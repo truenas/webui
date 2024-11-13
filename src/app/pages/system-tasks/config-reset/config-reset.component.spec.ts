@@ -11,8 +11,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ConfigResetComponent', () => {
   let spectator: Spectator<ConfigResetComponent>;
@@ -59,7 +59,7 @@ describe('ConfigResetComponent', () => {
   });
 
   it('resets config when user visits the page and waits for websocket to reconnect', fakeAsync(() => {
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketConnectionService).prepareShutdown).toHaveBeenCalled();
   }));

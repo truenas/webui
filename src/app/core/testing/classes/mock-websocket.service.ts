@@ -20,8 +20,8 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.
@@ -41,7 +41,7 @@ const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
  * ```
  */
 @Injectable()
-export class MockWebSocketService extends WebSocketService {
+export class MockWebSocketService extends ApiService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 

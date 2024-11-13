@@ -38,9 +38,9 @@ import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -87,7 +87,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private sysGenService: SystemGeneralService,
     private errorHandler: ErrorHandlerService,

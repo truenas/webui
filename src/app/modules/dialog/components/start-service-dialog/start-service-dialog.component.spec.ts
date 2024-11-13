@@ -13,7 +13,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -87,8 +87,8 @@ describe('StartServiceDialogComponent', () => {
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: true,
@@ -113,8 +113,8 @@ describe('StartServiceDialogComponent', () => {
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: false,
@@ -125,7 +125,7 @@ describe('StartServiceDialogComponent', () => {
     const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
     await noButton.click();
 
-    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: false,
       startAutomatically: false,

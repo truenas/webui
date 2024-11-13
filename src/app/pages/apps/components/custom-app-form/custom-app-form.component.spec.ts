@@ -21,8 +21,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeApp = {
   name: 'test-app-one',
@@ -112,7 +112,7 @@ describe('CustomAppFormComponent', () => {
       const button = await loader.getHarness(MatButtonHarness);
       await button.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           custom_app: true,
@@ -142,7 +142,7 @@ describe('CustomAppFormComponent', () => {
       const button = await loader.getHarness(MatButtonHarness);
       await button.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('app.update', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [
         'test-app-one',
         { custom_compose_config_string: jsonToYaml(fakeApp.config) },
       ]);

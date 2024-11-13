@@ -27,8 +27,8 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { DeviceWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/device-wizard-step/device-wizard-step.component';
 import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/initiator-wizard-step/initiator-wizard-step.component';
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -130,13 +130,13 @@ describe('IscsiWizardComponent', () => {
     await saveButton.click();
     tick();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -146,25 +146,25 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(10, 'iscsi.auth.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.auth.create', [{
       secret: '123456789qwerty',
       tag: 1234,
       user: 'userName',
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(11, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.portal.create', [{
       comment: 'test-name',
       discovery_authgroup: 12,
       discovery_authmethod: 'CHAP',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(13, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.target.create', [{
       name: 'test-name',
       groups: [{
         auth: null,
@@ -174,7 +174,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(14, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(14, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);

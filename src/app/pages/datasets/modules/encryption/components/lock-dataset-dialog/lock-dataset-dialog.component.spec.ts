@@ -11,7 +11,7 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { LockDatasetDialogComponent } from './lock-dataset-dialog.component';
 
 describe('LockDatasetDialogComponent', () => {
@@ -56,7 +56,7 @@ describe('LockDatasetDialogComponent', () => {
     await lockButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job)
+    expect(spectator.inject(ApiService).job)
       .toHaveBeenCalledWith('pool.dataset.lock', ['pool/dataset', { force_umount: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

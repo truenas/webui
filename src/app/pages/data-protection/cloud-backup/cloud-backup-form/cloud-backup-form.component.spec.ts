@@ -19,10 +19,10 @@ import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/page
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudBackupFormComponent', () => {
   const storjCreds = {
@@ -125,7 +125,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         bwlimit: [],
@@ -171,7 +171,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
         bwlimit: [],
@@ -265,7 +265,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
         attributes: {
           folder: '/My Folder',

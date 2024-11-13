@@ -10,7 +10,7 @@ import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provide
 import { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;
@@ -19,7 +19,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
   private rows: ApiCallResponseType<T>[] = [];
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     protected method: T,
     protected params: ApiCallParams<T> = [],
   ) {

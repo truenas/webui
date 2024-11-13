@@ -39,8 +39,8 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CertificateAddComponent', () => {
   let spectator: Spectator<CertificateAddComponent>;
@@ -163,7 +163,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateInternal,
@@ -227,7 +227,7 @@ describe('CertificateAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.Import,
       certificate: '-----BEGIN CERTIFICATE-----',

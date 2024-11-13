@@ -31,9 +31,9 @@ import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-mess
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { ApiService } from 'app/services/api.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -93,7 +93,7 @@ export class AuthService {
   constructor(
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {

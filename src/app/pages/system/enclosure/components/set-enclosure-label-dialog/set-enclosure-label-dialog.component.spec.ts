@@ -11,7 +11,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('SetEnclosureLabelDialogComponent', () => {
   let spectator: Spectator<SetEnclosureLabelDialogComponent>;
@@ -50,7 +50,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'New label' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'New label' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('New label');
   });
 
@@ -61,7 +61,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'TRUENAS-M40-HA' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'TRUENAS-M40-HA' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('TRUENAS-M40-HA');
   });
 });

@@ -10,7 +10,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('SftpProviderFormComponent', () => {
   let spectator: Spectator<SftpProviderFormComponent>;
@@ -92,7 +92,7 @@ describe('SftpProviderFormComponent', () => {
 
     await lastValueFrom(spectator.component.beforeSubmit());
 
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
     expect(websocket.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
     expect(websocket.call).toHaveBeenCalledWith('keychaincredential.create', [{
       attributes: {

@@ -12,8 +12,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { CloudSyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
 describe('CloudSyncRestoreDialogComponent', () => {
@@ -57,7 +57,7 @@ describe('CloudSyncRestoreDialogComponent', () => {
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.restore', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.restore', [
       23,
       {
         description: 'Reverse task',

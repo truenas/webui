@@ -13,8 +13,8 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;
@@ -69,7 +69,7 @@ describe('AuthorizedAccessFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.auth.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.auth.create', [{
         tag: 113,
         user: 'new-user',
         secret: '123456789012',
@@ -118,7 +118,7 @@ describe('AuthorizedAccessFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'iscsi.auth.update',
         [
           123,

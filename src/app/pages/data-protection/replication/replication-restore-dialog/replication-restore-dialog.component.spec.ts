@@ -11,8 +11,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationRestoreDialogComponent', () => {
   let spectator: Spectator<ReplicationRestoreDialogComponent>;
@@ -53,7 +53,7 @@ describe('ReplicationRestoreDialogComponent', () => {
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.restore', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.restore', [
       23,
       {
         name: 'Reverse task',

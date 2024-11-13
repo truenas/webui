@@ -10,7 +10,7 @@ import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.ut
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {
@@ -47,7 +47,7 @@ describe('LeaveDomainDialogComponent', () => {
     const leaveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Leave Domain' }));
     await leaveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('activedirectory.leave', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('activedirectory.leave', [{
       username: 'Administrator',
       password: '12345678',
     }]);

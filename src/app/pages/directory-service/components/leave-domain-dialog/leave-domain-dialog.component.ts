@@ -15,8 +15,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class LeaveDomainDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
     private dialogService: DialogService,
     private snackbar: SnackbarService,

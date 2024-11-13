@@ -21,8 +21,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailFormComponent } from './email-form.component';
 
@@ -43,7 +43,7 @@ describe('EmailFormComponent', () => {
   let spectator: Spectator<EmailFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
@@ -104,7 +104,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
@@ -113,7 +113,7 @@ describe('EmailFormComponent', () => {
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await button.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('mail.local_administrator_email');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
@@ -189,7 +189,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -218,7 +218,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
@@ -268,7 +268,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -312,7 +312,7 @@ describe('EmailFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('shows current Gmail config when Gmail is set', async () => {

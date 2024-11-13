@@ -7,8 +7,8 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetFormService', () => {
   let spectator: SpectatorService<DatasetFormService>;
@@ -56,7 +56,7 @@ describe('DatasetFormService', () => {
     it('loads dataset by id', async () => {
       const loadedDataset = await firstValueFrom(spectator.service.loadDataset('test'));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
       expect(loadedDataset).toEqual(dataset);
     });
   });

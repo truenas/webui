@@ -20,7 +20,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('PoolManagerComponent – create pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -216,7 +216,7 @@ describe('PoolManagerComponent – create pool', () => {
     jest.spyOn(router, 'navigate').mockImplementation();
 
     await (await wizard.getCreatePoolButton()).click();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'pool.create',
       [{
         name: 'pool1',

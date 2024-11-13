@@ -17,8 +17,8 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { ApiService } from 'app/services/api.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -179,7 +179,7 @@ export class WidgetResourcesService {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AppState>,
   ) {}
 

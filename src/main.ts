@@ -32,9 +32,9 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app/app.component';
@@ -110,13 +110,13 @@ bootstrapApplication(AppComponent, {
       useClass: IxIconRegistry,
     },
     {
-      provide: WebSocketService,
+      provide: ApiService,
       deps: [Router, WebSocketConnectionService, TranslateService],
       useFactory: (router: Router, connection: WebSocketConnectionService, translate: TranslateService) => {
         if (environment.mockConfig.enabled) {
           return new MockEnclosureWebsocketService(router, connection, translate);
         }
-        return new WebSocketService(router, connection, translate);
+        return new ApiService(router, connection, translate);
       },
     },
     provideCharts(withDefaultRegisterables()),

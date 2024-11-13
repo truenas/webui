@@ -16,7 +16,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
@@ -68,7 +68,7 @@ describe('ApiKeyFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.create', [{
       name: 'My key',
       username: 'root',
       expires_at: null,
@@ -94,7 +94,7 @@ describe('ApiKeyFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: false,
       expires_at: null,
@@ -123,7 +123,7 @@ describe('ApiKeyFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.update', [1, {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.update', [1, {
       name: 'My key',
       reset: true,
       expires_at: {

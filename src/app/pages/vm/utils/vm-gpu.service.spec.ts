@@ -6,12 +6,12 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
+import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;
-  let websocket: SpyObject<WebSocketService>;
+  let websocket: SpyObject<ApiService>;
 
   const radeon = {
     addr: {
@@ -84,7 +84,7 @@ describe('VmGpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
   });
 
   describe('updateVmGpus', () => {

@@ -14,12 +14,12 @@ import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
   let spectator: Spectator<DeleteDatasetDialogComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DeleteDatasetDialogComponent,
@@ -65,7 +65,7 @@ describe('DeleteDatasetDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

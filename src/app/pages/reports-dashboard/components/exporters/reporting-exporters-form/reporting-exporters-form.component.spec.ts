@@ -14,7 +14,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;
@@ -91,7 +91,7 @@ describe('ReportingExportersFormComponent', () => {
 
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
         type: ReportingExporterKey.Graphite,
         enabled: true,
@@ -116,7 +116,7 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('shows values for existing exporter', async () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
 
       const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
       const typeOptions = await typeSelect.getOptionLabels();
@@ -152,7 +152,7 @@ describe('ReportingExportersFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'reporting.exporters.update',
         [
           123,

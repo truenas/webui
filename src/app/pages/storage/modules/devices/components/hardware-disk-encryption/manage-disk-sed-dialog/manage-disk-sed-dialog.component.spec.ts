@@ -10,7 +10,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {
@@ -50,7 +50,7 @@ describe('ManageDiskSedDialogComponent', () => {
   });
 
   it('loads and shows if password is currently set for the current disk', async () => {
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
     expect(await passwordInput.getValue()).toBe('123456');
@@ -60,7 +60,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear SED Password' }));
     await clearButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: '' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });
@@ -71,7 +71,7 @@ describe('ManageDiskSedDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['disk1234', { passwd: 'new-password' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('SED password updated.');
   });

@@ -16,10 +16,10 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskCardComponent', () => {
@@ -130,7 +130,7 @@ describe('ScrubTaskCardComponent', () => {
       message: 'Delete Scrub Task <b>"APPS"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
   });
 
   it('updates Scrub Task Enabled status once mat-toggle is updated', async () => {
@@ -140,7 +140,7 @@ describe('ScrubTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'pool.scrub.update',
       [1, { enabled: true }],
     );

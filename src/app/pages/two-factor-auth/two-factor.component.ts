@@ -29,8 +29,8 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private translate: TranslateService,
     protected matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 

@@ -13,8 +13,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
 describe('VmwareSnapshotFormComponent', () => {
@@ -94,7 +94,7 @@ describe('VmwareSnapshotFormComponent', () => {
       const fetchDatastoresButton = await loader.getHarness(MatButtonHarness.with({ text: 'Fetch DataStores' }));
       await fetchDatastoresButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.match_datastores_with_datasets', [{
         hostname: '192.168.30.4',
         username: 'root',
         password: 'pleasechange',
@@ -109,7 +109,7 @@ describe('VmwareSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.create', [{
         hostname: '192.168.30.4',
         username: 'root',
         password: 'pleasechange',
@@ -161,7 +161,7 @@ describe('VmwareSnapshotFormComponent', () => {
         }),
       );
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vmware.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vmware.update', [
         1,
         {
           hostname: '192.168.30.4',

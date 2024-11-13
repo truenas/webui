@@ -19,9 +19,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('LdapComponent', () => {
   let spectator: Spectator<LdapComponent>;
@@ -93,7 +93,7 @@ describe('LdapComponent', () => {
   });
 
   it('loads LDAP config and shows it', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ldap.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -155,7 +155,7 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'ldap.update',
       [{
         ...existingLdapConfig,

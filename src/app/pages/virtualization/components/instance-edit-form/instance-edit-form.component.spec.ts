@@ -22,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('InstanceEditFormComponent', () => {
   let spectator: Spectator<InstanceEditFormComponent>;
@@ -84,7 +84,7 @@ describe('InstanceEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
       autostart: true,
       cpu: '2-5',
       memory: GiB,

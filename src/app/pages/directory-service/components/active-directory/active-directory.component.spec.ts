@@ -25,9 +25,9 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ActiveDirectoryComponent', () => {
   let spectator: Spectator<ActiveDirectoryComponent>;
@@ -101,8 +101,8 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('loads and shows active directory config', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('activedirectory.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('activedirectory.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -179,7 +179,7 @@ describe('ActiveDirectoryComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'activedirectory.update',
       [{
         domainname: 'ad.truenas.com',

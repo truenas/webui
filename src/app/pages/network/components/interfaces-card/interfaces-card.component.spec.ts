@@ -22,9 +22,9 @@ import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesState, InterfacesStore } from 'app/pages/network/stores/interfaces.store';
+import { ApiService } from 'app/services/api.service';
 import { NetworkService } from 'app/services/network.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;
@@ -144,7 +144,7 @@ describe('InterfacesCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Delete Interface',
     }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
@@ -156,7 +156,7 @@ describe('InterfacesCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
     }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('interface.delete', ['eno1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['eno1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });

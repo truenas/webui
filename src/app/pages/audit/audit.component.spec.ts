@@ -16,14 +16,14 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let table: IxTableHarness;
 
   const auditEntries = [
@@ -112,7 +112,7 @@ describe('AuditComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     // Do it in this weird way because table header is outside the table element.
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });

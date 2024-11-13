@@ -18,8 +18,8 @@ import { SaveConfigDialogComponent } from 'app/pages/system/general-settings/sav
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('UpdateActionsCardComponent', () => {
@@ -100,18 +100,18 @@ describe('UpdateActionsCardComponent', () => {
       title: 'Apply Pending Updates',
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
   });
 
   it('shows save configuration dialog and runs update when Download Updates button is pressed', async () => {
     const downloadUpdatesButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Updates' }));
     await downloadUpdatesButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.get_jobs', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.get_jobs', [
       [['method', '=', 'update.update'], ['state', '=', JobState.Running]],
     ]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('update.check_available');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('update.check_available');
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SaveConfigDialogComponent, {
       data: {
@@ -130,7 +130,7 @@ describe('UpdateActionsCardComponent', () => {
       title: 'Download Update',
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.update', [{ reboot: true, resume: false }]);
   });
 
   it('shows save configuration dialog and redirects to the manual update page when Install Manual Update File button is pressed', async () => {

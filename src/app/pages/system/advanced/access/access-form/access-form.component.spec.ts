@@ -13,9 +13,9 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
@@ -98,10 +98,10 @@ describe('AccessFormComponent', () => {
     await saveButton.click();
 
     expect(store$.dispatch).toHaveBeenCalledWith(lifetimeTokenUpdated({ lifetime: 60 }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.general.update', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.general.update', [{
       ds_auth: false,
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.update', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{
       login_banner: '',
     }]);
     expect(store$.dispatch).toHaveBeenCalledWith(generalConfigUpdated());

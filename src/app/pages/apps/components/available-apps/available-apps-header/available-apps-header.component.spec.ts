@@ -19,7 +19,7 @@ import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
@@ -127,6 +127,6 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator.click(spectator.query(byText('Refresh Catalog')));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
   });
 });

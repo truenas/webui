@@ -18,8 +18,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-list/associated-target-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const targetExtents: IscsiTargetExtent[] = [
   {
@@ -101,9 +101,9 @@ describe('AssociatedTargetListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.global.sessions');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.global.sessions');
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.targetextent.delete', [1, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.targetextent.delete', [1, true]);
   });
 
   it('should show table rows', async () => {

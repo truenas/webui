@@ -20,9 +20,9 @@ import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interf
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const authMeUser = {
   pw_dir: 'dir',
@@ -120,7 +120,7 @@ describe('AuthService', () => {
         method: 'auth.login_ex',
         params: [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
       }));
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
@@ -151,7 +151,7 @@ describe('AuthService', () => {
         method: 'auth.login_ex',
         params: [{ mechanism: 'TOKEN_PLAIN', token: 'DUMMY_TOKEN' }],
       }));
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',

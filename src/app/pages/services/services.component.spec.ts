@@ -29,9 +29,9 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
+import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -50,7 +50,7 @@ const fakeDataSource: Service[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -86,7 +86,7 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 

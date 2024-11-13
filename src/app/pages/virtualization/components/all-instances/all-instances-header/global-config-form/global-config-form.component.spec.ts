@@ -12,7 +12,7 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('GlobalConfigFormComponent', () => {
   let spectator: Spectator<GlobalConfigFormComponent>;
@@ -78,7 +78,7 @@ describe('GlobalConfigFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.global.update', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
       bridge: '[AUTO]',
       v4_network: '1.2.3.4/24',

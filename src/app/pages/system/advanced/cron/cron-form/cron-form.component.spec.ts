@@ -13,10 +13,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('CronFormComponent', () => {
@@ -103,7 +103,7 @@ describe('CronFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.create', [{
         command: 'rm -rf /',
         description: 'Final cron job',
         enabled: true,
@@ -157,7 +157,7 @@ describe('CronFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.update', [234, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
         command: 'ls -la',
         description: 'Updated cron job',
         enabled: false,

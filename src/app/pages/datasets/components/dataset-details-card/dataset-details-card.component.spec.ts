@@ -21,8 +21,8 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const dataset = {
   id: 'pool/child',
@@ -191,7 +191,7 @@ describe('DatasetDetailsCardComponent', () => {
       const promoteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Promote' }));
       await promoteButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
     });
   });
 });

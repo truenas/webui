@@ -23,7 +23,7 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('RaidzExtendDialogComponent', () => {
   let spectator: Spectator<RaidzExtendDialogComponent>;
@@ -115,7 +115,7 @@ describe('RaidzExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',

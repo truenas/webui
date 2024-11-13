@@ -10,7 +10,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   NetworkInterfaceStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/4-network-interface-step/network-interface-step.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('NetworkInterfaceStepComponent', () => {
   let spectator: Spectator<NetworkInterfaceStepComponent>;
@@ -71,7 +71,7 @@ describe('NetworkInterfaceStepComponent', () => {
   });
 
   it('generates random MAC when form is initialized', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.random_mac');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.random_mac');
 
     const macAddress = await form.getControl('Mac Address') as IxInputHarness;
     expect(await macAddress.getValue()).toBe('00:00:00:00:00:01');

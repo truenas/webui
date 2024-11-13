@@ -13,8 +13,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { SysctlCardComponent } from './sysctl-card.component';
 
 describe('SysctlCardComponent', () => {
@@ -106,6 +106,6 @@ describe('SysctlCardComponent', () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 4);
     await deleteIcon.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('tunable.delete', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [1]);
   });
 });

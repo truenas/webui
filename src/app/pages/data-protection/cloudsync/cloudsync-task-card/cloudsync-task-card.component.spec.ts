@@ -29,11 +29,11 @@ import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudSyncTaskCardComponent', () => {
@@ -193,7 +193,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -206,7 +206,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -229,7 +229,7 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Delete Cloud Sync Task <b>"custom-cloudsync"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {
@@ -239,7 +239,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloudsync.update',
       [3, { enabled: true }],
     );

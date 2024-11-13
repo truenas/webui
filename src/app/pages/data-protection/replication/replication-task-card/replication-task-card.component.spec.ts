@@ -18,9 +18,9 @@ import { ReplicationFormComponent } from 'app/pages/data-protection/replication/
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -28,7 +28,7 @@ describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const replicationTasks = [
     {
@@ -108,7 +108,7 @@ describe('ReplicationTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
   });
 
   it('should show table rows', async () => {
@@ -152,7 +152,7 @@ describe('ReplicationTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('replication.run', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -191,7 +191,7 @@ describe('ReplicationTaskCardComponent', () => {
       message: 'Delete Replication Task <b>"APPS/test2 - APPS/test3"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('updates Replication Task Enabled status once mat-toggle is updated', async () => {
@@ -201,7 +201,7 @@ describe('ReplicationTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'replication.update',
       [1, { enabled: true }],
     );

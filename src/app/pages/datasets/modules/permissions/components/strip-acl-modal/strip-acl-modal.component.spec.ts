@@ -13,7 +13,7 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('StripAclModalComponent', () => {
   let spectator: Spectator<StripAclModalComponent>;
@@ -52,7 +52,7 @@ describe('StripAclModalComponent', () => {
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],
@@ -77,7 +77,7 @@ describe('StripAclModalComponent', () => {
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],

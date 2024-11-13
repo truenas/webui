@@ -16,8 +16,8 @@ import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-pane
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
+import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
@@ -57,7 +57,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -101,7 +101,7 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
   });
 

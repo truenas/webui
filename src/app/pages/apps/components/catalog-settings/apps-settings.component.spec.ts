@@ -22,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
@@ -83,7 +83,7 @@ describe('AppsSettingsComponent', () => {
     });
 
     it('loads list of available trains and shows them', async () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('catalog.trains');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.trains');
 
       const checkboxList = await loader.getHarness(IxCheckboxListHarness);
       const checkboxes = await checkboxList.getCheckboxes();
@@ -111,7 +111,7 @@ describe('AppsSettingsComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('catalog.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
         { preferred_trains: ['stable', 'community'] },
       ]);
       expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
@@ -157,7 +157,7 @@ describe('AppsSettingsComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('catalog.update', [
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
           { preferred_trains: ['stable'] },
         ]);
 
@@ -242,7 +242,7 @@ describe('AppsSettingsComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('docker.update', [{
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
           enable_image_updates: true,
           address_pools: [
             { base: '172.17.0.0/12', size: 12 },

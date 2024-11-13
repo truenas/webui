@@ -24,7 +24,7 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {
@@ -108,13 +108,13 @@ describe('SupportCardComponent', () => {
         await isProductionSystemToggle.setValue(true);
 
         expect(matDialog.open).toHaveBeenCalledWith(SetProductionStatusDialogComponent);
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
       it('sets production status to false when toggle is unset', async () => {
         await isProductionSystemToggle.setValue(false);
 
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
       });
     });
   });

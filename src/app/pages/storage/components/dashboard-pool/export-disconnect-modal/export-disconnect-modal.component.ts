@@ -35,8 +35,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -119,7 +119,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,

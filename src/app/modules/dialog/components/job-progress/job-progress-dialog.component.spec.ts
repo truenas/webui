@@ -14,7 +14,7 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialogComponent<unknown>>;
@@ -166,7 +166,7 @@ describe('JobProgressDialogComponent', () => {
       const abortButton = await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }));
       await abortButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
     });
 
     it('emits jobAborted and closes when job update from middleware shows that it was aborted', () => {

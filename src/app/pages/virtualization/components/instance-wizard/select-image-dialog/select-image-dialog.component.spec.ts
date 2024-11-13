@@ -16,7 +16,7 @@ import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
   'almalinux/8/cloud': {
@@ -63,7 +63,7 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('loads image choices', () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'virt.instance.image_choices',
         [{ remote: VirtualizationRemote.LinuxContainers }],
       );

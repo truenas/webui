@@ -28,8 +28,8 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
 
 describe('CertificateEditComponent', () => {
@@ -108,7 +108,7 @@ describe('CertificateEditComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [1,
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.update', [1,
         { name: 'New Name', add_to_trusted_store: true },
       ]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();

@@ -1,13 +1,13 @@
 import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 export class EmptyWebsocketService {
-  readonly clearSubscriptions$ = getMissingInjectionErrorObservable(WebSocketService.name);
-  call = getMissingInjectionErrorFactory(WebSocketService.name);
-  job = getMissingInjectionErrorFactory(WebSocketService.name);
-  callAndSubscribe = getMissingInjectionErrorFactory(WebSocketService.name);
-  startJob = getMissingInjectionErrorFactory(WebSocketService.name);
-  subscribe = getMissingInjectionErrorFactory(WebSocketService.name);
-  subscribeToLogs = getMissingInjectionErrorFactory(WebSocketService.name);
-  clearSubscriptions = getMissingInjectionErrorFactory(WebSocketService.name);
+  readonly clearSubscriptions$ = getMissingInjectionErrorObservable(ApiService.name);
+  call = getMissingInjectionErrorFactory(ApiService.name);
+  job = getMissingInjectionErrorFactory(ApiService.name);
+  callAndSubscribe = getMissingInjectionErrorFactory(ApiService.name);
+  startJob = getMissingInjectionErrorFactory(ApiService.name);
+  subscribe = getMissingInjectionErrorFactory(ApiService.name);
+  subscribeToLogs = getMissingInjectionErrorFactory(ApiService.name);
+  clearSubscriptions = getMissingInjectionErrorFactory(ApiService.name);
 }

@@ -51,7 +51,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
@@ -221,7 +221,7 @@ describe('PoolManagerWizardComponent', () => {
       spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService, true).job).toHaveBeenCalledWith('pool.create', [{
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [{
         name: 'pewl',
         allow_duplicate_serials: true,
         encryption: false,

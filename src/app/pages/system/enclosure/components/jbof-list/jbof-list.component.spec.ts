@@ -14,8 +14,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeJbofDataSource: Jbof[] = [
   {
@@ -106,7 +106,7 @@ describe('JbofListComponent', () => {
       buttonColor: 'red',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
   it('enables Add button when existing are less than licensed', () => {

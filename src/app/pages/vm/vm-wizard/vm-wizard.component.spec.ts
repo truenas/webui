@@ -34,11 +34,11 @@ import {
 } from 'app/pages/vm/vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
@@ -266,7 +266,7 @@ describe('VmWizardComponent', () => {
     const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await submit.click();
 
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
     expect(websocket.call).toHaveBeenCalledWith('vm.create', [{
       autostart: true,
       bootloader: VmBootloader.Uefi,

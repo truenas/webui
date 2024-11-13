@@ -7,7 +7,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -62,7 +62,7 @@ describe('HaUpgradeEffects', () => {
       expect(await firstValueFrom(spectator.service.checkIfRemoteUpgradeIsRequired$))
         .toEqual(upgradePendingStateLoaded({ isUpgradePending: true }));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.upgrade_pending');
     });
 
     it('does not check whether upgrade is pending when HA is disabled', () => {
@@ -75,7 +75,7 @@ describe('HaUpgradeEffects', () => {
 
       spectator.service.checkIfRemoteUpgradeIsRequired$.subscribe();
 
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('failover.upgrade_pending');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('failover.upgrade_pending');
     });
 
     it('checks whether upgrade is pending when HA is disabled due to version mismatch', async () => {
@@ -89,7 +89,7 @@ describe('HaUpgradeEffects', () => {
       expect(await firstValueFrom(spectator.service.checkIfRemoteUpgradeIsRequired$))
         .toEqual(upgradePendingStateLoaded({ isUpgradePending: true }));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('failover.upgrade_pending');
     });
   });
 
@@ -119,7 +119,7 @@ describe('HaUpgradeEffects', () => {
       await firstValueFrom(spectator.service.showUpgradePendingDialog$);
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('failover.upgrade_finish');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.upgrade_finish');
 
       expect(await firstValueFrom(spectator.service.showUpgradePendingDialog$))
         .toEqual(failoverUpgradeFinished());

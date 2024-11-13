@@ -12,8 +12,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ServiceStateColumnComponent,
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
+import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceStateColumnComponent', () => {
   let spectator: Spectator<ServiceStateColumnComponent>;
@@ -85,7 +85,7 @@ describe('ServiceStateColumnComponent', () => {
     it('stops the service when user confirms', async () => {
       await toggle.toggle();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.stop', [service.service, { silent: false }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.stop', [service.service, { silent: false }]);
     });
   });
 
@@ -95,7 +95,7 @@ describe('ServiceStateColumnComponent', () => {
 
       await toggle.toggle();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', [service.service, { silent: false }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', [service.service, { silent: false }]);
     });
   });
 });

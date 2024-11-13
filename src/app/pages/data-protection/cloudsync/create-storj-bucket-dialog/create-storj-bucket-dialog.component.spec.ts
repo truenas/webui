@@ -10,7 +10,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import {
   CreateStorjBucketDialogComponent,
 } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('CreateStorjBucketDialogComponent', () => {
   let spectator: Spectator<CreateStorjBucketDialogComponent>;
@@ -47,7 +47,7 @@ describe('CreateStorjBucketDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.create_bucket', [1, 'new-bucket']);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('new-bucket');
   });
 });

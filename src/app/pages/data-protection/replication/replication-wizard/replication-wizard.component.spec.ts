@@ -26,7 +26,7 @@ import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',
@@ -141,7 +141,7 @@ describe('ReplicationWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -153,7 +153,7 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool2/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -165,19 +165,19 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
       dataset: 'pool1/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
       dataset: 'pool2/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('replication.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('replication.create', [{
       auto: true,
       direction: Direction.Push,
       encryption: false,

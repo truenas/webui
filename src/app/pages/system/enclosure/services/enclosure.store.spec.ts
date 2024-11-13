@@ -16,8 +16,8 @@ import {
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { ApiService } from 'app/services/api.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureStore', () => {
   let spectator: SpectatorService<EnclosureStore>;
@@ -66,7 +66,7 @@ describe('EnclosureStore', () => {
 
   describe('initiate', () => {
     it('loads dashboard information', () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.state()).toMatchObject({
         enclosures,
@@ -90,8 +90,8 @@ describe('EnclosureStore', () => {
       });
 
       tick(1 * 1000);
-      expect(spectator.inject(WebSocketService).subscribe).toHaveBeenCalledWith('disk.query');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('disk.query');
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
     }));

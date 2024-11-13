@@ -10,8 +10,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { InstanceGeneralInfoComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const demoInstance = {
   id: 'demo',
@@ -88,7 +88,7 @@ describe('InstanceGeneralInfoComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
+    expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
   });
 
   it('navigates to app edit page when Edit button is pressed', async () => {

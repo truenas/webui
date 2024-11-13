@@ -8,7 +8,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
@@ -51,7 +51,7 @@ describe('EulaEffects', () => {
   });
 
   it('should call truenas.accept_eula when EULA dialog is accepted', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.accept_eula');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.accept_eula');
   });
 
   it('does not check for EULA if user does not have FullAdmin role', () => {
@@ -61,6 +61,6 @@ describe('EulaEffects', () => {
     authMock.setRoles([Role.ReadonlyAdmin]);
     actions$.next(adminUiInitialized());
 
-    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');
   });
 });
