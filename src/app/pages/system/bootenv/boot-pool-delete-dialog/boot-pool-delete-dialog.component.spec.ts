@@ -67,8 +67,8 @@ describe('BootPoolDeleteDialogComponent', () => {
     const jobArguments = [
       'boot.environment.destroy',
       [
-        ['CLONE'],
-        ['22.12-MASTER-20220808-020013'],
+        [{ id: '25.04.0-MASTER-20241031-104807' }],
+        [{ id: '25.04.0-MASTER-20241105-224807' }],
       ],
     ];
     spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
@@ -94,8 +94,8 @@ describe('BootPoolDeleteDialogComponent', () => {
     const jobArguments: CoreBulkQuery = [
       'boot.environment.destroy',
       [
-        ['CLONE'],
-        ['22.12-MASTER-20220808-020013'],
+        [{ id: '25.04.0-MASTER-20241031-104807' }],
+        [{ id: '25.04.0-MASTER-20241105-224807' }],
       ],
     ];
     spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));

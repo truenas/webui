@@ -1,4 +1,4 @@
-<ix-page-header>
+<ix-page-header [loading]="dataProvider.isLoading$ | async">
   <ix-search-input1
     [value]="filterString()"
     (search)="onListFiltered($event)"

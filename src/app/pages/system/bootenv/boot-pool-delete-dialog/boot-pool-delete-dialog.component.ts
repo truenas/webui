@@ -85,10 +85,10 @@ export class BootPoolDeleteDialogComponent {
     });
 
     this.ws.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
-      filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result),
+      filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
       untilDestroyed(this),
     ).subscribe((response) => {
-      response.arguments[1].forEach((params, index: number) => {
+      response.arguments[1].flat().forEach((params, index: number) => {
         const bootenvId = params.id;
         const bulkItem = this.bulkItems.get(bootenvId);
         if (bulkItem) {
