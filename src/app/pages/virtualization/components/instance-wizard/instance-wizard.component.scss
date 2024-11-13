@@ -1,4 +1,5 @@
 .container {
+  color: var(--fg1);
   display: flex;
   gap: 15px;
 
@@ -27,5 +28,14 @@ ix-fieldset {
 
   button {
     margin-top: 43px;
+  }
+}
+
+.protocol-and-port {
+  display: flex;
+  gap: 12px;
+
+  .protocol {
+    width: 100px;
   }
 }

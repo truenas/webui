@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -22,8 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
   name: `dns-authenticator-${index}`,
-  authenticator: `tn-${index}`,
-})) as unknown as DnsAuthenticator[];
+  authenticator: DnsAuthenticatorType.Cloudflare,
+})) as DnsAuthenticator[];
 
 describe('AcmeDnsAuthenticatorListComponent', () => {
   let spectator: Spectator<AcmeDnsAuthenticatorListComponent>;
@@ -93,10 +94,10 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Authenticator', ''],
-      ['dns-authenticator-0', 'tn-0', ''],
-      ['dns-authenticator-1', 'tn-1', ''],
-      ['dns-authenticator-2', 'tn-2', ''],
-      ['dns-authenticator-3', 'tn-3', ''],
+      ['dns-authenticator-0', 'cloudflare', ''],
+      ['dns-authenticator-1', 'cloudflare', ''],
+      ['dns-authenticator-2', 'cloudflare', ''],
+      ['dns-authenticator-3', 'cloudflare', ''],
     ];
 
     const cells = await table.getCellTexts();

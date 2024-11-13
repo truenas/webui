@@ -21,13 +21,13 @@ const demoInstance = {
   cpu: '525',
   autostart: true,
   image: {
-    architecture: 'amd64',
+    archs: ['amd64'],
     description: 'Almalinux 8 amd64 (20241030_23:38)',
     os: 'Almalinux',
     release: '8',
   },
   memory: 131072000,
-} as unknown as VirtualizationInstance;
+} as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
   let spectator: Spectator<InstanceGeneralInfoComponent>;

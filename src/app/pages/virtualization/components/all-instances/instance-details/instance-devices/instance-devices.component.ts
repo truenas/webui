@@ -1,16 +1,25 @@
-import { TitleCasePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, signal,
+  ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import {
-  MatCardContent, MatCardModule,
-} from '@angular/material/card';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import {
+  EMPTY, Observable, switchMap, tap,
+} from 'rxjs';
+import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDevice,
+} from 'app/interfaces/virtualization.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -22,46 +31,73 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatButton,
-    MatCardModule,
+    MatCard,
+    MatCardHeader,
     TranslateModule,
     MatCardContent,
-    MatProgressSpinner,
-    TitleCasePipe,
+    NgxSkeletonLoaderModule,
+    MapValuePipe,
+    MatIconButton,
+    TestDirective,
+    IxIconComponent,
   ],
 })
-export class InstanceDevicesComponent implements OnChanges {
-  instance = input.required<VirtualizationInstance>();
+export class InstanceDevicesComponent {
+  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
 
-  devices = signal<VirtualizationDevice[]>([]);
-  isLoading = signal<boolean>(false);
+  protected readonly shownDevices = computed(() => {
+    return this.instanceStore.selectedInstanceDevices().filter((device) => {
+      return [VirtualizationDeviceType.Usb, VirtualizationDeviceType.Gpu].includes(device.dev_type);
+    });
+  });
 
   constructor(
+    private instanceStore: VirtualizationInstancesStore,
+    private dialog: DialogService,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
     private ws: WebSocketService,
+    private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!(changes.instance.currentValue as unknown as VirtualizationInstance).id) {
-      return;
-    }
+  protected getDeviceDescription(device: VirtualizationDevice): string {
+    const type = virtualizationDeviceTypeLabels.has(device.dev_type)
+      ? virtualizationDeviceTypeLabels.get(device.dev_type)
+      : device.dev_type;
 
-    this.loadDevices();
+    // TODO: Get better names.
+    const description = device.name;
+
+    return `${type}: ${description}`;
   }
 
-  loadDevices(): void {
-    this.isLoading.set(true);
-    this.ws.call('virt.instance.device_list', [this.instance().id])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (devices) => {
-          this.devices.set(devices);
-          this.isLoading.set(false);
-        },
-        error: (error: unknown) => {
-          this.errorHandler.showErrorModal(error);
-          this.isLoading.set(false);
-        },
-      });
+  protected deleteProxyPressed(device: VirtualizationDevice): void {
+    this.dialog.confirm({
+      message: this.translate.instant('Are you sure you want to delete this device?'),
+      title: this.translate.instant('Delete Device'),
+    })
+      .pipe(
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return EMPTY;
+          }
+
+          return this.deleteDevice(device);
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
+  }
+
+  private deleteDevice(proxy: VirtualizationDevice): Observable<unknown> {
+    return this.ws.call('virt.instance.device_delete', [this.instanceStore.selectedInstance().id, proxy.name]).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      tap(() => {
+        this.snackbar.success(this.translate.instant('Device deleted'));
+        this.instanceStore.loadDevices();
+      }),
+    );
   }
 }

@@ -314,7 +314,7 @@ describe('PoolManagerStore', () => {
       openFnSpy.mockImplementation(() => {
         return {
           afterClosed: () => of([]),
-        } as unknown as MatDialogRef<unknown>;
+        } as MatDialogRef<unknown>;
       });
       spectator.service.openManualSelectionDialog(VdevType.Data);
       expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
