@@ -1,14 +1,14 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetFormService', () => {
   let spectator: SpectatorService<DatasetFormService>;
@@ -16,7 +16,7 @@ describe('DatasetFormService', () => {
   const createService = createServiceFactory({
     service: DatasetFormService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [dataset]),
       ]),
       mockProvider(DialogService, {
@@ -56,7 +56,7 @@ describe('DatasetFormService', () => {
     it('loads dataset by id', async () => {
       const loadedDataset = await firstValueFrom(spectator.service.loadDataset('test'));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
       expect(loadedDataset).toEqual(dataset);
     });
   });

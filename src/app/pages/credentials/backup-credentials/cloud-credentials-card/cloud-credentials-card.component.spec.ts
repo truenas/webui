@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,9 +17,9 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;
@@ -63,7 +63,7 @@ describe('CloudCredentialsCardComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.providers', providers),
         mockCall('cloudsync.credentials.query', credentials),
         mockCall('cloudsync.credentials.delete'),
@@ -119,7 +119,7 @@ describe('CloudCredentialsCardComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
   });
 
   it('should show table rows', async () => {

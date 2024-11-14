@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -27,24 +27,24 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { VmService } from 'app/services/vm.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let saveButton: MatButtonHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
@@ -130,7 +130,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new CD-ROM device', async () => {
@@ -168,7 +168,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing CD-ROM device', async () => {
@@ -224,7 +224,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new NIC device', async () => {
@@ -269,7 +269,7 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           Type: 'NIC',
         });
-        spectator.inject(MockWebSocketService).call.mockClear();
+        spectator.inject(MockApiService).call.mockClear();
 
         const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
         await generateButton.click();
@@ -298,7 +298,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing NIC device', async () => {
@@ -343,7 +343,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new disk', async () => {
@@ -389,7 +389,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Disk', async () => {
@@ -456,7 +456,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new Raw File device', async () => {
@@ -503,7 +503,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Raw File device', async () => {
@@ -566,7 +566,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new PCI Passthrough device', async () => {
@@ -608,7 +608,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing PCI Passthrough device', async () => {
@@ -676,7 +676,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Display device', async () => {
@@ -707,11 +707,11 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockWebSocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+        spectator.inject(MockApiService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(websocket.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');
@@ -746,7 +746,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new USB Passthrough device', async () => {
@@ -787,7 +787,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing USB Passthrough device', async () => {

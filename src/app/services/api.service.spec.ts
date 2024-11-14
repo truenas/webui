@@ -11,8 +11,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const mockWebSocketConnectionService = {
   send: jest.fn(),
@@ -28,19 +28,19 @@ const mockEventSubscriptions = new Map<string, Observable<ApiEvent>>([
   ['event2', apiEventSubscription2$],
 ]);
 
-describe('WebSocketService', () => {
-  let service: WebSocketService;
+describe('ApiService', () => {
+  let service: ApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        WebSocketService,
+        ApiService,
         mockProvider(TranslateService),
         { provide: WebSocketConnectionService, useValue: mockWebSocketConnectionService },
       ],
     });
 
-    service = TestBed.inject(WebSocketService);
+    service = TestBed.inject(ApiService);
 
     jest.spyOn(service.clearSubscriptions$, 'next');
 

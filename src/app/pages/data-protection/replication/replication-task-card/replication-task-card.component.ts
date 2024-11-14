@@ -50,10 +50,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -157,7 +157,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     private chainedSlideIn: ChainedSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,

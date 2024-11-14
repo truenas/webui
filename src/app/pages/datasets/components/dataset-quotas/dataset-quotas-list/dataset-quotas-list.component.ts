@@ -19,11 +19,11 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -48,9 +48,9 @@ import {
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -194,7 +194,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     protected formatter: IxFormatterService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -304,7 +304,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),
@@ -368,7 +368,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),

@@ -7,15 +7,15 @@ import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {
@@ -33,7 +33,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
 describe('TruecommandConnectModalComponent', () => {
   let spectator: Spectator<TruecommandConnectModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   function createComponentWithData(
     config: Partial<TrueCommandConfig>,
@@ -45,7 +45,7 @@ describe('TruecommandConnectModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebSocket([
+        mockApi([
           mockCall('truecommand.update'),
         ]),
         mockProvider(AppLoaderService),
@@ -101,7 +101,7 @@ describe('TruecommandConnectModalComponent', () => {
       beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        ws = spectator.inject(WebSocketService);
+        ws = spectator.inject(ApiService);
       });
 
       it(`it has title '${expectedTitle}'`, () => {
@@ -142,7 +142,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -182,7 +182,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -228,7 +228,7 @@ describe('TruecommandConnectModalComponent', () => {
       jest.spyOn(dialogServiceMock, 'generalDialog').mockReturnValue(of(true));
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {

@@ -4,8 +4,8 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
@@ -16,8 +16,8 @@ import {
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { ApiService } from 'app/services/api.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('EnclosureStore', () => {
   let spectator: SpectatorService<EnclosureStore>;
@@ -52,7 +52,7 @@ describe('EnclosureStore', () => {
   const createService = createServiceFactory({
     service: EnclosureStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.enclosure.dashboard', enclosures),
       ]),
       mockProvider(ThemeService),
@@ -66,7 +66,7 @@ describe('EnclosureStore', () => {
 
   describe('initiate', () => {
     it('loads dashboard information', () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.state()).toMatchObject({
         enclosures,
@@ -84,14 +84,14 @@ describe('EnclosureStore', () => {
       jest.spyOn(spectator.service, 'patchState').mockImplementation();
       spectator.service.listenForDiskUpdates().subscribe();
 
-      spectator.inject(MockWebSocketService).emitSubscribeEvent({
+      spectator.inject(MockApiService).emitSubscribeEvent({
         msg: IncomingApiMessageType.Changed,
         collection: 'disk.query',
       });
 
       tick(1 * 1000);
-      expect(spectator.inject(WebSocketService).subscribe).toHaveBeenCalledWith('disk.query');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('disk.query');
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
     }));

@@ -11,16 +11,16 @@ import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +58,7 @@ export class ServiceExtraActionsComponent {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private router: Router,
     private slideInService: SlideInService,
@@ -91,7 +91,7 @@ export class ServiceExtraActionsComponent {
             );
           }
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           let message = this.translate.instant(
             'Error starting service {serviceName}.',
             { serviceName: serviceNames.get(service.service) || service.service },

@@ -5,25 +5,25 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
-} from 'app/core/testing/utils/mock-websocket.utils';
+  mockCall, mockJob, mockApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/services/api.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let saveButton: MatButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -35,7 +35,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,
@@ -74,7 +74,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
   });
 

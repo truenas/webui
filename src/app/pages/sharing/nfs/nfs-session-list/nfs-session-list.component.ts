@@ -26,7 +26,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -153,7 +153,7 @@ export class NfsSessionListComponent implements OnInit {
   nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,

@@ -2,7 +2,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 
@@ -11,7 +11,7 @@ describe('FreeSpaceValidatorService', () => {
   const createService = createServiceFactory({
     service: FreeSpaceValidatorService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.statfs', {
           free_bytes: 10 * TiB,
         } as Statfs),

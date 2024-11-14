@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
@@ -104,7 +104,7 @@ describe('SmartTestResultListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', disks),
         mockCall('smart.test.results', smartTestResults),
         mockCall('rsynctask.update'),

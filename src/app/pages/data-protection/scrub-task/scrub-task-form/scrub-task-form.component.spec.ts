@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -13,9 +13,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskFormComponent', () => {
@@ -48,7 +48,7 @@ describe('ScrubTaskFormComponent', () => {
       }),
       mockAuth(),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),
         mockCall('pool.query', [
@@ -89,7 +89,7 @@ describe('ScrubTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
         pool: 1,
         description: 'New task',
         enabled: true,
@@ -141,7 +141,7 @@ describe('ScrubTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
         description: 'Updated task',
         enabled: false,
         pool: 1,

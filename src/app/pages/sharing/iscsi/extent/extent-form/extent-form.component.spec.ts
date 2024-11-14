@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { KiB } from 'app/constants/bytes.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
@@ -14,9 +14,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExtentFormComponent', () => {
   let spectator: Spectator<ExtentFormComponent>;
@@ -52,7 +52,7 @@ describe('ExtentFormComponent', () => {
       mockProvider(SlideInService),
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.extent.create'),
         mockCall('iscsi.extent.update'),
         mockCall('iscsi.extent.disk_choices', {
@@ -108,7 +108,7 @@ describe('ExtentFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
         avail_threshold: null,
         blocksize: 1024,
         comment: 'new_comment',
@@ -169,7 +169,7 @@ describe('ExtentFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.extent.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,
         {
           avail_threshold: 50,

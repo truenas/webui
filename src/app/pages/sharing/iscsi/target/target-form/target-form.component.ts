@@ -29,8 +29,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
+import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -136,7 +136,7 @@ export class TargetFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInRef: SlideInRef<TargetFormComponent>,
     private targetNameValidationService: TargetNameValidationService,
     @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,

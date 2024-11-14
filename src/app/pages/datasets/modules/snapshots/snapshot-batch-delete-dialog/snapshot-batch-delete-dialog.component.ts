@@ -15,17 +15,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -73,7 +73,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private websocket: WebSocketService,
+    private websocket: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -119,7 +119,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         this.isJobCompleted = true;
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError | Job) => {
+      error: (error: ApiError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
