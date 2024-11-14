@@ -1561,7 +1561,7 @@
   "Builtin": "Intégré",
   "Bulk Edit Disks": "Modifier en masse les disques",
   "Bulk actions": "Actions en masse",
-  "Burst": "Poussée",
+  "Burst": "",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "En cochant la case de création de partage ci-dessous, un nouveau partage sera créé lors de la soumission du formulaire avec les paramètres de partage par défaut. De plus, les utilisateurs TrueNAS locaux auront accès au partage résultant et d'autres options de configuration seront disponibles.",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "Par défaut, Samba utilise un algorithme de hachage pour les caractères illégaux NTFS. En activant cette option, les caractères illégaux NTFS sont traduits dans la gamme privée Unicode.",
   "By default, the VM receives an auto-generated random MAC address. Enter a custom address into the field to override the default. Click <b>Generate MAC Address</b> to add a new randomized address into this field.": "Par défaut, la machine virtuelle reçoit une adresse MAC aléatoire générée automatiquement. Entrez une adresse personnalisée dans le champ pour remplacer l'adresse par défaut. Cliquez sur <b>Générer une adresse MAC</b> pour ajouter une nouvelle adresse aléatoire dans ce champ.",
