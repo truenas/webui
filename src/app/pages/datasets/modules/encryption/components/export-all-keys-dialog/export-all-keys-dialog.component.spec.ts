@@ -5,12 +5,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExportAllKeysDialogComponent', () => {
   let spectator: Spectator<ExportAllKeysDialogComponent>;
@@ -20,7 +20,7 @@ describe('ExportAllKeysDialogComponent', () => {
     imports: [
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.download', [1, 'http://localhost/download']),
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
       ]),
@@ -48,7 +48,7 @@ describe('ExportAllKeysDialogComponent', () => {
     const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Keys' }));
     await downloadButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
       'pool.dataset.export_keys',
       ['my-dataset'],
       'dataset_my-dataset_keys.json',

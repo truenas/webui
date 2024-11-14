@@ -1,6 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
 import { TaskService } from 'app/services/task.service';
@@ -25,7 +25,7 @@ describe('CloudBackupScheduleComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupScheduleComponent,
     providers: [
-      mockWebSocket(),
+      mockApi(),
       mockProvider(TaskService, {
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),

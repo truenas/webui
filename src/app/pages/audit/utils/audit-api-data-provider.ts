@@ -5,7 +5,7 @@ import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   lastParams: AuditQueryParams;
@@ -20,7 +20,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
     return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
-  constructor(ws: WebSocketService) {
+  constructor(ws: ApiService) {
     super(ws, 'audit.query');
   }
 

@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -18,11 +18,11 @@ import {
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { RsyncTaskFormComponent } from './rsync-task-form.component';
 
@@ -73,7 +73,7 @@ describe('RsyncTaskFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('rsynctask.create', existingTask),
         mockCall('rsynctask.update', existingTask),
         mockCall('keychaincredential.query', [
@@ -141,7 +141,7 @@ describe('RsyncTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
         compress: true,
         delayupdates: false,
@@ -221,7 +221,7 @@ describe('RsyncTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTask,
@@ -251,7 +251,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -281,7 +281,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,

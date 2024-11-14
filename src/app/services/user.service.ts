@@ -5,7 +5,7 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -16,7 +16,7 @@ export class UserService {
   protected groupQuery = 'group.query' as const;
   protected queryOptions = { limit: 50 };
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws: ApiService) {}
 
   private groupQueryDsCacheByName(name: string): Observable<Group[]> {
     if (!name?.length) {

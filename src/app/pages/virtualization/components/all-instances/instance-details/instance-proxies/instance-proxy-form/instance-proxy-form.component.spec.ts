@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
@@ -10,7 +10,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   InstanceProxyFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('InstanceProxyFormComponent', () => {
   let spectator: Spectator<InstanceProxyFormComponent>;
@@ -18,7 +18,7 @@ describe('InstanceProxyFormComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceProxyFormComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.device_add'),
       ]),
       mockProvider(ChainedRef, {
@@ -52,7 +52,7 @@ describe('InstanceProxyFormComponent', () => {
       error: false,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       source_port: 2000,
       source_proto: VirtualizationProxyProtocol.Tcp,
       dest_port: 3000,

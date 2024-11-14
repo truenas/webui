@@ -1,20 +1,20 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('FilesystemService', () => {
   let spectator: SpectatorService<FilesystemService>;
   const createService = createServiceFactory({
     service: FilesystemService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.listdir', [
           {
             path: '/mnt/parent/directory',
@@ -47,7 +47,7 @@ describe('FilesystemService', () => {
         } as TreeNode<ExplorerNodeData>),
       );
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'filesystem.listdir',
         ['/mnt/parent', [], {
           select: ['attributes', 'is_ctldir', 'name', 'path', 'type'],

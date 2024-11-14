@@ -1,15 +1,15 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
@@ -17,7 +17,7 @@ describe('AppResourcesCardComponent', () => {
       FileSizePipe,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('app.available_space', 2500),
       ]),
       mockProvider(DockerStore, {
@@ -32,7 +32,7 @@ describe('AppResourcesCardComponent', () => {
         isLoading: false,
       },
     });
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
   });
 
   it('shows header', () => {

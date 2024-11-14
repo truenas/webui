@@ -7,8 +7,8 @@ import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
@@ -27,7 +27,7 @@ import {
 import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {
@@ -110,7 +110,7 @@ describe('AlertServiceComponent', () => {
       MockProvider(DialogService, {
         info: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('alertservice.test', true),
         mockCall('alertservice.create'),
         mockCall('alertservice.update'),
@@ -149,7 +149,7 @@ describe('AlertServiceComponent', () => {
       const awsSnsForm = spectator.query(AwsSnsServiceComponent);
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.create', [{
         name: 'My Alert Service',
         enabled: true,
         type: AlertServiceType.AwsSns,
@@ -178,7 +178,7 @@ describe('AlertServiceComponent', () => {
 
       const awsSnsForm = spectator.query(AwsSnsServiceComponent);
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.test', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.test', [{
         attributes: {
           aws_access_key_id: 'KEY1',
           aws_secret_access_key: 'SECRET1',
@@ -233,7 +233,7 @@ describe('AlertServiceComponent', () => {
       const opsGenie = spectator.query(OpsGenieServiceComponent);
       expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('alertservice.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.update', [
         4,
         {
           name: 'Updated Service',

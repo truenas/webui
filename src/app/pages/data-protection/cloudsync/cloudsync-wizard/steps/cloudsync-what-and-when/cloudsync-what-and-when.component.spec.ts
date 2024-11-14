@@ -6,8 +6,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
@@ -39,7 +39,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       CdkStepper,
       mockProvider(ChainedRef, chainedRef),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),

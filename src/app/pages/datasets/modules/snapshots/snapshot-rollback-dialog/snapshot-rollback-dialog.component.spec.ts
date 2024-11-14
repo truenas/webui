@@ -5,13 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialogComponent>;
@@ -33,7 +33,7 @@ describe('SnapshotRollbackDialogComponent', () => {
       },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.rollback'),
       ]),
@@ -51,7 +51,7 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('checks getting additional properties query is called', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.query', [[['id', '=', 'test-dataset@first-snapshot']]]);
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
@@ -64,7 +64,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true },
     ]);
@@ -81,7 +81,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive: true },
     ]);
@@ -98,7 +98,7 @@ describe('SnapshotRollbackDialogComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
     await rollbackButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true, recursive_clones: true },
     ]);

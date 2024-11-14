@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -99,7 +99,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     protected emptyService: EmptyService,
     private slideIn: SlideInService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,

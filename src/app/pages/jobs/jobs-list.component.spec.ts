@@ -9,7 +9,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
@@ -91,7 +91,7 @@ describe('JobsListComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockWebSocket([
+      mockApi([
         mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
       mockProvider(DownloadService, {

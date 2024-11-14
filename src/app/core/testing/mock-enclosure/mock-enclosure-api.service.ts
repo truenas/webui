@@ -8,13 +8,13 @@ import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class MockEnclosureWebsocketService extends WebSocketService {
+export class MockEnclosureApiService extends ApiService {
   private mockConfig: MockEnclosureConfig = environment.mockConfig;
   private mockStorage = new MockEnclosureGenerator(this.mockConfig);
 
@@ -25,7 +25,7 @@ export class MockEnclosureWebsocketService extends WebSocketService {
   ) {
     super(router, wsManager, translate);
 
-    console.warn('MockEnclosureWebsocketService is in effect. Some calls will be mocked');
+    console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
   }
 
   override call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {

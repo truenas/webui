@@ -3,7 +3,7 @@ import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -16,14 +16,14 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let table: IxTableHarness;
 
   const auditEntries = [
@@ -78,7 +78,7 @@ describe('AuditComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('audit.query', (params) => {
           if (params[0]['query-options'].count) {
             // TODO: Not correct. Figure out how to solve this for query endpoints.
@@ -112,7 +112,7 @@ describe('AuditComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     // Do it in this weird way because table header is outside the table element.
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });

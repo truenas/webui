@@ -23,7 +23,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const defaultEncryptionStandard = 'AES-256-GCM';
 
@@ -70,7 +70,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     .pipe(choicesToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private formBuilder: FormBuilder,
     private dialog: DialogService,
     private translate: TranslateService,

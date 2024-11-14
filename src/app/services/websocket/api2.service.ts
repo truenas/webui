@@ -3,55 +3,40 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  merge, Observable, of, Subject, Subscriber, throwError,
+  filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, throwError,
 } from 'rxjs';
-import {
-  filter, map, share, startWith, switchMap, take, takeUntil, tap,
-} from 'rxjs/operators';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
+import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod, ApiJobParams, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
-  ApiCallMethod,
-  ApiCallParams,
-  ApiCallResponse,
-} from 'app/interfaces/api/api-call-directory.interface';
-import {
-  ApiJobMethod,
-  ApiJobParams,
-  ApiJobResponse,
-} from 'app/interfaces/api/api-job-directory.interface';
-import {
-  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
+  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingApiMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class WebSocketService {
+export class Api2Service {
   private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
     protected router: Router,
-    protected wsManager: WebSocketConnectionService,
+    protected wsHandler: WebSocketHandlerService,
     protected translate: TranslateService,
   ) {
-    this.wsManager.isConnected$?.subscribe((isConnected) => {
+    this.wsHandler.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
       }
     });
-  }
-
-  private get ws$(): Observable<unknown> {
-    return this.wsManager.websocket$;
   }
 
   call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
@@ -108,7 +93,7 @@ export class WebSocketService {
       return this.eventSubscribers.get(method as K);
     }
     const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscription = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
+      const subscription = this.wsHandler.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
       return () => {
         subscription.unsubscribe();
         this.eventSubscribers.delete(method as K);
@@ -139,24 +124,21 @@ export class WebSocketService {
     this.eventSubscribers.clear();
   }
 
-  getWebSocketStream$(): Observable<unknown> {
-    return this.ws$;
-  }
-
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
-      tap(() => {
+      switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
-        this.wsManager.send({
+        this.wsHandler.scheduleCall({
           id: uuid, msg: IncomingApiMessageType.Method, method, params,
         });
+        return this.wsHandler.responses$.pipe(
+          filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+        );
       }),
-      switchMap(() => this.ws$),
-      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebSocketMessage) => {
+      switchMap((data: IncomingApiMessage) => {
         if ('error' in data && data.error) {
           this.printError(data.error, { method, params });
           const error = this.enhanceError(data.error, { method });
@@ -181,8 +163,8 @@ export class WebSocketService {
     );
   }
 
-  private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+  private printError(error: ApiError, context: { method: string; params: unknown }): void {
+    if (error.errname === ApiErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
     }
@@ -196,14 +178,13 @@ export class WebSocketService {
   }
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
-    if (error.errname === WebSocketErrorName.NoAccess) {
+  private enhanceError(error: ApiError, context: { method: string }): ApiError {
+    if (error.errname === ApiErrorName.NoAccess) {
       return {
         ...error,
         reason: this.translate.instant('Access denied to {method}', { method: context.method }),
       };
     }
-
     return error;
   }
 }

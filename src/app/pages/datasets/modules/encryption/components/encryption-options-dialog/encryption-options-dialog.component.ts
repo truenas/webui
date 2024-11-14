@@ -17,9 +17,9 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Role } from 'app/enums/role.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -33,8 +33,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -108,7 +108,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
@@ -164,7 +164,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -195,7 +195,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });

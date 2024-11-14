@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -26,10 +26,10 @@ import {
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudBackupFormComponent', () => {
   const storjCreds = {
@@ -91,7 +91,7 @@ describe('CloudBackupFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('cloud_backup.create', existingTask),
         mockCall('cloud_backup.update', existingTask),
         mockCall('cloudsync.create_bucket'),
@@ -137,12 +137,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'cloudsync.create_bucket', [
-        2,
-        'brand-new-bucket',
-      ]);
-
-      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(3, 'cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
         credentials: 2,
@@ -187,7 +182,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
         credentials: 2,
@@ -259,7 +254,7 @@ describe('CloudBackupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloud_backup.update', [1, {
         args: '',
         attributes: {
           folder: '/My Folder',
