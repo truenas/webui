@@ -457,6 +457,7 @@
   "Enter an email address to override the admin account’s default email.  If left blank, the admin account’s email address will be used": "",
   "Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.": "",
   "Enter the number of last kept backups.": "",
+  "Environment Variable": "",
   "Environment Variables": "",
   "Error ({code})": "",
   "Error Installing": "",

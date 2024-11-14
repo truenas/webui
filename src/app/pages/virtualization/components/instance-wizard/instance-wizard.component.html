@@ -63,7 +63,7 @@
         @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
           <ix-list-item
             [formGroupName]="i"
-            [label]="'Environment Variable ' + (i + 1)"
+            [label]="'Environment Variable' | translate"
             (delete)="removeEnvironmentVariable(i)"
           >
             <div class="environment-variable">

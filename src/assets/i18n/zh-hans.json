@@ -15,6 +15,7 @@
   "Device deleted": "",
   "Edit Instance: {name}": "",
   "Enable this to create a token with no expiration date. The token will stay active until it is manually revoked or updated.": "",
+  "Environment Variable": "",
   "Environment Variables": "",
   "Error Installing": "",
   "Expires at": "",
