@@ -31,11 +31,9 @@ export class ContainerShellComponent implements TerminalConfiguration {
 
   get connectionData(): TerminalConnectionData {
     return {
-      podInfo: {
-        chartReleaseName: this.appName,
-        containerId: this.containerId,
-        command: this.command,
-      },
+      app_name: this.appName,
+      container_id: this.containerId,
+      command: this.command,
     };
   }
 

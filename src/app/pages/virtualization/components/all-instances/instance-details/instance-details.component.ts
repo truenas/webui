@@ -13,6 +13,9 @@ import {
 import {
   InstanceProxiesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
+import {
+  InstanceToolsComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-tools/instance-tools.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @Component({
@@ -27,6 +30,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     InstanceGeneralInfoComponent,
     MobileBackButtonComponent,
     InstanceProxiesComponent,
+    InstanceToolsComponent,
   ],
 })
 export class InstanceDetailsComponent {
