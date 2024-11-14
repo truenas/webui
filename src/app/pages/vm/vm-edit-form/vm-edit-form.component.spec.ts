@@ -50,10 +50,10 @@ describe('VmEditFormComponent', () => {
     ensure_display_device: true,
     devices: [
       {
-        dtype: VmDeviceType.Pci,
         vm: 4,
         id: 1,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_02_00_0',
         },
       },

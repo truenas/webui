@@ -290,8 +290,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Nic,
       attributes: {
+        dtype: VmDeviceType.Nic,
         mac: '00:00:00:00:00:01',
         nic_attach: 'eno2',
         trust_guest_rx_filters: false,
@@ -300,8 +300,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         create_zvol: true,
         logical_sectorsize: null,
         physical_sectorsize: null,
@@ -312,14 +312,16 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Cdrom,
-      attributes: { path: '/mnt/iso/FreeNAS-11.3-U3.iso' },
+      attributes: {
+        dtype: VmDeviceType.Cdrom,
+        path: '/mnt/iso/FreeNAS-11.3-U3.iso',
+      },
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.port_wizard');
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
-      dtype: VmDeviceType.Display,
       vm: 4,
       attributes: {
+        dtype: VmDeviceType.Display,
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,

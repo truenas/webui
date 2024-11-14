@@ -19,6 +19,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -228,7 +229,7 @@ export class VmListComponent implements OnInit {
     if (!vm.display_available) {
       return this.translate.instant('N/A');
     }
-    const devices = vm.devices;
+    const devices = vm.devices as VmDisplayDevice[];
     if (!devices || devices.length === 0) {
       return false;
     }
@@ -236,7 +237,7 @@ export class VmListComponent implements OnInit {
       return false;
     }
     for (const device of devices) {
-      if (devices && device.dtype === VmDeviceType.Display) {
+      if (devices && device.attributes.dtype === VmDeviceType.Display) {
         return device.attributes.port;
       }
     }

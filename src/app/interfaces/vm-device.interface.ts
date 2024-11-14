@@ -3,104 +3,40 @@ import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
 
-interface VmPciPassthroughAttributes {
-  pptdev: string;
-  type: string;
-}
-
-interface VmUsbPassthroughAttributes {
-  controller_type: string;
-  device: string | null;
-  usb?: {
-    product_id?: string;
-    vendor_id?: string;
-  };
-}
-
-export interface VmDisplayAttributes {
-  bind: string;
-  password: string;
-  password_configured?: boolean;
-  port: number;
-  resolution: string;
-  type: VmDisplayType;
-  wait: boolean;
-  web: boolean;
-}
-
-export interface VmCdRomAttributes {
-  path: string;
-}
-
-export interface VmRawFileAttributes {
-  boot: boolean;
-  logical_sectorsize: number;
-  path: string;
-  physical_sectorsize: number;
-  size: number;
-  type: VmDiskMode;
-}
-
-export interface VmNicAttributes {
-  mac: string;
-  nic_attach: string;
-  type: VmNicType;
-  trust_guest_rx_filters: boolean;
-}
-
-export interface VmDiskAttributes {
-  logical_sectorsize: number;
-  path: string;
-  physical_sectorsize: number;
-  type: VmDiskMode;
-
-  // TODO: May be only relevant when creating a vm
-  create_zvol?: boolean;
-  zvol_name?: string;
-  zvol_volsize?: number;
-}
-
-export interface BaseVmDevice {
+export interface BaseVmDevice<T> {
   id: number;
   dtype: VmDeviceType;
-  attributes: unknown;
+  attributes: T;
   order: number;
   vm: number;
 }
 
-export interface VmPciPassthroughDevice extends BaseVmDevice {
+export interface VmPciPassthroughDevice extends BaseVmDevice<VmPciPassthroughAttributes> {
   dtype: VmDeviceType.Pci;
-  attributes: VmPciPassthroughAttributes;
 }
 
-export interface VmRawFileDevice extends BaseVmDevice {
-  dtype: VmDeviceType.Raw;
-  attributes: VmRawFileAttributes;
-}
-
-export interface VmNicDevice extends BaseVmDevice {
-  dtype: VmDeviceType.Nic;
-  attributes: VmNicAttributes;
-}
-
-export interface VmDisplayDevice extends BaseVmDevice {
-  dtype: VmDeviceType.Display;
-  attributes: VmDisplayAttributes;
-}
-
-export interface VmCdRomDevice extends BaseVmDevice {
-  dtype: VmDeviceType.Cdrom;
-  attributes: VmCdRomAttributes;
-}
-
-export interface VmDiskDevice extends BaseVmDevice {
-  dtype: VmDeviceType.Disk;
-  attributes: VmDiskAttributes;
-}
-
-export interface VmUsbPassthroughDevice extends BaseVmDevice {
+export interface VmUsbPassthroughDevice extends BaseVmDevice<VmUsbPassthroughAttributes> {
   dtype: VmDeviceType.Usb;
-  attributes: VmUsbPassthroughAttributes;
+}
+
+export interface VmDisplayDevice extends BaseVmDevice<VmDisplayAttributes> {
+  dtype: VmDeviceType.Display;
+}
+
+export interface VmCdRomDevice extends BaseVmDevice<VmCdRomAttributes> {
+  dtype: VmDeviceType.Cdrom;
+}
+
+export interface VmRawFileDevice extends BaseVmDevice<VmRawFileAttributes> {
+  dtype: VmDeviceType.Raw;
+}
+
+export interface VmNicDevice extends BaseVmDevice<VmNicAttributes> {
+  dtype: VmDeviceType.Nic;
+}
+
+export interface VmDiskDevice extends BaseVmDevice<VmDiskAttributes> {
+  dtype: VmDeviceType.Disk;
 }
 
 export type VmDevice =
@@ -161,4 +97,67 @@ export interface VmUsbPassthroughDeviceChoice {
   };
   available: boolean;
   error: unknown;
+}
+
+interface VmDisplayAttributes {
+  bind: string;
+  password: string;
+  password_configured?: boolean;
+  port: number;
+  resolution: string;
+  type: VmDisplayType;
+  wait: boolean;
+  web: boolean;
+  dtype: VmDeviceType.Display;
+}
+
+interface VmCdRomAttributes {
+  path: string;
+  dtype: VmDeviceType.Cdrom;
+}
+
+interface VmRawFileAttributes {
+  boot: boolean;
+  logical_sectorsize: number;
+  path: string;
+  physical_sectorsize: number;
+  size: number;
+  type: VmDiskMode;
+  dtype: VmDeviceType.Raw;
+}
+
+interface VmNicAttributes {
+  mac: string;
+  nic_attach: string;
+  type: VmNicType;
+  trust_guest_rx_filters: boolean;
+  dtype: VmDeviceType.Nic;
+}
+
+interface VmDiskAttributes {
+  logical_sectorsize: number;
+  path: string;
+  physical_sectorsize: number;
+  type: VmDiskMode;
+  dtype: VmDeviceType.Disk;
+
+  create_zvol?: boolean;
+  zvol_name?: string;
+  zvol_volsize?: number;
+}
+
+interface VmPciPassthroughAttributes {
+  pptdev: string;
+  type: string;
+  dtype: VmDeviceType.Pci;
+}
+
+interface VmUsbPassthroughAttributes {
+  controller_type: string;
+  device: string | null;
+  usb?: {
+    product_id?: string;
+    vendor_id?: string;
+  };
+  dtype: VmDeviceType.Usb;
 }

@@ -12,8 +12,8 @@ describe('DeviceDetailsComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          dtype: VmDeviceType.Display,
           attributes: {
+            dtype: VmDeviceType.Display,
             web: true,
             port: 720,
             wait: true,
@@ -31,11 +31,12 @@ describe('DeviceDetailsComponent', () => {
 
   it('shows device attributes in a list', () => {
     const attributes = spectator.queryAll('.attributes div');
-    expect(attributes).toHaveLength(5);
-    expect(attributes[0]).toHaveText('web: true');
-    expect(attributes[1]).toHaveText('port: 720');
-    expect(attributes[2]).toHaveText('wait: true');
-    expect(attributes[3]).toHaveText('type: SPICE');
-    expect(attributes[4]).toHaveText('resolution: 1024x768');
+    expect(attributes).toHaveLength(6);
+    expect(attributes[0]).toHaveText('dtype: DISPLAY');
+    expect(attributes[1]).toHaveText('web: true');
+    expect(attributes[2]).toHaveText('port: 720');
+    expect(attributes[3]).toHaveText('wait: true');
+    expect(attributes[4]).toHaveText('type: SPICE');
+    expect(attributes[5]).toHaveText('resolution: 1024x768');
   });
 });

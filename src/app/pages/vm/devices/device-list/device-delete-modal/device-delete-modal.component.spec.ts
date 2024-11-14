@@ -43,8 +43,10 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for disk', () => {
     const fakeDisk = {
       id: 4,
-      dtype: VmDeviceType.Disk,
-      attributes: { path: '/path/to/zvol123' },
+      attributes: {
+        dtype: VmDeviceType.Disk,
+        path: '/path/to/zvol123',
+      },
     } as VmDiskDevice;
 
     const createComponent = createComponentWithData(fakeDisk);
@@ -101,7 +103,9 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for raw file', () => {
     const fakeRawFile = {
       id: 5,
-      dtype: VmDeviceType.Raw,
+      attributes: {
+        dtype: VmDeviceType.Raw,
+      },
     } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
@@ -174,7 +178,9 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for other device', () => {
     const fakeRawFile = {
       id: 6,
-      dtype: undefined,
+      attributes: {
+        dtype: undefined,
+      },
     } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);

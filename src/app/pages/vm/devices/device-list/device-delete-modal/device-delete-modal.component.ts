@@ -67,7 +67,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private ws: ApiService,
   ) {
-    if (this.device.dtype !== VmDeviceType.Disk) {
+    if (this.device.attributes.dtype !== VmDeviceType.Disk) {
       return;
     }
 
@@ -76,7 +76,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol is required'),
     );
 
-    const zvolName = this.getZvolName(this.device);
+    const zvolName = this.getZvolName(this.device as VmDiskDevice);
 
     const zvolConfirmMustMatch = this.validatorsService.withMessage(
       Validators.pattern(new RegExp(`^${zvolName}$`)),
