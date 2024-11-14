@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
@@ -10,8 +10,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('InstanceDiskFormComponent', () => {
   let spectator: Spectator<InstanceDiskFormComponent>;
@@ -19,7 +19,7 @@ describe('InstanceDiskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceDiskFormComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.device_add'),
       ]),
       mockProvider(ChainedRef, {
@@ -52,7 +52,7 @@ describe('InstanceDiskFormComponent', () => {
       error: false,
     });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       source: '/mnt/path',
       destination: 'destination',
       dev_type: VirtualizationDeviceType.Disk,

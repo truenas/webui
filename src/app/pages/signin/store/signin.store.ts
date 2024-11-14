@@ -17,13 +17,13 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
@@ -69,7 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private disabledReasonsSubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private tokenLastUsedService: TokenLastUsedService,
     private dialogService: DialogService,

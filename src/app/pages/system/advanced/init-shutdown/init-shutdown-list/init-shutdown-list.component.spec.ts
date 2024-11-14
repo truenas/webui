@@ -2,8 +2,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -18,8 +18,8 @@ import {
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownListComponent', () => {
   let spectator: Spectator<InitShutdownListComponent>;
@@ -50,7 +50,7 @@ describe('InitShutdownListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('initshutdownscript.query', scripts),
         mockCall('initshutdownscript.delete'),
       ]),
@@ -93,6 +93,6 @@ describe('InitShutdownListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
   });
 });

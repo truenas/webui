@@ -3,16 +3,16 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -47,7 +47,7 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
   let slideInRef: SlideInService;
   let table: IxTableHarness;
 
@@ -55,7 +55,7 @@ describe('NtpServerCardComponent', () => {
     component: NtpServerCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('system.ntpserver.query', fakeDataSource),
         mockCall('system.ntpserver.delete', true),
       ]),
@@ -72,7 +72,7 @@ describe('NtpServerCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
     slideInRef = spectator.inject(SlideInService);
     table = await loader.getHarness(IxTableHarness);
   });

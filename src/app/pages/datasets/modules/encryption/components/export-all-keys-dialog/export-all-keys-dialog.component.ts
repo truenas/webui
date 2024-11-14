@@ -10,9 +10,9 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ExportAllKeysDialogComponent {
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
     private download: DownloadService,

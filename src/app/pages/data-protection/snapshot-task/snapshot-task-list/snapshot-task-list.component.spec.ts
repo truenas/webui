@@ -5,8 +5,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -22,10 +22,10 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;
@@ -70,7 +70,7 @@ describe('SnapshotTaskListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.snapshottask.query', snapshotTasksList),
       ]),
       mockProvider(DialogService, {
@@ -127,7 +127,7 @@ describe('SnapshotTaskListComponent', () => {
       },
     );
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -143,6 +143,6 @@ describe('SnapshotTaskListComponent', () => {
       message: 'Delete Periodic Snapshot Task <b>"m60pool/manual-2024-02-05_11-19-clone - auto-%Y-%m-%d_%H-%M"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 });

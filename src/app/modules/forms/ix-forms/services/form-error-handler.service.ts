@@ -2,8 +2,8 @@ import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -56,14 +56,14 @@ export class FormErrorHandlerService {
   }
 
   private handleValidationError(
-    error: WebSocketError | Job,
+    error: ApiError | Job,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
     triggerAnchor: string,
   ): void {
     this.isOnErrorFocused = false;
     this.needToShowError = false;
-    const extra = (error as WebSocketError).extra as string[][];
+    const extra = (error as ApiError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
       const errorMessage = extraItem[1];
@@ -104,7 +104,7 @@ export class FormErrorHandlerService {
     control: AbstractControl;
     field: string;
     errorMessage: string;
-    error: WebSocketError | Job;
+    error: ApiError | Job;
   }): void {
     const controlsNames = this.formService.getControlsNames();
 

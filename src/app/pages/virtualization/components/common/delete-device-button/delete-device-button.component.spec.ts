@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -12,7 +12,7 @@ import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeleteDeviceButtonComponent', () => {
   let spectator: Spectator<DeleteDeviceButtonComponent>;
@@ -24,7 +24,7 @@ describe('DeleteDeviceButtonComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.device_delete'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
@@ -62,7 +62,7 @@ describe('DeleteDeviceButtonComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
     expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
   });
 });

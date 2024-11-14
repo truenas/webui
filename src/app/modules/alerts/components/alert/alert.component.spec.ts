@@ -5,8 +5,8 @@ import { ngMocks } from 'ng-mocks';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -15,7 +15,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -32,7 +32,7 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let alert: AlertPageObject;
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -57,7 +57,7 @@ describe('AlertComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),
@@ -71,7 +71,7 @@ describe('AlertComponent', () => {
       },
     });
 
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     alert = new AlertPageObject(spectator);
   });
 

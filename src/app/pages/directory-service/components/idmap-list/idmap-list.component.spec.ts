@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
@@ -18,14 +18,14 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('IdmapListComponent', () => {
   let spectator: Spectator<IdmapListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let webSocket: WebSocketService;
+  let webSocket: ApiService;
 
   let servicesState: DirectoryServicesState;
   const idmapRecords = [
@@ -61,7 +61,7 @@ describe('IdmapListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('idmap.query', idmapRecords),
         mockCall('idmap.delete'),
         mockCall('directoryservices.get_state', () => servicesState),
@@ -85,7 +85,7 @@ describe('IdmapListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    webSocket = spectator.inject(WebSocketService);
+    webSocket = spectator.inject(ApiService);
 
     servicesState = {
       activedirectory: DirectoryServiceState.Disabled,

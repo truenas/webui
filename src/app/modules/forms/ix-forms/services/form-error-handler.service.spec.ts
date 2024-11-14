@@ -1,18 +1,18 @@
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-const fakeError: WebSocketError = {
+const fakeError: ApiError = {
   type: ResponseErrorType.Validation,
   error: 11,
-  errname: WebSocketErrorName.Again,
+  errname: ApiErrorName.Again,
   extra: [
     [
       'test-query.test_control_1',
@@ -42,7 +42,7 @@ describe('FormErrorHandlerService', () => {
       mockProvider(DialogService),
       mockProvider(ErrorHandlerService, {
         isWebSocketError: jest.fn(() => true),
-        parseError: jest.fn((error: WebSocketError) => ({
+        parseError: jest.fn((error: ApiError) => ({
           title: error.type,
           message: error.reason,
           backtrace: error.trace?.formatted,

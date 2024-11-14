@@ -4,16 +4,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
   let loader: HarnessLoader;
@@ -30,7 +30,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('cloud_backup.restore'),
       ]),
       mockProvider(SlideInService, {
@@ -65,7 +65,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -85,7 +85,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -110,7 +110,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -135,7 +135,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer/a',
@@ -159,7 +159,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',

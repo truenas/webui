@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,7 @@ export class CreateStorjBucketDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private appLoader: AppLoaderService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
     private formErrorHandler: FormErrorHandlerService,

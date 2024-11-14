@@ -40,8 +40,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -110,7 +110,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,

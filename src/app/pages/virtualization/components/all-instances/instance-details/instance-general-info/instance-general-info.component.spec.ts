@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,8 +15,8 @@ import {
   InstanceEditFormComponent,
 } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const demoInstance = {
   id: 'demo',
@@ -53,7 +53,7 @@ describe('InstanceGeneralInfoComponent', () => {
       mockProvider(SlideInService, {
         open: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('virt.instance.delete'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
@@ -92,7 +92,7 @@ describe('InstanceGeneralInfoComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
+    expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
   });
 
   it('opens edit instance form when Edit is pressed', async () => {

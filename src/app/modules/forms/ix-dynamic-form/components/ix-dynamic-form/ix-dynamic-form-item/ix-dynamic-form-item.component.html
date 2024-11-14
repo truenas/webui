@@ -62,6 +62,7 @@
             [empty]="getFormArray.controls.length === 0"
             [formArrayName]="dynamicSchema.controlName"
             [default]="dynamicSchema.default"
+            [tooltip]="dynamicSchema.tooltip | translate"
             [itemsSchema]="dynamicSchema.itemsSchema"
             [required]="dynamicSchema.required"
             [isEditMode]="isEditMode"

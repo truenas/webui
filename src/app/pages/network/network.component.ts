@@ -30,11 +30,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -96,7 +96,7 @@ export class NetworkComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private router: Router,
     private dialogService: DialogService,
     private loader: AppLoaderService,

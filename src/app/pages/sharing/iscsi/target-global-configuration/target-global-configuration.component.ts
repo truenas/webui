@@ -23,8 +23,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -79,7 +79,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   ];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,

@@ -38,10 +38,10 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -140,7 +140,7 @@ export class RsyncTaskCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     private store$: Store<AppState>,

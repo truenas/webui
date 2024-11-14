@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { User } from '@sentry/angular';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -17,9 +17,9 @@ import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-comb
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { SmbAclComponent } from './smb-acl.component';
 
 describe('SmbAclComponent', () => {
@@ -66,7 +66,7 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
         mockCall('user.query', [rootUser] as TnUser[]),
@@ -186,7 +186,7 @@ describe('SmbAclComponent', () => {
   it('loads and shows current acl for a share', async () => {
     const listValues = await entriesList.getFormValues();
 
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('sharing.smb.getacl', [{ share_name: 'myshare' }]);
 
     expect(listValues).toEqual([
@@ -219,7 +219,7 @@ describe('SmbAclComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
       share_name: 'myshare',
       share_acl: [
         { ae_perm: SmbSharesecPermission.Read, ae_type: SmbSharesecType.Allowed, ae_who_sid: 'S-1-1-0' },

@@ -8,16 +8,16 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
+import { ApiService } from 'app/services/api.service';
 import { UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetUnlockComponent', () => {
   let spectator: Spectator<DatasetUnlockComponent>;
@@ -39,7 +39,7 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'pool_name_1' } },
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('pool.dataset.encryption_summary'),
       ]),
       mockProvider(DialogService, {
@@ -94,7 +94,7 @@ describe('DatasetUnlockComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'pool.dataset.encryption_summary',
       [
         'pool_name_1',

@@ -8,14 +8,14 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -48,7 +48,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
   ) {
     super(initialState);
@@ -167,7 +167,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
     return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: WebSocketError) => {
+      catchError((error: ApiError) => {
         console.error('Error loading temperature: ', error);
         return of({});
       }),

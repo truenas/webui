@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -18,8 +18,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/target-list/target-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const targets: IscsiTarget[] = [{
   id: 1,
@@ -41,7 +41,7 @@ describe('TargetListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.target.query', targets),
         mockCall('iscsi.target.delete'),
         mockCall('iscsi.global.sessions', []),
@@ -89,9 +89,9 @@ describe('TargetListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.global.sessions');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.global.sessions');
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.target.delete', [1, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.target.delete', [1, true]);
   });
 
   it('should show table rows', async () => {

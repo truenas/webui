@@ -4,8 +4,8 @@ import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
@@ -18,10 +18,10 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
+import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmEditFormComponent', () => {
   let spectator: Spectator<VmEditFormComponent>;
@@ -68,7 +68,7 @@ describe('VmEditFormComponent', () => {
     providers: [
       mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
           UEFI_CSM: 'Legacy BIOS',
@@ -188,7 +188,7 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.update', [4, {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
       bootloader: VmBootloader.Uefi,
       cores: 2,
@@ -225,7 +225,7 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.update', [4, {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.update', [4, {
       autostart: true,
       bootloader: VmBootloader.Uefi,
       cores: 2,

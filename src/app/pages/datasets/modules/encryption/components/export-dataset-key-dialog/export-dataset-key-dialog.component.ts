@@ -10,16 +10,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   key: string;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
@@ -71,7 +71,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close();
         },
-        error: (error: WebSocketError | HttpErrorResponse) => {
+        error: (error: ApiError | HttpErrorResponse) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
@@ -90,7 +90,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.key = job.result;
           this.cdr.markForCheck();
         },
-        error: (error: Job | WebSocketError) => {
+        error: (error: Job | ApiError) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

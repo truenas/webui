@@ -35,11 +35,11 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -95,7 +95,7 @@ export class ManualUpdateFormComponent implements OnInit {
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,

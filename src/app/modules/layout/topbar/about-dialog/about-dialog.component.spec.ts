@@ -9,7 +9,7 @@ import { MockComponent } from 'ng-mocks';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
@@ -37,7 +37,7 @@ describe('AboutDialogComponent', () => {
           },
         ],
       }),
-      mockProvider(WebSocketService),
+      mockProvider(ApiService),
       mockProvider(MatDialogRef),
     ],
     declarations: [MockComponent(IxIconComponent)],

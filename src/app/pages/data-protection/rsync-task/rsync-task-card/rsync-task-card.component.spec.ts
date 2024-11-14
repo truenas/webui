@@ -7,8 +7,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,10 +18,10 @@ import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('RsyncTaskCardComponent', () => {
@@ -91,7 +91,7 @@ describe('RsyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('rsynctask.query', rsyncTasks),
         mockCall('rsynctask.delete'),
         mockCall('rsynctask.update'),
@@ -165,7 +165,7 @@ describe('RsyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
@@ -177,7 +177,7 @@ describe('RsyncTaskCardComponent', () => {
       message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {
@@ -187,7 +187,7 @@ describe('RsyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'rsynctask.update',
       [1, { enabled: true }],
     );

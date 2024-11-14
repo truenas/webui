@@ -30,6 +30,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import {
   ChartFormValue,
@@ -47,7 +48,6 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
@@ -66,10 +66,10 @@ import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dock
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -156,7 +156,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private authService: AuthService,
     private matDialog: MatDialog,
   ) {}
@@ -202,7 +202,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           });
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 
@@ -334,7 +334,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           this.setAppForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebSocketError) => this.afterAppLoadError(error),
+        error: (error: ApiError) => this.afterAppLoadError(error),
       });
   }
 

@@ -29,9 +29,9 @@ import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
@@ -488,14 +488,14 @@ export class ReportComponent implements OnInit, OnChanges {
         this.data = formatData(cloneDeep(event));
         this.cdr.markForCheck();
       },
-      error: (err: WebSocketError) => {
+      error: (err: ApiError) => {
         this.handleError(err);
         this.cdr.markForCheck();
       },
     });
   }
 
-  handleError(err: WebSocketError): void {
+  handleError(err: ApiError): void {
     if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,

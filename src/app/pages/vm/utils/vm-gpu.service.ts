@@ -8,8 +8,8 @@ import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
+import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {}
 
   /**

@@ -53,10 +53,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -172,7 +172,7 @@ export class ReplicationListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private chainedSlideIn: ChainedSlideInService,
     private dialogService: DialogService,

@@ -8,8 +8,8 @@ import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -22,8 +22,8 @@ import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wiz
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const appVersion121 = {
   healthy: true,
@@ -292,7 +292,7 @@ describe('AppWizardComponent', () => {
         getApp: jest.fn(() => of([existingAppEdit])),
         getAllApps: jest.fn(() => of([existingAppEdit])),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('app.create'),
         mockJob('app.update'),
         mockCall('catalog.get_app_details', existingCatalogApp),
@@ -361,7 +361,7 @@ describe('AppWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.update',
         ['app_name', {
           values: {
@@ -449,7 +449,7 @@ describe('AppWizardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'appname',
@@ -498,7 +498,7 @@ describe('AppWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'ipfs',

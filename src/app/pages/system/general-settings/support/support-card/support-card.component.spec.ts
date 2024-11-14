@@ -8,8 +8,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
@@ -24,7 +24,7 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {
@@ -46,7 +46,7 @@ describe('SupportCardComponent', () => {
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production', fakeSuccessfulJob()),
         mockCall('system.product_type', ProductType.Scale),
@@ -108,13 +108,13 @@ describe('SupportCardComponent', () => {
         await isProductionSystemToggle.setValue(true);
 
         expect(matDialog.open).toHaveBeenCalledWith(SetProductionStatusDialogComponent);
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
       it('sets production status to false when toggle is unset', async () => {
         await isProductionSystemToggle.setValue(false);
 
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
       });
     });
   });

@@ -37,9 +37,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -144,7 +144,7 @@ export class PrivilegeListComponent implements OnInit {
 
   constructor(
     private slideInService: SlideInService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,

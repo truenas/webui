@@ -20,9 +20,9 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class InstanceGeneralInfoComponent {
     protected formatter: IxFormatterService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private slideInService: SlideInService,

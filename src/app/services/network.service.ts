@@ -4,7 +4,7 @@ import { filter, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
@@ -24,7 +24,7 @@ export class NetworkService {
 
   hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected ws: ApiService) {}
 
   getVlanParentInterfaceChoices(): Observable<Choices> {
     return this.ws.call('interface.vlan_parent_interface_choices');
