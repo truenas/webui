@@ -21,8 +21,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export type VirtualizationImageWithId = VirtualizationImage & {
   id: string;
@@ -73,7 +73,7 @@ export class SelectImageDialogComponent implements OnInit {
   } as EmptyConfig);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogRef: MatDialogRef<SelectImageDialogComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,

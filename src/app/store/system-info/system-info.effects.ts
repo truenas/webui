@@ -4,7 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
@@ -57,6 +57,6 @@ export class SystemInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) { }
 }

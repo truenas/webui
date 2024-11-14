@@ -27,8 +27,8 @@ import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class IpmiCardComponent implements OnInit {
   protected readonly hasIpmi$ = this.ws.call('ipmi.is_loaded');
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: SlideInService,
     private matDialog: MatDialog,
     private translate: TranslateService,

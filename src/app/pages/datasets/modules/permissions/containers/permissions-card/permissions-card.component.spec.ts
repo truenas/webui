@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -27,7 +27,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {
@@ -60,7 +60,7 @@ describe('PermissionsCardComponent', () => {
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.stat', stat),
         mockCall('filesystem.getacl', {
           trivial: true,
@@ -77,7 +77,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
     expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
@@ -102,7 +102,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -122,7 +122,7 @@ describe('PermissionsCardComponent', () => {
       locked: true,
     });
 
-    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
     expect(spectator.fixture.nativeElement).toHaveText('Dataset is locked');
   });
 
@@ -132,7 +132,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,

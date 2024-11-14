@@ -4,14 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('CreateDatasetDialogComponent', () => {
   let spectator: Spectator<CreateDatasetDialogComponent>;
@@ -23,7 +23,7 @@ describe('CreateDatasetDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [{
           name: 'parent_name',
           casesensitivity: { value: DatasetCaseSensitivity.Sensitive },
@@ -79,7 +79,7 @@ describe('CreateDatasetDialogComponent', () => {
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'parent_name/new_dataset',
         acltype: DatasetAclType.Nfsv4,
       }]);
@@ -94,7 +94,7 @@ describe('CreateDatasetDialogComponent', () => {
     it('loads correct parent dataset even if parent id was passed in with leading slash', () => {
       setupTest('/pool/parent-dataset-with-slash/');
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'pool.dataset.query',
         [[['id', '=', '/pool/parent-dataset-with-slash']]],
       );

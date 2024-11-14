@@ -39,9 +39,9 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
   name?: string;
@@ -222,7 +222,7 @@ export class ZvolFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,

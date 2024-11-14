@@ -5,13 +5,13 @@ import {
   BehaviorSubject, Observable, combineLatest,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Injectable({
@@ -31,7 +31,7 @@ export class TrainService {
 
   constructor(
     private updateService: UpdateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -186,7 +186,7 @@ export class TrainService {
         }
         this.updateService.isLoading$.next(false);
       },
-      error: (err: WebSocketError) => {
+      error: (err: ApiError) => {
         this.updateService.generalUpdateError$.next(
           `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`,
         );

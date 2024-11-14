@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -22,7 +22,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AddVdevsComponent – Add Vdev to existing pool', () => {
   let spectator: Spectator<AddVdevsComponent>;
@@ -35,7 +35,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     ],
     componentProviders: [
       ...commonProviders,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.validate_name', true),
         mockCall('disk.details', {
           used: [
@@ -239,7 +239,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.clickUpdatePoolButton();
 
     expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService, true).job).toHaveBeenCalledWith('pool.update', [
+    expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
       1,
       {
         topology: {

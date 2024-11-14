@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
@@ -21,8 +21,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeApp = {
   name: 'test-app-one',
@@ -81,7 +81,7 @@ describe('CustomAppFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('app.create'),
         mockJob('app.update'),
       ]),
@@ -112,7 +112,7 @@ describe('CustomAppFormComponent', () => {
       const button = await loader.getHarness(MatButtonHarness);
       await button.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           custom_app: true,
@@ -142,7 +142,7 @@ describe('CustomAppFormComponent', () => {
       const button = await loader.getHarness(MatButtonHarness);
       await button.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('app.update', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [
         'test-app-one',
         { custom_compose_config_string: jsonToYaml(fakeApp.config) },
       ]);

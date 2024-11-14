@@ -11,8 +11,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -22,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('InstanceEditFormComponent', () => {
   let spectator: Spectator<InstanceEditFormComponent>;
@@ -47,7 +47,7 @@ describe('InstanceEditFormComponent', () => {
       { provide: SLIDE_IN_DATA, useValue: mockInstance },
       mockAuth(),
       mockProvider(SlideInRef),
-      mockWebSocket([
+      mockApi([
         mockJob('virt.instance.update', fakeSuccessfulJob({ id: 'test' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),
@@ -85,7 +85,7 @@ describe('InstanceEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
       autostart: true,
       cpu: '2-5',
       memory: GiB,

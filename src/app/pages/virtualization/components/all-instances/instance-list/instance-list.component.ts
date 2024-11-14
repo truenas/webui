@@ -20,8 +20,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -100,7 +100,7 @@ export class InstanceListComponent {
     private store: VirtualizationInstancesStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

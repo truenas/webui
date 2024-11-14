@@ -21,16 +21,16 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private translate: TranslateService,
     protected matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -129,7 +129,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.toggleLoading(false)),
-      catchError((error: WebSocketError) => this.handleError(error)),
+      catchError((error: ApiError) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -141,7 +141,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     return params.get('secret');
   }
 
-  private handleError(error: WebSocketError): Observable<boolean> {
+  private handleError(error: ApiError): Observable<boolean> {
     this.toggleLoading(false);
 
     return this.dialogService.error({
