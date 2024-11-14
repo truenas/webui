@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, TemplateRef, input, output,
 } from '@angular/core';
@@ -20,7 +19,6 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   standalone: true,
   imports: [
     IxIconComponent,
-    NgTemplateOutlet,
     RequiresRolesDirective,
     TestDirective,
     NgxSkeletonLoaderModule,

@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, ElementRef, Inject, ViewChild,
 } from '@angular/core';
@@ -20,7 +19,6 @@ import {
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     MatDialogActions,
     MatButton,

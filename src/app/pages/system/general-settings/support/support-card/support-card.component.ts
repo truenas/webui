@@ -5,7 +5,6 @@ import {
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -63,7 +62,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     MatCardContent,
     SysInfoComponent,
     RequiresRolesDirective,
-    MatCheckbox,
     TestDirective,
     ReactiveFormsModule,
     FormsModule,

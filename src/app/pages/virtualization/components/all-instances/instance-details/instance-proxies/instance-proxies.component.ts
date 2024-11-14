@@ -3,7 +3,6 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -41,7 +40,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatButton,
     TestDirective,
     NgxSkeletonLoaderModule,
-    MatTooltip,
     MatIconButton,
     IxIconComponent,
   ],

@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, TemplateRef, input,
 } from '@angular/core';
@@ -15,7 +14,6 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    NgTemplateOutlet,
     IxIconComponent,
     TranslateModule,
     FormatDateTimePipe,

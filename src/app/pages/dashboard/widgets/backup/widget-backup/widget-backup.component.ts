@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
   input,
@@ -62,7 +61,6 @@ interface BackupRow {
     MatGridList,
     MatGridTile,
     BackupTaskTileComponent,
-    NgTemplateOutlet,
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     TranslateModule,

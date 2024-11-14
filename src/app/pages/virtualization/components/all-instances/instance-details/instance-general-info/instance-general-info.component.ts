@@ -5,7 +5,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
@@ -15,6 +15,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ApiService } from 'app/services/api.service';
@@ -38,8 +39,8 @@ import { SlideInService } from 'app/services/slide-in.service';
     MatCardContent,
     YesNoPipe,
     TitleCasePipe,
-    RouterLink,
     RequiresRolesDirective,
+    TestDirective,
   ],
 })
 export class InstanceGeneralInfoComponent {

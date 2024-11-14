@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
@@ -6,7 +5,7 @@ import {
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -37,8 +36,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   imports: [
     MatDialogTitle,
     MatProgressBar,
-    CdkScrollable,
-    MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
     IxInputComponent,
