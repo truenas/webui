@@ -155,7 +155,7 @@ describe('SmbListComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.update',
       [1, { enabled: false }],
     );
