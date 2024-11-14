@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 
 @Component({
@@ -9,4 +10,5 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 })
 export class CloudBackupStatsComponent {
   @Input() backup: CloudBackup;
+  protected readonly cloudsyncTransferSettingLabels = cloudsyncTransferSettingLabels;
 }
