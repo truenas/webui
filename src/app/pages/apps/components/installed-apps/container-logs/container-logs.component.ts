@@ -11,17 +11,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface ContainerLogEvent {
   data: string;
@@ -61,7 +61,7 @@ export class ContainerLogsComponent implements OnInit {
   logs: ContainerLogEvent[] = [];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
@@ -119,7 +119,7 @@ export class ContainerLogsComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.isLoading = false;
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));

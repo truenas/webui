@@ -3,14 +3,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmNicType } from 'app/enums/vm.enum';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   NetworkInterfaceStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/4-network-interface-step/network-interface-step.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('NetworkInterfaceStepComponent', () => {
   let spectator: Spectator<NetworkInterfaceStepComponent>;
@@ -23,7 +23,7 @@ describe('NetworkInterfaceStepComponent', () => {
     ],
     providers: [
       CdkStepper,
-      mockWebSocket([
+      mockApi([
         mockCall('vm.random_mac', '00:00:00:00:00:01'),
         mockCall('vm.device.nic_attach_choices', {
           eno1: 'eno1',
@@ -71,7 +71,7 @@ describe('NetworkInterfaceStepComponent', () => {
   });
 
   it('generates random MAC when form is initialized', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.random_mac');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.random_mac');
 
     const macAddress = await form.getControl('Mac Address') as IxInputHarness;
     expect(await macAddress.getValue()).toBe('00:00:00:00:00:01');

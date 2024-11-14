@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -12,8 +12,8 @@ import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
@@ -26,7 +26,7 @@ describe('SetAdminPasswordFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('user.setup_local_administrator'),
       ]),
       mockProvider(SigninStore, {
@@ -61,7 +61,7 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
     expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
     const authService = spectator.inject(AuthService);
     expect(authService.login).toHaveBeenCalledWith('truenas_admin', '12345678');

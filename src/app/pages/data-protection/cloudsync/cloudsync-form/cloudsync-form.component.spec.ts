@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -21,9 +21,9 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudSyncFormComponent', () => {
   const existingTask = {
@@ -96,7 +96,7 @@ describe('CloudSyncFormComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.create', existingTask),
         mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [
@@ -161,7 +161,7 @@ describe('CloudSyncFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
         attributes: { folder: '/' },
         bwlimit: [],
         create_empty_src_dirs: false,
@@ -244,7 +244,7 @@ describe('CloudSyncFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
           { bandwidth: undefined, time: '9:00' },

@@ -15,10 +15,10 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -45,10 +45,10 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -124,7 +124,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -231,7 +231,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebSocketError | Job) => {
+        error: (err: ApiError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

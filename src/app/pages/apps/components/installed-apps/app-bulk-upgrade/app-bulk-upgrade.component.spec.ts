@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -19,7 +19,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const fakeAppOne = {
   name: 'test-app-one',
@@ -95,7 +95,7 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebSocket([
+      mockApi([
         mockJob('core.bulk'),
         mockCall('app.upgrade_summary', fakeUpgradeSummary),
         mockJob('app.upgrade', fakeSuccessfulJob(fakeAppOne)),
@@ -127,7 +127,7 @@ describe('AppBulkUpgradeComponent', () => {
     const updatedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upgrade' }));
     await updatedButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Upgrading Apps. Please check on the progress in Task Manager.');
   });
 });

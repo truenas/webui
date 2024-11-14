@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
 const mockJobSuccessResponse = [{
@@ -30,7 +30,7 @@ describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService;
+  let ws: ApiService;
   const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
@@ -57,7 +57,7 @@ describe('DiskBulkEditComponent', () => {
       mockProvider(SlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
       ]),
     ],
@@ -67,7 +67,7 @@ describe('DiskBulkEditComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
   });
 
   it('sets disks settings when form is opened', async () => {

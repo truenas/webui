@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -16,10 +16,10 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
@@ -59,7 +59,7 @@ describe('CronCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
       ]),
@@ -112,7 +112,7 @@ describe('CronCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing cronjob when Edit button is pressed', async () => {

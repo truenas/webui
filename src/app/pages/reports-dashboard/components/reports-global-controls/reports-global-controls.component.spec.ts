@@ -7,8 +7,8 @@ import { ActivatedRoute } from '@angular/router';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import {
   NetdataDialogComponent,
@@ -28,7 +28,7 @@ describe('ReportsGlobalControlsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', []),
         mockCall('disk.temperatures'),
         mockCall('reporting.netdata_graphs', []),

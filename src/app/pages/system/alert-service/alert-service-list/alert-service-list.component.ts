@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -119,7 +119,7 @@ export class AlertServiceListComponent implements OnInit {
     protected emptyService: EmptyService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: SlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

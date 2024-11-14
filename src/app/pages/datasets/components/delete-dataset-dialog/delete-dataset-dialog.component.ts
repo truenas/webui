@@ -16,10 +16,10 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -27,8 +27,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
     private translate: TranslateService,
@@ -90,7 +90,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.deleteDataset().pipe(
-      catchError((error: WebSocketError) => {
+      catchError((error: ApiError) => {
         if (error.reason.includes('Device busy')) {
           return this.askToForceDelete();
         }

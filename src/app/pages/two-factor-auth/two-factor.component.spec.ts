@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -13,13 +13,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
@@ -32,7 +32,7 @@ describe('TwoFactorComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('user.renew_2fa_secret'),
       ]),
       mockProvider(AuthService, {
@@ -56,7 +56,7 @@ describe('TwoFactorComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
   });
 
   it('shows the QR code viewer with correct provisioning URI when 2FA is configured', () => {

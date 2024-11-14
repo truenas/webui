@@ -15,8 +15,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface JobProgressDialogConfig<Result> {
   job$: Observable<Job<Result>>;
@@ -109,7 +109,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   constructor(
     private dialogRef: MatDialogRef<JobProgressDialogComponent<T>, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) { }

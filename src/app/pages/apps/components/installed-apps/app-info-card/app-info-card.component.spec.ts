@@ -10,8 +10,8 @@ import { MockComponents, MockDirective } from 'ng-mocks';
 import { ImgFallbackDirective, ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockJob, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,9 +25,9 @@ import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-a
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
+import { ApiService } from 'app/services/api.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppInfoCardComponent', () => {
   let spectator: Spectator<AppInfoCardComponent>;
@@ -103,7 +103,7 @@ describe('AppInfoCardComponent', () => {
       }),
       mockProvider(RedirectService),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockJob('app.upgrade'),
         mockJob('app.delete'),
         mockCall('app.rollback_versions', ['1.2.1']),
@@ -222,7 +222,7 @@ describe('AppInfoCardComponent', () => {
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Remove iXVolumes',
     });
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'app.delete',
       [fakeApp.name, { remove_images: true, remove_ix_volumes: true }],
     );

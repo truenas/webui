@@ -19,8 +19,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,

@@ -6,8 +6,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -43,10 +43,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',
@@ -159,7 +159,7 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.count_eligible_manual_snapshots', {
           eligible: 3,
           total: 5,
@@ -228,7 +228,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
       expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
         ssh_credentials: 5,
         direction: Direction.Pull,
@@ -248,7 +248,7 @@ describe('ReplicationFormComponent', () => {
       tick();
       spectator.detectChanges();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'replication.count_eligible_manual_snapshots',
         [
           {
@@ -285,7 +285,7 @@ describe('ReplicationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
         1,
         {
           name: 'dataset',

@@ -16,8 +16,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class PullImageFormComponent {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInRef: SlideInRef<PullImageFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,

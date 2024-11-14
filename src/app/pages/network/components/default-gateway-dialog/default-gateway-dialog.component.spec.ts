@@ -5,17 +5,17 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Spectator, byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { DefaultGatewayDialogComponent } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DefaultGatewayDialogComponent', () => {
   let spectator: Spectator<DefaultGatewayDialogComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const createComponent = createComponentFactory({
     component: DefaultGatewayDialogComponent,
@@ -24,7 +24,7 @@ describe('DefaultGatewayDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('network.general.summary', {
           default_routes: ['1.1.1.1'],
         } as NetworkSummary),
@@ -37,7 +37,7 @@ describe('DefaultGatewayDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
   });
 
   it('checks the header', () => {

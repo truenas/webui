@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -20,14 +20,14 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
 
   const existingTarget = {
     id: 123,
@@ -60,7 +60,7 @@ describe('TargetFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
         mockCall('iscsi.target.validate_name', null),
@@ -113,7 +113,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('add new target when form is submitted', async () => {
@@ -180,7 +180,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
@@ -260,7 +260,7 @@ describe('TargetFormComponent', () => {
 
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         if (method === 'iscsi.target.validate_name') {
           return of('Target with this name already exists');

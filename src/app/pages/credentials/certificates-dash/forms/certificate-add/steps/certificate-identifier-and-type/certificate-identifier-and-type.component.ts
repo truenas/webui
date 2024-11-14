@@ -21,8 +21,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +74,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,

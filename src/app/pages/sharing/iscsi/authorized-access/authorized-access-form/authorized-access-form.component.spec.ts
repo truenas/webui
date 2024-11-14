@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -13,8 +13,8 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;
@@ -39,7 +39,7 @@ describe('AuthorizedAccessFormComponent', () => {
       mockAuth(),
       mockProvider(SlideInService),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.auth.create'),
         mockCall('iscsi.auth.update'),
       ]),
@@ -69,7 +69,7 @@ describe('AuthorizedAccessFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.auth.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.auth.create', [{
         tag: 113,
         user: 'new-user',
         secret: '123456789012',
@@ -118,7 +118,7 @@ describe('AuthorizedAccessFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'iscsi.auth.update',
         [
           123,

@@ -25,7 +25,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class DiskBulkEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private slideInRef: SlideInRef<DiskBulkEditComponent, boolean>,
     private snackbarService: SnackbarService,

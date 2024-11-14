@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -19,8 +19,8 @@ import {
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownCardComponent', () => {
   let spectator: Spectator<InitShutdownCardComponent>;
@@ -54,7 +54,7 @@ describe('InitShutdownCardComponent', () => {
     imports: [
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('initshutdownscript.query', scripts),
         mockCall('initshutdownscript.delete'),
       ]),
@@ -118,6 +118,6 @@ describe('InitShutdownCardComponent', () => {
     const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'Prepare system');
     await deleteIcon.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
   });
 });

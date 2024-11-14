@@ -9,9 +9,9 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -49,7 +49,7 @@ export class EulaEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

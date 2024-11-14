@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -13,7 +13,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeleteExtentDialogComponent', () => {
   let spectator: Spectator<DeleteExtentDialogComponent>;
@@ -25,7 +25,7 @@ describe('DeleteExtentDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.extent.delete'),
       ]),
       mockProvider(MatDialogRef),
@@ -53,7 +53,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, false, true]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -81,7 +81,7 @@ describe('DeleteExtentDialogComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await submitButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.delete', [1, true, true]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });
