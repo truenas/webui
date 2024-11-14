@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,7 +18,7 @@ import {
   StopOptionsDialogComponent,
   StopOptionsOperation,
 } from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const instance = {
   id: 'my-instance',
@@ -41,7 +41,7 @@ describe('InstanceRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockJob('virt.instance.restart', fakeSuccessfulJob()),
         mockJob('virt.instance.start', fakeSuccessfulJob()),
         mockJob('virt.instance.stop', fakeSuccessfulJob()),
@@ -126,7 +126,7 @@ describe('InstanceRowComponent', () => {
         .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Stop });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'virt.instance.stop',
         ['my-instance', { force: true, timeout: -1 }],
       );
@@ -141,7 +141,7 @@ describe('InstanceRowComponent', () => {
         .toHaveBeenCalledWith(StopOptionsDialogComponent, { data: StopOptionsOperation.Restart });
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'virt.instance.restart',
         ['my-instance', { force: true, timeout: -1 }],
       );
@@ -158,7 +158,7 @@ describe('InstanceRowComponent', () => {
       await startIcon.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.start', ['my-instance']);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Instance started');
     });
   });
