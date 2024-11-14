@@ -143,7 +143,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return [
       ['x', ...rd.legend],
       ...newRows,
-    ] as unknown as dygraphs.DataArray;
+    ] as dygraphs.DataArray;
   }
 
   inferUnits(label: string): string {

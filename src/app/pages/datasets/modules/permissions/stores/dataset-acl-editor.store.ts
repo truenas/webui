@@ -11,8 +11,6 @@ import {
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { NfsAclTag } from 'app/enums/nfs-acl.enum';
-import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
@@ -188,7 +186,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       // Prepare request
       withLatestFrom(saveParams$),
-      switchMap(([, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
+      map(([, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
 
       // Save
       switchMap((setAcl) => this.makeSaveRequest(setAcl)),
@@ -264,108 +262,27 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   /**
    * Validates and converts user and group names to ids
    * and prepares an SetACl object.
-   * TODO: Validation does not belong here and should be handled by form control.
-   * TODO: Converting should not be necessary, id should be coming from form control.
    */
-  private prepareSetAcl(editorState: DatasetAclEditorState, options: AclSaveFormParams): Observable<SetAcl> {
-    const markAceAsHavingErrors = (aceIndex: number): void => {
-      this.patchState((state) => ({
-        ...state,
-        acesWithError: union(state.acesWithError, [aceIndex]),
-      }));
-    };
-
-    // Load ids for all user and group who's
-    const userWhoToIds = new Map<string, number>();
-    const groupWhoToIds = new Map<string, number>();
-    const requests: Observable<unknown>[] = [];
-
-    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
-      if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
-        requests.push(
-          this.userService.getUserByName(ace.who).pipe(
-            tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
-              markAceAsHavingErrors(index);
-              return EMPTY;
-            }),
-          ),
-        );
-
-        return;
+  private prepareSetAcl(editorState: DatasetAclEditorState, options: AclSaveFormParams): SetAcl {
+    const dacl = editorState.acl.acl.map((ace) => {
+      if (ace.who === null && ace.id) {
+        return ace;
       }
 
-      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
-        requests.push(
-          this.userService.getGroupByName(ace.who).pipe(
-            tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
-              markAceAsHavingErrors(index);
-              return EMPTY;
-            }),
-          ),
-        );
-      }
+      return omit(ace, 'id');
     });
 
-    requests.push(
-      this.userService.getUserByName(options.owner).pipe(
-        tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
-        catchError((error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
-          return EMPTY;
-        }),
-      ),
-    );
-
-    requests.push(
-      this.userService.getGroupByName(options.ownerGroup).pipe(
-        tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
-        catchError((error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
-          return EMPTY;
-        }),
-      ),
-    );
-
-    return forkJoin(requests).pipe(
-      withLatestFrom(this.state$),
-      filter(([, currentState]) => currentState.acesWithError.length === 0),
-      map(([, currentState]) => {
-        const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
-          const aceAttributes = omit(ace, ['who']);
-          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
-            const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
-            return { ...aceAttributes, id };
-          }
-          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
-            const id = groupWhoToIds.has(ace.who) ? groupWhoToIds.get(ace.who) : -1;
-            return { ...aceAttributes, id };
-          }
-
-          return {
-            ...aceAttributes,
-            id: -1, // -1 is effectively null for middleware
-          };
-        });
-
-        return {
-          options: {
-            recursive: options.recursive,
-            traverse: options.traverse,
-            validate_effective_acl: options.validateEffectiveAcl,
-          },
-          uid: userWhoToIds.has(options.owner) && options.applyOwner ? userWhoToIds.get(options.owner) : null,
-          gid: groupWhoToIds.has(options.ownerGroup) && options.applyGroup
-            ? groupWhoToIds.get(options.ownerGroup)
-            : null,
-          acltype: editorState.acl.acltype,
-          path: editorState.mountpoint,
-          dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
-        } as SetAcl;
-      }),
-    );
+    return {
+      dacl,
+      options: {
+        recursive: options.recursive,
+        traverse: options.traverse,
+        validate_effective_acl: options.validateEffectiveAcl,
+      },
+      user: options.owner,
+      group: options.ownerGroup,
+      acltype: editorState.acl.acltype,
+      path: editorState.mountpoint,
+    } as SetAcl;
   }
 }

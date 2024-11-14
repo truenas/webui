@@ -69,7 +69,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   protected readonly stat = signal<FileSystemStat | null>(null);
   protected readonly acl = signal<Acl | null>(null);
 
-  emptyConfig: EmptyConfig = {
+  defaultEmptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('No Data'),
   };
@@ -77,6 +77,11 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   missionMountpointEmptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('Dataset has no mountpoint'),
+  };
+
+  lockedEmptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('Dataset is locked'),
   };
 
   readonly AclType = AclType;
@@ -97,8 +102,23 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     }
   }
 
+  readonly emptyConfig = computed(() => {
+    if (this.isMissingMountpoint()) {
+      return this.missionMountpointEmptyConfig;
+    }
+    if (this.isLocked()) {
+      return this.lockedEmptyConfig;
+    }
+
+    return this.defaultEmptyConfig;
+  });
+
   readonly canEditPermissions = computed(() => {
     return this.acl && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
+  });
+
+  readonly isLocked = computed(() => {
+    return this.dataset().locked;
   });
 
   readonly reasonEditIsDisabled = computed(() => {
@@ -110,7 +130,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
       return this.translate.instant(helptextPermissions.editDisabled.root);
     }
 
-    if (this.dataset().locked) {
+    if (this.isLocked()) {
       return this.translate.instant(helptextPermissions.editDisabled.locked);
     }
 
@@ -154,6 +174,13 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   }
 
   private loadPermissions(): void {
+    this.acl.set(null);
+    this.stat.set(null);
+
+    if (this.isLocked()) {
+      return;
+    }
+
     this.isMissingMountpoint.set(!this.dataset().mountpoint);
     if (this.isMissingMountpoint()) {
       return;

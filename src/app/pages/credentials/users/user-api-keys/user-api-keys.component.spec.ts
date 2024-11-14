@@ -30,15 +30,20 @@ describe('UserApiKeysComponent', () => {
       id: 1,
       name: 'first-api-key',
       username: 'root',
-      keyhash: 'strong-key',
+      local: true,
+      revoked: false,
       created_at: {
         $date: 1010101010101,
+      },
+      expires_at: {
+        $date: 1013001010101,
       },
     }, {
       id: 2,
       name: 'second-api-key',
       username: 'root',
-      keyhash: 'strong-key',
+      local: false,
+      revoked: true,
       created_at: {
         $date: 1011101010102,
       },
@@ -91,17 +96,17 @@ describe('UserApiKeysComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Username', 'Keyhash', 'Created date', 'Expires date', ''],
-      ['first-api-key', 'root', 'strong-key', '2002-01-03 15:36:50', 'Never', ''],
-      ['second-api-key', 'root', 'strong-key', '2002-01-15 05:23:30', 'Never', ''],
+      ['Name', 'Username', 'Local', 'Revoked', 'Created date', 'Expires date', ''],
+      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 15:36:50', '2002-02-06 05:10:10', ''],
+      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'N/A', ''],
     ];
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
 
-  it('shows form to edit an existing Smart Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-pencil' }), 1, 5);
+  it('shows form to edit an existing API Key when Edit button is pressed', async () => {
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
     await editButton.click();
 
     expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
@@ -109,8 +114,8 @@ describe('UserApiKeysComponent', () => {
     });
   });
 
-  it('deletes a Smart Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
+  it('deletes a API Key with confirmation when Delete button is pressed', async () => {
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

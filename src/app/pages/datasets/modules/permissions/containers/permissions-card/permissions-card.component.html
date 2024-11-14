@@ -64,7 +64,7 @@
 
     @if (!isLoading() && !acl()) {
       <ix-empty
-        [conf]="isMissingMountpoint() ? missionMountpointEmptyConfig : emptyConfig"
+        [conf]="emptyConfig()"
       ></ix-empty>
     }
   </mat-card-content>

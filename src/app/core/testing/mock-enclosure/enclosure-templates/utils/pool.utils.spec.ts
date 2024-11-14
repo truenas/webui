@@ -1,7 +1,11 @@
 import { mapSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/slots.utils';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { DashboardEnclosure, Enclosure, EnclosureElement } from 'app/interfaces/enclosure.interface';
+import {
+  DashboardEnclosure, DashboardEnclosureSlot,
+  Enclosure,
+  EnclosureElement,
+} from 'app/interfaces/enclosure.interface';
 import { addPoolsToDisks, randomizeDiskStatuses } from './pool.utils';
 
 jest.mock('app/core/testing/mock-enclosure/enclosure-templates/utils/slots.utils');
@@ -13,23 +17,23 @@ describe('pool.utils', () => {
       name: 'Enclosure 1',
       elements: {
         [EnclosureElementType.ArrayDeviceSlot]: {
-          1: { dev: 'sd1', drive_bay_number: 1 },
-          2: { dev: 'sd2', drive_bay_number: 2 },
-          3: { dev: 'sd3', drive_bay_number: 3 },
-        },
+          1: { dev: 'sd1', drive_bay_number: 1 } as DashboardEnclosureSlot,
+          2: { dev: 'sd2', drive_bay_number: 2 } as DashboardEnclosureSlot,
+          3: { dev: 'sd3', drive_bay_number: 3 } as DashboardEnclosureSlot,
+        } as Record<number, DashboardEnclosureSlot>,
       },
-    } as unknown as DashboardEnclosure,
+    } as DashboardEnclosure,
     {
       id: '2',
       name: 'Enclosure 2',
       elements: {
         [EnclosureElementType.ArrayDeviceSlot]: {
-          1: { dev: 'sd4', drive_bay_number: 1 },
-          2: { dev: 'sd5', drive_bay_number: 2 },
-          3: { dev: 'sd6', drive_bay_number: 3 },
-        },
+          1: { dev: 'sd4', drive_bay_number: 1 } as DashboardEnclosureSlot,
+          2: { dev: 'sd5', drive_bay_number: 2 } as DashboardEnclosureSlot,
+          3: { dev: 'sd6', drive_bay_number: 3 } as DashboardEnclosureSlot,
+        } as Record<number, DashboardEnclosureSlot>,
       },
-    } as unknown as DashboardEnclosure,
+    } as DashboardEnclosure,
   ];
 
   beforeEach(() => {

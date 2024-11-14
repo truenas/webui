@@ -28,13 +28,13 @@ describe('WidgetAppMemoryComponent', () => {
   const app = {
     id: 'testapp',
     name: 'TestApp',
-    status: AppState.Running,
+    state: AppState.Running,
     metadata: {
       icon: 'http://localhost/test-app.png',
       app_version: '1.0',
       train: 'stable',
     },
-  } as unknown as App;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: WidgetAppMemoryComponent,

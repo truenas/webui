@@ -54,6 +54,11 @@ export enum VirtualizationProxyProtocol {
   Tcp = 'TCP',
 }
 
+export const virtualizationProxyProtocolLabels = new Map<VirtualizationProxyProtocol, string>([
+  [VirtualizationProxyProtocol.Udp, 'UDP'],
+  [VirtualizationProxyProtocol.Tcp, 'TCP'],
+]);
+
 export enum VirtualizationNetworkType {
   Bridge = 'BRIDGE',
 }
