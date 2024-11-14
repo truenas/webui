@@ -35,9 +35,9 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -154,7 +154,7 @@ export class NfsListComponent implements OnInit {
 
   constructor(
     private appLoader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,

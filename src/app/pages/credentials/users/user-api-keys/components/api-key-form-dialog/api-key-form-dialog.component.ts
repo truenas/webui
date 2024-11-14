@@ -33,8 +33,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -108,7 +108,7 @@ export class ApiKeyFormComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,

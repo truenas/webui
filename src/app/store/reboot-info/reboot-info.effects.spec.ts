@@ -1,11 +1,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
@@ -33,7 +33,7 @@ describe('RebootInfoEffects', () => {
     service: RebootInfoEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebSocket([
+      mockApi([
         mockCall('system.reboot.info', fakeThisNodeRebootInfo),
         mockCall('failover.reboot.info', {
           this_node: fakeThisNodeRebootInfo,
@@ -47,7 +47,7 @@ describe('RebootInfoEffects', () => {
   beforeEach(() => {
     spectator = createService();
 
-    jest.spyOn(spectator.inject(WebSocketService), 'subscribe').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockImplementation((method) => {
       if (method === 'system.reboot.info') {
         return of({ fields: fakeThisNodeRebootInfo } as ApiEvent<SystemRebootInfo>);
       }

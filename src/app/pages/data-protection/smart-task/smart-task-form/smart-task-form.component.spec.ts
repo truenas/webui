@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -13,9 +13,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('SmartTaskFormComponent', () => {
@@ -47,7 +47,7 @@ describe('SmartTaskFormComponent', () => {
       }),
       mockAuth(),
       DialogService,
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.create'),
         mockCall('smart.test.update'),
         mockCall('smart.test.disk_choices', {
@@ -89,7 +89,7 @@ describe('SmartTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.create', [{
         all_disks: false,
         disks: ['sdc'],
         desc: 'New task',
@@ -139,7 +139,7 @@ describe('SmartTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.update', [5, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.update', [5, {
         all_disks: true,
         disks: [],
         desc: 'Updated task',

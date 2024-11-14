@@ -8,8 +8,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -28,11 +28,11 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudSyncListComponent', () => {
   let spectator: Spectator<CloudSyncListComponent>;
@@ -102,7 +102,7 @@ describe('CloudSyncListComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.query', cloudSyncList),
         mockCall('cloudsync.delete'),
         mockJob('cloudsync.sync', fakeSuccessfulJob()),
@@ -166,9 +166,9 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 
@@ -184,7 +184,7 @@ describe('CloudSyncListComponent', () => {
       expect.objectContaining(cloudSyncList[0]),
     );
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -200,8 +200,8 @@ describe('CloudSyncListComponent', () => {
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been deleted.');
   });
 
@@ -217,7 +217,7 @@ describe('CloudSyncListComponent', () => {
       data: 1,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has been restored.');
   });
 
@@ -233,8 +233,8 @@ describe('CloudSyncListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Cloud Sync «custom-cloudlist» has started.');
   });
 });

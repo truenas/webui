@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { isWebSocketError } from 'app/helpers/websocket.helper';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { isApiError } from 'app/helpers/api.helper';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 @Component({
   selector: 'ix-with-loading-state-error',
@@ -13,11 +13,11 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
   imports: [TranslateModule],
 })
 export class WithLoadingStateErrorComponent {
-  @Input() error: Error | WebSocketError;
+  @Input() error: Error | ApiError;
 
   get errorMessage(): string {
     const error = this.error;
-    if (isWebSocketError(error)) {
+    if (isApiError(error)) {
       return error?.reason || error.error.toString();
     }
     if (error instanceof Error) {

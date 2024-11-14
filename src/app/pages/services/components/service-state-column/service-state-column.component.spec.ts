@@ -2,8 +2,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
@@ -12,8 +12,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ServiceStateColumnComponent,
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
+import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceStateColumnComponent', () => {
   let spectator: Spectator<ServiceStateColumnComponent>;
@@ -28,7 +28,7 @@ describe('ServiceStateColumnComponent', () => {
       mockProvider(IscsiService, {
         getGlobalSessions: jest.fn(() => of([])),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('service.start', true),
         mockCall('service.stop', true),
       ]),
@@ -85,7 +85,7 @@ describe('ServiceStateColumnComponent', () => {
     it('stops the service when user confirms', async () => {
       await toggle.toggle();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.stop', [service.service, { silent: false }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.stop', [service.service, { silent: false }]);
     });
   });
 
@@ -95,7 +95,7 @@ describe('ServiceStateColumnComponent', () => {
 
       await toggle.toggle();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', [service.service, { silent: false }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('service.start', [service.service, { silent: false }]);
     });
   });
 });

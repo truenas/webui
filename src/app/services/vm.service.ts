@@ -5,11 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
 } from 'rxjs';
+import { ApiErrorName } from 'app/enums/api-error-name.enum';
 import { VmState } from 'app/enums/vm.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   VirtualizationDetails,
   VirtualMachine,
@@ -17,13 +18,12 @@ import {
   VmDisplayWebUriParams,
   VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
@@ -38,7 +38,7 @@ export class VmService {
   } as const;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -123,7 +123,7 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
@@ -142,9 +142,9 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           if (method === this.wsMethods.start
-            && error.errname === WebSocketErrorName.NoMemory) {
+            && error.errname === ApiErrorName.NoMemory) {
             this.onMemoryError(vm);
             return;
           }

@@ -16,10 +16,10 @@ import { convertStringToId } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private servicesService = inject(ServicesService);
-  private ws = inject(WebSocketService);
+  private ws = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(AppLoaderService);

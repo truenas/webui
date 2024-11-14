@@ -16,7 +16,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const newOption = 'NEW';
 
@@ -56,7 +56,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   override readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

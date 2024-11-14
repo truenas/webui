@@ -4,7 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppStats } from 'app/interfaces/app.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 type State = Record<string, AppStats>;
 
@@ -12,7 +12,7 @@ type State = Record<string, AppStats>;
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {
     super({});
   }

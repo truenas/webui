@@ -7,9 +7,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ShutdownComponent implements OnInit {
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,

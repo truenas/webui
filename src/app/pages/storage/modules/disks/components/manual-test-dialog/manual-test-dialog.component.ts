@@ -21,7 +21,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -88,7 +88,7 @@ export class ManualTestDialogComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
     public dialogRef: MatDialogRef<ManualTestDialogComponent>,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
   ) {
     this.setDisksBySupport();

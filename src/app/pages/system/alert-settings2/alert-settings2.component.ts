@@ -22,8 +22,8 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class AlertSettings2Component implements OnInit {
   policyOptions: string[] = [];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private themeService: ThemeService,

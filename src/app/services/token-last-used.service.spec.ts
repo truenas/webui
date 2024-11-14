@@ -1,13 +1,13 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TokenLastUsedService', () => {
   let spectator: SpectatorService<TokenLastUsedService>;
@@ -24,7 +24,7 @@ describe('TokenLastUsedService', () => {
         logout: jest.fn().mockReturnValue(new Subject()),
         user$: new Subject(),
       }),
-      mockWebSocket(),
+      mockApi(),
       {
         provide: WINDOW,
         useValue: {
@@ -76,7 +76,7 @@ describe('TokenLastUsedService', () => {
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
       const ws$ = new Subject();
 
-      jest.spyOn(spectator.inject(WebSocketService), 'getWebSocketStream$').mockReturnValue(ws$);
+      jest.spyOn(spectator.inject(ApiService), 'getWebSocketStream$').mockReturnValue(ws$);
 
       spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
 

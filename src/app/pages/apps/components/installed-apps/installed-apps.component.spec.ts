@@ -10,8 +10,8 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -30,7 +30,7 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
@@ -116,7 +116,7 @@ describe('InstalledAppsComponent', () => {
           },
         },
       },
-      mockWebSocket([]),
+      mockApi([]),
       mockAuth(),
       mockProvider(AppsStatsService),
     ],
@@ -174,7 +174,7 @@ describe('InstalledAppsComponent', () => {
       secondaryCheckboxText: 'Remove iXVolumes',
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'core.bulk',
       ['app.delete', [[app.name, { remove_images: true, remove_ix_volumes: true }]]],
     );

@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AppStats } from 'app/interfaces/app.interface';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AppsStatsService', () => {
   const plexStats: AppStats = {
@@ -43,7 +43,7 @@ describe('AppsStatsService', () => {
   const createService = createServiceFactory({
     service: AppsStatsService,
     providers: [
-      mockProvider(WebSocketService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn(() => of({
           fields: [
             plexStats,
@@ -61,7 +61,7 @@ describe('AppsStatsService', () => {
   describe('subscribeToUpdates()', () => {
     it('subscribes to app stats updates when subscribeToUpdates() is called', () => {
       spectator.service.subscribeToUpdates();
-      expect(spectator.inject(WebSocketService).subscribe).toHaveBeenCalledWith('app.stats');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('app.stats');
     });
   });
 

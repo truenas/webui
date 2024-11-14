@@ -7,8 +7,8 @@ import {
 } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class FipsService {
     private translate: TranslateService,
     private router: Router,
     private snackbar: SnackbarService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 

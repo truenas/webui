@@ -1,12 +1,12 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('ApplicationsService', () => {
   let spectator: SpectatorService<ApplicationsService>;
@@ -34,7 +34,7 @@ describe('ApplicationsService', () => {
   const createService = createServiceFactory({
     service: ApplicationsService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('app.upgrade_summary'),
         mockCall('app.available', appsResponse),
         mockCall('app.latest', appsResponse),
@@ -57,7 +57,7 @@ describe('ApplicationsService', () => {
   describe('getAvailableApps', () => {
     it('loads available apps', async () => {
       const apps = await firstValueFrom(spectator.service.getAvailableApps(filters));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.available', appsRequestPayload);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.available', appsRequestPayload);
       expect(apps).toEqual(appsResponse.filter((app) => app.name !== customApp));
     });
   });
@@ -65,7 +65,7 @@ describe('ApplicationsService', () => {
   describe('getLatestApps', () => {
     it('loads latest apps', async () => {
       const apps = await firstValueFrom(spectator.service.getLatestApps(filters));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.latest', appsRequestPayload);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.latest', appsRequestPayload);
       expect(apps).toEqual(appsResponse.filter((app) => app.name !== customApp));
     });
   });
@@ -73,11 +73,11 @@ describe('ApplicationsService', () => {
   describe('getAppUpgradeSummary', () => {
     it('loads summary without version', async () => {
       await firstValueFrom(spectator.service.getAppUpgradeSummary('test'));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
     });
     it('loads summary with version', async () => {
       await firstValueFrom(spectator.service.getAppUpgradeSummary('test', '2.0'));
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.upgrade_summary', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.upgrade_summary', [
         'test', { app_version: '2.0' },
       ]);
     });
