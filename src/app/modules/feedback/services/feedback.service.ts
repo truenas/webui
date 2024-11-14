@@ -47,7 +47,7 @@ export class FeedbackService {
 
   constructor(
     private httpClient: HttpClient,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
@@ -157,7 +157,7 @@ export class FeedbackService {
   }
 
   getSimilarIssues(query: string): Observable<SimilarIssue[]> {
-    return this.ws.call('support.similar_issues', [query]);
+    return this.api.call('support.similar_issues', [query]);
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
@@ -261,12 +261,12 @@ export class FeedbackService {
         filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
         take(1),
       ),
-      this.ws.call('system.host_id'),
+      this.api.call('system.host_id'),
     ]);
   }
 
   private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {
-    return this.ws.job('support.new_ticket', [ticket]).pipe(
+    return this.api.job('support.new_ticket', [ticket]).pipe(
       filter((job) => job.state === JobState.Success),
       map((job) => job.result),
     );

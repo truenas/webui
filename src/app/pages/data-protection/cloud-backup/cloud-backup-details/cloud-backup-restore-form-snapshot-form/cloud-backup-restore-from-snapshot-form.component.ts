@@ -110,7 +110,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -133,7 +133,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     const params = this.prepareParams();
 
     this.dialogService.jobDialog(
-      this.ws.job('cloud_backup.restore', params),
+      this.api.job('cloud_backup.restore', params),
       {
         title: this.translate.instant('Restoring backup'),
         canMinimize: true,
@@ -157,7 +157,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
-      return this.ws.call(
+      return this.api.call(
         'cloud_backup.list_snapshot_directory',
         [this.data.backup.id, this.data.snapshot?.id, node.data.path],
       ).pipe(

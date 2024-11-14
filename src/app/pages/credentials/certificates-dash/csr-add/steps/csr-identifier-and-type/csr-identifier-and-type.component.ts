@@ -71,7 +71,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -107,7 +107,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.csr_profiles')
+    this.api.call('webui.crypto.csr_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

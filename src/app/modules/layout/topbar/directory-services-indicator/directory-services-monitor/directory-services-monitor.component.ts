@@ -46,7 +46,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   protected readonly directoryServiceStateLabels = directoryServiceStateLabels;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -56,7 +56,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
 
   getStatus(): void {
     this.isLoading.set(true);
-    this.ws.call('directoryservices.get_state')
+    this.api.call('directoryservices.get_state')
       .pipe(
         this.errorHandler.catchError(),
         finalize(() => this.isLoading.set(false)),

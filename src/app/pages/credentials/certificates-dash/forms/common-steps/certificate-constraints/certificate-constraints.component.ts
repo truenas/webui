@@ -92,7 +92,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -300,7 +300,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   }
 
   private loadKeyUsageOptions(): void {
-    this.ws.call('certificate.extended_key_usage_choices')
+    this.api.call('certificate.extended_key_usage_choices')
       .pipe(
         choicesToOptions(),
         untilDestroyed(this),

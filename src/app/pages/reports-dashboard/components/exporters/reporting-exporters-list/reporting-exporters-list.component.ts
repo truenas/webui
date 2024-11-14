@@ -96,7 +96,7 @@ export class ReportingExporterListComponent implements OnInit {
         const exporter = { ...row };
         delete exporter.type;
         delete exporter.id;
-        this.ws.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
+        this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
           complete: () => this.appLoader.close(),
@@ -148,7 +148,7 @@ export class ReportingExporterListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private slideInService: SlideInService,
     private dialogService: DialogService,
@@ -179,7 +179,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private getExporters(): void {
-    this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
         this.onListFiltered(this.filterString);
@@ -221,7 +221,7 @@ export class ReportingExporterListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),
-      switchMap(() => this.ws.call('reporting.exporters.delete', [exporter.id])),
+      switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (deleted) => {

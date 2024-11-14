@@ -57,7 +57,7 @@ export class KerberosSettingsComponent implements OnInit {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<KerberosSettingsComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -69,7 +69,7 @@ export class KerberosSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -87,7 +87,7 @@ export class KerberosSettingsComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();

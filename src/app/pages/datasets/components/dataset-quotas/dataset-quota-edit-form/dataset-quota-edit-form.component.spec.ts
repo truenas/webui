@@ -19,7 +19,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 describe('DatasetQuotaEditFormComponent', () => {
   let spectator: Spectator<DatasetQuotaEditFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaEditFormComponent,
@@ -62,7 +62,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -70,7 +70,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
 
-      expect(ws.call).toHaveBeenCalledWith(
+      expect(api.call).toHaveBeenCalledWith(
         'pool.dataset.get_quota',
         ['Test', DatasetQuotaType.User, [['id', '=', 1]]],
       );
@@ -92,7 +92,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
           quota_type: DatasetQuotaType.User,
           id: '1',
@@ -122,7 +122,7 @@ describe('DatasetQuotaEditFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -130,7 +130,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
 
-      expect(ws.call).toHaveBeenCalledWith(
+      expect(api.call).toHaveBeenCalledWith(
         'pool.dataset.get_quota',
         ['Test', DatasetQuotaType.Group, [['id', '=', 1]]],
       );
@@ -152,7 +152,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
         {
           quota_type: DatasetQuotaType.Group,
           id: '1',

@@ -132,7 +132,7 @@ export class CloudBackupFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -241,7 +241,7 @@ export class CloudBackupFormComponent implements OnInit {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.api.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
@@ -280,12 +280,12 @@ export class CloudBackupFormComponent implements OnInit {
 
   onSubmit(): void {
     const payload = this.prepareData(this.form.value);
-    let request$ = this.ws.call('cloud_backup.create', [payload]);
+    let request$ = this.api.call('cloud_backup.create', [payload]);
 
     this.isLoading = true;
 
     if (!this.isNew) {
-      request$ = this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
+      request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
