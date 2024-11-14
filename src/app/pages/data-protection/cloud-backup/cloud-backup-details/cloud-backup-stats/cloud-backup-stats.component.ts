@@ -5,6 +5,7 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 
 @Component({
@@ -23,4 +24,5 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 })
 export class CloudBackupStatsComponent {
   readonly backup = input.required<CloudBackup>();
+  protected readonly cloudsyncTransferSettingLabels = cloudsyncTransferSettingLabels;
 }
