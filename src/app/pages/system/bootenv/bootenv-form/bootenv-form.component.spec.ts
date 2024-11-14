@@ -62,12 +62,12 @@ describe('BootEnvironmentFormComponent', () => {
     it('sends a create payload with source option to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const fields = {
-        name: 'cloned',
-        source: cloneSource,
+        id: cloneSource,
+        target: 'cloned',
       };
 
       await form.fillForm({
-        Name: fields.name,
+        Name: fields.target,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
