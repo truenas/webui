@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -145,6 +146,19 @@ describe('SmbListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+  });
+
+  it('updates SMB Enabled status once mat-toggle is updated', async () => {
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+
+    expect(await toggle.isChecked()).toBe(true);
+
+    await toggle.uncheck();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      'sharing.smb.update',
+      [1, { enabled: false }],
+    );
   });
 
   it('should show table rows', async () => {
