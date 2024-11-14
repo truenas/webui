@@ -19,7 +19,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class BootPoolDeleteDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],

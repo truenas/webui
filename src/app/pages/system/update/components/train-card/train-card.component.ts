@@ -17,8 +17,8 @@ import { Role } from 'app/enums/role.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextSystemUpdate } from 'app/helptext/system/update';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -131,7 +131,7 @@ export class TrainCardComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.dialogService.warn(
           error.trace.class,
           this.translate.instant('TrueNAS was unable to reach update servers.'),

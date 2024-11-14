@@ -15,7 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -26,8 +26,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -65,7 +65,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
@@ -112,7 +112,7 @@ export class AllowedAddressesFormComponent implements OnInit {
           return of(true);
         }
         return this.ws.call('system.general.ui_restart').pipe(
-          catchError((error: WebSocketError) => {
+          catchError((error: ApiError) => {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
               message: error.reason,

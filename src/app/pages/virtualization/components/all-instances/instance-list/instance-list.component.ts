@@ -18,10 +18,11 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatCheckboxModule,
     RequiresRolesDirective,
     EmptyComponent,
+    TestDirective,
   ],
 })
 
@@ -100,7 +102,7 @@ export class InstanceListComponent {
     private store: VirtualizationInstancesStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -31,7 +31,7 @@ describe('GpuStepComponent', () => {
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('system.advanced.get_gpu_pci_choices', {
           'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',
           'GeForce GTX 1080 Ti [0000:04:00.0]': '0000:04:00.0',

@@ -6,7 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
@@ -19,10 +19,10 @@ import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credent
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;
@@ -53,7 +53,7 @@ describe('CloudSyncProviderComponent', () => {
     providers: [
       CdkStepper,
       mockProvider(ChainedRef, chainedComponentRef),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.credentials.verify', {
@@ -114,7 +114,7 @@ describe('CloudSyncProviderComponent', () => {
     expect(loading.emit).toHaveBeenNthCalledWith(1, true);
     expect(loading.emit).toHaveBeenNthCalledWith(2, false);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
       provider: 'GOOGLE_PHOTOS',
       attributes: {
         client_id: 'test-client-id',

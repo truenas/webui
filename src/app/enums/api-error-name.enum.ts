@@ -1,4 +1,4 @@
-export enum WebSocketErrorName {
+export enum ApiErrorName {
   NotAuthenticated = 'ENOTAUTHENTICATED',
   NoAccess = 'EACCES',
   NoMemory = 'ENOMEM',

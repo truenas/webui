@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
@@ -19,10 +19,10 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SmartTaskCardComponent', () => {
@@ -89,7 +89,7 @@ describe('SmartTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.query', smartTasks),
         mockCall('disk.query', disks),
         mockCall('smart.test.delete'),
@@ -147,7 +147,7 @@ describe('SmartTaskCardComponent', () => {
       data: expect.objectContaining(smartTasks[0]),
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query');
   });
 
   it('deletes a Smart Task with confirmation when Delete button is pressed', async () => {
@@ -159,8 +159,8 @@ describe('SmartTaskCardComponent', () => {
       message: 'Delete S.M.A.R.T. Test <b>"LONG - test"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query');
   });
 });

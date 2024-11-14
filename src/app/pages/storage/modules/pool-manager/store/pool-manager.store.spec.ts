@@ -4,7 +4,7 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -18,7 +18,7 @@ import {
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;
@@ -61,7 +61,7 @@ describe('PoolManagerStore', () => {
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('enclosure2.query', enclosures),
       ]),
       mockProvider(DiskStore, {
@@ -129,7 +129,7 @@ describe('PoolManagerStore', () => {
     it('loads enclosures', async () => {
       spectator.service.initialize();
 
-      const websocket = spectator.inject(WebSocketService);
+      const websocket = spectator.inject(ApiService);
       expect(websocket.call).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({

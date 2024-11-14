@@ -6,7 +6,7 @@ import { Observable, Subject, of } from 'rxjs';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
-} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+} from 'app/core/testing/interfaces/mock-api-responses.interface';
 import { ApiCallAndSubscribeMethod } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
@@ -20,8 +20,8 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ApiService } from 'app/services/api.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.
@@ -29,19 +29,19 @@ import { WebSocketService } from 'app/services/ws.service';
 const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
 
 /**
- * MockWebSocketService can be used to update websocket mocks on the fly.
- * For initial setup prefer mockWebSocket();
+ * MockApiService can be used to update api mocks on the fly.
+ * For initial setup prefer mockApi();
  *
  * To update on the fly:
  * @example
  * ```
  * // In test case:
- * const websocketService = spectator.inject(MockWebSocketService);
- * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
+ * const apiService = spectator.inject(MockApiService);
+ * apiService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
  * ```
  */
 @Injectable()
-export class MockWebSocketService extends WebSocketService {
+export class MockApiService extends ApiService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
@@ -59,13 +59,13 @@ export class MockWebSocketService extends WebSocketService {
     this.callAndSubscribe = jest.fn();
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
-      throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked api call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.callAndSubscribe).mockImplementation((method: ApiCallAndSubscribeMethod, args: unknown) => {
-      throw Error(`Unmocked websocket callAndSubscribe ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked api callAndSubscribe ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
-      throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked api job call ${method} with ${JSON.stringify(args)}`);
     });
   }
 

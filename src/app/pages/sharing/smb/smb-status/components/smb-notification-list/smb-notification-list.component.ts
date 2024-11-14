@@ -22,7 +22,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class SmbNotificationListComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,

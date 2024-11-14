@@ -4,15 +4,15 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('GlobalConfigFormComponent', () => {
   let spectator: Spectator<GlobalConfigFormComponent>;
@@ -22,7 +22,7 @@ describe('GlobalConfigFormComponent', () => {
   const createComponent = createComponentFactory({
     component: GlobalConfigFormComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.global.pool_choices', {
           '[Disabled]': '[Disabled]',
           poolio: 'poolio',
@@ -78,7 +78,7 @@ describe('GlobalConfigFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.global.update', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.global.update', [{
       pool: '[Disabled]',
       bridge: '[AUTO]',
       v4_network: '1.2.3.4/24',

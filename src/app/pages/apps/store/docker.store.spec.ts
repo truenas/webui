@@ -1,18 +1,18 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;
   const createComponent = createServiceFactory({
     service: DockerStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('docker.config', {
           enable_image_updates: true,
           pool: 'pewl',
@@ -35,9 +35,9 @@ describe('DockerStore', () => {
     it('loads docker data', () => {
       spectator.service.initialize();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.nvidia_status');
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('docker.status');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.config');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.nvidia_status');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.status');
 
       expect(spectator.service.state()).toEqual({
         dockerConfig: {
@@ -63,7 +63,7 @@ describe('DockerStore', () => {
         enable_image_updates: false,
       } as DockerConfig;
 
-      const mockWebsocket = spectator.inject(MockWebSocketService);
+      const mockWebsocket = spectator.inject(MockApiService);
       jest.resetAllMocks();
       mockWebsocket.mockCall('docker.config', newDockerConfig);
 
@@ -77,7 +77,7 @@ describe('DockerStore', () => {
 
   describe('reloadDockerNvidiaStatus', () => {
     it('reloads docker nvidia status and updates the state', () => {
-      const mockWebsocket = spectator.inject(MockWebSocketService);
+      const mockWebsocket = spectator.inject(MockApiService);
       jest.resetAllMocks();
       mockWebsocket.mockCall('docker.nvidia_status', { status: DockerNvidiaStatus.Installed });
 

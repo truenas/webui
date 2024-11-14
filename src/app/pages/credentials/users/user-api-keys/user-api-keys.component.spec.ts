@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -16,9 +16,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('UserApiKeysComponent', () => {
   let spectator: Spectator<UserApiKeysComponent>;
@@ -73,7 +73,7 @@ describe('UserApiKeysComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('api_key.query', apiKeys),
         mockCall('api_key.delete'),
       ]),
@@ -125,6 +125,6 @@ describe('UserApiKeysComponent', () => {
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('api_key.delete', [1]);
   });
 });

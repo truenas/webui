@@ -21,8 +21,8 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -61,7 +61,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   protected readonly Role = Role;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     private store$: Store<AppState>,
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,

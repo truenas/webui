@@ -18,8 +18,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class KerberosSettingsComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInRef: SlideInRef<KerberosSettingsComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,

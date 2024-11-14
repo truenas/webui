@@ -17,8 +17,8 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface ExtendDialogParams {
   poolId: number;
@@ -54,7 +54,7 @@ export class ExtendDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,

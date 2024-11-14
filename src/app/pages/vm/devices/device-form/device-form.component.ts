@@ -40,9 +40,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const specifyCustom = T('Specify custom');
 
@@ -232,7 +232,7 @@ export class DeviceFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private networkService: NetworkService,

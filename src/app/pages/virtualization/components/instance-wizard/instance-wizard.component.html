@@ -56,6 +56,60 @@
     <ix-fieldset [title]="'Network' | translate">
     </ix-fieldset>
 
+    <ix-fieldset [title]="'Proxies' | translate">
+      <ix-list
+        formArrayName="proxies"
+        [empty]="form.controls.proxies.controls.length === 0"
+        [label]="'Proxies' | translate"
+        [formArray]="form.controls.proxies"
+        (add)="addProxy()"
+      >
+        @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Proxy' | translate"
+            (delete)="removeProxy(i)"
+          >
+            <div class="protocol-and-port">
+              <ix-select
+                class="protocol"
+                formControlName="source_proto"
+                [label]="'Host Protocol' | translate"
+                [required]="true"
+                [options]="proxyProtocols$"
+              ></ix-select>
+
+              <ix-input
+                class="port"
+                type="number"
+                formControlName="source_port"
+                [label]="'Host Port' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+
+            <div class="protocol-and-port">
+              <ix-select
+                class="protocol"
+                formControlName="dest_proto"
+                [label]="'Instance Protocol' | translate"
+                [required]="true"
+                [options]="proxyProtocols$"
+              ></ix-select>
+
+              <ix-input
+                class="port"
+                type="number"
+                formControlName="dest_port"
+                [label]="'Instance Port' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
     @if ((usbDevices$ | async); as usbDevices) {
       @if (usbDevices.length > 0) {
         <ix-fieldset [title]="'USB Devices' | translate">

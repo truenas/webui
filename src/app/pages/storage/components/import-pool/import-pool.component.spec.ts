@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
@@ -15,13 +15,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { ImportPoolComponent } from './import-pool.component';
 
 describe('ImportPoolComponent', () => {
   let spectator: Spectator<ImportPoolComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const createComponent = createComponentFactory({
     component: ImportPoolComponent,
@@ -29,7 +29,7 @@ describe('ImportPoolComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
         mockJob(
           'pool.import_find',
@@ -71,7 +71,7 @@ describe('ImportPoolComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(ApiService);
   });
 
   it('loads and shows the current list of pools to import when form is opened', async () => {

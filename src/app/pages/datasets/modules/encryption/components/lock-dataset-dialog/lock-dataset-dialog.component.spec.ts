@@ -6,12 +6,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { LockDatasetDialogComponent } from './lock-dataset-dialog.component';
 
 describe('LockDatasetDialogComponent', () => {
@@ -30,7 +30,7 @@ describe('LockDatasetDialogComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('pool.dataset.lock', fakeSuccessfulJob()),
       ]),
       {
@@ -56,7 +56,7 @@ describe('LockDatasetDialogComponent', () => {
     await lockButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job)
+    expect(spectator.inject(ApiService).job)
       .toHaveBeenCalledWith('pool.dataset.lock', ['pool/dataset', { force_umount: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

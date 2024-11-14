@@ -20,9 +20,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -52,10 +52,10 @@ import { certificateAuthorityListElements } from 'app/pages/credentials/certific
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -146,7 +146,7 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -254,7 +254,7 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebSocketError | Job) => {
+        error: (err: ApiError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

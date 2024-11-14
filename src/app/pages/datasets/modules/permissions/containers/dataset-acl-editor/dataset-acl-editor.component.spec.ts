@@ -8,10 +8,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -98,7 +98,7 @@ describe('DatasetAclEditorComponent', () => {
       StorageService,
       DatasetAclEditorStore,
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
           user: 'john',
@@ -124,7 +124,7 @@ describe('DatasetAclEditorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

@@ -32,7 +32,7 @@ import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-he
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -100,7 +100,7 @@ export class SyslogFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,

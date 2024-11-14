@@ -36,8 +36,8 @@ import {
   Observable,
 } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
-import { EmptyWebsocketService } from 'app/core/testing/utils/empty-ws.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -86,9 +86,9 @@ import {
 } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 failOnConsole();
 
@@ -193,8 +193,8 @@ defineGlobalsInjections({
       useClass: EmptyAuthService,
     },
     {
-      provide: WebSocketService,
-      useClass: EmptyWebsocketService,
+      provide: ApiService,
+      useClass: EmptyApiService,
     },
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
     { provide: MatIconRegistry, useClass: FakeMatIconRegistry },

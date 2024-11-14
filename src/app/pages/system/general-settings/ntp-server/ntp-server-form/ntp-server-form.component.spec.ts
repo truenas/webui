@@ -3,21 +3,21 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { NtpServerFormComponent } from './ntp-server-form.component';
 
 describe('NtpServerFormComponent', () => {
   let spectator: Spectator<NtpServerFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   const createComponent = createComponentFactory({
     component: NtpServerFormComponent,
@@ -26,7 +26,7 @@ describe('NtpServerFormComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
       ]),
@@ -41,7 +41,7 @@ describe('NtpServerFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -85,7 +85,7 @@ describe('NtpServerFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     it('shows current server values when form is being edited', async () => {

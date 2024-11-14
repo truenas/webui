@@ -1,0 +1,41 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Proxies' | translate }}
+    </h3>
+
+    <button
+      mat-button
+      ixTest="add-proxy"
+      (click)="addProxy()"
+    >{{ 'Add' | translate }}</button>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (proxy of proxies(); track proxy) {
+        <div class="proxy">
+          <div class="proxy-description">
+            {{ proxy.source_port }} {{ proxy.source_proto }} <span class="hint">({{ 'Host' | translate }})</span>
+            →
+            {{ proxy.dest_port }} {{ proxy.dest_proto }} <span class="hint">({{ 'Instance' | translate }})</span>
+          </div>
+
+          <button
+            mat-icon-button
+            class="delete-button"
+            [attr.aria-label]="'Delete proxy' | translate"
+            [ixTest]="['delete-proxy', $index]"
+            (click)="deleteProxyPressed(proxy)"
+          >
+            <ix-icon name="mdi-close"></ix-icon>
+          </button>
+        </div>
+      } @empty {
+        {{ 'No proxies added.' | translate }}
+      }
+    }
+  </mat-card-content>
+</mat-card>
