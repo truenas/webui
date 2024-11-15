@@ -17,7 +17,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 describe('KerberosRealmsFormComponent', () => {
   let spectator: Spectator<KerberosRealmsFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: KerberosRealmsFormComponent,
     imports: [
@@ -40,7 +40,7 @@ describe('KerberosRealmsFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -55,7 +55,7 @@ describe('KerberosRealmsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('kerberos.realm.create', [{
+      expect(api.call).toHaveBeenCalledWith('kerberos.realm.create', [{
         realm: 'new',
         kdc: ['kdc1', 'kdc2'],
         admin_server: ['10.10.12.1', '10.10.12.2'],
@@ -81,7 +81,7 @@ describe('KerberosRealmsFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -108,7 +108,7 @@ describe('KerberosRealmsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('kerberos.realm.update', [
+      expect(api.call).toHaveBeenCalledWith('kerberos.realm.update', [
         13,
         {
           realm: 'updated',

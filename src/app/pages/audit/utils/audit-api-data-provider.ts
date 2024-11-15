@@ -20,8 +20,8 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
     return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
-  constructor(ws: ApiService) {
-    super(ws, 'audit.query');
+  constructor(api: ApiService) {
+    super(api, 'audit.query');
   }
 
   protected override countRows(): Observable<number> {
@@ -39,7 +39,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
       }),
     }];
 
-    return this.ws.call(this.method, params) as unknown as Observable<number>;
+    return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
   protected override prepareParams(params: ApiCallParams<'audit.query'>): ApiCallParams<'audit.query'> {

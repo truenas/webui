@@ -18,7 +18,7 @@ import { ApiService } from 'app/services/api.service';
 describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const fakeDataPrivilege = {
     id: 10,
@@ -65,7 +65,7 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows roles sorted alphabetically with compound (non-builtin) roles on top', async () => {
@@ -91,7 +91,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('privilege.create', [{
+      expect(api.call).toHaveBeenLastCalledWith('privilege.create', [{
         ds_groups: [],
         local_groups: [],
         name: 'new privilege',
@@ -109,7 +109,7 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current privilege values when form is being edited', async () => {
@@ -136,7 +136,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('privilege.update', [10, {
+      expect(api.call).toHaveBeenLastCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         name: 'updated privilege',
@@ -154,7 +154,7 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
@@ -175,7 +175,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('privilege.update', [10, {
+      expect(api.call).toHaveBeenLastCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         web_shell: false,

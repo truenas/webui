@@ -125,7 +125,7 @@ export class ServiceFtpComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -159,7 +159,7 @@ export class ServiceFtpComponent implements OnInit {
     };
 
     this.isFormLoading = true;
-    this.ws.call('ftp.update', [values])
+    this.api.call('ftp.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -182,7 +182,7 @@ export class ServiceFtpComponent implements OnInit {
 
   private loadConfig(): void {
     this.isFormLoading = true;
-    this.ws.call('ftp.config')
+    this.api.call('ftp.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

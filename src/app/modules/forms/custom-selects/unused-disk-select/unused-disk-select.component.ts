@@ -73,7 +73,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     return getNonUniqueSerialDisksWarning(this.nonUniqueSerialDisks(), this.translate);
   });
 
-  private unusedDisks$ = this.ws.call('disk.details').pipe(
+  private unusedDisks$ = this.api.call('disk.details').pipe(
     map((diskDetails) => {
       return [
         ...diskDetails.unused,
@@ -105,7 +105,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {

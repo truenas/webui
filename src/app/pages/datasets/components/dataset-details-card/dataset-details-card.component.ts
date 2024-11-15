@@ -64,7 +64,7 @@ export class DatasetDetailsCardComponent {
     private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
   ) { }
 
@@ -100,7 +100,7 @@ export class DatasetDetailsCardComponent {
   }
 
   promoteDataset(): void {
-    this.ws.call('pool.dataset.promote', [this.dataset().id])
+    this.api.call('pool.dataset.promote', [this.dataset().id])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));

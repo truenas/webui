@@ -33,13 +33,13 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     super(initialConsoleMessagesState);
   }
 
   subscribeToMessageUpdates(): void {
-    this.ws.subscribeToLogs(this.logPath)
+    this.api.subscribeToLogs(this.logPath)
       .pipe(
         map((event) => event.fields),
         filter((log) => typeof log?.data === 'string'),

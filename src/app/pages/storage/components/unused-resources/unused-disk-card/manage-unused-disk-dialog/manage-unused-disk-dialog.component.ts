@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -37,7 +36,6 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     WarningComponent,
     IxFieldsetComponent,

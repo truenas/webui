@@ -1,34 +1,30 @@
-import { Bootenv } from 'app/interfaces/bootenv.interface';
+import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 
 export const fakeBootEnvironmentsDataSource = [
   {
-    id: 'CLONE',
-    realname: 'CLONE',
-    name: 'CLONE',
-    active: '',
+    id: '25.04.0-MASTER-20241031-104807',
+    dataset: 'boot-pool/ROOT/25.04.0-MASTER-20241031-104807',
+    active: false,
     activated: false,
-    can_activate: true,
-    mountpoint: '-',
-    space: '384.0K',
     created: {
-      $date: 1661185620000,
+      $date: 1730397347000,
     },
+    used_bytes: 3272175616,
+    used: '3.05 GiB',
     keep: false,
-    rawspace: 393216,
+    can_activate: true,
   },
   {
-    id: '22.12-MASTER-20220808-020013',
-    realname: '22.12-MASTER-20220808-020013',
-    name: '22.12-MASTER-20220808-020013',
-    active: 'NR',
+    id: '25.04.0-MASTER-20241105-224807',
+    dataset: 'boot-pool/ROOT/25.04.0-MASTER-20241105-224807',
+    active: true,
     activated: true,
-    can_activate: true,
-    mountpoint: 'legacy',
-    space: '2.61G',
     created: {
-      $date: 1660053120000,
+      $date: 1730894736000,
     },
+    used_bytes: 3357876224,
+    used: '3.13 GiB',
     keep: false,
-    rawspace: 2797170688,
+    can_activate: true,
   },
-] as Bootenv[];
+] as BootEnvironment[];

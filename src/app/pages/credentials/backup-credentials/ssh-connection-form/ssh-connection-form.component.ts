@@ -163,7 +163,7 @@ export class SshConnectionFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
@@ -205,7 +205,7 @@ export class SshConnectionFormComponent implements OnInit {
       connect_timeout: this.form.controls.connect_timeout.value,
     };
 
-    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
+    this.api.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (remoteHostKey) => {
@@ -273,7 +273,7 @@ export class SshConnectionFormComponent implements OnInit {
       };
     }
 
-    return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
+    return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: ApiError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
@@ -286,7 +286,7 @@ export class SshConnectionFormComponent implements OnInit {
             switchMap((retry) => {
               if (retry) {
                 params.semi_automatic_setup.verify_ssl = false;
-                return this.ws.call('keychaincredential.setup_ssh_connection', [params]);
+                return this.api.call('keychaincredential.setup_ssh_connection', [params]);
               }
               return throwError(() => error);
             }),
@@ -311,6 +311,6 @@ export class SshConnectionFormComponent implements OnInit {
       } as SshCredentials,
     };
 
-    return this.ws.call('keychaincredential.update', [this.existingConnection.id, params]);
+    return this.api.call('keychaincredential.update', [this.existingConnection.id, params]);
   }
 }

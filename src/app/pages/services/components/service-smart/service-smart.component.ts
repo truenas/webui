@@ -76,7 +76,7 @@ export class ServiceSmartComponent implements OnInit {
   ]);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -89,7 +89,7 @@ export class ServiceSmartComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    this.ws.call('smart.config')
+    this.api.call('smart.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -109,7 +109,7 @@ export class ServiceSmartComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('smart.update', [values as SmartConfigUpdate])
+    this.api.call('smart.update', [values as SmartConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

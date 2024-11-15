@@ -7,7 +7,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   VirtualizationDeviceType,
   VirtualizationProxyProtocol,
@@ -41,7 +40,6 @@ import { ApiService } from 'app/services/api.service';
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
-    RequiresRolesDirective,
     TestDirective,
     TranslateModule,
     IxSelectComponent,

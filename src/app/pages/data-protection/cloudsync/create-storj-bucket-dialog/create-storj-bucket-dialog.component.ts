@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject, Optional,
 } from '@angular/core';
@@ -28,7 +27,6 @@ import { ApiService } from 'app/services/api.service';
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     FormActionsComponent,
@@ -50,14 +48,14 @@ export class CreateStorjBucketDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CreateStorjBucketDialogComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private appLoader: AppLoaderService,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { credentialsId: number },
     private formErrorHandler: FormErrorHandlerService,
   ) {}
 
   onSubmit(): void {
-    this.ws.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])
+    this.api.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])
       .pipe(
         this.appLoader.withLoader(),
         untilDestroyed(this),

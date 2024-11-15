@@ -13,7 +13,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   map, Observable, of,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
@@ -62,7 +61,6 @@ import { AuthService } from 'app/services/auth/auth.service';
     TranslateModule,
     IxCheckboxComponent,
     MatButton,
-    RequiresRolesDirective,
     TestDirective,
     IxFieldsetComponent,
     ReadOnlyComponent,

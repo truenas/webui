@@ -67,7 +67,7 @@ export class DockerImageDeleteDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
@@ -86,7 +86,7 @@ export class DockerImageDeleteDialogComponent {
       this.bulkItems.set(image.id, { state: BulkListItemState.Running, item: image });
     });
 
-    this.ws.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
+    this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {
