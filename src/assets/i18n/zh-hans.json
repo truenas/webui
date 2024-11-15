@@ -42,6 +42,7 @@
   "Delete device": "",
   "Device deleted": "",
   "Device is readonly and cannot be removed.": "",
+  "Device was added": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
   "Disk added": "",

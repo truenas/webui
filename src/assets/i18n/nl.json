@@ -377,6 +377,7 @@
   "Device deleted": "",
   "Device is readonly and cannot be removed.": "",
   "Device removed": "",
+  "Device was added": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
   "Directory Mask": "",

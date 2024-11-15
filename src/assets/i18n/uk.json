@@ -554,6 +554,7 @@
   "Device is readonly and cannot be removed.": "",
   "Device removed": "",
   "Device updated": "",
+  "Device was added": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
   "Device/File": "",

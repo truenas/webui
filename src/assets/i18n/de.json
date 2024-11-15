@@ -967,6 +967,7 @@
   "Device deleted": "",
   "Device is readonly and cannot be removed.": "",
   "Device names of each disk being edited.": "",
+  "Device was added": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
   "Digest Algorithm": "",

@@ -631,6 +631,7 @@
   "Device is readonly and cannot be removed.": "",
   "Device names of each disk being edited.": "",
   "Device removed": "",
+  "Device was added": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
   "Direct the flow of data to the remote host.": "",

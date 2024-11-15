@@ -63,6 +63,6 @@ describe('DeleteDeviceButtonComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationInstancesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
   });
 });
