@@ -1,4 +1,5 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
@@ -384,6 +385,7 @@ export interface ApiCallDirectory {
   'cloud_backup.delete': { params: [id: number]; response: boolean };
   'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
   'cloud_backup.list_snapshot_directory': { params: CloudBackupSnapshotDirectoryParams; response: CloudBackupSnapshotDirectoryListing[] };
+  'cloud_backup.transfer_setting_choices': { params: void; response: CloudsyncTransferSetting[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
   'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
 
