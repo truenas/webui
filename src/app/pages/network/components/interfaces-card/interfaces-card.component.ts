@@ -139,7 +139,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private slideInService: SlideInService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,
@@ -219,7 +219,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   private makeDeleteCall(row: NetworkInterface): void {
-    this.ws.call('interface.delete', [row.id])
+    this.api.call('interface.delete', [row.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

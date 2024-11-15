@@ -19,7 +19,7 @@ import { ResilverConfigComponent } from './resilver-config.component';
 describe('ResilverConfigComponent', () => {
   let spectator: Spectator<ResilverConfigComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: ResilverConfigComponent,
     imports: [
@@ -48,7 +48,7 @@ describe('ResilverConfigComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current resilver settings when form is opened', async () => {
@@ -75,7 +75,7 @@ describe('ResilverConfigComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.resilver.update',
       [{
         enabled: false,

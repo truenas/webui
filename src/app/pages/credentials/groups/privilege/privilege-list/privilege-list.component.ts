@@ -126,7 +126,7 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private groupsSuggestions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({
       label: group.group,
       value: `"${group.group}"`,
@@ -144,7 +144,7 @@ export class PrivilegeListComponent implements OnInit {
 
   constructor(
     private slideInService: SlideInService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
@@ -152,7 +152,7 @@ export class PrivilegeListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'privilege.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'privilege.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
 
@@ -178,7 +178,7 @@ export class PrivilegeListComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('privilege.delete', [privilege.id])),
+        switchMap(() => this.api.call('privilege.delete', [privilege.id])),
         untilDestroyed(this),
       )
       .subscribe({

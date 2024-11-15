@@ -121,7 +121,7 @@ export class FileTicketLicensedComponent {
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     this.getSystemFileSizeLimit();
   }
@@ -154,7 +154,7 @@ export class FileTicketLicensedComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(
         this.imageValidator.getImagesValidator(size * MiB),
       );

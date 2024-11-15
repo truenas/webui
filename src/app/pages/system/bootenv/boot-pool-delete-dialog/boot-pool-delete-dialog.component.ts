@@ -1,6 +1,6 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, TrackByFunction,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, signal, TrackByFunction,
 } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { Bootenv } from 'app/interfaces/bootenv.interface';
+import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -48,8 +48,8 @@ export class BootPoolDeleteDialogComponent {
     confirm: [false, [Validators.requiredTrue]],
   });
 
-  isJobCompleted = false;
-  bulkItems = new Map<string, BulkListItem<Bootenv>>();
+  isJobCompleted = signal(false);
+  bulkItems = new Map<string, BulkListItem<BootEnvironment>>();
 
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
@@ -59,22 +59,22 @@ export class BootPoolDeleteDialogComponent {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
 
-  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<BootEnvironment>>> = (_, entry) => entry.key;
 
   constructor(
     private fb: FormBuilder,
     private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public bootenvs: Bootenv[],
+    @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
   ) {
     this.bootenvs.forEach((bootenv) => {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Initial, item: bootenv });
     });
   }
 
-  getSelectedNames(selectedBootenvs: Bootenv[]): string[][] {
-    return selectedBootenvs.map((bootenv) => [bootenv.id]);
+  getSelectedNames(selectedBootenvs: BootEnvironment[]): { id: string }[][] {
+    return selectedBootenvs.map(({ id }) => [{ id }]);
   }
 
   onSubmit(): void {
@@ -84,12 +84,12 @@ export class BootPoolDeleteDialogComponent {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['bootenv.do_delete', bootenvsToDelete]).pipe(
-      filter((job: Job<CoreBulkResponse<void>[], string[][]>) => !!job.result),
+    this.ws.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
+      filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
       untilDestroyed(this),
     ).subscribe((response) => {
-      response.arguments[1].forEach((params, index: number) => {
-        const [bootenvId] = params.toString().split(',');
+      response.arguments[1].flat().forEach((params, index: number) => {
+        const bootenvId = params.id;
         const bulkItem = this.bulkItems.get(bootenvId);
         if (bulkItem) {
           const item = response.result[index];
@@ -113,8 +113,7 @@ export class BootPoolDeleteDialogComponent {
           }
         }
       });
-      this.isJobCompleted = true;
-      this.cdr.markForCheck();
+      this.isJobCompleted.set(true);
     });
   }
 }

@@ -124,7 +124,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -135,7 +135,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const certificates$ = this.ws.call('certificate.query').pipe(
+    const certificates$ = this.api.call('certificate.query').pipe(
       map((certificates) => certificates.filter((certificate) => certificate.CSR !== null)),
       tap((certificates) => this.certificates = certificates),
       untilDestroyed(this),
@@ -189,7 +189,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         const force = confirmation.secondaryCheckbox;
 
         const jobDialogRef = this.dialogService.jobDialog(
-          this.ws.job('certificate.delete', [certificate.id, force]),
+          this.api.job('certificate.delete', [certificate.id, force]),
           { title: this.translate.instant('Deleting...') },
         );
 
@@ -209,7 +209,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [path], fileName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -236,7 +236,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
       });
     const keyName = `${certificate.name}.key`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [certificate.privatekey_path], keyName])
       .pipe(untilDestroyed(this))
       .subscribe({
