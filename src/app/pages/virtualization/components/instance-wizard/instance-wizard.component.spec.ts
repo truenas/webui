@@ -140,7 +140,7 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
-    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
+    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
     await usbDeviceCheckbox.setValue(true);
 
     const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));

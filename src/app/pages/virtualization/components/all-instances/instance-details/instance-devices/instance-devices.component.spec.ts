@@ -15,14 +15,19 @@ describe('InstanceDevicesComponent', () => {
   const devices = [
     {
       dev_type: VirtualizationDeviceType.Usb,
+      description: 'USB: My USB device',
+      product_id: '1234',
       name: 'usb1',
+
     } as VirtualizationUsb,
     {
       dev_type: VirtualizationDeviceType.Gpu,
       name: 'gpu1',
+      description: 'GPU: My GPU',
+      product_id: '4321',
     },
     {
-      name: 'proxy2',
+      name: 'gpu1',
     } as VirtualizationProxy,
   ];
 
@@ -49,8 +54,8 @@ describe('InstanceDevicesComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('usb1');
-    expect(deviceRows[1]).toHaveText('gpu1');
+    expect(deviceRows[0]).toHaveText('USB: My USB device (1234)');
+    expect(deviceRows[1]).toHaveText('GPU: My GPU (4321)');
   });
 
   it('renders a button to delete the device', () => {
