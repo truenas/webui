@@ -52,7 +52,7 @@ export class InstanceDiskFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: ChainedRef<string>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -68,7 +68,7 @@ export class InstanceDiskFormComponent {
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
 
-    this.ws.call('virt.instance.device_add', [instanceId, payload])
+    this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

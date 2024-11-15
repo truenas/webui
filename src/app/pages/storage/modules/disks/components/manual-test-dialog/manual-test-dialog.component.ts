@@ -82,7 +82,7 @@ export class ManualTestDialogComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
     public dialogRef: MatDialogRef<ManualTestDialogComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {
     this.setDisksBySupport();
@@ -95,7 +95,7 @@ export class ManualTestDialogComponent {
       type: this.form.value.type,
     }));
 
-    this.ws.call('smart.test.manual_test', [params])
+    this.api.call('smart.test.manual_test', [params])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (startedTests) => {

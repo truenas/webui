@@ -23,11 +23,11 @@ export class UpdateService {
   changeLog$ = new BehaviorSubject<string>('');
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   pendingUpdates(): void {
-    this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
+    this.api.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
       if (pending.length !== 0) {
         this.updateDownloaded$.next(true);
       }

@@ -77,14 +77,14 @@ export class SmbSessionListComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
+    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
       tap((sessions: SmbSession[]) => {
         this.sessions = sessions;
         if (this.filterString) {

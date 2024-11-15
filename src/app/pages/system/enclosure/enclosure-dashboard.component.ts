@@ -38,7 +38,7 @@ import { ApiService } from 'app/services/api.service';
   ],
 })
 export class EnclosureDashboardComponent {
-  readonly isJbofLicensed$ = this.ws.call('jbof.licensed');
+  readonly isJbofLicensed$ = this.api.call('jbof.licensed');
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
 
@@ -52,7 +52,7 @@ export class EnclosureDashboardComponent {
   constructor(
     private enclosureStore: EnclosureStore,
     private route: ActivatedRoute,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
   ) {
     this.enclosureStore.initiate();

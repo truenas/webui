@@ -17,7 +17,7 @@ import { NtpServerFormComponent } from './ntp-server-form.component';
 describe('NtpServerFormComponent', () => {
   let spectator: Spectator<NtpServerFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: NtpServerFormComponent,
@@ -41,7 +41,7 @@ describe('NtpServerFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -54,7 +54,7 @@ describe('NtpServerFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('system.ntpserver.create', [{
+      expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [{
         address: 'ua.pool.ntp.org',
         burst: false,
         iburst: true,
@@ -85,7 +85,7 @@ describe('NtpServerFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current server values when form is being edited', async () => {
@@ -112,7 +112,7 @@ describe('NtpServerFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('system.ntpserver.update', [
+      expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [
         1,
         {
           address: 'updated.mock.ntp.server',

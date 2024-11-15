@@ -37,7 +37,7 @@ export class HaUpgradeEffects {
         return EMPTY;
       }
 
-      return this.ws.call('failover.upgrade_pending').pipe(
+      return this.api.call('failover.upgrade_pending').pipe(
         map((isUpgradePending) => upgradePendingStateLoaded({ isUpgradePending })),
       );
     }),
@@ -66,7 +66,7 @@ export class HaUpgradeEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -76,7 +76,7 @@ export class HaUpgradeEffects {
 
   private finishUpgrade(): Observable<unknown> {
     return this.dialogService.jobDialog(
-      this.ws.job('failover.upgrade_finish'),
+      this.api.job('failover.upgrade_finish'),
       { title: this.translate.instant('Update') },
     )
       .afterClosed()

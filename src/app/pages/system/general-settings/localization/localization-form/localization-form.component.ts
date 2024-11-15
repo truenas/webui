@@ -141,7 +141,7 @@ export class LocalizationFormComponent implements OnInit {
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
     public localeService: LocaleService,
-    protected ws: ApiService,
+    protected api: ApiService,
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -187,7 +187,7 @@ export class LocalizationFormComponent implements OnInit {
     }));
     delete body.date_format;
     delete body.time_format;
-    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());

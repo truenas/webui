@@ -63,7 +63,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     if (this.device.attributes.dtype !== VmDeviceType.Disk) {
       return;
@@ -108,7 +108,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
-    this.ws.call('vm.device.delete', [
+    this.api.call('vm.device.delete', [
       this.device.id,
       {
         zvol: value.zvol,

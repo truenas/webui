@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -110,18 +109,17 @@ export class TunableListComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
-    private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private chainedSlideIns: ChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(
+    const tunables$ = this.api.call('tunable.query').pipe(
       tap((tunables) => this.tunables = tunables),
       untilDestroyed(this),
     );
@@ -165,7 +163,7 @@ export class TunableListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.dialogService.jobDialog(
-            this.ws.job('tunable.delete', [tunable.id]),
+            this.api.job('tunable.delete', [tunable.id]),
             {
               title: this.translate.instant('Deleting...'),
             },

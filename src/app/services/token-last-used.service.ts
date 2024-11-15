@@ -38,7 +38,7 @@ export class TokenLastUsedService {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {
   }
@@ -47,7 +47,7 @@ export class TokenLastUsedService {
     user$.pipe(
       filter(Boolean),
       tapOnce(() => this.updateTokenLastUsed()),
-      switchMap(() => this.ws.getWebSocketStream$().pipe(debounceTime(5000))),
+      switchMap(() => this.api.getWebSocketStream$().pipe(debounceTime(5000))),
       tap(() => this.updateTokenLastUsed()),
       untilDestroyed(this),
     ).subscribe();

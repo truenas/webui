@@ -82,7 +82,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
-  usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
+  usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
       label: choice.product,
       value: choice.product_id,
@@ -91,7 +91,7 @@ export class InstanceWizardComponent implements OnInit {
   );
 
   // TODO: MV supports only [Container, Physical] for now (based on the response)
-  gpuDevices$ = this.ws.call(
+  gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
     [VirtualizationType.Container, VirtualizationGpuType.Physical],
   ).pipe(
@@ -133,7 +133,7 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private matDialog: MatDialog,
     private router: Router,
@@ -201,7 +201,7 @@ export class InstanceWizardComponent implements OnInit {
 
   protected onSubmit(): void {
     const payload = this.getPayload();
-    const job$ = this.ws.job('virt.instance.create', [payload]);
+    const job$ = this.api.job('virt.instance.create', [payload]);
 
     this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Creating Instance') })

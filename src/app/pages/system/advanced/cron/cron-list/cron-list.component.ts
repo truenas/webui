@@ -129,7 +129,7 @@ export class CronListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private taskService: TaskService,
     private dialog: DialogService,
@@ -140,7 +140,7 @@ export class CronListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query').pipe(
+    const cronjobs$ = this.api.call('cronjob.query').pipe(
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
@@ -185,7 +185,7 @@ export class CronListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cronjob.run', [row.id])),
+      switchMap(() => this.api.call('cronjob.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

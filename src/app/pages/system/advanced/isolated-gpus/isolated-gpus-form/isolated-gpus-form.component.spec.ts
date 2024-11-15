@@ -23,7 +23,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('IsolatedGpuPcisFormComponent', () => {
   let spectator: Spectator<IsolatedGpusFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: IsolatedGpusFormComponent,
@@ -72,7 +72,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings and shows them', async () => {
@@ -93,6 +93,6 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update_gpu_pci_ids', [['0000:00:01.0']]);
   });
 });

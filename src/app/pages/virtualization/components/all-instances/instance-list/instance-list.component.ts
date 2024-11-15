@@ -100,7 +100,7 @@ export class InstanceListComponent {
     private store: VirtualizationInstancesStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
@@ -136,7 +136,7 @@ export class InstanceListComponent {
 
   restart(instanceId: string): void {
     this.dialog.jobDialog(
-      this.ws.job('virt.instance.restart', [instanceId, {}]),
+      this.api.job('virt.instance.restart', [instanceId, {}]),
       { title: this.translate.instant('Restarting...') },
     )
       .afterClosed()
@@ -146,7 +146,7 @@ export class InstanceListComponent {
 
   start(instanceId: string): void {
     this.dialog.jobDialog(
-      this.ws.job('virt.instance.start', [instanceId]),
+      this.api.job('virt.instance.start', [instanceId]),
       { title: this.translate.instant('Starting...') },
     )
       .afterClosed()
@@ -156,7 +156,7 @@ export class InstanceListComponent {
 
   stop(instanceId: string): void {
     this.dialog.jobDialog(
-      this.ws.job('virt.instance.stop', [instanceId, {}]),
+      this.api.job('virt.instance.stop', [instanceId, {}]),
       { title: this.translate.instant('Stopping...') },
     )
       .afterClosed()

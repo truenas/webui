@@ -14,7 +14,7 @@ import { ApiService } from 'app/services/api.service';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AlertConfigFormComponent,
     imports: [
@@ -85,13 +85,13 @@ describe('AlertConfigFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   // TODO: Does not interact with the form as a user.
   it('loads current config and shows values in the form', () => {
-    expect(ws.call).toHaveBeenCalledWith('alert.list_categories');
-    expect(ws.call).toHaveBeenCalledWith('alertclasses.config');
+    expect(api.call).toHaveBeenCalledWith('alert.list_categories');
+    expect(api.call).toHaveBeenCalledWith('alertclasses.config');
     expect(spectator.component.form.value).toEqual({
       app_1: { level: AlertLevel.Error, policy: AlertPolicy.Never },
       app_2: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
@@ -110,7 +110,7 @@ describe('AlertConfigFormComponent', () => {
 
     spectator.component.onSubmit();
 
-    expect(ws.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
+    expect(api.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
       classes: {
         app_2: { level: AlertLevel.Notice },
         cert_1: { policy: AlertPolicy.Never },

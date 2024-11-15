@@ -21,7 +21,7 @@ import { ImportPoolComponent } from './import-pool.component';
 describe('ImportPoolComponent', () => {
   let spectator: Spectator<ImportPoolComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: ImportPoolComponent,
@@ -71,7 +71,7 @@ describe('ImportPoolComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows the current list of pools to import when form is opened', async () => {
@@ -79,7 +79,7 @@ describe('ImportPoolComponent', () => {
     const controls = await form.getControlHarnessesDict();
     const optionLabels = await (controls['Pool'] as IxSelectHarness).getOptionLabels();
 
-    expect(ws.job).toHaveBeenCalledWith('pool.import_find');
+    expect(api.job).toHaveBeenCalledWith('pool.import_find');
     expect(optionLabels).toEqual([
       'pool_name_1 | pool_guid_1',
       'pool_name_2 | pool_guid_2',
@@ -97,7 +97,7 @@ describe('ImportPoolComponent', () => {
     await importButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(ws.job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+    expect(api.job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
   });
 
   it('checks if pool needs to be unlocked and prompts user to unlock it', async () => {
@@ -109,7 +109,7 @@ describe('ImportPoolComponent', () => {
     const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
     await importButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('pool.dataset.query', [[['name', '=', 'pool_name_1']]]);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.query', [[['name', '=', 'pool_name_1']]]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Unlock Pool',
     }));

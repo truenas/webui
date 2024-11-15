@@ -17,7 +17,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 describe('BootEnvironmentFormComponent', () => {
   let spectator: Spectator<BootEnvironmentFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: BootEnvironmentFormComponent,
     imports: [
@@ -51,7 +51,7 @@ describe('BootEnvironmentFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -74,7 +74,7 @@ describe('BootEnvironmentFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('boot.environment.clone', [
+      expect(api.call).toHaveBeenCalledWith('boot.environment.clone', [
         fields,
       ]);
     });

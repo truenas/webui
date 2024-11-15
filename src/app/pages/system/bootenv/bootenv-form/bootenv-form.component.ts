@@ -63,7 +63,7 @@ export class BootEnvironmentFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private slideInRef: SlideInRef<BootEnvironmentFormComponent>,
   ) {}
@@ -79,7 +79,7 @@ export class BootEnvironmentFormComponent implements OnInit {
       target: this.formGroup.value.target,
     }];
 
-    this.ws.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close(true);

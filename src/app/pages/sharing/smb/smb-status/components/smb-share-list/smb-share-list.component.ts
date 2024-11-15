@@ -73,14 +73,14 @@ export class SmbShareListComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Shares]).pipe(
+    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Shares]).pipe(
       tap((shares: SmbShareInfo[]) => {
         this.shares = shares;
         if (this.filterString) {

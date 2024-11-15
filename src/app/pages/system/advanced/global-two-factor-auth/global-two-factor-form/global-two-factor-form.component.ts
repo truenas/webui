@@ -65,7 +65,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -114,7 +114,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('auth.twofactor.update', [payload]);
+        return this.api.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
         this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);

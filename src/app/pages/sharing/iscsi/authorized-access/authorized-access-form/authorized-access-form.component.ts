@@ -117,7 +117,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private validatorService: IxValidatorsService,
     private slideInRef: SlideInRef<AuthorizedAccessFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingAccess: IscsiAuthAccess,
@@ -145,9 +145,9 @@ export class AuthorizedAccessFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.auth.create', [values as IscsiAuthAccessUpdate]);
+      request$ = this.api.call('iscsi.auth.create', [values as IscsiAuthAccessUpdate]);
     } else {
-      request$ = this.ws.call('iscsi.auth.update', [
+      request$ = this.api.call('iscsi.auth.update', [
         this.editingAccess.id,
         values as IscsiAuthAccessUpdate,
       ]);

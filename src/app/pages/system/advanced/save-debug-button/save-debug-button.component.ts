@@ -41,7 +41,7 @@ export class SaveDebugButtonComponent {
   protected readonly searchableElement = saveDebugElement;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,
@@ -76,7 +76,7 @@ export class SaveDebugButtonComponent {
         const mimeType = 'application/gzip';
         const fileName = `debug-${hostname}-${date}.tgz`;
 
-        return this.ws.call('core.download', ['system.debug', [], fileName, true]).pipe(
+        return this.api.call('core.download', ['system.debug', [], fileName, true]).pipe(
           switchMap(([jobId, url]) => {
             const job$ = this.store$.pipe(
               select(selectJob(jobId)),

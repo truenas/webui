@@ -42,7 +42,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   isWsConnected(): void {
@@ -78,7 +78,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
 
   resetConfig(): void {
     this.dialogService.jobDialog(
-      this.ws.job('config.reset', [{ reboot: true }]),
+      this.api.job('config.reset', [{ reboot: true }]),
       {
         title: this.translate.instant('Resetting. Please wait...'),
         description: this.translate.instant('Resetting system configuration to default settings. The system will restart.'),

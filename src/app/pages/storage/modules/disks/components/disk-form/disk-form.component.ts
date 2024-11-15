@@ -80,7 +80,7 @@ export class DiskFormComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -140,7 +140,7 @@ export class DiskFormComponent implements OnInit {
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading = true;
-    this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
+    this.api.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

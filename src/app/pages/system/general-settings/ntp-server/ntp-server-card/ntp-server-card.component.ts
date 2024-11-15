@@ -108,13 +108,13 @@ export class NtpServerCardComponent implements OnInit {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private slideInService: SlideInService,
   ) {}
 
   ngOnInit(): void {
-    const ntpServers$ = this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this));
+    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
     this.loadItems();
   }
@@ -133,7 +133,7 @@ export class NtpServerCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
+      switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {

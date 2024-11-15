@@ -39,7 +39,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
 
   constructor(
     private diskStore: DiskStore,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -60,7 +60,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     return triggers$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap((poolId) => {
-        return this.ws.call('pool.query', [[['id', '=', +poolId]]]);
+        return this.api.call('pool.query', [[['id', '=', +poolId]]]);
       }),
       tapResponse(
         (pools) => {

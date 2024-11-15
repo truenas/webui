@@ -20,7 +20,7 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn() };
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
@@ -51,7 +51,7 @@ describe('AllowedAddressesComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows allowed addresses when editing a form', async () => {
@@ -68,7 +68,7 @@ describe('AllowedAddressesComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['2.2.2.2'] },
     ]);
   });
@@ -80,7 +80,7 @@ describe('AllowedAddressesComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['192.168.1.0/24'] },
     ]);
   });

@@ -25,7 +25,7 @@ export class FipsService {
     private translate: TranslateService,
     private router: Router,
     private snackbar: SnackbarService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -87,7 +87,7 @@ export class FipsService {
 
   private restartRemote(): Observable<unknown> {
     return this.dialog.jobDialog(
-      this.ws.job('failover.reboot.other_node'),
+      this.api.job('failover.reboot.other_node'),
       { title: this.translate.instant('Restarting Standby') },
     )
       .afterClosed()

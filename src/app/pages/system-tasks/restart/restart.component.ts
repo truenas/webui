@@ -30,7 +30,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class RestartComponent implements OnInit {
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private wsManager: WebSocketConnectionService,
     protected router: Router,
     private route: ActivatedRoute,
@@ -49,7 +49,7 @@ export class RestartComponent implements OnInit {
     this.location.replaceState('/signin');
 
     this.matDialog.closeAll();
-    this.ws.job('system.reboot', [reason]).pipe(untilDestroyed(this)).subscribe({
+    this.api.job('system.reboot', [reason]).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))

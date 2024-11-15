@@ -63,7 +63,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private fips: FipsService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();
@@ -77,7 +77,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('system.security.update', [this.form.value as SystemSecurityConfig]),
+      this.api.job('system.security.update', [this.form.value as SystemSecurityConfig]),
       {
         title: this.translate.instant('Saving settings'),
       },

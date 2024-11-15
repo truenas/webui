@@ -17,7 +17,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   /**
@@ -69,7 +69,7 @@ export class VmGpuService {
   }
 
   private createVmPciDevice(vm: VirtualMachine, device: PciDevice): Observable<unknown> {
-    return this.ws.call('vm.device.create', [{
+    return this.api.call('vm.device.create', [{
       vm: vm.id,
       attributes: {
         dtype: VmDeviceType.Pci,
@@ -80,7 +80,7 @@ export class VmGpuService {
 
   private deleteGpus(previousVmPciDevices: VmPciPassthroughDevice[], gpusToRemove: Device[]): Observable<unknown>[] {
     const slotsToRemove = this.findSlotsToRemove(previousVmPciDevices, gpusToRemove);
-    return slotsToRemove.map((device) => this.ws.call('vm.device.delete', [device.id]));
+    return slotsToRemove.map((device) => this.api.call('vm.device.delete', [device.id]));
   }
 
   private findSlotsToRemove(

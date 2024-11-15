@@ -56,7 +56,7 @@ export class DeleteVmDialogComponent implements OnInit {
   readonly helptext = helptextVmList;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
     private validators: IxValidatorsService,
@@ -71,7 +71,7 @@ export class DeleteVmDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.ws.call('vm.delete', [this.vm.id, {
+    this.api.call('vm.delete', [this.vm.id, {
       force: this.form.value.force,
       zvols: this.form.value.zvols,
     }])

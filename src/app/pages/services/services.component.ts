@@ -138,7 +138,7 @@ export class ServicesComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
-    private ws: ApiService,
+    private api: ApiService,
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -195,7 +195,7 @@ export class ServicesComponent implements OnInit {
   private enableToggle(service: ServiceRow): void {
     this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
 
-    this.ws.call('service.update', [service.id, { enable: !service.enable }])
+    this.api.call('service.update', [service.id, { enable: !service.enable }])
       .pipe(
         this.loader.withLoader(),
         take(1),

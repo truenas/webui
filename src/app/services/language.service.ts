@@ -371,7 +371,7 @@ export class LanguageService {
 
   constructor(
     protected translate: TranslateService,
-    protected ws: ApiService,
+    protected api: ApiService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {

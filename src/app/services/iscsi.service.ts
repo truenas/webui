@@ -15,41 +15,41 @@ import { ApiService } from 'app/services/api.service';
   providedIn: 'root',
 })
 export class IscsiService {
-  constructor(protected ws: ApiService) {}
+  constructor(protected api: ApiService) {}
 
   getIpChoices(): Observable<Choices> {
-    return this.ws.call('iscsi.portal.listen_ip_choices');
+    return this.api.call('iscsi.portal.listen_ip_choices');
   }
 
   listPortals(): Observable<IscsiPortal[]> {
-    return this.ws.call('iscsi.portal.query', []);
+    return this.api.call('iscsi.portal.query', []);
   }
 
   getInitiators(): Observable<IscsiInitiatorGroup[]> {
-    return this.ws.call('iscsi.initiator.query', []);
+    return this.api.call('iscsi.initiator.query', []);
   }
 
   getExtentDevices(): Observable<Choices> {
-    return this.ws.call('iscsi.extent.disk_choices');
+    return this.api.call('iscsi.extent.disk_choices');
   }
 
   getExtents(): Observable<IscsiExtent[]> {
-    return this.ws.call('iscsi.extent.query', []);
+    return this.api.call('iscsi.extent.query', []);
   }
 
   getTargets(): Observable<IscsiTarget[]> {
-    return this.ws.call('iscsi.target.query', []);
+    return this.api.call('iscsi.target.query', []);
   }
 
   getTargetExtents(): Observable<IscsiTargetExtent[]> {
-    return this.ws.call('iscsi.targetextent.query', []);
+    return this.api.call('iscsi.targetextent.query', []);
   }
 
   getAuth(): Observable<IscsiAuthAccess[]> {
-    return this.ws.call('iscsi.auth.query', []);
+    return this.api.call('iscsi.auth.query', []);
   }
 
   getGlobalSessions(): Observable<IscsiGlobalSession[]> {
-    return this.ws.call('iscsi.global.sessions');
+    return this.api.call('iscsi.global.sessions');
   }
 }

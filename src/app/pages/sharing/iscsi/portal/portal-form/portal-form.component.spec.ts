@@ -19,7 +19,7 @@ import { PortalFormComponent } from './portal-form.component';
 describe('PortalFormComponent', () => {
   let spectator: Spectator<PortalFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: PortalFormComponent,
     imports: [
@@ -55,7 +55,7 @@ describe('PortalFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an create payload to websocket and closes modal when save is pressed', async () => {
@@ -75,7 +75,7 @@ describe('PortalFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('iscsi.portal.create', [{
+      expect(api.call).toHaveBeenCalledWith('iscsi.portal.create', [{
         comment: 'work',
         discovery_authgroup: 1,
         discovery_authmethod: IscsiAuthMethod.ChapMutual,
@@ -102,7 +102,7 @@ describe('PortalFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows iscsi portal group values when form is being edited', async () => {
@@ -129,7 +129,7 @@ describe('PortalFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('iscsi.portal.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('iscsi.portal.update', [1, {
         comment: 'good',
         discovery_authgroup: 1,
         discovery_authmethod: IscsiAuthMethod.Chap,
@@ -142,7 +142,7 @@ describe('PortalFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('adds and removes blocks when Add or Delete button is pressed', async () => {

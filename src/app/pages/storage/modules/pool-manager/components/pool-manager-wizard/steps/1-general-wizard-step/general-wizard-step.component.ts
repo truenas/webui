@@ -59,18 +59,18 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   isLoading$ = this.store.isLoading$;
-  poolNames$ = this.ws.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+  poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
     map((pools) => pools.map((pool) => pool.name)),
   );
 
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
-  readonly encryptionAlgorithmOptions$ = this.ws
+  readonly encryptionAlgorithmOptions$ = this.api
     .call('pool.dataset.encryption_algorithm_choices')
     .pipe(choicesToOptions());
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private dialog: DialogService,
     private translate: TranslateService,

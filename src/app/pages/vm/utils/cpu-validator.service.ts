@@ -22,7 +22,7 @@ export class CpuValidatorService {
   constructor(
     private validators: IxValidatorsService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   createValidator(): (control: AbstractControl) => Observable<ValidationErrors | null> {
@@ -56,7 +56,7 @@ export class CpuValidatorService {
    */
   private getMaxVcpus(): Observable<number> {
     if (!this.maximumCpus$) {
-      this.maximumCpus$ = this.ws.call('vm.maximum_supported_vcpus').pipe(shareReplay({
+      this.maximumCpus$ = this.api.call('vm.maximum_supported_vcpus').pipe(shareReplay({
         refCount: false,
         bufferSize: 1,
       }));

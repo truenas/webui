@@ -33,7 +33,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 })
 export class FailoverComponent implements OnInit {
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private errorHandler: ErrorHandlerService,
     private wsManager: WebSocketConnectionService,
     protected router: Router,
@@ -64,7 +64,7 @@ export class FailoverComponent implements OnInit {
     // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
     this.matDialog.closeAll();
-    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))

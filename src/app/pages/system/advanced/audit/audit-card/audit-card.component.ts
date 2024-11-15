@@ -47,7 +47,7 @@ export class AuditCardComponent {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('audit.config')),
+    switchMap(() => this.api.call('audit.config')),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -57,7 +57,7 @@ export class AuditCardComponent {
 
   constructor(
     private chainedSlideIns: ChainedSlideInService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private advancedSettingsService: AdvancedSettingsService,
   ) {}

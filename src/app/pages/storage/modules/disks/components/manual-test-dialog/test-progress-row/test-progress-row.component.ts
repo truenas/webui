@@ -55,7 +55,7 @@ export class TestProgressRowComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -101,7 +101,7 @@ export class TestProgressRowComponent implements OnInit {
 
   private getTestUpdateSubscriber(): Observable<SmartTestProgressUpdate> {
     const diskName = this.disk().name;
-    return this.ws.subscribe(`smart.test.progress:${diskName}`).pipe(
+    return this.api.subscribe(`smart.test.progress:${diskName}`).pipe(
       catchError((error: unknown) => {
         this.test.set({
           ...this.test(),

@@ -27,7 +27,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: LocalizationFormComponent,
     imports: [
@@ -114,7 +114,7 @@ describe('LocalizationFormComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   describe('saving localization settings', () => {
@@ -149,7 +149,7 @@ describe('LocalizationFormComponent', () => {
         dateFormat: 'MMMM d, yyyy',
         timeFormat: 'hh:mm:ss aa',
       }));
-      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [{
         language: 'en',
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',

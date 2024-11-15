@@ -122,7 +122,7 @@ export class PortalListComponent implements OnInit {
               buttonText: this.translate.instant('Delete'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
+              switchMap(() => this.api.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
               next: () => this.refresh(),
@@ -144,7 +144,7 @@ export class PortalListComponent implements OnInit {
     public emptyService: EmptyService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,
@@ -156,7 +156,7 @@ export class PortalListComponent implements OnInit {
     this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
       this.ipChoices = new Map(Object.entries(choices));
     });
-    const portals$ = this.ws.call('iscsi.portal.query', []).pipe(
+    const portals$ = this.api.call('iscsi.portal.query', []).pipe(
       tap((portals) => this.portals = portals),
     );
 

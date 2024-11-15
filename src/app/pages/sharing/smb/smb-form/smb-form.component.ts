@@ -228,7 +228,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private datasetService: DatasetService,
@@ -349,7 +349,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     if (this.wasStripAclWarningShown || !path || aclValue) {
       return;
     }
-    this.ws
+    this.api
       .call('filesystem.stat', [path])
       .pipe(untilDestroyed(this))
       .subscribe((stat) => {
@@ -379,7 +379,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
   setupAndApplyPurposePresets(): Observable<void> {
-    return this.ws.call('sharing.smb.presets').pipe(
+    return this.api.call('sharing.smb.presets').pipe(
       switchMap((presets) => {
         const nonClusterPresets = Object.entries(presets).reduce(
           (acc, [presetName, preset]) => {
@@ -468,9 +468,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     let request$: Observable<SmbShare>;
 
     if (this.isNew) {
-      request$ = this.ws.call('sharing.smb.create', [smbShare]);
+      request$ = this.api.call('sharing.smb.create', [smbShare]);
     } else {
-      request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
+      request$ = this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -563,7 +563,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   restartCifsService = (): Observable<boolean> => {
     this.loader.open();
-    return this.ws.call('service.restart', [ServiceName.Cifs]).pipe(
+    return this.api.call('service.restart', [ServiceName.Cifs]).pipe(
       tap(() => {
         this.loader.close();
         this.snackbar.success(
@@ -578,7 +578,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
-    return this.ws.call('filesystem.stat', [sharePath]).pipe(
+    return this.api.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
         return of(
           stat.acl !== this.form.controls.acl.value && datasetId.includes('/'),

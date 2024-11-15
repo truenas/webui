@@ -131,7 +131,7 @@ export class AssociatedTargetListComponent implements OnInit {
                     buttonText: this.translate.instant('Delete'),
                   }).pipe(
                     filter(Boolean),
-                    switchMap(() => this.ws.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
+                    switchMap(() => this.api.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
                     untilDestroyed(this),
                   ).subscribe({
                     next: () => this.dataProvider.load(),
@@ -157,7 +157,7 @@ export class AssociatedTargetListComponent implements OnInit {
     private iscsiService: IscsiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,

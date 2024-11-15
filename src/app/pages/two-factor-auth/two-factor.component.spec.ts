@@ -19,7 +19,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
@@ -56,7 +56,7 @@ describe('TwoFactorComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows the QR code viewer with correct provisioning URI when 2FA is configured', () => {
@@ -123,7 +123,7 @@ describe('TwoFactorComponent', () => {
       buttonText: helptext2fa.two_factor.renewSecret.btn,
     });
 
-    expect(ws.call).toHaveBeenCalledWith('user.renew_2fa_secret', ['dummy', {
+    expect(api.call).toHaveBeenCalledWith('user.renew_2fa_secret', ['dummy', {
       interval: 30,
       otp_digits: 6,
     }]);

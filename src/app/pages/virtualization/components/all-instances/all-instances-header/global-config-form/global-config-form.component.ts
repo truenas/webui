@@ -56,8 +56,8 @@ export class GlobalConfigFormComponent {
     v6_network: [null as string],
   });
 
-  protected poolOptions$ = this.ws.call('virt.global.pool_choices').pipe(choicesToOptions());
-  protected bridgeOptions$ = this.ws.call('virt.global.bridge_choices').pipe(choicesToOptions());
+  protected poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());
+  protected bridgeOptions$ = this.api.call('virt.global.bridge_choices').pipe(choicesToOptions());
 
   get isAutoBridge(): boolean {
     return this.form.controls.bridge.value === this.autoBridge;
@@ -65,7 +65,7 @@ export class GlobalConfigFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -94,7 +94,7 @@ export class GlobalConfigFormComponent {
     };
 
     this.dialogService.jobDialog(
-      this.ws.job('virt.global.update', [values]),
+      this.api.job('virt.global.update', [values]),
       { title: this.translate.instant('Updating settings') },
     )
       .afterClosed()

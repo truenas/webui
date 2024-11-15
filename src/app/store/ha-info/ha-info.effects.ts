@@ -16,7 +16,7 @@ export class HaInfoEffects {
   loadFailoverLicensedStatus = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('failover.licensed').pipe(
+      return this.api.call('failover.licensed').pipe(
         map((isHaLicensed) => {
           return failoverLicensedStatusLoaded({ isHaLicensed });
         }),
@@ -27,7 +27,7 @@ export class HaInfoEffects {
   loadHaStatus = createEffect(() => this.actions$.pipe(
     ofType(haSettingsUpdated, passiveNodeReplaced, adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('failover.disabled.reasons').pipe(
+      return this.api.call('failover.disabled.reasons').pipe(
         map((failoverDisabledReasons) => {
           const haEnabled = failoverDisabledReasons.length === 0;
           this.window.localStorage.setItem('ha_status', haEnabled.toString());
@@ -41,7 +41,7 @@ export class HaInfoEffects {
   subscribeToHa = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.subscribe('failover.disabled.reasons').pipe(
+      return this.api.subscribe('failover.disabled.reasons').pipe(
         map((event) => {
           const failoverDisabledReasons = event.fields?.disabled_reasons;
           const haEnabled = failoverDisabledReasons.length === 0;
@@ -55,7 +55,7 @@ export class HaInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) { }
 }

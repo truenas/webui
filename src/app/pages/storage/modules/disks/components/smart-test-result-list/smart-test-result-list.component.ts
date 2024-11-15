@@ -111,7 +111,7 @@ export class SmartTestResultListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}
@@ -124,13 +124,13 @@ export class SmartTestResultListComponent implements OnInit {
   }
 
   createDataProvider(): void {
-    const smartTestResults$ = this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+    const smartTestResults$ = this.api.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       switchMap((disks) => {
         this.disks = disks;
         const queryParams: QueryParams<SmartTestResults> = this.type === SmartTestResultPageType.Disk
           ? [[['disk', '=', this.pk]]]
           : [[['disk', 'in', this.diskNames]]];
-        return this.ws.call('smart.test.results', queryParams);
+        return this.api.call('smart.test.results', queryParams);
       }),
       map((smartTestResults: SmartTestResults[]) => {
         const rows: SmartTestResultsRow[] = [];

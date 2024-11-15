@@ -21,9 +21,9 @@ import { ApiService } from 'app/services/api.service';
   ],
 })
 export class TrueCommandStatusComponent {
-  protected isManagedByTruecommand$ = this.ws.call('truenas.managed_by_truecommand');
+  protected isManagedByTruecommand$ = this.api.call('truenas.managed_by_truecommand');
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 }

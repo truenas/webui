@@ -135,7 +135,7 @@ export class ExtentFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private filesystemService: FilesystemService,
     private slideInRef: SlideInRef<ExtentFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingExtent: IscsiExtent,
@@ -184,9 +184,9 @@ export class ExtentFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.extent.create', [values]);
+      request$ = this.api.call('iscsi.extent.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.extent.update', [
+      request$ = this.api.call('iscsi.extent.update', [
         this.editingExtent.id,
         values,
       ]);

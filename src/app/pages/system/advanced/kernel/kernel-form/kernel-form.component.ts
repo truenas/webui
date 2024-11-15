@@ -59,7 +59,7 @@ export class KernelFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -90,7 +90,7 @@ export class KernelFormComponent implements OnInit {
       debugkernel: values.debugkernel,
     };
     this.isFormLoading = true;
-    this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));

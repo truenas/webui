@@ -69,7 +69,7 @@ export class DiskWipeDialogComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
@@ -92,7 +92,7 @@ export class DiskWipeDialogComponent {
 
   private wipeDisk(): void {
     this.dialogService.jobDialog(
-      this.ws.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
+      this.api.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
       {
         canMinimize: true,
         description: this.translate.instant('Wiping disk...'),

@@ -18,7 +18,7 @@ import { ApiService } from 'app/services/api.service';
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   function createComponentWithData(device: VmDevice): SpectatorFactory<DeviceDeleteModalComponent> {
     return createComponentFactory({
@@ -54,7 +54,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -90,7 +90,7 @@ describe('DeviceDeleteModalComponent', () => {
             const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
             await submitButton.click();
 
-            expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
+            expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
               fakeDisk.id,
               expectedValues,
             ]);
@@ -113,7 +113,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -165,7 +165,7 @@ describe('DeviceDeleteModalComponent', () => {
             const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
             await submitButton.click();
 
-            expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
+            expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
               fakeRawFile.id,
               expectedValues,
             ]);
@@ -188,7 +188,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -220,7 +220,7 @@ describe('DeviceDeleteModalComponent', () => {
           const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete Device' }));
           await submitButton.click();
 
-          expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
+          expect(api.call).toHaveBeenCalledWith('vm.device.delete', [
             fakeRawFile.id,
             expectedValues,
           ]);

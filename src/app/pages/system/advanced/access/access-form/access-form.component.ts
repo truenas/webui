@@ -79,7 +79,7 @@ export class AccessFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
@@ -151,7 +151,7 @@ export class AccessFormComponent implements OnInit {
 
   private updateLoginBanner(): Observable<unknown> {
     const loginBanner = this.form.value.login_banner;
-    return this.ws.call('system.advanced.update', [{ login_banner: loginBanner }])
+    return this.api.call('system.advanced.update', [{ login_banner: loginBanner }])
       .pipe(finalize(() => {
         this.store$.dispatch(advancedConfigUpdated());
         this.store$.dispatch(loginBannerUpdated({ loginBanner }));
@@ -159,7 +159,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   private updateEnterpriseDsAuth(): Observable<unknown> {
-    return this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+    return this.api.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
       .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
   }
 

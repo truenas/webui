@@ -259,7 +259,7 @@ export class IscsiWizardComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -305,62 +305,62 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   createZvol(payload: DatasetCreate): Promise<Dataset> {
-    return lastValueFrom(this.ws.call('pool.dataset.create', [payload]));
+    return lastValueFrom(this.api.call('pool.dataset.create', [payload]));
   }
 
   createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
-    return lastValueFrom(this.ws.call('iscsi.extent.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.extent.create', [payload]));
   }
 
   createAuthgroup(payload: IscsiAuthAccessUpdate): Promise<IscsiAuthAccess> {
-    return lastValueFrom(this.ws.call('iscsi.auth.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.auth.create', [payload]));
   }
 
   createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
-    return lastValueFrom(this.ws.call('iscsi.portal.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.portal.create', [payload]));
   }
 
   createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
-    return lastValueFrom(this.ws.call('iscsi.initiator.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.initiator.create', [payload]));
   }
 
   createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
-    return lastValueFrom(this.ws.call('iscsi.target.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
   }
 
   createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
-    return lastValueFrom(this.ws.call('iscsi.targetextent.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 
   rollBack(): void {
     const requests = [];
 
     if (this.createdZvol) {
-      requests.push(this.ws.call('pool.dataset.delete', [this.createdZvol.id, { recursive: true, force: true }]));
+      requests.push(this.api.call('pool.dataset.delete', [this.createdZvol.id, { recursive: true, force: true }]));
     }
 
     if (this.createdExtent) {
-      requests.push(this.ws.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
+      requests.push(this.api.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
     }
 
     if (this.createdAuthgroup) {
-      requests.push(this.ws.call('iscsi.auth.delete', [this.createdAuthgroup.id]));
+      requests.push(this.api.call('iscsi.auth.delete', [this.createdAuthgroup.id]));
     }
 
     if (this.createdPortal) {
-      requests.push(this.ws.call('iscsi.portal.delete', [this.createdPortal.id]));
+      requests.push(this.api.call('iscsi.portal.delete', [this.createdPortal.id]));
     }
 
     if (this.createdInitiator) {
-      requests.push(this.ws.call('iscsi.initiator.delete', [this.createdInitiator.id]));
+      requests.push(this.api.call('iscsi.initiator.delete', [this.createdInitiator.id]));
     }
 
     if (this.createdTarget) {
-      requests.push(this.ws.call('iscsi.target.delete', [this.createdTarget.id]));
+      requests.push(this.api.call('iscsi.target.delete', [this.createdTarget.id]));
     }
 
     if (this.createdTargetExtent) {
-      requests.push(this.ws.call('iscsi.targetextent.delete', [this.createdTargetExtent.id]));
+      requests.push(this.api.call('iscsi.targetextent.delete', [this.createdTargetExtent.id]));
     }
 
     if (requests.length) {

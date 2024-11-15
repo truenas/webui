@@ -90,7 +90,7 @@ export class InitiatorFormComponent implements OnInit {
   ];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
@@ -125,9 +125,9 @@ export class InitiatorFormComponent implements OnInit {
 
     let request;
     if (this.pk === undefined) {
-      request = this.ws.call('iscsi.initiator.create', [payload]);
+      request = this.api.call('iscsi.initiator.create', [payload]);
     } else {
-      request = this.ws.call('iscsi.initiator.update', [this.pk, payload]);
+      request = this.api.call('iscsi.initiator.update', [this.pk, payload]);
     }
 
     this.isFormLoading = true;
@@ -146,7 +146,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   getConnectedInitiators(): void {
-    this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (sessions) => {
         this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
         this.cdr.markForCheck();
@@ -169,7 +169,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setForm(): void {
-    this.ws.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
+    this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (initiators) => {

@@ -27,7 +27,7 @@ export class ServicesEffects {
   loadServices$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
+      return this.api.call('service.query', [[], { order_by: ['service'] }]).pipe(
         map((services) => services.filter((service) => !hiddenServices.includes(service.service))),
         map((services) => servicesLoaded({ services })),
         catchError((error) => {
@@ -42,7 +42,7 @@ export class ServicesEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(servicesLoaded),
     switchMap(() => {
-      return this.ws.subscribe('service.query').pipe(
+      return this.api.subscribe('service.query').pipe(
         map((event) => event.fields),
         filter((service) => !hiddenServices.includes(service.service)),
         map((service) => serviceChanged({ service })),
@@ -90,7 +90,7 @@ export class ServicesEffects {
   constructor(
     private store$: Store<AppState>,
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private authService: AuthService,
     private servicesService: ServicesService,

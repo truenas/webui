@@ -29,8 +29,8 @@ export class NetworkInterfacesEffects {
     filterAsync(() => this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
-        this.ws.call('interface.has_pending_changes'),
-        this.ws.call('interface.checkin_waiting'),
+        this.api.call('interface.has_pending_changes'),
+        this.api.call('interface.checkin_waiting'),
       ]).pipe(
         this.errorHandler.catchError(),
         map(([hasPendingChanges, checkinWaiting]) => {
@@ -68,7 +68,7 @@ export class NetworkInterfacesEffects {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,

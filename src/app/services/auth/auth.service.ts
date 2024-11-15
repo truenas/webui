@@ -93,7 +93,7 @@ export class AuthService {
   constructor(
     private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -107,7 +107,7 @@ export class AuthService {
       return of(this.cachedGlobalTwoFactorConfig);
     }
 
-    return this.ws.call('auth.twofactor.config').pipe(
+    return this.api.call('auth.twofactor.config').pipe(
       tap((config) => {
         this.cachedGlobalTwoFactorConfig = config;
       }),
@@ -183,7 +183,7 @@ export class AuthService {
     return this.makeRequest('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.ws.clearSubscriptions();
+        this.api.clearSubscriptions();
         this.isLoggedIn$.next(false);
       }),
     );
@@ -282,7 +282,7 @@ export class AuthService {
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
-    return this.ws.call('auth.me').pipe(
+    return this.api.call('auth.me').pipe(
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),

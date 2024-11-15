@@ -139,7 +139,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
-  readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
+  readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
         let label = id;
@@ -155,7 +155,7 @@ export class DeviceFormComponent implements OnInit {
     }),
   );
 
-  readonly usbControllerOptions$ = this.ws.call('vm.device.usb_controller_choices').pipe(
+  readonly usbControllerOptions$ = this.api.call('vm.device.usb_controller_choices').pipe(
     map((usbControllers) => {
       return Object.entries(usbControllers).map(([key, controller]) => {
         return {
@@ -166,13 +166,13 @@ export class DeviceFormComponent implements OnInit {
     }),
   );
 
-  readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
-  readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
-  readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
+  readonly resolutions$ = this.api.call('vm.resolution_choices').pipe(choicesToOptions());
+  readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
 
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
-    this.ws.call('vm.device.passthrough_device_choices').pipe(
+    this.api.call('vm.device.passthrough_device_choices').pipe(
       map((passthroughDevices) => {
         return Object.keys(passthroughDevices).map((id) => {
           return {
@@ -185,7 +185,7 @@ export class DeviceFormComponent implements OnInit {
   );
 
   readonly zvolProvider = new SimpleAsyncComboboxProvider(
-    this.ws.call('vm.device.disk_choices').pipe(choicesToOptions()),
+    this.api.call('vm.device.disk_choices').pipe(choicesToOptions()),
   );
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
@@ -232,7 +232,7 @@ export class DeviceFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private networkService: NetworkService,
@@ -315,7 +315,7 @@ export class DeviceFormComponent implements OnInit {
   }
 
   generateMacAddress(): void {
-    this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
+    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
       this.nicForm.patchValue({ mac: randomMac });
     });
   }
@@ -333,8 +333,8 @@ export class DeviceFormComponent implements OnInit {
 
     if (this.typeControl.value === VmDeviceType.Pci) {
       forkJoin([
-        this.ws.call('vm.device.passthrough_device_choices'),
-        this.ws.call('system.advanced.config'),
+        this.api.call('vm.device.passthrough_device_choices'),
+        this.api.call('system.advanced.config'),
       ]).pipe(untilDestroyed(this)).subscribe(([passthroughDevices, advancedConfig]) => {
         const dev = this.pciForm.controls.pptdev.value;
         if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
@@ -361,8 +361,8 @@ export class DeviceFormComponent implements OnInit {
     };
 
     const request$ = this.isNew
-      ? this.ws.call('vm.device.create', [update])
-      : this.ws.call('vm.device.update', [this.existingDevice.id, update]);
+      ? this.api.call('vm.device.create', [update])
+      : this.api.call('vm.device.update', [this.existingDevice.id, update]);
 
     request$
       .pipe(untilDestroyed(this))
@@ -410,7 +410,7 @@ export class DeviceFormComponent implements OnInit {
    * Only one display of each type can be added.
    */
   private hideDisplayIfCannotBeAdded(): void {
-    this.ws.call('vm.get_display_devices', [this.virtualMachineId])
+    this.api.call('vm.get_display_devices', [this.virtualMachineId])
       .pipe(untilDestroyed(this))
       .subscribe((devices) => {
         if (devices.length < 2) {

@@ -18,7 +18,7 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 describe('AuditFormComponent', () => {
   let spectator: Spectator<AuditFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AuditFormComponent,
     imports: [
@@ -49,14 +49,14 @@ describe('AuditFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for audit form and shows them', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('audit.config');
+    expect(api.call).toHaveBeenCalledWith('audit.config');
     expect(values).toEqual({
       'Retention (in days)': '30',
       'Reservation (in GiB)': '100',
@@ -79,7 +79,7 @@ describe('AuditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('audit.update', [
+    expect(api.call).toHaveBeenCalledWith('audit.update', [
       {
         retention: 29,
         reservation: 99,

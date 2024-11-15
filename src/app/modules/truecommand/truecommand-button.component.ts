@@ -74,7 +74,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
@@ -84,12 +84,12 @@ export class TruecommandButtonComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.api.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
       this.tcStatus = config;
       this.tcConnected = !!config.api_key;
       this.cdr.markForCheck();
     });
-    this.ws.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
       this.tcStatus = event.fields;
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
@@ -135,7 +135,7 @@ export class TruecommandButtonComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
         this.loader.open();
-        this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
+        this.api.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.loader.close();
           },

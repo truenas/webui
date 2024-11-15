@@ -83,7 +83,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private authService: AuthService,
@@ -103,7 +103,7 @@ export class FailoverSettingsComponent implements OnInit {
     this.isLoading = true;
     const values = this.form.getRawValue();
 
-    this.ws.call('failover.update', [values])
+    this.api.call('failover.update', [values])
       .pipe(
         map(() => { this.store$.dispatch(haSettingsUpdated()); }),
         untilDestroyed(this),
@@ -144,7 +144,7 @@ export class FailoverSettingsComponent implements OnInit {
         switchMap((result) => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
+          return this.api.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         untilDestroyed(this),
       )
@@ -175,7 +175,7 @@ export class FailoverSettingsComponent implements OnInit {
         switchMap(() => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_from_peer');
+          return this.api.call('failover.sync_from_peer');
         }),
         untilDestroyed(this),
       )
@@ -198,7 +198,7 @@ export class FailoverSettingsComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading = true;
 
-    this.ws.call('failover.config')
+    this.api.call('failover.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

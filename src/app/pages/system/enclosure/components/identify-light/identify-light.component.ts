@@ -34,7 +34,7 @@ export class IdentifyLightComponent {
   protected readonly DriveBayLightStatus = DriveBayLightStatus;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store: EnclosureStore,
   ) {}
@@ -50,7 +50,7 @@ export class IdentifyLightComponent {
       driveBayNumber: slot.drive_bay_number,
     });
 
-    this.ws.call('enclosure2.set_slot_status', [{
+    this.api.call('enclosure2.set_slot_status', [{
       status: newStatus,
       enclosure_id: enclosure.id,
       slot: slot.drive_bay_number,

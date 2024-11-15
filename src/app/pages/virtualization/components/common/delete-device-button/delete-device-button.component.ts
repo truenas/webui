@@ -36,7 +36,7 @@ export class DeleteDeviceButtonComponent {
 
   constructor(
     private dialog: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -63,7 +63,7 @@ export class DeleteDeviceButtonComponent {
   }
 
   private deleteDevice(): Observable<unknown> {
-    return this.ws.call('virt.instance.device_delete', [this.instanceStore.selectedInstance().id, this.device().name]).pipe(
+    return this.api.call('virt.instance.device_delete', [this.instanceStore.selectedInstance().id, this.device().name]).pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       tap(() => {

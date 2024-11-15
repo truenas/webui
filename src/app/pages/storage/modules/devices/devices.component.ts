@@ -136,7 +136,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
@@ -284,7 +284,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private getPool(): void {
-    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
       if (pools.length) {
         this.poolName = pools[0]?.name;
         this.cdr.markForCheck();

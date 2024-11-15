@@ -104,7 +104,7 @@ export class BootStatusListComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -119,7 +119,7 @@ export class BootStatusListComponent implements OnInit {
   }
 
   loadPoolInstance(): void {
-    this.ws.call('boot.get_state').pipe(
+    this.api.call('boot.get_state').pipe(
       tap(() => this.isLoading$.next(true)),
       untilDestroyed(this),
     ).subscribe({
@@ -154,7 +154,7 @@ export class BootStatusListComponent implements OnInit {
 
   detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
-    this.ws.call('boot.detach', [disk])
+    this.api.call('boot.detach', [disk])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
