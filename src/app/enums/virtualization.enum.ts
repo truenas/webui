@@ -15,7 +15,7 @@ export enum VirtualizationStatus {
   Stopped = 'STOPPED',
 }
 
-export const virtualizationStatusMap = new Map<VirtualizationStatus, string>([
+export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>([
   [VirtualizationStatus.Running, T('Running')],
   [VirtualizationStatus.Stopped, T('Stopped')],
 ]);
