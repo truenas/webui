@@ -84,7 +84,7 @@ export class InstanceWizardComponent implements OnInit {
 
   usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
-      label: choice.product,
+      label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
     }))),
     untilDestroyed(this),
@@ -154,7 +154,7 @@ export class InstanceWizardComponent implements OnInit {
   protected onBrowseImages(): void {
     this.matDialog
       .open(SelectImageDialogComponent, {
-        minWidth: '80vw',
+        minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
         },
