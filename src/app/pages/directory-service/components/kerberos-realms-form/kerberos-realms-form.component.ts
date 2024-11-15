@@ -73,7 +73,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -100,9 +100,9 @@ export class KerberosRealmsFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
+      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     } else {
-      request$ = this.ws.call('kerberos.realm.update', [
+      request$ = this.api.call('kerberos.realm.update', [
         this.editingRealm.id,
         values as KerberosRealmUpdate,
       ]);

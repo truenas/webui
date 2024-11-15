@@ -74,7 +74,7 @@ export class SelectPresetModalComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
@@ -94,7 +94,7 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.ws.call('filesystem.acltemplate.by_path', [{
+    this.api.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
         resolve_names: true,

@@ -69,7 +69,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
     private fb: FormBuilder,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -100,7 +100,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       params.api_key = this.form.value.api_key;
     }
 
-    this.ws.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.loader.close();
         this.dialogRef.close();
@@ -131,7 +131,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       }
 
       this.loader.open();
-      this.ws.call('truecommand.update', [{ api_key: null, enabled: false }])
+      this.api.call('truecommand.update', [{ api_key: null, enabled: false }])
         .pipe(untilDestroyed(this))
         .subscribe({
           next: () => {

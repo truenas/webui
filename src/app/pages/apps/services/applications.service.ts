@@ -28,22 +28,25 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  constructor(private ws: ApiService, private translate: TranslateService) {}
+  constructor(
+    private api: ApiService,
+    private translate: TranslateService,
+  ) {}
 
   checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
-    return this.ws.call('app.ix_volume.exists', [appName]);
+    return this.api.call('app.ix_volume.exists', [appName]);
   }
 
   getPoolList(): Observable<Pool[]> {
-    return this.ws.call('pool.query');
+    return this.api.call('pool.query');
   }
 
   getCatalogAppDetails(name: string, train: string): Observable<CatalogApp> {
-    return this.ws.call('catalog.get_app_details', [name, { train }]);
+    return this.api.call('catalog.get_app_details', [name, { train }]);
   }
 
   getAllAppsCategories(): Observable<string[]> {
-    return this.ws.call('app.categories');
+    return this.api.call('app.categories');
   }
 
   getLatestApps(filters?: AppsFiltersValues): Observable<AvailableApp[]> {
@@ -55,15 +58,15 @@ export class ApplicationsService {
   }
 
   getSimilarApps(app: AvailableApp): Observable<AvailableApp[]> {
-    return this.ws.call('app.similar', [app.name, app.train]);
+    return this.api.call('app.similar', [app.name, app.train]);
   }
 
   getAllApps(): Observable<App[]> {
-    return this.ws.call('app.query', [[], { extra: { retrieve_config: true } }]);
+    return this.api.call('app.query', [[], { extra: { retrieve_config: true } }]);
   }
 
   getApp(name: string): Observable<App[]> {
-    return this.ws.call('app.query', [[['name', '=', name]], {
+    return this.api.call('app.query', [[['name', '=', name]], {
       extra: {
         include_app_schema: true,
         retrieve_config: true,
@@ -72,11 +75,11 @@ export class ApplicationsService {
   }
 
   getInstalledAppsUpdates(): Observable<ApiEvent<App>> {
-    return this.ws.subscribe('app.query');
+    return this.api.subscribe('app.query');
   }
 
   getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<void, AppStartQueryParams>>> {
-    return this.ws.subscribe('core.get_jobs').pipe(
+    return this.api.subscribe('core.get_jobs').pipe(
       filter((event: ApiEvent<Job<void, AppStartQueryParams>>) => {
         return ['app.start', 'app.stop'].includes(event.fields.method);
       }),
@@ -88,19 +91,19 @@ export class ApplicationsService {
     if (version) {
       payload.push({ app_version: version });
     }
-    return this.ws.call('app.upgrade_summary', payload);
+    return this.api.call('app.upgrade_summary', payload);
   }
 
   startApplication(name: string): Observable<Job<void>> {
-    return this.ws.job('app.start', [name]);
+    return this.api.job('app.start', [name]);
   }
 
   stopApplication(name: string): Observable<Job<void>> {
-    return this.ws.job('app.stop', [name]);
+    return this.api.job('app.stop', [name]);
   }
 
   restartApplication(name: string): Observable<Job<void>> {
-    return this.ws.job('app.redeploy', [name]);
+    return this.api.job('app.redeploy', [name]);
   }
 
   convertDateToRelativeDate(date: Date): string {
@@ -127,7 +130,7 @@ export class ApplicationsService {
       delete filters.sort;
     }
     if (!filters || (filters && !Object.keys(filters).length)) {
-      return this.ws.call(endPoint).pipe(filterIgnoredApps());
+      return this.api.call(endPoint).pipe(filterIgnoredApps());
     }
 
     const firstOption: QueryFilters<AvailableApp> = [];
@@ -146,6 +149,6 @@ export class ApplicationsService {
 
     const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
 
-    return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
+    return this.api.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }
 }

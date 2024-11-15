@@ -95,14 +95,14 @@ export class StaticRoutesCardComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const staticRoutes$ = this.ws.call('staticroute.query').pipe(
+    const staticRoutes$ = this.api.call('staticroute.query').pipe(
       tap((staticRoutes) => this.staticRoutes = staticRoutes),
       untilDestroyed(this),
     );

@@ -50,12 +50,12 @@ export class ResilverProgressDialogComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         return;

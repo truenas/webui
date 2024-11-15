@@ -20,7 +20,7 @@ const initialState: PermissionsCardState = {
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
   ) {
@@ -37,8 +37,8 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
       }),
       switchMap((mountpoint) => {
         return forkJoin([
-          this.ws.call('filesystem.stat', [mountpoint]),
-          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
+          this.api.call('filesystem.stat', [mountpoint]),
+          this.api.call('filesystem.getacl', [mountpoint, true, true]),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({

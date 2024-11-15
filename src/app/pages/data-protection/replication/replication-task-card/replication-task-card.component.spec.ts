@@ -28,7 +28,7 @@ describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let ws: ApiService;
+  let api: ApiService;
 
   const replicationTasks = [
     {
@@ -108,7 +108,7 @@ describe('ReplicationTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('should show table rows', async () => {
@@ -170,7 +170,7 @@ describe('ReplicationTaskCardComponent', () => {
     const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-download' }), 1, 5);
     await downloadButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('core.download', [
+    expect(api.call).toHaveBeenCalledWith('core.download', [
       'pool.dataset.export_keys_for_replication',
       [1],
       'APPS/test2 - APPS/test3_encryption_keys.json',

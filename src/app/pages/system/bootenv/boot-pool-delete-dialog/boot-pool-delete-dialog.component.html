@@ -1,6 +1,6 @@
 <h1 matDialogTitle>{{ 'Delete' | translate }}</h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  @if (!isJobCompleted) {
+  @if (!isJobCompleted()) {
     <p>
       <strong>
         {{ 'The following { n, plural, one {boot environment} other {# boot environments} } will be deleted. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
@@ -23,9 +23,7 @@
 
   <div class="bulk-list">
     @for (bulkItem of bulkItems | keyvalue; track trackByKey($index, bulkItem)) {
-      <ix-bulk-list-item
-        [item]="bulkItem.value"
-      >
+      <ix-bulk-list-item [item]="bulkItem.value">
         <span>{{ bulkItem.value.item.id }}</span>
       </ix-bulk-list-item>
     }
@@ -33,7 +31,7 @@
 
   <div class="form-actions">
     <div class="form-actions-cell">
-      @if (!isJobCompleted) {
+      @if (!isJobCompleted()) {
         <ix-checkbox
           formControlName="confirm"
           [label]="'Confirm' | translate"
@@ -44,7 +42,7 @@
 
     <div class="form-actions-cell">
       <ng-container *ixRequiresRoles="requiredRoles">
-        @if (!isJobCompleted) {
+        @if (!isJobCompleted()) {
           <button
             mat-button
             type="submit"
@@ -56,7 +54,7 @@
           </button>
         }
       </ng-container>
-      @if (!isJobCompleted) {
+      @if (!isJobCompleted()) {
         <button
           mat-button
           type="button"

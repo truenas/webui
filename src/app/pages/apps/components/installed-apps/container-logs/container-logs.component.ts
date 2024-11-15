@@ -61,7 +61,7 @@ export class ContainerLogsComponent implements OnInit {
   logs: ContainerLogEvent[] = [];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
@@ -105,7 +105,7 @@ export class ContainerLogsComponent implements OnInit {
         this.logs = [];
         this.isLoading = true;
       }),
-      switchMap(() => this.ws.subscribeToLogs(this.subscriptionMethod)),
+      switchMap(() => this.api.subscribeToLogs(this.subscriptionMethod)),
       map((apiEvent) => apiEvent.fields),
       untilDestroyed(this),
     ).subscribe({

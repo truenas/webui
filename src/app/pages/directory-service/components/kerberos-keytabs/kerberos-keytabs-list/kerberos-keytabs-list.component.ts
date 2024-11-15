@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -98,7 +98,7 @@ export class KerberosKeytabsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('kerberos.keytab.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -119,16 +119,15 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     protected dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
     private slideInService: SlideInService,
   ) { }
 
   ngOnInit(): void {
-    const keytabsRows$ = this.ws.call('kerberos.keytab.query').pipe(
+    const keytabsRows$ = this.api.call('kerberos.keytab.query').pipe(
       tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
       untilDestroyed(this),
     );

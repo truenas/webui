@@ -43,7 +43,7 @@ export class StaticRouteDeleteDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<StaticRouteDeleteDialogComponent>,
@@ -52,7 +52,7 @@ export class StaticRouteDeleteDialogComponent {
   ) { }
 
   onDelete(): void {
-    this.ws.call('staticroute.delete', [this.route.id])
+    this.api.call('staticroute.delete', [this.route.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

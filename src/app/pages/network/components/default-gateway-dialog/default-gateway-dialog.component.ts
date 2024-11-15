@@ -66,14 +66,14 @@ export class DefaultGatewayDialogComponent {
     ],
   });
 
-  currentGateway$ = this.ws.call('network.general.summary').pipe(
+  currentGateway$ = this.api.call('network.general.summary').pipe(
     toLoadingState(),
   );
 
   readonly helptext = helptextNetworkConfiguration;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,
@@ -86,7 +86,7 @@ export class DefaultGatewayDialogComponent {
   onSubmit(): void {
     this.dialogRef.close();
     const formValues = this.form.value;
-    this.ws.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
+    this.api.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
       catchError((error: unknown) => {
         this.dialog.error(this.errorHandler.parseError(error));
         return EMPTY;

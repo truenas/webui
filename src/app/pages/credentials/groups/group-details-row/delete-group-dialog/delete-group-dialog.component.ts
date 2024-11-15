@@ -50,7 +50,7 @@ export class DeleteGroupDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
@@ -66,7 +66,7 @@ export class DeleteGroupDialogComponent {
   }
 
   onDelete(): void {
-    this.ws.call('group.delete', [this.group.id, { delete_users: this.deleteUsersCheckbox.value }])
+    this.api.call('group.delete', [this.group.id, { delete_users: this.deleteUsersCheckbox.value }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

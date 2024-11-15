@@ -49,7 +49,7 @@ export class LeaveDomainDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -59,7 +59,7 @@ export class LeaveDomainDialogComponent {
   onSubmit(): void {
     const params = this.form.value;
 
-    this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
+    this.api.job('activedirectory.leave', [params as LeaveActiveDirectory])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {
