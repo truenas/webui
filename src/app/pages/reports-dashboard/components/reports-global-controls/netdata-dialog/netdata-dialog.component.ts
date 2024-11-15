@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
@@ -33,7 +32,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatDialogClose,
     TestDirective,
     IxIconComponent,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     ReactiveFormsModule,
@@ -47,7 +45,7 @@ export class NetdataDialogComponent implements OnInit {
   protected readonly passwordControl = new FormControl('');
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private reportsService: ReportsService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -79,7 +77,7 @@ export class NetdataDialogComponent implements OnInit {
   }
 
   private generatePassword(): Observable<string> {
-    return this.ws.call('reporting.netdataweb_generate_password')
+    return this.api.call('reporting.netdataweb_generate_password')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

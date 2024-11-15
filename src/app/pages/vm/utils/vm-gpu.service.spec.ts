@@ -73,8 +73,8 @@ describe('VmGpuService', () => {
     devices: [
       {
         id: 13,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_02_00_0',
         },
         vm: 2,
@@ -94,8 +94,8 @@ describe('VmGpuService', () => {
       expect(websocket.call).toHaveBeenCalledTimes(1);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_01_00_0',
         },
       }]);
@@ -115,15 +115,15 @@ describe('VmGpuService', () => {
       expect(websocket.call).toHaveBeenCalledWith('vm.device.delete', [13]);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_01_00_0',
         },
       }]);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_03_00_0',
         },
       }]);

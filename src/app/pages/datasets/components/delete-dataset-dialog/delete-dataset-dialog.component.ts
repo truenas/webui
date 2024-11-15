@@ -73,7 +73,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
     private translate: TranslateService,
@@ -107,11 +107,11 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private deleteDataset(): Observable<boolean> {
-    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
+    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
   }
 
   private forceDeleteDataset(): Observable<boolean> {
-    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
+    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
   }
 
   private askToForceDelete(): Observable<unknown> {
@@ -146,8 +146,8 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   private loadDatasetRelatedEntities(): void {
     combineLatest([
-      this.ws.call('pool.dataset.attachments', [this.dataset.id]),
-      this.ws.call('pool.dataset.processes', [this.dataset.id]),
+      this.api.call('pool.dataset.attachments', [this.dataset.id]),
+      this.api.call('pool.dataset.processes', [this.dataset.id]),
     ]).pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([attachments, processes]) => {

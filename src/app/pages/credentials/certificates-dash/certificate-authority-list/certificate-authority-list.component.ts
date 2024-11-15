@@ -146,7 +146,7 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -156,7 +156,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const authorities$ = this.ws.call('certificateauthority.query').pipe(
+    const authorities$ = this.api.call('certificateauthority.query').pipe(
       map((authorities) => {
         return authorities.map((authority) => {
           if (isObject(authority.issuer)) {
@@ -219,7 +219,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         })
         .pipe(
           filter(Boolean),
-          switchMap(() => this.ws.call('certificateauthority.delete', [authority.id])),
+          switchMap(() => this.api.call('certificateauthority.delete', [authority.id])),
           untilDestroyed(this),
         )
         .subscribe(() => {
@@ -232,7 +232,7 @@ export class CertificateAuthorityListComponent implements OnInit {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [path], fileName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -259,7 +259,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
       });
     const keyName = `${certificate.name}.key`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [certificate.privatekey_path], keyName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -301,7 +301,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
+          return this.api.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
             catchError((error) => {
               this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;

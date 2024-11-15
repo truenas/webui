@@ -22,7 +22,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
@@ -55,7 +55,7 @@ describe('SnapshotDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('renders details rows', () => {
@@ -93,11 +93,11 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(await holdCheckbox.getValue()).toBeTruthy();
 
     await holdCheckbox.toggle();
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
     expect(await holdCheckbox.getValue()).toBeFalsy();
 
     await holdCheckbox.toggle();
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
@@ -110,6 +110,6 @@ describe('SnapshotDetailsRowComponent', () => {
         message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
       }),
     );
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
   });
 });

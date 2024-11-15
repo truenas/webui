@@ -99,7 +99,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     protected emptyService: EmptyService,
     private slideIn: SlideInService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -111,7 +111,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       return;
     }
 
-    const cloudBackupSnapshots$ = this.ws.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
+    const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       untilDestroyed(this),
     );
@@ -152,7 +152,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
+        switchMap(() => this.api.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
         tapOnce(() => this.loader.open()),
         catchError((error) => {
           this.dialog.error(this.errorHandler.parseError(error));

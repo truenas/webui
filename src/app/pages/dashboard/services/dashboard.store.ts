@@ -51,7 +51,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
   constructor(
     private authService: AuthService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
   ) {
@@ -92,7 +92,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   save(groups: WidgetGroup[]): Observable<void> {
     this.toggleLoadingState(true);
 
-    return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
+    return this.api.call('auth.set_attribute', ['dashState', groups]).pipe(
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );

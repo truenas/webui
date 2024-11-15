@@ -95,7 +95,7 @@ export class CloudCredentialsCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private chainedSlideinService: ChainedSlideInService,
@@ -104,7 +104,7 @@ export class CloudCredentialsCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const credentials$ = this.ws.call('cloudsync.credentials.query').pipe(
+    const credentials$ = this.api.call('cloudsync.credentials.query').pipe(
       tap((credentials) => this.credentials = credentials),
       untilDestroyed(this),
     );
@@ -164,7 +164,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('cloudsync.credentials.delete', [credential.id])),
+        switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
         untilDestroyed(this),
       )
       .subscribe(() => {

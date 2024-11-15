@@ -96,13 +96,13 @@ export class VmwareSnapshotListComponent implements OnInit {
     protected translate: TranslateService,
     private slideInService: SlideInService,
     protected emptyService: EmptyService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
-    const snapshots$ = this.ws.call('vmware.query').pipe(
+    const snapshots$ = this.api.call('vmware.query').pipe(
       tap((snapshots) => this.snapshots = snapshots),
       untilDestroyed(this),
     );
@@ -142,7 +142,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('vmware.delete', [snapshot.id])),
+      switchMap(() => this.api.call('vmware.delete', [snapshot.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

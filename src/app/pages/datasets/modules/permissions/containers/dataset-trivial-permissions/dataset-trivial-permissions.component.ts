@@ -111,7 +111,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
     private translate: TranslateService,
@@ -153,7 +153,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     const payload = this.preparePayload();
 
     this.dialog.jobDialog(
-      this.ws.job('filesystem.setperm', [payload]),
+      this.api.job('filesystem.setperm', [payload]),
       { title: this.translate.instant('Saving Permissions') },
     )
       .afterClosed()
@@ -172,7 +172,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private loadPermissionsInformation(): void {
     this.isLoading.set(true);
     forkJoin([
-      this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
+      this.api.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(untilDestroyed(this))

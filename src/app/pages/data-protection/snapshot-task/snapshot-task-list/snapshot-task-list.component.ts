@@ -169,7 +169,7 @@ export class SnapshotTaskListComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private taskService: TaskService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
@@ -181,7 +181,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tasks$ = this.ws.call('pool.snapshottask.query').pipe(
+    const tasks$ = this.api.call('pool.snapshottask.query').pipe(
       tap((tasks) => {
         this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
       }),
@@ -232,7 +232,7 @@ export class SnapshotTaskListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

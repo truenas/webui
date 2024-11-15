@@ -186,7 +186,7 @@ export class IdmapFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private validationHelpers: IxValidatorsService,
     private idmapService: IdmapService,
     private dialogService: DialogService,
@@ -236,8 +236,8 @@ export class IdmapFormComponent implements OnInit {
     const params = this.prepareSubmitParams();
 
     const request$ = this.isNew
-      ? this.ws.call('idmap.create', [params])
-      : this.ws.call('idmap.update', [this.existingIdmap.id, params]);
+      ? this.api.call('idmap.create', [params])
+      : this.api.call('idmap.update', [this.existingIdmap.id, params]);
 
     request$
       .pipe(
@@ -347,7 +347,7 @@ export class IdmapFormComponent implements OnInit {
         }
 
         return this.dialogService.jobDialog(
-          this.ws.job('idmap.clear_idmap_cache'),
+          this.api.job('idmap.clear_idmap_cache'),
           {
             title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.job_title),
           },

@@ -77,10 +77,10 @@ export class IpmiCardComponent implements OnInit {
     ariaLabels: (row) => [row.ip_address, this.translate.instant('IPMI')],
   });
 
-  protected readonly hasIpmi$ = this.ws.call('ipmi.is_loaded');
+  protected readonly hasIpmi$ = this.api.call('ipmi.is_loaded');
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -89,7 +89,7 @@ export class IpmiCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const ipmi$ = this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this));
+    const ipmi$ = this.api.call('ipmi.lan.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
   }

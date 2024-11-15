@@ -51,7 +51,6 @@ export interface ContainerImageUi extends ContainerImage {
   standalone: true,
   imports: [
     TranslateModule,
-    FileSizePipe,
     PageHeaderComponent,
     SearchInput1Component,
     MatButton,
@@ -133,7 +132,7 @@ export class DockerImagesListComponent implements OnInit {
   constructor(
     public emptyService: EmptyService,
     public formatter: IxFormatterService,
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private slideInService: SlideInService,
     private translate: TranslateService,
@@ -142,7 +141,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const containerImages$ = this.ws.call('app.image.query').pipe(
+    const containerImages$ = this.api.call('app.image.query').pipe(
       map((images) => images.map((image) => ({ ...image, selected: false }))),
       tap((images) => this.containerImages = images),
     );

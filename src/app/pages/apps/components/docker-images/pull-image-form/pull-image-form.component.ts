@@ -60,7 +60,7 @@ export class PullImageFormComponent {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<PullImageFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -88,7 +88,7 @@ export class PullImageFormComponent {
 
     this.isFormLoading = true;
     this.dialogService.jobDialog(
-      this.ws.job('app.image.pull', [params]),
+      this.api.job('app.image.pull', [params]),
       { title: this.translate.instant('Pulling...') },
     )
       .afterClosed()

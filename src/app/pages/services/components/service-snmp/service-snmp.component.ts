@@ -104,7 +104,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -130,7 +130,7 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Service configuration saved'));
@@ -147,7 +147,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   private loadCurrentSettings(): void {
     this.isFormLoading = true;
-    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.isFormLoading = false;
         this.form.patchValue(config);

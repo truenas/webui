@@ -24,6 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
@@ -88,7 +89,8 @@ export class BootenvStatsDialogComponent implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.dialogRef.close();
+          this.dialogRef.close(true);
+          this.store$.dispatch(advancedConfigUpdated());
           this.snackbar.success(
             this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
           );

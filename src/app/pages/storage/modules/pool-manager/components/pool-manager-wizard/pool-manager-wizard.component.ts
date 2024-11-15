@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  MatStepper, MatStep, MatStepLabel, MatStepperIcon,
+  MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -79,7 +79,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    MatStepperIcon,
     UseIxIconsInStepperComponent,
   ],
   providers: [

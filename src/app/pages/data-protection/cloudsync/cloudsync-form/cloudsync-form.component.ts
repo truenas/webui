@@ -213,7 +213,7 @@ export class CloudSyncFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -463,7 +463,7 @@ export class CloudSyncFormComponent implements OnInit {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.api.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
@@ -704,7 +704,7 @@ export class CloudSyncFormComponent implements OnInit {
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
     this.dialog.jobDialog(
-      this.ws.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
+      this.api.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
       { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
     )
       .afterClosed()
@@ -721,9 +721,9 @@ export class CloudSyncFormComponent implements OnInit {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('cloudsync.create', [payload]);
+      request$ = this.api.call('cloudsync.create', [payload]);
     } else {
-      request$ = this.ws.call('cloudsync.update', [this.editingTask.id, payload]);
+      request$ = this.api.call('cloudsync.update', [this.editingTask.id, payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

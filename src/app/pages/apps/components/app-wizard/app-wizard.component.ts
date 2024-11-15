@@ -156,7 +156,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private dockerStore: DockerStore,
-    private ws: ApiService,
+    private api: ApiService,
     private authService: AuthService,
     private matDialog: MatDialog,
   ) {}
@@ -268,7 +268,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     if (this.isNew) {
       const version = data.version;
       delete data.version;
-      job$ = this.ws.job('app.create', [
+      job$ = this.api.job('app.create', [
         {
           values: data,
           catalog_app: this.catalogApp.name,
@@ -279,7 +279,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       ]);
     } else {
       delete data.release_name;
-      job$ = this.ws.job('app.update', [
+      job$ = this.api.job('app.update', [
         this.config.release_name as string,
         { values: data },
       ]);
@@ -561,7 +561,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDockerHubRateLimitInfo(): void {
-    this.ws.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+    this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
       if (info.remaining_pull_limit < 5) {
         this.matDialog.open(DockerHubRateInfoDialogComponent, {
           data: info,

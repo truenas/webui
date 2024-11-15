@@ -140,7 +140,7 @@ export class RsyncTaskCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     private store$: Store<AppState>,
@@ -150,7 +150,7 @@ export class RsyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const rsyncTasks$ = this.ws.call('rsynctask.query').pipe(
+    const rsyncTasks$ = this.api.call('rsynctask.query').pipe(
       map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
       tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
       untilDestroyed(this),
@@ -171,7 +171,7 @@ export class RsyncTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('rsynctask.delete', [row.id])),
+      switchMap(() => this.api.call('rsynctask.delete', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -200,7 +200,7 @@ export class RsyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => row.state = { state: JobState.Running }),
-      switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+      switchMap(() => this.api.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
           name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
@@ -241,7 +241,7 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
-    this.ws
+    this.api
       .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled } as RsyncTaskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({

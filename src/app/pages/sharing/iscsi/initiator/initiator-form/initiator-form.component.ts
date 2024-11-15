@@ -5,7 +5,6 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatListItemLine } from '@angular/material/list';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -50,7 +49,6 @@ interface InitiatorItem {
     MatButton,
     TestDirective,
     IxIconComponent,
-    MatListItemLine,
     MatCardActions,
     RequiresRolesDirective,
     TranslateModule,

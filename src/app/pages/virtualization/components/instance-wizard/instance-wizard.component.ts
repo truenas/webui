@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -13,7 +14,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   map, Observable, of,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
@@ -29,10 +29,12 @@ import {
   AvailableGpu,
   AvailableUsb,
   CreateVirtualizationInstance,
+  InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -49,6 +51,7 @@ import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -62,7 +65,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     IxCheckboxComponent,
     MatButton,
-    RequiresRolesDirective,
     TestDirective,
     IxFieldsetComponent,
     ReadOnlyComponent,
@@ -70,6 +72,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
+    IxExplorerComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -110,13 +113,20 @@ export class InstanceWizardComponent implements OnInit {
       dest_proto: FormControl<VirtualizationProxyProtocol>;
       dest_port: FormControl<number>;
     }>>([]),
+    disks: this.formBuilder.array<FormGroup<{
+      source: FormControl<string>;
+      destination: FormControl<string>;
+    }>>([]),
     autostart: [false],
+    environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     memory: [null as number, Validators.required],
     image: ['', Validators.required],
   });
 
   protected readonly visibleImageName = new FormControl('');
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
+
+  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
@@ -133,6 +143,7 @@ export class InstanceWizardComponent implements OnInit {
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
     private authService: AuthService,
+    private filesystem: FilesystemService,
   ) {}
 
   ngOnInit(): void {
@@ -175,17 +186,30 @@ export class InstanceWizardComponent implements OnInit {
     this.form.controls.proxies.removeAt(index);
   }
 
+  protected addDisk(): void {
+    const control = this.formBuilder.group({
+      source: ['', Validators.required],
+      destination: ['', Validators.required],
+    });
+
+    this.form.controls.disks.push(control);
+  }
+
+  protected removeDisk(index: number): void {
+    this.form.controls.disks.removeAt(index);
+  }
+
   protected onSubmit(): void {
     const payload = this.getPayload();
     const job$ = this.ws.job('virt.instance.create', [payload]);
 
     this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Saving Instance') })
+      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ({ result }) => {
-          this.snackbar.success(this.translate.instant('Instance saved'));
+          this.snackbar.success(this.translate.instant('Instance created'));
           this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
@@ -194,8 +218,21 @@ export class InstanceWizardComponent implements OnInit {
       });
   }
 
+  addEnvironmentVariable(): void {
+    const control = this.formBuilder.group({
+      name: ['', Validators.required],
+      value: ['', Validators.required],
+    });
+
+    this.form.controls.environmentVariables.push(control);
+  }
+
+  removeEnvironmentVariable(index: number): void {
+    this.form.controls.environmentVariables.removeAt(index);
+  }
+
   private getPayload(): CreateVirtualizationInstance {
-    const devices = this.getPayloadDevices();
+    const devices = this.getDevicesPayload();
 
     return {
       devices,
@@ -204,10 +241,29 @@ export class InstanceWizardComponent implements OnInit {
       autostart: this.form.controls.autostart.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
+      environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
   }
 
-  private getPayloadDevices(): VirtualizationDevice[] {
+  private get environmentVariablesPayload(): Record<string, string> {
+    return this.form.controls.environmentVariables.controls.reduce((env: Record<string, string>, control) => {
+      const name = control.get('name')?.value;
+      const value = control.get('value')?.value;
+
+      if (name && value) {
+        env[name] = value;
+      }
+      return env;
+    }, {});
+  }
+
+  private getDevicesPayload(): VirtualizationDevice[] {
+    const disks = this.form.controls.disks.value.map((proxy) => ({
+      dev_type: VirtualizationDeviceType.Disk,
+      source: proxy.source,
+      destination: proxy.destination,
+    }));
+
     const usbDevices = Object.entries(this.form.controls.usb_devices.value || {})
       .filter(([_, isSelected]) => isSelected)
       .map(([productId]) => ({
@@ -231,9 +287,10 @@ export class InstanceWizardComponent implements OnInit {
     }));
 
     return [
+      ...disks,
+      ...proxies,
       ...usbDevices,
       ...gpuDevices,
-      ...proxies,
     ] as VirtualizationDevice[];
   }
 

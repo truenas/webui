@@ -68,12 +68,12 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   readonly keyTypes$ = of(mapToOptions(certificateKeyTypeLabels, this.translate));
   readonly digestAlgorithms$ = of(mapToOptions(certificateDigestAlgorithmLabels, this.translate));
   readonly keyLengths$ = of(certificateKeyLengths);
-  readonly ecCurves$ = this.ws.call('certificate.ec_curve_choices').pipe(choicesToOptions());
+  readonly ecCurves$ = this.api.call('certificate.ec_curve_choices').pipe(choicesToOptions());
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private systemGeneralService: SystemGeneralService,
     private cdr: ChangeDetectorRef,
   ) { }

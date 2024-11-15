@@ -72,7 +72,7 @@ export class StaticRouteFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -97,9 +97,9 @@ export class StaticRouteFormComponent implements OnInit {
 
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('staticroute.create', [values]);
+      request$ = this.api.call('staticroute.create', [values]);
     } else {
-      request$ = this.ws.call('staticroute.update', [
+      request$ = this.api.call('staticroute.update', [
         this.editingRoute.id,
         values,
       ]);

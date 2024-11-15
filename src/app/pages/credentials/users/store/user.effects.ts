@@ -30,7 +30,7 @@ export class UserEffects {
       if (preferences.hideBuiltinUsers) {
         params = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
       }
-      return this.ws.call('user.query', params).pipe(
+      return this.api.call('user.query', params).pipe(
         map((users) => usersLoaded({ users })),
         catchError((error) => {
           console.error(error);
@@ -48,7 +48,7 @@ export class UserEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
-      return this.ws.subscribe('user.query').pipe(
+      return this.api.subscribe('user.query').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => userRemoved({ id: event.id as number })),
       );
@@ -57,7 +57,7 @@ export class UserEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}

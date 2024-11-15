@@ -238,8 +238,8 @@ export class VmWizardComponent implements OnInit {
 
   private getNicRequest(vm: VirtualMachine): Observable<VmDevice> {
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Nic,
       attributes: {
+        dtype: VmDeviceType.Nic,
         type: this.nicForm.nic_type,
         mac: this.nicForm.nic_mac,
         nic_attach: this.nicForm.nic_attach,
@@ -254,8 +254,8 @@ export class VmWizardComponent implements OnInit {
     if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
-        dtype: VmDeviceType.Disk,
         attributes: {
+          dtype: VmDeviceType.Disk,
           create_zvol: true,
           type: this.diskForm.hdd_type,
           physical_sectorsize: null,
@@ -267,8 +267,8 @@ export class VmWizardComponent implements OnInit {
     }
 
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         path: this.diskForm.hdd_path,
         type: this.diskForm.hdd_type,
         physical_sectorsize: null,
@@ -279,8 +279,8 @@ export class VmWizardComponent implements OnInit {
 
   private getCdromRequest(vm: VirtualMachine): Observable<VmDevice> {
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Cdrom,
       attributes: {
+        dtype: VmDeviceType.Cdrom,
         path: this.mediaForm.iso_path,
       },
     });
@@ -299,8 +299,8 @@ export class VmWizardComponent implements OnInit {
     return this.ws.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
-          dtype: VmDeviceType.Display,
           attributes: {
+            dtype: VmDeviceType.Display,
             port: port.port,
             bind: this.osForm.bind,
             password: this.osForm.password,

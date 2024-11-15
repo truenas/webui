@@ -79,7 +79,7 @@ export class CertificateEditComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private slideInService: SlideInService,
     private slideInRef: SlideInRef<CertificateEditComponent>,
@@ -141,7 +141,7 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.job('certificate.update', [this.certificate.id, this.form.value])
+    this.api.job('certificate.update', [this.certificate.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

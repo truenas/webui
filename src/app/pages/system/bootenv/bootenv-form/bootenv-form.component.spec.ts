@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -26,8 +25,7 @@ describe('BootEnvironmentFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('bootenv.create'),
-        mockCall('bootenv.update'),
+        mockCall('boot.environment.clone'),
       ]),
       mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
@@ -38,40 +36,7 @@ describe('BootEnvironmentFormComponent', () => {
   });
 
   /*
-  * Create
-  */
-  describe('creating a boot environment', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              operation: BootEnvironmentAction.Create,
-            },
-          },
-        ],
-      });
-      ws = spectator.inject(ApiService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
 
-    it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const fields = { name: 'myBootEnv' };
-
-      await form.fillForm({
-        Name: fields.name,
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(ws.call).toHaveBeenCalledWith('bootenv.create', [fields]);
-    });
-  });
-
-  /*
   * Clone
   */
   describe('cloning a boot environment', () => {
@@ -82,10 +47,7 @@ describe('BootEnvironmentFormComponent', () => {
         providers: [
           {
             provide: SLIDE_IN_DATA,
-            useValue: {
-              operation: BootEnvironmentAction.Clone,
-              name: cloneSource,
-            },
+            useValue: cloneSource,
           },
         ],
       });
@@ -101,55 +63,18 @@ describe('BootEnvironmentFormComponent', () => {
     it('sends a create payload with source option to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const fields = {
-        name: 'cloned',
-        source: cloneSource,
+        id: cloneSource,
+        target: 'cloned',
       };
 
       await form.fillForm({
-        Name: fields.name,
+        Name: fields.target,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('bootenv.create', [
-        fields,
-      ]);
-    });
-  });
-
-  /*
-  * Rename
-  */
-  describe('renaming a boot environment', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              operation: BootEnvironmentAction.Rename,
-              name: 'myBootEnv',
-            },
-          },
-        ],
-      });
-      ws = spectator.inject(ApiService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const fields = { name: 'updated' };
-      await form.fillForm({
-        Name: fields.name,
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(ws.call).toHaveBeenCalledWith('bootenv.update', [
-        spectator.component.currentName,
+      expect(ws.call).toHaveBeenCalledWith('boot.environment.clone', [
         fields,
       ]);
     });

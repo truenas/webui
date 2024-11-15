@@ -153,7 +153,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private chainedRef: ChainedRef<unknown>,
     private dialog: DialogService,
@@ -519,7 +519,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.api.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 

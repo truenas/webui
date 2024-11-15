@@ -129,7 +129,7 @@ export class ScrubListComponent implements OnInit {
     private translate: TranslateService,
     private crontabExplanation: CrontabExplanationPipe,
     private taskService: TaskService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideIn: SlideInService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -139,7 +139,7 @@ export class ScrubListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider = new AsyncDataProvider(this.ws.call('pool.scrub.query'));
+    this.dataProvider = new AsyncDataProvider(this.api.call('pool.scrub.query'));
     this.dataProvider.load();
   }
 
@@ -172,7 +172,7 @@ export class ScrubListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('pool.scrub.delete', [row.id]).pipe(
+          return this.api.call('pool.scrub.delete', [row.id]).pipe(
             this.loader.withLoader(),
             this.errorHandler.catchError(),
           );

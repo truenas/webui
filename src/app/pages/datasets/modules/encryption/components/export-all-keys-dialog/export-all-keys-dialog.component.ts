@@ -35,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class ExportAllKeysDialogComponent {
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
     private download: DownloadService,
@@ -45,7 +45,7 @@ export class ExportAllKeysDialogComponent {
   onDownload(): void {
     const fileName = 'dataset_' + this.dataset.name + '_keys.json';
     const mimetype = 'application/json';
-    this.ws.call('core.download', ['pool.dataset.export_keys', [this.dataset.name], fileName])
+    this.api.call('core.download', ['pool.dataset.export_keys', [this.dataset.name], fileName])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

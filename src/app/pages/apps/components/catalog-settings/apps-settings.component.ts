@@ -82,7 +82,7 @@ export class AppsSettingsComponent implements OnInit {
     }>>([]),
   });
 
-  protected allTrains$ = this.ws.call('catalog.trains').pipe(
+  protected allTrains$ = this.api.call('catalog.trains').pipe(
     singleArrayToOptions(),
   );
 
@@ -95,7 +95,7 @@ export class AppsSettingsComponent implements OnInit {
 
   constructor(
     private dockerStore: DockerStore,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<AppsSettingsComponent>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
@@ -108,7 +108,7 @@ export class AppsSettingsComponent implements OnInit {
 
   setupForm(): void {
     combineLatest([
-      this.ws.call('catalog.config'),
+      this.api.call('catalog.config'),
       this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
     ])
       .pipe(untilDestroyed(this))
@@ -149,8 +149,8 @@ export class AppsSettingsComponent implements OnInit {
 
     this.isFormLoading.set(true);
     forkJoin([
-      this.ws.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
-      this.ws.job('docker.update', [{
+      this.api.call('catalog.update', [{ preferred_trains: values.preferred_trains } as CatalogUpdate]),
+      this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
       }]),

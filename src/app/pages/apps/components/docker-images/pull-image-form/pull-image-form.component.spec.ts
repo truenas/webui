@@ -18,7 +18,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('PullImageFormComponent', () => {
   let spectator: Spectator<PullImageFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: PullImageFormComponent,
     imports: [
@@ -44,7 +44,7 @@ describe('PullImageFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('pulls docker image when form is submitted', async () => {
@@ -60,7 +60,7 @@ describe('PullImageFormComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(ws.job).toHaveBeenCalledWith('app.image.pull', [{
+    expect(api.job).toHaveBeenCalledWith('app.image.pull', [{
       auth_config: {
         username: 'john',
         password: '12345678',

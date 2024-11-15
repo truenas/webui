@@ -113,14 +113,14 @@ export class ScrubTaskCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const scrubTasks$ = this.ws.call('pool.scrub.query');
+    const scrubTasks$ = this.api.call('pool.scrub.query');
     this.dataProvider = new AsyncDataProvider<PoolScrubTask>(scrubTasks$);
     this.getScrubTasks();
   }
@@ -135,7 +135,7 @@ export class ScrubTaskCardComponent implements OnInit {
       message: this.translate.instant('Delete Scrub Task <b>"{name}"</b>?', { name: scrubTask.pool_name }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.scrub.delete', [scrubTask.id])),
+      switchMap(() => this.api.call('pool.scrub.delete', [scrubTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -156,7 +156,7 @@ export class ScrubTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(scrubTask: PoolScrubTask): void {
-    this.ws
+    this.api
       .call('pool.scrub.update', [scrubTask.id, { enabled: !scrubTask.enabled } as PoolScrubTask])
       .pipe(untilDestroyed(this))
       .subscribe({

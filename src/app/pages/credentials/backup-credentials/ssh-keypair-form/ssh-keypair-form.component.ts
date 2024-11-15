@@ -89,7 +89,7 @@ export class SshKeypairFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -116,7 +116,7 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   onGenerateButtonPressed(): void {
-    this.ws.call('keychaincredential.generate_ssh_key_pair')
+    this.api.call('keychaincredential.generate_ssh_key_pair')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
@@ -151,12 +151,12 @@ export class SshKeypairFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('keychaincredential.create', [{
+      request$ = this.api.call('keychaincredential.create', [{
         ...commonBody,
         type: KeychainCredentialType.SshKeyPair,
       }]);
     } else {
-      request$ = this.ws.call('keychaincredential.update', [
+      request$ = this.api.call('keychaincredential.update', [
         this.editingKeypair.id,
         commonBody,
       ]);

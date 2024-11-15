@@ -33,7 +33,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
 describe('TruecommandConnectModalComponent', () => {
   let spectator: Spectator<TruecommandConnectModalComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   function createComponentWithData(
     config: Partial<TrueCommandConfig>,
@@ -101,7 +101,7 @@ describe('TruecommandConnectModalComponent', () => {
       beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        ws = spectator.inject(ApiService);
+        api = spectator.inject(ApiService);
       });
 
       it(`it has title '${expectedTitle}'`, () => {
@@ -142,7 +142,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -156,7 +156,7 @@ describe('TruecommandConnectModalComponent', () => {
       expect(await submitButton.isDisabled()).toBeFalsy();
       await submitButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('truecommand.update', [{
+      expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
         api_key: '1234567890123456',
         enabled: true,
       }]);
@@ -182,7 +182,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -196,7 +196,7 @@ describe('TruecommandConnectModalComponent', () => {
       expect(await submitButton.isDisabled()).toBeFalsy();
       await submitButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('truecommand.update', [{
+      expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
         api_key: 'qwertyuiopasdfgh',
         enabled: false,
       }]);
@@ -228,7 +228,7 @@ describe('TruecommandConnectModalComponent', () => {
       jest.spyOn(dialogServiceMock, 'generalDialog').mockReturnValue(of(true));
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -236,7 +236,7 @@ describe('TruecommandConnectModalComponent', () => {
       expect(await deregisterButton.isDisabled()).toBeFalsy();
       await deregisterButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('truecommand.update', [{
+      expect(api.call).toHaveBeenCalledWith('truecommand.update', [{
         api_key: null,
         enabled: false,
       }]);

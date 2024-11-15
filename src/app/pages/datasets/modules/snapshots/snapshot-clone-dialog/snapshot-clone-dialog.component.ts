@@ -52,7 +52,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
@@ -69,7 +69,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.ws.call('zfs.snapshot.clone', [{
+    this.api.call('zfs.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])

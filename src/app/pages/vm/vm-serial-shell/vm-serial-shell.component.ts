@@ -18,7 +18,7 @@ export class VmSerialShellComponent implements TerminalConfiguration {
 
   get connectionData(): TerminalConnectionData {
     return {
-      vmId: Number(this.pk),
+      vm_id: Number(this.pk),
     };
   }
 

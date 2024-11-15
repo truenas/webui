@@ -89,7 +89,7 @@ export class CertificateAddComponent {
   summary: SummarySection[];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -120,7 +120,7 @@ export class CertificateAddComponent {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.job('certificate.create', [payload])
+    this.api.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

@@ -99,7 +99,7 @@ export class ReportingExportersFormComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<ReportingExportersFormComponent>,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -147,7 +147,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   getExportersSchemas(): Observable<ReportingExporterSchema[]> {
-    return this.ws.call('reporting.exporters.exporter_schemas');
+    return this.api.call('reporting.exporters.exporter_schemas');
   }
 
   setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
@@ -230,9 +230,9 @@ export class ReportingExportersFormComponent implements OnInit {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('reporting.exporters.create', [values]);
+      request$ = this.api.call('reporting.exporters.create', [values]);
     } else {
-      request$ = this.ws.call('reporting.exporters.update', [
+      request$ = this.api.call('reporting.exporters.update', [
         this.editingExporter.id,
         values,
       ]);

@@ -189,7 +189,7 @@ export class RsyncTaskListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private chainedSlideIn: ChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -205,7 +205,7 @@ export class RsyncTaskListComponent implements OnInit {
   ngOnInit(): void {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
 
-    const request$ = this.ws.call('rsynctask.query');
+    const request$ = this.api.call('rsynctask.query');
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
@@ -239,7 +239,7 @@ export class RsyncTaskListComponent implements OnInit {
             this.translate.instant('Rsync task has started.'),
           );
         }),
-        switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+        switchMap(() => this.api.job('rsynctask.run', [row.id])),
         untilDestroyed(this),
       )
       .subscribe(() => this.refresh());
@@ -266,7 +266,7 @@ export class RsyncTaskListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('rsynctask.delete', [row.id]).pipe(
+          return this.api.call('rsynctask.delete', [row.id]).pipe(
             this.loader.withLoader(),
             this.errorHandler.catchError(),
           );

@@ -122,7 +122,7 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -171,9 +171,9 @@ export class SnapshotTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
+      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     } else {
-      request$ = this.ws.call('pool.snapshottask.update', [
+      request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);

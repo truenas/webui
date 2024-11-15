@@ -112,7 +112,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     sudo: [false],
     name: ['', [Validators.required],
       forbiddenAsyncValues(
-        this.ws.call('replication.query').pipe(
+        this.api.call('replication.query').pipe(
           map((replications) => replications.map((replication) => replication.name)),
         ),
       ),
@@ -171,7 +171,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -420,7 +420,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ]).pipe(
         switchMap((hasRole) => {
           if (hasRole) {
-            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+            return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
           }
           return of({ eligible: 0, total: 0 });
         }),

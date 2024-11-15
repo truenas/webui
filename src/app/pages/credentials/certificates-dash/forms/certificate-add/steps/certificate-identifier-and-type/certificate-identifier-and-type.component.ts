@@ -13,7 +13,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -74,8 +73,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: ApiService,
-    private dialogService: DialogService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}
@@ -90,7 +88,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.certificate_profiles')
+    this.api.call('webui.crypto.certificate_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

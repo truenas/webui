@@ -103,7 +103,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   } as const;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
@@ -165,7 +165,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     this.cdr.markForCheck();
     const payload = this.getChangedFormValues();
 
-    this.ws.call('pool.dataset.update', [this.dataset.id, payload])
+    this.api.call('pool.dataset.update', [this.dataset.id, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

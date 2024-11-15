@@ -124,8 +124,8 @@ export class ServiceSmbComponent implements OnInit {
     { label: this.translate.instant('Debug'), value: LogLevel.Debug },
   ]);
 
-  readonly unixCharsetOptions$ = this.ws.call('smb.unixcharset_choices').pipe(choicesToOptions());
-  readonly guestAccountOptions$ = this.ws.call('user.query').pipe(
+  readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
+  readonly guestAccountOptions$ = this.api.call('user.query').pipe(
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
 
@@ -135,11 +135,11 @@ export class ServiceSmbComponent implements OnInit {
     ),
   );
 
-  readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
+  readonly bindIpAddressOptions$ = this.api.call('smb.bindip_choices').pipe(choicesToOptions());
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -155,7 +155,7 @@ export class ServiceSmbComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -177,7 +177,7 @@ export class ServiceSmbComponent implements OnInit {
     const values: SmbConfigUpdate = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('smb.update', [values])
+    this.api.call('smb.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

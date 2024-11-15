@@ -2,6 +2,7 @@ import { DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppStats } from 'app/interfaces/app.interface';
+import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -43,4 +44,5 @@ export interface ApiEventDirectory {
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };
+  'boot.environment.query': { response: BootEnvironment };
 }

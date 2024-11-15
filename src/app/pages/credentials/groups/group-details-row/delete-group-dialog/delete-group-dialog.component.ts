@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
@@ -30,7 +29,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxCheckboxComponent,
     ReactiveFormsModule,
@@ -52,7 +50,7 @@ export class DeleteGroupDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
@@ -68,7 +66,7 @@ export class DeleteGroupDialogComponent {
   }
 
   onDelete(): void {
-    this.ws.call('group.delete', [this.group.id, { delete_users: this.deleteUsersCheckbox.value }])
+    this.api.call('group.delete', [this.group.id, { delete_users: this.deleteUsersCheckbox.value }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

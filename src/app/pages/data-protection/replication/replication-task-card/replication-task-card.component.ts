@@ -157,7 +157,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     private chainedSlideIn: ChainedSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
@@ -166,7 +166,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], {
+    const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
@@ -185,7 +185,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('replication.delete', [replicationTask.id])),
+      switchMap(() => this.api.call('replication.delete', [replicationTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -220,7 +220,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => row.state.state = JobState.Running),
-      switchMap(() => this.ws.job('replication.run', [row.id])),
+      switchMap(() => this.api.job('replication.run', [row.id])),
       tapOnce(() => {
         this.snackbar.success(
           this.translate.instant('Replication «{name}» has started.', { name: row.name }),
@@ -252,7 +252,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   downloadKeys(row: ReplicationTask): void {
-    this.ws.call('core.download', [
+    this.api.call('core.download', [
       'pool.dataset.export_keys_for_replication',
       [row.id],
       `${row.name}_encryption_keys.json`,
@@ -279,7 +279,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
-    this.ws
+    this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({

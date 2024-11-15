@@ -11,7 +11,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -35,7 +34,6 @@ const adminUsername = 'truenas_admin';
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
-    IxRadioGroupComponent,
     TestDirective,
   ],
 })

@@ -130,7 +130,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
@@ -155,7 +155,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
     this.isLoading = true;
 
     const quotas = this.getQuotas();
-    this.ws.call('pool.dataset.set_quota', [this.datasetId, quotas])
+    this.api.call('pool.dataset.set_quota', [this.datasetId, quotas])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

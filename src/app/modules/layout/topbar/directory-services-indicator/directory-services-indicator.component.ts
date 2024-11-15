@@ -41,7 +41,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   private statusSubscription: Subscription;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }
@@ -72,10 +72,10 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
 
   private loadDirectoryServicesStatus(): void {
     // TODO: Sync endpoints
-    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
+    this.api.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       this.updateIconVisibility(state);
     });
-    this.statusSubscription = this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.statusSubscription = this.api.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((event) => {
       this.updateIconVisibility(event.fields);
     });
   }

@@ -35,6 +35,7 @@ describe('InstanceEditFormComponent', () => {
     autostart: false,
     cpu: '1-3',
     memory: 2 * GiB,
+    environment: null,
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -88,7 +89,7 @@ describe('InstanceEditFormComponent', () => {
       autostart: true,
       cpu: '2-5',
       memory: GiB,
-      environment: null,
+      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

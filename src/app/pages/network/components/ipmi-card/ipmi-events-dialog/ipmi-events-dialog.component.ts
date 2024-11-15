@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -32,7 +31,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     EmptyComponent,
     FormActionsComponent,
@@ -54,7 +52,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -68,7 +66,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   onClear(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;
@@ -97,7 +95,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   private loadEvents(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;

@@ -113,7 +113,7 @@ export class KerberosRealmsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('kerberos.realm.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.realm.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -134,7 +134,7 @@ export class KerberosRealmsListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
@@ -142,7 +142,7 @@ export class KerberosRealmsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const kerberosRealsm$ = this.ws.call('kerberos.realm.query').pipe(
+    const kerberosRealsm$ = this.api.call('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {

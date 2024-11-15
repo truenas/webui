@@ -87,7 +87,7 @@ export class LdapComponent implements OnInit {
   });
 
   readonly helptext = helptextLdap;
-  readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
+  readonly kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
         label: realm.realm,
@@ -96,14 +96,14 @@ export class LdapComponent implements OnInit {
     }),
   );
 
-  readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
-  readonly sslOptions$ = this.ws.call('ldap.ssl_choices').pipe(singleArrayToOptions());
+  readonly kerberosPrincipals$ = this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
+  readonly sslOptions$ = this.api.call('ldap.ssl_choices').pipe(singleArrayToOptions());
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly schemaOptions$ = this.ws.call('ldap.schema_choices').pipe(singleArrayToOptions());
+  readonly schemaOptions$ = this.api.call('ldap.schema_choices').pipe(singleArrayToOptions());
   readonly isEnabled$ = this.form.select((values) => values.enable);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
@@ -149,7 +149,7 @@ export class LdapComponent implements OnInit {
     const values = this.form.value;
 
     this.dialogService.jobDialog(
-      this.ws.job('ldap.update', [values]),
+      this.api.job('ldap.update', [values]),
       {
         title: 'LDAP',
       },
@@ -174,7 +174,7 @@ export class LdapComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading = true;
 
-    this.ws.call('ldap.config')
+    this.api.call('ldap.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

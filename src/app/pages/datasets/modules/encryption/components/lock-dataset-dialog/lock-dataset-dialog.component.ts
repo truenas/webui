@@ -45,7 +45,7 @@ export class LockDatasetDialogComponent {
   forceCheckbox = new FormControl(false);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -59,7 +59,7 @@ export class LockDatasetDialogComponent {
 
     const force = this.forceCheckbox.value;
     this.dialogService.jobDialog(
-      this.ws.job('pool.dataset.lock', [this.dataset.id, { force_umount: force }]),
+      this.api.job('pool.dataset.lock', [this.dataset.id, { force_umount: force }]),
       { title: this.translate.instant(helptextVolumes.lock_dataset_dialog.locking_dataset) },
     )
       .afterClosed()

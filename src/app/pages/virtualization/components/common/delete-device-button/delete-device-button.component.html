@@ -1,0 +1,15 @@
+<div
+  [matTooltip]="device().readonly ? ('Device is readonly and cannot be removed.' | translate) : ''"
+  [class.disabled]="device().readonly"
+>
+  <button
+    mat-icon-button
+    class="delete-button"
+    [attr.aria-label]="'Delete device' | translate"
+    [ixTest]="['delete-device', device().name]"
+    [disabled]="device().readonly"
+    (click)="deletePressed()"
+  >
+    <ix-icon name="mdi-close"></ix-icon>
+  </button>
+</div>

@@ -160,7 +160,7 @@ export class CloudSyncListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private taskService: TaskService,
     private chainedSlideIn: ChainedSlideInService,
@@ -173,7 +173,7 @@ export class CloudSyncListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
+    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
     );
@@ -196,7 +196,7 @@ export class CloudSyncListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
-      switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
+      switchMap(() => this.api.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
@@ -222,7 +222,7 @@ export class CloudSyncListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('cloudsync.abort', [row.id]).pipe(
+          return this.api.call('cloudsync.abort', [row.id]).pipe(
             this.errorHandler.catchError(),
           );
         }),
@@ -242,7 +242,7 @@ export class CloudSyncListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
+      switchMap(() => this.api.job('cloudsync.sync', [row.id, { dry_run: true }])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
@@ -300,7 +300,7 @@ export class CloudSyncListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cloudsync.delete', [row.id])),
+      switchMap(() => this.api.call('cloudsync.delete', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

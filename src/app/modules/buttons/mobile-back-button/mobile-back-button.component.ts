@@ -1,7 +1,6 @@
 import {
   Component, output, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -10,7 +9,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatButton,
     IxIconComponent,
     TranslateModule,
     TestDirective,

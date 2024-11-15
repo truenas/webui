@@ -31,7 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ResilveringIndicatorComponent {
-  protected isResilvering$ = this.ws.subscribe('zfs.pool.scan').pipe(
+  protected isResilvering$ = this.api.subscribe('zfs.pool.scan').pipe(
     map((event) => {
       const scan = event.fields.scan;
       return scan.function === PoolScanFunction.Resilver && scan.state !== PoolScanState.Finished;
@@ -42,7 +42,7 @@ export class ResilveringIndicatorComponent {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   showDetails(): void {

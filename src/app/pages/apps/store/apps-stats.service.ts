@@ -12,7 +12,7 @@ type State = Record<string, AppStats>;
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     super({});
   }
@@ -22,7 +22,7 @@ export class AppsStatsService extends ComponentStore<State> {
   }
 
   subscribeToUpdates(): void {
-    this.ws.subscribe('app.stats')
+    this.api.subscribe('app.stats')
       .pipe(untilDestroyed(this))
       .subscribe((event) => this.onStatisticsReceived(event.fields));
   }

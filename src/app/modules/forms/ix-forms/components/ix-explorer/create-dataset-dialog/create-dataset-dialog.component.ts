@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
@@ -6,7 +5,7 @@ import {
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -37,8 +36,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   imports: [
     MatDialogTitle,
     MatProgressBar,
-    CdkScrollable,
-    MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
     IxInputComponent,
@@ -68,7 +65,7 @@ export class CreateDatasetDialogComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
@@ -89,7 +86,7 @@ export class CreateDatasetDialogComponent implements OnInit {
 
   createDataset(): void {
     this.isLoading$.next(true);
-    this.ws.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
+    this.api.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
       .pipe(untilDestroyed(this)).subscribe({
         next: (dataset) => {
           this.isLoading$.next(false);
@@ -105,7 +102,7 @@ export class CreateDatasetDialogComponent implements OnInit {
   loadParentDataset(): void {
     this.isLoading$.next(true);
     const normalizedParentId = this.data.parentId.replace(/\/$/, '');
-    this.ws.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(
+    this.api.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(
       tap((parent) => {
         if (!parent.length) {
           throw new Error(`Parent dataset ${normalizedParentId} not found`);

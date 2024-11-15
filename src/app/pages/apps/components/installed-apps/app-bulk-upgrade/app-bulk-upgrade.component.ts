@@ -82,7 +82,7 @@ export class AppBulkUpgradeComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
@@ -154,7 +154,7 @@ export class AppBulkUpgradeComponent {
       return params;
     });
 
-    this.ws
+    this.api
       .job('core.bulk', ['app.upgrade', payload])
       .pipe(untilDestroyed(this))
       .subscribe(() => {

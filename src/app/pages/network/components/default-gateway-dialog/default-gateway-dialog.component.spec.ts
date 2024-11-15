@@ -15,7 +15,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('DefaultGatewayDialogComponent', () => {
   let spectator: Spectator<DefaultGatewayDialogComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: DefaultGatewayDialogComponent,
@@ -37,7 +37,7 @@ describe('DefaultGatewayDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('checks the header', () => {
@@ -53,6 +53,6 @@ describe('DefaultGatewayDialogComponent', () => {
     const registerGatewayButton = await loader.getHarness(MatButtonHarness.with({ text: 'Register' }));
     await registerGatewayButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('interface.save_default_route', ['192.168.1.1']);
+    expect(api.call).toHaveBeenCalledWith('interface.save_default_route', ['192.168.1.1']);
   });
 });

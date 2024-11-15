@@ -74,7 +74,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}
@@ -93,7 +93,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.certificateauthority_profiles')
+    this.api.call('webui.crypto.certificateauthority_profiles')
       .pipe(
         this.errorHandler.catchError(),
         untilDestroyed(this),

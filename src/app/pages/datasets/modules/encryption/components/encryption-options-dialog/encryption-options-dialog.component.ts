@@ -108,7 +108,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private dialog: DialogService,
@@ -157,7 +157,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private setToInherit(): void {
-    this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
+    this.api.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -185,7 +185,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     }
 
     this.dialog.jobDialog(
-      this.ws.job('pool.dataset.change_key', [this.data.dataset.id, body]),
+      this.api.job('pool.dataset.change_key', [this.data.dataset.id, body]),
       { title: this.translate.instant('Updating key type') },
     )
       .afterClosed()
@@ -206,7 +206,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private loadPbkdf2iters(): void {
-    this.ws.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
+    this.api.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (datasets: Dataset[]) => {

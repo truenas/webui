@@ -92,13 +92,13 @@ export class GroupFormComponent implements OnInit {
     smb: helptextGroups.smb_tooltip,
   };
 
-  readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
+  readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -114,7 +114,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   readonly privilegesProvider: ChipsProvider = (query: string) => {
-    return this.ws.call('privilege.query', []).pipe(
+    return this.api.call('privilege.query', []).pipe(
       map((privileges) => {
         const chips = privileges.map((privilege) => privilege.name);
         return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
@@ -126,7 +126,7 @@ export class GroupFormComponent implements OnInit {
     this.setFormRelations();
 
     if (this.isNew) {
-      this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
+      this.api.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
         this.form.patchValue({
           gid: nextId,
         });
@@ -162,19 +162,19 @@ export class GroupFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('group.create', [{
+      request$ = this.api.call('group.create', [{
         ...commonBody,
         gid: values.gid,
       }]);
     } else {
-      request$ = this.ws.call('group.update', [
+      request$ = this.api.call('group.update', [
         this.editingGroup.id,
         commonBody,
       ]);
     }
 
     request$.pipe(
-      switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
+      switchMap((id) => this.api.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
       switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
       untilDestroyed(this),
@@ -213,7 +213,7 @@ export class GroupFormComponent implements OnInit {
 
       privileges.forEach((privilege) => {
         requests$.push(
-          this.ws.call('privilege.update', [
+          this.api.call('privilege.update', [
             privilege.id,
             this.mapPrivilegeToPrivilegeUpdate(
               privilege,
@@ -230,7 +230,7 @@ export class GroupFormComponent implements OnInit {
 
       privileges.forEach((privilege) => {
         requests$.push(
-          this.ws.call('privilege.update', [
+          this.api.call('privilege.update', [
             privilege.id,
             this.mapPrivilegeToPrivilegeUpdate(
               privilege,
@@ -245,7 +245,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private getPrivilegesList(): void {
-    this.ws.call('privilege.query', [])
+    this.api.call('privilege.query', [])
       .pipe(untilDestroyed(this)).subscribe((privileges) => {
         this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
           return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
@@ -260,7 +260,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private setNamesInUseValidator(currentName?: string): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.api.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       let forbiddenNames = groups.map((group) => group.group);
       if (currentName) {
         forbiddenNames = forbiddenNames.filter((name) => name !== currentName);

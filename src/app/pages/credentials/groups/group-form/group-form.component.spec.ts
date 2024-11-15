@@ -23,7 +23,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const fakePrivilegeDataSource: Privilege[] = [
     {
@@ -80,14 +80,14 @@ describe('GroupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('loads names of existing groups and makes sure new name is unique', async () => {
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('existing');
 
-      expect(ws.call).toHaveBeenCalledWith('group.query');
+      expect(api.call).toHaveBeenCalledWith('group.query');
       expect(await nameInput.getErrorText()).toBe('The name "existing" is already in use.');
     });
 
@@ -95,7 +95,7 @@ describe('GroupFormComponent', () => {
       const gidInput = await loader.getHarness(IxInputHarness.with({ label: 'GID' }));
       const value = await gidInput.getValue();
 
-      expect(ws.call).toHaveBeenCalledWith('group.get_next_gid');
+      expect(api.call).toHaveBeenCalledWith('group.get_next_gid');
       expect(value).toBe('1234');
     });
 
@@ -111,7 +111,7 @@ describe('GroupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('group.create', [{
+      expect(api.call).toHaveBeenCalledWith('group.create', [{
         gid: 1234,
         name: 'new',
         smb: true,
@@ -129,7 +129,7 @@ describe('GroupFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {
@@ -165,7 +165,7 @@ describe('GroupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('group.update', [
+      expect(api.call).toHaveBeenCalledWith('group.update', [
         13,
         {
           name: 'updated',
@@ -175,7 +175,7 @@ describe('GroupFormComponent', () => {
         },
       ]);
 
-      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
         ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
@@ -192,7 +192,7 @@ describe('GroupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
         ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });

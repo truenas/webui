@@ -57,7 +57,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: SlideInService,
@@ -154,8 +154,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
     this.cdr.markForCheck();
 
     combineLatest([
-      this.ws.call('network.general.summary'),
-      this.ws.call('network.configuration.config'),
+      this.api.call('network.general.summary'),
+      this.api.call('network.configuration.config'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([summary, config]) => {

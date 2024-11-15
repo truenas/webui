@@ -57,7 +57,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -67,7 +67,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   onExport(): void {
     this.isLoading = true;
-    this.ws.job(this.jobMethod, this.getExportParams(
+    this.api.job(this.jobMethod, this.getExportParams(
       this.getQueryFilters(this.searchQuery),
       this.getQueryOptions(this.sorting),
     )).pipe(
@@ -89,7 +89,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
           customArguments.report_name = url;
         }
 
-        return this.ws.call('core.download', [downloadMethod, [customArguments], url]);
+        return this.api.call('core.download', [downloadMethod, [customArguments], url]);
       }),
       switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
       catchError((error) => {

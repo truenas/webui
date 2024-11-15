@@ -63,7 +63,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
         });
       }),
       switchMap(() => {
-        return this.ws.call('pool.dataset.details')
+        return this.api.call('pool.dataset.details')
           .pipe(
             tap((datasets: DatasetDetails[]) => {
               this.patchState({
@@ -110,7 +110,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     super(initialState);
   }

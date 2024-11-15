@@ -18,7 +18,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('KerberosSettingsComponent', () => {
   let spectator: Spectator<KerberosSettingsComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: KerberosSettingsComponent,
     imports: [
@@ -44,14 +44,14 @@ describe('KerberosSettingsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current kerberos settings and show them', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('kerberos.config');
+    expect(api.call).toHaveBeenCalledWith('kerberos.config');
     expect(values).toEqual({
       'Appdefaults Auxiliary Parameters': 'testparam',
       'Libdefaults Auxiliary Parameters': 'clockskew=2',
@@ -68,7 +68,7 @@ describe('KerberosSettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('kerberos.update', [{
+    expect(api.call).toHaveBeenCalledWith('kerberos.update', [{
       appdefaults_aux: 'newparam',
       libdefaults_aux: 'clockskew=6',
     }]);

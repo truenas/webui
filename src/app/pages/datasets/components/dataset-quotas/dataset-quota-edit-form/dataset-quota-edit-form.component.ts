@@ -128,7 +128,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
@@ -175,7 +175,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   getQuota(id: number): Observable<DatasetQuota[]> {
     const params = [['id', '=', id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
-    return this.ws.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, params]);
+    return this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, params]);
   }
 
   onSubmit(): void {
@@ -207,7 +207,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('pool.dataset.set_quota', [this.datasetId, payload]);
+        return this.api.call('pool.dataset.set_quota', [this.datasetId, payload]);
       }),
       untilDestroyed(this),
     ).subscribe({

@@ -96,7 +96,7 @@ export class ReplicationFormComponent implements OnInit {
   protected existingReplication: ReplicationTask;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
@@ -167,8 +167,8 @@ export class ReplicationFormComponent implements OnInit {
     const payload = this.getPayload();
 
     const operation$ = this.isNew
-      ? this.ws.call('replication.create', [payload])
-      : this.ws.call('replication.update', [this.existingReplication.id, payload]);
+      ? this.api.call('replication.create', [payload])
+      : this.api.call('replication.update', [this.existingReplication.id, payload]);
 
     this.isLoading = true;
     operation$
@@ -257,7 +257,7 @@ export class ReplicationFormComponent implements OnInit {
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
         }
         return of({ eligible: 0, total: 0 });
       }),

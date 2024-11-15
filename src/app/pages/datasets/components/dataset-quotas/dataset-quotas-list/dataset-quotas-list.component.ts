@@ -194,7 +194,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     protected formatter: IxFormatterService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -232,7 +232,7 @@ export class DatasetQuotasListComponent implements OnInit {
 
   getQuotas(): void {
     this.isLoading = true;
-    this.ws.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
+    this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
       .pipe(untilDestroyed(this)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
@@ -259,7 +259,7 @@ export class DatasetQuotasListComponent implements OnInit {
   };
 
   checkInvalidQuotas(): void {
-    this.ws.call(
+    this.api.call(
       'pool.dataset.get_quota',
       [this.datasetId, this.quotaType, this.invalidFilter],
     ).pipe(untilDestroyed(this)).subscribe({
@@ -313,7 +313,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   setQuota(quotas: SetDatasetQuota[]): Observable<void> {
-    return this.ws.call('pool.dataset.set_quota', [this.datasetId, quotas]);
+    return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 
   doAdd(): void {

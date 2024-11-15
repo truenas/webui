@@ -90,7 +90,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -153,8 +153,8 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const payload = this.preparePayload();
           return this.isNew
-            ? this.ws.call('cloudsync.credentials.create', [payload])
-            : this.ws.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
+            ? this.api.call('cloudsync.credentials.create', [payload])
+            : this.api.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
         }),
         untilDestroyed(this),
       )
@@ -188,7 +188,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const { name, ...payload } = this.preparePayload();
 
-          return this.ws.call('cloudsync.credentials.verify', [payload]);
+          return this.api.call('cloudsync.credentials.verify', [payload]);
         }),
         untilDestroyed(this),
       )

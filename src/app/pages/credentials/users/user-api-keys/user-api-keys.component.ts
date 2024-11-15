@@ -32,7 +32,6 @@ import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
@@ -64,7 +63,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    IxTableDetailsRowDirective,
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
@@ -140,7 +138,7 @@ export class UserApiKeysComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private readonly apiKeys$ = this.ws.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
   protected readonly nameSuggestions$ = this.apiKeys$.pipe(
     map((keys) => uniq(keys.map((key) => ({ label: key.name, value: key.name })))),
@@ -153,7 +151,7 @@ export class UserApiKeysComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -163,7 +161,7 @@ export class UserApiKeysComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'api_key.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'api_key.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();
@@ -197,7 +195,7 @@ export class UserApiKeysComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('api_key.delete', [apiKey.id])),
+      switchMap(() => this.api.call('api_key.delete', [apiKey.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.dataProvider.load(),

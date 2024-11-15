@@ -43,7 +43,7 @@ export class ErrorTemplateComponent {
   @Input() logs: Job;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -68,7 +68,7 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
+    this.api.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';

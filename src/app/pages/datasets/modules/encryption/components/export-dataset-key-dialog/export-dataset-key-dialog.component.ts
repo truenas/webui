@@ -43,7 +43,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   key: string;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
@@ -61,7 +61,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     const fileName = `dataset_${this.dataset.name}_key.json`;
     const mimetype = 'application/json';
 
-    this.ws.call('core.download', ['pool.dataset.export_key', [this.dataset.id, true], fileName])
+    this.api.call('core.download', ['pool.dataset.export_key', [this.dataset.id, true], fileName])
       .pipe(
         this.loader.withLoader(),
         switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
@@ -78,7 +78,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   }
 
   private loadKey(): void {
-    this.ws.job('pool.dataset.export_key', [this.dataset.id])
+    this.api.job('pool.dataset.export_key', [this.dataset.id])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {

@@ -20,7 +20,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaAddFormComponent,
@@ -59,7 +59,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -77,7 +77,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
           { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
@@ -101,7 +101,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -116,7 +116,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
           { id: 'sys', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },

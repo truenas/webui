@@ -91,7 +91,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
@@ -121,8 +121,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       }),
       switchMap(() => forkJoin([
-        this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
-        this.ws.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
+        this.api.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
+        this.api.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
       ])),
       untilDestroyed(this),
     ).subscribe({

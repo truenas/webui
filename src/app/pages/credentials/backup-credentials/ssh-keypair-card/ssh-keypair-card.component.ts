@@ -96,7 +96,7 @@ export class SshKeypairCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -152,7 +152,7 @@ export class SshKeypairCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('keychaincredential.delete', [credential.id])),
+        switchMap(() => this.api.call('keychaincredential.delete', [credential.id])),
         untilDestroyed(this),
       )
       .subscribe(() => {

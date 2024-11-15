@@ -203,7 +203,7 @@ export class NetworkConfigurationComponent implements OnInit {
     fcName: 'outbound_network_value',
     label: helptextNetworkConfiguration.outbound_network_value.placeholder,
     tooltip: helptextNetworkConfiguration.outbound_network_value.tooltip,
-    options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
+    options: this.api.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
 
@@ -220,7 +220,7 @@ export class NetworkConfigurationComponent implements OnInit {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private slideInRef: SlideInRef<NetworkConfigurationComponent>,
     private formErrorHandler: FormErrorHandlerService,
@@ -264,7 +264,7 @@ export class NetworkConfigurationComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.ws.call('network.configuration.config')
+    this.api.call('network.configuration.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config: NetworkConfiguration) => {
@@ -344,7 +344,7 @@ export class NetworkConfigurationComponent implements OnInit {
     };
 
     this.isFormLoading = true;
-    this.ws.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
+    this.api.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

@@ -79,7 +79,7 @@ export class KmipComponent implements OnInit {
   readonly certificateAuthorities$ = this.systemGeneralService.getCertificateAuthorities().pipe(idNameArrayToOptions());
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -95,7 +95,7 @@ export class KmipComponent implements OnInit {
 
   onSyncKeysPressed(): void {
     this.isLoading = true;
-    this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.syncInfoDialog.title,
@@ -114,7 +114,7 @@ export class KmipComponent implements OnInit {
 
   onClearSyncKeysPressed(): void {
     this.isLoading = true;
-    this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.dialogService.info(
           helptextSystemKmip.clearSyncKeyInfoDialog.title,
@@ -133,7 +133,7 @@ export class KmipComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('kmip.update', [this.form.value as KmipConfigUpdate]),
+      this.api.job('kmip.update', [this.form.value as KmipConfigUpdate]),
       { title: this.translate.instant(helptextSystemKmip.jobDialog.title) },
     )
       .afterClosed()
@@ -149,8 +149,8 @@ export class KmipComponent implements OnInit {
   private loadKmipConfig(): void {
     this.isLoading = true;
     forkJoin([
-      this.ws.call('kmip.config'),
-      this.ws.call('kmip.kmip_sync_pending'),
+      this.api.call('kmip.config'),
+      this.api.call('kmip.kmip_sync_pending'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({

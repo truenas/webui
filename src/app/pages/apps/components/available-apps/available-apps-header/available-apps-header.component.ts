@@ -88,7 +88,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -147,7 +147,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   refreshCatalog(): void {
     this.dialogService.jobDialog(
-      this.ws.job('catalog.sync'),
+      this.api.job('catalog.sync'),
       {
         title: this.translate.instant(helptextApps.refreshing),
         canMinimize: true,

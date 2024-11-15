@@ -70,7 +70,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<KerberosKeytabsFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingKerberosKeytab: KerberosKeytab,
   ) {}
@@ -104,9 +104,9 @@ export class KerberosKeytabsFormComponent implements OnInit {
       this.isLoading = true;
       let request$: Observable<unknown>;
       if (this.isNew) {
-        request$ = this.ws.call('kerberos.keytab.create', [payload]);
+        request$ = this.api.call('kerberos.keytab.create', [payload]);
       } else {
-        request$ = this.ws.call('kerberos.keytab.update', [
+        request$ = this.api.call('kerberos.keytab.update', [
           this.editingKerberosKeytab.id,
           payload,
         ]);

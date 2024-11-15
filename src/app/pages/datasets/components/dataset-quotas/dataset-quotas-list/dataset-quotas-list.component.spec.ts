@@ -46,7 +46,7 @@ const fakeQuotas = [{
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -96,17 +96,17 @@ describe('DatasetQuotasListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
       ['Test', DatasetQuotaType.User, []],
     );
 
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
       ['Test', DatasetQuotaType.User, [['name', '=', null]]],
     );
@@ -131,7 +131,7 @@ describe('DatasetQuotasListComponent', () => {
         title: 'Delete User Quota',
       }),
     );
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.set_quota',
       ['Test', [{
         id: '1',

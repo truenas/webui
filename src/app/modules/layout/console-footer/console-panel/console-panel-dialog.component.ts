@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
@@ -18,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     MatDialogActions,
     MatButton,

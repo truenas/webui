@@ -71,7 +71,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -129,7 +129,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
   }
 
   private loadCsrs(): void {
-    this.ws.call('certificate.query', [[['CSR', '!=', null]]])
+    this.api.call('certificate.query', [[['CSR', '!=', null]]])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((csrs) => {
         this.csrs = csrs;

@@ -1,4 +1,3 @@
-import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
   signal,
@@ -8,7 +7,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
 } from '@angular/material/dialog';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -18,7 +16,6 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -44,10 +41,7 @@ export interface ManualTestDialogParams {
     TestDirective,
     MatDialogClose,
     RequiresRolesDirective,
-    MatProgressBar,
     TranslateModule,
-    FormatDateTimePipe,
-    PercentPipe,
     TestProgressRowComponent,
   ],
 })

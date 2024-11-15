@@ -68,7 +68,7 @@ export class ChangePasswordDialogComponent {
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private authService: AuthService,
     private loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
@@ -80,7 +80,7 @@ export class ChangePasswordDialogComponent {
   }
 
   onSubmit(): void {
-    this.ws.call('user.set_password', [{
+    this.api.call('user.set_password', [{
       old_password: this.form.value.old_password,
       new_password: this.form.value.new_password,
       username: this.loggedInUser.pw_name,

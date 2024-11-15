@@ -24,7 +24,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createRoutingFactory({
     component: ServiceSmbComponent,
@@ -98,14 +98,14 @@ describe('ServiceSmbComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('smb.config');
+    expect(api.call).toHaveBeenCalledWith('smb.config');
     expect(values).toEqual({
       'NetBIOS Name': 'truenas',
       'NetBIOS Alias': [],
@@ -159,7 +159,7 @@ describe('ServiceSmbComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('smb.update', [{
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // New basic options
       netbiosname: 'truenas-scale',
       netbiosalias: ['truenas-alias', 'truenas-alias2'],
@@ -205,7 +205,7 @@ describe('ServiceSmbComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('smb.update', [{
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // Old basic options
       netbiosname: 'truenas',
       netbiosalias: [],
