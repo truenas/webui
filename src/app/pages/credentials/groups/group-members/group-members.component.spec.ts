@@ -54,6 +54,10 @@ describe('GroupMembersComponent', () => {
     api = spectator.inject(ApiService);
   });
 
+  it('loads local users to show in available users', () => {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [[['local', '=', true]]]);
+  });
+
   it('shows current group values when form is being edited', async () => {
     const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
     const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
@@ -63,7 +67,6 @@ describe('GroupMembersComponent', () => {
     expect(await userList.getItems()).toHaveLength(1);
     expect(await memberList.getItems()).toHaveLength(1);
 
-    expect(api.call).toHaveBeenCalledWith('user.query');
     expect(api.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
   });
 

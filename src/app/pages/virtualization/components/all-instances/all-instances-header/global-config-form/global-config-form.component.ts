@@ -13,7 +13,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
@@ -36,7 +35,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatButton,
     MatCard,
     MatCardContent,
-    IxRadioGroupComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TestDirective,

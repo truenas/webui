@@ -3,7 +3,6 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -35,7 +34,6 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
     MatButton,
     TestDirective,
     NgxSkeletonLoaderModule,
-    MatTooltip,
     MatIconButton,
     IxIconComponent,
     DeleteDeviceButtonComponent,

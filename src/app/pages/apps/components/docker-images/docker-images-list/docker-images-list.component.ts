@@ -51,7 +51,6 @@ export interface ContainerImageUi extends ContainerImage {
   standalone: true,
   imports: [
     TranslateModule,
-    FileSizePipe,
     PageHeaderComponent,
     SearchInput1Component,
     MatButton,

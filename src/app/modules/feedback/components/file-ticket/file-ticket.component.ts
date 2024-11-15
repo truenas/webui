@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component, Input, output,
@@ -34,7 +33,6 @@ import { ApiService } from 'app/services/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     ReactiveFormsModule,
     IxInputComponent,

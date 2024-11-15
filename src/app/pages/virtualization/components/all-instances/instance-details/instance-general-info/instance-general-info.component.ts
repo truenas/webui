@@ -5,7 +5,7 @@ import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
@@ -41,7 +41,6 @@ import { SlideInService } from 'app/services/slide-in.service';
     MatCardContent,
     YesNoPipe,
     TitleCasePipe,
-    RouterLink,
     RequiresRolesDirective,
     TestDirective,
     MapValuePipe,
