@@ -33,7 +33,7 @@ export class DeviceDetailsComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) protected device: VmDevice,
   ) {
-    this.attributes = Object.entries(device.attributes);
+    this.attributes = Object.entries(device.attributes).filter(([key]) => key !== 'dtype');
   }
 
   get title(): string {

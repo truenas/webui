@@ -3,40 +3,40 @@ import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
 
-export interface BaseVmDevice<T> {
+export interface BaseVmDevice {
   id: number;
   dtype: VmDeviceType;
-  attributes: T;
+  attributes: unknown;
   order: number;
   vm: number;
 }
 
-export interface VmPciPassthroughDevice extends BaseVmDevice<VmPciPassthroughAttributes> {
-  dtype: VmDeviceType.Pci;
+export interface VmPciPassthroughDevice extends BaseVmDevice {
+  attributes: VmPciPassthroughAttributes;
 }
 
-export interface VmUsbPassthroughDevice extends BaseVmDevice<VmUsbPassthroughAttributes> {
-  dtype: VmDeviceType.Usb;
+export interface VmUsbPassthroughDevice extends BaseVmDevice {
+  attributes: VmUsbPassthroughAttributes;
 }
 
-export interface VmDisplayDevice extends BaseVmDevice<VmDisplayAttributes> {
-  dtype: VmDeviceType.Display;
+export interface VmDisplayDevice extends BaseVmDevice {
+  attributes: VmDisplayAttributes;
 }
 
-export interface VmCdRomDevice extends BaseVmDevice<VmCdRomAttributes> {
-  dtype: VmDeviceType.Cdrom;
+export interface VmCdRomDevice extends BaseVmDevice {
+  attributes: VmCdRomAttributes;
 }
 
-export interface VmRawFileDevice extends BaseVmDevice<VmRawFileAttributes> {
-  dtype: VmDeviceType.Raw;
+export interface VmRawFileDevice extends BaseVmDevice {
+  attributes: VmRawFileAttributes;
 }
 
-export interface VmNicDevice extends BaseVmDevice<VmNicAttributes> {
-  dtype: VmDeviceType.Nic;
+export interface VmNicDevice extends BaseVmDevice {
+  attributes: VmNicAttributes;
 }
 
-export interface VmDiskDevice extends BaseVmDevice<VmDiskAttributes> {
-  dtype: VmDeviceType.Disk;
+export interface VmDiskDevice extends BaseVmDevice {
+  attributes: VmDiskAttributes;
 }
 
 export type VmDevice =
