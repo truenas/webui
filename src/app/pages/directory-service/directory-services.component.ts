@@ -90,7 +90,7 @@ export class DirectoryServicesComponent implements OnInit {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
@@ -105,10 +105,10 @@ export class DirectoryServicesComponent implements OnInit {
 
   refreshCards(): void {
     forkJoin([
-      this.ws.call('directoryservices.get_state'),
-      this.ws.call('activedirectory.config'),
-      this.ws.call('ldap.config'),
-      this.ws.call('kerberos.config'),
+      this.api.call('directoryservices.get_state'),
+      this.api.call('activedirectory.config'),
+      this.api.call('ldap.config'),
+      this.api.call('kerberos.config'),
     ])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {

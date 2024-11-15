@@ -60,7 +60,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private chainedComponentRef: ChainedRef<unknown>,
     private cdr: ChangeDetectorRef,
@@ -108,7 +108,7 @@ export class CloudSyncProviderComponent implements OnInit {
       provider: this.existingCredential.provider,
       attributes: { ...this.existingCredential.attributes },
     };
-    this.ws.call('cloudsync.credentials.verify', [payload]).pipe(
+    this.api.call('cloudsync.credentials.verify', [payload]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (response) => {

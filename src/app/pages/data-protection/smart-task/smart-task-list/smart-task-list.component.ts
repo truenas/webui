@@ -122,7 +122,7 @@ export class SmartTaskListComponent implements OnInit {
     private taskService: TaskService,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -132,7 +132,7 @@ export class SmartTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const smartTasks$ = this.ws.call('smart.test.query').pipe(
+    const smartTasks$ = this.api.call('smart.test.query').pipe(
       map((smartTasks: SmartTestTaskUi[]) => this.transformSmartTasks(smartTasks)),
       tap((smartTasks) => this.smartTasks = smartTasks),
       untilDestroyed(this),
@@ -175,7 +175,7 @@ export class SmartTaskListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('smart.test.delete', [smartTask.id])),
+      switchMap(() => this.api.call('smart.test.delete', [smartTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

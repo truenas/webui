@@ -1,4 +1,4 @@
-import { KeyValuePipe, TitleCasePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -11,10 +11,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ApiService } from 'app/services/api.service';
@@ -37,15 +40,17 @@ import { SlideInService } from 'app/services/slide-in.service';
     TranslateModule,
     MatCardContent,
     YesNoPipe,
-    TitleCasePipe,
     RequiresRolesDirective,
     KeyValuePipe,
+    TestDirective,
+    MapValuePipe,
   ],
 })
 export class InstanceGeneralInfoComponent {
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
+  protected readonly virtualizationStatusLabels = virtualizationStatusLabels;
 
   constructor(
     protected formatter: IxFormatterService,

@@ -15,8 +15,10 @@
 
   <mat-card-content>
     @if (instance(); as instance) {
-      <p>{{ 'Name' | translate }}: {{ instance.name || '-' }}</p>
-      <p>{{ 'Status' | translate }}: {{ (instance.status | titlecase) | translate }}</p>
+      <p>
+        {{ 'Status' | translate }}:
+        {{ (instance.status | mapValue: virtualizationStatusLabels) | translate }}
+      </p>
       <p>{{ 'Autostart' | translate }}: {{ instance.autostart | yesNo }}</p>
       <p>{{ 'Base Image' | translate }}: {{ instance.image.description || '-' }}</p>
       <p>{{ 'CPU' | translate }}: {{ instance.cpu || '-' }}</p>

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component, computed, input, output,
 } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -37,7 +37,6 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
     FileSizePipe,
     AppUpdateCellComponent,
     RequiresRolesDirective,
-    MatButton,
     MatIconButton,
     IxIconComponent,
   ],

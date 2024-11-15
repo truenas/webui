@@ -28,7 +28,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let form: IxFormHarness;
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
@@ -90,13 +90,13 @@ describe('ServiceNfsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     form = await loader.getHarness(IxFormHarness);
   });
   it('shows current settings for NFS service when form is opened', async () => {
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('nfs.config');
+    expect(api.call).toHaveBeenCalledWith('nfs.config');
     expect(values).toEqual({
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
       'Calculate number of threads dynamically': false,
@@ -129,7 +129,7 @@ describe('ServiceNfsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('nfs.update', [{
+    expect(api.call).toHaveBeenCalledWith('nfs.update', [{
       allow_nonroot: true,
       bindip: ['192.168.1.119'],
       protocols: [NfsProtocol.V4],

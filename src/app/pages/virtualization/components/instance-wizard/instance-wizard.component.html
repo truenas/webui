@@ -33,7 +33,7 @@
           ixTest="browse-images"
           type="button"
           (click)="onBrowseImages()"
-        >{{ 'Browse' | translate }}</button>
+        >{{ 'Browse Catalog' | translate }}</button>
       </div>
     </ix-fieldset>
 
@@ -82,6 +82,40 @@
           </ix-list-item>
         }
       </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Disks' | translate">
+      <ix-list
+        formArrayName="disks"
+        [empty]="form.controls.disks.controls.length === 0"
+        [label]="'Disks' | translate"
+        [formArray]="form.controls.disks"
+        (add)="addDisk()"
+      >
+        @for (disk of form.controls.disks.controls; track disk; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Disk' | translate"
+            (delete)="removeDisk(i)"
+          >
+            <ix-explorer
+              formControlName="source"
+              [label]="'Source' | translate"
+              [required]="true"
+              [nodeProvider]="directoryNodeProvider"
+            ></ix-explorer>
+
+            <ix-input
+              formControlName="destination"
+              [label]="'Destination' | translate"
+              [required]="true"
+            ></ix-input>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Network' | translate">
     </ix-fieldset>
 
     <ix-fieldset [title]="'Proxies' | translate">
@@ -173,10 +207,10 @@
         mat-button
         type="submit"
         color="primary"
-        ixTest="save"
+        ixTest="create"
         [disabled]="form.invalid || isLoading()"
       >
-        {{ 'Save' | translate }}
+        {{ 'Create' | translate }}
       </button>
     </div>
   </form>

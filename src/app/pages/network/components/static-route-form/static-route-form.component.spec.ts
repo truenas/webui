@@ -17,7 +17,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 describe('StaticRouteFormComponent', () => {
   let spectator: Spectator<StaticRouteFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: StaticRouteFormComponent,
     imports: [
@@ -40,7 +40,7 @@ describe('StaticRouteFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -54,7 +54,7 @@ describe('StaticRouteFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('staticroute.create', [{
+      expect(api.call).toHaveBeenCalledWith('staticroute.create', [{
         destination: '10.24.12.13/16',
         gateway: '10.24.12.1',
         description: 'My route',
@@ -78,7 +78,7 @@ describe('StaticRouteFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -103,7 +103,7 @@ describe('StaticRouteFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('staticroute.update', [
+      expect(api.call).toHaveBeenCalledWith('staticroute.update', [
         13,
         {
           destination: '15.24.12.13/16',

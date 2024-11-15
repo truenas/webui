@@ -4,7 +4,7 @@ import {
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogModule, MatDialogRef,
+  MAT_DIALOG_DATA, MatDialogContent, MatDialogModule, MatDialogRef,
 } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -38,7 +38,6 @@ export type VirtualizationImageWithId = VirtualizationImage & {
     IxSelectComponent,
     ReactiveFormsModule,
     MatDialogContent,
-    MatDialogActions,
     MatDialogModule,
     TranslateModule,
     IxIconComponent,

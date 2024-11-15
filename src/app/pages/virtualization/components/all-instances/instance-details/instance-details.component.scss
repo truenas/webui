@@ -4,7 +4,6 @@
 :host {
   display: block;
   width: 100%;
-  width: 100%;
 
   .header {
     color: var(--fg1);
@@ -16,6 +15,7 @@
   }
 
   .title {
+    color: var(--fg2);
     margin-bottom: 12px;
     margin-top: 20px;
     min-height: 36px;
@@ -34,7 +34,7 @@
     }
 
     .prefix {
-      display: flex;
+      display: inline;
 
       @media (max-width: $breakpoint-hidden) {
         display: none;

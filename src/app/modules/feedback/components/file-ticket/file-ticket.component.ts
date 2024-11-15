@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy,
   Component, Input, output,
@@ -34,7 +33,6 @@ import { ApiService } from 'app/services/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     ReactiveFormsModule,
     IxInputComponent,
@@ -83,7 +81,7 @@ export class FileTicketComponent {
     private feedbackService: FeedbackService,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     this.getSystemFileSizeLimit();
   }
@@ -106,7 +104,7 @@ export class FileTicketComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(this.imageValidator.getImagesValidator(size * MiB));
       this.form.controls.images.updateValueAndValidity();
     });
