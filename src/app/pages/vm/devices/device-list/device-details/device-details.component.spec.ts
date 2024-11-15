@@ -12,8 +12,8 @@ describe('DeviceDetailsComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          dtype: VmDeviceType.Display,
           attributes: {
+            dtype: VmDeviceType.Display,
             web: true,
             port: 720,
             wait: true,

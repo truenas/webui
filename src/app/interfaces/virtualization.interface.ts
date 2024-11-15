@@ -1,3 +1,4 @@
+import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
   VirtualizationDeviceType,
@@ -175,3 +176,8 @@ export interface AvailableUsb {
   product: string;
   manufacturer: string;
 }
+
+export type InstanceEnvVariablesFormGroup = FormGroup<{
+  name: FormControl<string>;
+  value: FormControl<string>;
+}>;

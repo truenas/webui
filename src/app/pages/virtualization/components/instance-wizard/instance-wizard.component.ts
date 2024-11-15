@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,6 +29,7 @@ import {
   AvailableGpu,
   AvailableUsb,
   CreateVirtualizationInstance,
+  InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -116,6 +118,7 @@ export class InstanceWizardComponent implements OnInit {
       destination: FormControl<string>;
     }>>([]),
     autostart: [false],
+    environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
     memory: [null as number, Validators.required],
     image: ['', Validators.required],
   });
@@ -215,8 +218,21 @@ export class InstanceWizardComponent implements OnInit {
       });
   }
 
+  addEnvironmentVariable(): void {
+    const control = this.formBuilder.group({
+      name: ['', Validators.required],
+      value: ['', Validators.required],
+    });
+
+    this.form.controls.environmentVariables.push(control);
+  }
+
+  removeEnvironmentVariable(index: number): void {
+    this.form.controls.environmentVariables.removeAt(index);
+  }
+
   private getPayload(): CreateVirtualizationInstance {
-    const devices = this.getPayloadDevices();
+    const devices = this.getDevicesPayload();
 
     return {
       devices,
@@ -225,10 +241,23 @@ export class InstanceWizardComponent implements OnInit {
       autostart: this.form.controls.autostart.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
+      environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
   }
 
-  private getPayloadDevices(): VirtualizationDevice[] {
+  private get environmentVariablesPayload(): Record<string, string> {
+    return this.form.controls.environmentVariables.controls.reduce((env: Record<string, string>, control) => {
+      const name = control.get('name')?.value;
+      const value = control.get('value')?.value;
+
+      if (name && value) {
+        env[name] = value;
+      }
+      return env;
+    }, {});
+  }
+
+  private getDevicesPayload(): VirtualizationDevice[] {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
