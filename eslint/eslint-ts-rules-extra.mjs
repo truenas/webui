@@ -114,6 +114,10 @@ export const extraRules = {
         "message": "Use built-in control flow syntax instead"
       },
       {
+        "name": "@angular/core",
+        "importNames": ["CUSTOM_ELEMENTS_SCHEMA"],
+      },
+      {
         "name": "@angular/common",
         "importNames": ["CommonModule"],
         "message": "Import individual constituents instead."
