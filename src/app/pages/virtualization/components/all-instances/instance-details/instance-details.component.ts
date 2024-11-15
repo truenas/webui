@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import {
   InstanceDevicesComponent,
@@ -31,6 +32,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     InstanceProxiesComponent,
     InstanceDisksComponent,
     DatasetIconComponent,
+    MobileBackButtonComponent,
   ],
 })
 export class InstanceDetailsComponent {
