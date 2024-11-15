@@ -68,7 +68,7 @@ export class DeleteDeviceButtonComponent {
       this.errorHandler.catchError(),
       tap(() => {
         this.snackbar.success(this.translate.instant('Device deleted'));
-        this.instanceStore.loadDevices();
+        this.instanceStore.deviceDeleted(this.device().name);
       }),
     );
   }
