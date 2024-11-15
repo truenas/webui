@@ -75,7 +75,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: coverage-${{ matrix.shard }}
-         path: coverage/${{matrix.shard}}.json
+         path: coverage/coverage-${{matrix.shard}}.json
+      - name: Upload test data
+        uses: actions/upload-artifact@v4
+        with:
+         name: coverage-junit-${{ matrix.shard }}
+         path: coverage/junit-${{matrix.shard}}.xml
 
   report-coverage:
     name: Collect coverage
