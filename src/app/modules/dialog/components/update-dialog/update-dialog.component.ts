@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
@@ -18,7 +17,6 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     MatDialogTitle,
     TranslateModule,

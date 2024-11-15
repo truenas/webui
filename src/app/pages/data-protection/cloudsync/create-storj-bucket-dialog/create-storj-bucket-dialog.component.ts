@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject, Optional,
 } from '@angular/core';
@@ -28,7 +27,6 @@ import { ApiService } from 'app/services/api.service';
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     FormActionsComponent,

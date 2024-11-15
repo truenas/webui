@@ -14,7 +14,6 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
@@ -42,7 +41,6 @@ import { SlideInService } from 'app/services/slide-in.service';
     TestDirective,
     AsyncPipe,
     MobileBackButtonComponent,
-    IxIconComponent,
     TranslateModule,
     DatasetIconComponent,
     MatTooltip,

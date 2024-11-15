@@ -6,7 +6,6 @@ import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
-import { MatListItemIcon, MatListItemLine } from '@angular/material/list';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +19,6 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/api.service';
@@ -42,9 +40,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     ReadOnlyComponent,
     MatCardContent,
     DualListBoxComponent,
-    IxIconComponent,
-    MatListItemIcon,
-    MatListItemLine,
     MatCardActions,
     RequiresRolesDirective,
     MatButton,

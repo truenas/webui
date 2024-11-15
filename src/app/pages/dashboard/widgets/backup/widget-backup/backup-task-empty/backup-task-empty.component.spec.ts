@@ -1,4 +1,3 @@
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { BackupTaskEmptyComponent } from './backup-task-empty.component';
@@ -7,7 +6,6 @@ describe('BackupTaskEmptyComponent', () => {
   let spectator: Spectator<BackupTaskEmptyComponent>;
   const createComponent = createComponentFactory({
     component: BackupTaskEmptyComponent,
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
       mockAuth(),
     ],

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
@@ -65,7 +64,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TestDirective,
     TooltipComponent,
     TranslateModule,
-    AsyncPipe,
+
   ],
 })
 export class ServiceNfsComponent implements OnInit {

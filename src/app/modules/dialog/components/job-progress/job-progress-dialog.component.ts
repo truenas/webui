@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DecimalPipe } from '@angular/common';
 import {
   AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, output,
@@ -53,7 +52,6 @@ export interface JobProgressDialogConfig<Result> {
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     MatProgressBar,
     MatDialogActions,
