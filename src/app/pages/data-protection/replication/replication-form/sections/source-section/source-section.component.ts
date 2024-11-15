@@ -77,7 +77,7 @@ export class SourceSectionComponent implements OnChanges {
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
   readonly snapshotNamingOptions$ = of(mapToOptions(snapshotNamingOptionNames, this.translate));
 
-  readonly periodicSnapshotTasks$ = this.ws.call('pool.snapshottask.query').pipe(map((tasks) => {
+  readonly periodicSnapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(map((tasks) => {
     return tasks.map((task) => {
       const enabledMessage = task.enabled
         ? this.translate.instant('Enabled')
@@ -94,7 +94,7 @@ export class SourceSectionComponent implements OnChanges {
   protected readonly CronPresetValue = CronPresetValue;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private taskService: TaskService,
     private translate: TranslateService,

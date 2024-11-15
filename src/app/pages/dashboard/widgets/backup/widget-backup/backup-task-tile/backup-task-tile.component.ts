@@ -15,10 +15,10 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    NgTemplateOutlet,
     IxIconComponent,
     TranslateModule,
     FormatDateTimePipe,
+    NgTemplateOutlet,
   ],
 })
 export class BackupTaskTileComponent {

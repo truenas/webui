@@ -19,7 +19,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
   private rows: ApiCallResponseType<T>[] = [];
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     protected method: T,
     protected params: ApiCallParams<T> = [],
   ) {
@@ -38,7 +38,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
       this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
-          return this.ws.call(this.method, this.prepareParams(this.params)) as Observable<ApiCallResponseType<T>[]>;
+          return this.api.call(this.method, this.prepareParams(this.params)) as Observable<ApiCallResponseType<T>[]>;
         }),
       ).subscribe({
         next: (rows: ApiCallResponseType<T>[]) => {
@@ -80,7 +80,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
       { count: true },
     ] as ApiCallParams<T>;
 
-    return this.ws.call(this.method, params) as unknown as Observable<number>;
+    return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
   protected prepareParams(params: ApiCallParams<T>): ApiCallParams<T> {

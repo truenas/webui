@@ -63,7 +63,7 @@ describe('UserFormComponent', () => {
   const builtinUser = { ...mockUser, builtin: true, immutable: true };
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: UserFormComponent,
     imports: [
@@ -115,7 +115,7 @@ describe('UserFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 
@@ -123,13 +123,13 @@ describe('UserFormComponent', () => {
       const uidInput = await loader.getHarness(IxInputHarness.with({ label: 'UID' }));
       const value = await uidInput.getValue();
 
-      expect(ws.call).toHaveBeenCalledWith('user.get_next_uid');
+      expect(api.call).toHaveBeenCalledWith('user.get_next_uid');
       expect(value).toBe('1234');
     });
 
     it('loads home share path and puts it in home field', async () => {
       const homeInput = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      expect(ws.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
+      expect(api.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
       expect(await homeInput.getValue()).toBe('/mnt/users');
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
@@ -153,7 +153,7 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
+      expect(api.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
         full_name: 'John Smith',
         group_create: true,
         password: 'test-pass',
@@ -185,7 +185,7 @@ describe('UserFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 
@@ -204,7 +204,7 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
+      expect(api.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
         password: 'changepwd',
       })]);
     });
@@ -278,11 +278,11 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.update', [
+      expect(api.call).toHaveBeenCalledWith('user.update', [
         69, { home: '/home/updated', home_create: true },
       ]);
 
-      expect(ws.call).toHaveBeenLastCalledWith('user.update', [
+      expect(api.call).toHaveBeenLastCalledWith('user.update', [
         69,
         {
           email: null,
@@ -312,7 +312,7 @@ describe('UserFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 

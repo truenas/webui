@@ -5,7 +5,9 @@ import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 @Component({
   selector: 'ix-cloud-backup-stats',
@@ -19,8 +21,10 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
     MatCardTitle,
     MatCardContent,
     TranslateModule,
+    MapValuePipe,
   ],
 })
 export class CloudBackupStatsComponent {
   readonly backup = input.required<CloudBackup>();
+  protected readonly cloudsyncTransferSettingLabels = cloudsyncTransferSettingLabels;
 }

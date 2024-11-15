@@ -76,7 +76,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
                   Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private shellService: ShellService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -187,7 +187,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
     if (size) {
-      this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.api.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
         this.xterm.focus();
       });
     }

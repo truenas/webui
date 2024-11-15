@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
@@ -28,7 +27,6 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   imports: [
     MatDialogTitle,
     MatDivider,
-    CdkScrollable,
     MatDialogContent,
     IxIconComponent,
     MatDialogActions,

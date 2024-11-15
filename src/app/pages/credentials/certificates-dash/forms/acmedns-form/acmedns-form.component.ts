@@ -91,7 +91,7 @@ export class AcmednsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   getAuthenticatorSchemas(): Observable<AuthenticatorSchema[]> {
-    return this.ws.call('acme.dns.authenticator.authenticator_schemas');
+    return this.api.call('acme.dns.authenticator.authenticator_schemas');
   }
 
   authenticatorOptions$: Observable<Option[]>;
@@ -103,7 +103,7 @@ export class AcmednsFormComponent implements OnInit {
     private slideInRef: SlideInRef<AcmednsFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private changeDetectorRef: ChangeDetectorRef,
     @Inject(SLIDE_IN_DATA) private acmedns: DnsAuthenticator,
   ) {}
@@ -208,9 +208,9 @@ export class AcmednsFormComponent implements OnInit {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('acme.dns.authenticator.create', [values]);
+      request$ = this.api.call('acme.dns.authenticator.create', [values]);
     } else {
-      request$ = this.ws.call('acme.dns.authenticator.update', [
+      request$ = this.api.call('acme.dns.authenticator.update', [
         this.editingAcmedns.id,
         values,
       ]);

@@ -65,7 +65,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -86,7 +86,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   getSnapshotInfo(): void {
-    this.ws.call(
+    this.api.call(
       'zfs.snapshot.query',
       [
         [['id', '=', this.snapshot.name]], {
@@ -118,7 +118,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'zfs.snapshot.hold' : 'zfs.snapshot.release';
-    this.ws.call(holdOrRelease, [this.snapshotInfo.name])
+    this.api.call(holdOrRelease, [this.snapshotInfo.name])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         error: (error: unknown) => {
@@ -144,7 +144,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
+        return this.api.call('zfs.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => {

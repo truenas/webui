@@ -60,7 +60,7 @@ export class SignCsrDialogComponent {
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}
@@ -71,7 +71,7 @@ export class SignCsrDialogComponent {
       ca_id: this.caId,
     };
 
-    this.ws.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
+    this.api.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
