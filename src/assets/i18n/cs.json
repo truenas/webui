@@ -1332,6 +1332,8 @@
   "Enter zvol name to continue.": "",
   "Enter {value} below to confirm.": "",
   "Entering <i>0</i> uses the actual file size and requires that the file already exists. Otherwise, specify the file size for the new file.": "",
+  "Environment Variable": "",
+  "Environment Variables": "",
   "Error ({code})": "",
   "Error In Apps Service": "",
   "Error Installing": "",

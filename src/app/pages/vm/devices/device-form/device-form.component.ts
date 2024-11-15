@@ -272,9 +272,9 @@ export class DeviceFormComponent implements OnInit {
   }
 
   setDeviceForEdit(): void {
-    this.typeControl.setValue(this.existingDevice.dtype);
+    this.typeControl.setValue(this.existingDevice.attributes.dtype);
     this.orderControl.setValue(this.existingDevice.order);
-    switch (this.existingDevice.dtype) {
+    switch (this.existingDevice.attributes.dtype) {
       case VmDeviceType.Pci:
         this.pciForm.patchValue(this.existingDevice.attributes);
         break;
@@ -310,7 +310,7 @@ export class DeviceFormComponent implements OnInit {
         this.usbForm.patchValue(this.existingDevice.attributes);
         break;
       default:
-        assertUnreachable(this.existingDevice);
+        assertUnreachable(this.existingDevice as never);
     }
   }
 
@@ -356,7 +356,6 @@ export class DeviceFormComponent implements OnInit {
 
     const update: VmDeviceUpdate = {
       vm: this.virtualMachineId,
-      dtype: this.typeControl.value,
       order: this.orderControl.value,
       attributes: this.getUpdateAttributes(),
     };
@@ -387,7 +386,11 @@ export class DeviceFormComponent implements OnInit {
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
-    const values = this.typeSpecificForm.value;
+    const values = {
+      ...this.typeSpecificForm.value,
+      dtype: this.typeControl.value,
+    };
+
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;
     }
@@ -397,10 +400,10 @@ export class DeviceFormComponent implements OnInit {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
         physical_sectorsize: sectorsize === 0 ? null : sectorsize,
-      };
+      } as VmDeviceUpdate['attributes'];
     }
 
-    return values;
+    return values as VmDeviceUpdate['attributes'];
   }
 
   /**

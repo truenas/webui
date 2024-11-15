@@ -90,8 +90,8 @@ export class DeviceListComponent implements OnInit {
     }),
     actionsColumn({}),
   ], {
-    uniqueRowTag: (row) => `vm-device-${row.dtype}-${row.order}`,
-    ariaLabels: (row) => [row.dtype, this.translate.instant('Device')],
+    uniqueRowTag: (row) => `vm-device-${row.attributes.dtype}-${row.order}`,
+    ariaLabels: (row) => [row.attributes.dtype, this.translate.instant('Device')],
   });
 
   get vmId(): number {
@@ -197,7 +197,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   private getDeviceTypeLabel(device: VmDevice): string {
-    const deviceLabel = vmDeviceTypeLabels.get(device.dtype) ?? device.dtype;
+    const deviceLabel = vmDeviceTypeLabels.get(device.attributes.dtype) ?? device.attributes.dtype;
     return this.translate.instant(deviceLabel);
   }
 }

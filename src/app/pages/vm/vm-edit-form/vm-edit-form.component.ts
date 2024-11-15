@@ -185,7 +185,7 @@ export class VmEditFormComponent implements OnInit {
 
   private setupGpuControl(vm: VirtualMachine): void {
     const vmPciSlots = vm.devices
-      .filter((device) => device.dtype === VmDeviceType.Pci)
+      .filter((device) => device.attributes.dtype === VmDeviceType.Pci)
       .map((pciDevice: VmPciPassthroughDevice) => pciDevice.attributes.pptdev);
 
     this.gpuService.getAllGpus().pipe(untilDestroyed(this)).subscribe((allGpus) => {

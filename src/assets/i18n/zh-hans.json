@@ -47,6 +47,8 @@
   "Enable NFS over RDMA": "",
   "Enable this to create a token with no expiration date. The token will stay active until it is manually revoked or updated.": "",
   "Enter an email address to override the admin account’s default email.  If left blank, the admin account’s email address will be used": "",
+  "Environment Variable": "",
+  "Environment Variables": "",
   "Error Installing": "",
   "Expires at": "",
   "Expires date": "",

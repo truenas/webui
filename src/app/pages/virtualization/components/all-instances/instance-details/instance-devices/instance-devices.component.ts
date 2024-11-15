@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,8 +9,6 @@ import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/en
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
@@ -30,9 +27,6 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
-    MatIconButton,
-    TestDirective,
-    IxIconComponent,
     DeleteDeviceButtonComponent,
   ],
 })
