@@ -6,7 +6,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -67,8 +66,6 @@ describe('PortalFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Description: 'work',
-        'Discovery Authentication Method': 'Mutual CHAP',
-        'Discovery Authentication Group': '1',
         'IP Address': '192.168.1.3',
       });
 
@@ -77,8 +74,6 @@ describe('PortalFormComponent', () => {
 
       expect(ws.call).toHaveBeenCalledWith('iscsi.portal.create', [{
         comment: 'work',
-        discovery_authgroup: 1,
-        discovery_authmethod: IscsiAuthMethod.ChapMutual,
         listen: [{ ip: '192.168.1.3' }],
       }]);
     });
@@ -92,8 +87,6 @@ describe('PortalFormComponent', () => {
             provide: SLIDE_IN_DATA,
             useValue: {
               comment: 'test',
-              discovery_authgroup: 1,
-              discovery_authmethod: IscsiAuthMethod.None,
               listen: [{ ip: '0.0.0.0' }],
               id: 1,
               tag: 1,
@@ -111,8 +104,6 @@ describe('PortalFormComponent', () => {
 
       expect(values).toEqual({
         Description: 'test',
-        'Discovery Authentication Method': 'NONE',
-        'Discovery Authentication Group': '1',
         'IP Address': '0.0.0.0',
       });
     });
@@ -121,8 +112,6 @@ describe('PortalFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Description: 'good',
-        'Discovery Authentication Method': 'CHAP',
-        'Discovery Authentication Group': '1',
         'IP Address': '0.0.0.0',
       });
 
@@ -131,8 +120,6 @@ describe('PortalFormComponent', () => {
 
       expect(ws.call).toHaveBeenCalledWith('iscsi.portal.update', [1, {
         comment: 'good',
-        discovery_authgroup: 1,
-        discovery_authmethod: IscsiAuthMethod.Chap,
         listen: [{ ip: '0.0.0.0' }],
       }]);
     });

@@ -90,7 +90,7 @@ describe('PortalListComponent', () => {
   });
 
   it('opens portal form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
     expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PortalFormComponent, {
@@ -99,7 +99,7 @@ describe('PortalListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
@@ -108,13 +108,11 @@ describe('PortalListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Portal Group ID', 'Listen', 'Description', 'Discovery Auth Method', 'Discovery Auth Group', ''],
+      ['Portal Group ID', 'Listen', 'Description', ''],
       [
         '1',
         '0.0.0.0:3260',
         'test-portal',
-        'NONE',
-        '0',
         '',
       ],
     ];

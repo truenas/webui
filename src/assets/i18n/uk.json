@@ -2868,8 +2868,6 @@
   "Disable caching LDAP users and groups in large LDAP environments.  When caching is disabled, LDAP users and groups do not appear in dropdown  menus, but are still accepted when manually entered.": "Вимкнути кешування користувачів та груп LDAP у великих середовищах LDAP. Коли кешування відключено, користувачі та групи LDAP не відображаються в меню, що розкриваються, але все ж приймаються при введенні вручну.",
   "Disabled": "Роз'єднано",
   "Discard": "Відкинути",
-  "Discovery Auth Group": "Група аутентифікації виявлення",
-  "Discovery Auth Method": "Метод аутентифікації виявлення",
   "Discovery Authentication Group": "Група аутентифікації виявлення",
   "Discovery Authentication Method": "Метод аутентифікації виявлення",
   "Disk": "Диск",

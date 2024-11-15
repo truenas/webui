@@ -8,10 +8,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
@@ -71,50 +69,20 @@ export class PortalFormComponent implements OnInit {
 
   form = this.fb.group({
     comment: [''],
-    discovery_authmethod: [IscsiAuthMethod.None],
-    discovery_authgroup: [null as number],
     ip: this.fb.array<string>([]),
   });
 
   readonly labels = {
     comment: helptextSharingIscsi.portal_form_placeholder_comment,
-    discovery_authmethod: helptextSharingIscsi.portal_form_placeholder_discovery_authmethod,
-    discovery_authgroup: helptextSharingIscsi.portal_form_placeholder_discovery_authgroup,
     ip: helptextSharingIscsi.portal_form_placeholder_ip,
     port: helptextSharingIscsi.portal_form_placeholder_port,
   };
 
   readonly tooltips = {
     comment: helptextSharingIscsi.portal_form_tooltip_comment,
-    discovery_authmethod: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
-    discovery_authgroup: helptextSharingIscsi.portal_form_tooltip_discovery_authgroup,
     ip: helptextSharingIscsi.portal_form_tooltip_ip,
     port: helptextSharingIscsi.portal_form_tooltip_port,
   };
-
-  readonly authmethodOptions$ = of([
-    {
-      label: 'NONE',
-      value: IscsiAuthMethod.None,
-    },
-    {
-      label: 'CHAP',
-      value: IscsiAuthMethod.Chap,
-    },
-    {
-      label: 'Mutual CHAP',
-      value: IscsiAuthMethod.ChapMutual,
-    },
-  ]);
-
-  readonly authgroupOptions$ = this.iscsiService.getAuth().pipe(
-    map((auth) => {
-      return auth.map((item) => ({
-        label: String(item.tag),
-        value: item.tag,
-      }));
-    }),
-  );
 
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
@@ -169,8 +137,6 @@ export class PortalFormComponent implements OnInit {
     const values = this.form.value;
     const params = {
       comment: values.comment,
-      discovery_authmethod: values.discovery_authmethod,
-      discovery_authgroup: values.discovery_authgroup,
       listen: values.ip.map((ip) => ({ ip })) as IscsiInterface[],
     };
 
