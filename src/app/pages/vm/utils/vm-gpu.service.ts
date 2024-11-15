@@ -30,8 +30,8 @@ export class VmGpuService {
     return this.gpuService.getAllGpus().pipe(
       switchMap((allGpus) => {
         const previousVmPciDevices = vm.devices.filter((device) => {
-          return device.dtype === VmDeviceType.Pci;
-        });
+          return device.attributes.dtype === VmDeviceType.Pci;
+        }) as VmPciPassthroughDevice[];
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
         const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
 
@@ -70,9 +70,9 @@ export class VmGpuService {
 
   private createVmPciDevice(vm: VirtualMachine, device: PciDevice): Observable<unknown> {
     return this.ws.call('vm.device.create', [{
-      dtype: VmDeviceType.Pci,
       vm: vm.id,
       attributes: {
+        dtype: VmDeviceType.Pci,
         pptdev: device.vm_pci_slot,
       },
     }]);

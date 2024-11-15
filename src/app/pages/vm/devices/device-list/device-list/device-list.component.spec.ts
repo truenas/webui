@@ -31,15 +31,19 @@ describe('DeviceListComponent', () => {
   const devices = [
     {
       id: 1,
-      dtype: VmDeviceType.Cdrom,
       order: 1001,
       vm: 4,
+      attributes: {
+        dtype: VmDeviceType.Cdrom,
+      },
     },
     {
       id: 2,
-      dtype: VmDeviceType.Disk,
       order: 1002,
       vm: 4,
+      attributes: {
+        dtype: VmDeviceType.Disk,
+      },
     },
   ] as VmDevice[];
 

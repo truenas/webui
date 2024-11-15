@@ -33,11 +33,13 @@ export class DeviceDetailsComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) protected device: VmDevice,
   ) {
-    this.attributes = Object.entries(device.attributes);
+    this.attributes = Object.entries(device.attributes).filter(([key]) => key !== 'dtype');
   }
 
   get title(): string {
-    const deviceTypeLabel = this.translate.instant(vmDeviceTypeLabels.get(this.device.dtype) ?? this.device.dtype);
+    const deviceTypeLabel = this.translate.instant(
+      vmDeviceTypeLabels.get(this.device.attributes.dtype) ?? this.device.attributes.dtype,
+    );
     return this.translate.instant('Details for {vmDevice}', {
       vmDevice: `${deviceTypeLabel} ${this.device.id}`,
     });
