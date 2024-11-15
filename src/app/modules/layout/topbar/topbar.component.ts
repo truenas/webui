@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
@@ -11,12 +11,15 @@ import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import {
+  filter, Observable, Subscription, switchMap, tap,
+} from 'rxjs';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { RebootRequiredDialogComponent } from 'app/modules/dialog/components/reboot-required-dialog/reboot-required-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
@@ -26,7 +29,6 @@ import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-ind
 import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-indicator.component';
-import { FailoverUpgradeIndicatorComponent } from 'app/modules/layout/topbar/failover-upgrade-indicator/failover-upgrade-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
@@ -37,9 +39,12 @@ import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -59,7 +64,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     GlobalSearchTriggerComponent,
     RouterLink,
     IxLogoComponent,
-    FailoverUpgradeIndicatorComponent,
     CheckinIndicatorComponent,
     ResilveringIndicatorComponent,
     HaStatusIconComponent,
@@ -87,15 +91,20 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.mat_tooltips;
   protected searchableElements = toolBarElements;
 
+  readonly hasRebootRequiredReasons = signal(false);
+  readonly shownDialog = signal(false);
+
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
 
   constructor(
     public themeService: ThemeService,
+    private authService: AuthService,
     private router: Router,
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,
     private store$: Store<AlertSlice>,
+    private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -149,6 +158,8 @@ export class TopbarComponent implements OnInit {
 
       this.cdr.markForCheck();
     });
+
+    this.showRebootInfoDialog();
   }
 
   onAlertIndicatorPressed(): void {
@@ -182,7 +193,27 @@ export class TopbarComponent implements OnInit {
     this.updateDialog.componentInstance.setMessage({ title, message });
   }
 
+  showRebootInfoDialog(): void {
+    this.checkRebootInfo().pipe(untilDestroyed(this)).subscribe(() => {
+      this.shownDialog.set(false);
+    });
+  }
+
   onFeedbackIndicatorPressed(): void {
     this.matDialog.open(FeedbackDialogComponent);
+  }
+
+  private checkRebootInfo(): Observable<unknown> {
+    return this.appStore$.select(selectRebootInfo).pipe(
+      tap(() => this.hasRebootRequiredReasons.set(false)),
+      filter(({ thisNodeRebootInfo, otherNodeRebootInfo }) => {
+        return !!thisNodeRebootInfo?.reboot_required_reasons?.length
+          || !!otherNodeRebootInfo?.reboot_required_reasons?.length;
+      }),
+      tap(() => this.hasRebootRequiredReasons.set(true)),
+      filter(() => !this.shownDialog()),
+      tap(() => this.shownDialog.set(true)),
+      switchMap(() => this.matDialog.open(RebootRequiredDialogComponent, { minWidth: '400px' }).afterClosed()),
+    );
   }
 }
