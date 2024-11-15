@@ -13,6 +13,7 @@
   "Delete device": "",
   "Delete proxy": "",
   "Device deleted": "",
+  "Discovery Authentication": "",
   "Edit Instance: {name}": "",
   "Enable this to create a token with no expiration date. The token will stay active until it is manually revoked or updated.": "",
   "Error Installing": "",

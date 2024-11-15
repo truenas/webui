@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -34,6 +35,7 @@ describe('PortalFormComponent', () => {
           secret: '',
           tag: 1,
           user: 'root',
+          discovery_auth: IscsiAuthMethod.None,
         }]),
         mockCall('iscsi.portal.listen_ip_choices', {
           '0.0.0.0': '0.0.0.0',

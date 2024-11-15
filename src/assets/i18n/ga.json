@@ -79,6 +79,7 @@
   "Device deleted": "",
   "Device «{disk}» has been detached.": "",
   "Device «{name}» was successfully attached.": "",
+  "Discovery Authentication": "",
   "Docker Write": "",
   "Edit Custom App": "",
   "Edit Instance: {name}": "",

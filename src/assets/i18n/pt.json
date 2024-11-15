@@ -645,6 +645,7 @@
   "Disable caching LDAP users and groups in large LDAP environments.  When caching is disabled, LDAP users and groups do not appear in dropdown  menus, but are still accepted when manually entered.": "",
   "Disabled in Disk Settings": "",
   "Discover Remote Host Key": "",
+  "Discovery Authentication": "",
   "Discovery Authentication Group": "",
   "Discovery Authentication Method": "",
   "Disk Details for {disk}": "",

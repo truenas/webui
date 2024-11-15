@@ -384,6 +384,7 @@
   "Disable LDAP User/Group Cache": "",
   "Disabled in Disk Settings": "",
   "Discover Remote Host Key": "",
+  "Discovery Authentication": "",
   "Disk Details for {disk}": "",
   "Disk Details for {disk} ({descriptor})": "",
   "Disk I/O": "",

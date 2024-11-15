@@ -31,6 +31,7 @@ export interface IscsiAuthAccess {
   secret: string;
   tag: number;
   user: string;
+  discovery_auth: IscsiAuthMethod;
 }
 
 export type IscsiAuthAccessUpdate = Omit<IscsiAuthAccess, 'id'>;
