@@ -30,7 +30,7 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: ApiService;
+  let api: ApiService;
   let productType: ProductType;
   const createComponent = createComponentFactory({
     component: IpmiFormComponent,
@@ -110,7 +110,7 @@ describe('IpmiFormComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   }
 
   describe('product type is SCALE_ENTERPRISE', () => {
@@ -174,7 +174,7 @@ describe('IpmiFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
@@ -197,7 +197,7 @@ describe('IpmiFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
@@ -237,7 +237,7 @@ describe('IpmiFormComponent', () => {
       const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
       await flashButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
+      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
@@ -246,7 +246,7 @@ describe('IpmiFormComponent', () => {
       const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
       await stopFlashing.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
+      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
     });
   });
 });

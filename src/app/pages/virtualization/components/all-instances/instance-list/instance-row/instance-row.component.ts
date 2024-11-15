@@ -7,10 +7,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationStatus, virtualizationStatusMap, virtualizationTypeMap } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, virtualizationStatusLabels, virtualizationTypeMap } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -21,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    FileSizePipe,
     IxIconComponent,
     MatTooltipModule,
     TestDirective,
@@ -45,5 +43,5 @@ export class InstanceRowComponent {
   readonly onRestart = output();
 
   readonly virtualizationTypeMap = virtualizationTypeMap;
-  readonly virtualizationStatusMap = virtualizationStatusMap;
+  readonly virtualizationStatusMap = virtualizationStatusLabels;
 }

@@ -55,7 +55,7 @@ export class CloudSyncWizardComponent {
 
   constructor(
     private chainedRef: ChainedRef<unknown>,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -64,7 +64,7 @@ export class CloudSyncWizardComponent {
   ) {}
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
-    return this.ws.call('cloudsync.create', [payload]);
+    return this.api.call('cloudsync.create', [payload]);
   }
 
   onProviderSaved(credential: CloudSyncCredential): void {

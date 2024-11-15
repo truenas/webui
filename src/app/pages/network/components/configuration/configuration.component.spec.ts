@@ -23,7 +23,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: NetworkConfigurationComponent,
     imports: [
@@ -83,7 +83,7 @@ describe('NetworkConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current network global configuration when form is opened', async () => {
@@ -137,7 +137,7 @@ describe('NetworkConfigurationComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',
       [{
         activity: {
@@ -172,7 +172,7 @@ describe('NetworkConfigurationComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'network.configuration.update',
       [
         expect.objectContaining({

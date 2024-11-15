@@ -1,0 +1,9 @@
+.tool {
+  display: flex;
+  margin: 0 -16px;
+
+  ::ng-deep .mdc-button__label {
+    flex-grow: 1;
+    justify-content: space-between;
+  }
+}

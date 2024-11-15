@@ -9,7 +9,7 @@
       [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: device.id, deviceType: device.dtype }"
     ></p>
 
-    @if (device.dtype === VmDeviceType.Disk) {
+    @if (device.attributes.dtype === VmDeviceType.Disk) {
       <ix-checkbox
         formControlName="zvol"
         [label]="'Delete zvol device' | translate"
@@ -23,7 +23,7 @@
       }
     }
 
-    @if (device.dtype === VmDeviceType.Raw) {
+    @if (device.attributes.dtype === VmDeviceType.Raw) {
       <ix-checkbox
         formControlName="raw_file"
         [label]="'Delete raw file' | translate"
