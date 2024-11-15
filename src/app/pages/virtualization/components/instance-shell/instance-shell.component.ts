@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscriber } from 'rxjs';
@@ -7,18 +7,18 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-vm-serial-shell',
+  selector: 'ix-instance-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [TerminalComponent],
 })
-export class VmSerialShellComponent implements TerminalConfiguration {
-  protected pk: string;
+export class InstanceShellComponent implements TerminalConfiguration {
+  protected instanceId = signal('');
 
   get connectionData(): TerminalConnectionData {
     return {
-      vm_id: Number(this.pk),
+      virt_instance_id: this.instanceId(),
     };
   }
 
@@ -29,7 +29,7 @@ export class VmSerialShellComponent implements TerminalConfiguration {
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
       this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.pk = params['pk'] as string;
+        this.instanceId.set(params['id'] as string);
         subscriber.next();
       });
     });
