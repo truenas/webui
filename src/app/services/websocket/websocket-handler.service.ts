@@ -5,6 +5,7 @@ import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
+  combineLatest,
   filter,
   interval,
   map,
@@ -90,7 +91,11 @@ export class WebSocketHandlerService {
   }
 
   private setupScheduledCalls(): void {
-    this.triggerNextCall$.pipe(
+    combineLatest([
+      this.triggerNextCall$,
+      this.isConnected$,
+    ]).pipe(
+      filter(([, isConnected]) => isConnected),
       tap(() => {
         if (this.activeCalls + 1 < this.maxConcurrentCalls) {
           return;
