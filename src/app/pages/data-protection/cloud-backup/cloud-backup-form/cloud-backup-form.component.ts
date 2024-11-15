@@ -118,7 +118,7 @@ export class CloudBackupFormComponent implements OnInit {
   editingTask: CloudBackup;
 
   bucketOptions$ = of<SelectOption[]>([]);
-  transferSettings$ = this.ws.call('cloud_backup.transfer_setting_choices').pipe(
+  transferSettings$ = this.api.call('cloud_backup.transfer_setting_choices').pipe(
     map((availableSettings) => {
       const allOptions = mapToOptions(cloudsyncTransferSettingLabels, this.translate);
       return allOptions.filter((option) => availableSettings.includes(option.value as CloudsyncTransferSetting));
