@@ -89,6 +89,8 @@
   "Enclosure Unavailable": "",
   "Ensure that ACL permissions are validated for all users and groups. Disabling this may allow configurations that do not provide the intended access.  It is recommended to keep this option enabled.": "",
   "Enter an email address to override the admin account’s default email.  If left blank, the admin account’s email address will be used": "",
+  "Environment Variable": "",
+  "Environment Variables": "",
   "Error Installing": "",
   "Error when loading similar apps.": "",
   "Exited": "",

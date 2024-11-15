@@ -111,7 +111,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  it('creates new instance with selected devices when form is submitted', async () => {
+  it('creates new instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
@@ -171,6 +171,7 @@ describe('InstanceWizardComponent', () => {
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
+      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

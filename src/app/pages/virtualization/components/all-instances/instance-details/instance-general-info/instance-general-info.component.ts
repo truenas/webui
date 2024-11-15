@@ -1,4 +1,4 @@
-import { TitleCasePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -40,8 +40,8 @@ import { SlideInService } from 'app/services/slide-in.service';
     TranslateModule,
     MatCardContent,
     YesNoPipe,
-    TitleCasePipe,
     RequiresRolesDirective,
+    KeyValuePipe,
     TestDirective,
     MapValuePipe,
   ],
