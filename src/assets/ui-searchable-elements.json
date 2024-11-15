@@ -826,7 +826,8 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
-      "user-api-keys"
+      "users",
+      "api-keys"
     ],
     "routerLink": null,
     "anchor": "credentials-users-user-api-keys",
@@ -846,7 +847,8 @@
     "visibleTokens": [],
     "anchorRouterLink": [
       "/credentials",
-      "user-api-keys"
+      "users",
+      "api-keys"
     ],
     "routerLink": null,
     "anchor": "credentials-users-user-api-keys",

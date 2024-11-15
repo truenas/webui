@@ -16,13 +16,8 @@ export const credentialsRoutes: Routes = [{
     },
     {
       path: 'users',
-      loadComponent: () => import('app/pages/credentials/users/user-list/user-list.component').then((module) => module.UserListComponent),
-      data: { title: T('Users'), breadcrumb: T('Users'), icon: 'group' },
-    },
-    {
-      path: 'user-api-keys',
-      loadComponent: () => import('app/pages/credentials/users/user-api-keys/user-api-keys.component').then((module) => module.UserApiKeysComponent),
-      data: { title: T('User API Keys'), breadcrumb: T('Users'), icon: 'group' },
+      data: { title: T('Users'), breadcrumb: T('Users') },
+      loadChildren: () => import('app/pages/credentials/users/user.routes').then((module) => module.userRoutes),
     },
     {
       path: 'groups',
