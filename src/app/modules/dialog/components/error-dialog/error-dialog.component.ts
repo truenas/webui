@@ -14,9 +14,9 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class ErrorDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
-    private ws: WebSocketService,
+    private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -63,7 +63,7 @@ export class ErrorDialogComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
       next: (url) => {
         const mimetype = 'text/plain';
         this.download.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({

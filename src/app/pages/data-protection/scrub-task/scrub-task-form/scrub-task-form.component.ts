@@ -28,7 +28,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -76,7 +76,7 @@ export class ScrubTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  poolOptions$ = this.ws.call('pool.query').pipe(
+  poolOptions$ = this.api.call('pool.query').pipe(
     map((pools) => {
       return pools.map((pool) => ({ label: pool.name, value: pool.id }));
     }),
@@ -93,7 +93,7 @@ export class ScrubTaskFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -123,9 +123,9 @@ export class ScrubTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('pool.scrub.create', [values as CreatePoolScrubTask]);
+      request$ = this.api.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     } else {
-      request$ = this.ws.call('pool.scrub.update', [
+      request$ = this.api.call('pool.scrub.update', [
         this.editingTask.id,
         values as CreatePoolScrubTask,
       ]);

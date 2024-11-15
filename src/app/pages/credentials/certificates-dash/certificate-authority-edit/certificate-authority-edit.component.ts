@@ -26,7 +26,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
   readonly helptext = helptextSystemCertificates;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
@@ -107,7 +107,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.call('certificateauthority.update', [this.certificateAuthority.id, this.form.value])
+    this.api.call('certificateauthority.update', [this.certificateAuthority.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

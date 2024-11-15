@@ -15,7 +15,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
@@ -69,7 +69,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.ws.call('zfs.snapshot.clone', [{
+    this.api.call('zfs.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])

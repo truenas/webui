@@ -3,12 +3,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ShowLogsDialogComponent', () => {
   let spectator: Spectator<ShowLogsDialogComponent>;
@@ -26,7 +26,7 @@ describe('ShowLogsDialogComponent', () => {
       mockProvider(DownloadService, {
         downloadUrl: jest.fn(),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
     ],
@@ -45,7 +45,7 @@ describe('ShowLogsDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Download Logs' }));
     await button.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [123456, '123456.log']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_download_logs', [123456, '123456.log']);
     expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenLastCalledWith(
       'http://localhost/download/log',
       '123456.log',

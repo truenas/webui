@@ -53,10 +53,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -172,7 +172,7 @@ export class ReplicationListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private chainedSlideIn: ChainedSlideInService,
     private dialogService: DialogService,
@@ -185,7 +185,7 @@ export class ReplicationListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], {
+    const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: {
         check_dataset_encryption_keys: true,
       },
@@ -217,7 +217,7 @@ export class ReplicationListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
-      switchMap(() => this.ws.job('replication.run', [row.id])),
+      switchMap(() => this.api.job('replication.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
@@ -271,7 +271,7 @@ export class ReplicationListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -296,7 +296,7 @@ export class ReplicationListComponent implements OnInit {
 
   downloadKeys(row: ReplicationTask): void {
     const fileName = `${row.name}_encryption_keys.json`;
-    this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
+    this.api.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
       .pipe(this.appLoader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([, url]) => {
@@ -317,7 +317,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
-    this.ws
+    this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({

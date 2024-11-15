@@ -35,9 +35,9 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +96,7 @@ export class ReportingExporterListComponent implements OnInit {
         const exporter = { ...row };
         delete exporter.type;
         delete exporter.id;
-        this.ws.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
+        this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
           complete: () => this.appLoader.close(),
@@ -148,7 +148,7 @@ export class ReportingExporterListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private slideInService: SlideInService,
     private dialogService: DialogService,
@@ -179,7 +179,7 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private getExporters(): void {
-    this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
         this.onListFiltered(this.filterString);
@@ -221,7 +221,7 @@ export class ReportingExporterListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),
-      switchMap(() => this.ws.call('reporting.exporters.delete', [exporter.id])),
+      switchMap(() => this.api.call('reporting.exporters.delete', [exporter.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (deleted) => {

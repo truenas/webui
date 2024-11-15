@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -16,15 +16,15 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const createComponent = createRoutingFactory({
     component: ServiceSmbComponent,
@@ -33,7 +33,7 @@ describe('ServiceSmbComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('smb.config', {
           id: 1,
           netbiosname: 'truenas',
@@ -98,14 +98,14 @@ describe('ServiceSmbComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current settings for Smb service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('smb.config');
+    expect(api.call).toHaveBeenCalledWith('smb.config');
     expect(values).toEqual({
       'NetBIOS Name': 'truenas',
       'NetBIOS Alias': [],
@@ -159,7 +159,7 @@ describe('ServiceSmbComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('smb.update', [{
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // New basic options
       netbiosname: 'truenas-scale',
       netbiosalias: ['truenas-alias', 'truenas-alias2'],
@@ -205,7 +205,7 @@ describe('ServiceSmbComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('smb.update', [{
+    expect(api.call).toHaveBeenLastCalledWith('smb.update', [{
       // Old basic options
       netbiosname: 'truenas',
       netbiosalias: [],

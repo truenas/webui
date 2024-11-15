@@ -5,8 +5,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, filter, repeat } from 'rxjs/operators';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
@@ -39,7 +39,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly selectedInstanceDevices = computed(() => this.stateAsSignal().selectedInstanceDevices);
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);

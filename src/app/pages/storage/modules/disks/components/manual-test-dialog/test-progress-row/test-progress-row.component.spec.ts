@@ -1,8 +1,8 @@
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -29,7 +29,7 @@ describe('IxTestProgressRowComponent', () => {
         error: jest.fn(() => of(true)),
       }),
       mockProvider(ErrorHandlerService),
-      mockWebSocket(),
+      mockApi(),
     ],
   });
 
@@ -103,7 +103,7 @@ describe('IxTestProgressRowComponent', () => {
     });
 
     it('shows progress change', () => {
-      const websocketMock = spectator.inject(MockWebSocketService);
+      const websocketMock = spectator.inject(MockApiService);
       websocketMock.emitSubscribeEvent({
         msg: IncomingApiMessageType.Added,
         collection: 'smart.test.progerss:sdd',
@@ -119,7 +119,7 @@ describe('IxTestProgressRowComponent', () => {
     });
 
     it('shows success icon when test is done', () => {
-      const websocketMock = spectator.inject(MockWebSocketService);
+      const websocketMock = spectator.inject(MockApiService);
       websocketMock.emitSubscribeEvent({
         msg: IncomingApiMessageType.Added,
         collection: 'smart.test.progerss:sdd',

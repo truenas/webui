@@ -1,8 +1,8 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
@@ -20,7 +20,7 @@ describe('VirtualizationInstancesStore', () => {
   const createService = createServiceFactory({
     service: VirtualizationInstancesStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.query', instances),
         mockCall('virt.instance.device_list', devices),
       ]),
@@ -44,7 +44,7 @@ describe('VirtualizationInstancesStore', () => {
   it('should load instances when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
       isLoading: false,
@@ -70,7 +70,7 @@ describe('VirtualizationInstancesStore', () => {
     spectator.service.loadDevices();
 
     expect(spectator.service.selectedInstanceDevices()).toBe(devices);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
   });
 
   describe('selectors', () => {

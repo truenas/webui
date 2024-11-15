@@ -19,8 +19,8 @@ import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -63,7 +63,7 @@ export class StartServiceDialogComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -94,11 +94,11 @@ export class StartServiceDialogComponent implements OnInit {
     };
 
     if (result.start && result.startAutomatically && this.isDisabled) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
+      requests.push(this.api.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
     }
 
     if (result.start) {
-      requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
+      requests.push(this.api.call('service.start', [this.serviceName, { silent: false }]));
     }
 
     forkJoin(requests)

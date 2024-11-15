@@ -21,8 +21,8 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -129,7 +129,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
   }
 
   private loadCsrs(): void {
-    this.ws.call('certificate.query', [[['CSR', '!=', null]]])
+    this.api.call('certificate.query', [[['CSR', '!=', null]]])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((csrs) => {
         this.csrs = csrs;

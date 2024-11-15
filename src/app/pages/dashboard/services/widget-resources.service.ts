@@ -17,8 +17,8 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
+import { ApiService } from 'app/services/api.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -35,20 +35,20 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
-  readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+  readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
-    this.ws.call('replication.query'),
-    this.ws.call('rsynctask.query'),
-    this.ws.call('cloudsync.query'),
+    this.api.call('replication.query'),
+    this.api.call('rsynctask.query'),
+    this.api.call('cloudsync.query'),
   ]).pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
+  readonly systemInfo$ = this.api.call('webui.main.dashboard.sys_info').pipe(
     repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
     debounceTime(300),
     toLoadingState(),
@@ -62,13 +62,13 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
+  readonly networkInterfaces$ = this.api.call('interface.query').pipe(
     map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly installedApps$ = this.ws.callAndSubscribe('app.query').pipe(
+  readonly installedApps$ = this.api.callAndSubscribe('app.query').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
@@ -77,11 +77,11 @@ export class WidgetResourcesService {
   );
 
   readonly volumesData$ = this.pools$.pipe(
-    switchMap(() => this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
+    switchMap(() => this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
     map((datasets) => this.parseVolumeData(datasets)),
   );
 
-  readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
+  readonly updateAvailable$ = this.api.call('update.check_available').pipe(
     map((update) => update.status === SystemUpdateStatus.Available),
     catchError(() => of(false)),
     shareReplay({ refCount: false, bufferSize: 1 }),
@@ -104,7 +104,7 @@ export class WidgetResourcesService {
         const end = Math.floor(serverTime.getTime() / 1000);
         const start = Math.floor(subMinutes(serverTime, minutes).getTime() / 1000);
 
-        return this.ws.call('reporting.netdata_get_data', [[{ name: 'cpu' }], { end, start }]);
+        return this.api.call('reporting.netdata_get_data', [[{ name: 'cpu' }], { end, start }]);
       }),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -116,7 +116,7 @@ export class WidgetResourcesService {
       switchMap((serverTime) => {
         const end = Math.floor(serverTime.getTime() / 1000);
         const start = Math.floor(subHours(serverTime, 1).getTime() / 1000);
-        return this.ws.call('reporting.netdata_get_data', [[{
+        return this.api.call('reporting.netdata_get_data', [[{
           identifier: interfaceName,
           name: 'interface',
         }], { end, start }]);
@@ -133,14 +133,14 @@ export class WidgetResourcesService {
   }
 
   getDatasetById(datasetId: string): Observable<Dataset> {
-    return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+    return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
       map((response) => response[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 
   getDisksByPoolId(poolId: string): Observable<Disk[]> {
-    return this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+    return this.api.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       map((response) => response.filter((disk: Disk) => disk.pool === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
@@ -161,7 +161,7 @@ export class WidgetResourcesService {
   }
 
   getAppStats(appName: string): Observable<LoadingState<AppStats>> {
-    return this.ws.subscribe('app.stats').pipe(
+    return this.api.subscribe('app.stats').pipe(
       filter(() => Boolean(appName)),
       map((event) => event.fields.find((stats) => stats.app_name === appName)),
       throttleTime(500),
@@ -170,7 +170,7 @@ export class WidgetResourcesService {
   }
 
   getAppStatusUpdates(appName: string): Observable<Job<void, AppStartQueryParams>> {
-    return this.ws.subscribe('core.get_jobs').pipe(
+    return this.api.subscribe('core.get_jobs').pipe(
       filter((event) => ['app.start', 'app.stop'].includes(event.fields.method)),
       filter((event: ApiEvent<Job<void, AppStartQueryParams>>) => event.fields.arguments[0] === appName),
       map((event) => event.fields),
@@ -179,7 +179,7 @@ export class WidgetResourcesService {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private store$: Store<AppState>,
   ) {}
 

@@ -18,9 +18,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
@@ -32,10 +32,10 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -111,7 +111,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
     private translate: TranslateService,
@@ -153,7 +153,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     const payload = this.preparePayload();
 
     this.dialog.jobDialog(
-      this.ws.job('filesystem.setperm', [payload]),
+      this.api.job('filesystem.setperm', [payload]),
       { title: this.translate.instant('Saving Permissions') },
     )
       .afterClosed()
@@ -163,7 +163,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Permissions saved.'));
           this.router.navigate(['/datasets', this.datasetId]);
         },
-        error: (error: WebSocketError | Job) => {
+        error: (error: ApiError | Job) => {
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });
@@ -172,7 +172,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private loadPermissionsInformation(): void {
     this.isLoading.set(true);
     forkJoin([
-      this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
+      this.api.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(untilDestroyed(this))

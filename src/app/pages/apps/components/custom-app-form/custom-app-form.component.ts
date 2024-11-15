@@ -27,8 +27,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class CustomAppFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private appService: ApplicationsService,
@@ -103,7 +103,7 @@ export class CustomAppFormComponent implements OnInit {
     this.isLoading.set(true);
     const data = this.form.value;
 
-    const appCreate$ = this.ws.job(
+    const appCreate$ = this.api.job(
       'app.create',
       [{
         custom_app: true,
@@ -112,7 +112,7 @@ export class CustomAppFormComponent implements OnInit {
       } as AppCreate],
     );
 
-    const appUpdate$ = this.ws.job('app.update', [
+    const appUpdate$ = this.api.job('app.update', [
       data.release_name,
       { custom_compose_config_string: data.custom_compose_config_string },
     ]);

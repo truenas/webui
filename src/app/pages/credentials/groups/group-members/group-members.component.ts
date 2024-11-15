@@ -23,9 +23,9 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class GroupMembersComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
@@ -81,12 +81,12 @@ export class GroupMembersComponent implements OnInit {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(
       switchMap((params) => {
-        return this.ws.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]);
+        return this.api.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]);
       }),
       switchMap((groups) => {
         this.group = groups[0];
         this.cdr.markForCheck();
-        return this.ws.call('user.query');
+        return this.api.call('user.query');
       }),
       untilDestroyed(this),
     ).subscribe((users) => {
@@ -106,7 +106,7 @@ export class GroupMembersComponent implements OnInit {
     this.cdr.markForCheck();
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [this.group.id, { users: userIds }]).pipe(
+    this.api.call('group.update', [this.group.id, { users: userIds }]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

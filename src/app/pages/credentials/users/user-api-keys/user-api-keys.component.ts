@@ -42,10 +42,10 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -140,7 +140,7 @@ export class UserApiKeysComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private readonly apiKeys$ = this.ws.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private readonly apiKeys$ = this.api.call('api_key.query').pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
   protected readonly nameSuggestions$ = this.apiKeys$.pipe(
     map((keys) => uniq(keys.map((key) => ({ label: key.name, value: key.name })))),
@@ -153,7 +153,7 @@ export class UserApiKeysComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -163,7 +163,7 @@ export class UserApiKeysComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'api_key.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'api_key.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();
@@ -197,7 +197,7 @@ export class UserApiKeysComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('api_key.delete', [apiKey.id])),
+      switchMap(() => this.api.call('api_key.delete', [apiKey.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.dataProvider.load(),

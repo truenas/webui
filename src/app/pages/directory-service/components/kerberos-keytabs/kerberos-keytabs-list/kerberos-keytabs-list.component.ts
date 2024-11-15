@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -31,9 +31,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -98,7 +98,7 @@ export class KerberosKeytabsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('kerberos.keytab.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.keytab.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -119,16 +119,15 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
     private slideInService: SlideInService,
   ) { }
 
   ngOnInit(): void {
-    const keytabsRows$ = this.ws.call('kerberos.keytab.query').pipe(
+    const keytabsRows$ = this.api.call('kerberos.keytab.query').pipe(
       tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
       untilDestroyed(this),
     );

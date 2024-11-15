@@ -37,7 +37,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -121,7 +121,7 @@ export class FileTicketLicensedComponent {
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {
     this.getSystemFileSizeLimit();
   }
@@ -154,7 +154,7 @@ export class FileTicketLicensedComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(
         this.imageValidator.getImagesValidator(size * MiB),
       );

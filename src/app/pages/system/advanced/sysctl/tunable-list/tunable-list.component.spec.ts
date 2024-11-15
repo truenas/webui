@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockWebSocket, mockCall, mockJob,
-} from 'app/core/testing/utils/mock-websocket.utils';
+  mockApi, mockCall, mockJob,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -18,8 +18,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
@@ -117,7 +117,7 @@ describe('TunableListComponent', () => {
           afterClosed: of(null),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('core.get_jobs'),
         mockCall('tunable.query', tunables),
         mockJob('tunable.delete', fakeSuccessfulJob()),
@@ -187,6 +187,6 @@ describe('TunableListComponent', () => {
     });
 
     expect(dialogService.jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('tunable.delete', [12]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

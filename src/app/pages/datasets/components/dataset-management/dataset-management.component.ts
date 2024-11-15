@@ -41,10 +41,10 @@ import { DetailsHeightDirective } from 'app/directives/details-height/details-he
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -66,8 +66,8 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -108,7 +108,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
-  systemDataset = toSignal(this.ws.call('systemdataset.config').pipe(map((config) => config.pool)));
+  systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
   subscription = new Subscription();
   ixTreeHeaderWidth: number | null = null;
@@ -171,7 +171,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
@@ -233,7 +233,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: WebSocketError | Job): void => {
+  handleError = (error: ApiError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 

@@ -25,7 +25,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +77,7 @@ export class PrivilegeFormComponent implements OnInit {
       : this.translate.instant('Edit Privilege');
   }
 
-  readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
+  readonly rolesOptions$ = this.api.call('privilege.roles').pipe(
     map((roles) => {
       const sortedRoles = roles.toSorted((a, b) => {
         // Show compound roles first, then sort by name.
@@ -96,7 +96,7 @@ export class PrivilegeFormComponent implements OnInit {
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
-    return this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+    return this.api.call('group.query', [[['local', '=', true]]]).pipe(
       map((groups) => {
         this.localGroups = groups;
         const chips = groups.map((group) => group.group);
@@ -106,7 +106,7 @@ export class PrivilegeFormComponent implements OnInit {
   };
 
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
-    return this.ws.call('group.query', [[['local', '=', false]]]).pipe(
+    return this.api.call('group.query', [[['local', '=', false]]]).pipe(
       map((groups) => {
         this.dsGroups = groups;
         const chips = groups.map((group) => group.group);
@@ -118,7 +118,7 @@ export class PrivilegeFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideInRef: SlideInRef<PrivilegeFormComponent>,
@@ -156,9 +156,9 @@ export class PrivilegeFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<Privilege>;
     if (this.isNew) {
-      request$ = this.ws.call('privilege.create', [values]);
+      request$ = this.api.call('privilege.create', [values]);
     } else {
-      request$ = this.ws.call('privilege.update', [this.existingPrivilege.id, values]);
+      request$ = this.api.call('privilege.update', [this.existingPrivilege.id, values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -40,8 +40,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -110,7 +110,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -133,7 +133,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     const params = this.prepareParams();
 
     this.dialogService.jobDialog(
-      this.ws.job('cloud_backup.restore', params),
+      this.api.job('cloud_backup.restore', params),
       {
         title: this.translate.instant('Restoring backup'),
         canMinimize: true,
@@ -157,7 +157,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
-      return this.ws.call(
+      return this.api.call(
         'cloud_backup.list_snapshot_directory',
         [this.data.backup.id, this.data.snapshot?.id, node.data.path],
       ).pipe(

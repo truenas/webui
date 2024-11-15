@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -99,7 +99,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     protected emptyService: EmptyService,
     private slideIn: SlideInService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -111,7 +111,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       return;
     }
 
-    const cloudBackupSnapshots$ = this.ws.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
+    const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       untilDestroyed(this),
     );
@@ -152,7 +152,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
+        switchMap(() => this.api.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
         tapOnce(() => this.loader.open()),
         catchError((error) => {
           this.dialog.error(this.errorHandler.parseError(error));

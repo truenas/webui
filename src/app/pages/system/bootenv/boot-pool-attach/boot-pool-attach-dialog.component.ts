@@ -20,7 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,

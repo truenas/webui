@@ -8,8 +8,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const initialState: PermissionsCardState = {
   isLoading: false,
@@ -20,7 +20,7 @@ const initialState: PermissionsCardState = {
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
   ) {
@@ -37,8 +37,8 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
       }),
       switchMap((mountpoint) => {
         return forkJoin([
-          this.ws.call('filesystem.stat', [mountpoint]),
-          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
+          this.api.call('filesystem.stat', [mountpoint]),
+          this.api.call('filesystem.getacl', [mountpoint, true, true]),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({

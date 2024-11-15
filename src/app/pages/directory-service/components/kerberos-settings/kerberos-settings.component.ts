@@ -18,8 +18,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class KerberosSettingsComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private slideInRef: SlideInRef<KerberosSettingsComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -69,7 +69,7 @@ export class KerberosSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -87,7 +87,7 @@ export class KerberosSettingsComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();

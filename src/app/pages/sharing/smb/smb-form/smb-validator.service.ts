@@ -8,7 +8,7 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Injectable({
@@ -20,7 +20,7 @@ export class SmbValidationService {
   private wasNoSmbUsersWarningShown = false;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) { }

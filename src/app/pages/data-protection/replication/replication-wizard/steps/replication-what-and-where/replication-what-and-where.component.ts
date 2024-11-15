@@ -19,11 +19,11 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -41,11 +41,11 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -112,7 +112,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     sudo: [false],
     name: ['', [Validators.required],
       forbiddenAsyncValues(
-        this.ws.call('replication.query').pipe(
+        this.api.call('replication.query').pipe(
           map((replications) => replications.map((replication) => replication.name)),
         ),
       ),
@@ -171,7 +171,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -420,7 +420,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ]).pipe(
         switchMap((hasRole) => {
           if (hasRole) {
-            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+            return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
           }
           return of({ eligible: 0, total: 0 });
         }),
@@ -439,7 +439,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.snapshotsText = '';
           this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
           this.cdr.markForCheck();

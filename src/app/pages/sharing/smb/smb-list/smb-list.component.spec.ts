@@ -7,8 +7,8 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -27,8 +27,8 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 const shares: Partial<SmbShare>[] = [
@@ -64,7 +64,7 @@ describe('SmbListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
@@ -145,7 +145,7 @@ describe('SmbListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
   });
 
   it('updates SMB Enabled status once mat-toggle is updated', async () => {
@@ -155,7 +155,7 @@ describe('SmbListComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.update',
       [1, { enabled: false }],
     );

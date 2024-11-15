@@ -29,9 +29,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +89,7 @@ export class SshKeypairFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private slideInRef: SlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -116,7 +116,7 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   onGenerateButtonPressed(): void {
-    this.ws.call('keychaincredential.generate_ssh_key_pair')
+    this.api.call('keychaincredential.generate_ssh_key_pair')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
@@ -151,12 +151,12 @@ export class SshKeypairFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('keychaincredential.create', [{
+      request$ = this.api.call('keychaincredential.create', [{
         ...commonBody,
         type: KeychainCredentialType.SshKeyPair,
       }]);
     } else {
-      request$ = this.ws.call('keychaincredential.update', [
+      request$ = this.api.call('keychaincredential.update', [
         this.editingKeypair.id,
         commonBody,
       ]);

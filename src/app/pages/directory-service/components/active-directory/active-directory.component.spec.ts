@@ -5,10 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
@@ -25,9 +25,9 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ActiveDirectoryComponent', () => {
   let spectator: Spectator<ActiveDirectoryComponent>;
@@ -62,7 +62,7 @@ describe('ActiveDirectoryComponent', () => {
       LeaveDomainDialogComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('activedirectory.update', fakeSuccessfulJob()),
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Disabled,
@@ -101,8 +101,8 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('loads and shows active directory config', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('activedirectory.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('activedirectory.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -115,7 +115,7 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('does not show Account Name and Password when Kerberos principal is set', async () => {
-    spectator.inject(MockWebSocketService).mockCall('activedirectory.config', {
+    spectator.inject(MockApiService).mockCall('activedirectory.config', {
       ...existingConfig,
       kerberos_principal: 'TRUENAS$@AD.IXSYSTEMS.NET',
     });
@@ -179,7 +179,7 @@ describe('ActiveDirectoryComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'activedirectory.update',
       [{
         domainname: 'ad.truenas.com',
@@ -208,7 +208,7 @@ describe('ActiveDirectoryComponent', () => {
 
   describe('leave domain button', () => {
     beforeEach(() => {
-      spectator.inject(MockWebSocketService).mockCall('directoryservices.get_state', {
+      spectator.inject(MockApiService).mockCall('directoryservices.get_state', {
         activedirectory: DirectoryServiceState.Healthy,
       } as DirectoryServicesState);
       spectator.component.ngOnInit();

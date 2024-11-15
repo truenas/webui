@@ -30,8 +30,8 @@ import { FilterSelectListComponent } from 'app/pages/apps/components/filter-sele
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -88,7 +88,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -147,7 +147,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   refreshCatalog(): void {
     this.dialogService.jobDialog(
-      this.ws.job('catalog.sync'),
+      this.api.job('catalog.sync'),
       {
         title: this.translate.instant(helptextApps.refreshing),
         canMinimize: true,

@@ -6,7 +6,7 @@ import { MatDialogHarness } from '@angular/material/dialog/testing';
 import { MatProgressBarHarness } from '@angular/material/progress-bar/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -14,7 +14,7 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialogComponent<unknown>>;
@@ -24,7 +24,7 @@ describe('JobProgressDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: JobProgressDialogComponent<unknown>,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.job_abort', null),
       ]),
       mockProvider(MatDialogRef),
@@ -166,7 +166,7 @@ describe('JobProgressDialogComponent', () => {
       const abortButton = await loader.getHarness(MatButtonHarness.with({ text: 'Abort' }));
       await abortButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
     });
 
     it('emits jobAborted and closes when job update from middleware shows that it was aborted', () => {

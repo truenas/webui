@@ -14,7 +14,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -52,12 +52,12 @@ export class ResilverProgressDialogComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((event) => {
       // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!event || !event.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         return;

@@ -37,9 +37,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -126,7 +126,7 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private groupsSuggestions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({
       label: group.group,
       value: `"${group.group}"`,
@@ -144,7 +144,7 @@ export class PrivilegeListComponent implements OnInit {
 
   constructor(
     private slideInService: SlideInService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
@@ -152,7 +152,7 @@ export class PrivilegeListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'privilege.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'privilege.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
 
@@ -178,7 +178,7 @@ export class PrivilegeListComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('privilege.delete', [privilege.id])),
+        switchMap(() => this.api.call('privilege.delete', [privilege.id])),
         untilDestroyed(this),
       )
       .subscribe({

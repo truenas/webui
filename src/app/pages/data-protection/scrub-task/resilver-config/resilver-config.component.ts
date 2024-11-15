@@ -23,10 +23,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { resilverConfigElements } from 'app/pages/data-protection/scrub-task/resilver-config/resilver-config.elements';
+import { ApiService } from 'app/services/api.service';
 import { CalendarService } from 'app/services/calendar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +83,7 @@ export class ResilverConfigComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -98,7 +98,7 @@ export class ResilverConfigComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('pool.resilver.config')
+    this.api.call('pool.resilver.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -118,7 +118,7 @@ export class ResilverConfigComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('pool.resilver.update', [values as ResilverConfigUpdate])
+    this.api.call('pool.resilver.update', [values as ResilverConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

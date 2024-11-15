@@ -16,9 +16,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class NetdataDialogComponent implements OnInit {
   protected readonly passwordControl = new FormControl('');
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private reportsService: ReportsService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -79,7 +79,7 @@ export class NetdataDialogComponent implements OnInit {
   }
 
   private generatePassword(): Observable<string> {
-    return this.ws.call('reporting.netdataweb_generate_password')
+    return this.api.call('reporting.netdataweb_generate_password')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

@@ -38,8 +38,8 @@ import {
   snapshotExcludeBootQueryFilter,
 } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -95,7 +95,7 @@ export class SnapshotAddFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
@@ -158,7 +158,7 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('zfs.snapshot.create', [params]).pipe(
+    this.api.call('zfs.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -181,7 +181,7 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getDatasetOptions(): Observable<Option[]> {
-    return this.ws.call('pool.dataset.query', [
+    return this.api.call('pool.dataset.query', [
       snapshotExcludeBootQueryFilter as QueryFilters<Dataset>,
       { extra: { flat: true } },
     ]).pipe(
@@ -196,7 +196,7 @@ export class SnapshotAddFormComponent implements OnInit {
           return of([]);
         }
 
-        return this.ws.call('replication.list_naming_schemas').pipe(
+        return this.api.call('replication.list_naming_schemas').pipe(
           singleArrayToOptions(),
         );
       }),
@@ -205,7 +205,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private checkForVmsInDataset(): void {
     this.isFormLoading = true;
-    this.ws.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
+    this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (hasVmsInDataset) => {

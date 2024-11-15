@@ -30,6 +30,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -37,7 +38,6 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -57,10 +57,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
+import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -228,7 +228,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private datasetService: DatasetService,
@@ -518,7 +518,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
           this.slideInRef.close(true);
         }
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }

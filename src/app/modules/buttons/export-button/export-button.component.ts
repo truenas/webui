@@ -20,9 +20,9 @@ import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -57,7 +57,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -67,7 +67,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   onExport(): void {
     this.isLoading = true;
-    this.ws.job(this.jobMethod, this.getExportParams(
+    this.api.job(this.jobMethod, this.getExportParams(
       this.getQueryFilters(this.searchQuery),
       this.getQueryOptions(this.sorting),
     )).pipe(
@@ -89,7 +89,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
           customArguments.report_name = url;
         }
 
-        return this.ws.call('core.download', [downloadMethod, [customArguments], url]);
+        return this.api.call('core.download', [downloadMethod, [customArguments], url]);
       }),
       switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
       catchError((error) => {

@@ -19,8 +19,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class AppRollbackModalComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AppRollbackModalComponent>,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -70,7 +70,7 @@ export class AppRollbackModalComponent {
     const rollbackParams = [this.app.name, this.form.value] as Required<AppRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('app.rollback', rollbackParams),
+      this.api.job('app.rollback', rollbackParams),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
@@ -79,7 +79,7 @@ export class AppRollbackModalComponent {
   }
 
   private setVersionOptions(): void {
-    this.ws.call('app.rollback_versions', [this.app.name]).pipe(
+    this.api.call('app.rollback_versions', [this.app.name]).pipe(
       tap((versions) => {
         const options = versions.map((version) => ({
           label: version,

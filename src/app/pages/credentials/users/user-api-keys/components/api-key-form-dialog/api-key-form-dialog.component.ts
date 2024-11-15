@@ -33,8 +33,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -92,13 +92,13 @@ export class ApiKeyFormComponent implements OnInit {
     .setOptions({ select: ['username'], order_by: ['username'] })
     .getParams();
 
-  protected readonly usernames$ = this.ws.call('user.query', this.userQueryParams).pipe(
+  protected readonly usernames$ = this.api.call('user.query', this.userQueryParams).pipe(
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
 
   protected readonly userProvider = new SimpleAsyncComboboxProvider(this.usernames$);
 
-  protected readonly forbiddenNames$ = this.ws.call('api_key.query', [
+  protected readonly forbiddenNames$ = this.api.call('api_key.query', [
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
@@ -108,7 +108,7 @@ export class ApiKeyFormComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
@@ -137,8 +137,8 @@ export class ApiKeyFormComponent implements OnInit {
     const expiresAtTimestamp = nonExpiring ? null : { $date: +expiresAt } as ApiTimestamp;
 
     const request$ = this.isNew()
-      ? this.ws.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
-      : this.ws.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAtTimestamp }]);
+      ? this.api.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
+      : this.api.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAtTimestamp }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))

@@ -10,8 +10,8 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DatasetFormService {
   constructor(
     private dialog: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
   ) {}
@@ -54,7 +54,7 @@ export class DatasetFormService {
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {
-    return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+    return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
       map((response) => response[0]),
     );
   }

@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FtpConfig } from 'app/interfaces/ftp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
@@ -16,9 +16,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceFtpComponent', () => {
   let spectator: Spectator<ServiceFtpComponent>;
@@ -74,7 +74,7 @@ describe('ServiceFtpComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('ftp.config', {
           ...existingFtpConfig,
           id: 1,
@@ -109,7 +109,7 @@ describe('ServiceFtpComponent', () => {
   it('loads and shows current settings for FTP service', async () => {
     const values = await form.getValues();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.config');
     expect(values).toEqual({
       Port: '21',
       Clients: '5',
@@ -184,7 +184,7 @@ describe('ServiceFtpComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ftp.update', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
       anonuserdlbw: 5,

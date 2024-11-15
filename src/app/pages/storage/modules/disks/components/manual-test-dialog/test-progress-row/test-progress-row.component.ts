@@ -15,8 +15,8 @@ import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class TestProgressRowComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
   ) {}
 
   ngOnInit(): void {

@@ -28,8 +28,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -100,7 +100,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(
+    const authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(
       tap((authenticators) => this.authenticators = authenticators),
       untilDestroyed(this),
     );
@@ -146,7 +146,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('acme.dns.authenticator.delete', [authenticator.id])),
+        switchMap(() => this.api.call('acme.dns.authenticator.delete', [authenticator.id])),
         untilDestroyed(this),
       )
       .subscribe(() => {

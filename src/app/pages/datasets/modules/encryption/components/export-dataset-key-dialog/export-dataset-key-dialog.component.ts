@@ -10,16 +10,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
   key: string;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
@@ -61,7 +61,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     const fileName = `dataset_${this.dataset.name}_key.json`;
     const mimetype = 'application/json';
 
-    this.ws.call('core.download', ['pool.dataset.export_key', [this.dataset.id, true], fileName])
+    this.api.call('core.download', ['pool.dataset.export_key', [this.dataset.id, true], fileName])
       .pipe(
         this.loader.withLoader(),
         switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
@@ -71,14 +71,14 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close();
         },
-        error: (error: WebSocketError | HttpErrorResponse) => {
+        error: (error: ApiError | HttpErrorResponse) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
 
   private loadKey(): void {
-    this.ws.job('pool.dataset.export_key', [this.dataset.id])
+    this.api.job('pool.dataset.export_key', [this.dataset.id])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {
@@ -90,7 +90,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.key = job.result;
           this.cdr.markForCheck();
         },
-        error: (error: Job | WebSocketError) => {
+        error: (error: Job | ApiError) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

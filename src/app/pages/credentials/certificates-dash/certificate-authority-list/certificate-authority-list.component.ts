@@ -20,9 +20,9 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -52,10 +52,10 @@ import { certificateAuthorityListElements } from 'app/pages/credentials/certific
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -146,7 +146,7 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -156,7 +156,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const authorities$ = this.ws.call('certificateauthority.query').pipe(
+    const authorities$ = this.api.call('certificateauthority.query').pipe(
       map((authorities) => {
         return authorities.map((authority) => {
           if (isObject(authority.issuer)) {
@@ -219,7 +219,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         })
         .pipe(
           filter(Boolean),
-          switchMap(() => this.ws.call('certificateauthority.delete', [authority.id])),
+          switchMap(() => this.api.call('certificateauthority.delete', [authority.id])),
           untilDestroyed(this),
         )
         .subscribe(() => {
@@ -232,7 +232,7 @@ export class CertificateAuthorityListComponent implements OnInit {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [path], fileName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -254,12 +254,12 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebSocketError | Job) => {
+        error: (err: ApiError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
     const keyName = `${certificate.name}.key`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [certificate.privatekey_path], keyName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -301,7 +301,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
+          return this.api.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
             catchError((error) => {
               this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;

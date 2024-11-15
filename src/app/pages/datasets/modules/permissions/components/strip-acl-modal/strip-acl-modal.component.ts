@@ -14,8 +14,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface StripAclModalData {
   path: string;
@@ -48,7 +48,7 @@ export class StripAclModalComponent {
   readonly helptext = helptextAcl;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<StripAclModalComponent>,
@@ -57,7 +57,7 @@ export class StripAclModalComponent {
   ) { }
 
   onStrip(): void {
-    const job$ = this.ws.job('filesystem.setacl', [{
+    const job$ = this.api.job('filesystem.setacl', [{
       path: this.data.path,
       dacl: [],
       options: {

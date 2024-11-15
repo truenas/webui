@@ -10,7 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobAborted } from './job.actions';
 
@@ -19,8 +19,8 @@ export class JobEffects {
   loadJobs$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      const getNotCompletedJobs$ = this.ws.call('core.get_jobs', [[['state', '!=', JobState.Success]]]);
-      const getCompletedJobs$ = this.ws.call('core.get_jobs', [[['state', '=', JobState.Success]], { order_by: ['-id'], limit: 30 }]);
+      const getNotCompletedJobs$ = this.api.call('core.get_jobs', [[['state', '!=', JobState.Success]]]);
+      const getCompletedJobs$ = this.api.call('core.get_jobs', [[['state', '=', JobState.Success]], { order_by: ['-id'], limit: 30 }]);
 
       return forkJoin([
         getNotCompletedJobs$,
@@ -43,7 +43,7 @@ export class JobEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.subscribe('core.get_jobs').pipe(
+      return this.api.subscribe('core.get_jobs').pipe(
         filter((event) => event.msg !== IncomingApiMessageType.Removed),
         switchMap((event) => {
           switch (event.msg) {
@@ -62,7 +62,7 @@ export class JobEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.subscribe('core.get_jobs').pipe(
+      return this.api.subscribe('core.get_jobs').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => jobRemoved({ id: event.id as number })),
       );
@@ -72,7 +72,7 @@ export class JobEffects {
   abortJob$ = createEffect(() => this.actions$.pipe(
     ofType(abortJobPressed),
     switchMap(({ job }) => {
-      return this.ws.call('core.job_abort', [job.id]).pipe(
+      return this.api.call('core.job_abort', [job.id]).pipe(
         map(() => jobAborted({ job })),
       );
     }),
@@ -80,7 +80,7 @@ export class JobEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
   ) {}
 }

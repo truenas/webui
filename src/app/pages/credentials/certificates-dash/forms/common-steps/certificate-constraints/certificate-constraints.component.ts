@@ -35,7 +35,7 @@ import {
   basicConstraintOptions,
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -300,7 +300,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
   }
 
   private loadKeyUsageOptions(): void {
-    this.ws.call('certificate.extended_key_usage_choices')
+    this.api.call('certificate.extended_key_usage_choices')
       .pipe(
         choicesToOptions(),
         untilDestroyed(this),

@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { SshConfig } from 'app/interfaces/ssh-config.interface';
@@ -14,8 +14,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -29,14 +29,14 @@ const fakeGroupDataSource = [{
 describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: ServiceSshComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('ssh.config', {
           tcpport: 22,
@@ -69,14 +69,14 @@ describe('ServiceSshComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current settings for S3 service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.config');
+    expect(api.call).toHaveBeenCalledWith('ssh.config');
     expect(values).toEqual({
       'TCP Port': '22',
       'Password Login Groups': ['dummy-group'],
@@ -121,7 +121,7 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
       tcpport: 23,
       password_login_groups: ['dummy-group'],
@@ -157,7 +157,7 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // Old basic options
       kerberosauth: false,
       passwordauth: true,

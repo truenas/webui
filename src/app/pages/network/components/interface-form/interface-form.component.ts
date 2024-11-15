@@ -58,9 +58,9 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
+import { ApiService } from 'app/services/api.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -149,8 +149,8 @@ export class InterfaceFormComponent implements OnInit {
 
   lagProtocols$ = this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions());
   lagPorts$ = this.networkService.getLaggPortsChoices().pipe(choicesToOptions());
-  xmitHashPolicies$ = this.ws.call('interface.xmit_hash_policy_choices').pipe(choicesToOptions());
-  lacpduRates$ = this.ws.call('interface.lacpdu_rate_choices').pipe(choicesToOptions());
+  xmitHashPolicies$ = this.api.call('interface.xmit_hash_policy_choices').pipe(choicesToOptions());
+  lacpduRates$ = this.api.call('interface.lacpdu_rate_choices').pipe(choicesToOptions());
 
   vlanPcpOptions$ = of([
     { value: 0, label: this.translate.instant('Best effort (default)') },
@@ -172,7 +172,7 @@ export class InterfaceFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
@@ -268,14 +268,14 @@ export class InterfaceFormComponent implements OnInit {
     const params = this.prepareSubmitParams();
 
     const request$ = this.isNew
-      ? this.ws.call('interface.create', [params])
-      : this.ws.call('interface.update', [this.existingInterface.id, params]);
+      ? this.api.call('interface.create', [params])
+      : this.api.call('interface.update', [this.existingInterface.id, params]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-        this.ws.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
+        this.api.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
           if (approved) {
             this.matDialog.open(DefaultGatewayDialogComponent, {
               width: '600px',
@@ -323,8 +323,8 @@ export class InterfaceFormComponent implements OnInit {
     }
 
     forkJoin([
-      this.ws.call('failover.licensed'),
-      this.ws.call('failover.node'),
+      this.api.call('failover.licensed'),
+      this.api.call('failover.node'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([isHaLicensed, failoverNode]) => {

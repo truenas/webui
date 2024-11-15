@@ -24,7 +24,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +83,7 @@ export class FileTicketComponent {
     private feedbackService: FeedbackService,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {
     this.getSystemFileSizeLimit();
   }
@@ -106,7 +106,7 @@ export class FileTicketComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(this.imageValidator.getImagesValidator(size * MiB));
       this.form.controls.images.updateValueAndValidity();
     });

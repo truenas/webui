@@ -21,8 +21,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
 
 @UntilDestroy()
@@ -55,7 +55,7 @@ export class CloudSyncWizardComponent {
 
   constructor(
     private chainedRef: ChainedRef<unknown>,
-    private ws: WebSocketService,
+    private api: ApiService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
@@ -64,7 +64,7 @@ export class CloudSyncWizardComponent {
   ) {}
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
-    return this.ws.call('cloudsync.create', [payload]);
+    return this.api.call('cloudsync.create', [payload]);
   }
 
   onProviderSaved(credential: CloudSyncCredential): void {

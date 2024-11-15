@@ -23,8 +23,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private chainedComponentRef: ChainedRef<unknown>,
     private cdr: ChangeDetectorRef,
@@ -108,7 +108,7 @@ export class CloudSyncProviderComponent implements OnInit {
       provider: this.existingCredential.provider,
       attributes: { ...this.existingCredential.attributes },
     };
-    this.ws.call('cloudsync.credentials.verify', [payload]).pipe(
+    this.api.call('cloudsync.credentials.verify', [payload]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (response) => {

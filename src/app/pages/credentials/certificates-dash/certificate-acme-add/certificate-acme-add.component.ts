@@ -27,8 +27,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -76,8 +76,8 @@ export class CertificateAcmeAddComponent {
   isLoading = false;
   domains: string[] = [];
 
-  readonly acmeDirectoryUris$ = this.ws.call('certificate.acme_server_choices').pipe(choicesToOptions());
-  readonly authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
+  readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
+  readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCertificates;
 
@@ -86,7 +86,7 @@ export class CertificateAcmeAddComponent {
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<CertificateAcmeAddComponent>,
@@ -121,7 +121,7 @@ export class CertificateAcmeAddComponent {
     this.cdr.markForCheck();
 
     this.dialogService.jobDialog(
-      this.ws.job('certificate.create', [payload]),
+      this.api.job('certificate.create', [payload]),
       {
         title: this.translate.instant('Creating ACME Certificate'),
       },
@@ -149,7 +149,7 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.ws.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
+    this.api.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (domains) => {
