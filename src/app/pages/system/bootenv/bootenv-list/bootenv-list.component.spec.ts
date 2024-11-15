@@ -37,7 +37,7 @@ describe('BootEnvironmentListComponent', () => {
         timezone: 'America/Los_Angeles',
       }),
       mockApi([
-        mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
+        mockCall('boot.environment.query', fakeBootEnvironmentsDataSource),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -62,20 +62,28 @@ describe('BootEnvironmentListComponent', () => {
     const cells = await table.getCellTexts();
 
     const expectedRows = [
-      ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-22 09:27:00', '384 KiB', 'No', ''],
+      ['', 'Name', 'Active', 'Date Created', 'Used Space', 'Keep', ''],
       [
         '',
-        '22.12-MASTER-20220808-020013',
-        'Now/Restart',
-        '2022-08-09 06:52:00',
-        '2.61 GiB',
+        '25.04.0-MASTER-20241105-224807',
+        'Now',
+        '2024-11-06 04:05:36',
+        '3.13 GiB',
+        'No',
+        '',
+      ],
+      [
+        '',
+        '25.04.0-MASTER-20241031-104807',
+        'No',
+        '2024-10-31 10:55:47',
+        '3.05 GiB',
         'No',
         '',
       ],
     ];
 
-    expect(websocket.call).toHaveBeenCalledWith('bootenv.query');
+    expect(websocket.call).toHaveBeenCalledWith('boot.environment.query');
     expect(cells).toEqual(expectedRows);
   });
 });
