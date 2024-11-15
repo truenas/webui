@@ -68,7 +68,7 @@ export class SaveAsPresetModalComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -96,7 +96,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.ws.call('filesystem.acltemplate.by_path', [{
+    this.api.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
         resolve_names: true,
@@ -132,7 +132,7 @@ export class SaveAsPresetModalComponent implements OnInit {
           }) as NfsAclItem[] | PosixAclItem[],
         };
 
-        return this.ws.call('filesystem.acltemplate.create', [payload]);
+        return this.api.call('filesystem.acltemplate.create', [payload]);
       }),
       this.loader.withLoader(),
       this.errorHandler.catchError(),
@@ -143,7 +143,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onRemovePreset(preset: AclTemplateByPath): void {
-    this.ws.call('filesystem.acltemplate.delete', [preset.id])
+    this.api.call('filesystem.acltemplate.delete', [preset.id])
       .pipe(
         this.errorHandler.catchError(),
         this.loader.withLoader(),

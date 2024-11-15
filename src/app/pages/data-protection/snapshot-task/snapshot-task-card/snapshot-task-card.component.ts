@@ -128,14 +128,14 @@ export class SnapshotTaskCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const snapshotTasks$ = this.ws.call('pool.snapshottask.query').pipe(
+    const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
       untilDestroyed(this),
     );
@@ -155,7 +155,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -176,7 +176,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.ws
+    this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))
       .subscribe({

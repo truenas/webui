@@ -19,7 +19,7 @@ const initialState: InterfacesState = {
 @Injectable()
 export class InterfacesStore extends ComponentStore<InterfacesState> {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -30,7 +30,7 @@ export class InterfacesStore extends ComponentStore<InterfacesState> {
     return trigger$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap(() => {
-        return this.ws.call('interface.query').pipe(
+        return this.api.call('interface.query').pipe(
           tap({
             next: (interfaces) => this.patchState({ interfaces }),
             error: (error) => this.dialogService.error(this.errorHandler.parseError(error)),

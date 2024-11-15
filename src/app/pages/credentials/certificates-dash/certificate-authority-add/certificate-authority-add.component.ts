@@ -97,7 +97,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   summary: SummarySection[];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -155,7 +155,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.call('certificateauthority.create', [payload])
+    this.api.call('certificateauthority.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

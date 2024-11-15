@@ -106,7 +106,7 @@ export class ServiceNfsComponent implements OnInit {
     userd_manage_gids: helptextServiceNfs.userd_manage_gids,
   };
 
-  readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
+  readonly ipChoices$ = this.api.call('nfs.bindip_choices').pipe(choicesToOptions());
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
@@ -114,7 +114,7 @@ export class ServiceNfsComponent implements OnInit {
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
@@ -154,7 +154,7 @@ export class ServiceNfsComponent implements OnInit {
     delete params.servers_auto;
 
     this.isFormLoading.set(true);
-    this.ws.call('nfs.update', [params])
+    this.api.call('nfs.update', [params])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -170,7 +170,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private loadConfig(): Observable<NfsConfig> {
-    return this.ws.call('nfs.config')
+    return this.api.call('nfs.config')
       .pipe(
         tap((config) => {
           this.isAddSpnDisabled.set(!config.v4_krb);
@@ -185,7 +185,7 @@ export class ServiceNfsComponent implements OnInit {
 
   private checkForRdmaSupport(): Observable<void> {
     return forkJoin([
-      this.ws.call('rdma.capable_protocols'),
+      this.api.call('rdma.capable_protocols'),
       this.store$.select(selectIsEnterprise).pipe(take(1)),
     ]).pipe(
       map(([capableProtocols, isEnterprise]) => {
@@ -202,7 +202,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private loadActiveDirectoryState(): Observable<DirectoryServicesState> {
-    return this.ws.call('directoryservices.get_state').pipe(
+    return this.api.call('directoryservices.get_state').pipe(
       tap(({ activedirectory }) => {
         this.activeDirectoryState.set(activedirectory);
       }),

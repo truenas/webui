@@ -200,7 +200,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
@@ -487,7 +487,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     ]);
 
     return this.dialogService.jobDialog(
-      this.ws.job('core.bulk', ['app.delete', bulkDeletePayload]),
+      this.api.job('core.bulk', ['app.delete', bulkDeletePayload]),
       { title: helptextApps.apps.delete_dialog.job },
     ).afterClosed();
   }

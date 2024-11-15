@@ -48,7 +48,7 @@ export class StripAclModalComponent {
   readonly helptext = helptextAcl;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<StripAclModalComponent>,
@@ -57,7 +57,7 @@ export class StripAclModalComponent {
   ) { }
 
   onStrip(): void {
-    const job$ = this.ws.job('filesystem.setacl', [{
+    const job$ = this.api.job('filesystem.setacl', [{
       path: this.data.path,
       dacl: [],
       options: {
