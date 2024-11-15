@@ -58,7 +58,7 @@ export class InstanceRowComponent {
   constructor(
     private dialog: DialogService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
@@ -68,7 +68,7 @@ export class InstanceRowComponent {
     const instanceId = this.instance().id;
 
     this.dialog.jobDialog(
-      this.ws.job('virt.instance.start', [instanceId]),
+      this.api.job('virt.instance.start', [instanceId]),
       { title: this.translate.instant('Starting...') },
     )
       .afterClosed()
@@ -88,7 +88,7 @@ export class InstanceRowComponent {
         filter(Boolean),
         switchMap((options: VirtualizationStopParams) => {
           return this.dialog.jobDialog(
-            this.ws.job('virt.instance.stop', [instanceId, options]),
+            this.api.job('virt.instance.stop', [instanceId, options]),
             { title: this.translate.instant('Stopping...') },
           )
             .afterClosed()
@@ -111,7 +111,7 @@ export class InstanceRowComponent {
         filter(Boolean),
         switchMap((options: VirtualizationStopParams) => {
           return this.dialog.jobDialog(
-            this.ws.job('virt.instance.restart', [instanceId, options]),
+            this.api.job('virt.instance.restart', [instanceId, options]),
             { title: this.translate.instant('Restarting...') },
           )
             .afterClosed()
