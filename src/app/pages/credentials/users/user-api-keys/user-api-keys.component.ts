@@ -32,7 +32,6 @@ import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
@@ -64,7 +63,6 @@ import { SlideInService } from 'app/services/slide-in.service';
     IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTableBodyComponent,
-    IxTableDetailsRowDirective,
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,

@@ -1,6 +1,6 @@
 import { NgClass, NgStyle } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatIconButton } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     NgClass,
     NgStyle,
-    MatButton,
     AngularDualListBoxModule,
     IxIconComponent,
     MatIconButton,

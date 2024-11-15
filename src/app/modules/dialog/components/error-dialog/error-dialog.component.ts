@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, ElementRef, ViewChild,
@@ -28,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   imports: [
     MatDialogTitle,
     IxIconComponent,
-    CdkScrollable,
     MatDialogContent,
     CopyButtonComponent,
     MatDialogActions,

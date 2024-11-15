@@ -1,0 +1,37 @@
+<ix-modal-header2
+  [title]="'Add Disk' | translate"
+  [loading]="isLoading()"
+></ix-modal-header2>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-explorer
+          formControlName="source"
+          [label]="'Source' | translate"
+          [required]="true"
+          [nodeProvider]="directoryNodeProvider"
+        ></ix-explorer>
+
+        <ix-input
+          formControlName="destination"
+          [label]="'Destination' | translate"
+          [required]="true"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="add"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Add' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

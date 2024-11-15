@@ -7,7 +7,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
@@ -40,7 +39,6 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   imports: [
     MatFormField,
     MatInput,
-    MatProgressSpinner,
     MatProgressBar,
     MatCard,
     MatCardContent,

@@ -8,7 +8,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -34,7 +33,6 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     FakeProgressBarComponent,
     InstanceRowComponent,
     MatCheckboxModule,
-    RequiresRolesDirective,
     EmptyComponent,
     TestDirective,
   ],

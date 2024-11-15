@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
 } from '@angular/core';
@@ -38,7 +37,6 @@ import { AuthService } from 'app/services/auth/auth.service';
     ReactiveFormsModule,
     InsecureConnectionComponent,
     MatButton,
-    AsyncPipe,
     TranslateModule,
     IxInputComponent,
     AutofocusDirective,
