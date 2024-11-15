@@ -20,7 +20,7 @@ import { ServiceSmartComponent } from './service-smart.component';
 describe('ServiceSmartComponent', () => {
   let spectator: Spectator<ServiceSmartComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: ServiceSmartComponent,
     imports: [
@@ -50,14 +50,14 @@ describe('ServiceSmartComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current settings for SMART service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('smart.config');
+    expect(api.call).toHaveBeenCalledWith('smart.config');
     expect(values).toEqual({
       'Check Interval': '30',
       'Power Mode': 'Never',
@@ -80,7 +80,7 @@ describe('ServiceSmartComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('smart.update', [{
+    expect(api.call).toHaveBeenCalledWith('smart.update', [{
       interval: 60,
       powermode: SmartPowerMode.Sleep,
       difference: 20,

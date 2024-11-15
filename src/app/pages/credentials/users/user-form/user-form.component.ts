@@ -172,7 +172,7 @@ export class UserFormComponent implements OnInit {
     smbBuiltin: helptextUsers.smbBuiltin,
   };
 
-  readonly groupOptions$ = this.ws.call('group.query').pipe(
+  readonly groupOptions$ = this.api.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
@@ -217,7 +217,7 @@ export class UserFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -353,7 +353,7 @@ export class UserFormComponent implements OnInit {
         let request$: Observable<number>;
         let nextRequest$: Observable<number>;
         if (this.isNewUser) {
-          request$ = this.ws.call('user.create', [{
+          request$ = this.api.call('user.create', [{
             ...body,
             group_create: values.group_create,
             password: values.password,
@@ -365,19 +365,19 @@ export class UserFormComponent implements OnInit {
             body.password = values.password;
           }
           if (body.home_create) {
-            request$ = this.ws.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
+            request$ = this.api.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
             delete body.home_create;
             delete body.home;
-            nextRequest$ = this.ws.call('user.update', [this.editingUser.id, body]);
+            nextRequest$ = this.api.call('user.update', [this.editingUser.id, body]);
           } else {
-            request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+            request$ = this.api.call('user.update', [this.editingUser.id, body]);
           }
         }
 
         request$.pipe(
           switchMap((id) => nextRequest$ || of(id)),
           filter(Boolean),
-          switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
+          switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),
         ).subscribe({
@@ -478,7 +478,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private setHomeSharePath(): void {
-    this.ws.call('sharing.smb.query', [[
+    this.api.call('sharing.smb.query', [[
       ['enabled', '=', true],
       ['home', '=', true],
     ]]).pipe(
@@ -491,13 +491,13 @@ export class UserFormComponent implements OnInit {
   }
 
   private setNextUserId(): void {
-    this.ws.call('user.get_next_uid').pipe(untilDestroyed(this)).subscribe((nextUid) => {
+    this.api.call('user.get_next_uid').pipe(untilDestroyed(this)).subscribe((nextUid) => {
       this.form.patchValue({ uid: nextUid });
     });
   }
 
   private setFirstShellOption(): void {
-    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+    this.api.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
@@ -538,7 +538,7 @@ export class UserFormComponent implements OnInit {
       ids.add(group);
     }
 
-    this.ws.call('user.shell_choices', [Array.from(ids)])
+    this.api.call('user.shell_choices', [Array.from(ids)])
       .pipe(choicesToOptions(), take(1), untilDestroyed(this))
       .subscribe((options) => {
         this.shellOptions$ = of(options);

@@ -91,7 +91,7 @@ export class AppInfoCardComponent {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private redirect: RedirectService,
     private errorHandler: ErrorHandlerService,
@@ -133,7 +133,7 @@ export class AppInfoCardComponent {
       filter(Boolean),
       switchMap(
         (version: string) => this.dialogService.jobDialog(
-          this.ws.job('app.upgrade', [name, { app_version: version }]),
+          this.api.job('app.upgrade', [name, { app_version: version }]),
           { title: helptextApps.apps.upgrade_dialog.job },
         ).afterClosed(),
       ),
@@ -172,7 +172,7 @@ export class AppInfoCardComponent {
 
   executeDelete(name: string, removeIxVolumes = false): void {
     this.dialogService.jobDialog(
-      this.ws.job('app.delete', [name, { remove_images: true, remove_ix_volumes: removeIxVolumes }]),
+      this.api.job('app.delete', [name, { remove_images: true, remove_ix_volumes: removeIxVolumes }]),
       { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()
@@ -202,7 +202,7 @@ export class AppInfoCardComponent {
   }
 
   private updateRollbackSetup(appName: string): void {
-    this.ws.call('app.rollback_versions', [appName]).pipe(
+    this.api.call('app.rollback_versions', [appName]).pipe(
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
       untilDestroyed(this),
     ).subscribe();

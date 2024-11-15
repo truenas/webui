@@ -83,7 +83,7 @@ export class ResilverConfigComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -98,7 +98,7 @@ export class ResilverConfigComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('pool.resilver.config')
+    this.api.call('pool.resilver.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -118,7 +118,7 @@ export class ResilverConfigComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('pool.resilver.update', [values as ResilverConfigUpdate])
+    this.api.call('pool.resilver.update', [values as ResilverConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

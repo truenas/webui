@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
@@ -28,7 +27,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     ReactiveFormsModule,

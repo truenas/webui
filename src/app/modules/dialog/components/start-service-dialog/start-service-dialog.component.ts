@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -37,7 +36,6 @@ export interface StartServiceDialogResult {
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxSlideToggleComponent,
     ReactiveFormsModule,
@@ -63,7 +61,7 @@ export class StartServiceDialogComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -94,11 +92,11 @@ export class StartServiceDialogComponent implements OnInit {
     };
 
     if (result.start && result.startAutomatically && this.isDisabled) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
+      requests.push(this.api.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
     }
 
     if (result.start) {
-      requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
+      requests.push(this.api.call('service.start', [this.serviceName, { silent: false }]));
     }
 
     forkJoin(requests)

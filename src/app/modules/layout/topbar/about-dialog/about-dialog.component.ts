@@ -6,11 +6,9 @@ import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/mater
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -28,8 +26,6 @@ import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info
     CopyrightLineComponent,
     MatButton,
     TranslateModule,
-    MapValuePipe,
-    LetDirective,
     TestDirective,
     AsyncPipe,
   ],

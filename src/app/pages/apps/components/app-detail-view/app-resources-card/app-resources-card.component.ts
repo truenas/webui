@@ -32,11 +32,11 @@ export class AppResourcesCardComponent implements OnInit {
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
-  readonly availableSpace$ = this.ws.call('app.available_space');
+  readonly availableSpace$ = this.api.call('app.available_space');
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dockerStore: DockerStore,
   ) {}
 
@@ -45,7 +45,7 @@ export class AppResourcesCardComponent implements OnInit {
   }
 
   getResourcesUsageUpdates(): void {
-    this.ws.subscribe('reporting.realtime').pipe(
+    this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),
       untilDestroyed(this),

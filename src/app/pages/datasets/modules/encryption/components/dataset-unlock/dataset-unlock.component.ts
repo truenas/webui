@@ -100,7 +100,7 @@ export class DatasetUnlockComponent implements OnInit {
   private apiEndPoint: string;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private aroute: ActivatedRoute,
     private authService: AuthService,
@@ -143,7 +143,7 @@ export class DatasetUnlockComponent implements OnInit {
 
   getEncryptionSummary(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.dataset.encryption_summary', [this.pk]),
+      this.api.job('pool.dataset.encryption_summary', [this.pk]),
       {
         title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),
         description: this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
@@ -212,7 +212,7 @@ export class DatasetUnlockComponent implements OnInit {
         method: 'pool.dataset.unlock',
         params: [this.pk, payload],
       })
-      : this.ws.job('pool.dataset.unlock', [this.pk, payload]);
+      : this.api.job('pool.dataset.unlock', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.unlocking_datasets_title),
@@ -254,7 +254,7 @@ export class DatasetUnlockComponent implements OnInit {
         method: 'pool.dataset.encryption_summary',
         params: [this.pk, payload],
       })
-      : this.ws.job('pool.dataset.encryption_summary', [this.pk, payload]);
+      : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),

@@ -136,16 +136,16 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   aclModeOptions$ = of(mapToOptions(aclModeLabels, this.translate));
 
   private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
-  private readonly defaultCompressionOptions$ = this.ws.call('pool.dataset.compression_choices').pipe(choicesToOptions());
+  private readonly defaultCompressionOptions$ = this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions());
   private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultDeduplicationOptions$ = of(mapToOptions(deduplicationSettingLabels, this.translate));
-  private defaultChecksumOptions$ = this.ws.call('pool.dataset.checksum_choices').pipe(
+  private defaultChecksumOptions$ = this.api.call('pool.dataset.checksum_choices').pipe(
     choicesToOptions(),
   );
 
   private onOffOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultSnapdevOptions$ = of(mapToOptions(datasetSnapdevLabels, this.translate));
-  private defaultRecordSizeOptions$ = this.ws.call('pool.dataset.recordsize_choices').pipe(
+  private defaultRecordSizeOptions$ = this.api.call('pool.dataset.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
 
@@ -161,7 +161,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private formatter: IxFormatterService,
-    private ws: ApiService,
+    private api: ApiService,
     private datasetFormService: DatasetFormService,
   ) {}
 
@@ -477,7 +477,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const root = this.parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
-      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]),
+      this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([recordsizeValue, recommendedAsString]) => {

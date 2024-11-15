@@ -1,8 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
-import {
-  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
-} from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,10 +24,6 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
     TranslateModule,
     MatButton,
     TestDirective,

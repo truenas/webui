@@ -60,7 +60,7 @@ export class AppDetailsHeaderComponent {
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private viewContainerRef: ViewContainerRef,
   ) { }
 
@@ -108,7 +108,7 @@ export class AppDetailsHeaderComponent {
             disableClose: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
+            switchMap(() => this.api.call('auth.set_attribute', ['appsAgreement', true])),
             switchMap(() => this.authService.refreshUser()),
           );
       }),

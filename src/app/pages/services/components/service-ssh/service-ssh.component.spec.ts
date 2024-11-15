@@ -29,7 +29,7 @@ const fakeGroupDataSource = [{
 describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: ServiceSshComponent,
     imports: [
@@ -69,14 +69,14 @@ describe('ServiceSshComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current settings for S3 service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.config');
+    expect(api.call).toHaveBeenCalledWith('ssh.config');
     expect(values).toEqual({
       'TCP Port': '22',
       'Password Login Groups': ['dummy-group'],
@@ -121,7 +121,7 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // New basic options
       tcpport: 23,
       password_login_groups: ['dummy-group'],
@@ -157,7 +157,7 @@ describe('ServiceSshComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ssh.update', [{
+    expect(api.call).toHaveBeenCalledWith('ssh.update', [{
       // Old basic options
       kerberosauth: false,
       passwordauth: true,

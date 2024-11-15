@@ -108,7 +108,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
-  systemDataset = toSignal(this.ws.call('systemdataset.config').pipe(map((config) => config.pool)));
+  systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
   subscription = new Subscription();
   ixTreeHeaderWidth: number | null = null;
@@ -171,7 +171,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,

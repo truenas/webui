@@ -158,7 +158,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
-  private userSuggestions$ = this.ws.call('user.query').pipe(
+  private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
     take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),
@@ -168,7 +168,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     protected emptyService: EmptyService,
     private breakpointObserver: BreakpointObserver,
     private cdr: ChangeDetectorRef,
@@ -187,7 +187,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataProvider = new AuditApiDataProvider(this.ws);
+    this.dataProvider = new AuditApiDataProvider(this.api);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();

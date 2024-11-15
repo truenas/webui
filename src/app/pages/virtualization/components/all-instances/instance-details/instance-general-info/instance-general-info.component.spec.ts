@@ -5,10 +5,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { InstanceGeneralInfoComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
+import {
+  InstanceGeneralInfoComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
+import {
+  InstanceEditFormComponent,
+} from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
@@ -16,8 +21,8 @@ import { SlideInService } from 'app/services/slide-in.service';
 const demoInstance = {
   id: 'demo',
   name: 'Demo',
-  type: 'CONTAINER',
-  status: 'RUNNING',
+  type: VirtualizationType.Container,
+  status: VirtualizationStatus.Running,
   cpu: '525',
   autostart: true,
   image: {
@@ -27,7 +32,11 @@ const demoInstance = {
     release: '8',
   },
   memory: 131072000,
-} as VirtualizationInstance;
+  environment: {
+    TEST_ENV: 'value1',
+    SAMPLE_ENV: 'value2',
+  },
+} as unknown as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
   let spectator: Spectator<InstanceGeneralInfoComponent>;
@@ -75,12 +84,19 @@ describe('InstanceGeneralInfoComponent', () => {
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
     expect(chartExtra).toHaveLength(6);
-    expect(chartExtra[0]).toHaveText('Name: Demo');
-    expect(chartExtra[1]).toHaveText('Status: Running');
-    expect(chartExtra[2]).toHaveText('Autostart: Yes');
-    expect(chartExtra[3]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
-    expect(chartExtra[4]).toHaveText('CPU: 525');
-    expect(chartExtra[5]).toHaveText('Memory: 125 MiB');
+    expect(chartExtra[0]).toHaveText('Status: Running');
+    expect(chartExtra[1]).toHaveText('Autostart: Yes');
+    expect(chartExtra[2]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
+    expect(chartExtra[3]).toHaveText('CPU: 525');
+    expect(chartExtra[4]).toHaveText('Memory: 125 MiB');
+    expect(chartExtra[5]).toHaveText('Environment:');
+  });
+
+  it('renders environment variables', () => {
+    const envContainer = spectator.query('mat-card-content').querySelectorAll('ul li');
+    expect(envContainer).toHaveLength(2);
+    expect(envContainer[0]).toHaveText('SAMPLE_ENV: value2');
+    expect(envContainer[1]).toHaveText('TEST_ENV: value1');
   });
 
   it('deletes instance when "Delete" button is pressed', async () => {
@@ -91,7 +107,7 @@ describe('InstanceGeneralInfoComponent', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
   });
 
-  it('navigates to app edit page when Edit button is pressed', async () => {
+  it('opens edit instance form when Edit is pressed', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 

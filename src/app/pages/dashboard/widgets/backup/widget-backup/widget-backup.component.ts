@@ -62,10 +62,10 @@ interface BackupRow {
     MatGridList,
     MatGridTile,
     BackupTaskTileComponent,
-    NgTemplateOutlet,
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     TranslateModule,
+    NgTemplateOutlet,
   ],
 })
 export class WidgetBackupComponent implements OnInit {

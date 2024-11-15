@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -18,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     ErrorTemplateComponent,
     MatDivider,
