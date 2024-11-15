@@ -102,7 +102,10 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    cpu: ['', [Validators.required, cpuValidator()]],
+    autostart: [false],
+    image: ['', Validators.required],
+    cpu: ['', [cpuValidator()]],
+    memory: [null as number],
     usb_devices: this.formBuilder.group({}),
     gpu_devices: this.formBuilder.group({}),
     proxies: this.formBuilder.array<FormGroup<{
@@ -115,9 +118,6 @@ export class InstanceWizardComponent implements OnInit {
       source: FormControl<string>;
       destination: FormControl<string>;
     }>>([]),
-    autostart: [false],
-    memory: [null as number, Validators.required],
-    image: ['', Validators.required],
   });
 
   protected readonly visibleImageName = new FormControl('');

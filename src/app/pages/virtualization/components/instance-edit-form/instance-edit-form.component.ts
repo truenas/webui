@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, signal,
 } from '@angular/core';
 import {
-  FormBuilder, ReactiveFormsModule, Validators,
+  FormBuilder, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -53,9 +53,9 @@ export class InstanceEditFormComponent {
   editingInstanceId = this.instance.id;
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    cpu: ['', [Validators.required, cpuValidator()]],
     autostart: [false],
-    memory: [null as number, Validators.required],
+    cpu: ['', [cpuValidator()]],
+    memory: [null as number],
   });
 
   constructor(
