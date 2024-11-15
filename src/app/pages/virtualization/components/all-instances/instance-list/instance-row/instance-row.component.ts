@@ -52,8 +52,8 @@ export class InstanceRowComponent {
 
   readonly selectionChange = output();
 
-  protected readonly virtualizationTypeMap = virtualizationTypeLabels;
-  protected readonly virtualizationStatusMap = virtualizationStatusLabels;
+  protected readonly typeLabels = virtualizationTypeLabels;
+  protected readonly statusLabels = virtualizationStatusLabels;
 
   constructor(
     private dialog: DialogService,

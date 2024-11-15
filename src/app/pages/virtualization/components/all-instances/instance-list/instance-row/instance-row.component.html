@@ -12,9 +12,9 @@
   <span class="name">{{ instance().name }}</span>
 </div>
 
-<div class="cell">{{ instance().type | mapValue: virtualizationTypeMap | translate }}</div>
+<div class="cell">{{ instance().type | mapValue: typeLabels | translate }}</div>
 
-<div class="cell">{{ instance().status | mapValue: virtualizationStatusMap | translate }}</div>
+<div class="cell">{{ instance().status | mapValue: statusLabels | translate }}</div>
 
 <div class="cell actions">
   @if (isStopped()) {
