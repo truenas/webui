@@ -75,12 +75,12 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     { label: T('Passphrase'), value: DatasetEncryptionType.Passphrase },
   ]);
 
-  algorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
+  algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(choicesToOptions());
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   get hasEncryption(): boolean {

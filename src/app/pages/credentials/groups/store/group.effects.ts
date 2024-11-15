@@ -30,7 +30,7 @@ export class GroupEffects {
       if (preferences.hideBuiltinGroups) {
         params = [[['builtin', '=', false]]];
       }
-      return this.ws.call('group.query', params).pipe(
+      return this.api.call('group.query', params).pipe(
         map((groups) => groupsLoaded({ groups })),
         catchError((error) => {
           console.error(error);
@@ -48,7 +48,7 @@ export class GroupEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(groupsLoaded),
     switchMap(() => {
-      return this.ws.subscribe('group.query').pipe(
+      return this.api.subscribe('group.query').pipe(
         filter((event) => event.msg === IncomingApiMessageType.Removed),
         map((event) => groupRemoved({ id: event.id as number })),
       );
@@ -57,7 +57,7 @@ export class GroupEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private translate: TranslateService,
   ) {}

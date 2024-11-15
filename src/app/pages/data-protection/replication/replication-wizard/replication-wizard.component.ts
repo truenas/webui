@@ -86,7 +86,7 @@ export class ReplicationWizardComponent {
   createdReplication: ReplicationTask;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private replicationService: ReplicationService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -109,11 +109,11 @@ export class ReplicationWizardComponent {
     const requests: Observable<unknown>[] = [];
 
     this.createdSnapshots.forEach((snapshot) => {
-      requests.push(this.ws.call('zfs.snapshot.delete', [snapshot.name]));
+      requests.push(this.api.call('zfs.snapshot.delete', [snapshot.name]));
     });
 
     this.createdSnapshotTasks.forEach((task) => {
-      requests.push(this.ws.call('pool.snapshottask.delete', [task.id]));
+      requests.push(this.api.call('pool.snapshottask.delete', [task.id]));
     });
 
     if (requests.length) {
@@ -171,7 +171,7 @@ export class ReplicationWizardComponent {
 
   private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
     this.appLoader.open(this.translate.instant('Starting task'));
-    return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
+    return this.api.startJob('replication.run', [createdReplication.id]).pipe(
       switchMap(() => {
         this.appLoader.close();
         return this.dialogService.info(
@@ -200,7 +200,7 @@ export class ReplicationWizardComponent {
     ]).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
         }
         return of({ eligible: 0, total: 0 });
       }),
@@ -208,19 +208,19 @@ export class ReplicationWizardComponent {
   }
 
   getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
-    return this.ws.call('replication.target_unmatched_snapshots', payload);
+    return this.api.call('replication.target_unmatched_snapshots', payload);
   }
 
   createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
-    return this.ws.call('pool.snapshottask.create', [payload]);
+    return this.api.call('pool.snapshottask.create', [payload]);
   }
 
   createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
-    return this.ws.call('zfs.snapshot.create', [payload]);
+    return this.api.call('zfs.snapshot.create', [payload]);
   }
 
   createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
-    return this.ws.call('replication.create', [payload]);
+    return this.api.call('replication.create', [payload]);
   }
 
   getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams {
@@ -352,7 +352,7 @@ export class ReplicationWizardComponent {
     schedule: Schedule;
     naming_schema?: string;
   }): Observable<PeriodicSnapshotTask[]> {
-    return this.ws.call('pool.snapshottask.query', [[
+    return this.api.call('pool.snapshottask.query', [[
       ['dataset', '=', payload.dataset],
       ['schedule.minute', '=', payload.schedule.minute],
       ['schedule.hour', '=', payload.schedule.hour],

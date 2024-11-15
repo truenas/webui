@@ -52,7 +52,7 @@ export class ErrorDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -63,7 +63,7 @@ export class ErrorDialogComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
       next: (url) => {
         const mimetype = 'text/plain';
         this.download.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({

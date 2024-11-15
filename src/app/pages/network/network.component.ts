@@ -96,7 +96,7 @@ export class NetworkComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private router: Router,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -190,19 +190,19 @@ export class NetworkComponent implements OnInit {
 
   private getCheckInWaitingSeconds(): Promise<number> {
     return lastValueFrom(
-      this.ws.call('interface.checkin_waiting'),
+      this.api.call('interface.checkin_waiting'),
     );
   }
 
   private getPendingChanges(): Promise<boolean> {
     return lastValueFrom(
-      this.ws.call('interface.has_pending_changes'),
+      this.api.call('interface.has_pending_changes'),
     );
   }
 
   private async cancelCommit(): Promise<void> {
     await lastValueFrom(
-      this.ws.call('interface.cancel_rollback'),
+      this.api.call('interface.cancel_rollback'),
     );
   }
 
@@ -242,7 +242,7 @@ export class NetworkComponent implements OnInit {
   }
 
   commitPendingChanges(): void {
-    this.ws
+    this.api
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
@@ -281,7 +281,7 @@ export class NetworkComponent implements OnInit {
               return;
             }
 
-            this.ws
+            this.api
               .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
               .pipe(
                 this.loader.withLoader(),
@@ -331,7 +331,7 @@ export class NetworkComponent implements OnInit {
   }
 
   finishCheckin(): void {
-    this.ws
+    this.api
       .call('interface.checkin')
       .pipe(
         this.loader.withLoader(),
@@ -366,7 +366,7 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        this.ws
+        this.api
           .call('interface.rollback')
           .pipe(
             this.loader.withLoader(),
@@ -396,7 +396,7 @@ export class NetworkComponent implements OnInit {
       return;
     }
 
-    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.api.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

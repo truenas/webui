@@ -27,7 +27,7 @@ const fakeGroupDataSource = [{
 describe('GroupMembersComponent', () => {
   let spectator: SpectatorRouting<GroupMembersComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: GroupMembersComponent,
     imports: [
@@ -51,7 +51,7 @@ describe('GroupMembersComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current group values when form is being edited', async () => {
@@ -63,8 +63,8 @@ describe('GroupMembersComponent', () => {
     expect(await userList.getItems()).toHaveLength(1);
     expect(await memberList.getItems()).toHaveLength(1);
 
-    expect(ws.call).toHaveBeenCalledWith('user.query');
-    expect(ws.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
+    expect(api.call).toHaveBeenCalledWith('user.query');
+    expect(api.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
   });
 
   it('redirects to Group List page when Cancel button is pressed', async () => {
@@ -95,7 +95,7 @@ describe('GroupMembersComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
+    expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 });

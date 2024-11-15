@@ -19,7 +19,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 export class DatasetFormService {
   constructor(
     private dialog: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
   ) {}
@@ -54,7 +54,7 @@ export class DatasetFormService {
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {
-    return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+    return this.api.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
       map((response) => response[0]),
     );
   }

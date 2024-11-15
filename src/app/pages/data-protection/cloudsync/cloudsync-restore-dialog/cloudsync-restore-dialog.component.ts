@@ -71,7 +71,7 @@ export class CloudSyncRestoreDialogComponent {
   ]);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
@@ -82,7 +82,7 @@ export class CloudSyncRestoreDialogComponent {
   ) { }
 
   onSubmit(): void {
-    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
+    this.api.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {

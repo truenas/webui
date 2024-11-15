@@ -57,7 +57,7 @@ export class AppRollbackModalComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AppRollbackModalComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -70,7 +70,7 @@ export class AppRollbackModalComponent {
     const rollbackParams = [this.app.name, this.form.value] as Required<AppRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('app.rollback', rollbackParams),
+      this.api.job('app.rollback', rollbackParams),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
@@ -79,7 +79,7 @@ export class AppRollbackModalComponent {
   }
 
   private setVersionOptions(): void {
-    this.ws.call('app.rollback_versions', [this.app.name]).pipe(
+    this.api.call('app.rollback_versions', [this.app.name]).pipe(
       tap((versions) => {
         const options = versions.map((version) => ({
           label: version,

@@ -24,7 +24,7 @@ import { DownloadService } from 'app/services/download.service';
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const fakeSshKeyPair = {
     id: 23,
     name: 'existing key',
@@ -61,7 +61,7 @@ describe('SshKeypairFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -75,7 +75,7 @@ describe('SshKeypairFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('keychaincredential.create', [{
+      expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
         name: 'new',
         type: KeychainCredentialType.SshKeyPair,
         attributes: {
@@ -93,7 +93,7 @@ describe('SshKeypairFormComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
-        expect(ws.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
+        expect(api.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
         expect(values).toMatchObject({
           'Private Key': 'Generated private key',
           'Public Key': 'Generated public key',
@@ -144,7 +144,7 @@ describe('SshKeypairFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       spectator.component.setKeypairForEditing();
     });
 
@@ -170,7 +170,7 @@ describe('SshKeypairFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('keychaincredential.update', [
+      expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [
         23,
         {
           name: 'new',
