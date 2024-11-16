@@ -59,7 +59,7 @@ export class UserDetailsRowComponent {
         value: this.translate.instant('{n, plural, =0 {No keys} =1 {# key} other {# keys}}', {
           n: user.api_keys?.length,
         }),
-        action: user.api_keys?.length > 0 ? () => this.viewUserApiKeys(user) : null,
+        action: () => this.viewUserApiKeys(user),
       },
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
@@ -130,7 +130,7 @@ export class UserDetailsRowComponent {
   }
 
   viewUserApiKeys(user: User): void {
-    this.router.navigate(['/credentials/user-api-keys'], {
+    this.router.navigate(['/credentials/users/api-keys'], {
       queryParams: { userName: user.username },
     });
   }

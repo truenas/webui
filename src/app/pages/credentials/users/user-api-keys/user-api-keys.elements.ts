@@ -3,7 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const userApiKeysElements = {
   hierarchy: [T('Credentials'), T('Users'), T('User API Keys')],
-  anchorRouterLink: ['/credentials', 'user-api-keys'],
+  anchorRouterLink: ['/credentials', 'users', 'api-keys'],
   elements: {
     list: {
       synonyms: [
