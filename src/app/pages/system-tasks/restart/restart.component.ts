@@ -59,7 +59,7 @@ export class RestartComponent implements OnInit {
       },
       complete: () => { // show restart screen
         this.wsManager.prepareShutdown();
-        this.wsManager.closeWsConnection();
+        this.wsManager.reconnect();
         setTimeout(() => {
           this.router.navigate(['/signin']);
         }, 5000);

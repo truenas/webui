@@ -8,6 +8,10 @@ export class WebSocketConnection {
     return this.wsAsObservable$;
   }
 
+  get closed(): boolean {
+    return this.ws$?.closed;
+  }
+
   constructor(
     private webSocket: typeof rxjsWebSocket,
   ) { }

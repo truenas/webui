@@ -218,7 +218,7 @@ export class WebSocketHandlerService {
     if (event.code === 1008) {
       this.isAccessRestricted$ = true;
     } else {
-      this.reconnect();
+      this.initiateReconnect();
     }
   }
 
@@ -255,6 +255,14 @@ export class WebSocketHandlerService {
   }
 
   reconnect(): void {
+    if (this.wsConnection.closed) {
+      this.initiateReconnect();
+    } else {
+      this.wsConnection.close();
+    }
+  }
+
+  private initiateReconnect(): void {
     if (this.reconnectTimerSubscription) {
       this.unsubscribeReconnectSubscription();
     }
@@ -265,10 +273,6 @@ export class WebSocketHandlerService {
         this.setupWebSocket();
       },
     });
-  }
-
-  closeWsConnection(): void {
-    this.wsConnection.close();
   }
 
   setupConnectionUrl(protocol: string, remote: string): void {

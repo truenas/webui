@@ -118,7 +118,7 @@ export class FailoverSettingsComponent implements OnInit {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.authService.clearAuthToken();
-                this.wsManager.closeWsConnection();
+                this.wsManager.reconnect();
               },
             });
           }

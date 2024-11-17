@@ -217,7 +217,7 @@ export class GuiFormComponent {
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.closeWsConnection();
+            this.wsManager.reconnect();
             this.replaceHrefWhenWsConnected(href);
           },
           error: (error: ApiError) => {
