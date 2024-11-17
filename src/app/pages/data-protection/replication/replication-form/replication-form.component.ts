@@ -110,6 +110,15 @@ export class ReplicationFormComponent implements OnInit {
     private chainedRef: ChainedRef<ReplicationTask>,
   ) {
     this.existingReplication = this.chainedRef.getData();
+    this.chainedRef.requireConfirmationWhen(() => {
+      return of(
+        this.generalSection.form.dirty
+        || this.transportSection.form.dirty
+        || this.sourceSection.form.dirty
+        || this.targetSection.form.dirty
+        || this.scheduleSection.form.dirty,
+      );
+    });
   }
 
   ngOnInit(): void {
