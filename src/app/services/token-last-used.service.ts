@@ -38,7 +38,6 @@ export class TokenLastUsedService {
   }
 
   constructor(
-    // private ws: ApiService,
     private wsHandler: WebSocketHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
