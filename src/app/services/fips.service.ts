@@ -38,7 +38,7 @@ export class FipsService {
       .pipe(
         tap((approved) => {
           if (approved) {
-            this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+            this.restart();
           }
         }),
       );
@@ -58,7 +58,7 @@ export class FipsService {
       tap((approved) => {
         this.isFailoverPromptOpen = false;
         if (approved) {
-          this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
+          this.failover();
         }
       }),
     );
@@ -85,7 +85,15 @@ export class FipsService {
     );
   }
 
-  private restartRemote(): Observable<unknown> {
+  restart(): void {
+    this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+  }
+
+  failover(): void {
+    this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
+  }
+
+  restartRemote(): Observable<unknown> {
     return this.dialog.jobDialog(
       this.ws.job('failover.reboot.other_node'),
       { title: this.translate.instant('Restarting Standby') },

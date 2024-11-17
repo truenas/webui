@@ -5,10 +5,13 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
+import {
+  AddDeviceMenuComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
@@ -28,6 +31,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     MatCardContent,
     NgxSkeletonLoaderModule,
     DeleteDeviceButtonComponent,
+    AddDeviceMenuComponent,
   ],
 })
 export class InstanceDevicesComponent {
@@ -44,13 +48,11 @@ export class InstanceDevicesComponent {
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
-    const type = virtualizationDeviceTypeLabels.has(device.dev_type)
-      ? virtualizationDeviceTypeLabels.get(device.dev_type)
-      : device.dev_type;
+    // TODO: Add type back after https://ixsystems.atlassian.net/browse/NAS-132543
+    // const type = virtualizationDeviceTypeLabels.has(device.dev_type)
+    //   ? virtualizationDeviceTypeLabels.get(device.dev_type)
+    //   : device.dev_type;
 
-    // TODO: Get better names.
-    const description = device.name;
-
-    return `${type}: ${description}`;
+    return device.description;
   }
 }

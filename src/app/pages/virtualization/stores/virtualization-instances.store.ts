@@ -120,4 +120,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     });
     this.loadDevices();
   }
+
+  deviceDeleted(deviceName: string): void {
+    this.patchState({
+      selectedInstanceDevices: this.selectedInstanceDevices().filter((device) => device.name !== deviceName),
+    });
+  }
 }
