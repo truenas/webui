@@ -110,6 +110,7 @@ export class DockerImagesListComponent implements OnInit {
           ? this.fileSizePipe.transform(row.size)
           : this.translate.instant('Unknown');
       },
+      sortBy: (row) => row.size,
     }),
     actionsColumn({
       actions: [
