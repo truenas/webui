@@ -135,13 +135,10 @@ export interface VirtualizationImage {
   variant: string;
 }
 
-export type VirtualizationStopParams = [
-  instanceId: string,
-  {
-    timeout?: number;
-    force?: boolean;
-  },
-];
+export interface VirtualizationStopParams {
+  timeout?: number;
+  force?: boolean;
+}
 
 export interface VirtualizationGlobalConfigUpdate {
   pool: string;
