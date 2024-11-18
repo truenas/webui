@@ -12,7 +12,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   /**
@@ -46,7 +46,7 @@ export class FilesystemService {
         limit: 1000,
       };
 
-      return this.ws.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
+      return this.api.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {

@@ -58,7 +58,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   constructor(
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -85,7 +85,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
       max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
     this.isFormLoading = true;
-    this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;

@@ -63,7 +63,7 @@ export class SelfEncryptingDriveCardComponent {
         distinctUntilChanged((previous, current) => isEqual(previous.sed_user, current.sed_user)),
         map((config) => config.sed_user),
       );
-      const updatedSedPassword$ = this.ws.call('system.advanced.sed_global_password').pipe(
+      const updatedSedPassword$ = this.api.call('system.advanced.sed_global_password').pipe(
         map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
       );
       return combineLatest([
@@ -82,7 +82,7 @@ export class SelfEncryptingDriveCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

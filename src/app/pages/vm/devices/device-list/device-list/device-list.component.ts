@@ -99,7 +99,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
@@ -109,7 +109,7 @@ export class DeviceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+    const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
       tap((devices) => this.devices = devices),
       untilDestroyed(this),
     );

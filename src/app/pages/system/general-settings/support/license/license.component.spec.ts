@@ -17,7 +17,7 @@ import { LicenseComponent } from './license.component';
 describe('LicenseComponent', () => {
   let spectator: Spectator<LicenseComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: LicenseComponent,
     imports: [
@@ -39,7 +39,7 @@ describe('LicenseComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -51,6 +51,6 @@ describe('LicenseComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.license_update', ['test-license']);
+    expect(api.call).toHaveBeenCalledWith('system.license_update', ['test-license']);
   });
 });

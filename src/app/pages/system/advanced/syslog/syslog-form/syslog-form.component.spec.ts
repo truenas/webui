@@ -19,7 +19,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: SyslogFormComponent,
     imports: [
@@ -68,7 +68,7 @@ describe('SyslogFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for syslog form and shows them', async () => {
@@ -97,7 +97,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       {
         fqdn_syslog: false,
         sysloglevel: SyslogLevel.Info,
@@ -122,7 +122,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       expect.objectContaining({
         syslog_transport: SyslogTransport.Tls,
         syslog_tls_certificate: 2,

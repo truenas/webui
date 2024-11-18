@@ -60,7 +60,7 @@ export class ReplaceDiskDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
     private snackbar: SnackbarService,
@@ -71,7 +71,7 @@ export class ReplaceDiskDialogComponent {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.replace', [this.data.poolId, {
+      this.api.job('pool.replace', [this.data.poolId, {
         label: this.data.guid,
         disk: this.form.value.replacement,
         force: this.form.value.force,

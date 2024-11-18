@@ -30,7 +30,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const mockSystemGeneralConfig = {
     usage_collection: false,
@@ -122,7 +122,7 @@ describe('GuiFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current values when form is being edited', async () => {
@@ -155,7 +155,7 @@ describe('GuiFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       {
         ...mockSystemGeneralConfig,
         ui_certificate: 1,
@@ -203,7 +203,7 @@ describe('GuiFormComponent', () => {
     expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Restart Web Service',
     }));
-    expect(ws.call).toHaveBeenCalledWith('system.general.ui_restart');
+    expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
   });
 
   it('dispatches themeChangedInGuiForm when theme is changed', async () => {

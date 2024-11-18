@@ -119,14 +119,14 @@ export class AlertServiceListComponent implements OnInit {
     protected emptyService: EmptyService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    const alertServices$ = this.ws.call('alertservice.query').pipe(
+    const alertServices$ = this.api.call('alertservice.query').pipe(
       tap((alertServices) => this.alertServices = alertServices),
       untilDestroyed(this),
     );
@@ -166,7 +166,7 @@ export class AlertServiceListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('alertservice.delete', [alertService.id])),
+      switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => this.getAlertServices());

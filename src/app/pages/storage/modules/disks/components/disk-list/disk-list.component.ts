@@ -200,7 +200,7 @@ export class DiskListComponent implements OnInit {
   private smartDiskChoices: Choices = {};
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -211,14 +211,14 @@ export class DiskListComponent implements OnInit {
 
   ngOnInit(): void {
     const request$ = forkJoin([
-      this.ws.call('disk.details').pipe(
+      this.api.call('disk.details').pipe(
         map((diskDetails) => [
           ...diskDetails.unused,
           ...diskDetails.used.filter((disk) => disk.exported_zpool),
         ]),
       ),
-      this.ws.call('smart.test.disk_choices'),
-      this.ws.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
+      this.api.call('smart.test.disk_choices'),
+      this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
     ]).pipe(
       map(([unusedDisks, disksThatSupportSmart, disks]) => {
         this.unusedDisks = unusedDisks;

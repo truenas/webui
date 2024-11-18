@@ -65,7 +65,7 @@ export class InstanceEditFormComponent {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -88,7 +88,7 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
-    const job$ = this.ws.job('virt.instance.update', [this.editingInstanceId, payload]);
+    const job$ = this.api.job('virt.instance.update', [this.editingInstanceId, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant('Updating Instance'),

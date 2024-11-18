@@ -72,7 +72,7 @@ export class SaveConfigDialogComponent {
   };
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private download: DownloadService,
     private loader: AppLoaderService,
@@ -106,7 +106,7 @@ export class SaveConfigDialogComponent {
           fileName += '.db';
         }
 
-        return this.ws.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
+        return this.api.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
           this.loader.withLoader(),
           switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimeType)),
         );

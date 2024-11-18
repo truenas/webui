@@ -48,7 +48,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private servicesService = inject(ServicesService);
-  private ws = inject(ApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(AppLoaderService);
@@ -97,7 +97,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private stopService(toggle: MatSlideToggle): void {
-    this.ws.call('service.stop', [this.service().service, { silent: false }]).pipe(
+    this.api.call('service.stop', [this.service().service, { silent: false }]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({
@@ -110,7 +110,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private startService(toggle: MatSlideToggle): void {
-    this.ws.call('service.start', [this.service().service, { silent: false }]).pipe(
+    this.api.call('service.start', [this.service().service, { silent: false }]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({

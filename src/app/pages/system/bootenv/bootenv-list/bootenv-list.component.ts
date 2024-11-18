@@ -193,7 +193,7 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private slideInService: SlideInService,
@@ -205,7 +205,7 @@ export class BootEnvironmentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const request$ = this.ws.call('boot.environment.query').pipe(
+    const request$ = this.api.call('boot.environment.query').pipe(
       map((bootenvs) => {
         this.bootenvs = bootenvs.map((bootenv) => ({
           ...bootenv,
@@ -248,7 +248,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.startJob('boot.scrub').pipe(
+        return this.api.startJob('boot.scrub').pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
         );
@@ -276,7 +276,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('boot.environment.activate', [{ id: bootenv.id }]).pipe(
+        return this.api.call('boot.environment.activate', [{ id: bootenv.id }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
         );
@@ -294,7 +294,7 @@ export class BootEnvironmentListComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('boot.environment.keep', [{ id: bootenv.id, value: true }]).pipe(
+          return this.api.call('boot.environment.keep', [{ id: bootenv.id, value: true }]).pipe(
             this.loader.withLoader(),
             this.errorHandler.catchError(),
           );
@@ -309,7 +309,7 @@ export class BootEnvironmentListComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('boot.environment.keep', [{ id: bootenv.id, value: false }]).pipe(
+          return this.api.call('boot.environment.keep', [{ id: bootenv.id, value: false }]).pipe(
             this.loader.withLoader(),
             this.errorHandler.catchError(),
           );

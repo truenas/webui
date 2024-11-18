@@ -55,14 +55,14 @@ export class IsolatedGpusFormComponent implements OnInit {
     }),
   });
 
-  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
+  readonly options$ = this.api.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
     return Object.entries(choices).map(
       ([value, label]) => ({ value: label, label: value }),
     );
   }));
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -87,7 +87,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     this.isFormLoading = true;
     const isolatedGpuPciIds = this.formGroup.controls.isolated_gpu_pci_ids.value;
 
-    this.ws.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
+    this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

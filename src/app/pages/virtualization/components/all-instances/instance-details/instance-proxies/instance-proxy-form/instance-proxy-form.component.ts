@@ -72,7 +72,7 @@ export class InstanceProxyFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: ChainedRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -116,10 +116,10 @@ export class InstanceProxyFormComponent implements OnInit {
     } as VirtualizationProxy;
 
     return this.existingProxy()
-      ? this.ws.call('virt.instance.device_update', [instanceId, {
+      ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
         name: this.existingProxy().name,
       }])
-      : this.ws.call('virt.instance.device_add', [instanceId, payload]);
+      : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }
 }

@@ -183,7 +183,7 @@ export class VmListComponent implements OnInit {
     private slideInService: SlideInService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private vmService: VmService,
     private fileSizePipe: FileSizePipe,
@@ -200,7 +200,7 @@ export class VmListComponent implements OnInit {
 
   createDataProvider(): void {
     // TODO: Refactor VM data provider to use ngrx/store
-    const virtualMachines$ = this.ws.call('vm.query').pipe(
+    const virtualMachines$ = this.api.call('vm.query').pipe(
       tap((vms) => this.vmMachines = vms),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);

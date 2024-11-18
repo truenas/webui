@@ -58,7 +58,7 @@ export class SetAdminPasswordFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -69,7 +69,7 @@ export class SetAdminPasswordFormComponent {
     const { username, password } = this.form.value;
     this.signinStore.setLoadingState(true);
 
-    const request$ = this.ws.call('user.setup_local_administrator', [username, password]);
+    const request$ = this.api.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),

@@ -23,7 +23,7 @@ export class EulaEffects {
     filterAsync(() => this.store$.select(selectIsEnterprise).pipe(filter(Boolean))),
     filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     mergeMap(() => {
-      return this.ws.call('truenas.is_eula_accepted').pipe(
+      return this.api.call('truenas.is_eula_accepted').pipe(
         filter((isEulaAccepted) => !isEulaAccepted),
         switchMap(() => this.showEulaDialog()),
         this.errorHandler.catchError(),
@@ -32,7 +32,7 @@ export class EulaEffects {
   ), { dispatch: false });
 
   private showEulaDialog(): Observable<void> {
-    return this.ws.call('truenas.get_eula').pipe(
+    return this.api.call('truenas.get_eula').pipe(
       switchMap((eula) => {
         return this.dialogService.confirm({
           title: this.translate.instant('End User License Agreement - TrueNAS'),
@@ -43,13 +43,13 @@ export class EulaEffects {
         });
       }),
       filter(Boolean),
-      switchMap(() => this.ws.call('truenas.accept_eula')),
+      switchMap(() => this.api.call('truenas.accept_eula')),
     );
   }
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

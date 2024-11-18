@@ -65,7 +65,7 @@ export class JbofFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -92,9 +92,9 @@ export class JbofFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('jbof.create', [values]);
+      request$ = this.api.call('jbof.create', [values]);
     } else {
-      request$ = this.ws.call('jbof.update', [this.editingJbof.id, values]);
+      request$ = this.api.call('jbof.update', [this.editingJbof.id, values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

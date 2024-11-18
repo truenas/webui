@@ -22,7 +22,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('ProactiveComponent', () => {
   let spectator: Spectator<ProactiveComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let form: IxFormHarness;
 
   const createComponent = createComponentFactory({
@@ -59,12 +59,12 @@ describe('ProactiveComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     form = await loader.getHarness(IxFormHarness);
   });
 
   it('loads current proactive settings and shows them in the form', async () => {
-    expect(ws.call).toHaveBeenCalledWith('support.config');
+    expect(api.call).toHaveBeenCalledWith('support.config');
     const value = await form.getValues();
     expect(value).toEqual({
       Name: 'Zepp Karlsen',
@@ -90,7 +90,7 @@ describe('ProactiveComponent', () => {
     await form.fillForm(sendValue);
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
-    expect(ws.call).toHaveBeenCalledWith('support.update', [{
+    expect(api.call).toHaveBeenCalledWith('support.update', [{
       enabled: true,
       name: 'Jhon Smith',
       title: 'Cannot connect',

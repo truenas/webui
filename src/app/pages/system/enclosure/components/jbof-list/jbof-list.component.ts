@@ -106,7 +106,7 @@ export class JbofListComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -117,7 +117,7 @@ export class JbofListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const request$ = this.ws.call('jbof.query').pipe(
+    const request$ = this.api.call('jbof.query').pipe(
       tap((jbofs) => this.jbofs = jbofs),
       untilDestroyed(this),
     );
@@ -147,7 +147,7 @@ export class JbofListComponent implements OnInit {
       switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {
         const force = confirmation.secondaryCheckbox;
 
-        return this.ws.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
+        return this.api.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -165,8 +165,8 @@ export class JbofListComponent implements OnInit {
 
   updateAvailableJbof(): void {
     forkJoin([
-      this.ws.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
-      this.ws.call('jbof.licensed'),
+      this.api.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
+      this.api.call('jbof.licensed'),
     ]).pipe(untilDestroyed(this)).subscribe(([jbofsLength, licensedLength]) => {
       this.canAddJbof = licensedLength > jbofsLength;
       this.cdr.markForCheck();

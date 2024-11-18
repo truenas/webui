@@ -29,7 +29,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
   private configSubscription: Subscription;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -42,7 +42,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
 
         this.patchState({ isLoading: true });
 
-        return this.ws.call('virt.global.config').pipe(
+        return this.api.call('virt.global.config').pipe(
           tap((config) => {
             this.patchState({
               config,
@@ -64,7 +64,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
       return;
     }
 
-    this.configSubscription = this.ws.subscribe('virt.global.config')
+    this.configSubscription = this.api.subscribe('virt.global.config')
       .pipe(untilDestroyed(this))
       .subscribe(({ fields }) => {
         this.patchState({ config: fields });

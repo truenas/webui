@@ -76,7 +76,7 @@ export class TunableFormComponent implements OnInit {
   private editingTunable: Tunable;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -116,7 +116,7 @@ export class TunableFormComponent implements OnInit {
   }
 
   private createTunable(): Observable<Job<Tunable>> {
-    return this.ws.job('tunable.create', [{
+    return this.api.job('tunable.create', [{
       ...this.form.getRawValue(),
       type: TunableType.Sysctl,
     }]);
@@ -124,7 +124,7 @@ export class TunableFormComponent implements OnInit {
 
   private updateTunable(): Observable<Job<Tunable>> {
     const values = this.form.value;
-    return this.ws.job('tunable.update', [
+    return this.api.job('tunable.update', [
       this.editingTunable.id,
       {
         comment: values.comment,

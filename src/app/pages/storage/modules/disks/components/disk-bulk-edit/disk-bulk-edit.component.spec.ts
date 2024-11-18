@@ -30,7 +30,7 @@ describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: ApiService;
+  let api: ApiService;
   const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
@@ -67,7 +67,7 @@ describe('DiskBulkEditComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('sets disks settings when form is opened', async () => {
@@ -123,7 +123,7 @@ describe('DiskBulkEditComponent', () => {
       ],
     ];
 
-    expect(ws.job).toHaveBeenCalledWith('core.bulk', req);
+    expect(api.job).toHaveBeenCalledWith('core.bulk', req);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });

@@ -28,7 +28,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 })
 export class ShutdownComponent implements OnInit {
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private wsManager: WebSocketHandlerService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,
@@ -43,7 +43,7 @@ export class ShutdownComponent implements OnInit {
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.ws.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
+    this.api.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on shutdown
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))

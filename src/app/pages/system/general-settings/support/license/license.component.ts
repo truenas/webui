@@ -60,7 +60,7 @@ export class LicenseComponent {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<LicenseComponent>,
-    protected ws: ApiService,
+    protected api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}
@@ -69,7 +69,7 @@ export class LicenseComponent {
     this.isFormLoading = true;
 
     const { license } = this.form.value;
-    this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.slideInRef.close(true);

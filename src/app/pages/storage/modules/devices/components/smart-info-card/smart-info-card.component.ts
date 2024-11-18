@@ -71,7 +71,7 @@ export class SmartInfoCardComponent implements OnChanges {
   private readonly maxResultCategories = 4;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -100,7 +100,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
+    const results$ = this.api.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
       map((testResults) => {
         const results = testResults[0]?.tests ?? [];
         return results.filter((result) => result.status !== SmartTestResultStatus.Running);
@@ -126,7 +126,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadSmartTasks(): void {
-    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
+    this.smartTasksCount$ = this.api.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
       map((tasks) => tasks.length),
       toLoadingState(),
     );

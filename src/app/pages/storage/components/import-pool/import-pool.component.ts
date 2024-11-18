@@ -77,7 +77,7 @@ export class ImportPoolComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private slideInRef: SlideInRef<ImportPoolComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -89,7 +89,7 @@ export class ImportPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
       next: (importablePoolFindJob) => {
         if (importablePoolFindJob.state !== JobState.Success) {
           return;
@@ -119,7 +119,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -138,7 +138,7 @@ export class ImportPoolComponent implements OnInit {
   }
 
   checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
-    return this.ws.call(
+    return this.api.call(
       'pool.dataset.query',
       [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
     )

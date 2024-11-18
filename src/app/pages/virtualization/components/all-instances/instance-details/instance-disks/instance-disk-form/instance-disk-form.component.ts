@@ -66,7 +66,7 @@ export class InstanceDiskFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: ChainedRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -113,10 +113,10 @@ export class InstanceDiskFormComponent implements OnInit {
     } as VirtualizationDisk;
 
     return this.existingDisk()
-      ? this.ws.call('virt.instance.device_update', [instanceId, {
+      ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
         name: this.existingDisk().name,
       }])
-      : this.ws.call('virt.instance.device_add', [instanceId, payload]);
+      : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }
 }

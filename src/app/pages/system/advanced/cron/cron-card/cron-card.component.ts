@@ -132,7 +132,7 @@ export class CronCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private taskService: TaskService,
     private matDialog: MatDialog,
@@ -142,7 +142,7 @@ export class CronCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query').pipe(
+    const cronjobs$ = this.api.call('cronjob.query').pipe(
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
@@ -172,7 +172,7 @@ export class CronCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cronjob.run', [row.id])),
+      switchMap(() => this.api.call('cronjob.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

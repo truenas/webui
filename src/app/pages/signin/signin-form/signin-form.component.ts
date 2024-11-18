@@ -23,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +67,6 @@ export class SigninFormComponent implements OnInit {
     private signinStore: SigninStore,
     private translate: TranslateService,
     private authService: AuthService,
-    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {

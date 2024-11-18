@@ -87,7 +87,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private sysGenService: SystemGeneralService,
     private errorHandler: ErrorHandlerService,
@@ -119,7 +119,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {
@@ -159,7 +159,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
@@ -189,7 +189,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   startUpdate(): void {
     this.updateService.error$.next(null);
-    this.ws.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
+    this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
         this.updateService.status$.next(update.status);
         if (update.status === SystemUpdateStatus.Available) {
@@ -297,11 +297,11 @@ export class UpdateActionsCardComponent implements OnInit {
     if (this.isHaLicensed) {
       job$ = this.trainService.trainValue$.pipe(
         take(1),
-        switchMap((trainValue) => this.ws.call('update.set_train', [trainValue])),
-        switchMap(() => this.ws.job('failover.upgrade', [{ resume }])),
+        switchMap((trainValue) => this.api.call('update.set_train', [trainValue])),
+        switchMap(() => this.api.job('failover.upgrade', [{ resume }])),
       );
     } else {
-      job$ = this.ws.job('update.update', [{ resume, reboot: true }]);
+      job$ = this.api.job('update.update', [{ resume, reboot: true }]);
     }
 
     this.dialogService
@@ -389,7 +389,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private downloadUpdates(): void {
     this.dialogService.jobDialog(
-      this.ws.job('update.download'),
+      this.api.job('update.download'),
       { title: this.updateTitle },
     )
       .afterClosed()

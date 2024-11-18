@@ -54,7 +54,7 @@ export class GlobalTwoFactorAuthCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('auth.twofactor.config')),
+    switchMap(() => this.api.call('auth.twofactor.config')),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -63,7 +63,7 @@ export class GlobalTwoFactorAuthCardComponent {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private chainedSlideIns: ChainedSlideInService,
   ) { }

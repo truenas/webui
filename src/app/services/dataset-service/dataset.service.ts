@@ -13,14 +13,14 @@ import { ApiService } from 'app/services/websocket/api.service';
 @Injectable({ providedIn: 'root' })
 export class DatasetService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
   ) {}
 
   getDatasetNodeProvider(): TreeNodeProvider {
     return () => {
-      return this.ws.call('pool.filesystem_choices').pipe(
+      return this.api.call('pool.filesystem_choices').pipe(
         map((filesystems) => {
           const nodes: ExplorerNodeData[] = [];
           filesystems.forEach((filesystem) => {
