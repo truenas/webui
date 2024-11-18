@@ -11,6 +11,18 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 
+export interface VirtualizationInstanceMetrics {
+  cpu: {
+    cpu_user_percentage: number;
+  };
+  mem_utilization: {
+    mem_utilization_utilization_percentage: number;
+  };
+  io_full_pressure: {
+    io_full_pressure_full_60_percentage: number;
+  };
+}
+
 export interface VirtualizationInstance {
   id: string;
   name: string;
