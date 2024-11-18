@@ -8,7 +8,8 @@ import {
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
-import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
+import { SchemaType } from 'app/enums/schema.enum';
+import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -49,29 +50,33 @@ describe('AcmednsFormComponent', () => {
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
         mockCall('acme.dns.authenticator.authenticator_schemas', [{
-          key: 'cloudflare' as DnsAuthenticatorType,
-          schema: [
-            {
-              _name_: 'cloudflare_email', _required_: false, title: 'Cloudflare Email', type: 'string',
+          key: DnsAuthenticatorType.Cloudflare,
+          schema: {
+            properties: {
+              cloudflare_email: {
+                _name_: 'cloudflare_email', _required_: false, title: 'Cloudflare Email', type: SchemaType.String,
+              },
+              api_key: {
+                _name_: 'api_key', _required_: false, title: 'API Key', type: SchemaType.String,
+              },
+              api_token: {
+                _name_: 'api_token', _required_: false, title: 'API Token', type: SchemaType.String,
+              },
             },
-            {
-              _name_: 'api_key', _required_: false, title: 'API Key', type: 'string',
-            },
-            {
-              _name_: 'api_token', _required_: false, title: 'API Token', type: 'string',
-            },
-          ] as Schema[],
+          } as unknown as Schema,
         }, {
-          key: 'route53' as DnsAuthenticatorType,
-          schema: [
-            {
-              _name_: 'access_key_id', _required_: true, title: 'Access Key ID', type: 'string',
+          key: DnsAuthenticatorType.Route53,
+          schema: {
+            properties: {
+              access_key_id: {
+                _name_: 'access_key_id', _required_: true, title: 'Access Key ID', type: SchemaType.String,
+              },
+              secret_access_key: {
+                _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: SchemaType.String,
+              },
             },
-            {
-              _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: 'string',
-            },
-          ] as Schema[],
-        }] as AuthenticatorSchema[]),
+          } as unknown as Schema,
+        }]),
       ]),
       mockAuth(),
     ],
@@ -138,6 +143,7 @@ describe('AcmednsFormComponent', () => {
           {
             name: 'name_edit',
             attributes: {
+              authenticator: 'cloudflare',
               api_token: 'new_api_token',
             },
           },
@@ -167,8 +173,8 @@ describe('AcmednsFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
         name: 'name_new',
-        authenticator: 'cloudflare',
         attributes: {
+          authenticator: 'cloudflare',
           api_key: 'new_api_key',
           cloudflare_email: 'aaa@aaa.com',
         },
