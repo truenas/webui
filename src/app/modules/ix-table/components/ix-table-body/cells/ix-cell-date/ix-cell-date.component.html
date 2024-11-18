@@ -1,8 +1,14 @@
 @if (date) {
-  <ix-date
-    [ixTest]="[title, uniqueRowTag(row()), 'row-date']"
-    [date]="date"
-  ></ix-date>
+  @if (dateDataType === 'string') {
+    <span [ixTest]="[title, uniqueRowTag(row()), 'row-date']">
+      {{ date.toString() | translate }}
+    </span>
+  } @else {
+    <ix-date
+      [ixTest]="[title, uniqueRowTag(row()), 'row-date']"
+      [date]="date"
+    ></ix-date>
+  }
 } @else {
   <span [ixTest]="[title, uniqueRowTag(row()), 'row-date']">
     {{ 'N/A' | translate }}

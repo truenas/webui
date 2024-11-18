@@ -13,7 +13,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted,

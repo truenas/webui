@@ -16,8 +16,8 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;

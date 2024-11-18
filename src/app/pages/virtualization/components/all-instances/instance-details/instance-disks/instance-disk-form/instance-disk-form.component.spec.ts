@@ -10,8 +10,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InstanceDiskFormComponent', () => {
   let spectator: Spectator<InstanceDiskFormComponent>;

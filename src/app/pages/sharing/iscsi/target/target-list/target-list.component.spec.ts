@@ -18,8 +18,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/target-list/target-list.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const targets: IscsiTarget[] = [{
   id: 1,

@@ -4,8 +4,6 @@ import {
 
 export interface IscsiPortal {
   comment: string;
-  discovery_authgroup: number;
-  discovery_authmethod: IscsiAuthMethod;
   id: number;
   listen: IscsiInterface[];
   tag: number;
@@ -33,6 +31,7 @@ export interface IscsiAuthAccess {
   secret: string;
   tag: number;
   user: string;
+  discovery_auth: IscsiAuthMethod;
 }
 
 export type IscsiAuthAccessUpdate = Omit<IscsiAuthAccess, 'id'>;

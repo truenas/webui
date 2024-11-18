@@ -26,8 +26,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

@@ -17,8 +17,8 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,

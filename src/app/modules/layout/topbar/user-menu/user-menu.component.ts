@@ -81,7 +81,7 @@ export class UserMenuComponent {
   }
 
   viewUserApiKeys(user: User): void {
-    this.router.navigate(['/credentials/user-api-keys'], {
+    this.router.navigate(['/credentials/users/api-keys'], {
       queryParams: { userName: user.username },
     });
   }

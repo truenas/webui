@@ -98,7 +98,7 @@ export class NavigationService {
       name: T('Containers (WIP)'),
       type: MenuItemType.Link,
       tooltip: T('Containers'),
-      icon: iconMarker('computer'),
+      icon: iconMarker('view_in_ar'),
       state: 'virtualization',
       isVisible$: this.hasVms$,
     },

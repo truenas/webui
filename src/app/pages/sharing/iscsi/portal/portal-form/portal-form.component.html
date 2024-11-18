@@ -15,22 +15,6 @@
         ></ix-input>
       </ix-fieldset>
 
-      <ix-fieldset [title]="'Authentication Method and Group' | translate">
-        <ix-select
-          formControlName="discovery_authmethod"
-          [label]="labels.discovery_authmethod | translate"
-          [tooltip]="tooltips.discovery_authmethod | translate"
-          [options]="authmethodOptions$"
-        ></ix-select>
-
-        <ix-select
-          formControlName="discovery_authgroup"
-          [label]="labels.discovery_authgroup | translate"
-          [tooltip]="tooltips.discovery_authgroup | translate"
-          [options]="authgroupOptions$"
-        ></ix-select>
-      </ix-fieldset>
-
       <ix-fieldset [title]="'IP Address' | translate">
         <ix-list
           formArrayName="ip"

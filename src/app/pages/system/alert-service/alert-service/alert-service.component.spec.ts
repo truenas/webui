@@ -27,7 +27,7 @@ import {
 import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {

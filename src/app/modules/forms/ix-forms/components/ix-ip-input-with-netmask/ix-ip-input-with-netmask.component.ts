@@ -32,6 +32,7 @@ import { NetworkService } from 'app/services/network.service';
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() tooltip: string;
+  @Input() hint: string;
   @Input() required: boolean;
 
   onChange: (value: string) => void = (): void => {};

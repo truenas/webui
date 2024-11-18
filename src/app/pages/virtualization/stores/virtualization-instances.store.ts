@@ -5,8 +5,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, filter, repeat } from 'rxjs/operators';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
@@ -119,5 +119,11 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
       selectedInstance,
     });
     this.loadDevices();
+  }
+
+  deviceDeleted(deviceName: string): void {
+    this.patchState({
+      selectedInstanceDevices: this.selectedInstanceDevices().filter((device) => device.name !== deviceName),
+    });
   }
 }
