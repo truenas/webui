@@ -9,8 +9,8 @@ import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
 import {
-  DeleteDeviceButtonComponent,
-} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
+  DeviceActionsMenuComponent,
+} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 describe('InstanceDevicesComponent', () => {
@@ -33,7 +33,7 @@ describe('InstanceDevicesComponent', () => {
     component: InstanceDevicesComponent,
     imports: [
       MockComponents(
-        DeleteDeviceButtonComponent,
+        DeviceActionsMenuComponent,
         AddDeviceMenuComponent,
       ),
     ],
@@ -59,10 +59,10 @@ describe('InstanceDevicesComponent', () => {
     expect(deviceRows[1]).toHaveText('Matrox G200eW');
   });
 
-  it('renders a button to delete the device', () => {
-    const deleteButtons = spectator.queryAll(DeleteDeviceButtonComponent);
-    expect(deleteButtons).toHaveLength(2);
-    expect(deleteButtons[0].device).toBe(devices[0]);
+  it('renders a menu to delete the device', () => {
+    const actionsMenu = spectator.queryAll(DeviceActionsMenuComponent);
+    expect(actionsMenu).toHaveLength(2);
+    expect(actionsMenu[0].device).toBe(devices[0]);
   });
 
   it('renders a menu to add a new device', () => {

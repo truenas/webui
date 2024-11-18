@@ -13,8 +13,8 @@ import {
   AddDeviceMenuComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
-  DeleteDeviceButtonComponent,
-} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
+  DeviceActionsMenuComponent,
+} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -30,7 +30,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
-    DeleteDeviceButtonComponent,
+    DeviceActionsMenuComponent,
     AddDeviceMenuComponent,
   ],
 })

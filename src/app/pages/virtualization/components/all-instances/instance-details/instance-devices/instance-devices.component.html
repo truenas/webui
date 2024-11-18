@@ -15,7 +15,10 @@
         <div class="device">
           <span>{{ getDeviceDescription(device) }}</span>
 
-          <ix-delete-device-button [device]="device"></ix-delete-device-button>
+          <ix-device-actions-menu
+            [device]="device"
+            [showEdit]="false"
+          ></ix-device-actions-menu>
         </div>
       } @empty {
          {{ 'No devices added.' | translate }}
