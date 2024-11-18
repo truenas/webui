@@ -26,7 +26,7 @@
 
       @if (instance.environment && (instance.environment | keyvalue)?.length) {
         <p>{{ 'Environment' | translate }}:</p>
-        <ul>
+        <ul class="environment-variables">
           @for (env of (instance.environment | keyvalue); track env) {
             <li>
               <strong>{{ env.key }}:</strong> {{ env.value }}
@@ -39,7 +39,7 @@
 
   <mat-card-actions>
     <button
-      *ixRequiresRoles="[Role.VirtInstanceWrite]"
+      *ixRequiresRoles="[Role.VirtInstanceDelete]"
       mat-button
       ixTest="delete-instance"
       (click)="deleteInstance()"

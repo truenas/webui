@@ -21,10 +21,20 @@ export class IxCellDateComponent<T> extends ColumnComponent<T> {
     if (!this.value) {
       return null;
     }
+
     if ((this.value as ApiTimestamp)?.$date) {
       return (this.value as ApiTimestamp).$date;
     }
-    return this.value as number | Date;
+
+    if (typeof this.value === 'string') {
+      return this.value as null;
+    }
+
+    return this.value as number;
+  }
+
+  get dateDataType(): string {
+    return typeof this.date;
   }
 }
 

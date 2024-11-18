@@ -1,7 +1,10 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/virtualization.interface';
+import {
+  AddDeviceMenuComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
@@ -15,16 +18,11 @@ describe('InstanceDevicesComponent', () => {
   const devices = [
     {
       dev_type: VirtualizationDeviceType.Usb,
-      description: 'USB: My USB device',
-      product_id: '1234',
-      name: 'usb1',
-
+      description: 'USB Microphone',
     } as VirtualizationUsb,
     {
       dev_type: VirtualizationDeviceType.Gpu,
-      name: 'gpu1',
-      description: 'GPU: My GPU',
-      product_id: '4321',
+      description: 'Matrox G200eW',
     },
     {
       name: 'gpu1',
@@ -34,7 +32,10 @@ describe('InstanceDevicesComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceDevicesComponent,
     imports: [
-      MockComponent(DeleteDeviceButtonComponent),
+      MockComponents(
+        DeleteDeviceButtonComponent,
+        AddDeviceMenuComponent,
+      ),
     ],
     providers: [
       mockProvider(VirtualizationInstancesStore, {
@@ -54,13 +55,18 @@ describe('InstanceDevicesComponent', () => {
     const deviceRows = spectator.queryAll('.device');
 
     expect(deviceRows).toHaveLength(2);
-    expect(deviceRows[0]).toHaveText('USB: My USB device (1234)');
-    expect(deviceRows[1]).toHaveText('GPU: My GPU (4321)');
+    expect(deviceRows[0]).toHaveText('USB Microphone');
+    expect(deviceRows[1]).toHaveText('Matrox G200eW');
   });
 
   it('renders a button to delete the device', () => {
     const deleteButtons = spectator.queryAll(DeleteDeviceButtonComponent);
     expect(deleteButtons).toHaveLength(2);
     expect(deleteButtons[0].device).toBe(devices[0]);
+  });
+
+  it('renders a menu to add a new device', () => {
+    const addMenu = spectator.query(AddDeviceMenuComponent);
+    expect(addMenu).toExist();
   });
 });

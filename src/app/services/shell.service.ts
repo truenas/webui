@@ -30,13 +30,13 @@ export class ShellService {
     @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
   ) {}
 
-  connect(connectionData: TerminalConnectionData, token: string): void {
+  connect(token: string, connectionData: TerminalConnectionData): void {
     this.disconnectIfSessionActive();
 
     this.ws$ = this.webSocket({
       url: this.connectionUrl,
       openObserver: {
-        next: () => this.onOpen(connectionData, token),
+        next: () => this.onOpen(token, connectionData),
       },
       closeObserver: {
         next: this.onClose.bind(this),
@@ -60,21 +60,8 @@ export class ShellService {
     });
   }
 
-  private onOpen(connectionData: TerminalConnectionData, token: string): void {
-    if (connectionData.vmId) {
-      this.ws$.next(JSON.stringify({ token, options: { vm_id: connectionData.vmId } }));
-    } else if (connectionData.podInfo) {
-      this.ws$.next(JSON.stringify({
-        token,
-        options: {
-          app_name: connectionData.podInfo.chartReleaseName,
-          container_id: connectionData.podInfo.containerId,
-          command: connectionData.podInfo.command,
-        },
-      }));
-    } else {
-      this.ws$.next(JSON.stringify({ token }));
-    }
+  private onOpen(token: string, connectionData: TerminalConnectionData): void {
+    this.ws$.next(JSON.stringify({ token, options: connectionData }));
   }
 
   private onClose(): void {

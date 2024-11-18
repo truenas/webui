@@ -60,16 +60,17 @@ export type VirtualizationDevice =
 
 export interface VirtualizationDisk {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Disk;
   readonly: boolean;
   source: string | null;
   destination: string | null;
   product_id: string;
-  description: string;
 }
 
 export interface VirtualizationGpu {
   name: string;
+  description: string;
   readonly: boolean;
   dev_type: VirtualizationDeviceType.Gpu;
   gpu_type: VirtualizationGpuType;
@@ -81,11 +82,11 @@ export interface VirtualizationGpu {
   mig_uuid: string;
   pci: string;
   product_id: string;
-  description: string;
 }
 
 export interface VirtualizationProxy {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Proxy;
   readonly: boolean;
   source_proto: VirtualizationProxyProtocol;
@@ -93,37 +94,36 @@ export interface VirtualizationProxy {
   dest_proto: VirtualizationProxyProtocol;
   dest_port: number;
   product_id: string;
-  description: string;
 }
 
 export interface VirtualizationNic {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Nic;
   readonly: boolean;
   network: string;
   product_id: string;
-  description: string;
 }
 
 export interface VirtualizationTpm {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Tpm;
   readonly: boolean;
   path: string;
   pathrm: string;
   product_id: string;
-  description: string;
 }
 
 export interface VirtualizationUsb {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Usb;
   readonly: boolean;
   bus: number;
   dev: number;
   product_id: string;
   vendor_id: string;
-  description: string;
 }
 
 export interface VirtualizationImage {

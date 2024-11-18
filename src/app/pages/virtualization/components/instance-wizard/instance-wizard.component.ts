@@ -87,7 +87,6 @@ export class InstanceWizardComponent implements OnInit {
       label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
     }))),
-    untilDestroyed(this),
   );
 
   // TODO: MV supports only [Container, Physical] for now (based on the response)
@@ -97,16 +96,16 @@ export class InstanceWizardComponent implements OnInit {
   ).pipe(
     map((choices: Record<string, AvailableGpu>) => Object.values(choices).map((choice) => ({
       label: choice.description,
+      // TODO: Incorrect value – doesn't uniquely identify the GPU
       value: choice.vendor,
     }))),
-    untilDestroyed(this),
   );
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     cpu: ['', [Validators.required, cpuValidator()]],
-    usb_devices: this.formBuilder.group({}),
-    gpu_devices: this.formBuilder.group({}),
+    usb_devices: this.formBuilder.record<boolean>({}),
+    gpu_devices: this.formBuilder.record<boolean>({}),
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number>;

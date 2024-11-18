@@ -184,6 +184,7 @@ import {
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
@@ -442,11 +443,11 @@ export interface ApiCallDirectory {
   'failover.get_ips': { params: void; response: string[] };
   'failover.licensed': { params: void; response: boolean };
   'failover.node': { params: void; response: string };
+  'failover.reboot.info': { params: void; response: FailoverRebootInfo };
   'failover.status': { params: void; response: FailoverStatus };
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
-  'failover.upgrade_pending': { params: void; response: boolean };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
@@ -781,6 +782,7 @@ export interface ApiCallDirectory {
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
+  'system.reboot.info': { params: void; response: SystemRebootInfo };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
