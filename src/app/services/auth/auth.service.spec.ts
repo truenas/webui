@@ -74,26 +74,6 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     spectator = createService();
-
-    // const originalMakeRequest = spectator.service.makeRequest.bind(spectator.service);
-    // jest.spyOn(spectator.service, 'makeRequest').mockImplementation((method: ApiCallMethod, params: never) => {
-    //   originalMakeRequest(method, params).subscribe();
-
-    //   switch (method) {
-    //     case 'auth.generate_token':
-    //       return of('DUMMY_TOKEN');
-    //     case 'auth.login_ex':
-    //       return of({
-    //         response_type: LoginExResponseType.Success,
-    //         user_info: {
-    //           privilege: { webui_access: true },
-    //         },
-    //       } as LoginExResponse);
-    //     default:
-    //       return of(null);
-    //   }
-    // });
-
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
     });
