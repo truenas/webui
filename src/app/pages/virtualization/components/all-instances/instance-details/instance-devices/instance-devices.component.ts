@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,8 +9,9 @@ import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/en
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  AddDeviceMenuComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
@@ -30,10 +30,8 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
-    MatIconButton,
-    TestDirective,
-    IxIconComponent,
     DeleteDeviceButtonComponent,
+    AddDeviceMenuComponent,
   ],
 })
 export class InstanceDevicesComponent {
@@ -54,8 +52,8 @@ export class InstanceDevicesComponent {
       ? virtualizationDeviceTypeLabels.get(device.dev_type)
       : device.dev_type;
 
-    // TODO: Get better names.
-    const description = device.name;
+    // TODO: Remove `.replace(`${type}:`, '')` after https://ixsystems.atlassian.net/browse/NAS-132543
+    const description = `${device.description} (${device.product_id})`.replace(`${type}:`, '').trim();
 
     return `${type}: ${description}`;
   }

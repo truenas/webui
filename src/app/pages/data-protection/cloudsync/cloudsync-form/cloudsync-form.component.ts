@@ -10,8 +10,12 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
-import { Observable, forkJoin, of } from 'rxjs';
 import {
+  EMPTY,
+  Observable, forkJoin, of,
+} from 'rxjs';
+import {
+  catchError,
   filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -218,7 +222,7 @@ export class CloudSyncFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    protected dialog: DialogService,
+    private dialogService: DialogService,
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
@@ -257,7 +261,15 @@ export class CloudSyncFormComponent implements OnInit {
     forkJoin([
       this.getCredentialsList(),
       this.getProviders(),
-    ]).pipe(untilDestroyed(this)).subscribe(() => {
+    ]).pipe(
+      catchError((error: unknown) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.errorHandler.handleWsFormError(error, this.form);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();
 
@@ -422,8 +434,8 @@ export class CloudSyncFormComponent implements OnInit {
           this.isLoading = false;
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();
-          this.dialog.closeAllDialogs();
-          this.dialog.confirm({
+          this.dialogService.closeAllDialogs();
+          this.dialogService.confirm({
             title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
             message: error.reason,
             hideCheckbox: true,
@@ -703,7 +715,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
-    this.dialog.jobDialog(
+    this.dialogService.jobDialog(
       this.api.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
       { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
     )

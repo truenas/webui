@@ -21,7 +21,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
+import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { ApiService } from 'app/services/api.service';
 
 describe('InstanceEditFormComponent', () => {
@@ -35,6 +35,7 @@ describe('InstanceEditFormComponent', () => {
     autostart: false,
     cpu: '1-3',
     memory: 2 * GiB,
+    environment: null,
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -88,7 +89,7 @@ describe('InstanceEditFormComponent', () => {
       autostart: true,
       cpu: '2-5',
       memory: GiB,
-      environment: null,
+      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

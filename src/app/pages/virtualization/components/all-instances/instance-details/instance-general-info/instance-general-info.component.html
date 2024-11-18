@@ -23,12 +23,23 @@
       <p>{{ 'Base Image' | translate }}: {{ instance.image.description || '-' }}</p>
       <p>{{ 'CPU' | translate }}: {{ instance.cpu || '-' }}</p>
       <p>{{ 'Memory' | translate }}: {{ formatter.memorySizeFormatting(instance.memory) || '-' }}</p>
+
+      @if (instance.environment && (instance.environment | keyvalue)?.length) {
+        <p>{{ 'Environment' | translate }}:</p>
+        <ul class="environment-variables">
+          @for (env of (instance.environment | keyvalue); track env) {
+            <li>
+              <strong>{{ env.key }}:</strong> {{ env.value }}
+            </li>
+          }
+        </ul>
+      }
     }
   </mat-card-content>
 
   <mat-card-actions>
     <button
-      *ixRequiresRoles="[Role.VirtInstanceWrite]"
+      *ixRequiresRoles="[Role.VirtInstanceDelete]"
       mat-button
       ixTest="delete-instance"
       (click)="deleteInstance()"

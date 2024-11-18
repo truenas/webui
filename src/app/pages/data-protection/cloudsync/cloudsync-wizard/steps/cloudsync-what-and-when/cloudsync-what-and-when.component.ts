@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
-  Observable, combineLatest, filter, map, merge, of, tap,
+  EMPTY,
+  Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
@@ -38,6 +39,7 @@ import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explo
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -160,6 +162,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private filesystemService: FilesystemService,
+    private formErrorHandler: FormErrorHandlerService,
     private cloudCredentialService: CloudCredentialService,
     private matDialog: MatDialog,
     private router: Router,
@@ -176,6 +179,11 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       tap(() => {
         this.form.controls.credentials.setValue(changes.credentialId.currentValue);
         this.cdr.markForCheck();
+      }),
+      catchError((error: unknown) => {
+        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+        return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe();

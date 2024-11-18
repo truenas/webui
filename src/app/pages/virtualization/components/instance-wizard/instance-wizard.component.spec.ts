@@ -111,7 +111,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  it('creates new instance with selected devices when form is submitted', async () => {
+  it('creates new instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
@@ -140,7 +140,7 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
-    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
+    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
     await usbDeviceCheckbox.setValue(true);
 
     const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
@@ -171,6 +171,7 @@ describe('InstanceWizardComponent', () => {
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
+      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

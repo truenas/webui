@@ -92,14 +92,6 @@ export class PortalListComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    textColumn({
-      title: this.translate.instant('Discovery Auth Method'),
-      propertyName: 'discovery_authmethod',
-    }),
-    textColumn({
-      title: this.translate.instant('Discovery Auth Group'),
-      propertyName: 'discovery_authgroup',
-    }),
     actionsColumn({
       actions: [
         {
@@ -174,7 +166,7 @@ export class PortalListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setFilter({ query, columnKeys: ['comment', 'discovery_authmethod'] });
+    this.dataProvider.setFilter({ query, columnKeys: ['comment'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

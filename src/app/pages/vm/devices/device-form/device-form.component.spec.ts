@@ -107,8 +107,8 @@ describe('DeviceFormComponent', () => {
   describe('CD-ROM', () => {
     const existingCdRom = {
       id: 5,
-      dtype: VmDeviceType.Cdrom,
       attributes: {
+        dtype: VmDeviceType.Cdrom,
         path: '/mnt/bassein/cdrom',
       },
       order: 4,
@@ -143,8 +143,10 @@ describe('DeviceFormComponent', () => {
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
-          dtype: VmDeviceType.Cdrom,
-          attributes: { path: '/mnt/cdrom' },
+          attributes: {
+            path: '/mnt/cdrom',
+            dtype: VmDeviceType.Cdrom,
+          },
           order: 1002,
           vm: 45,
         }]);
@@ -186,8 +188,10 @@ describe('DeviceFormComponent', () => {
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [5, {
-          attributes: { path: '/mnt/newcdrom' },
-          dtype: VmDeviceType.Cdrom,
+          attributes: {
+            path: '/mnt/newcdrom',
+            dtype: VmDeviceType.Cdrom,
+          },
           order: 4,
           vm: 45,
         }]);
@@ -198,12 +202,12 @@ describe('DeviceFormComponent', () => {
   describe('NIC', () => {
     const existingNic = {
       id: 2,
-      dtype: VmDeviceType.Nic,
       attributes: {
         type: 'E1000',
         mac: '00:a0:98:53:a5:ac',
         nic_attach: 'enp0s3',
         trust_guest_rx_filters: false,
+        dtype: VmDeviceType.Nic,
       },
       order: 1002,
       vm: 1,
@@ -246,8 +250,8 @@ describe('DeviceFormComponent', () => {
             nic_attach: 'enp0s4',
             type: VmNicType.Virtio,
             trust_guest_rx_filters: true,
+            dtype: VmDeviceType.Nic,
           },
-          dtype: VmDeviceType.Nic,
           order: 1006,
           vm: 45,
         }]);
@@ -317,8 +321,8 @@ describe('DeviceFormComponent', () => {
   describe('Disk', () => {
     const existingDisk = {
       id: 3,
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         path: '/dev/zvol/bassein/zvol1',
         type: VmDiskMode.Ahci,
         physical_sectorsize: 4096,
@@ -365,8 +369,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: 512,
             path: '/dev/zvol/bassein/zvol1',
             type: VmDiskMode.Virtio,
+            dtype: VmDeviceType.Disk,
           },
-          dtype: VmDeviceType.Disk,
           order: 1002,
           vm: 45,
         }]);
@@ -416,8 +420,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: null,
             path: '/dev/zvol/bassein/zvol1',
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Disk,
           },
-          dtype: VmDeviceType.Disk,
           order: 1001,
           vm: 45,
         }]);
@@ -428,8 +432,8 @@ describe('DeviceFormComponent', () => {
   describe('Raw File', () => {
     const existingRawFile = {
       id: 6,
-      dtype: VmDeviceType.Raw,
       attributes: {
+        dtype: VmDeviceType.Raw,
         path: '/mnt/bassein/raw',
         type: VmDiskMode.Ahci,
         size: 3,
@@ -479,8 +483,8 @@ describe('DeviceFormComponent', () => {
             path: '/mnt/bassein/newraw',
             size: 3,
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
           },
-          dtype: VmDeviceType.Raw,
           order: 6,
           vm: 45,
         }]);
@@ -531,8 +535,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: null,
             size: 5,
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
           },
-          dtype: VmDeviceType.Raw,
           order: 5,
           vm: 45,
         }]);
@@ -543,8 +547,8 @@ describe('DeviceFormComponent', () => {
   describe('PCI Passthrough Device', () => {
     const existingPassthrough = {
       id: 4,
-      dtype: VmDeviceType.Pci,
       attributes: {
+        dtype: VmDeviceType.Pci,
         pptdev: 'pci_0000_00_1c_0',
       },
       order: 5,
@@ -584,8 +588,8 @@ describe('DeviceFormComponent', () => {
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
           attributes: {
             pptdev: 'pci_0000_00_1c_0',
+            dtype: VmDeviceType.Pci,
           },
-          dtype: VmDeviceType.Pci,
           order: 6,
           vm: 45,
         }]);
@@ -635,8 +639,8 @@ describe('DeviceFormComponent', () => {
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [4, {
           attributes: {
             pptdev: 'pci_0000_00_1c_5',
+            dtype: VmDeviceType.Pci,
           },
-          dtype: VmDeviceType.Pci,
           order: 5,
           vm: 45,
         }]);
@@ -647,8 +651,8 @@ describe('DeviceFormComponent', () => {
   describe('Display', () => {
     const existingDisplay = {
       id: 1,
-      dtype: VmDeviceType.Display,
       attributes: {
+        dtype: VmDeviceType.Display,
         bind: '0.0.0.0',
         password: '12345678910',
         web: true,
@@ -722,8 +726,8 @@ describe('DeviceFormComponent', () => {
   describe('USB Passthrough Device', () => {
     const existingUsb = {
       id: 1,
-      dtype: VmDeviceType.Usb,
       attributes: {
+        dtype: VmDeviceType.Usb,
         controller_type: 'pci-ohci',
         device: 'usb_device_2',
       },
@@ -763,8 +767,8 @@ describe('DeviceFormComponent', () => {
           attributes: {
             controller_type: 'pci-ohci',
             device: 'usb_device_2',
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: null,
           vm: 45,
         }]);
@@ -810,8 +814,8 @@ describe('DeviceFormComponent', () => {
           attributes: {
             controller_type: 'piix3-uhci',
             device: 'usb_device_1',
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: 7,
           vm: 45,
         }]);
@@ -838,8 +842,8 @@ describe('DeviceFormComponent', () => {
               vendor_id: 'vendor_1',
               product_id: 'product_1',
             },
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: 7,
           vm: 45,
         }]);

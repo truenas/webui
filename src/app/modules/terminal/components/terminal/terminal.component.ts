@@ -196,7 +196,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   initializeWebShell(): void {
-    this.shellService.connect(this.conf.connectionData, this.token);
+    this.shellService.connect(this.token, this.conf.connectionData);
 
     this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
@@ -212,7 +212,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    this.shellService.connect(this.conf.connectionData, this.token);
+    this.shellService.connect(this.token, this.conf.connectionData);
   }
 
   onFontSizeChanged(newSize: number): void {

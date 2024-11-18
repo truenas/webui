@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
 import {
+  FormArray,
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,6 +29,7 @@ import {
   AvailableGpu,
   AvailableUsb,
   CreateVirtualizationInstance,
+  InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -82,10 +84,9 @@ export class InstanceWizardComponent implements OnInit {
 
   usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
-      label: choice.product,
+      label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
     }))),
-    untilDestroyed(this),
   );
 
   // TODO: MV supports only [Container, Physical] for now (based on the response)
@@ -95,9 +96,9 @@ export class InstanceWizardComponent implements OnInit {
   ).pipe(
     map((choices: Record<string, AvailableGpu>) => Object.values(choices).map((choice) => ({
       label: choice.description,
+      // TODO: Incorrect value – doesn't uniquely identify the GPU
       value: choice.vendor,
     }))),
-    untilDestroyed(this),
   );
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -106,8 +107,8 @@ export class InstanceWizardComponent implements OnInit {
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
-    usb_devices: this.formBuilder.group({}),
-    gpu_devices: this.formBuilder.group({}),
+    usb_devices: this.formBuilder.record<boolean>({}),
+    gpu_devices: this.formBuilder.record<boolean>({}),
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number>;
@@ -118,6 +119,7 @@ export class InstanceWizardComponent implements OnInit {
       source: FormControl<string>;
       destination: FormControl<string>;
     }>>([]),
+    environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   protected readonly visibleImageName = new FormControl('');
@@ -151,7 +153,7 @@ export class InstanceWizardComponent implements OnInit {
   protected onBrowseImages(): void {
     this.matDialog
       .open(SelectImageDialogComponent, {
-        minWidth: '80vw',
+        minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
         },
@@ -215,8 +217,21 @@ export class InstanceWizardComponent implements OnInit {
       });
   }
 
+  addEnvironmentVariable(): void {
+    const control = this.formBuilder.group({
+      name: ['', Validators.required],
+      value: ['', Validators.required],
+    });
+
+    this.form.controls.environmentVariables.push(control);
+  }
+
+  removeEnvironmentVariable(index: number): void {
+    this.form.controls.environmentVariables.removeAt(index);
+  }
+
   private getPayload(): CreateVirtualizationInstance {
-    const devices = this.getPayloadDevices();
+    const devices = this.getDevicesPayload();
 
     return {
       devices,
@@ -225,10 +240,23 @@ export class InstanceWizardComponent implements OnInit {
       autostart: this.form.controls.autostart.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
+      environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
   }
 
-  private getPayloadDevices(): VirtualizationDevice[] {
+  private get environmentVariablesPayload(): Record<string, string> {
+    return this.form.controls.environmentVariables.controls.reduce((env: Record<string, string>, control) => {
+      const name = control.get('name')?.value;
+      const value = control.get('value')?.value;
+
+      if (name && value) {
+        env[name] = value;
+      }
+      return env;
+    }, {});
+  }
+
+  private getDevicesPayload(): VirtualizationDevice[] {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,

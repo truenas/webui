@@ -28,8 +28,6 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
-  IscsiAuthAccess,
-  IscsiAuthAccessUpdate,
   IscsiExtent,
   IscsiExtentUpdate,
   IscsiInitiatorGroup,
@@ -95,7 +93,6 @@ export class IscsiWizardComponent implements OnInit {
 
   createdZvol: Dataset;
   createdExtent: IscsiExtent;
-  createdAuthgroup: IscsiAuthAccess;
   createdPortal: IscsiPortal;
   createdInitiator: IscsiInitiatorGroup;
   createdTarget: IscsiTarget;
@@ -119,12 +116,6 @@ export class IscsiWizardComponent implements OnInit {
     }),
     portal: this.fb.group({
       portal: [null as typeof newOption | number, [Validators.required]],
-      discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
-      discovery_authgroup: [null as typeof newOption | number],
-      tag: [0, [Validators.min(0), Validators.required]],
-      user: ['', [Validators.required]],
-      secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
-      secret_confirm: ['', [Validators.required]],
       listen: this.fb.array<string>([]),
     }),
     initiator: this.fb.group({
@@ -148,11 +139,6 @@ export class IscsiWizardComponent implements OnInit {
 
   get isNewZvol(): boolean {
     return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
-  }
-
-  get isNewAuthgroup(): boolean {
-    return this.form.controls.portal.controls.discovery_authgroup.enabled
-      && this.form.value.portal.discovery_authgroup === newOption;
   }
 
   get isNewPortal(): boolean {
@@ -205,22 +191,11 @@ export class IscsiWizardComponent implements OnInit {
     return extentPayload;
   }
 
-  get authgroupPayload(): IscsiAuthAccessUpdate {
-    const value = this.form.value.portal;
-    return {
-      tag: value.tag,
-      user: value.user,
-      secret: value.secret,
-    } as IscsiAuthAccessUpdate;
-  }
-
   get portalPayload(): IscsiPortalUpdate {
     const value = this.form.value;
     return {
       comment: value.device.name,
-      discovery_authmethod: value.portal.discovery_authmethod,
       listen: value.portal.listen.map((ip) => ({ ip } as IscsiInterface)),
-      discovery_authgroup: this.isNewAuthgroup ? this.createdAuthgroup.tag : undefined,
     };
   }
 
@@ -295,12 +270,6 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   disablePortalGroup(): void {
-    this.form.controls.portal.controls.discovery_authmethod.disable();
-    this.form.controls.portal.controls.discovery_authgroup.disable();
-    this.form.controls.portal.controls.tag.disable();
-    this.form.controls.portal.controls.user.disable();
-    this.form.controls.portal.controls.secret.disable();
-    this.form.controls.portal.controls.secret_confirm.disable();
     this.form.controls.portal.controls.listen.disable();
   }
 
@@ -310,10 +279,6 @@ export class IscsiWizardComponent implements OnInit {
 
   createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
     return lastValueFrom(this.ws.call('iscsi.extent.create', [payload]));
-  }
-
-  createAuthgroup(payload: IscsiAuthAccessUpdate): Promise<IscsiAuthAccess> {
-    return lastValueFrom(this.ws.call('iscsi.auth.create', [payload]));
   }
 
   createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
@@ -341,10 +306,6 @@ export class IscsiWizardComponent implements OnInit {
 
     if (this.createdExtent) {
       requests.push(this.ws.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
-    }
-
-    if (this.createdAuthgroup) {
-      requests.push(this.ws.call('iscsi.auth.delete', [this.createdAuthgroup.id]));
     }
 
     if (this.createdPortal) {
@@ -385,7 +346,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.createdZvol = undefined;
     this.createdExtent = undefined;
-    this.createdAuthgroup = undefined;
     this.createdPortal = undefined;
     this.createdInitiator = undefined;
     this.createdTarget = undefined;
@@ -407,18 +367,6 @@ export class IscsiWizardComponent implements OnInit {
       (createdExtent) => this.createdExtent = createdExtent,
       (err: unknown) => this.handleError(err),
     );
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    if (this.isNewAuthgroup) {
-      await this.createAuthgroup(this.authgroupPayload).then(
-        (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
-        (err: unknown) => this.handleError(err),
-      );
-    }
 
     if (this.toStop) {
       this.rollBack();
