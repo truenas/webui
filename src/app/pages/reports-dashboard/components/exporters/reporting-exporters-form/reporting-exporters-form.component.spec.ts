@@ -14,7 +14,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;

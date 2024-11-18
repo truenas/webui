@@ -675,6 +675,8 @@
   "Make the currently active TrueNAS controller the default when both TrueNAS controllers are online and HA is enabled. To change the default TrueNAS controller, unset this option on the default TrueNAS controller and allow the system to fail over. This briefly interrupts system services.": "",
   "Makes the group available for permissions editors over SMB protocol (and the share ACL     editor). It is not used for SMB authentication or determining the user session token or internal     permissions checks.": "",
   "Manage Global SED Password": "",
+  "Max Concurrent Calls": "",
+  "Max concurrent calls limit reached.\n        There are more than 20 calls queued. \n        See queued calls in the browser's console logs": "",
   "Memory Stats": "",
   "Memory Usage": "",
   "Memory Utilization": "",

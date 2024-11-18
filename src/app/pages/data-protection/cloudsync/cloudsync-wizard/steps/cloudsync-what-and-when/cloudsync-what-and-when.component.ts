@@ -48,9 +48,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 

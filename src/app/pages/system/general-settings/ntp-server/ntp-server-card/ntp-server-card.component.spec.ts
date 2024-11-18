@@ -11,8 +11,8 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeDataSource: NtpServer[] = [
   {

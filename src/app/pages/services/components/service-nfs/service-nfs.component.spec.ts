@@ -21,8 +21,8 @@ import {
   AddSpnDialogComponent,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceNfsComponent', () => {

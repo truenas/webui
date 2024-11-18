@@ -16,7 +16,7 @@ import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
   'almalinux/8/cloud': {

@@ -36,9 +36,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 

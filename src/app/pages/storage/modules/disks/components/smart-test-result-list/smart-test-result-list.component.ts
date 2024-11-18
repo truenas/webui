@@ -27,7 +27,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

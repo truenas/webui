@@ -57,10 +57,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';

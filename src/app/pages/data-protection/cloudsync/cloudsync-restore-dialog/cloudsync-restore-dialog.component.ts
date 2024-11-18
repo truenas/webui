@@ -23,8 +23,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

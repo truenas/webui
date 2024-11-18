@@ -20,10 +20,10 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 

@@ -40,8 +40,8 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 

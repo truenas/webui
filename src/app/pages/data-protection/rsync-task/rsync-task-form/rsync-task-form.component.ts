@@ -36,9 +36,9 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

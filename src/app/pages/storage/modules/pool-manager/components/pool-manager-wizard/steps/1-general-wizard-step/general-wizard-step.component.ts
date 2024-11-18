@@ -23,7 +23,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const defaultEncryptionStandard = 'AES-256-GCM';
 

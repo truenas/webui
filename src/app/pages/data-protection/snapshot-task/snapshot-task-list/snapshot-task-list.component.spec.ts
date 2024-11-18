@@ -22,10 +22,10 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
-import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SnapshotTaskListComponent', () => {
   let spectator: Spectator<SnapshotTaskListComponent>;

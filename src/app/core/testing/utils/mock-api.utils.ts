@@ -1,7 +1,6 @@
 import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
@@ -12,8 +11,8 @@ import {
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiService } from 'app/services/api.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 /**
  * This is a sugar syntax for creating simple api mocks.
@@ -48,8 +47,8 @@ export function mockApi(
   return [
     {
       provide: ApiService,
-      useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
-        const mockApiService = new MockApiService(router, wsManager, translate);
+      useFactory: (wsHandler: WebSocketHandlerService, translate: TranslateService) => {
+        const mockApiService = new MockApiService(wsHandler, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockApiResponseType.Call) {
             mockApiService.mockCall(mockResponse.method, mockResponse.response);
@@ -62,15 +61,15 @@ export function mockApi(
         });
         return mockApiService;
       },
-      deps: [Router, WebSocketConnectionService, TranslateService],
+      deps: [WebSocketHandlerService, TranslateService],
     },
     {
       provide: MockApiService,
       useExisting: forwardRef(() => ApiService),
     },
     {
-      provide: WebSocketConnectionService,
-      useValue: ({ send: jest.fn() } as unknown as WebSocketConnectionService),
+      provide: WebSocketHandlerService,
+      useValue: ({ send: jest.fn() } as unknown as WebSocketHandlerService),
     },
   ];
 }

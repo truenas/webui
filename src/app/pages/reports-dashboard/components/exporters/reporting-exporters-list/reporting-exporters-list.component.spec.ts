@@ -14,8 +14,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const exporters: ReportingExporter[] = [
   {

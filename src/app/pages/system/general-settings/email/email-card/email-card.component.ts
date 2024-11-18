@@ -16,8 +16,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

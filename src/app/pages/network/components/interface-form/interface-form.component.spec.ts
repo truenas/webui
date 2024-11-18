@@ -32,10 +32,10 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { ApiService } from 'app/services/api.service';
 import { NetworkService } from 'app/services/network.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';

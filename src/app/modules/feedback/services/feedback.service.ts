@@ -26,10 +26,10 @@ import {
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { ApiService } from 'app/services/api.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';

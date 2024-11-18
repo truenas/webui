@@ -13,10 +13,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('CronFormComponent', () => {

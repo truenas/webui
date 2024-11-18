@@ -21,8 +21,8 @@ import {
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 

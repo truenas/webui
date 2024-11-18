@@ -15,7 +15,7 @@ import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {

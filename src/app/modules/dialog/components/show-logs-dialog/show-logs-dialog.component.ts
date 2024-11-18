@@ -11,9 +11,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

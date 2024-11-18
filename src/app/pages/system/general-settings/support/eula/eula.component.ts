@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

@@ -15,10 +15,10 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { ApiService } from 'app/services/api.service';
 import { LanguageService } from 'app/services/language.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;

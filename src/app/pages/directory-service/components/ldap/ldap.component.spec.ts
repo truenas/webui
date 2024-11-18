@@ -19,9 +19,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('LdapComponent', () => {
   let spectator: Spectator<LdapComponent>;

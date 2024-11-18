@@ -12,8 +12,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakePrivilegeDataSource: Privilege[] = [
   {

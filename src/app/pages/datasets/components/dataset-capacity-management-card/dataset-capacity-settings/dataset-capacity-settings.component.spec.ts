@@ -19,8 +19,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
   let spectator: Spectator<DatasetCapacitySettingsComponent>;

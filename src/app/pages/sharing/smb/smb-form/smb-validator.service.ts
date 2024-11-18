@@ -8,7 +8,7 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({
