@@ -131,7 +131,7 @@ export class DialogService {
    * Usage:
    * ```
    * this.dialogService.jobDialog(
-   *   this.ws.call('pool.create', [pool]),
+   *   this.api.call('pool.create', [pool]),
    * )
    *  .afterClosed()
    *  .pipe(

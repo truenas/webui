@@ -44,7 +44,7 @@ export class SystemSecurityCardComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('system.security.config').pipe(toLoadingState())),
+    switchMap(() => this.api.call('system.security.config').pipe(toLoadingState())),
     shareReplay({
       refCount: false,
       bufferSize: 1,
@@ -53,7 +53,7 @@ export class SystemSecurityCardComponent {
 
   constructor(
     private chainedSlideIns: ChainedSlideInService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {

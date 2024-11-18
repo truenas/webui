@@ -8,13 +8,13 @@ import { ApiService } from 'app/services/websocket/api.service';
   providedIn: 'root',
 })
 export class KeychainCredentialService {
-  constructor(protected ws: ApiService) { }
+  constructor(protected api: ApiService) { }
 
   getSshKeys(): Observable<KeychainSshKeyPair[]> {
-    return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]) as Observable<KeychainSshKeyPair[]>;
+    return this.api.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]) as Observable<KeychainSshKeyPair[]>;
   }
 
   getSshConnections(): Observable<KeychainSshCredentials[]> {
-    return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshCredentials]]]) as Observable<KeychainSshCredentials[]>;
+    return this.api.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshCredentials]]]) as Observable<KeychainSshCredentials[]>;
   }
 }

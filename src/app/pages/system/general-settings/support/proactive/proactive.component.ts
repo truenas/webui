@@ -73,7 +73,7 @@ export class ProactiveComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<ProactiveComponent>,
@@ -90,7 +90,7 @@ export class ProactiveComponent implements OnInit {
     const values = this.form.value as SupportConfigUpdate;
     this.isLoading = true;
 
-    this.ws.call('support.update', [values])
+    this.api.call('support.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -114,9 +114,9 @@ export class ProactiveComponent implements OnInit {
     this.isLoading = true;
 
     forkJoin([
-      this.ws.call('support.config'),
-      this.ws.call('support.is_available'),
-      this.ws.call('support.is_available_and_enabled'),
+      this.api.call('support.config'),
+      this.api.call('support.is_available'),
+      this.api.call('support.is_available_and_enabled'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({

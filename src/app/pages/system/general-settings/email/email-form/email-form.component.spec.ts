@@ -43,7 +43,7 @@ describe('EmailFormComponent', () => {
   let spectator: Spectator<EmailFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
@@ -104,7 +104,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
@@ -164,7 +164,7 @@ describe('EmailFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('mail.update', [{
+      expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: '',
         fromname: '',
         oauth: {
@@ -218,7 +218,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
@@ -234,7 +234,7 @@ describe('EmailFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('mail.update', [{
+      expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
         fromname: 'Jeremy',
         oauth: null,
@@ -312,7 +312,7 @@ describe('EmailFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current Gmail config when Gmail is set', async () => {

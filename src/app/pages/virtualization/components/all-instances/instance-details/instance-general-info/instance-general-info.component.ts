@@ -56,7 +56,7 @@ export class InstanceGeneralInfoComponent {
     protected formatter: IxFormatterService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private slideInService: SlideInService,
@@ -75,7 +75,7 @@ export class InstanceGeneralInfoComponent {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.jobDialog(
-          this.ws.job('virt.instance.delete', [this.instance().id]),
+          this.api.job('virt.instance.delete', [this.instance().id]),
         ).afterClosed();
       }),
       this.errorHandler.catchError(),

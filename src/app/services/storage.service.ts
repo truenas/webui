@@ -14,19 +14,19 @@ export class StorageService {
   protected diskResource = 'disk.query' as const;
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
   ) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
-    return this.ws.call('filesystem.stat', [path]);
+    return this.api.call('filesystem.stat', [path]);
   }
 
   listDisks(): Observable<Disk[]> {
-    return this.ws.call(this.diskResource, []);
+    return this.api.call(this.diskResource, []);
   }
 
   getDatasetNameOptions(): Observable<Option[]> {
-    return this.ws
+    return this.api
       .call('pool.filesystem_choices')
       .pipe(map((response) => response.map((value) => ({ label: value, value }))));
   }

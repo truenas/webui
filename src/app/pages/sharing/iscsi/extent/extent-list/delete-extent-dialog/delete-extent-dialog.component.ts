@@ -53,7 +53,7 @@ export class DeleteExtentDialogComponent {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -68,7 +68,7 @@ export class DeleteExtentDialogComponent {
   onDelete(): void {
     const { remove, force } = this.form.value;
 
-    this.ws.call('iscsi.extent.delete', [this.extent.id, remove, force])
+    this.api.call('iscsi.extent.delete', [this.extent.id, remove, force])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

@@ -16,7 +16,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class TargetNameValidationService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -37,7 +37,7 @@ export class TargetNameValidationService {
             return of(null);
           }
 
-          return this.ws.call('iscsi.target.validate_name', [value]).pipe(
+          return this.api.call('iscsi.target.validate_name', [value]).pipe(
             catchError((error: ApiError) => {
               const errorReports = this.errorHandler.parseError(error) as ErrorReport;
               return of({

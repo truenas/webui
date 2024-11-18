@@ -106,7 +106,7 @@ export class InitiatorListComponent implements OnInit {
               buttonText: this.translate.instant('Delete'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('iscsi.initiator.delete', [row.id]).pipe(this.loader.withLoader())),
+              switchMap(() => this.api.call('iscsi.initiator.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
               next: () => this.refresh(),
@@ -128,7 +128,7 @@ export class InitiatorListComponent implements OnInit {
     public emptyService: EmptyService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,

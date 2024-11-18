@@ -17,8 +17,8 @@ export class SystemConfigEffects {
     ofType(adminUiInitialized, generalConfigUpdated, advancedConfigUpdated),
     mergeMap(() => {
       return forkJoin([
-        this.ws.call('system.general.config'),
-        this.ws.call('system.advanced.config'),
+        this.api.call('system.general.config'),
+        this.api.call('system.advanced.config'),
       ]).pipe(
         map(([generalConfig, advancedConfig]) => {
           this.window.localStorage.setItem('language', generalConfig.language);
@@ -35,7 +35,7 @@ export class SystemConfigEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 }

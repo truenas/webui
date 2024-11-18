@@ -73,7 +73,7 @@ export class DashboardPoolComponent implements OnChanges {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
     private searchDirectives: UiSearchDirectivesService,
@@ -109,7 +109,7 @@ export class DashboardPoolComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
+          return this.api.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
         }),
         filter((job) => job.state === JobState.Success),
         tap(() => {
@@ -131,7 +131,7 @@ export class DashboardPoolComponent implements OnChanges {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
+        return this.api.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
       }),
       tap(() => {
         this.snackbar.success(

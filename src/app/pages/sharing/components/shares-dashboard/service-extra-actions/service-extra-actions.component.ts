@@ -58,7 +58,7 @@ export class ServiceExtraActionsComponent {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private router: Router,
     private slideInService: SlideInService,
@@ -67,7 +67,7 @@ export class ServiceExtraActionsComponent {
 
   changeServiceState(service: Service): void {
     const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
-    this.ws.call(rpc, [service.service, { silent: false }])
+    this.api.call(rpc, [service.service, { silent: false }])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (hasChanged: boolean) => {

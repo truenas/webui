@@ -35,12 +35,12 @@ export class EulaComponent implements OnInit {
   protected readonly searchableElements = eulaElements;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
+    this.api.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
       this.eula = eula;
       this.cdr.markForCheck();
     });

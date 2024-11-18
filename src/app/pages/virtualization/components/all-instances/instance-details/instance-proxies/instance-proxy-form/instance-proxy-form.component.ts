@@ -61,7 +61,7 @@ export class InstanceProxyFormComponent {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: ChainedRef<string>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -76,7 +76,7 @@ export class InstanceProxyFormComponent {
       dev_type: VirtualizationDeviceType.Proxy,
     } as VirtualizationProxy;
 
-    this.ws.call('virt.instance.device_add', [instanceId, payload])
+    this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

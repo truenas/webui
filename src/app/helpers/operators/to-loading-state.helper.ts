@@ -12,7 +12,7 @@ export interface LoadingState<T> {
 
 /**
  * Usage:
- * myData$ = this.ws.call('my.method').pipe(toLoadingState());
+ * myData$ = this.api.call('my.method').pipe(toLoadingState());
  *
  * <ng-container *ngIf="myData$ | async as data">
  *   <my-loading-spinner *ngIf="data.isLoading"></my-loading-spinner>

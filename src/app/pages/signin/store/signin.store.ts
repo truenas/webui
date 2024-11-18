@@ -69,7 +69,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private disabledReasonsSubscription: Subscription;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private tokenLastUsedService: TokenLastUsedService,
     private dialogService: DialogService,
@@ -173,7 +173,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkForLoginBanner(): Observable<string> {
     this.subscribeToLoginBannerUpdates();
 
-    return this.ws.call('system.advanced.login_banner').pipe(
+    return this.api.call('system.advanced.login_banner').pipe(
       tap((loginBanner) => this.patchState({ loginBanner })),
     );
   }
@@ -186,7 +186,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
-    return this.ws.call('user.has_local_administrator_set_up').pipe(
+    return this.api.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
       catchError((error) => {
         this.errorHandler.showErrorModal(error);
@@ -196,7 +196,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private loadFailoverStatus(): Observable<unknown> {
-    return this.ws.call('failover.status').pipe(
+    return this.api.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
 
@@ -216,8 +216,8 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private loadAdditionalFailoverInfo(): Observable<unknown> {
     return forkJoin([
-      this.ws.call('failover.get_ips'),
-      this.ws.call('failover.disabled.reasons'),
+      this.api.call('failover.get_ips'),
+      this.api.call('failover.disabled.reasons'),
     ])
       .pipe(
         tap(
@@ -230,11 +230,11 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private subscribeToFailoverUpdates(): void {
-    this.failoverStatusSubscription = this.ws.subscribe('failover.status')
+    this.failoverStatusSubscription = this.api.subscribe('failover.status')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe(({ status }) => this.setFailoverStatus(status));
 
-    this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
+    this.disabledReasonsSubscription = this.api.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }

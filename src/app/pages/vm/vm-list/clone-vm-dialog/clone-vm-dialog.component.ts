@@ -45,7 +45,7 @@ export class CloneVmDialogComponent {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
     private dialogRef: MatDialogRef<CloneVmDialogComponent>,
@@ -57,7 +57,7 @@ export class CloneVmDialogComponent {
       params.push(this.nameControl.value);
     }
 
-    this.ws.call('vm.clone', params)
+    this.api.call('vm.clone', params)
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

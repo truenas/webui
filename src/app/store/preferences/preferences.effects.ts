@@ -77,13 +77,13 @@ export class PreferencesEffects {
         return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
-      return this.ws.call('auth.set_attribute', ['preferences', state.preferences]);
+      return this.api.call('auth.set_attribute', ['preferences', state.preferences]);
     }),
   ), { dispatch: false });
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private authService: AuthService,
   ) {}

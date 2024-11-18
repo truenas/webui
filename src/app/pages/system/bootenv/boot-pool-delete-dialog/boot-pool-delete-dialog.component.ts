@@ -1,6 +1,6 @@
 import { KeyValue, KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, signal, TrackByFunction,
+  ChangeDetectionStrategy, Component, Inject, signal, TrackByFunction,
 } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -63,8 +63,7 @@ export class BootPoolDeleteDialogComponent {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
-    private cdr: ChangeDetectorRef,
+    private api: ApiService,
     private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
   ) {
@@ -84,7 +83,7 @@ export class BootPoolDeleteDialogComponent {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
+    this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
       untilDestroyed(this),
     ).subscribe((response) => {

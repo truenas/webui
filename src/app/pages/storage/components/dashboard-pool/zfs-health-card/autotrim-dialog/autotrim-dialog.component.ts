@@ -50,7 +50,7 @@ export class AutotrimDialogComponent implements OnInit {
   constructor(
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<AutotrimDialogComponent>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -63,7 +63,7 @@ export class AutotrimDialogComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    this.ws.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
+    this.api.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

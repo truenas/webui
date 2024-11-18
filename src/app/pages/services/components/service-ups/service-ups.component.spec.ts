@@ -18,7 +18,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: ServiceUpsComponent,
     imports: [
@@ -72,14 +72,14 @@ describe('ServiceUpsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current settings for UPS service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('ups.config');
+    expect(api.call).toHaveBeenCalledWith('ups.config');
     expect(values).toEqual({
       Identifier: 'ups',
       'UPS Mode': 'Master',
@@ -126,7 +126,7 @@ describe('ServiceUpsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ups.update', [{
+    expect(api.call).toHaveBeenCalledWith('ups.update', [{
       description: 'This is a test',
       driver: 'bcmxcp$R1500 G2',
       extrausers: '',

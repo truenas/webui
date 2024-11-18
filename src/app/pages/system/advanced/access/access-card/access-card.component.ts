@@ -142,14 +142,14 @@ export class AccessCardComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const sessions$ = this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
+    const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
@@ -202,7 +202,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   private terminateOtherSessions(): void {
-    this.ws.call('auth.terminate_other_sessions').pipe(
+    this.api.call('auth.terminate_other_sessions').pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),
@@ -226,7 +226,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   private terminateSession(sessionId: string): void {
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(
+    this.api.call('auth.terminate_session', [sessionId]).pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),

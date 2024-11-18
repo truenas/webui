@@ -58,9 +58,9 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
   ],
 })
 export class AdvancedSettingsComponent {
-  isSystemLicensed$: Observable<boolean> = this.ws.call('system.security.info.fips_available');
+  isSystemLicensed$: Observable<boolean> = this.api.call('system.security.info.fips_available');
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
 
-  constructor(private ws: ApiService) {}
+  constructor(private api: ApiService) {}
 }

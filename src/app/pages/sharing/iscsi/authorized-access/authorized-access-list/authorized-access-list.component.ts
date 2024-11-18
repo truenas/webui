@@ -107,7 +107,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               buttonText: this.translate.instant('Delete'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
+              switchMap(() => this.api.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
               next: () => this.refresh(),
@@ -129,7 +129,7 @@ export class AuthorizedAccessListComponent implements OnInit {
     public emptyService: EmptyService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,

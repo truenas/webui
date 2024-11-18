@@ -39,7 +39,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly selectedInstanceDevices = computed(() => this.stateAsSignal().selectedInstanceDevices);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -48,10 +48,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
-        return this.ws.call('virt.instance.query').pipe(
+        return this.api.call('virt.instance.query').pipe(
           tap(() => this.patchState({ isLoading: true })),
           repeat({
-            delay: () => this.ws.subscribe('core.get_jobs').pipe(
+            delay: () => this.api.subscribe('core.get_jobs').pipe(
               filter((event) => [
                 'virt.instance.start',
                 'virt.instance.stop',
@@ -87,7 +87,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
 
         this.patchState({ isLoadingDevices: true });
 
-        return this.ws.call('virt.instance.device_list', [selectedInstance.id]).pipe(
+        return this.api.call('virt.instance.device_list', [selectedInstance.id]).pipe(
           tap((devices) => {
             this.patchState({
               selectedInstanceDevices: devices,

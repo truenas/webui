@@ -33,14 +33,14 @@ export class DiskStore extends ComponentStore<DiskState> {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
   }
 
   loadDisks(): Observable<DiskDetailsResponse> {
-    return this.ws.call('disk.details').pipe(
+    return this.api.call('disk.details').pipe(
       this.errorHandler.catchError(),
       tap((diskResponse) => {
         this.patchState({

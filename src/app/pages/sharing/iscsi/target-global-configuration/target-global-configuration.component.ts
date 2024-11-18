@@ -79,7 +79,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   ];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -98,7 +98,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     this.setLoading(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
-    this.ws.call('iscsi.global.update', [values])
+    this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
@@ -118,7 +118,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.setLoading(true);
 
-    this.ws.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.setLoading(false);

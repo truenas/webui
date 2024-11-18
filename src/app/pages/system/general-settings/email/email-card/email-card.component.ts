@@ -42,20 +42,20 @@ export class EmailCardComponent {
   readonly helptext = helptextSystemEmail;
   protected readonly searchableElements = emailCardElements;
 
-  emailConfig$: Observable<LoadingState<MailConfig>> = this.ws.call('mail.config').pipe(toLoadingState());
+  emailConfig$: Observable<LoadingState<MailConfig>> = this.api.call('mail.config').pipe(toLoadingState());
 
   constructor(
     private slideInService: SlideInService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   openEmailSettings(): void {
-    this.ws.call('mail.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.api.call('mail.config').pipe(untilDestroyed(this)).subscribe((config) => {
       const slideInRef = this.slideInService.open(EmailFormComponent, { data: config });
 
       slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.ws.call('mail.config').pipe(untilDestroyed(this)).subscribe((result) => {
+        this.api.call('mail.config').pipe(untilDestroyed(this)).subscribe((result) => {
           this.emailConfig$ = of(result).pipe(toLoadingState());
           this.cdr.markForCheck();
         });
