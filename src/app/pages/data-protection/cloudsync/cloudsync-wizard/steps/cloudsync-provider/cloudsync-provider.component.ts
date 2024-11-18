@@ -9,7 +9,9 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { pairwise, startWith } from 'rxjs';
+import {
+  catchError, EMPTY, pairwise, startWith,
+} from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
@@ -67,14 +69,23 @@ export class CloudSyncProviderComponent implements OnInit {
 
   getExistingCredentials(): void {
     this.loading.emit(true);
-    this.cloudCredentialService.getCloudSyncCredentials().pipe(untilDestroyed(this)).subscribe({
-      next: (creds) => {
-        this.credentials = creds;
-      },
-      complete: () => {
-        this.loading.emit(false);
-      },
-    });
+    this.cloudCredentialService.getCloudSyncCredentials()
+      .pipe(
+        catchError((error: unknown) => {
+          this.loading.emit(false);
+          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+          return EMPTY;
+        }),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (credentials) => {
+          this.credentials = credentials;
+        },
+        complete: () => {
+          this.loading.emit(false);
+        },
+      });
   }
 
   subToLoading(): void {
