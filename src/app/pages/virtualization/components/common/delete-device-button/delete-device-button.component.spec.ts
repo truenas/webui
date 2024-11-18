@@ -12,7 +12,7 @@ import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeleteDeviceButtonComponent', () => {
   let spectator: Spectator<DeleteDeviceButtonComponent>;
@@ -63,6 +63,6 @@ describe('DeleteDeviceButtonComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationInstancesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
   });
 });

@@ -10,6 +10,9 @@ import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import {
+  AddDeviceMenuComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
+import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
@@ -28,6 +31,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     MatCardContent,
     NgxSkeletonLoaderModule,
     DeleteDeviceButtonComponent,
+    AddDeviceMenuComponent,
   ],
 })
 export class InstanceDevicesComponent {
@@ -48,8 +52,8 @@ export class InstanceDevicesComponent {
       ? virtualizationDeviceTypeLabels.get(device.dev_type)
       : device.dev_type;
 
-    // TODO: Get better names.
-    const description = device.name;
+    // TODO: Remove `.replace(`${type}:`, '')` after https://ixsystems.atlassian.net/browse/NAS-132543
+    const description = `${device.description} (${device.product_id})`.replace(`${type}:`, '').trim();
 
     return `${type}: ${description}`;
   }

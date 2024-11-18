@@ -26,10 +26,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -92,7 +92,7 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -118,7 +118,7 @@ export class FailoverSettingsComponent implements OnInit {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.authService.clearAuthToken();
-                this.wsManager.closeWebSocketConnection();
+                this.wsManager.reconnect();
               },
             });
           }

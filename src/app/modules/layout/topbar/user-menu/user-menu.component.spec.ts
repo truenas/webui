@@ -17,7 +17,6 @@ import {
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
@@ -35,7 +34,6 @@ describe('UserMenuComponent', () => {
         logout: jest.fn(() => of()),
         user$: of(dummyUser),
       }),
-      mockProvider(WebSocketConnectionService),
     ],
   });
 
@@ -73,7 +71,7 @@ describe('UserMenuComponent', () => {
       const apiKeys = await menu.getItems({ text: /My API Keys$/ });
       const apiKeysElement = await apiKeys[0].host();
 
-      expect(await apiKeysElement.getAttribute('href')).toBe('/credentials/user-api-keys?userName=root');
+      expect(await apiKeysElement.getAttribute('href')).toBe('/credentials/users/api-keys?userName=root');
     });
 
     it('has a Guide menu item that opens user guide', async () => {

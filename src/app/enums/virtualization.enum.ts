@@ -5,7 +5,7 @@ export enum VirtualizationType {
   Vm = 'VM',
 }
 
-export const virtualizationTypeMap = new Map<VirtualizationType, string>([
+export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
   [VirtualizationType.Container, T('Container')],
   [VirtualizationType.Vm, T('VM')],
 ]);

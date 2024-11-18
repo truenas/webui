@@ -14,8 +14,8 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ApiService } from 'app/services/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
 describe('SshConnectionFormComponent', () => {

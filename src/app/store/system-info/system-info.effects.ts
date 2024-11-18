@@ -4,7 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,

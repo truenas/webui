@@ -8,7 +8,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface Temperature {
   keys: string[];

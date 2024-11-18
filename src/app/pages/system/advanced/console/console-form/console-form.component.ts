@@ -24,7 +24,7 @@ import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-he
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 

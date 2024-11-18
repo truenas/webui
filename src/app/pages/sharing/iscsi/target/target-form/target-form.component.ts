@@ -29,8 +29,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
-import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

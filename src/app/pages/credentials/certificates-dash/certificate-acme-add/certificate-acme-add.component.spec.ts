@@ -18,7 +18,7 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;

@@ -11,13 +11,13 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ApiService } from 'app/services/api.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 const mockWebSocketConnectionService = {
-  send: jest.fn(),
+  scheduleCall: jest.fn(),
   buildSubscriber: jest.fn().mockReturnValue(new Subject<unknown>()),
-  websocket$: new BehaviorSubject<unknown>(null),
+  responses$: new BehaviorSubject<unknown>(null),
 };
 
 const apiEventSubscription1$ = new BehaviorSubject(null);
@@ -36,7 +36,7 @@ describe('ApiService', () => {
       providers: [
         ApiService,
         mockProvider(TranslateService),
-        { provide: WebSocketConnectionService, useValue: mockWebSocketConnectionService },
+        { provide: WebSocketHandlerService, useValue: mockWebSocketConnectionService },
       ],
     });
 
@@ -55,7 +55,7 @@ describe('ApiService', () => {
     it('should make a WS call and get a response', () => {
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebSocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.responses$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         result: {},
@@ -66,14 +66,14 @@ describe('ApiService', () => {
         expect(result).toEqual({});
       });
 
-      expect(mockWebSocketConnectionService.send).toHaveBeenCalled();
+      expect(mockWebSocketConnectionService.scheduleCall).toHaveBeenCalled();
     });
 
     it('should handle WS call errors', () => {
       jest.spyOn(console, 'error').mockImplementation();
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebSocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.responses$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         error: 'Test Error',
@@ -95,7 +95,7 @@ describe('ApiService', () => {
       const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebSocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.responses$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         result: pools,
@@ -112,7 +112,7 @@ describe('ApiService', () => {
       const uuid = 'fakeUUID';
       const mockJobId = 1234;
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebSocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.responses$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         result: mockJobId,

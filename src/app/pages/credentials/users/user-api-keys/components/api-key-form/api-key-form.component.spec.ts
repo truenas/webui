@@ -14,9 +14,9 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
@@ -88,7 +88,7 @@ describe('ApiKeyFormComponent', () => {
 
     await form.fillForm({
       Name: 'My key',
-      'Non expiring': true,
+      'Non-expiring': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -116,7 +116,7 @@ describe('ApiKeyFormComponent', () => {
     await form.fillForm({
       Name: 'My key',
       Reset: true,
-      'Non expiring': false,
+      'Non-expiring': false,
       'Expires at': '2024-12-31T23:59:59.000Z',
     });
 

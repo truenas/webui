@@ -20,9 +20,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
