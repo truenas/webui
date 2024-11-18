@@ -68,15 +68,11 @@ describe('TargetFormComponent', () => {
           comment: 'comment_1',
           id: 1,
           tag: 11,
-          discovery_authgroup: 111,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '1.1.1.1' }],
         }, {
           comment: 'comment_2',
           id: 2,
           tag: 22,
-          discovery_authgroup: 222,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
         mockCall('iscsi.initiator.query', [{
