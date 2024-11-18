@@ -18,7 +18,7 @@ import {
   StopOptionsDialogComponent,
   StopOptionsOperation,
 } from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const instance = {
   id: 'my-instance',

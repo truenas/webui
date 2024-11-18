@@ -22,8 +22,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   StopOptionsDialogComponent, StopOptionsOperation,
 } from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
