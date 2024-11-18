@@ -177,6 +177,11 @@ export interface AvailableGpu {
   vendor: string | null;
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface AvailableGpus {
+  [pci: string]: AvailableGpu;
+}
+
 export interface AvailableUsb {
   vendor_id: string;
   product_id: string;

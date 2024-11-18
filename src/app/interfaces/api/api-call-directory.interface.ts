@@ -244,9 +244,9 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VirtualizationDevice, VirtualizationGlobalConfig, AvailableGpu,
+  VirtualizationDevice, VirtualizationGlobalConfig,
   VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork, AvailableUsb,
+  VirtualizationInstance, VirtualizationNetwork, AvailableUsb, AvailableGpus,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -840,7 +840,7 @@ export interface ApiCallDirectory {
   'virt.device.disk_choices': { params: []; response: Choices };
   'virt.device.gpu_choices': {
     params: [instanceType: VirtualizationType, gpuType: VirtualizationGpuType];
-    response: Record<string, AvailableGpu>;
+    response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 
