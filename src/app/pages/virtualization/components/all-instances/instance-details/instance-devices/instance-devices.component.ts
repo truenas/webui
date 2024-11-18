@@ -5,7 +5,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
@@ -48,11 +48,13 @@ export class InstanceDevicesComponent {
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
-    // TODO: Add type back after https://ixsystems.atlassian.net/browse/NAS-132543
-    // const type = virtualizationDeviceTypeLabels.has(device.dev_type)
-    //   ? virtualizationDeviceTypeLabels.get(device.dev_type)
-    //   : device.dev_type;
+    const type = virtualizationDeviceTypeLabels.has(device.dev_type)
+      ? virtualizationDeviceTypeLabels.get(device.dev_type)
+      : device.dev_type;
 
-    return device.description;
+    // TODO: Remove `.replace(`${type}:`, '')` after https://ixsystems.atlassian.net/browse/NAS-132543
+    const description = `${device.description} (${device.product_id})`.replace(`${type}:`, '').trim();
+
+    return `${type}: ${description}`;
   }
 }

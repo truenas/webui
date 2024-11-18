@@ -65,6 +65,7 @@ export interface VirtualizationDisk {
   readonly: boolean;
   source: string | null;
   destination: string | null;
+  product_id: string;
 }
 
 export interface VirtualizationGpu {
@@ -80,8 +81,7 @@ export interface VirtualizationGpu {
   mdev: string;
   mig_uuid: string;
   pci: string;
-  productid: string;
-  vendorid: string;
+  product_id: string;
 }
 
 export interface VirtualizationProxy {
@@ -93,6 +93,7 @@ export interface VirtualizationProxy {
   source_port: number;
   dest_proto: VirtualizationProxyProtocol;
   dest_port: number;
+  product_id: string;
 }
 
 export interface VirtualizationNic {
@@ -101,6 +102,7 @@ export interface VirtualizationNic {
   dev_type: VirtualizationDeviceType.Nic;
   readonly: boolean;
   network: string;
+  product_id: string;
 }
 
 export interface VirtualizationTpm {
@@ -110,6 +112,7 @@ export interface VirtualizationTpm {
   readonly: boolean;
   path: string;
   pathrm: string;
+  product_id: string;
 }
 
 export interface VirtualizationUsb {
