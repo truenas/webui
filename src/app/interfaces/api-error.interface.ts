@@ -8,6 +8,7 @@ export interface ApiError {
   reason: string;
   trace: ApiErrorTrace;
   type: ResponseErrorType | null;
+  message?: string | null;
 }
 
 export interface ApiErrorTrace {
