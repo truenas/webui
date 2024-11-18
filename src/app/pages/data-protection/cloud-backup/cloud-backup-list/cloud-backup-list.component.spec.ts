@@ -200,10 +200,10 @@ describe('CloudBackupListComponent', () => {
       setFilter: jest.fn(),
     } as unknown as AsyncDataProvider<CloudBackup>;
 
-    const queryString = 'UA';
+    const queryString = 'ua';
     spectator.component.onListFiltered(queryString);
 
-    expect(spectator.component.filterString).toBe(queryString.toLowerCase());
+    expect(spectator.component.filterString).toBe(queryString);
 
     expect(spectator.component.dataProvider.setFilter).toHaveBeenCalledWith({
       query: queryString,
