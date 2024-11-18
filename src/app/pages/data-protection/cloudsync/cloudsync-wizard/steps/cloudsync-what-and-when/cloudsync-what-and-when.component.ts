@@ -8,7 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, combineLatest, filter, map, merge, of, tap,
+  EMPTY,
+  Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -29,6 +30,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -130,6 +132,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private filesystemService: FilesystemService,
+    private formErrorHandler: FormErrorHandlerService,
     private cloudCredentialService: CloudCredentialService,
     private matDialog: MatDialog,
     private router: Router,
@@ -146,6 +149,11 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       tap(() => {
         this.form.controls.credentials.setValue(changes.credentialId.currentValue);
         this.cdr.markForCheck();
+      }),
+      catchError((error: unknown) => {
+        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+        return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe();
