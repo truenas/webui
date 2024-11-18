@@ -15,7 +15,7 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (proxy of proxies(); track proxy) {
+      @for (proxy of proxies(); track proxy.name) {
         <div class="proxy">
           <div class="proxy-description">
             {{ proxy.source_port }} {{ proxy.source_proto }} <span class="hint">({{ 'Host' | translate }})</span>
@@ -23,15 +23,7 @@
             {{ proxy.dest_port }} {{ proxy.dest_proto }} <span class="hint">({{ 'Instance' | translate }})</span>
           </div>
 
-          <button
-            mat-icon-button
-            class="delete-button"
-            [attr.aria-label]="'Delete proxy' | translate"
-            [ixTest]="['delete-proxy', $index]"
-            (click)="deleteProxyPressed(proxy)"
-          >
-            <ix-icon name="mdi-close"></ix-icon>
-          </button>
+          <ix-delete-device-button [device]="proxy"></ix-delete-device-button>
         </div>
       } @empty {
         {{ 'No proxies added.' | translate }}

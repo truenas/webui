@@ -40,8 +40,8 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -129,7 +129,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
@@ -223,8 +223,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
     const payload = this.preparePayload();
     const request$ = this.isNew
-      ? this.ws.call('pool.dataset.create', [payload as DatasetCreate])
-      : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
+      ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
+      : this.api.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
       switchMap((dataset) => this.createSmb(dataset)),
@@ -283,7 +283,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     }
 
     const parentPath = `/mnt/${this.parentDataset.id}`;
-    return this.ws.call('filesystem.stat', [parentPath]).pipe(map((stat) => stat.acl));
+    return this.api.call('filesystem.stat', [parentPath]).pipe(map((stat) => stat.acl));
   }
 
   private aclDialog(): Observable<boolean> {
@@ -301,7 +301,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.canCreateSmb) {
       return of(dataset);
     }
-    return this.ws.call('sharing.smb.create', [{
+    return this.api.call('sharing.smb.create', [{
       name: datasetPresetFormValue.smb_name,
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
@@ -315,7 +315,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.canCreateNfs) {
       return of(dataset);
     }
-    return this.ws.call('sharing.nfs.create', [{
+    return this.api.call('sharing.nfs.create', [{
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
       switchMap(() => of(dataset)),
@@ -324,7 +324,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   private rollBack(dataset: Dataset, error: unknown): Observable<Dataset> {
-    return this.ws.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
+    return this.api.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
       switchMap(() => {
         throw error;
       }),

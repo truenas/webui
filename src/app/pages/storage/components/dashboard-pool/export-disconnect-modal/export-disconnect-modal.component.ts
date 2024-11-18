@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -19,12 +18,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -35,8 +34,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +48,6 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogTitle,
     MatProgressBar,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxFieldsetComponent,
     IxCheckboxComponent,
@@ -119,7 +117,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -288,7 +286,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.prepareForm();
           this.cdr.markForCheck();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.dialogService.error({
             title: helptextVolumes.exportError,
             message: error.reason,

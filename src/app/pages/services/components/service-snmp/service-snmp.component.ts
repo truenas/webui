@@ -25,8 +25,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -104,7 +104,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -130,7 +130,7 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Service configuration saved'));
@@ -147,7 +147,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   private loadCurrentSettings(): void {
     this.isFormLoading = true;
-    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.isFormLoading = false;
         this.form.patchValue(config);

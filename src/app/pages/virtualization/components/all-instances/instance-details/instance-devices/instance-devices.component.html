@@ -3,24 +3,19 @@
     <h3 mat-card-title>
       {{ 'Devices' | translate }}
     </h3>
+
+    <ix-add-device-menu></ix-add-device-menu>
   </mat-card-header>
 
   <mat-card-content>
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @for (device of shownDevices(); track device) {
+      @for (device of shownDevices(); track device.name) {
         <div class="device">
           <span>{{ getDeviceDescription(device) }}</span>
-          <button
-            mat-icon-button
-            class="delete-button"
-            [attr.aria-label]="'Delete device' | translate"
-            [ixTest]="['delete-device', $index]"
-            (click)="deleteProxyPressed(device)"
-          >
-            <ix-icon name="mdi-close"></ix-icon>
-          </button>
+
+          <ix-delete-device-button [device]="device"></ix-delete-device-button>
         </div>
       } @empty {
          {{ 'No devices added.' | translate }}

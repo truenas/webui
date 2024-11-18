@@ -42,9 +42,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -136,7 +136,7 @@ export class CloudBackupCardComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private chainedSlideInService: ChainedSlideInService,
     private dialogService: DialogService,
@@ -149,7 +149,7 @@ export class CloudBackupCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
+    const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
       tap((cloudBackups) => this.cloudBackups = cloudBackups),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
@@ -179,7 +179,7 @@ export class CloudBackupCardComponent implements OnInit {
       tapOnce(() => {
         this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
       }),
-      switchMap(() => this.ws.job('cloud_backup.sync', [row.id])),
+      switchMap(() => this.api.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
@@ -213,7 +213,7 @@ export class CloudBackupCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -226,7 +226,7 @@ export class CloudBackupCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
-    this.ws
+    this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({

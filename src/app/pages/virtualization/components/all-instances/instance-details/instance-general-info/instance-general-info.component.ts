@@ -1,25 +1,28 @@
-import { TitleCasePipe } from '@angular/common';
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { InstanceEditFormComponent } from 'app/pages/virtualization/components/instance-edit-form/instance-edit-form.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -37,21 +40,23 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
     MatCardContent,
     YesNoPipe,
-    TitleCasePipe,
-    RouterLink,
     RequiresRolesDirective,
+    KeyValuePipe,
+    TestDirective,
+    MapValuePipe,
   ],
 })
 export class InstanceGeneralInfoComponent {
   instance = input.required<VirtualizationInstance>();
 
   protected readonly Role = Role;
+  protected readonly virtualizationStatusLabels = virtualizationStatusLabels;
 
   constructor(
     protected formatter: IxFormatterService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private slideInService: SlideInService,

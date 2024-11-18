@@ -29,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class SmartInfoCardComponent implements OnChanges {
   private readonly maxResultCategories = 4;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

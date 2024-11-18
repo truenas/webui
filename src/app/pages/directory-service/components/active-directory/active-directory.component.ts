@@ -31,9 +31,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -92,7 +92,7 @@ export class ActiveDirectoryComponent implements OnInit {
   hasKerberosPrincipal$ = this.form.select((values) => values.kerberos_principal);
 
   readonly helptext = helptextActiveDirectory;
-  readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
+  readonly kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
         label: realm.realm,
@@ -101,11 +101,11 @@ export class ActiveDirectoryComponent implements OnInit {
     }),
   );
 
-  readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
-  readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
+  readonly kerberosPrincipals$ = this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
+  readonly nssOptions$ = this.api.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -167,7 +167,7 @@ export class ActiveDirectoryComponent implements OnInit {
     };
 
     this.dialogService.jobDialog(
-      this.ws.job('activedirectory.update', [values]),
+      this.api.job('activedirectory.update', [values]),
       { title: this.translate.instant('Active Directory') },
     )
       .afterClosed()
@@ -206,7 +206,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   private loadDirectoryState(): Observable<void> {
-    return this.ws.call('directoryservices.get_state').pipe(
+    return this.api.call('directoryservices.get_state').pipe(
       map((adState) => {
         const isHealthy = adState.activedirectory === DirectoryServiceState.Healthy;
         this.canLeaveDomain = isHealthy;
@@ -220,7 +220,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   private loadDirectoryConfig(): Observable<void> {
-    return this.ws.call('activedirectory.config').pipe(
+    return this.api.call('activedirectory.config').pipe(
       map((config) => {
         this.form.patchValue(config);
       }),

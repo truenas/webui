@@ -20,7 +20,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class KerberosRealmsFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -100,9 +100,9 @@ export class KerberosRealmsFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
+      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     } else {
-      request$ = this.ws.call('kerberos.realm.update', [
+      request$ = this.api.call('kerberos.realm.update', [
         this.editingRealm.id,
         values as KerberosRealmUpdate,
       ]);

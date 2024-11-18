@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -22,8 +21,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +33,6 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     WithLoadingStateDirective,
     ReactiveFormsModule,
@@ -68,14 +66,14 @@ export class DefaultGatewayDialogComponent {
     ],
   });
 
-  currentGateway$ = this.ws.call('network.general.summary').pipe(
+  currentGateway$ = this.api.call('network.general.summary').pipe(
     toLoadingState(),
   );
 
   readonly helptext = helptextNetworkConfiguration;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private fb: FormBuilder,
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<DefaultGatewayDialogComponent>,
@@ -88,7 +86,7 @@ export class DefaultGatewayDialogComponent {
   onSubmit(): void {
     this.dialogRef.close();
     const formValues = this.form.value;
-    this.ws.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
+    this.api.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
       catchError((error: unknown) => {
         this.dialog.error(this.errorHandler.parseError(error));
         return EMPTY;

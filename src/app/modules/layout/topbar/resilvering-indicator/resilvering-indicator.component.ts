@@ -13,7 +13,7 @@ import {
   ResilverProgressDialogComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @Component({
   selector: 'ix-resilvering-indicator',
@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class ResilveringIndicatorComponent {
-  protected isResilvering$ = this.ws.subscribe('zfs.pool.scan').pipe(
+  protected isResilvering$ = this.api.subscribe('zfs.pool.scan').pipe(
     map((event) => {
       const scan = event.fields.scan;
       return scan.function === PoolScanFunction.Resilver && scan.state !== PoolScanState.Finished;
@@ -42,7 +42,7 @@ export class ResilveringIndicatorComponent {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   showDetails(): void {

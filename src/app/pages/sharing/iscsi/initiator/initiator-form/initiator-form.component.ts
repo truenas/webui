@@ -5,7 +5,6 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
-import { MatListItemLine } from '@angular/material/list';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -24,8 +23,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface InitiatorItem {
   id: string;
@@ -50,7 +49,6 @@ interface InitiatorItem {
     MatButton,
     TestDirective,
     IxIconComponent,
-    MatListItemLine,
     MatCardActions,
     RequiresRolesDirective,
     TranslateModule,
@@ -92,7 +90,7 @@ export class InitiatorFormComponent implements OnInit {
   ];
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,

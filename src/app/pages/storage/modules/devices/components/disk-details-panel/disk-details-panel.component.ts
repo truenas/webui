@@ -9,9 +9,7 @@ import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DiskInfoCardComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/disk-info-card.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { SmartInfoCardComponent } from 'app/pages/storage/modules/devices/components/smart-info-card/smart-info-card.component';
@@ -25,8 +23,6 @@ import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/componen
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    TestDirective,
-    IxIconComponent,
     MatTooltip,
     TopologyItemIconComponent,
     ZfsInfoCardComponent,

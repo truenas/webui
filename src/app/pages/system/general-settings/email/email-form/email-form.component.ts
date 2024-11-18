@@ -32,9 +32,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -115,7 +115,7 @@ export class EmailFormComponent implements OnInit {
   private oauthCredentials: GmailOauthConfig | Record<string, never>;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,

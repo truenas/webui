@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  MatStepper, MatStep, MatStepLabel, MatStepperIcon,
+  MatStepper, MatStep, MatStepLabel,
 } from '@angular/material/stepper';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -37,8 +37,8 @@ import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/page
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 import { GeneralWizardStepComponent } from './steps/1-general-wizard-step/general-wizard-step.component';
@@ -79,7 +79,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     ReviewWizardStepComponent,
     TranslateModule,
     AsyncPipe,
-    MatStepperIcon,
     UseIxIconsInStepperComponent,
   ],
   providers: [
@@ -127,7 +126,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private poolManagerValidation: PoolManagerValidationService,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 

@@ -20,11 +20,11 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   standalone: true,
   imports: [
     IxIconComponent,
-    NgTemplateOutlet,
     RequiresRolesDirective,
     TestDirective,
     NgxSkeletonLoaderModule,
     TranslateModule,
+    NgTemplateOutlet,
   ],
 })
 export class BackupTaskEmptyComponent {

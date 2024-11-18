@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -22,7 +22,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { CertificateAuthorityEditComponent } from './certificate-authority-edit.component';
 
 describe('CertificateAuthorityEditComponent', () => {
@@ -40,7 +40,7 @@ describe('CertificateAuthorityEditComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificateauthority.update'),
       ]),
       mockProvider(MatDialog),
@@ -85,7 +85,7 @@ describe('CertificateAuthorityEditComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificateauthority.update', [1,
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('certificateauthority.update', [1,
       { name: 'New Name', add_to_trusted_store: true },
     ]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();

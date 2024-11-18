@@ -66,8 +66,8 @@ import { auditElements } from 'app/pages/audit/audit.elements';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
+import { ApiService } from 'app/services/api.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -158,7 +158,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
-  private userSuggestions$ = this.ws.call('user.query').pipe(
+  private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
     take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),
@@ -168,7 +168,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected emptyService: EmptyService,
     private breakpointObserver: BreakpointObserver,
     private cdr: ChangeDetectorRef,
@@ -187,7 +187,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataProvider = new AuditApiDataProvider(this.ws);
+    this.dataProvider = new AuditApiDataProvider(this.api);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();

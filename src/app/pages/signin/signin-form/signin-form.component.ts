@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, Inject, input, OnInit,
 } from '@angular/core';
@@ -23,8 +22,8 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +37,6 @@ import { WebSocketService } from 'app/services/ws.service';
     ReactiveFormsModule,
     InsecureConnectionComponent,
     MatButton,
-    AsyncPipe,
     TranslateModule,
     IxInputComponent,
     AutofocusDirective,
@@ -70,7 +68,7 @@ export class SigninFormComponent implements OnInit {
     private signinStore: SigninStore,
     private translate: TranslateService,
     private authService: AuthService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {

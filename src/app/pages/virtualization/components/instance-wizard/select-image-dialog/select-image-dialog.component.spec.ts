@@ -10,13 +10,13 @@ import {
 } from '@ngneat/spectator/jest';
 import {
   mockCall,
-  mockWebSocket,
-} from 'app/core/testing/utils/mock-websocket.utils';
+  mockApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
   'almalinux/8/cloud': {
@@ -43,7 +43,7 @@ describe('SelectImageDialogComponent', () => {
     component: SelectImageDialogComponent,
     imports: [ReactiveFormsModule],
     providers: [
-      mockWebSocket([mockCall('virt.instance.image_choices', imageChoices)]),
+      mockApi([mockCall('virt.instance.image_choices', imageChoices)]),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
@@ -63,7 +63,7 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('loads image choices', () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'virt.instance.image_choices',
         [{ remote: VirtualizationRemote.LinuxContainers }],
       );

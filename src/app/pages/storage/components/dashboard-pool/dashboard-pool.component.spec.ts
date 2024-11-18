@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -26,7 +26,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DashboardPoolComponent', () => {
   let spectator: Spectator<DashboardPoolComponent>;
@@ -55,7 +55,7 @@ describe('DashboardPoolComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', []),
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),
@@ -97,7 +97,7 @@ describe('DashboardPoolComponent', () => {
       title: helptextVolumes.expand_pool_dialog.title,
       message: helptextVolumes.expand_pool_dialog.message,
     });
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -106,7 +106,7 @@ describe('DashboardPoolComponent', () => {
     await upgradeButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 

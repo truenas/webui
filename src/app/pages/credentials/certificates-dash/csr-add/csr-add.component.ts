@@ -39,8 +39,8 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +89,7 @@ export class CsrAddComponent {
   summary: SummarySection[];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
@@ -143,7 +143,7 @@ export class CsrAddComponent {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.job('certificate.create', [payload])
+    this.api.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

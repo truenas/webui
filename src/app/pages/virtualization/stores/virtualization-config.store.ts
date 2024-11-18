@@ -5,8 +5,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Subscription, switchMap, tap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface VirtualizationConfigState {
   isLoading: boolean;
@@ -29,7 +29,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
   private configSubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);

@@ -11,9 +11,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ShowLogsDialogComponent {
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private download: DownloadService,
     private dialogService: DialogService,
@@ -42,7 +42,7 @@ export class ShowLogsDialogComponent {
   ) { }
 
   downloadLogs(): void {
-    this.ws.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(
+    this.api.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(
       switchMap((url) => this.download.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));

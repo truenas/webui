@@ -20,9 +20,9 @@ import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ShellService } from 'app/services/shell.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -76,7 +76,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
                   Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private shellService: ShellService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -187,7 +187,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
     if (size) {
-      this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.api.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
         this.xterm.focus();
       });
     }
@@ -196,7 +196,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   initializeWebShell(): void {
-    this.shellService.connect(this.conf.connectionData, this.token);
+    this.shellService.connect(this.token, this.conf.connectionData);
 
     this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
@@ -212,7 +212,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    this.shellService.connect(this.conf.connectionData, this.token);
+    this.shellService.connect(this.token, this.conf.connectionData);
   }
 
   onFontSizeChanged(newSize: number): void {

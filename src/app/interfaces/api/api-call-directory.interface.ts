@@ -1,4 +1,5 @@
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
@@ -36,12 +37,7 @@ import { AuditConfig, AuditEntry, AuditQueryParams } from 'app/interfaces/audit/
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { LoginExOtpTokenQuery, LoginExQuery, LoginExResponse } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import {
-  Bootenv,
-  CreateBootenvParams,
-  SetBootenvAttributeParams,
-  UpdateBootenvParams,
-} from 'app/interfaces/bootenv.interface';
+import { BootenvCloneParams, BootEnvironment, BootenvKeepParams } from 'app/interfaces/boot-environment.interface';
 import {
   CatalogConfig, CatalogApp,
   CatalogUpdate, GetItemDetailsParams,
@@ -188,6 +184,7 @@ import {
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
@@ -349,12 +346,12 @@ export interface ApiCallDirectory {
   'boot.get_state': { params: void; response: PoolInstance };
   'boot.set_scrub_interval': { params: [number]; response: number };
 
-  // Bootenv
-  'bootenv.activate': { params: [string]; response: boolean };
-  'bootenv.create': { params: CreateBootenvParams; response: string };
-  'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
-  'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
-  'bootenv.update': { params: UpdateBootenvParams; response: string };
+  // Boot Environment
+  'boot.environment.query': { params: QueryParams<BootEnvironment>; response: BootEnvironment[] };
+  'boot.environment.activate': { params: [{ id: string }]; response: unknown };
+  'boot.environment.destroy': { params: [{ id: string }]; response: unknown };
+  'boot.environment.clone': { params: BootenvCloneParams; response: unknown };
+  'boot.environment.keep': { params: BootenvKeepParams; response: unknown };
 
   // Catalog
   'catalog.get_app_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
@@ -384,6 +381,7 @@ export interface ApiCallDirectory {
   'cloud_backup.delete': { params: [id: number]; response: boolean };
   'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
   'cloud_backup.list_snapshot_directory': { params: CloudBackupSnapshotDirectoryParams; response: CloudBackupSnapshotDirectoryListing[] };
+  'cloud_backup.transfer_setting_choices': { params: void; response: CloudsyncTransferSetting[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
   'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
 
@@ -445,11 +443,11 @@ export interface ApiCallDirectory {
   'failover.get_ips': { params: void; response: string[] };
   'failover.licensed': { params: void; response: boolean };
   'failover.node': { params: void; response: string };
+  'failover.reboot.info': { params: void; response: FailoverRebootInfo };
   'failover.status': { params: void; response: FailoverStatus };
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
-  'failover.upgrade_pending': { params: void; response: boolean };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
@@ -784,6 +782,7 @@ export interface ApiCallDirectory {
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
+  'system.reboot.info': { params: void; response: SystemRebootInfo };
 
   // Systemdataset
   'systemdataset.config': { params: void; response: SystemDatasetConfig };

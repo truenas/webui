@@ -26,8 +26,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   constructor(
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -86,7 +86,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   getSnapshotInfo(): void {
-    this.ws.call(
+    this.api.call(
       'zfs.snapshot.query',
       [
         [['id', '=', this.snapshot.name]], {
@@ -118,7 +118,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   doHoldOrRelease(): void {
     const holdOrRelease = this.holdControl.value ? 'zfs.snapshot.hold' : 'zfs.snapshot.release';
-    this.ws.call(holdOrRelease, [this.snapshotInfo.name])
+    this.api.call(holdOrRelease, [this.snapshotInfo.name])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         error: (error: unknown) => {
@@ -144,7 +144,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
+        return this.api.call('zfs.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => {

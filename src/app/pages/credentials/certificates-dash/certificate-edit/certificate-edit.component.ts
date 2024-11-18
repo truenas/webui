@@ -33,8 +33,8 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -79,7 +79,7 @@ export class CertificateEditComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private slideInService: SlideInService,
     private slideInRef: SlideInRef<CertificateEditComponent>,
@@ -141,7 +141,7 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.job('certificate.update', [this.certificate.id, this.form.value])
+    this.api.job('certificate.update', [this.certificate.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

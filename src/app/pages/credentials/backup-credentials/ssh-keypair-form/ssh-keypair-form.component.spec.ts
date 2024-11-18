@@ -6,8 +6,8 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import {
@@ -18,13 +18,13 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const fakeSshKeyPair = {
     id: 23,
     name: 'existing key',
@@ -40,7 +40,7 @@ describe('SshKeypairFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('keychaincredential.generate_ssh_key_pair', {
           private_key: 'Generated private key',
           public_key: 'Generated public key',
@@ -61,7 +61,7 @@ describe('SshKeypairFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -75,7 +75,7 @@ describe('SshKeypairFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('keychaincredential.create', [{
+      expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
         name: 'new',
         type: KeychainCredentialType.SshKeyPair,
         attributes: {
@@ -93,7 +93,7 @@ describe('SshKeypairFormComponent', () => {
         const form = await loader.getHarness(IxFormHarness);
         const values = await form.getValues();
 
-        expect(ws.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
+        expect(api.call).toHaveBeenLastCalledWith('keychaincredential.generate_ssh_key_pair');
         expect(values).toMatchObject({
           'Private Key': 'Generated private key',
           'Public Key': 'Generated public key',
@@ -144,7 +144,7 @@ describe('SshKeypairFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       spectator.component.setKeypairForEditing();
     });
 
@@ -170,7 +170,7 @@ describe('SshKeypairFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('keychaincredential.update', [
+      expect(api.call).toHaveBeenCalledWith('keychaincredential.update', [
         23,
         {
           name: 'new',

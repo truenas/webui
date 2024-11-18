@@ -16,8 +16,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,7 @@ export class EmailCardComponent {
 
   constructor(
     private slideInService: SlideInService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 

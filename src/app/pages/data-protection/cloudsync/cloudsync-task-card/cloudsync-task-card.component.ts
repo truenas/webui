@@ -42,10 +42,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -158,7 +158,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private slideIn: ChainedSlideInService,
     private cdr: ChangeDetectorRef,
@@ -170,7 +170,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
+    const cloudSyncTasks$ = this.api.call('cloudsync.query').pipe(
       map((cloudSyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
       untilDestroyed(this),
@@ -191,7 +191,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cloudsync.delete', [cloudsyncTask.id])),
+      switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -232,7 +232,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
-      switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
+      switchMap(() => this.api.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
@@ -261,7 +261,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('cloudsync.abort', [row.id]).pipe(
+          return this.api.call('cloudsync.abort', [row.id]).pipe(
             this.errorHandler.catchError(),
           );
         }),
@@ -281,7 +281,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
+      switchMap(() => this.api.job('cloudsync.sync', [row.id, { dry_run: true }])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
@@ -337,7 +337,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(cloudsyncTask: CloudSyncTaskUi): void {
-    this.ws
+    this.api
       .call('cloudsync.update', [cloudsyncTask.id, { enabled: !cloudsyncTask.enabled } as CloudSyncTaskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({

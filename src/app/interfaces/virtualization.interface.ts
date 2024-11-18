@@ -1,3 +1,4 @@
+import { FormControl, FormGroup } from '@angular/forms';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import {
   VirtualizationDeviceType,
@@ -59,6 +60,7 @@ export type VirtualizationDevice =
 
 export interface VirtualizationDisk {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Disk;
   readonly: boolean;
   source: string | null;
@@ -67,6 +69,7 @@ export interface VirtualizationDisk {
 
 export interface VirtualizationGpu {
   name: string;
+  description: string;
   readonly: boolean;
   dev_type: VirtualizationDeviceType.Gpu;
   gpu_type: VirtualizationGpuType;
@@ -83,6 +86,7 @@ export interface VirtualizationGpu {
 
 export interface VirtualizationProxy {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Proxy;
   readonly: boolean;
   source_proto: VirtualizationProxyProtocol;
@@ -93,6 +97,7 @@ export interface VirtualizationProxy {
 
 export interface VirtualizationNic {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Nic;
   readonly: boolean;
   network: string;
@@ -100,6 +105,7 @@ export interface VirtualizationNic {
 
 export interface VirtualizationTpm {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Tpm;
   readonly: boolean;
   path: string;
@@ -108,6 +114,7 @@ export interface VirtualizationTpm {
 
 export interface VirtualizationUsb {
   name: string;
+  description: string;
   dev_type: VirtualizationDeviceType.Usb;
   readonly: boolean;
   bus: number;
@@ -178,3 +185,8 @@ export interface AvailableUsb {
   product: string;
   manufacturer: string;
 }
+
+export type InstanceEnvVariablesFormGroup = FormGroup<{
+  name: FormControl<string>;
+  value: FormControl<string>;
+}>;

@@ -11,8 +11,8 @@ import { DockerStatus } from 'app/enums/docker-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface DockerConfigState {
   isLoading: boolean;
@@ -49,7 +49,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   readonly statusDescription$ = this.select((state) => state.statusData.description);
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
@@ -80,20 +80,20 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   });
 
   private getDockerConfig(): Observable<DockerConfig> {
-    return this.ws.call('docker.config');
+    return this.api.call('docker.config');
   }
 
   private getDockerNvidiaStatus(): Observable<DockerNvidiaStatus> {
-    return this.ws.call('docker.nvidia_status').pipe(map(({ status }) => status));
+    return this.api.call('docker.nvidia_status').pipe(map(({ status }) => status));
   }
 
   private getDockerStatus(): Observable<DockerStatusData> {
-    return this.ws.call('docker.status');
+    return this.api.call('docker.status');
   }
 
   setDockerPool(poolName: string): Observable<Job<DockerConfig>> {
     return this.dialogService.jobDialog(
-      this.ws.job('docker.update', [{ pool: poolName }]),
+      this.api.job('docker.update', [{ pool: poolName }]),
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()
@@ -118,7 +118,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
 
   setDockerNvidia(nvidiaDriversInstalled: boolean): Observable<Job<DockerConfig>> {
     return this.dialogService.jobDialog(
-      this.ws.job('docker.update', [{ nvidia: nvidiaDriversInstalled }]),
+      this.api.job('docker.update', [{ nvidia: nvidiaDriversInstalled }]),
       { title: this.translate.instant('Configuring...') },
     )
       .afterClosed()
@@ -138,7 +138,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
    * stay alive until the component subscription stays alive i.e., until the component is destroyed
    */
   dockerStatusEventUpdates(): Observable<DockerStatusData> {
-    return this.ws.subscribe('docker.state').pipe(
+    return this.api.subscribe('docker.state').pipe(
       map((event) => event.fields),
       tap((statusData) => {
         this.patchState({ statusData });
@@ -147,7 +147,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   }
 
   dockerConfigEventUpdates(): Observable<DockerConfig> {
-    return this.ws.subscribe('core.get_jobs')
+    return this.api.subscribe('core.get_jobs')
       .pipe(
         filter((event) => event.fields.method === 'docker.update' && !!event.fields.result),
         map((event) => event.fields.result),

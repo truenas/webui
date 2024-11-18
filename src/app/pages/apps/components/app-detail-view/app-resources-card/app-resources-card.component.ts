@@ -11,7 +11,7 @@ import { map, throttleTime } from 'rxjs';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -32,11 +32,11 @@ export class AppResourcesCardComponent implements OnInit {
   readonly cpuPercentage = signal(0);
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
-  readonly availableSpace$ = this.ws.call('app.available_space');
+  readonly availableSpace$ = this.api.call('app.available_space');
   readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private dockerStore: DockerStore,
   ) {}
 
@@ -45,7 +45,7 @@ export class AppResourcesCardComponent implements OnInit {
   }
 
   getResourcesUsageUpdates(): void {
-    this.ws.subscribe('reporting.realtime').pipe(
+    this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields),
       throttleTime(2000),
       untilDestroyed(this),

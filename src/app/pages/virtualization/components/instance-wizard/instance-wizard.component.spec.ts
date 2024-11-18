@@ -13,7 +13,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   VirtualizationDeviceType,
   VirtualizationProxyProtocol,
@@ -29,8 +29,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
@@ -45,7 +46,8 @@ describe('InstanceWizardComponent', () => {
     providers: [
       mockProvider(AuthService, { hasRole: () => of(true) }),
       mockProvider(Router),
-      mockWebSocket([
+      mockProvider(FilesystemService),
+      mockApi([
         mockCall('virt.instance.query', [{
           id: 'test',
           name: 'test',
@@ -100,7 +102,7 @@ describe('InstanceWizardComponent', () => {
   });
 
   it('opens SelectImageDialogComponent when Browse image button is pressed and show image label when image is selected', async () => {
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
     await browseButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
@@ -109,7 +111,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  it('creates new instance with selected devices when form is submitted', async () => {
+  it('creates new instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
       Autostart: true,
@@ -117,14 +119,16 @@ describe('InstanceWizardComponent', () => {
       'Memory Size': '1 GiB',
     });
 
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse' }));
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
     await browseButton.click();
 
-    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
-    await usbDeviceCheckbox.setValue(true);
-
-    const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-    await gpuDeviceCheckbox.setValue(true);
+    const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+    await diskList.pressAddButton();
+    const diskForm = await diskList.getLastListItem();
+    await diskForm.fillForm({
+      Source: '/mnt/source',
+      Destination: 'destination',
+    });
 
     const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
     await proxiesList.pressAddButton();
@@ -136,16 +140,25 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller' }));
+    await usbDeviceCheckbox.setValue(true);
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('virt.instance.create', [{
+    const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    await gpuDeviceCheckbox.setValue(true);
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+    await createButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
       name: 'new',
       autostart: true,
       cpu: '1-2',
       devices: [
-        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
+        {
+          dev_type: VirtualizationDeviceType.Disk,
+          source: '/mnt/source',
+          destination: 'destination',
+        },
         {
           dev_type: VirtualizationDeviceType.Proxy,
           source_port: 3000,
@@ -153,9 +166,12 @@ describe('InstanceWizardComponent', () => {
           dest_port: 2000,
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
+        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
+      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

@@ -30,11 +30,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -96,7 +96,7 @@ export class NetworkComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private router: Router,
     private dialogService: DialogService,
     private loader: AppLoaderService,
@@ -190,19 +190,19 @@ export class NetworkComponent implements OnInit {
 
   private getCheckInWaitingSeconds(): Promise<number> {
     return lastValueFrom(
-      this.ws.call('interface.checkin_waiting'),
+      this.api.call('interface.checkin_waiting'),
     );
   }
 
   private getPendingChanges(): Promise<boolean> {
     return lastValueFrom(
-      this.ws.call('interface.has_pending_changes'),
+      this.api.call('interface.has_pending_changes'),
     );
   }
 
   private async cancelCommit(): Promise<void> {
     await lastValueFrom(
-      this.ws.call('interface.cancel_rollback'),
+      this.api.call('interface.cancel_rollback'),
     );
   }
 
@@ -242,7 +242,7 @@ export class NetworkComponent implements OnInit {
   }
 
   commitPendingChanges(): void {
-    this.ws
+    this.api
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
@@ -281,7 +281,7 @@ export class NetworkComponent implements OnInit {
               return;
             }
 
-            this.ws
+            this.api
               .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
               .pipe(
                 this.loader.withLoader(),
@@ -331,7 +331,7 @@ export class NetworkComponent implements OnInit {
   }
 
   finishCheckin(): void {
-    this.ws
+    this.api
       .call('interface.checkin')
       .pipe(
         this.loader.withLoader(),
@@ -366,7 +366,7 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        this.ws
+        this.api
           .call('interface.rollback')
           .pipe(
             this.loader.withLoader(),
@@ -396,7 +396,7 @@ export class NetworkComponent implements OnInit {
       return;
     }
 
-    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.api.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

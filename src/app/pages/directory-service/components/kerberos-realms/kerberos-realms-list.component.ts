@@ -34,9 +34,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -113,7 +113,7 @@ export class KerberosRealmsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('kerberos.realm.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.realm.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -134,7 +134,7 @@ export class KerberosRealmsListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
@@ -142,7 +142,7 @@ export class KerberosRealmsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const kerberosRealsm$ = this.ws.call('kerberos.realm.query').pipe(
+    const kerberosRealsm$ = this.api.call('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {

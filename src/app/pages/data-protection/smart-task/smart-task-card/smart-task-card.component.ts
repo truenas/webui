@@ -32,11 +32,11 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -113,7 +113,7 @@ export class SmartTaskCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     private storageService: StorageService,
@@ -125,7 +125,7 @@ export class SmartTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const smartTasks$ = this.ws.call('smart.test.query').pipe(
+    const smartTasks$ = this.api.call('smart.test.query').pipe(
       map((smartTasks: SmartTestTaskUi[]) => this.transformSmartTasks(smartTasks)),
       tap((smartTasks) => this.smartTasks = smartTasks),
       untilDestroyed(this),
@@ -154,7 +154,7 @@ export class SmartTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('smart.test.delete', [smartTask.id])),
+      switchMap(() => this.api.call('smart.test.delete', [smartTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

@@ -6,19 +6,19 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: ApiService;
 
   function createComponentWithData(device: VmDevice): SpectatorFactory<DeviceDeleteModalComponent> {
     return createComponentFactory({
@@ -27,7 +27,7 @@ describe('DeviceDeleteModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebSocket([
+        mockApi([
           mockCall('vm.device.delete'),
         ]),
         mockProvider(DialogService),
@@ -43,8 +43,10 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for disk', () => {
     const fakeDisk = {
       id: 4,
-      dtype: VmDeviceType.Disk,
-      attributes: { path: '/path/to/zvol123' },
+      attributes: {
+        dtype: VmDeviceType.Disk,
+        path: '/path/to/zvol123',
+      },
     } as VmDiskDevice;
 
     const createComponent = createComponentWithData(fakeDisk);
@@ -52,7 +54,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -101,7 +103,9 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for raw file', () => {
     const fakeRawFile = {
       id: 5,
-      dtype: VmDeviceType.Raw,
+      attributes: {
+        dtype: VmDeviceType.Raw,
+      },
     } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
@@ -109,7 +113,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {
@@ -174,7 +178,9 @@ describe('DeviceDeleteModalComponent', () => {
   describe('for other device', () => {
     const fakeRawFile = {
       id: 6,
-      dtype: undefined,
+      attributes: {
+        dtype: undefined,
+      },
     } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
@@ -182,7 +188,7 @@ describe('DeviceDeleteModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      ws = spectator.inject(ApiService);
     });
 
     afterEach(() => {

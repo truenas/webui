@@ -63,8 +63,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {
@@ -200,7 +200,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
@@ -487,7 +487,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     ]);
 
     return this.dialogService.jobDialog(
-      this.ws.job('core.bulk', ['app.delete', bulkDeletePayload]),
+      this.api.job('core.bulk', ['app.delete', bulkDeletePayload]),
       { title: helptextApps.apps.delete_dialog.job },
     ).afterClosed();
   }

@@ -6,8 +6,8 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -21,8 +21,8 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;
@@ -31,15 +31,19 @@ describe('DeviceListComponent', () => {
   const devices = [
     {
       id: 1,
-      dtype: VmDeviceType.Cdrom,
       order: 1001,
       vm: 4,
+      attributes: {
+        dtype: VmDeviceType.Cdrom,
+      },
     },
     {
       id: 2,
-      dtype: VmDeviceType.Disk,
       order: 1002,
       vm: 4,
+      attributes: {
+        dtype: VmDeviceType.Disk,
+      },
     },
   ] as VmDevice[];
 
@@ -55,7 +59,7 @@ describe('DeviceListComponent', () => {
       pk: 76,
     },
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('vm.device.query', devices),
       ]),
       mockAuth(),
@@ -79,7 +83,7 @@ describe('DeviceListComponent', () => {
   });
 
   it('loads devices using virtual machine id from url', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 76]]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.device.query', [[['vm', '=', 76]]]);
   });
 
   it('shows devices in a table', async () => {

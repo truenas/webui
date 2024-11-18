@@ -38,10 +38,10 @@ import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap
 import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -129,7 +129,7 @@ export class IdmapListComponent implements OnInit {
               hideCheckbox: true,
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('idmap.delete', [row.id])),
+              switchMap(() => this.api.call('idmap.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -150,7 +150,7 @@ export class IdmapListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected idmapService: IdmapService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -159,15 +159,15 @@ export class IdmapListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const idmapsRows$ = this.ws.call('directoryservices.get_state').pipe(
+    const idmapsRows$ = this.api.call('directoryservices.get_state').pipe(
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
+          return this.api.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
         }
         if (state.activedirectory !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
+          return this.api.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
         }
-        return this.ws.call('idmap.query');
+        return this.api.call('idmap.query');
       }),
       map((idmaps) => {
         const transformed = [...idmaps] as IdmapRow[];

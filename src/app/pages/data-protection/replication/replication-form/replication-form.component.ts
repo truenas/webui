@@ -14,10 +14,10 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -43,12 +43,12 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +96,7 @@ export class ReplicationFormComponent implements OnInit {
   protected existingReplication: ReplicationTask;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
@@ -167,8 +167,8 @@ export class ReplicationFormComponent implements OnInit {
     const payload = this.getPayload();
 
     const operation$ = this.isNew
-      ? this.ws.call('replication.create', [payload])
-      : this.ws.call('replication.update', [this.existingReplication.id, payload]);
+      ? this.api.call('replication.create', [payload])
+      : this.api.call('replication.update', [this.existingReplication.id, payload]);
 
     this.isLoading = true;
     operation$
@@ -257,7 +257,7 @@ export class ReplicationFormComponent implements OnInit {
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
         }
         return of({ eligible: 0, total: 0 });
       }),
@@ -276,7 +276,7 @@ export class ReplicationFormComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.isEligibleSnapshotsMessageRed = true;
         this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
         if ('reason' in error) {

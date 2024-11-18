@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Input, output,
@@ -36,7 +35,6 @@ export const maxFileSizeBytes = 5 * MiB;
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     ReactiveFormsModule,
     IxStarRatingComponent,

@@ -22,7 +22,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +72,7 @@ export class StaticRouteFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -97,9 +97,9 @@ export class StaticRouteFormComponent implements OnInit {
 
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('staticroute.create', [values]);
+      request$ = this.api.call('staticroute.create', [values]);
     } else {
-      request$ = this.ws.call('staticroute.update', [
+      request$ = this.api.call('staticroute.update', [
         this.editingRoute.id,
         values,
       ]);

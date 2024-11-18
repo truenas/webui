@@ -1,5 +1,4 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, inject, signal,
 } from '@angular/core';
@@ -23,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     FormActionsComponent,
     MatDialogActions,

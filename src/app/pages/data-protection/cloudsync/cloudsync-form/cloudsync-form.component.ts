@@ -25,12 +25,12 @@ import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -56,9 +56,9 @@ import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cl
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const customOptionValue = -1;
 
@@ -213,7 +213,7 @@ export class CloudSyncFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -418,7 +418,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.isLoading = false;
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();
@@ -463,7 +463,7 @@ export class CloudSyncFormComponent implements OnInit {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.api.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
@@ -704,7 +704,7 @@ export class CloudSyncFormComponent implements OnInit {
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
     this.dialog.jobDialog(
-      this.ws.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
+      this.api.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
       { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
     )
       .afterClosed()
@@ -721,9 +721,9 @@ export class CloudSyncFormComponent implements OnInit {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('cloudsync.create', [payload]);
+      request$ = this.api.call('cloudsync.create', [payload]);
     } else {
-      request$ = this.ws.call('cloudsync.update', [this.editingTask.id, payload]);
+      request$ = this.api.call('cloudsync.update', [this.editingTask.id, payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -1,17 +1,17 @@
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
+import { ApiService } from 'app/services/api.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;
-  let websocket: SpyObject<WebSocketService>;
+  let websocket: SpyObject<ApiService>;
 
   const radeon = {
     addr: {
@@ -61,7 +61,7 @@ describe('VmGpuService', () => {
           arc,
         ] as Device[]),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.delete'),
       ]),
@@ -73,8 +73,8 @@ describe('VmGpuService', () => {
     devices: [
       {
         id: 13,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_02_00_0',
         },
         vm: 2,
@@ -84,7 +84,7 @@ describe('VmGpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
   });
 
   describe('updateVmGpus', () => {
@@ -94,8 +94,8 @@ describe('VmGpuService', () => {
       expect(websocket.call).toHaveBeenCalledTimes(1);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_01_00_0',
         },
       }]);
@@ -115,15 +115,15 @@ describe('VmGpuService', () => {
       expect(websocket.call).toHaveBeenCalledWith('vm.device.delete', [13]);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_01_00_0',
         },
       }]);
       expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
-        dtype: VmDeviceType.Pci,
         attributes: {
+          dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_03_00_0',
         },
       }]);

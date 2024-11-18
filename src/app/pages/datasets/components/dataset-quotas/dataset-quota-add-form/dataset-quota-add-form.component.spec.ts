@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
@@ -13,14 +13,14 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaAddFormComponent,
@@ -28,7 +28,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(UserService, {
@@ -59,7 +59,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -77,7 +77,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
           { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
@@ -101,7 +101,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -116,7 +116,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
           { id: 'sys', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },

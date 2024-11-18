@@ -5,7 +5,6 @@ import {
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -43,9 +42,9 @@ import {
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -63,7 +62,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     MatCardContent,
     SysInfoComponent,
     RequiresRolesDirective,
-    MatCheckbox,
     TestDirective,
     ReactiveFormsModule,
     FormsModule,
@@ -96,7 +94,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected ws: ApiService,
     private loader: AppLoaderService,
     private dialog: DialogService,
     private matDialog: MatDialog,

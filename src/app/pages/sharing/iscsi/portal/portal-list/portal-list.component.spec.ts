@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -21,8 +21,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { PortalListComponent } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const portals: IscsiPortal[] = [
   {
@@ -52,7 +52,7 @@ describe('PortalListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.portal.query', portals),
         mockCall('iscsi.portal.delete'),
         mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
@@ -103,7 +103,7 @@ describe('PortalListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.portal.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.portal.delete', [1]);
   });
 
   it('should show table rows', async () => {

@@ -1,0 +1,40 @@
+@if (isLoadingDevices()) {
+  <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
+} @else if (hasDevicesToAdd()) {
+  <button
+    mat-button
+    ixTest="add-device"
+    [disabled]=""
+    [matMenuTriggerFor]="addDeviceMenu"
+  >
+    {{ 'Add' | translate }}
+  </button>
+
+  <mat-menu #addDeviceMenu="matMenu">
+    @if (availableUsbDevices().length) {
+      <h4 class="menu-header">{{ 'USB Devices' | translate }}</h4>
+      @for (usb of availableUsbDevices(); track usb.product_id) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-usb-device', usb.product]"
+          (click)="addUsb(usb)"
+        >
+          {{ usb.product }}
+        </button>
+      }
+    }
+
+    @if (availableGpuDevices().length) {
+      <h4 class="menu-header">{{ 'GPUs' | translate }}</h4>
+      @for (gpu of availableGpuDevices(); track gpu) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-gpu-device', gpu.description]"
+          (click)="addGpu(gpu)"
+        >
+          {{ gpu.description }}
+        </button>
+      }
+    }
+  </mat-menu>
+}

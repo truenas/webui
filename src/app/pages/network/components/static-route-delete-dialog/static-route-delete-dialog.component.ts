@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
@@ -16,8 +15,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +26,6 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     FormActionsComponent,
     MatDialogActions,
@@ -45,7 +43,7 @@ export class StaticRouteDeleteDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<StaticRouteDeleteDialogComponent>,
@@ -54,7 +52,7 @@ export class StaticRouteDeleteDialogComponent {
   ) { }
 
   onDelete(): void {
-    this.ws.call('staticroute.delete', [this.route.id])
+    this.api.call('staticroute.delete', [this.route.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

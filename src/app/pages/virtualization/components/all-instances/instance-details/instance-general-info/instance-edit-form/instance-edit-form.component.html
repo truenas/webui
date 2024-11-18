@@ -1,0 +1,71 @@
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading()"></ix-modal-header>
+
+<div class="container">
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset [title]="'Instance Configuration' | translate">
+      <ix-checkbox
+        formControlName="autostart"
+        [label]="'Autostart' | translate"
+      ></ix-checkbox>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'CPU & Memory' | translate">
+      <ix-input
+        formControlName="cpu"
+        [required]="true"
+        [label]="'CPU Configuration' | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="memory"
+        [required]="true"
+        [label]="'Memory Size' | translate"
+        [format]="formatter.memorySizeFormatting"
+        [parse]="formatter.memorySizeParsing"
+      ></ix-input>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Environment' | translate">
+      <ix-list
+        formArrayName="environmentVariables"
+        [empty]="form.controls.environmentVariables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable' | translate"
+            (delete)="removeEnvironmentVariable(i)"
+          >
+            <div class="environment-variable">
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="value"
+                [label]="'Value' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    <div class="actions">
+      <button
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="save"
+        [disabled]="form.invalid || isLoading()"
+      >
+        {{ 'Save' | translate }}
+      </button>
+    </div>
+  </form>
+</div>

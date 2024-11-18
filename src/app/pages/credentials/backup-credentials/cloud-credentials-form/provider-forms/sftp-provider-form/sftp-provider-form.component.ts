@@ -16,7 +16,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 const newOption = 'NEW';
 
@@ -56,7 +56,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   override readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -76,7 +76,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   private loadPrivateKeys(): void {
-    this.privateKeys$ = this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]])
+    this.privateKeys$ = this.api.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]])
       .pipe(
         idNameArrayToOptions(),
         map((options) => {
@@ -92,7 +92,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
   }
 
   private makeNewKeypair(): Observable<unknown> {
-    return this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(
+    return this.api.call('keychaincredential.generate_ssh_key_pair').pipe(
       switchMap((keypair) => {
         const createCredential = {
           name: this.translate.instant('{key} Key', {
@@ -102,7 +102,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
           attributes: keypair,
         };
 
-        return this.ws.call('keychaincredential.create', [createCredential]).pipe(
+        return this.api.call('keychaincredential.create', [createCredential]).pipe(
           tap((createdKey) => {
             this.loadPrivateKeys();
             this.form.patchValue({

@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
@@ -16,8 +15,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +27,6 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     ReactiveFormsModule,
@@ -47,7 +45,7 @@ export class CloneVmDialogComponent {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
     private dialogRef: MatDialogRef<CloneVmDialogComponent>,

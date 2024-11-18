@@ -17,8 +17,8 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class ChangePasswordDialogComponent {
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private authService: AuthService,
     private loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
@@ -80,7 +80,7 @@ export class ChangePasswordDialogComponent {
   }
 
   onSubmit(): void {
-    this.ws.call('user.set_password', [{
+    this.api.call('user.set_password', [{
       old_password: this.form.value.old_password,
       new_password: this.form.value.new_password,
       username: this.loggedInUser.pw_name,

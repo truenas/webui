@@ -6,8 +6,8 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -19,7 +19,7 @@ import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
@@ -37,7 +37,7 @@ describe('AvailableAppsHeaderComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('app.query', [{}, {}, {}] as App[]),
         mockJob('catalog.sync'),
       ]),
@@ -127,6 +127,6 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator.click(spectator.query(byText('Refresh Catalog')));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
   });
 });

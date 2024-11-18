@@ -39,9 +39,9 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
   name?: string;
@@ -214,7 +214,7 @@ export class ZvolFormComponent implements OnInit {
   readonly snapdevOptions$ = of(this.snapdevOptions);
   readonly encryptionTypeOptions$ = of(this.encryptionTypeOptions);
 
-  readonly algorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
+  readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
     map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
   );
 
@@ -222,7 +222,7 @@ export class ZvolFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
@@ -256,7 +256,7 @@ export class ZvolFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (parents) => {
         const parent = parents[0];
         if (parent.encrypted) {
@@ -285,7 +285,7 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId.pop();
           parentDatasetId = parentDatasetId.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
+          this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
             this.errorHandler.catchError(),
             untilDestroyed(this),
           ).subscribe({
@@ -626,7 +626,7 @@ export class ZvolFormComponent implements OnInit {
     delete data.encryption_type;
     delete data.algorithm;
 
-    this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
       error: (error: unknown) => {
         this.isLoading = false;
@@ -638,7 +638,7 @@ export class ZvolFormComponent implements OnInit {
 
   editSubmit(): void {
     this.isLoading = true;
-    this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
         const data: ZvolFormData = this.sendAsBasicOrAdvanced(this.form.value);
 
@@ -686,7 +686,7 @@ export class ZvolFormComponent implements OnInit {
         }
 
         if (!data.volsize || data.volsize >= roundedVolSize) {
-          this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
+          this.api.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error: unknown) => {
               this.isLoading = false;
@@ -721,7 +721,7 @@ export class ZvolFormComponent implements OnInit {
 
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+    this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((recommendedSize) => {

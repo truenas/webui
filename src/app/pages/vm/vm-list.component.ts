@@ -19,6 +19,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -46,10 +47,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -182,7 +183,7 @@ export class VmListComponent implements OnInit {
     private slideInService: SlideInService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     private vmService: VmService,
     private fileSizePipe: FileSizePipe,
@@ -228,7 +229,7 @@ export class VmListComponent implements OnInit {
     if (!vm.display_available) {
       return this.translate.instant('N/A');
     }
-    const devices = vm.devices;
+    const devices = vm.devices as VmDisplayDevice[];
     if (!devices || devices.length === 0) {
       return false;
     }
@@ -236,7 +237,7 @@ export class VmListComponent implements OnInit {
       return false;
     }
     for (const device of devices) {
-      if (devices && device.dtype === VmDeviceType.Display) {
+      if (devices && device.attributes.dtype === VmDeviceType.Display) {
         return device.attributes.port;
       }
     }

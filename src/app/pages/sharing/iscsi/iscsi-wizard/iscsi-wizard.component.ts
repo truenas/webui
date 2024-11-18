@@ -51,9 +51,9 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { DeviceWizardStepComponent } from './steps/device-wizard-step/device-wizard-step.component';
@@ -234,7 +234,7 @@ export class IscsiWizardComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

@@ -1,17 +1,16 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardTitle, MatCardContent, MatCardActions,
 } from '@angular/material/card';
-import { MatListItemIcon, MatListItemLine } from '@angular/material/list';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -20,12 +19,11 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -42,9 +40,6 @@ import { WebSocketService } from 'app/services/ws.service';
     ReadOnlyComponent,
     MatCardContent,
     DualListBoxComponent,
-    IxIconComponent,
-    MatListItemIcon,
-    MatListItemLine,
     MatCardActions,
     RequiresRolesDirective,
     MatButton,
@@ -56,44 +51,38 @@ import { WebSocketService } from 'app/services/ws.service';
 export class GroupMembersComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
   protected readonly iconMarker = iconMarker;
+  protected selectedMembers: User[] = [];
+  protected readonly users = signal<User[]>([]);
 
-  selectedMembers: User[] = [];
-  users: User[] = [];
-
-  isFormLoading = false;
-  group: Group;
+  protected readonly isLoading = signal(false);
+  protected readonly group = signal<Group | null>(null);
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private cdr: ChangeDetectorRef,
     private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
+    this.isLoading.set(true);
     this.activatedRoute.params.pipe(
-      switchMap((params) => {
-        return this.ws.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]);
-      }),
-      switchMap((groups) => {
-        this.group = groups[0];
-        this.cdr.markForCheck();
-        return this.ws.call('user.query');
-      }),
+      switchMap((params) => forkJoin([
+        this.api.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]),
+        this.api.call('user.query', [[['local', '=', true]]]),
+      ])),
       untilDestroyed(this),
-    ).subscribe((users) => {
-      this.users = users;
-      this.selectedMembers = users.filter((user) => this.group.users.includes(user.id));
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
+    ).subscribe(([groups, users]) => {
+      this.group.set(groups[0]);
+      this.users.set(users);
+      this.selectedMembers = users.filter((user) => this.group().users.includes(user.id));
+      this.isLoading.set(false);
     });
   }
 
@@ -102,20 +91,18 @@ export class GroupMembersComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
-    this.cdr.markForCheck();
+    this.isLoading.set(true);
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [this.group.id, { users: userIds }]).pipe(
+    this.api.call('group.update', [this.group().id, { users: userIds }]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.isFormLoading = false;
+        this.isLoading.set(false);
         this.router.navigate(['/', 'credentials', 'groups']);
       },
       error: (error) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
+        this.isLoading.set(false);
         this.dialog.error(this.errorHandler.parseError(error));
       },
     });

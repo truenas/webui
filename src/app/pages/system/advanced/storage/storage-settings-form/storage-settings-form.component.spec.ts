@@ -5,10 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -24,14 +24,14 @@ import { selectServices } from 'app/store/services/services.selectors';
 describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebSocketService;
+  let ws: MockApiService;
   const createComponent = createComponentFactory({
     component: StorageSettingsFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
@@ -72,7 +72,7 @@ describe('StorageSettingsFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebSocketService);
+    ws = spectator.inject(MockApiService);
   });
 
   it('loads and shows current system dataset pool', async () => {

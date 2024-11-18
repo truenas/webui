@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -19,8 +18,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +31,6 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     EmptyComponent,
     FormActionsComponent,
@@ -54,7 +52,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -68,7 +66,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   onClear(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.clear').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;
@@ -97,7 +95,7 @@ export class IpmiEventsDialogComponent implements OnInit {
   private loadEvents(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('ipmi.sel.elist').pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         if (job.state !== JobState.Success) {
           return;

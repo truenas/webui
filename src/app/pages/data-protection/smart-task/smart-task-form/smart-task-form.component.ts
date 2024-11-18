@@ -32,7 +32,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -90,12 +90,12 @@ export class SmartTaskFormComponent implements OnInit {
     schedule: helptextSmart.smarttest_picker_tooltip,
   };
 
-  readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
+  readonly diskOptions$ = this.api.call('smart.test.disk_choices').pipe(choicesToOptions());
   readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -127,9 +127,9 @@ export class SmartTaskFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('smart.test.create', [values]);
+      request$ = this.api.call('smart.test.create', [values]);
     } else {
-      request$ = this.ws.call('smart.test.update', [
+      request$ = this.api.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);

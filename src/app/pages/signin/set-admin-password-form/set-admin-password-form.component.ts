@@ -11,13 +11,12 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const adminUsername = 'truenas_admin';
 
@@ -35,7 +34,6 @@ const adminUsername = 'truenas_admin';
     AsyncPipe,
     TranslateModule,
     IxInputComponent,
-    IxRadioGroupComponent,
     TestDirective,
   ],
 })
@@ -60,7 +58,7 @@ export class SetAdminPasswordFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private ws: ApiService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,

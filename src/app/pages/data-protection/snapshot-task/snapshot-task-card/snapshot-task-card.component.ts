@@ -32,10 +32,10 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -128,14 +128,14 @@ export class SnapshotTaskCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const snapshotTasks$ = this.ws.call('pool.snapshottask.query').pipe(
+    const snapshotTasks$ = this.api.call('pool.snapshottask.query').pipe(
       map((snapshotTasks) => snapshotTasks as PeriodicSnapshotTaskUi[]),
       untilDestroyed(this),
     );
@@ -155,7 +155,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -176,7 +176,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
-    this.ws
+    this.api
       .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))
       .subscribe({

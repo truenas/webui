@@ -23,8 +23,8 @@ import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/ap
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class AppDetailsHeaderComponent {
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private viewContainerRef: ViewContainerRef,
   ) { }
 
@@ -108,7 +108,7 @@ export class AppDetailsHeaderComponent {
             disableClose: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
+            switchMap(() => this.api.call('auth.set_attribute', ['appsAgreement', true])),
             switchMap(() => this.authService.refreshUser()),
           );
       }),

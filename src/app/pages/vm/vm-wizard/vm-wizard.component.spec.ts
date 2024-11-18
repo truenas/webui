@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
@@ -34,11 +34,11 @@ import {
 } from 'app/pages/vm/vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
@@ -67,7 +67,7 @@ describe('VmWizardComponent', () => {
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
         mockCall('vm.query', []),
         mockCall('vm.port_wizard', { port: 13669 } as VmPortWizardResult),
@@ -266,7 +266,7 @@ describe('VmWizardComponent', () => {
     const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await submit.click();
 
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
     expect(websocket.call).toHaveBeenCalledWith('vm.create', [{
       autostart: true,
       bootloader: VmBootloader.Uefi,
@@ -290,8 +290,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Nic,
       attributes: {
+        dtype: VmDeviceType.Nic,
         mac: '00:00:00:00:00:01',
         nic_attach: 'eno2',
         trust_guest_rx_filters: false,
@@ -300,8 +300,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         create_zvol: true,
         logical_sectorsize: null,
         physical_sectorsize: null,
@@ -312,14 +312,16 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Cdrom,
-      attributes: { path: '/mnt/iso/FreeNAS-11.3-U3.iso' },
+      attributes: {
+        dtype: VmDeviceType.Cdrom,
+        path: '/mnt/iso/FreeNAS-11.3-U3.iso',
+      },
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.port_wizard');
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
-      dtype: VmDeviceType.Display,
       vm: 4,
       attributes: {
+        dtype: VmDeviceType.Display,
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,

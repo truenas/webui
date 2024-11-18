@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -19,8 +18,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +30,6 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxCheckboxComponent,
     TestOverrideDirective,
@@ -55,7 +53,7 @@ export class DeleteUserDialogComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public user: User,
     private dialogRef: MatDialogRef<DeleteUserDialogComponent>,
@@ -69,7 +67,7 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.ws.call('user.delete', [this.user.id, { delete_group: this.deleteGroupCheckbox.value }])
+    this.api.call('user.delete', [this.user.id, { delete_group: this.deleteGroupCheckbox.value }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
@@ -82,7 +80,7 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   private checkIfLastGroupMember(): void {
-    this.ws.call('group.query', [[['id', '=', this.user.group.id]]])
+    this.api.call('group.query', [[['id', '=', this.user.group.id]]])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

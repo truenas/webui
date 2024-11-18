@@ -1,27 +1,21 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
-import { MatIconButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  EMPTY, Observable, switchMap, tap,
-} from 'rxjs';
-import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import {
+  AddDeviceMenuComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
+import {
+  DeleteDeviceButtonComponent,
+} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -36,10 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
-    MapValuePipe,
-    MatIconButton,
-    TestDirective,
-    IxIconComponent,
+    DeleteDeviceButtonComponent,
+    AddDeviceMenuComponent,
   ],
 })
 export class InstanceDevicesComponent {
@@ -53,51 +45,14 @@ export class InstanceDevicesComponent {
 
   constructor(
     private instanceStore: VirtualizationInstancesStore,
-    private dialog: DialogService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private ws: WebSocketService,
-    private loader: AppLoaderService,
-    private errorHandler: ErrorHandlerService,
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
-    const type = virtualizationDeviceTypeLabels.has(device.dev_type)
-      ? virtualizationDeviceTypeLabels.get(device.dev_type)
-      : device.dev_type;
+    // TODO: Add type back after https://ixsystems.atlassian.net/browse/NAS-132543
+    // const type = virtualizationDeviceTypeLabels.has(device.dev_type)
+    //   ? virtualizationDeviceTypeLabels.get(device.dev_type)
+    //   : device.dev_type;
 
-    // TODO: Get better names.
-    const description = device.name;
-
-    return `${type}: ${description}`;
-  }
-
-  protected deleteProxyPressed(device: VirtualizationDevice): void {
-    this.dialog.confirm({
-      message: this.translate.instant('Are you sure you want to delete this device?'),
-      title: this.translate.instant('Delete Device'),
-    })
-      .pipe(
-        switchMap((confirmed) => {
-          if (!confirmed) {
-            return EMPTY;
-          }
-
-          return this.deleteDevice(device);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe();
-  }
-
-  private deleteDevice(proxy: VirtualizationDevice): Observable<unknown> {
-    return this.ws.call('virt.instance.device_delete', [this.instanceStore.selectedInstance().id, proxy.name]).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.catchError(),
-      tap(() => {
-        this.snackbar.success(this.translate.instant('Device deleted'));
-        this.instanceStore.loadDevices();
-      }),
-    );
+    return device.description;
   }
 }

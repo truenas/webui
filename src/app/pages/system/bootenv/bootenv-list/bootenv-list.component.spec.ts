@@ -5,22 +5,22 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
+import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -36,8 +36,8 @@ describe('BootEnvironmentListComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockWebSocket([
-        mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
+      mockApi([
+        mockCall('boot.environment.query', fakeBootEnvironmentsDataSource),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -54,7 +54,7 @@ describe('BootEnvironmentListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 
@@ -62,20 +62,28 @@ describe('BootEnvironmentListComponent', () => {
     const cells = await table.getCellTexts();
 
     const expectedRows = [
-      ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-22 09:27:00', '384 KiB', 'No', ''],
+      ['', 'Name', 'Active', 'Date Created', 'Used Space', 'Keep', ''],
       [
         '',
-        '22.12-MASTER-20220808-020013',
-        'Now/Restart',
-        '2022-08-09 06:52:00',
-        '2.61 GiB',
+        '25.04.0-MASTER-20241105-224807',
+        'Now',
+        '2024-11-06 04:05:36',
+        '3.13 GiB',
+        'No',
+        '',
+      ],
+      [
+        '',
+        '25.04.0-MASTER-20241031-104807',
+        'No',
+        '2024-10-31 10:55:47',
+        '3.05 GiB',
         'No',
         '',
       ],
     ];
 
-    expect(websocket.call).toHaveBeenCalledWith('bootenv.query');
+    expect(websocket.call).toHaveBeenCalledWith('boot.environment.query');
     expect(cells).toEqual(expectedRows);
   });
 });

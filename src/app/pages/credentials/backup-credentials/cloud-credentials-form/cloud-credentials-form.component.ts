@@ -36,9 +36,9 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { ApiService } from 'app/services/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface CloudCredentialFormInput {
   providers: CloudSyncProviderName[];
@@ -90,7 +90,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -153,8 +153,8 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const payload = this.preparePayload();
           return this.isNew
-            ? this.ws.call('cloudsync.credentials.create', [payload])
-            : this.ws.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
+            ? this.api.call('cloudsync.credentials.create', [payload])
+            : this.api.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
         }),
         untilDestroyed(this),
       )
@@ -188,7 +188,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const { name, ...payload } = this.preparePayload();
 
-          return this.ws.call('cloudsync.credentials.verify', [payload]);
+          return this.api.call('cloudsync.credentials.verify', [payload]);
         }),
         untilDestroyed(this),
       )

@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private store: DatasetAclEditorStore,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   }
 
   // TODO: Move here and in other places to global store.
-  protected hasValidateAclCheckbox = toSignal(this.ws.call('directoryservices.get_state').pipe(
+  protected hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.get_state').pipe(
     map((state) => {
       return state.activedirectory !== DirectoryServiceState.Disabled
         || state.ldap !== DirectoryServiceState.Disabled;

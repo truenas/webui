@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -18,8 +17,8 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 export interface TruecommandSignupModalState {
   isConnected: boolean;
@@ -38,7 +37,6 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxInputComponent,
     IxCheckboxComponent,
@@ -71,7 +69,7 @@ export class TruecommandConnectModalComponent implements OnInit {
     private dialogRef: MatDialogRef<TruecommandConnectModalComponent, TruecommandSignupModalResult>,
     private fb: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {
@@ -102,7 +100,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       params.api_key = this.form.value.api_key;
     }
 
-    this.ws.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.loader.close();
         this.dialogRef.close();
@@ -133,7 +131,7 @@ export class TruecommandConnectModalComponent implements OnInit {
       }
 
       this.loader.open();
-      this.ws.call('truecommand.update', [{ api_key: null, enabled: false }])
+      this.api.call('truecommand.update', [{ api_key: null, enabled: false }])
         .pipe(untilDestroyed(this))
         .subscribe({
           next: () => {

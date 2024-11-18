@@ -11,7 +11,7 @@ import {
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -23,7 +23,7 @@ export class GpuService {
   private allGpus$: Observable<Device[]>;
 
   constructor(
-    private ws: WebSocketService,
+    private ws: ApiService,
     private store$: Store<AppState>,
   ) {}
 

@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('VirtualizationConfigStore', () => {
   let spectator: SpectatorService<VirtualizationConfigStore>;
@@ -20,7 +20,7 @@ describe('VirtualizationConfigStore', () => {
   const createService = createServiceFactory({
     service: VirtualizationConfigStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.global.config', config),
       ]),
     ],
@@ -40,7 +40,7 @@ describe('VirtualizationConfigStore', () => {
   it('should load config when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: false,
       config,

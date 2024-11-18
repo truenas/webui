@@ -23,8 +23,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class CloudSyncRestoreDialogComponent {
   ]);
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
@@ -82,7 +82,7 @@ export class CloudSyncRestoreDialogComponent {
   ) { }
 
   onSubmit(): void {
-    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
+    this.api.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {

@@ -1,8 +1,8 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/api.service';
 
 describe('VirtualizationInstancesStore', () => {
   let spectator: SpectatorService<VirtualizationInstancesStore>;
@@ -20,7 +20,7 @@ describe('VirtualizationInstancesStore', () => {
   const createService = createServiceFactory({
     service: VirtualizationInstancesStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('virt.instance.query', instances),
         mockCall('virt.instance.device_list', devices),
       ]),
@@ -44,7 +44,7 @@ describe('VirtualizationInstancesStore', () => {
   it('should load instances when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
       isLoading: false,
@@ -64,13 +64,21 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.service.loadDevices).toHaveBeenCalled();
   });
 
-  it('loadDevices - loads a list of devices for the selected instance', () => {
+  it('loadDevices – loads a list of devices for the selected instance', () => {
     spectator.service.initialize();
     spectator.service.selectInstance('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.service.selectedInstanceDevices()).toBe(devices);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
+  });
+
+  it('deviceDeleted – removes a device from list of devices for selected instance', () => {
+    spectator.service.initialize();
+    spectator.service.selectInstance('instance1');
+    spectator.service.deviceDeleted('device1');
+
+    expect(spectator.service.selectedInstanceDevices()).toEqual([devices[1]]);
   });
 
   describe('selectors', () => {

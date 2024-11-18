@@ -22,10 +22,9 @@ import {
   DatasetAclEditorState,
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
+import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
-import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const initialState: DatasetAclEditorState = {
   isLoading: false,
@@ -42,13 +41,12 @@ const initialState: DatasetAclEditorState = {
 })
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private router: Router,
     private translate: TranslateService,
     private storageService: StorageService,
-    private userService: UserService,
   ) {
     super(initialState);
   }
@@ -64,8 +62,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }),
       switchMap((mountpoint) => {
         return forkJoin([
-          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
-          this.ws.call('filesystem.stat', [mountpoint]),
+          this.api.call('filesystem.getacl', [mountpoint, true, true]),
+          this.api.call('filesystem.stat', [mountpoint]),
         ]).pipe(
           tap(([acl, stat]) => {
             this.patchState({
@@ -214,7 +212,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         });
       }),
       switchMap(() => {
-        return this.ws.call('filesystem.acltemplate.by_path', [{
+        return this.api.call('filesystem.acltemplate.by_path', [{
           path: this.get().mountpoint,
           'format-options': {
             resolve_names: true,
@@ -243,7 +241,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
   private makeSaveRequest(setAcl: SetAcl): Observable<Job> {
     return this.dialogService.jobDialog(
-      this.ws.job('filesystem.setacl', [setAcl]),
+      this.api.job('filesystem.setacl', [setAcl]),
       {
         title: this.translate.instant(helptextAcl.save_dialog.title),
         description: this.translate.instant(helptextAcl.save_dialog.message),
