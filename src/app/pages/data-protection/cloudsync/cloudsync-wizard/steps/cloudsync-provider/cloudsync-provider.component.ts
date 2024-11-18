@@ -74,7 +74,7 @@ export class CloudSyncProviderComponent implements OnInit {
   ) {}
 
   get areActionsDisabled(): boolean {
-    return this.form.invalid || !this.form.controls.exist_credential.value;
+    return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
   }
 
   ngOnInit(): void {
