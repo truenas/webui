@@ -16,8 +16,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
-import { ApiService } from 'app/services/api.service';
 import { UploadService } from 'app/services/upload.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetUnlockComponent', () => {
   let spectator: Spectator<DatasetUnlockComponent>;

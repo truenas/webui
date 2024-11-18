@@ -10,7 +10,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   InstanceProxyFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InstanceProxyFormComponent', () => {
   let spectator: Spectator<InstanceProxyFormComponent>;

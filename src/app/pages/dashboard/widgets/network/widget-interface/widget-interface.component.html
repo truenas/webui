@@ -16,10 +16,10 @@
       </div>
     }
 
-    <div [class]="['container', size()]">
+    <div *ixWithLoadingState="interface() as interface" [class]="['container', size()]">
       <div class="nic-info">
         <div class="info-header">
-          <h3 *ixWithLoadingState="interface() as interface" class="info-header-title">{{ interface.name }}</h3>
+          <h3 class="info-header-title">{{ interface.name }}</h3>
         </div>
         <div class="info-body">
           <div class="info-column primary">
@@ -70,7 +70,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Type' | translate }}:</span>
-                  <span>{{ interface().value.state.active_media_type }}</span>
+                  <span>{{ interface.state.active_media_type }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -78,7 +78,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Subtype' | translate }}:</span>
-                  <span>{{ interface().value.state.active_media_subtype }}</span>
+                  <span>{{ interface.state.active_media_subtype }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -86,7 +86,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'IP' | translate }}:</span>
-                  <span>{{ getIpAddress(interface().value) }}</span>
+                  <span>{{ getIpAddress(interface) }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>

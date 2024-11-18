@@ -50,9 +50,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -84,7 +84,7 @@ export class InstanceWizardComponent implements OnInit {
 
   usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
-      label: choice.product,
+      label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
     }))),
   );
@@ -103,7 +103,10 @@ export class InstanceWizardComponent implements OnInit {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    cpu: ['', [Validators.required, cpuValidator()]],
+    autostart: [false],
+    image: ['', Validators.required],
+    cpu: ['', [cpuValidator()]],
+    memory: [null as number],
     usb_devices: this.formBuilder.record<boolean>({}),
     gpu_devices: this.formBuilder.record<boolean>({}),
     proxies: this.formBuilder.array<FormGroup<{
@@ -116,10 +119,7 @@ export class InstanceWizardComponent implements OnInit {
       source: FormControl<string>;
       destination: FormControl<string>;
     }>>([]),
-    autostart: [false],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
-    memory: [null as number, Validators.required],
-    image: ['', Validators.required],
   });
 
   protected readonly visibleImageName = new FormControl('');
@@ -153,7 +153,7 @@ export class InstanceWizardComponent implements OnInit {
   protected onBrowseImages(): void {
     this.matDialog
       .open(SelectImageDialogComponent, {
-        minWidth: '80vw',
+        minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
         },

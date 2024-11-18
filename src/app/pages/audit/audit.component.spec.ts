@@ -16,8 +16,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
-import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 

@@ -40,13 +40,11 @@
     <ix-fieldset [title]="'CPU & Memory' | translate">
       <ix-input
         formControlName="cpu"
-        [required]="true"
         [label]="'CPU Configuration' | translate"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
-        [required]="true"
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
@@ -23,12 +22,11 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 @Injectable({
   providedIn: 'root',
 })
-export class Api2Service {
+export class ApiService {
   private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
-    protected router: Router,
     protected wsHandler: WebSocketHandlerService,
     protected translate: TranslateService,
   ) {

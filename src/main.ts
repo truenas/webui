@@ -7,7 +7,6 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/mater
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
-  Router,
   withPreloading,
   provideRouter,
   PreloadAllModules,
@@ -32,9 +31,9 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app/app.component';
@@ -111,12 +110,12 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: ApiService,
-      deps: [Router, WebSocketConnectionService, TranslateService],
-      useFactory: (router: Router, connection: WebSocketConnectionService, translate: TranslateService) => {
+      deps: [WebSocketHandlerService, TranslateService],
+      useFactory: (connection: WebSocketHandlerService, translate: TranslateService) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(router, connection, translate);
+          return new MockEnclosureApiService(connection, translate);
         }
-        return new ApiService(router, connection, translate);
+        return new ApiService(connection, translate);
       },
     },
     provideCharts(withDefaultRegisterables()),

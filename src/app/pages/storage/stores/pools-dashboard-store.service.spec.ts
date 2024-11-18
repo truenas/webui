@@ -13,8 +13,8 @@ import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/d
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/api.service';
 import { StorageService } from 'app/services/storage.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const temperatureAgg = {
   sda: { min: 10, max: 30, avg: 20 },

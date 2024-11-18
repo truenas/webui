@@ -16,10 +16,10 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
-import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;

@@ -11,8 +11,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { ConfigResetComponent } from 'app/pages/system-tasks/config-reset/config-reset.component';
-import { ApiService } from 'app/services/api.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('ConfigResetComponent', () => {
   let spectator: Spectator<ConfigResetComponent>;
@@ -30,7 +30,7 @@ describe('ConfigResetComponent', () => {
       ]),
       mockProvider(MatDialog),
       mockProvider(Location),
-      mockProvider(WebSocketConnectionService, {
+      mockProvider(WebSocketHandlerService, {
         isConnected$,
         prepareShutdown: jest.fn(),
       }),
@@ -61,7 +61,7 @@ describe('ConfigResetComponent', () => {
   it('resets config when user visits the page and waits for websocket to reconnect', fakeAsync(() => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('config.reset', [{ reboot: true }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketConnectionService).prepareShutdown).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketHandlerService).prepareShutdown).toHaveBeenCalled();
   }));
 
   it('takes user to sign-in page when new websocket connection is established after config reset', fakeAsync(() => {

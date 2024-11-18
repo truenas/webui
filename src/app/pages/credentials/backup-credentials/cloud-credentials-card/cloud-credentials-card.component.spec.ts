@@ -17,9 +17,9 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;

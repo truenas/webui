@@ -25,7 +25,7 @@ describe('InstanceDevicesComponent', () => {
       description: 'Matrox G200eW',
     },
     {
-      name: 'proxy2',
+      name: 'gpu1',
     } as VirtualizationProxy,
   ];
 

@@ -12,7 +12,7 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('GlobalConfigFormComponent', () => {
   let spectator: Spectator<GlobalConfigFormComponent>;

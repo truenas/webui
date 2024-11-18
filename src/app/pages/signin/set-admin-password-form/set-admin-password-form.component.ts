@@ -15,8 +15,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const adminUsername = 'truenas_admin';
 
