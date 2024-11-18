@@ -70,6 +70,7 @@ describe('ReplicationWizardComponent', () => {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({

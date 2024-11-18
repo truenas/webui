@@ -21,7 +21,11 @@ describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
   let ws: ApiService;
-  const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn() };
+  const componentRef: ChainedRef<unknown> = {
+    close: jest.fn(),
+    getData: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+  };
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [

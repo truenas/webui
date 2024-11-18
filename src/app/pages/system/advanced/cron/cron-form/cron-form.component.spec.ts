@@ -43,6 +43,7 @@ describe('CronFormComponent', () => {
   const componentRef: ChainedRef<Cronjob> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({

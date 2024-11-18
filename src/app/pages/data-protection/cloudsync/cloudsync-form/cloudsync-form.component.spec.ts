@@ -79,6 +79,7 @@ describe('CloudSyncFormComponent', () => {
   const getData = jest.fn(() => existingTask);
   const chainedComponentRef: ChainedRef<CloudSyncTaskUi> = {
     close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
     swap: jest.fn(),
   };
