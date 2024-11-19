@@ -97,9 +97,16 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     if (!this.element || !this.isSlideInOpen) {
       return;
     }
-    this.componentInfo.close$.next({ response: false, error: null });
-    this.componentInfo.close$.complete();
-    this.closeSlideIn();
+    this.canCloseSlideIn().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.componentInfo.close$.next({ response: false, error: null });
+        this.componentInfo.close$.complete();
+        this.closeSlideIn();
+      },
+    });
   }
 
   closeSlideIn(): void {
