@@ -60,7 +60,9 @@
     }
 
     .name {
-      margin-left: 40px;
+      @media (max-width: $breakpoint-tablet) {
+        margin-left: 40px;
+      }
     }
   }
 

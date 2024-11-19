@@ -128,13 +128,11 @@ export class InstanceListComponent {
   }
 
   closeMobileDetails(): void {
-    this.viewStore.setMobileDetails(false);
+    this.viewStore.closeMobileDetails();
   }
 
   private selectForDetails(instanceId: string): void {
-    if (!this.instances()?.length) return;
-
-    const selected = this.instances()?.find((instance) => instance.id === instanceId);
+    const selected = instanceId && this.instances()?.find((instance) => instance.id === instanceId);
     if (selected) {
       this.deviceStore.selectInstance(selected);
     }
