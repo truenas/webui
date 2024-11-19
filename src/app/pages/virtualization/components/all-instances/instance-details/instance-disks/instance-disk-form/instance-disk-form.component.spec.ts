@@ -21,41 +21,112 @@ describe('InstanceDiskFormComponent', () => {
     providers: [
       mockApi([
         mockCall('virt.instance.device_add'),
+        mockCall('virt.instance.device_update'),
       ]),
-      mockProvider(ChainedRef, {
-        getData: () => 'my-instance',
-        close: jest.fn(),
-      }),
       mockProvider(SnackbarService),
       mockProvider(FilesystemService),
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  describe('creating a disk', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ChainedRef, {
+            getData: () => ({
+              instanceId: 'my-instance',
+            }),
+            close: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows a title for creating a disk', () => {
+      expect(spectator.query('ix-modal-header2')).toHaveText('Add Disk');
+    });
+
+    it('creates a new disk for the instance provided when form is submitted', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Source: '/mnt/path',
+        Destination: 'destination',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+        response: true,
+        error: false,
+      });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
+        source: '/mnt/path',
+        destination: 'destination',
+        dev_type: VirtualizationDeviceType.Disk,
+      }]);
+    });
   });
 
-  it('creates a new disk for the instance provided when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-
-    await form.fillForm({
-      Source: '/mnt/path',
-      Destination: 'destination',
+  describe('editing a disk', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ChainedRef, {
+            getData: () => ({
+              instanceId: 'my-instance',
+              disk: {
+                name: 'existing-disk',
+                source: '/mnt/from',
+                destination: 'to',
+              },
+            }),
+            close: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    await addButton.click();
-
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
-      response: true,
-      error: false,
+    it('shows a title for editing a disk', () => {
+      expect(spectator.query('ix-modal-header2')).toHaveText('Edit Disk');
     });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-      source: '/mnt/path',
-      destination: 'destination',
-      dev_type: VirtualizationDeviceType.Disk,
-    }]);
+
+    it('shows values for the disk that is being edited', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        Source: '/mnt/from',
+        Destination: 'to',
+      });
+    });
+
+    it('saves updated disk when form is saved', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Source: '/mnt/updated',
+        Destination: 'new-destination',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_update', ['my-instance', {
+        source: '/mnt/updated',
+        destination: 'new-destination',
+        dev_type: VirtualizationDeviceType.Disk,
+        name: 'existing-disk',
+      }]);
+
+      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+        response: true,
+        error: false,
+      });
+    });
   });
 });

@@ -23,7 +23,10 @@
             {{ disk.destination }}
           </div>
 
-          <ix-delete-device-button [device]="disk"></ix-delete-device-button>
+          <ix-device-actions-menu
+            [device]="disk"
+            (edit)="editDisk(disk)"
+          ></ix-device-actions-menu>
         </div>
       } @empty {
         {{ 'No disks added.' | translate }}
