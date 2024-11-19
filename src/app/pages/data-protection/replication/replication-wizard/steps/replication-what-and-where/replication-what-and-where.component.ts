@@ -173,11 +173,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private dialogService: DialogService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-  ) {
-    this.chainedRef.requireConfirmationWhen(() => {
-      return of(this.form.dirty);
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.disableSource();
