@@ -19,7 +19,9 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -44,14 +46,15 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class InstanceListComponent {
   protected readonly requireRoles = [Role.VirtInstanceWrite];
   protected readonly searchQuery = signal<string>('');
-  protected readonly showMobileDetails = signal<boolean>(false);
-  protected readonly isMobileView = signal(false);
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
 
   protected readonly instances = this.store.instances;
   protected readonly isLoading = this.store.isLoading;
-  protected readonly selectedInstance = this.store.selectedInstance;
+
+  protected readonly selectedInstance = this.deviceStore.selectedInstance;
+  protected readonly showMobileDetails = this.viewStore.showMobileDetails;
+  protected readonly isMobileView = this.viewStore.isMobileView;
 
   protected readonly isAllSelected = computed(() => {
     return this.selection.selected.length === this.instances().length;
@@ -83,12 +86,11 @@ export class InstanceListComponent {
   });
 
   protected selectInstanceDetails = effect(() => {
-    const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
-
     if (this.isLoading() || !this.instances()?.length) {
       return;
     }
 
+    const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
     if (instanceId) {
       this.selectForDetails(instanceId);
     } else {
@@ -98,12 +100,14 @@ export class InstanceListComponent {
 
   constructor(
     private store: VirtualizationInstancesStore,
+    private viewStore: VirtualizationViewStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private ws: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   onSearch(query: string): void {
@@ -120,18 +124,13 @@ export class InstanceListComponent {
 
   navigateToDetails(instance: VirtualizationInstance): void {
     this.selectForDetails(instance.id);
-
     this.router.navigate(['/virtualization', 'view', instance.id]);
 
     if (this.isMobileView()) {
-      this.showMobileDetails.set(true);
+      this.viewStore.setMobileDetails(true);
 
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus(), 0);
     }
-  }
-
-  closeMobileDetails(): void {
-    this.showMobileDetails.set(false);
   }
 
   restart(instanceId: string): void {
@@ -165,13 +164,11 @@ export class InstanceListComponent {
   }
 
   private selectForDetails(instanceId: string): void {
-    if (!this.instances()?.length) {
-      return;
-    }
+    if (!this.instances()?.length) return;
 
-    const selected = instanceId && this.instances().find((instance) => instance.id === instanceId);
+    const selected = this.instances()?.find((instance) => instance.id === instanceId);
     if (selected) {
-      this.store.selectInstance(selected.id);
+      this.deviceStore.selectInstance(selected);
     }
   }
 }

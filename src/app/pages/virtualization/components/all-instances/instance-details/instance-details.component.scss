@@ -15,10 +15,21 @@
   }
 
   .title {
+    align-items: center;
     color: var(--fg2);
+    display: flex;
+    gap: 8px;
     margin-bottom: 12px;
     margin-top: 20px;
     min-height: 36px;
+    
+    @media (max-width: $breakpoint-tablet) {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: unset;
+      max-width: 100%;
+      width: 100%;
+    }
 
     @media (max-width: calc($breakpoint-hidden - 1px)) {
       margin-top: 0;

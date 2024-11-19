@@ -6,6 +6,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -14,7 +15,7 @@ import {
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
@@ -37,28 +38,23 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   ],
 })
 export class InstanceDisksComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   constructor(
     private slideIn: ChainedSlideInService,
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   protected readonly visibleDisks = computed(() => {
-    return this.instanceStore.selectedInstanceDevices()
+    return this.deviceStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Disk)
       // TODO: Second filter is due to Typescript issues.
       .filter((disk) => disk.source);
   });
 
   protected addDisk(): void {
-    this.slideIn.open(InstanceDiskFormComponent, false, this.instanceStore.selectedInstance().id)
-      .pipe(untilDestroyed(this))
-      .subscribe((result) => {
-        if (!result.response) {
-          return;
-        }
-        this.instanceStore.loadDevices();
-      });
+    this.slideIn.open(InstanceDiskFormComponent, false, this.deviceStore.selectedInstance().id)
+      .pipe(filter((result) => !!result.response), untilDestroyed(this))
+      .subscribe(() => this.deviceStore.loadDevices());
   }
 }

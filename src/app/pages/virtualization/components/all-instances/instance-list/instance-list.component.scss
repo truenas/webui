@@ -101,7 +101,7 @@
     grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 100px 88px;
 
     @media (max-width: $breakpoint-tablet) {
-      grid-template-columns: 45px auto 0 0 0;
+      grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 0 0;
     }
   }
 

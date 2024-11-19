@@ -12,6 +12,7 @@ import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 import { ApiService } from 'app/services/api.service';
 
 describe('DeleteDeviceButtonComponent', () => {
@@ -28,10 +29,12 @@ describe('DeleteDeviceButtonComponent', () => {
         mockCall('virt.instance.device_delete'),
       ]),
       mockProvider(VirtualizationInstancesStore, {
+        loadDevices: jest.fn(),
+      }),
+      mockProvider(VirtualizationViewStore, {
         selectedInstance: () => ({
           id: 'my-instance',
         }),
-        loadDevices: jest.fn(),
       }),
     ],
   });

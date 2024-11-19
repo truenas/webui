@@ -1,0 +1,83 @@
+import { computed, Injectable } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ComponentStore } from '@ngrx/component-store';
+import {
+  switchMap, catchError, tap,
+  EMPTY,
+} from 'rxjs';
+import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/services/api.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+export interface VirtualizationInstanceDeviceState {
+  isLoading: boolean;
+  devices: VirtualizationDevice[];
+  selectedInstance: VirtualizationInstance;
+}
+
+const initialState: VirtualizationInstanceDeviceState = {
+  isLoading: false,
+  devices: [],
+  selectedInstance: null,
+};
+
+@Injectable()
+export class VirtualizationDevicesStore extends ComponentStore<VirtualizationInstanceDeviceState> {
+  readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
+  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
+  readonly devices = computed(() => this.stateAsSignal().devices);
+  readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
+
+  constructor(
+    private api: ApiService,
+    private errorHandler: ErrorHandlerService,
+  ) {
+    super(initialState);
+  }
+
+  readonly loadDevices = this.effect((trigger$) => {
+    return trigger$.pipe(
+      switchMap(() => {
+        const selectedInstance = this.selectedInstance();
+        if (!selectedInstance) {
+          return [];
+        }
+
+        this.patchState({ isLoading: true });
+
+        return this.api.call('virt.instance.device_list', [selectedInstance.id]).pipe(
+          tap((devices) => {
+            this.patchState({
+              devices,
+              isLoading: false,
+            });
+          }),
+          catchError((error) => {
+            this.patchState({ isLoading: false, devices: [] });
+            this.errorHandler.showErrorModal(error);
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  });
+
+  selectInstance(selectedInstance?: VirtualizationInstance): void {
+    if (!selectedInstance?.id) {
+      this.patchState({ selectedInstance: null });
+      return;
+    }
+    const oldSelectedInstance = this.selectedInstance();
+    if (!selectedInstance || selectedInstance === oldSelectedInstance) {
+      return;
+    }
+
+    this.patchState({ selectedInstance });
+    this.loadDevices();
+  }
+
+  deviceDeleted(deviceName: string): void {
+    const devices = this.devices().filter((device) => device.name !== deviceName);
+    this.patchState({ devices });
+  }
+}

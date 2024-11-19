@@ -15,7 +15,7 @@ import {
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 
 @UntilDestroy()
 @Component({
@@ -35,16 +35,16 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
   ],
 })
 export class InstanceDevicesComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
-    return this.instanceStore.selectedInstanceDevices().filter((device) => {
+    return this.deviceStore.devices().filter((device) => {
       return [VirtualizationDeviceType.Usb, VirtualizationDeviceType.Gpu].includes(device.dev_type);
     });
   });
 
   constructor(
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {

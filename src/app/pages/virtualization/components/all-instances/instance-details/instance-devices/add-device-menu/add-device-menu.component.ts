@@ -16,7 +16,7 @@ import {
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -42,11 +42,11 @@ export class AddDeviceMenuComponent {
   // TODO: Stop hardcoding params
   private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationType.Container, VirtualizationGpuType.Physical]), { initialValue: {} });
 
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   protected readonly availableUsbDevices = computed(() => {
     const usbChoices = Object.values(this.usbChoices());
-    const existingUsbDevices = this.instanceStore.selectedInstanceDevices()
+    const existingUsbDevices = this.deviceStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Usb);
 
     return usbChoices.filter((usb) => {
@@ -56,7 +56,7 @@ export class AddDeviceMenuComponent {
 
   protected readonly availableGpuDevices = computed(() => {
     const gpuChoices = Object.values(this.gpuChoices());
-    const existingGpuDevices = this.instanceStore.selectedInstanceDevices()
+    const existingGpuDevices = this.deviceStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Gpu);
 
     return gpuChoices.filter((gpu) => {
@@ -70,12 +70,12 @@ export class AddDeviceMenuComponent {
   });
 
   constructor(
-    private instanceStore: VirtualizationInstancesStore,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   protected addUsb(usb: AvailableUsb): void {
@@ -94,7 +94,7 @@ export class AddDeviceMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.instanceStore.selectedInstance().id;
+    const instanceId = this.deviceStore.selectedInstance().id;
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),
@@ -103,7 +103,7 @@ export class AddDeviceMenuComponent {
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Device was added'));
-        this.instanceStore.loadDevices();
+        this.deviceStore.loadDevices();
       });
   }
 }

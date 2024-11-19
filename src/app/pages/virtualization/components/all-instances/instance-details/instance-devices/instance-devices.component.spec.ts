@@ -11,7 +11,7 @@ import {
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 
 describe('InstanceDevicesComponent', () => {
   let spectator: Spectator<InstanceDevicesComponent>;
@@ -38,10 +38,10 @@ describe('InstanceDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(VirtualizationInstancesStore, {
-        isLoadingDevices: () => false,
+      mockProvider(VirtualizationDevicesStore, {
+        isLoading: () => false,
         selectedInstance: () => ({ id: 'my-instance' }),
-        selectedInstanceDevices: () => devices,
+        devices: () => devices,
         loadDevices: jest.fn(),
       }),
     ],

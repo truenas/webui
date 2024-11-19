@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host {
   align-items: center;
   border-bottom: 1px solid var(--lines);
@@ -6,6 +8,35 @@
   grid-gap: 8px;
   min-height: 48px;
   position: relative;
+  
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+    
+    @media (max-width: $breakpoint-tablet) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+      }
+    }
+
+    &:nth-child(2) {
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+
+        > div {
+          padding: 0;
+        }
+      }
+    }
+  }
 
   .cell.checkbox {
     mat-checkbox {

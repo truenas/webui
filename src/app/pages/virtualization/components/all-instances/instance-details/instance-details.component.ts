@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input,
+  output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -19,7 +20,6 @@ import {
 import {
   InstanceToolsComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-tools/instance-tools.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @Component({
   selector: 'ix-instance-details',
@@ -39,12 +39,5 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
-
-  constructor(
-    private instancesStore: VirtualizationInstancesStore,
-  ) {}
-
-  onCloseMobileDetails(): void {
-    this.instancesStore.selectInstance(null);
-  }
+  onCloseMobileDetails = output();
 }

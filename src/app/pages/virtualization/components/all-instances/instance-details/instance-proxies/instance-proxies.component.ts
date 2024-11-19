@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { filter } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceProxyFormComponent,
@@ -15,7 +15,7 @@ import {
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
@@ -34,33 +34,26 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
     MatButton,
     TestDirective,
     NgxSkeletonLoaderModule,
-    MatIconButton,
-    IxIconComponent,
     DeleteDeviceButtonComponent,
   ],
 })
 export class InstanceProxiesComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   constructor(
     private slideIn: ChainedSlideInService,
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   protected readonly proxies = computed(() => {
-    return this.instanceStore.selectedInstanceDevices().filter((device) => {
+    return this.deviceStore.devices().filter((device) => {
       return device.dev_type === VirtualizationDeviceType.Proxy;
     });
   });
 
   protected addProxy(): void {
-    this.slideIn.open(InstanceProxyFormComponent, false, this.instanceStore.selectedInstance().id)
-      .pipe(untilDestroyed(this))
-      .subscribe((result) => {
-        if (!result.response) {
-          return;
-        }
-        this.instanceStore.loadDevices();
-      });
+    this.slideIn.open(InstanceProxyFormComponent, false, this.deviceStore.selectedInstance().id)
+      .pipe(filter((result) => !!result.response), untilDestroyed(this))
+      .subscribe(() => this.deviceStore.loadDevices());
   }
 }

@@ -15,7 +15,7 @@ import {
 import {
   DeleteDeviceButtonComponent,
 } from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('InstanceProxiesComponent', () => {
@@ -56,10 +56,10 @@ describe('InstanceProxiesComponent', () => {
           error: false,
         })),
       }),
-      mockProvider(VirtualizationInstancesStore, {
-        isLoadingDevices: () => false,
+      mockProvider(VirtualizationDevicesStore, {
+        isLoading: () => false,
         selectedInstance: () => ({ id: 'my-instance' }),
-        selectedInstanceDevices: () => devices,
+        devices: () => devices,
         loadDevices: jest.fn(),
       }),
     ],
@@ -83,7 +83,7 @@ describe('InstanceProxiesComponent', () => {
     await addButton.click();
 
     expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(InstanceProxyFormComponent, false, 'my-instance');
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
   });
 
   it('renders a button to delete the proxy', () => {
