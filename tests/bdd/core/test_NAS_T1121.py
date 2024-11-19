@@ -168,24 +168,19 @@ def open_a_new_tab_navigate_to_s3_url_and_input_account_id(driver, s3_url, accou
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(s3_url)
-    assert wait_on_element(driver, 5, '//a[text()="Amazon Web Services Login"]')
-    assert wait_on_element(driver, 5, '//input[@id="iam_user_radio_button"]', 'clickable')
-    driver.find_element_by_xpath('//input[@id="iam_user_radio_button"]').click()
-    assert wait_on_element(driver, 5, '//input[@id="resolving_input"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="resolving_input"]').send_keys(account_id)
-    assert wait_on_element(driver, 5, '//button[@id="next_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="next_button"]').click()
+    assert wait_on_element(driver, 5, '//*[contains(text(),"Sign in as IAM user")]')
+    assert wait_on_element(driver, 5, '//*[@id="account"]', 'inputable')
+    driver.find_element_by_xpath('//*[@id="account"]').send_keys(account_id)
 
 
 @then('input <user_name> and <password>, click Sign in')
 def input_user_name_and_password_click_sign_in(driver, user_name, password):
     """input <user_name> and <password>, click Sign in."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Sign in as IAM user")]')
     assert wait_on_element(driver, 5, '//input[@id="username"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="username"]').send_keys(user_name)
     driver.find_element_by_xpath('//input[@id="password"]').send_keys(password)
-    assert wait_on_element(driver, 5, '//a[@id="signin_button"]', 'clickable')
-    driver.find_element_by_xpath('//a[@id="signin_button"]').click()
+    assert wait_on_element(driver, 5, '//*[@id="signin_button"]', 'clickable')
+    driver.find_element_by_xpath('//*[@id="signin_button"]').click()
 
 
 @then('click on the bucket being used and then upload a file')

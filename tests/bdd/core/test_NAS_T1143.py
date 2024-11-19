@@ -110,7 +110,7 @@ def enter_the_user_name_click_next_and_enter_the_password_click_next(driver, use
     assert wait_on_element(driver, 5, '//button[contains(text(),"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Next")]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 10, f'//p[@class="user-email" and contains(text(),"{user_name}")]')
+    assert wait_on_element(driver, 10, f'//input[@value="{user_name}")]')
     assert wait_on_element(driver, 5, '//input[@name="password-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@name="password-field"]').send_keys(password)
     time.sleep(1)
