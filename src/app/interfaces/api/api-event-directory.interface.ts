@@ -43,7 +43,6 @@ export interface ApiEventDirectory {
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
   'virt.instance.query': { response: VirtualizationInstance };
-  'virt.instance.agent_running': { response: unknown }; // TODO: Fix type
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };

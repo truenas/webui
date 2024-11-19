@@ -1,30 +1,47 @@
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { JsonRpcErrorCode } from 'app/enums/api.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiError } from 'app/interfaces/api-error.interface';
 
-export interface PongMessage {
+interface JsonRpcMessage {
+  jsonrpc: '2.0';
+}
+
+export interface RequestMessage extends JsonRpcMessage {
+  id?: string;
+  method: ApiMethod;
+  params?: unknown[];
+}
+
+export interface SuccessfulResponse extends JsonRpcMessage {
   id: string;
-  msg: IncomingApiMessageType.Pong;
+  result: unknown;
 }
 
-export interface SubscriptionReadyMessage {
-  msg: IncomingApiMessageType.Ready;
-  subs: string[];
-}
-
-export interface ResultMessage<T = unknown> {
+export interface ErrorResponse extends JsonRpcMessage {
+  jsonrpc: '2.0';
   id: string;
-  msg: IncomingApiMessageType.Result;
-  result?: T;
-  error?: ApiError;
+  error: JsonRpcError;
 }
 
-export interface ConnectedMessage {
-  msg: IncomingApiMessageType.Connected;
-  session: string;
+export interface CollectionUpdateMessage extends JsonRpcMessage {
+  method: 'collection_update';
+  params: ApiEvent;
 }
+
+export interface JsonRpcError {
+  code: JsonRpcErrorCode;
+  message: string;
+  data?: ApiError;
+}
+
+export type ResponseMessage =
+  | SuccessfulResponse
+  | ErrorResponse;
+
+export type ApiMethod = ApiCallMethod | ApiJobMethod | ApiEventMethod;
 
 export interface ApiEvent<T = unknown> {
   collection: ApiCallMethod | ApiJobMethod | ApiEventMethod;
@@ -43,10 +60,3 @@ export type ApiEventTyped<
   M extends ApiEventMethod = ApiEventMethod,
   T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
 > = ApiEvent<T>;
-
-export type IncomingApiMessage =
-  | PongMessage
-  | SubscriptionReadyMessage
-  | ResultMessage
-  | ConnectedMessage
-  | ApiEvent;

@@ -142,7 +142,7 @@
     "./src/app/enums/v-dev-type.enum.ts",
     "./src/app/enums/vdev-status.enum.ts",
     "./src/app/enums/vm.enum.ts",
-    "./src/app/enums/api-error-name.enum.ts",
+    "./src/app/enums/api.enum.ts",
     "./src/app/enums/weekday.enum.ts",
     "./src/app/enums/widget-name.enum.ts",
     "./src/app/enums/with-inherit.enum.ts",

@@ -1,4 +1,4 @@
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 
 export interface ApiError {

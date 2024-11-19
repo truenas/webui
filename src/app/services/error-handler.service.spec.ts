@@ -3,7 +3,7 @@ import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { ApiError } from 'app/interfaces/api-error.interface';

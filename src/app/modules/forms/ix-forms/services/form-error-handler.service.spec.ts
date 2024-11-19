@@ -1,6 +1,6 @@
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
