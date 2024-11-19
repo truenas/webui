@@ -1,0 +1,33 @@
+<div
+  [matTooltip]="device().readonly ? ('Device is readonly and cannot be removed.' | translate) : ''"
+  [class.disabled]="device().readonly"
+>
+  <button
+    mat-icon-button
+    type="button"
+    [ixTest]="['actions-for', device().description]"
+    [matMenuTriggerFor]="menu"
+    [disabled]="device().readonly"
+    [attr.aria-label]="'Actions for {device}' | translate: { device: device().description }"
+  >
+    <ix-icon name="more_vert"></ix-icon>
+  </button>
+</div>
+
+<mat-menu #menu="matMenu">
+  @if (showEdit()) {
+    <button
+      mat-menu-item
+      type="button"
+      [ixTest]="['edit', device().description]"
+      (click)="edit.emit()"
+    >{{ 'Edit' | translate }}</button>
+  }
+
+  <button
+    mat-menu-item
+    type="button"
+    [ixTest]="['delete', device().description]"
+    (click)="deletePressed()"
+  >{{ 'Delete' | translate }}</button>
+</mat-menu>
