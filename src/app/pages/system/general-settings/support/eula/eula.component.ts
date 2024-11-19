@@ -10,7 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -35,12 +35,12 @@ export class EulaComponent implements OnInit {
   protected readonly searchableElements = eulaElements;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
+    this.api.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
       this.eula = eula;
       this.cdr.markForCheck();
     });

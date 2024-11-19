@@ -16,9 +16,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
-import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('UserApiKeysComponent', () => {
   let spectator: Spectator<UserApiKeysComponent>;

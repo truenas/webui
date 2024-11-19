@@ -19,9 +19,9 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class InstanceGeneralInfoComponent {
     protected formatter: IxFormatterService,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private slideInService: SlideInService,
@@ -73,7 +73,7 @@ export class InstanceGeneralInfoComponent {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.jobDialog(
-          this.ws.job('virt.instance.delete', [this.instance().id]),
+          this.api.job('virt.instance.delete', [this.instance().id]),
         ).afterClosed();
       }),
       this.errorHandler.catchError(),

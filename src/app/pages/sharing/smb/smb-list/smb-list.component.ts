@@ -45,9 +45,9 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -136,7 +136,7 @@ export class SmbListComponent implements OnInit {
               // A home share has a name (homes) set; row.name works for other shares
               const searchName = row.home ? 'homes' : row.name;
               this.appLoader.open();
-              this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+              this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))
                 .subscribe((shareAcl) => {
                   this.appLoader.close();
@@ -179,7 +179,7 @@ export class SmbListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => {
-                this.ws.call('sharing.smb.delete', [row.id]).pipe(
+                this.api.call('sharing.smb.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe(() => {
@@ -198,7 +198,7 @@ export class SmbListComponent implements OnInit {
 
   constructor(
     private appLoader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -210,7 +210,7 @@ export class SmbListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const shares$ = this.ws.call('sharing.smb.query').pipe(
+    const shares$ = this.api.call('sharing.smb.query').pipe(
       tap((shares) => this.smbShares = shares),
       untilDestroyed(this),
     );
@@ -262,7 +262,7 @@ export class SmbListComponent implements OnInit {
   }
 
   private onChangeEnabledState(row: SmbShare): void {
-    this.ws.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
+    this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
       this.appLoader.withLoader(),
       untilDestroyed(this),
     ).subscribe({

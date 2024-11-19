@@ -29,8 +29,8 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -125,7 +125,7 @@ export class ZfsInfoCardComponent {
   constructor(
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -141,7 +141,7 @@ export class ZfsInfoCardComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.offline', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
+        return this.api.call('pool.offline', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -160,7 +160,7 @@ export class ZfsInfoCardComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.online', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
+        return this.api.call('pool.online', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -178,7 +178,7 @@ export class ZfsInfoCardComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.detach', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
+        return this.api.call('pool.detach', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -200,7 +200,7 @@ export class ZfsInfoCardComponent {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.jobDialog(
-          this.ws.job('pool.remove', [this.poolId(), { label: this.topologyItem().guid }]),
+          this.api.job('pool.remove', [this.poolId(), { label: this.topologyItem().guid }]),
           { title: this.translate.instant('Remove device') },
         )
           .afterClosed()

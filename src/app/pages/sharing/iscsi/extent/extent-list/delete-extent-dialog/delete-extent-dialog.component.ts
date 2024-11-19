@@ -16,8 +16,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +53,7 @@ export class DeleteExtentDialogComponent {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -68,7 +68,7 @@ export class DeleteExtentDialogComponent {
   onDelete(): void {
     const { remove, force } = this.form.value;
 
-    this.ws.call('iscsi.extent.delete', [this.extent.id, remove, force])
+    this.api.call('iscsi.extent.delete', [this.extent.id, remove, force])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

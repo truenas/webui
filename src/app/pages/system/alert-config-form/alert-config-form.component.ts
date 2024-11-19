@@ -25,8 +25,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -78,14 +78,14 @@ export class AlertConfigFormComponent implements OnInit {
     { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ]);
 
-  readonly policyOptions$ = this.ws.call('alert.list_policies').pipe(
+  readonly policyOptions$ = this.api.call('alert.list_policies').pipe(
     map((policyList) => {
       return policyList.map((policy) => ({ label: policy, value: policy }));
     }),
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     public dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected translate: TranslateService,
@@ -98,8 +98,8 @@ export class AlertConfigFormComponent implements OnInit {
     this.isFormLoading = true;
 
     forkJoin([
-      this.ws.call('alert.list_categories'),
-      this.ws.call('alertclasses.config'),
+      this.api.call('alert.list_categories'),
+      this.api.call('alertclasses.config'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -157,7 +157,7 @@ export class AlertConfigFormComponent implements OnInit {
         }
       });
 
-    this.ws.call('alertclasses.update', [payload]).pipe(
+    this.api.call('alertclasses.update', [payload]).pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {

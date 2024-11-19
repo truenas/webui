@@ -26,8 +26,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -65,7 +65,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
@@ -75,7 +75,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         config.ui_allowlist.forEach(() => {
           this.addAddress();
@@ -111,7 +111,7 @@ export class AllowedAddressesFormComponent implements OnInit {
         if (!shouldRestart) {
           return of(true);
         }
-        return this.ws.call('system.general.ui_restart').pipe(
+        return this.api.call('system.general.ui_restart').pipe(
           catchError((error: ApiError) => {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
@@ -130,7 +130,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
 
-    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
+    this.api.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
       tap(() => {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;

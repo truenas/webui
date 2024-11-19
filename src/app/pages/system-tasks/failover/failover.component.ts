@@ -11,9 +11,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
@@ -33,9 +33,9 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 })
 export class FailoverComponent implements OnInit {
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -64,7 +64,7 @@ export class FailoverComponent implements OnInit {
     // Replace URL so that we don't restart again if page is refreshed.
     this.location.replaceState('/signin');
     this.matDialog.closeAll();
-    this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on restart
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))

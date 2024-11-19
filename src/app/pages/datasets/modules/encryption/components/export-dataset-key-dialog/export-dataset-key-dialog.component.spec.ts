@@ -7,8 +7,8 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ExportDatasetKeyDialogComponent } from './export-dataset-key-dialog.component';
 
 describe('ExportDatasetKeyDialogComponent', () => {

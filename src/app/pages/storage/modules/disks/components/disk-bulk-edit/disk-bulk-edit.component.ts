@@ -25,7 +25,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class DiskBulkEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInRef: SlideInRef<DiskBulkEditComponent, boolean>,
     private snackbarService: SnackbarService,
@@ -147,7 +147,7 @@ export class DiskBulkEditComponent {
       { n: req.length },
     );
     this.isLoading = true;
-    this.ws.job('core.bulk', ['disk.update', req])
+    this.api.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {

@@ -3,21 +3,21 @@ import { Observable } from 'rxjs';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdmapService {
-  constructor(protected ws: ApiService) {}
+  constructor(protected api: ApiService) {}
 
   getCerts(): Observable<Certificate[]> {
-    return this.ws.call('certificate.query');
+    return this.api.call('certificate.query');
   }
 
   getBackendChoices(): Observable<IdmapBackendOptions> {
-    return this.ws.call('idmap.backend_options');
+    return this.api.call('idmap.backend_options');
   }
 
   getActiveDirectoryStatus(): Observable<ActiveDirectoryConfig> {
-    return this.ws.call('activedirectory.config');
+    return this.api.call('activedirectory.config');
   }
 }

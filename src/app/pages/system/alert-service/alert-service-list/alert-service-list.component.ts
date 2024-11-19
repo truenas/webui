@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -119,14 +119,14 @@ export class AlertServiceListComponent implements OnInit {
     protected emptyService: EmptyService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInService: SlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
-    const alertServices$ = this.ws.call('alertservice.query').pipe(
+    const alertServices$ = this.api.call('alertservice.query').pipe(
       tap((alertServices) => this.alertServices = alertServices),
       untilDestroyed(this),
     );
@@ -166,7 +166,7 @@ export class AlertServiceListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('alertservice.delete', [alertService.id])),
+      switchMap(() => this.api.call('alertservice.delete', [alertService.id])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => this.getAlertServices());

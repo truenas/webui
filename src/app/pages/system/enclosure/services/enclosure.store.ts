@@ -14,9 +14,9 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];
@@ -99,7 +99,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private theme: ThemeService,
   ) {
@@ -110,7 +110,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return origin$.pipe(
       tap(() => this.setState(initialState)),
       switchMap(() => {
-        return this.ws.call('webui.enclosure.dashboard').pipe(
+        return this.api.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState((state) => {
               return {
@@ -131,7 +131,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   update = this.effect((origin$) => {
     return origin$.pipe(
       switchMap(() => {
-        return this.ws.call('webui.enclosure.dashboard').pipe(
+        return this.api.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState({ enclosures });
           }),
@@ -142,7 +142,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   listenForDiskUpdates(): Observable<unknown> {
-    return this.ws.subscribe('disk.query').pipe(
+    return this.api.subscribe('disk.query').pipe(
       debounceTime(1 * 1000),
       tap(() => this.update()),
     );

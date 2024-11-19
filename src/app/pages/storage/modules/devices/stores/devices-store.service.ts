@@ -11,7 +11,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface DevicesState {
   isLoading: boolean;
@@ -78,12 +78,12 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         });
       }),
       switchMap((poolId) => {
-        return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
+        return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
             if (!pools?.length) {
               return of([]);
             }
-            return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+            return this.api.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({
                   isLoading: false,
@@ -121,7 +121,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   readonly loadDisksWithSmartTestSupport = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       switchMap(() => {
-        return this.ws.call('smart.test.disk_choices').pipe(
+        return this.api.call('smart.test.disk_choices').pipe(
           tap((disks) => {
             this.patchState({ disksWithSmartTestSupport: Object.values(disks) });
           }),
@@ -138,7 +138,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
   ) {
     super(initialState);

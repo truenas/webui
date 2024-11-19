@@ -35,11 +35,11 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -95,7 +95,7 @@ export class ManualUpdateFormComponent implements OnInit {
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,
@@ -138,7 +138,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   setPoolOptions(): void {
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       if (!pools) {
         return;
       }
@@ -167,7 +167,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {
@@ -306,8 +306,8 @@ export class ManualUpdateFormComponent implements OnInit {
 
   private resumeUpdateAfterFailure(): void {
     const job$: Observable<Job> = this.isHaLicensed
-      ? this.ws.job('failover.upgrade', [{ resume: true, resume_manual: true }])
-      : this.ws.job('update.file', [{ resume: true }]);
+      ? this.api.job('failover.upgrade', [{ resume: true, resume_manual: true }])
+      : this.api.job('update.file', [{ resume: true }]);
 
     this.dialogService
       .jobDialog(job$, { title: helptext.manual_update_action })

@@ -21,8 +21,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -85,7 +85,7 @@ export class AssociatedTargetFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private iscsiService: IscsiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -109,9 +109,9 @@ export class AssociatedTargetFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.targetextent.create', [values]);
+      request$ = this.api.call('iscsi.targetextent.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.targetextent.update', [
+      request$ = this.api.call('iscsi.targetextent.update', [
         this.editingTarget.id,
         values,
       ]);

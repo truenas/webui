@@ -22,8 +22,8 @@ import { replicationSettingsCardElements } from 'app/pages/system/advanced/repli
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +53,7 @@ export class ReplicationSettingsCardComponent {
   protected readonly searchableElements = replicationSettingsCardElements;
   taskLimit$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('replication.config.config')),
+    switchMap(() => this.api.call('replication.config.config')),
     tap((config) => this.replicationConfig = config),
     map((config) => config.max_parallel_replication_tasks),
     toLoadingState(),
@@ -64,7 +64,7 @@ export class ReplicationSettingsCardComponent {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

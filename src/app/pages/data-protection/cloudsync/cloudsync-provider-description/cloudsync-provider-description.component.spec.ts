@@ -1,9 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
-import {
-  cloudsyncProviderDescriptionMap,
-} from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description';
 import { CloudSyncProviderDescriptionComponent } from './cloudsync-provider-description.component';
 
 describe('CloudSyncProviderDescriptionComponent', () => {
@@ -31,6 +28,6 @@ describe('CloudSyncProviderDescriptionComponent', () => {
     expect(name).toHaveText('Storj');
 
     const description = spectator.query('.body');
-    expect(description).toHaveText(cloudsyncProviderDescriptionMap.get(CloudSyncProviderName.Storj));
+    expect(description).not.toContain('<a href');
   });
 });

@@ -27,7 +27,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {

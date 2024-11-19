@@ -6,8 +6,8 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
 import { ReplicationService } from 'app/services/replication.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReplicationService', () => {
   let spectator: SpectatorService<ReplicationService>;

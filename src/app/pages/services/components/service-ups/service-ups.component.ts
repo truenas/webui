@@ -28,8 +28,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -108,8 +108,8 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly providers: Record<string, IxComboboxProvider> = {
-    driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
-    port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
+    driver: new SimpleAsyncComboboxProvider(this.api.call('ups.driver_choices').pipe(choicesToOptions())),
+    port: new SimpleAsyncComboboxProvider(this.api.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
 
   readonly tooltips = {
@@ -146,7 +146,7 @@ export class ServiceUpsComponent implements OnInit {
   readonly shutdownOptions$ = of(helptextServiceUps.ups_shutdown_options);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -181,7 +181,7 @@ export class ServiceUpsComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.ws.call('ups.config')
+    this.api.call('ups.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -208,7 +208,7 @@ export class ServiceUpsComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('ups.update', [params as UpsConfigUpdate])
+    this.api.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

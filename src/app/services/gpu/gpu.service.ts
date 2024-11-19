@@ -11,7 +11,7 @@ import {
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -23,7 +23,7 @@ export class GpuService {
   private allGpus$: Observable<Device[]>;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
   ) {}
 
@@ -32,7 +32,7 @@ export class GpuService {
    */
   getAllGpus(): Observable<Device[]> {
     if (!this.allGpus$) {
-      this.allGpus$ = this.ws.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
+      this.allGpus$ = this.api.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
         shareReplay({
           refCount: false,
           bufferSize: 1,
@@ -44,7 +44,7 @@ export class GpuService {
   }
 
   getGpuOptions(): Observable<Option[]> {
-    return this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
+    return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
       map((choices) => {
         return Object.entries(choices).map(
           ([value, label]) => ({ value: label, label: value }),
@@ -85,7 +85,7 @@ export class GpuService {
           return of(undefined);
         }
 
-        return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
+        return this.api.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
           tap(() => this.store$.dispatch(advancedConfigUpdated())),
         );
       }),

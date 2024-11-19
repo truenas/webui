@@ -4,7 +4,6 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subject, map, switchMap,
@@ -23,9 +22,8 @@ import { storageCardElements } from 'app/pages/system/advanced/storage/storage-c
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
-import { AppState } from 'app/store';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +54,7 @@ export class StorageCardComponent {
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('systemdataset.config').pipe(map((config) => config.pool))),
+    switchMap(() => this.api.call('systemdataset.config').pipe(map((config) => config.pool))),
     map((systemDsPool) => ({ systemDsPool })),
     tap((config) => this.storageSettings = config),
     toLoadingState(),
@@ -69,8 +67,7 @@ export class StorageCardComponent {
   constructor(
     private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
-    private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   onConfigurePressed(): void {

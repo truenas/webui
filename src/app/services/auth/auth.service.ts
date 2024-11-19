@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
@@ -14,26 +13,18 @@ import {
   switchMap,
   take,
   tap,
-  throwError,
   timer,
 } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import {
-  ApiCallMethod,
-  ApiCallParams,
-  ApiCallResponse,
-} from 'app/interfaces/api/api-call-directory.interface';
-import { IncomingApiMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { ApiService } from 'app/services/api.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -91,9 +82,9 @@ export class AuthService {
   private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig;
 
   constructor(
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -107,7 +98,7 @@ export class AuthService {
       return of(this.cachedGlobalTwoFactorConfig);
     }
 
-    return this.ws.call('auth.twofactor.config').pipe(
+    return this.api.call('auth.twofactor.config').pipe(
       tap((config) => {
         this.cachedGlobalTwoFactorConfig = config;
       }),
@@ -133,8 +124,8 @@ export class AuthService {
 
   login(username: string, password: string, otp: string = null): Observable<LoginResult> {
     return (otp
-      ? this.makeRequest('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.makeRequest('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
+      ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
+      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
     ).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
@@ -146,7 +137,7 @@ export class AuthService {
     }
 
     performance.mark('Login Start');
-    return this.makeRequest('auth.login_ex', [{
+    return this.api.call('auth.login_ex', [{
       mechanism: LoginExMechanism.TokenPlain,
       token: this.token,
     }]).pipe(
@@ -180,10 +171,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.makeRequest('auth.logout').pipe(
+    return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.ws.clearSubscriptions();
+        this.api.clearSubscriptions();
         this.isLoggedIn$.next(false);
       }),
     );
@@ -224,65 +215,19 @@ export class AuthService {
     );
   }
 
-  // TODO: See if we can move this somewhere, like in wsManager.
-  // TODO: Rewrite tests not to rely on mocking this private method.
-  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
-    const uuid = UUID.UUID();
-    const payload = {
-      method,
-      params,
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      performance.mark(`${method} - ${uuid} - start`);
-      this.wsManager.send(payload);
-      subscriber.next();
-    }).pipe(take(1));
-
-    const uuidFilteredResponse$ = this.getFilteredWebSocketResponse<boolean>(uuid);
-
-    return combineLatest([
-      requestTrigger$,
-      uuidFilteredResponse$,
-    ]).pipe(
-      take(1),
-      tap(() => {
-        performance.mark(`${method} - ${uuid} - end`);
-        performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
-      }),
-      map(([, response]) => response),
-    );
-  }
-
-  private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
-    return this.wsManager.websocket$.pipe(
-      filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingApiMessage) => {
-        if ('error' in data && data.error) {
-          return throwError(() => data.error);
-        }
-        return of(data);
-      }),
-      map((data: ResultMessage<T>) => data.result),
-      take(1),
-    );
-  }
-
   private setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.isAuthenticated$.pipe(take(1))),
         filter((isAuthenticated) => isAuthenticated),
-        switchMap(() => this.makeRequest('auth.generate_token')),
+        switchMap(() => this.api.call('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
       ).subscribe();
     }
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
-    return this.ws.call('auth.me').pipe(
+    return this.api.call('auth.me').pipe(
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),

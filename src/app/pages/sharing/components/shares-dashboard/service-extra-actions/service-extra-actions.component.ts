@@ -18,9 +18,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +58,7 @@ export class ServiceExtraActionsComponent {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private router: Router,
     private slideInService: SlideInService,
@@ -67,7 +67,7 @@ export class ServiceExtraActionsComponent {
 
   changeServiceState(service: Service): void {
     const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
-    this.ws.call(rpc, [service.service, { silent: false }])
+    this.api.call(rpc, [service.service, { silent: false }])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (hasChanged: boolean) => {

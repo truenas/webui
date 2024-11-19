@@ -50,7 +50,7 @@ import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/com
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -136,7 +136,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
@@ -284,7 +284,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   }
 
   private getPool(): void {
-    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
       if (pools.length) {
         this.poolName = pools[0]?.name;
         this.cdr.markForCheck();

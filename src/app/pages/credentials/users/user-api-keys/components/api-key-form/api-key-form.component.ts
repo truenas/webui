@@ -33,8 +33,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

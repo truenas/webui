@@ -22,9 +22,9 @@ import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesState, InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { ApiService } from 'app/services/api.service';
 import { NetworkService } from 'app/services/network.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;

@@ -6,14 +6,13 @@ import {
 } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -22,7 +21,6 @@ import { InstanceRowComponent } from 'app/pages/virtualization/components/all-in
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -103,8 +101,6 @@ export class InstanceListComponent {
     private viewStore: VirtualizationViewStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: ApiService,
-    private dialog: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private deviceStore: VirtualizationDevicesStore,
@@ -133,34 +129,8 @@ export class InstanceListComponent {
     }
   }
 
-  restart(instanceId: string): void {
-    this.dialog.jobDialog(
-      this.ws.job('virt.instance.restart', [instanceId, {}]),
-      { title: this.translate.instant('Restarting...') },
-    )
-      .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe();
-  }
-
-  start(instanceId: string): void {
-    this.dialog.jobDialog(
-      this.ws.job('virt.instance.start', [instanceId]),
-      { title: this.translate.instant('Starting...') },
-    )
-      .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe();
-  }
-
-  stop(instanceId: string): void {
-    this.dialog.jobDialog(
-      this.ws.job('virt.instance.stop', [instanceId, {}]),
-      { title: this.translate.instant('Stopping...') },
-    )
-      .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe();
+  closeMobileDetails(): void {
+    this.viewStore.setMobileDetails(false);
   }
 
   private selectForDetails(instanceId: string): void {

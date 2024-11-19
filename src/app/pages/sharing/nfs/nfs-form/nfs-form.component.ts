@@ -39,10 +39,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 
@@ -135,7 +135,7 @@ export class NfsFormComponent implements OnInit {
   ]);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private userService: UserService,
     private translate: TranslateService,
@@ -194,9 +194,9 @@ export class NfsFormComponent implements OnInit {
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('sharing.nfs.create', [nfsShare]);
+      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
     } else {
-      request$ = this.ws.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
+      request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -233,7 +233,7 @@ export class NfsFormComponent implements OnInit {
   }
 
   private checkForNfsSecurityField(): void {
-    this.ws.call('nfs.config')
+    this.api.call('nfs.config')
       .pipe(untilDestroyed(this))
       .subscribe((nfsConfig) => {
         this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);

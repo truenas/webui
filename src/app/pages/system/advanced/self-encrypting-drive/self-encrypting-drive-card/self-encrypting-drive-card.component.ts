@@ -23,8 +23,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { sedCardElements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.elements';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -63,7 +63,7 @@ export class SelfEncryptingDriveCardComponent {
         distinctUntilChanged((previous, current) => isEqual(previous.sed_user, current.sed_user)),
         map((config) => config.sed_user),
       );
-      const updatedSedPassword$ = this.ws.call('system.advanced.sed_global_password').pipe(
+      const updatedSedPassword$ = this.api.call('system.advanced.sed_global_password').pipe(
         map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
       );
       return combineLatest([
@@ -82,7 +82,7 @@ export class SelfEncryptingDriveCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

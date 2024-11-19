@@ -23,8 +23,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -79,7 +79,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   ];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -98,7 +98,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     this.setLoading(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
-    this.ws.call('iscsi.global.update', [values])
+    this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
@@ -118,7 +118,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.setLoading(true);
 
-    this.ws.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.setLoading(false);

@@ -32,9 +32,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -115,7 +115,7 @@ export class EmailFormComponent implements OnInit {
   private oauthCredentials: GmailOauthConfig | Record<string, never>;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -154,7 +154,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   onSendTestEmailPressed(): void {
-    this.ws.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
+    this.api.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
       if (!email) {
         this.dialogService.info(
           this.translate.instant('Email'),
@@ -176,7 +176,7 @@ export class EmailFormComponent implements OnInit {
     this.isLoading = true;
     const update = this.prepareConfigUpdate();
 
-    this.ws.call('mail.update', [update])
+    this.api.call('mail.update', [update])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -212,7 +212,7 @@ export class EmailFormComponent implements OnInit {
     const config = this.prepareConfigUpdate();
 
     this.dialogService.jobDialog(
-      this.ws.job('mail.send', [email, config]),
+      this.api.job('mail.send', [email, config]),
       { title: this.translate.instant('Email') },
     )
       .afterClosed()

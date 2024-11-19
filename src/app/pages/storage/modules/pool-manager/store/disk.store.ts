@@ -4,8 +4,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface DiskState {
   usedDisks: DetailsDisk[];
@@ -33,14 +33,14 @@ export class DiskStore extends ComponentStore<DiskState> {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
   }
 
   loadDisks(): Observable<DiskDetailsResponse> {
-    return this.ws.call('disk.details').pipe(
+    return this.api.call('disk.details').pipe(
       this.errorHandler.catchError(),
       tap((diskResponse) => {
         this.patchState({

@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,12 +48,12 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
 
   readonly helptext = helptextVmWizard;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
-  readonly nicAttachOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -76,7 +76,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   private generateRandomMac(): void {
-    this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
+    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
       this.form.patchValue({ nic_mac: mac });
       this.cdr.markForCheck();
     });

@@ -19,8 +19,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -56,7 +56,7 @@ export class DeleteVmDialogComponent implements OnInit {
   readonly helptext = helptextVmList;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
     private validators: IxValidatorsService,
@@ -71,7 +71,7 @@ export class DeleteVmDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.ws.call('vm.delete', [this.vm.id, {
+    this.api.call('vm.delete', [this.vm.id, {
       force: this.form.value.force,
       zvols: this.form.value.zvols,
     }])

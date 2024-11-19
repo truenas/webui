@@ -27,7 +27,7 @@ import {
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class OsStepComponent implements SummaryProvider {
     name: ['',
       [Validators.required, Validators.pattern(vmNamePattern)],
       forbiddenAsyncValues(
-        this.ws.call('vm.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+        this.api.call('vm.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
           map((vms) => vms.map((vm) => vm.name)),
         ),
       ),
@@ -75,13 +75,13 @@ export class OsStepComponent implements SummaryProvider {
 
   readonly osOptions$ = of(mapToOptions(vmOsLabels, this.translate));
   readonly timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
-  readonly bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
-  readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
+  readonly bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
+  readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     this.form.controls.enable_display.valueChanges.pipe(untilDestroyed(this)).subscribe((isEnabled) => {
       if (isEnabled) {

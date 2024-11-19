@@ -1,0 +1,35 @@
+<h1 matDialogTitle>
+  @if (isRestart()) {
+    {{ 'Restart Options' | translate }}
+  } @else {
+    {{ 'Stop Options' | translate }}
+  }
+</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-select
+    formControlName="timeout"
+    [label]="'Timeout' | translate"
+    [required]="true"
+    [options]="timeoutOptions$"
+  ></ix-select>
+
+  <ix-checkbox
+    formControlName="force"
+    [label]="'Force' | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" ixTest="continue">
+      @if (isRestart()) {
+        {{ 'Restart' | translate }}
+      } @else {
+        {{ 'Stop' | translate }}
+      }
+    </button>
+  </ix-form-actions>
+</form>

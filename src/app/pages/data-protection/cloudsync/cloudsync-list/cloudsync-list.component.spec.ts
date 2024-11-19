@@ -28,11 +28,11 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncListComponent', () => {
   let spectator: Spectator<CloudSyncListComponent>;

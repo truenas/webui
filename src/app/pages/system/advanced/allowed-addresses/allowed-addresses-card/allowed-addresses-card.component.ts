@@ -31,9 +31,9 @@ import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -90,7 +90,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private dialog: DialogService,
     private chainedSlideIns: ChainedSlideInService,
@@ -101,7 +101,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const config$ = this.ws.call('system.general.config').pipe(
+    const config$ = this.api.call('system.general.config').pipe(
       map((config) => this.getAddressesSourceFromConfig(config)),
       untilDestroyed(this),
     );
@@ -139,7 +139,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     this.dataProvider.currentPage$.pipe(
       switchMap((currentPage) => {
         const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
-        return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
+        return this.api.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
       }),
       untilDestroyed(this),
     ).subscribe({

@@ -19,7 +19,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class JbofFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -92,9 +92,9 @@ export class JbofFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('jbof.create', [values]);
+      request$ = this.api.call('jbof.create', [values]);
     } else {
-      request$ = this.ws.call('jbof.update', [this.editingJbof.id, values]);
+      request$ = this.api.call('jbof.update', [this.editingJbof.id, values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -13,8 +13,8 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;
@@ -75,6 +75,7 @@ describe('AuthorizedAccessFormComponent', () => {
         secret: '123456789012',
         peeruser: 'new-peer',
         peersecret: 'peer123456789012',
+        discovery_auth: 'NONE',
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
@@ -95,18 +96,20 @@ describe('AuthorizedAccessFormComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         'Group ID': '23',
+        'Discovery Authentication': 'NONE',
         User: 'user',
         Secret: '123456789012',
-        'Secret (Confirm)': '',
+        'Secret (Confirm)': '123456789012',
         'Peer User': 'peer',
         'Peer Secret': 'peer123456789012',
-        'Peer Secret (Confirm)': '',
+        'Peer Secret (Confirm)': 'peer123456789012',
       });
     });
 
     it('edits existing authorized access when form opened for edit is submitted', async () => {
       await form.fillForm({
         'Group ID': '120',
+        'Discovery Authentication': 'NONE',
         User: 'updated-user',
         Secret: '123456789012',
         'Secret (Confirm)': '123456789012',
@@ -128,6 +131,7 @@ describe('AuthorizedAccessFormComponent', () => {
             secret: '123456789012',
             peeruser: '',
             peersecret: '',
+            discovery_auth: 'NONE',
           },
         ],
       );

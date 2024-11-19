@@ -24,9 +24,9 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -65,7 +65,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -114,7 +114,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('auth.twofactor.update', [payload]);
+        return this.api.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
         this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);

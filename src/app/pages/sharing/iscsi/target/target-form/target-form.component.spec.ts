@@ -20,8 +20,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
@@ -68,15 +68,11 @@ describe('TargetFormComponent', () => {
           comment: 'comment_1',
           id: 1,
           tag: 11,
-          discovery_authgroup: 111,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '1.1.1.1' }],
         }, {
           comment: 'comment_2',
           id: 2,
           tag: 22,
-          discovery_authgroup: 222,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
         mockCall('iscsi.initiator.query', [{

@@ -13,13 +13,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: SyslogFormComponent,
     imports: [
@@ -68,7 +68,7 @@ describe('SyslogFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for syslog form and shows them', async () => {
@@ -97,7 +97,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       {
         fqdn_syslog: false,
         sysloglevel: SyslogLevel.Info,
@@ -122,7 +122,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       expect.objectContaining({
         syslog_transport: SyslogTransport.Tls,
         syslog_tls_certificate: 2,

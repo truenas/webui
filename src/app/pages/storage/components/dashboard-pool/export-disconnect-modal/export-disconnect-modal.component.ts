@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent,
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -34,8 +34,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ApiService } from 'app/services/api.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -112,12 +111,10 @@ export class ExportDisconnectModalComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private dialogService: DialogService,
-    private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -140,7 +137,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   startExportDisconnectJob(): void {
     const value = this.form.value;
 
-    const job$ = this.ws.job('pool.export', [
+    const job$ = this.api.job('pool.export', [
       this.pool.id,
       {
         destroy: value.destroy,
@@ -273,9 +270,9 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   private loadRelatedEntities(): void {
     forkJoin([
-      this.ws.call('pool.attachments', [this.pool.id]),
-      this.ws.call('pool.processes', [this.pool.id]),
-      this.ws.call('systemdataset.config'),
+      this.api.call('pool.attachments', [this.pool.id]),
+      this.api.call('pool.processes', [this.pool.id]),
+      this.api.call('systemdataset.config'),
     ])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({

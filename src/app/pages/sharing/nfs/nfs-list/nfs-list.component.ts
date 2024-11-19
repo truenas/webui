@@ -35,9 +35,9 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -134,7 +134,7 @@ export class NfsListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => {
-                this.ws.call('sharing.nfs.delete', [row.id]).pipe(
+                this.api.call('sharing.nfs.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
@@ -154,7 +154,7 @@ export class NfsListComponent implements OnInit {
 
   constructor(
     private appLoader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -164,7 +164,7 @@ export class NfsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const shares$ = this.ws.call('sharing.nfs.query').pipe(
+    const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
       untilDestroyed(this),
     );
@@ -213,7 +213,7 @@ export class NfsListComponent implements OnInit {
   }
 
   private onChangeEnabledState(row: NfsShare): void {
-    this.ws.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
+    this.api.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

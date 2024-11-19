@@ -37,9 +37,9 @@ import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdow
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -116,7 +116,7 @@ export class InitShutdownCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
@@ -134,7 +134,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   loadScripts(): void {
     if (!this.dataProvider) {
-      const scripts$ = this.ws.call('initshutdownscript.query').pipe(untilDestroyed(this));
+      const scripts$ = this.api.call('initshutdownscript.query').pipe(untilDestroyed(this));
       this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     }
     this.dataProvider.load();
@@ -150,7 +150,7 @@ export class InitShutdownCardComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('initshutdownscript.delete', [row.id])),
+        switchMap(() => this.api.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
         this.errorHandler.catchError(),
         untilDestroyed(this),
