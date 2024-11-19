@@ -69,12 +69,12 @@ describe('InstanceMetricsComponent', () => {
     expect(memoryChart.data).toEqual([20]);
   });
 
-  it('passes correct data to Disk IO chart', () => {
+  it('passes correct data to Disk I/O chart', () => {
     spectator.detectChanges();
 
     const ioChart = spectator.queryAll(InstanceMetricsLineChartComponent)[2];
     expect(ioChart).toBeTruthy();
-    expect(ioChart.title).toBe('Disk IO');
+    expect(ioChart.title).toBe('Disk I/O');
     expect(ioChart.data).toEqual([30]);
   });
 
