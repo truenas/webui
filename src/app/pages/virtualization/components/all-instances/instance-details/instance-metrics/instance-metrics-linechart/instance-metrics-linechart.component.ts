@@ -25,6 +25,7 @@ export class InstanceMetricsLineChartComponent {
   data = input.required<number[]>();
   labels = input.required<number[]>();
   isLoading = input.required<boolean>();
+  postfix = input<string>();
 
   constructor(
     private themeService: ThemeService,
@@ -63,7 +64,7 @@ export class InstanceMetricsLineChartComponent {
         },
         tooltip: {
           callbacks: {
-            label: (item) => `${item.parsed.y}`,
+            label: (item) => `${item.parsed.y} ${this.postfix() || ''}`,
           },
         },
       },

@@ -74,7 +74,7 @@ describe('InstanceMetricsComponent', () => {
 
     const ioChart = spectator.queryAll(InstanceMetricsLineChartComponent)[2];
     expect(ioChart).toBeTruthy();
-    expect(ioChart.title).toBe('Disk I/O');
+    expect(ioChart.title).toBe('Disk I/O Full Pressure');
     expect(ioChart.data).toEqual([30]);
   });
 

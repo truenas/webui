@@ -8,6 +8,7 @@
   <mat-card-content>
     @if (instance()?.status === virtualizationStatus.Running) {
       <ix-instance-metrics-linechart
+        postfix="%"
         [title]="'CPU' | translate"
         [data]="cpuData()"
         [labels]="timeLabels()"
@@ -15,6 +16,7 @@
       ></ix-instance-metrics-linechart>
 
       <ix-instance-metrics-linechart
+        [postfix]="'MiB' | translate"
         [title]="'Memory' | translate"
         [data]="memoryData()"
         [labels]="timeLabels()"
@@ -22,7 +24,8 @@
       ></ix-instance-metrics-linechart>
 
       <ix-instance-metrics-linechart
-        [title]="'Disk I/O' | translate"
+        postfix="%"
+        [title]="'Disk I/O Full Pressure' | translate"
         [data]="ioPressureData()"
         [labels]="timeLabels()"
         [isLoading]="isLoading()"
