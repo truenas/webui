@@ -245,9 +245,9 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VirtualizationDevice, VirtualizationGlobalConfig, AvailableGpu,
+  VirtualizationDevice, VirtualizationGlobalConfig,
   VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork, AvailableUsb,
+  VirtualizationInstance, VirtualizationNetwork, AvailableUsb, AvailableGpus,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -836,15 +836,16 @@ export interface ApiCallDirectory {
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };
-  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: void }; // TODO
-  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: unknown }; // TODO:
+  'virt.instance.device_add': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_update': { params: [instanceId: string, device: VirtualizationDevice]; response: true };
+  'virt.instance.device_delete': { params: [instanceId: string, name: string]; response: true };
   'virt.instance.device_list': { params: [instanceId: string]; response: VirtualizationDevice[] };
   'virt.instance.image_choices': { params: [VirtualizationImageParams]; response: Record<string, VirtualizationImage> };
 
   'virt.device.disk_choices': { params: []; response: Choices };
   'virt.device.gpu_choices': {
     params: [instanceType: VirtualizationType, gpuType: VirtualizationGpuType];
-    response: Record<string, AvailableGpu>;
+    response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
 

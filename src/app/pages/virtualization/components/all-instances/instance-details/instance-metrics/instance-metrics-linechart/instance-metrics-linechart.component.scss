@@ -1,0 +1,25 @@
+.wrapper {
+  background-color: var(--bg2);
+
+  .title {
+    margin-bottom: 8px;
+
+    span {
+      color: var(--fg2);
+      font-size: small;
+    }
+  }
+
+  .chart {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.skeleton,
+.chart {
+  height: 150px;
+  margin-bottom: 15px;
+  padding: 0 8px;
+  width: 100%;
+}

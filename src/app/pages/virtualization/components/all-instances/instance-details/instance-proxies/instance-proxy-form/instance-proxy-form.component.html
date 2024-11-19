@@ -1,5 +1,5 @@
 <ix-modal-header2
-  [title]="'Add Proxy' | translate"
+  [title]="title()"
   [loading]="isLoading()"
 ></ix-modal-header2>
 
@@ -49,10 +49,10 @@
           mat-button
           type="submit"
           color="primary"
-          ixTest="add"
+          ixTest="save"
           [disabled]="form.invalid || isLoading()"
         >
-          {{ 'Add' | translate }}
+          {{ 'Save' | translate }}
         </button>
       </ix-form-actions>
     </form>

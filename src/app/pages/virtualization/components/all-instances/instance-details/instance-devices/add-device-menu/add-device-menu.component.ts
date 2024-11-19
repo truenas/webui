@@ -1,13 +1,14 @@
+import { KeyValuePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType, VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
 import {
-  AvailableGpu,
   AvailableUsb,
   VirtualizationDevice,
   VirtualizationGpu,
@@ -35,6 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     MatMenuTrigger,
     NgxSkeletonLoaderModule,
+    KeyValuePipe,
   ],
 })
 export class AddDeviceMenuComponent {
@@ -55,18 +57,17 @@ export class AddDeviceMenuComponent {
   });
 
   protected readonly availableGpuDevices = computed(() => {
-    const gpuChoices = Object.values(this.gpuChoices());
-    const existingGpuDevices = this.instanceStore.selectedInstanceDevices()
+    const gpuChoices = this.gpuChoices();
+    const usedGpus = this.instanceStore.selectedInstanceDevices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Gpu);
 
-    return gpuChoices.filter((gpu) => {
-      // TODO: Condition is incorrect.
-      return !existingGpuDevices.find((device) => device.description === gpu.description);
+    return pickBy(gpuChoices, (_, pci) => {
+      return !usedGpus.find((usedGpu) => usedGpu.pci === pci);
     });
   });
 
   protected readonly hasDevicesToAdd = computed(() => {
-    return this.availableUsbDevices().length > 0 || this.availableGpuDevices().length > 0;
+    return this.availableUsbDevices().length > 0 || Object.keys(this.availableGpuDevices()).length > 0;
   });
 
   constructor(
@@ -85,11 +86,10 @@ export class AddDeviceMenuComponent {
     } as VirtualizationUsb);
   }
 
-  protected addGpu(gpu: AvailableGpu): void {
+  protected addGpu(gpuPci: string): void {
     this.addDevice({
       dev_type: VirtualizationDeviceType.Gpu,
-      // TODO: Incorrect value.
-      description: gpu.description,
+      pci: gpuPci,
     } as VirtualizationGpu);
   }
 

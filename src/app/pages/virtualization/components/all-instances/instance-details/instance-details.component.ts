@@ -13,6 +13,7 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
+import { InstanceMetricsComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-metrics/instance-metrics.component';
 import {
   InstanceProxiesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
@@ -34,6 +35,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     InstanceProxiesComponent,
     InstanceDisksComponent,
     InstanceToolsComponent,
+    InstanceMetricsComponent,
     MobileBackButtonComponent,
   ],
 })
