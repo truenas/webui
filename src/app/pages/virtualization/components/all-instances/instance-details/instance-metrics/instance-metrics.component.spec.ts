@@ -21,7 +21,7 @@ describe('InstanceMetricsComponent', () => {
 
   const mockMetrics: VirtualizationInstanceMetrics = {
     cpu: { cpu_user_percentage: 10 },
-    mem_utilization: { mem_utilization_utilization_percentage: 20 },
+    mem_usage: { mem_usage_ram_mib: 20 },
     io_full_pressure: { io_full_pressure_full_60_percentage: 30 },
   } as VirtualizationInstanceMetrics;
 

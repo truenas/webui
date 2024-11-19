@@ -3,6 +3,11 @@
 
   .title {
     margin-bottom: 8px;
+
+    span {
+      color: var(--fg2);
+      font-size: small;
+    }
   }
 
   .chart {

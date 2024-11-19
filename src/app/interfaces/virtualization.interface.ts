@@ -15,8 +15,8 @@ export interface VirtualizationInstanceMetrics {
   cpu: {
     cpu_user_percentage: number;
   };
-  mem_utilization: {
-    mem_utilization_utilization_percentage: number;
+  mem_usage: {
+    mem_usage_ram_mib: number;
   };
   io_full_pressure: {
     io_full_pressure_full_60_percentage: number;

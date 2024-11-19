@@ -49,7 +49,7 @@ export class InstanceMetricsComponent {
     private api: ApiService,
   ) {
     toObservable(this.instance).pipe(
-      filter((instance): instance is VirtualizationInstance => instance.status === VirtualizationStatus.Running),
+      filter((instance) => instance.status === VirtualizationStatus.Running),
       distinctUntilChanged((prev, curr) => prev.id === curr.id),
       switchMap((instance) => {
         this.resetData();
@@ -74,19 +74,25 @@ export class InstanceMetricsComponent {
   private updateData(fields: VirtualizationInstanceMetrics): void {
     const now = Date.now();
 
-    this.cpuData.update((current) => ([
-      ...current, fields.cpu.cpu_user_percentage,
-    ]));
+    if (fields.cpu?.cpu_user_percentage !== undefined) {
+      this.cpuData.update((current) => ([
+        ...current, fields.cpu.cpu_user_percentage,
+      ]));
+    }
 
-    this.memoryData.update((current) => ([
-      ...current,
-      fields.mem_utilization.mem_utilization_utilization_percentage,
-    ]));
+    if (fields.mem_usage?.mem_usage_ram_mib !== undefined) {
+      this.memoryData.update((current) => ([
+        ...current,
+        fields.mem_usage.mem_usage_ram_mib,
+      ]));
+    }
 
-    this.ioPressureData.update((current) => ([
-      ...current,
-      fields.io_full_pressure.io_full_pressure_full_60_percentage,
-    ]));
+    if (fields.io_full_pressure?.io_full_pressure_full_60_percentage !== undefined) {
+      this.ioPressureData.update((current) => ([
+        ...current,
+        fields.io_full_pressure.io_full_pressure_full_60_percentage,
+      ]));
+    }
 
     this.timeLabels.update((current) => ([...current, now]));
   }
