@@ -38,7 +38,6 @@ import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtual
 export class AllInstancesComponent implements OnInit {
   readonly selectedInstance = this.deviceStore.selectedInstance;
   readonly showMobileDetails = this.viewStore.showMobileDetails;
-  readonly isMobileView = this.viewStore.isMobileView;
 
   constructor(
     private configStore: VirtualizationConfigStore,

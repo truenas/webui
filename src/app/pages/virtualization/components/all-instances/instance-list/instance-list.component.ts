@@ -89,7 +89,7 @@ export class InstanceListComponent {
 
     const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
     if (instanceId) {
-      this.selectForDetails(instanceId);
+      this.deviceStore.selectInstance(instanceId);
     } else {
       this.navigateToDetails(this.instances()[0]);
     }
@@ -117,7 +117,7 @@ export class InstanceListComponent {
   }
 
   navigateToDetails(instance: VirtualizationInstance): void {
-    this.selectForDetails(instance.id);
+    this.deviceStore.selectInstance(instance.id);
     this.router.navigate(['/virtualization', 'view', instance.id]);
 
     if (this.isMobileView()) {
@@ -129,12 +129,5 @@ export class InstanceListComponent {
 
   closeMobileDetails(): void {
     this.viewStore.closeMobileDetails();
-  }
-
-  private selectForDetails(instanceId: string): void {
-    const selected = instanceId && this.instances()?.find((instance) => instance.id === instanceId);
-    if (selected) {
-      this.deviceStore.selectInstance(selected);
-    }
   }
 }

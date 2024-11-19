@@ -1,4 +1,4 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
@@ -16,7 +16,6 @@ import {
 import {
   InstanceProxiesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 describe('InstanceDetailsComponent', () => {
   let spectator: Spectator<InstanceDetailsComponent>;
@@ -29,9 +28,6 @@ describe('InstanceDetailsComponent', () => {
         InstanceDisksComponent,
         InstanceProxiesComponent,
       ),
-    ],
-    providers: [
-      mockProvider(VirtualizationInstancesStore),
     ],
   });
 

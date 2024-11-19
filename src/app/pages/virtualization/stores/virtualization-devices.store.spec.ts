@@ -1,8 +1,9 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ApiService } from 'app/services/api.service';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VirtualizationDevicesStore', () => {
   let spectator: SpectatorService<VirtualizationDevicesStore>;
@@ -23,6 +24,9 @@ describe('VirtualizationDevicesStore', () => {
       mockApi([
         mockCall('virt.instance.device_list', devices),
       ]),
+      mockProvider(VirtualizationInstancesStore, {
+        instances: jest.fn(() => instances),
+      }),
     ],
   });
 
@@ -39,21 +43,21 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('should load devices when loadDevices is called', () => {
-    spectator.service.selectInstance({ id: 'instance1' } as VirtualizationInstance);
+    spectator.service.selectInstance('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalled();
     expect(spectator.service.stateAsSignal()).toEqual({
       devices,
       isLoading: false,
-      selectedInstance: { id: 'instance1' } as VirtualizationInstance,
+      selectedInstance: instances[0],
     });
   });
 
   it('selectInstance - selects an instance and loads its devices', () => {
     jest.spyOn(spectator.service, 'loadDevices');
 
-    spectator.service.selectInstance({ id: 'instance1' } as VirtualizationInstance);
+    spectator.service.selectInstance('instance1');
     spectator.service.loadDevices();
 
     expect(spectator.service.selectedInstance().id).toEqual(instances[0].id);
@@ -61,7 +65,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('loadDevices – loads a list of devices for the selected instance', () => {
-    spectator.service.selectInstance({ id: 'instance2' } as VirtualizationInstance);
+    spectator.service.selectInstance('instance2');
     spectator.service.loadDevices();
 
     expect(spectator.service.devices()).toBe(devices);
@@ -70,7 +74,7 @@ describe('VirtualizationDevicesStore', () => {
   });
 
   it('deviceDeleted – removes a device from list of devices for selected instance', () => {
-    spectator.service.selectInstance({ id: 'instance1' } as VirtualizationInstance);
+    spectator.service.selectInstance('instance1');
     spectator.service.deviceDeleted('device1');
 
     expect(spectator.service.devices()).toEqual([devices[1]]);
