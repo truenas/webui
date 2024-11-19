@@ -6,13 +6,11 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 
 export interface VirtualizationViewState {
-  isLoading: boolean;
   showMobileDetails: boolean;
   isMobileView: boolean;
 }
 
 const initialState: VirtualizationViewState = {
-  isLoading: false,
   showMobileDetails: false,
   isMobileView: false,
 };
@@ -21,7 +19,6 @@ const initialState: VirtualizationViewState = {
 @Injectable()
 export class VirtualizationViewStore extends ComponentStore<VirtualizationViewState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly showMobileDetails = computed(() => this.stateAsSignal().showMobileDetails);
   readonly isMobileView = computed(() => this.stateAsSignal().isMobileView);
 

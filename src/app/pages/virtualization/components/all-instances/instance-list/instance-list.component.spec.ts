@@ -5,6 +5,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { InstanceListComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-list.component';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 const instance = {
   id: '1',
@@ -18,17 +19,15 @@ describe('InstanceListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InstanceListComponent,
-    imports: [
-      InstanceRowComponent,
-    ],
+    imports: [InstanceRowComponent],
     providers: [
       mockAuth(),
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
-        selectedInstance: jest.fn(),
         instances: jest.fn(() => [instance]),
         isLoading: jest.fn(() => false),
       }),
+      mockProvider(VirtualizationViewStore),
     ],
   });
 

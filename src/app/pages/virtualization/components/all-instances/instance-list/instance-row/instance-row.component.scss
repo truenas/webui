@@ -8,12 +8,12 @@
   grid-gap: 8px;
   min-height: 48px;
   position: relative;
-  
+
   .cell {
     align-items: center;
     display: inline-flex;
     min-height: 48px;
-    
+
     @media (max-width: $breakpoint-tablet) {
       display: none;
     }
@@ -50,7 +50,7 @@
     justify-content: flex-end;
     padding-right: 8px;
   }
-  
+
   &:hover {
     background-color: var(--hover-bg);
   }
@@ -68,6 +68,16 @@
       top: 0;
       width: 6px;
       z-index: 1;
+    }
+  }
+
+  .cell.clickable {
+    display: none;
+
+    @media(max-width: $breakpoint-tablet) {
+      display: inline-flex;
+      position: absolute;
+      right: 0;
     }
   }
 }
