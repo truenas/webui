@@ -9,16 +9,12 @@
     display: flex;
     justify-content: center;
   }
-
-  h3 {
-    padding: 16px 0 0;
-    width: 100%;
-  }
 }
 
 .skeleton,
 .chart {
   height: 150px;
   margin-bottom: 15px;
+  padding: 0 8px;
   width: 100%;
 }
