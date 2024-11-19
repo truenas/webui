@@ -94,7 +94,7 @@ export class InstanceProxyFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.snackbar.success(this.translate.instant('Proxy added'));
+          this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
             error: false,
             response: true,

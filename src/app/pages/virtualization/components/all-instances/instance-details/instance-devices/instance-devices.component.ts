@@ -3,9 +3,9 @@ import {
 } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType, virtualizationDeviceTypeLabels } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
@@ -15,6 +15,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
+import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 
 @UntilDestroy()
@@ -44,17 +45,11 @@ export class InstanceDevicesComponent {
   });
 
   constructor(
+    private translate: TranslateService,
     private instanceStore: VirtualizationInstancesStore,
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
-    const type = virtualizationDeviceTypeLabels.has(device.dev_type)
-      ? virtualizationDeviceTypeLabels.get(device.dev_type)
-      : device.dev_type;
-
-    // TODO: Remove `.replace(`${type}:`, '')` after https://ixsystems.atlassian.net/browse/NAS-132543
-    const description = `${device.description} (${device.product_id})`.replace(`${type}:`, '').trim();
-
-    return `${type}: ${description}`;
+    return getDeviceDescription(this.translate, device);
   }
 }
