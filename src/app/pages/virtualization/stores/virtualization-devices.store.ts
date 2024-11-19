@@ -64,7 +64,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
 
   selectInstance(selectedInstance?: VirtualizationInstance): void {
     if (!selectedInstance?.id) {
-      this.patchState({ selectedInstance: null });
+      this.resetInstance();
       return;
     }
     const oldSelectedInstance = this.selectedInstance();
@@ -74,6 +74,10 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
 
     this.patchState({ selectedInstance });
     this.loadDevices();
+  }
+
+  resetInstance(): void {
+    this.patchState({ selectedInstance: null });
   }
 
   deviceDeleted(deviceName: string): void {

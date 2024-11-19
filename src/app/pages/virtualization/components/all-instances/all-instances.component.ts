@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { Router, NavigationStart } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
@@ -45,7 +47,17 @@ export class AllInstancesComponent implements OnInit {
     private instancesStore: VirtualizationInstancesStore,
     private viewStore: VirtualizationViewStore,
     private deviceStore: VirtualizationDevicesStore,
-  ) {}
+    private router: Router,
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+          this.deviceStore.resetInstance();
+          this.closeMobileDetails();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.configStore.initialize();

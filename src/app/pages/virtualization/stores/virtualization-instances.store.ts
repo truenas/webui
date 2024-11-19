@@ -3,7 +3,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map, startWith } from 'rxjs/operators';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -26,7 +27,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly instances = computed(() => this.stateAsSignal().instances);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -36,7 +37,32 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
     return trigger$.pipe(
       switchMap(() => {
         this.patchState({ isLoading: true });
-        return this.ws.call('virt.instance.query').pipe(
+        return this.api.call('virt.instance.query').pipe(
+          switchMap((instances: VirtualizationInstance[]) => this.api.subscribe('virt.instance.query').pipe(
+            startWith(null),
+            map((event) => {
+              switch (event?.msg) {
+                case IncomingApiMessageType.Added:
+                  return [...instances, event.fields];
+                case IncomingApiMessageType.Changed:
+                  // TODO: Keep it until API improvements
+                  if (Object.keys(event.fields).length === 1 && 'status' in event.fields) {
+                    return instances.map((instance) => {
+                      if (instance.name === event.id) {
+                        return { ...instance, status: event.fields.status };
+                      }
+                      return instance;
+                    });
+                  }
+                  return instances.map((item) => (item.id === event.id ? event.fields : item));
+                case IncomingApiMessageType.Removed:
+                  return instances.filter((item) => item.id !== event.id);
+                default:
+                  break;
+              }
+              return instances;
+            }),
+          )),
           tap((instances) => {
             this.patchState({
               instances,

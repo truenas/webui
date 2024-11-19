@@ -1,3 +1,4 @@
+import { beforeEach } from 'node:test';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -14,7 +15,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 
@@ -60,9 +60,6 @@ describe('InstanceGeneralInfoComponent', () => {
       mockApi([
         mockJob('virt.instance.delete'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
-        selectedInstance: jest.fn(),
-      }),
     ],
   });
 
