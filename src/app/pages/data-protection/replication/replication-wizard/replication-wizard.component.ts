@@ -96,7 +96,11 @@ export class ReplicationWizardComponent {
     private snackbar: SnackbarService,
     private chainedSlideInRef: ChainedRef<unknown>,
     private authService: AuthService,
-  ) {}
+  ) {
+    this.chainedSlideInRef.requireConfirmationWhen(() => {
+      return of(this.whatAndWhere.form.dirty || this.when.form.dirty);
+    });
+  }
 
   getSteps(): [
     ReplicationWhatAndWhereComponent,

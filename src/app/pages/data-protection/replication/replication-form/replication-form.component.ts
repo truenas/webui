@@ -109,6 +109,15 @@ export class ReplicationFormComponent implements OnInit {
     private authService: AuthService,
     private chainedRef: ChainedRef<ReplicationTask>,
   ) {
+    this.chainedRef.requireConfirmationWhen(() => {
+      return of(
+        this.generalSection.form.dirty
+        || this.transportSection.form.dirty
+        || this.sourceSection.form.dirty
+        || this.targetSection.form.dirty
+        || this.scheduleSection.form.dirty,
+      );
+    });
     this.existingReplication = this.chainedRef.getData();
     this.chainedRef.requireConfirmationWhen(() => {
       return of(

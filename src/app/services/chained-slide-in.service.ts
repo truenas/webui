@@ -30,6 +30,7 @@ export interface ChainedComponent {
 export interface ChainedComponentResponse<T = unknown> {
   response: T;
   error: unknown;
+  cancelled?: boolean;
 }
 
 export interface ChainedComponentSerialized {

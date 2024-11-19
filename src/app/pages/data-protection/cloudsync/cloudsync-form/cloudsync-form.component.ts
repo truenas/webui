@@ -224,6 +224,9 @@ export class CloudSyncFormComponent implements OnInit {
     protected cloudCredentialService: CloudCredentialService,
     private chainedRef: ChainedRef<CloudSyncTaskUi>,
   ) {
+    this.chainedRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = this.chainedRef.getData();
   }
 

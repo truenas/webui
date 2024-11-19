@@ -97,12 +97,13 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     if (!this.element || !this.isSlideInOpen) {
       return;
     }
+
     this.canCloseSlideIn().pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.componentInfo.close$.next({ response: false, error: null });
+        this.componentInfo.close$.next({ response: false, error: null, cancelled: true });
         this.componentInfo.close$.complete();
         this.closeSlideIn();
       },
@@ -162,7 +163,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
           provide: ChainedRef<D>,
           useValue: {
             close: (response: ChainedComponentResponse): void => {
-              this.canCloseSlideIn().pipe(
+              (response.cancelled ? this.canCloseSlideIn() : of(true)).pipe(
                 filter(Boolean),
                 untilDestroyed(this),
               ).subscribe({

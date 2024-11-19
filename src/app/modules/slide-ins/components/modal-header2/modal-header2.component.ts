@@ -70,6 +70,6 @@ export class ModalHeader2Component implements AfterViewInit {
   }
 
   close(): void {
-    this.chainedSlideInRef.close({ response: false, error: null });
+    this.chainedSlideInRef.close({ response: false, error: null, cancelled: true });
   }
 }
