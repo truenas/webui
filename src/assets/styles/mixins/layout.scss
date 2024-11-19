@@ -82,20 +82,6 @@ $scrollbar-offset: 20px;
     z-index: 2;
   }
 
-  .close-details-container-mobile {
-    display: none;
-
-    @media (max-width: $breakpoint-hidden) {
-      display: block;
-      left: 0;
-      padding: 8px 16px 0;
-      position: absolute;
-      text-align: right;
-      top: 0;
-      z-index: 4;
-    }
-  }
-
   .details-container.details-container-mobile {
     // Hide Details
     @media (max-width: $breakpoint-hidden) {
@@ -121,7 +107,6 @@ $scrollbar-offset: 20px;
       width: calc(100% - 16px);
 
       @media(max-width: $breakpoint-tablet) {
-        margin-left: -40px;
         width: 100%;
       }
     }

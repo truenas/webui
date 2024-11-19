@@ -1,4 +1,4 @@
-<ix-page-header [loading]="isLoading()">
+<ix-page-header>
   <ix-all-instances-header></ix-all-instances-header>
 </ix-page-header>
 
@@ -6,13 +6,13 @@
   <div class="table-container">
     <ix-instance-list></ix-instance-list>
   </div>
-  
+
   @if (selectedInstance()) {
     <div
       ixDetailsHeight="rightside-content-hold"
       class="details-container"
       [class.details-container-mobile]="showMobileDetails()"
-    >  
+    >
       <ix-instance-details
         [instance]="selectedInstance()"
         (onCloseMobileDetails)="closeMobileDetails()"

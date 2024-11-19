@@ -6,8 +6,8 @@ import { switchMap, tap } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;

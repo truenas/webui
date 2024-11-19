@@ -6,8 +6,8 @@ import {
   EMPTY,
 } from 'rxjs';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstanceDeviceState {
   isLoading: boolean;
