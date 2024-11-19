@@ -30,10 +30,10 @@ describe('AddDeviceMenuComponent', () => {
           } as AvailableUsb,
         }),
         mockCall('virt.device.gpu_choices', {
-          gpu1: {
+          pci_0000_01_00_0: {
             description: 'NDIVIA XTR 2000',
           } as AvailableGpu,
-          gpu2: {
+          pci_0000_01_00_1: {
             description: 'MAD Galeon 5000',
           } as AvailableGpu,
         }),
@@ -48,6 +48,7 @@ describe('AddDeviceMenuComponent', () => {
           },
           {
             dev_type: VirtualizationDeviceType.Gpu,
+            pci: 'pci_0000_01_00_0',
             description: 'NDIVIA XTR 2000',
           },
         ] as VirtualizationDevice[],
@@ -95,7 +96,7 @@ describe('AddDeviceMenuComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       dev_type: VirtualizationDeviceType.Gpu,
-      description: 'MAD Galeon 5000',
+      pci: 'pci_0000_01_00_1',
     } as VirtualizationDevice]);
     expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');

@@ -167,7 +167,7 @@ describe('InstanceWizardComponent', () => {
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
         { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        { dev_type: VirtualizationDeviceType.Gpu, gpu_type: 'NVIDIA Corporation' },
+        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
