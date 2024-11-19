@@ -168,7 +168,7 @@ def open_a_new_tab_navigate_to_s3_url_and_input_account_id(driver, s3_url, accou
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(s3_url)
-    assert wait_on_element(driver, 5, '//*[contains(text(),"Sign in as IAM user")]')
+    assert wait_on_element(driver, 5, '//*[contains(text(),"IAM user sign in")]')
     assert wait_on_element(driver, 5, '//*[@id="account"]', 'inputable')
     driver.find_element_by_xpath('//*[@id="account"]').send_keys(account_id)
 
