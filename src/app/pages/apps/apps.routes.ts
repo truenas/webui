@@ -54,7 +54,7 @@ export const appsRoutes: Routes = [
                 data: { breadcrumb: null },
               },
               {
-                path: 'shell/:containerId/:command',
+                path: 'shell/:containerId',
                 component: ContainerShellComponent,
                 data: { title: T('Container Shell') },
               },
