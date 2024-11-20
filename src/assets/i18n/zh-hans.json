@@ -3,6 +3,7 @@
   "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "",
   "...": "",
   "<p>The system will restart to perform this operation!</p> <p><font color=\"red\">All passwords are reset when the  uploaded configuration database file was saved  without the Password Secret Seed. </font></p>": "",
+  "API Docs": "",
   "API Key Read": "",
   "API Key Write": "",
   "Absent": "",
