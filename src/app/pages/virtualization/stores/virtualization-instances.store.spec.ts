@@ -31,9 +31,9 @@ describe('VirtualizationInstancesStore', () => {
     spectator = createService();
   });
 
-  it('should have default empty state', () => {
+  it('should have initial state', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
-      isLoading: false,
+      isLoading: true,
       instances: [],
     });
   });

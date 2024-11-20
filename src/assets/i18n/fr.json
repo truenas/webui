@@ -1698,7 +1698,6 @@
   "Choose File": "Choisir le fichier",
   "Choose File for {label}": "Choisir un fichier pour {label}",
   "Choose Pool": "Définir le volume",
-  "Choose Shell Details": "Choisissez les détails du shell",
   "Choose a DNS provider and configure any required authenticator attributes.": "Choisissez un fournisseur DNS et configurez tous les attributs d'authentification requis.",
   "Choose a Tag": "Choisissez un tag",
   "Choose a connection that has been saved in  <b>Credentials > Backup Credentials > SSH Connections</b>.": "Choisissez une connexion qui a été enregistrée dans <b>Credentials > Sauvegarde Credentials > Connections SSH</b>.",

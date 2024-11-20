@@ -983,7 +983,6 @@
   "Choose File": "选择文件",
   "Choose File for {label}": "为 {label} 选择文件",
   "Choose Pool": "选择池",
-  "Choose Shell Details": "选择 Shell 详情",
   "Choose a DNS provider and configure any required authenticator attributes.": "选择 DNS 提供程序并配置任何必需的身份验证器属性。",
   "Choose a Tag": "选择标签",
   "Choose a connection that has been saved in  <b>Credentials > Backup Credentials > SSH Connections</b>.": "选择已保存在 <b>用户凭证 > 备份凭证 > SSH 连接<b> 的连接。",

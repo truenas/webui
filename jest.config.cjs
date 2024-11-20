@@ -31,5 +31,15 @@ module.exports = {
   transformIgnorePatterns: [
     `node_modules/(?!(${esmPatterns.join('|')}))`
   ],
+  reporters: [
+    "default",
+    [
+      "jest-junit",
+      {
+        classNameTemplate: "{filepath}",
+        outputDirectory: "<rootDir>/coverage/webui"
+      },
+    ]
+  ],
   clearMocks: true,
 };

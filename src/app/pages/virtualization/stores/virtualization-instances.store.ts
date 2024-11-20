@@ -15,7 +15,7 @@ export interface VirtualizationInstancesState {
 }
 
 const initialState: VirtualizationInstancesState = {
-  isLoading: false,
+  isLoading: true,
   instances: [],
 };
 
