@@ -14,7 +14,7 @@
     display: inline-flex;
     min-height: 48px;
 
-    @media (max-width: $breakpoint-tablet) {
+    @media (max-width: $breakpoint-xs) {
       display: none;
     }
 
@@ -22,13 +22,13 @@
       left: 0;
       position: sticky;
 
-      @media (max-width: $breakpoint-tablet) {
+      @media (max-width: $breakpoint-xs) {
         display: inline-flex;
       }
     }
 
     &:nth-child(2) {
-      @media (max-width: $breakpoint-tablet) {
+      @media (max-width: $breakpoint-xs) {
         display: inline-flex;
 
         > div {
@@ -39,6 +39,8 @@
   }
 
   .cell.checkbox {
+    padding-left: 6px;
+
     mat-checkbox {
       margin: 0;
     }
@@ -71,13 +73,13 @@
     }
   }
 
-  .cell.clickable {
+  .instance-details {
     display: none;
 
-    @media(max-width: $breakpoint-tablet) {
+    @media(max-width: $breakpoint-md) {
+      align-items: center;
       display: inline-flex;
-      position: absolute;
-      right: 0;
+      min-width: 24px;
     }
   }
 }

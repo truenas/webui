@@ -3,6 +3,7 @@ import {
   Component, ChangeDetectionStrategy,
   signal, computed, inject,
   effect,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -91,7 +92,8 @@ export class InstanceListComponent {
     if (instanceId) {
       this.deviceStore.selectInstance(instanceId);
     } else {
-      this.navigateToDetails(this.instances()[0]);
+      const [firstInstance] = this.instances();
+      this.navigateToDetails(firstInstance);
     }
   }, { allowSignalWrites: true });
 
@@ -102,6 +104,7 @@ export class InstanceListComponent {
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   onSearch(query: string): void {
@@ -123,7 +126,10 @@ export class InstanceListComponent {
     if (this.isMobileView()) {
       this.viewStore.setMobileDetails(true);
 
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus(), 0);
+      setTimeout(() => {
+        (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus();
+        this.cdr.markForCheck();
+      }, 0);
     }
   }
 

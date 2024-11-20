@@ -4,6 +4,7 @@ import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualizati
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { InstanceListComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-list.component';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
@@ -27,7 +28,15 @@ describe('InstanceListComponent', () => {
         instances: jest.fn(() => [instance]),
         isLoading: jest.fn(() => false),
       }),
-      mockProvider(VirtualizationViewStore),
+      mockProvider(VirtualizationDevicesStore, {
+        selectInstance: jest.fn(),
+        selectedInstance: jest.fn(),
+      }),
+      mockProvider(VirtualizationViewStore, {
+        isMobileView: jest.fn(),
+        showMobileDetails: jest.fn(),
+        closeMobileDetails: jest.fn(),
+      }),
     ],
   });
 
