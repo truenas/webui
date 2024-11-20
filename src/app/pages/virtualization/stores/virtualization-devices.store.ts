@@ -60,7 +60,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
   });
 
   selectInstance(instanceId: string): void {
-    const selectedInstance = this.instances().find((instance) => instance.id === instanceId);
+    const selectedInstance = this.instances()?.find((instance) => instance.id === instanceId);
     if (!selectedInstance?.id) {
       this.resetInstance();
       return;

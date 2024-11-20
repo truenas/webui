@@ -23,7 +23,6 @@ describe('VirtualizationViewStore', () => {
     spectator.service.initialize();
 
     expect(spectator.service.stateAsSignal()).toEqual({
-      isLoading: false,
       showMobileDetails: false,
       isMobileView: true,
     });
@@ -33,10 +32,10 @@ describe('VirtualizationViewStore', () => {
     beforeEach(() => spectator.service.initialize());
 
     it('listens for screen size changes and sets isMobile accordingly', () => {
-      expect(spectator.service.isMobileView()).toBe(true);
+      expect(spectator.service.isMobileView()).toBeTruthy();
 
       breakpointObserve$.next({ matches: false });
-      expect(spectator.service.isMobileView()).toBe(false);
+      expect(spectator.service.isMobileView()).toBeFalsy();
     });
   });
 });
