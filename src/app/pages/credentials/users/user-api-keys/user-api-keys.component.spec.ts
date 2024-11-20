@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -92,6 +93,21 @@ describe('UserApiKeysComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
+  });
+
+  it('renders a button to add new API key', async () => {
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
+  });
+
+  it('renders a button that opens API docs', async () => {
+    const docsButton = await loader.getHarness(MatButtonHarness.with({ text: 'API Docs' }));
+    const host = await docsButton.host();
+
+    expect(docsButton).toBeTruthy();
+    expect(await host.getAttribute('href')).toBe('/api/docs');
   });
 
   it('should show table rows', async () => {
