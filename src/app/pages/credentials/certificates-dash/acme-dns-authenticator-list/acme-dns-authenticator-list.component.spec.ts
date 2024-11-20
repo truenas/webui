@@ -23,7 +23,9 @@ import { ApiService } from 'app/services/websocket/api.service';
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
   name: `dns-authenticator-${index}`,
-  authenticator: DnsAuthenticatorType.Cloudflare,
+  attributes: {
+    authenticator: DnsAuthenticatorType.Cloudflare,
+  },
 })) as DnsAuthenticator[];
 
 describe('AcmeDnsAuthenticatorListComponent', () => {
