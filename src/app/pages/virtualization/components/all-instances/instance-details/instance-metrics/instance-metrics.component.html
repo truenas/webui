@@ -1,0 +1,38 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Metrics' | translate }}
+    </h3>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (instance()?.status === virtualizationStatus.Running) {
+      <ix-instance-metrics-linechart
+        postfix="%"
+        [title]="'CPU' | translate"
+        [data]="cpuData()"
+        [labels]="timeLabels()"
+        [isLoading]="isLoading()"
+      ></ix-instance-metrics-linechart>
+
+      <ix-instance-metrics-linechart
+        [postfix]="'MiB' | translate"
+        [title]="'Memory' | translate"
+        [data]="memoryData()"
+        [labels]="timeLabels()"
+        [isLoading]="isLoading()"
+      ></ix-instance-metrics-linechart>
+
+      <ix-instance-metrics-linechart
+        postfix="%"
+        [title]="'Disk I/O Full Pressure' | translate"
+        [data]="ioPressureData()"
+        [labels]="timeLabels()"
+        [isLoading]="isLoading()"
+      ></ix-instance-metrics-linechart>
+    } @else {
+      {{ 'Instance is not running' | translate }}
+    }
+  </mat-card-content>
+</mat-card>
+

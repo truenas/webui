@@ -1,5 +1,8 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, output,
+} from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -12,15 +15,16 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-delete-device-button',
-  templateUrl: './delete-device-button.component.html',
-  styleUrls: ['./delete-device-button.component.scss'],
+  selector: 'ix-device-actions-menu',
+  templateUrl: './device-actions-menu.component.html',
+  styleUrls: ['./device-actions-menu.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -29,10 +33,16 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxIconComponent,
     MatIconButton,
     MatTooltip,
+    MatMenu,
+    MatMenuTrigger,
+    MatMenuItem,
   ],
 })
-export class DeleteDeviceButtonComponent {
+export class DeviceActionsMenuComponent {
   readonly device = input.required<VirtualizationDevice>();
+  readonly showEdit = input(true);
+
+  readonly edit = output();
 
   constructor(
     private dialog: DialogService,
@@ -46,8 +56,11 @@ export class DeleteDeviceButtonComponent {
 
   protected deletePressed(): void {
     this.dialog.confirm({
-      message: this.translate.instant('Are you sure you want to delete this device?'),
-      title: this.translate.instant('Delete Device'),
+      message: this.translate.instant(
+        'Are you sure you want to delete {item}?',
+        { item: getDeviceDescription(this.translate, this.device()) },
+      ),
+      title: this.translate.instant('Delete Item'),
     })
       .pipe(
         switchMap((confirmed) => {
