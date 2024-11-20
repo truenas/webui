@@ -14,7 +14,11 @@
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
   "<b>Copy & Paste</b> <br/>\n                  Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>\n                  <b>Kill Process</b> <br/>\n                  Kill process shortcut is <i>Ctrl+C</i>.": "",
   "<b>WARNING:</b> Rolling the dataset back destroys data on the dataset <i>and</i> can destroy additional snapshots that are related to the dataset. <b>This can result in permanent data loss!</b> Do not roll back until all desired data and snapshots are backed up.": "",
+<<<<<<< HEAD
   "<b>WARNING:</b> The configuration file contains sensitive data like system passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation. Additional sensitive information can be included in the configuration file.<br />": "<b>ADVERTENCIA:</b> El archivo de configuración contiene datos confidenciales, como contraseñas del sistema. Sin embargo, esta operación <b>NO</b> realiza una copia de seguridad de las claves SSH almacenadas en <samp>/root/.ssh</samp>. Se puede incluir información confidencial adicional en el archivo de configuración.<br />",
+=======
+  "<b>WARNING:</b> The configuration file contains sensitive data like system passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation. Additional sensitive information can be included in the configuration file.<br />": "<b>ADVERTENCIA:</b> El archivo de configuración contiene datos confidenciales, como contraseñas del sistema. Sin embargo, esta operación NO realiza una copia de seguridad de las claves SSH almacenadas en <samp>/root/.ssh</samp>. Se puede incluir información confidencial adicional en el archivo de configuración.<br />",
+>>>>>>> fe85fe73a0 (Update src/assets/i18n/es-ar.json)
   "<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.": "",
   "<i>Internal Certificates</i> use system-managed CAs for certificate issuance.  <i>Import Certificate</i> lets you import an existing certificate onto the system.": "",
   "<i>Sensitive</i> assumes filenames are case sensitive. <i>Insensitive</i> assumes filenames are not case sensitive.": "",
@@ -57,7 +61,11 @@
   "Add user linked API Key": "Agregar clave API vinculada al usuario",
   "Adding data VDEVs of different types is not supported.": "No se admite agregar datos VDEV de diferentes tipos.",
   "Adding, removing, or changing hardware components.": "Agregando, quitando o cambiando componentes de hardware.",
+<<<<<<< HEAD
   "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "Configuración adicional de la aplicación Kerberos. Consultá la sección \"appdefaults\" de <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a> para conocer la configuración disponible y la sintaxis de uso.",
+=======
+  "Additional Kerberos application settings. See the \"appdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "Configuración adicional de la aplicación Kerberos. Consultá la sección "appdefaults" de <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a> para conocer la configuración disponible y la sintaxis de uso.",
+>>>>>>> fe85fe73a0 (Update src/assets/i18n/es-ar.json)
   "Additional Kerberos library settings. See the \"libdefaults\" section of <a href=\"https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html\" target=\"_blank\">[krb.conf(5)]</a>. for available settings and usage syntax.": "",
   "Additional Parameters String": "",
   "Additional hosts to be appended to <i>/etc/hosts</i>. Separate entries by pressing <code>Enter</code>. Hosts defined here are  still accessible by name even when DNS is not available. See  <a href=\"https://man7.org/linux/man-pages/man5/hosts.5.html\" target=\"_blank\">hosts(5)</a>  for additional information.": "",
@@ -434,12 +442,21 @@
   "Error deleting dataset {datasetName}.": "",
   "Error detected reading App": "",
 <<<<<<< HEAD
+<<<<<<< HEAD
   "Error getting chart data": "Error al obtener los datos del gráfico",
   "Error starting service {serviceName}.": "",
   "Error stopping service {serviceName}.": "",
 =======
   "Error getting chart data": "",
 >>>>>>> 71a5d2c58b (NAS-131737: Fix service.start/stop requests in Shares (#11049))
+=======
+  "Error getting chart data": "",
+=======
+  "Error getting chart data": "Error al obtener los datos del gráfico",
+  "Error starting service {serviceName}.": "",
+  "Error stopping service {serviceName}.": "",
+>>>>>>> 3199e21379 (Update src/assets/i18n/es-ar.json)
+>>>>>>> fe85fe73a0 (Update src/assets/i18n/es-ar.json)
   "Error validating pool name": "",
   "Error validating target name": "",
   "Error when loading similar apps.": "",
