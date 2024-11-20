@@ -124,13 +124,13 @@ def click_on_browser_files_click_on_bucket_then_click_on_the_test_folder(driver,
     """click on Browser Files, click on {bucket}, then click on the bucket."""
     global my_bucket
     my_bucket = bucket
-    assert wait_on_element(driver, 10, '//span[text()="B2 Cloud Storage Buckets"]')
+    assert wait_on_element(driver, 10, '//h1[contains(text(),"B2 Cloud Storage Buckets")]')
     assert wait_on_element(driver, 7, '//a[text()="Browse Files"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="Browse Files"]').click()
     assert wait_on_element(driver, 10, '//h1[text()="Browse Files"]')
     assert wait_on_element(driver, 10, '//div[@class="b2-browse-crumbs" and contains(.,"Buckets")]')
-    assert wait_on_element(driver, 10, f'//span[contains(text(),"{bucket} ")]', 'clickable')
-    driver.find_element_by_xpath(f'//span[contains(text(),"{bucket} ")]').click()
+    assert wait_on_element(driver, 10, f'//*[contains(text(),"{bucket} ")]', 'clickable')
+    driver.find_element_by_xpath(f'//*[contains(text(),"{bucket} ")]').click()
     assert wait_on_element(driver, 10, f'//a[text()="{bucket}"]', 'clickable')
     time.sleep(1)
 
