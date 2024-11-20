@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  combineLatest, filter, switchMap, tap,
+} from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -21,9 +23,11 @@ export class WidgetPoolComponent implements WidgetComponent {
 
   protected poolId = computed(() => this.settings()?.poolId || '');
 
-  protected pool = toSignal(toObservable(this.poolId).pipe(
-    filter(Boolean),
-    switchMap((poolId) => this.resources.getPoolById(+poolId)),
+  protected poolName = computed(() => this.settings()?.name?.split(':')[1] || '');
+
+  protected pool = toSignal(combineLatest([toObservable(this.poolName), toObservable(this.poolId)]).pipe(
+    filter(([name, id]) => !!name || !!id),
+    switchMap(([name, id]) => (id ? this.resources.getPoolById(+id) : this.resources.getPoolByName(name))),
     tap((pool) => {
       this.poolExists = !!pool;
       this.cdr.markForCheck();
