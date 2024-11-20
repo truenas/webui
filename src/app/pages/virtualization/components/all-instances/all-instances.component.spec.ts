@@ -31,9 +31,11 @@ describe('AllInstancesComponent', () => {
       mockProvider(VirtualizationViewStore, {
         initialize: jest.fn(),
         showMobileDetails: jest.fn(),
+        setMobileDetails: jest.fn(),
       }),
       mockProvider(VirtualizationDevicesStore, {
         selectedInstance: jest.fn(() => ({ id: 'instance1' } as VirtualizationInstance)),
+        resetInstance: jest.fn(),
       }),
     ],
     declarations: [

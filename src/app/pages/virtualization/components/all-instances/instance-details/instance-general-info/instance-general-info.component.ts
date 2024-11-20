@@ -8,7 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
@@ -70,7 +70,6 @@ export class InstanceGeneralInfoComponent {
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete {name}?', { name: this.instance().name }),
     }).pipe(
-      filter(Boolean),
       switchMap(() => {
         return this.dialogService.jobDialog(
           this.api.job('virt.instance.delete', [this.instance().id]),

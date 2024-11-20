@@ -22,7 +22,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   StopOptionsDialogComponent, StopOptionsOperation,
 } from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -35,9 +34,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   standalone: true,
   imports: [
     IxIconComponent,
-    MatTooltipModule,
     TestDirective,
     TranslateModule,
+    MatTooltipModule,
     MatButtonModule,
     MatCheckboxModule,
     RequiresRolesDirective,
@@ -48,7 +47,6 @@ export class InstanceRowComponent {
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly selected = input<boolean>(false);
-  readonly isMobileView = this.viewStore.isMobileView;
   protected readonly isStopped = computed(() => this.instance().status === VirtualizationStatus.Stopped);
 
   readonly selectionChange = output();
@@ -63,7 +61,6 @@ export class InstanceRowComponent {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private viewStore: VirtualizationViewStore,
   ) {}
 
   start(): void {

@@ -33,6 +33,7 @@ describe('InstanceListComponent', () => {
         selectedInstance: jest.fn(),
       }),
       mockProvider(VirtualizationViewStore, {
+        initialize: jest.fn(),
         isMobileView: jest.fn(),
         showMobileDetails: jest.fn(),
         closeMobileDetails: jest.fn(),
