@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
+import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -7,14 +7,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { VirtualizationProxy } from 'app/interfaces/virtualization.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceProxyFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
 import {
-  DeleteDeviceButtonComponent,
-} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
+  DeviceActionsMenuComponent,
+} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
@@ -34,9 +34,7 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
     MatButton,
     TestDirective,
     NgxSkeletonLoaderModule,
-    MatIconButton,
-    IxIconComponent,
-    DeleteDeviceButtonComponent,
+    DeviceActionsMenuComponent,
   ],
 })
 export class InstanceProxiesComponent {
@@ -54,7 +52,19 @@ export class InstanceProxiesComponent {
   });
 
   protected addProxy(): void {
-    this.slideIn.open(InstanceProxyFormComponent, false, this.instanceStore.selectedInstance().id)
+    this.openProxyForm();
+  }
+
+  protected editProxy(proxy: VirtualizationProxy): void {
+    this.openProxyForm(proxy);
+  }
+
+  private openProxyForm(proxy?: VirtualizationProxy): void {
+    this.slideIn.open(
+      InstanceProxyFormComponent,
+      false,
+      { proxy, instanceId: this.instanceStore.selectedInstance().id },
+    )
       .pipe(untilDestroyed(this))
       .subscribe((result) => {
         if (!result.response) {
