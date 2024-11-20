@@ -18,7 +18,7 @@ export interface VirtualizationInstancesState {
 }
 
 const initialState: VirtualizationInstancesState = {
-  isLoading: false,
+  isLoading: true,
   instances: [],
 
   // TODO: May belong to its own store.
@@ -32,6 +32,7 @@ const initialState: VirtualizationInstancesState = {
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
+
   readonly instances = computed(() => this.stateAsSignal().instances);
 
   readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
