@@ -88,6 +88,8 @@
   "Adjust Scrub/Resilver Priority": "",
   "Adjust how often alert notifications are sent, use  the Frequency drop-down. Setting the Frequency to NEVER prevents that  alert from being added to alert notifications, but the alert can still  show in the web interface if it is triggered.": "",
   "All Users": "",
+  "Allow Directory Service users to access WebUI?": "",
+  "Allow access": "",
   "Allow anonymous FTP logins with access to the  directory specified in <b>Path</b>.": "",
   "Allow any local user to log in. By default, only  members of the <i>ftp</i> group are allowed to log in.": "",
   "Allow clients to access the TrueNAS server if they are members of domains that have a trust relationship with the domain to which TrueNAS is joined. This requires valid idmap backend configuration for all trusted domains.": "",
