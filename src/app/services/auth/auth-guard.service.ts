@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -20,13 +20,13 @@ export class AuthGuardService {
     });
   }
 
-  canActivate(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+  canActivate({ queryParams }: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     if (this.isAuthenticated) {
       return true;
     }
 
-    this.window.sessionStorage.setItem('redirectUrl', state.url);
-    this.router.navigate(['/signin']);
+    this.window.sessionStorage.setItem('redirectUrl', state.url.split('?')[0]);
+    this.router.navigate(['/signin'], { queryParams });
 
     return false;
   }

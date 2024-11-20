@@ -11,6 +11,7 @@ import {
   provideRouter,
   PreloadAllModules,
   withComponentInputBinding,
+  withDebugTracing,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -121,6 +122,6 @@ bootstrapApplication(AppComponent, {
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
+    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding(), withDebugTracing()),
   ],
 });

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
@@ -81,6 +81,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private authService: AuthService,
     private updateService: UpdateService,
     private actions$: Actions,
+    private activatedRoute: ActivatedRoute,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -240,6 +241,9 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private handleLoginWithToken(): Observable<LoginResult> {
+    this.authService.setQueryTokenIfExists(
+      this.activatedRoute.snapshot.queryParamMap.get('token'),
+    );
     return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(take(1)).pipe(
       filter((isTokenWithinTimeline) => {
         if (!isTokenWithinTimeline) {
