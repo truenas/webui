@@ -22,10 +22,10 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
@@ -79,7 +79,7 @@ export class AccessFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
@@ -151,7 +151,7 @@ export class AccessFormComponent implements OnInit {
 
   private updateLoginBanner(): Observable<unknown> {
     const loginBanner = this.form.value.login_banner;
-    return this.ws.call('system.advanced.update', [{ login_banner: loginBanner }])
+    return this.api.call('system.advanced.update', [{ login_banner: loginBanner }])
       .pipe(finalize(() => {
         this.store$.dispatch(advancedConfigUpdated());
         this.store$.dispatch(loginBannerUpdated({ loginBanner }));
@@ -159,7 +159,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   private updateEnterpriseDsAuth(): Observable<unknown> {
-    return this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+    return this.api.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
       .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
   }
 

@@ -10,8 +10,8 @@ import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class IdentifyLightComponent {
   protected readonly DriveBayLightStatus = DriveBayLightStatus;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store: EnclosureStore,
   ) {}
@@ -50,7 +50,7 @@ export class IdentifyLightComponent {
       driveBayNumber: slot.drive_bay_number,
     });
 
-    this.ws.call('enclosure2.set_slot_status', [{
+    this.api.call('enclosure2.set_slot_status', [{
       status: newStatus,
       enclosure_id: enclosure.id,
       slot: slot.drive_bay_number,

@@ -33,14 +33,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-api-key-form',
-  templateUrl: './api-key-form-dialog.component.html',
-  styleUrls: ['./api-key-form-dialog.component.scss'],
+  templateUrl: './api-key-form.component.html',
+  styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -125,6 +125,8 @@ export class ApiKeyFormComponent implements OnInit {
         nonExpiring: !this.editingRow().expires_at,
       });
     }
+
+    this.handleNonExpiringChanges();
   }
 
   onSubmit(): void {
@@ -169,5 +171,15 @@ export class ApiKeyFormComponent implements OnInit {
   protected addForbiddenNamesValidator(): void {
     this.form.controls.name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenNames$));
     this.form.controls.name.updateValueAndValidity();
+  }
+
+  private handleNonExpiringChanges(): void {
+    this.form.controls.nonExpiring.valueChanges.pipe(untilDestroyed(this)).subscribe((nonExpiring) => {
+      if (nonExpiring) {
+        this.form.controls.expiresAt.disable();
+      } else {
+        this.form.controls.expiresAt.enable();
+      }
+    });
   }
 }

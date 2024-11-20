@@ -7,15 +7,15 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PoolWizardNameValidationService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -28,7 +28,7 @@ export class PoolWizardNameValidationService {
       distinctUntilChanged(),
       take(1),
       switchMap((value) => {
-        return this.ws.call('pool.validate_name', [value]).pipe(
+        return this.api.call('pool.validate_name', [value]).pipe(
           switchMap((isValid) => {
             return isValid === true
               ? of(null)

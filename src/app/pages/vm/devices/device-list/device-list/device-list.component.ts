@@ -36,8 +36,8 @@ import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -99,7 +99,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
@@ -109,7 +109,7 @@ export class DeviceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+    const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
       tap((devices) => this.devices = devices),
       untilDestroyed(this),
     );

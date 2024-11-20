@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * Creates an async validator that checks if there is enough free space for the selected datastore.
@@ -22,7 +22,7 @@ export class FreeSpaceValidatorService {
   private previousPath: string;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private validators: IxValidatorsService,
     private translate: TranslateService,
   ) {}
@@ -59,7 +59,7 @@ export class FreeSpaceValidatorService {
 
   private getFreeSpaceInPath(path: string): Observable<number> {
     if (!this.freeSpaceInPath$ || this.previousPath !== path) {
-      this.freeSpaceInPath$ = this.ws.call('filesystem.statfs', [path]).pipe(
+      this.freeSpaceInPath$ = this.api.call('filesystem.statfs', [path]).pipe(
         map((stat) => stat.free_bytes),
         shareReplay({
           refCount: false,

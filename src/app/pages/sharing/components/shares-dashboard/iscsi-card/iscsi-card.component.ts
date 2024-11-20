@@ -35,9 +35,9 @@ import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/share
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -113,14 +113,14 @@ export class IscsiCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private store$: Store<ServicesState>,
   ) {}
 
   ngOnInit(): void {
-    const iscsiShares$ = this.ws.call('iscsi.target.query').pipe(untilDestroyed(this));
+    const iscsiShares$ = this.api.call('iscsi.target.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -146,7 +146,7 @@ export class IscsiCardComponent implements OnInit {
       message: this.translate.instant('Are you sure you want to delete iSCSI Share <b>"{name}"</b>?', { name: iscsi.name }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('iscsi.target.delete', [iscsi.id])),
+      switchMap(() => this.api.call('iscsi.target.delete', [iscsi.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

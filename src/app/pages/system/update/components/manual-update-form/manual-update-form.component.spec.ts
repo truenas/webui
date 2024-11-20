@@ -18,7 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -58,7 +58,7 @@ describe('ManualUpdateFormComponent', () => {
           getItem: () => ProductType.ScaleEnterprise,
         },
       }),
-      mockProvider(WebSocketConnectionService, {
+      mockProvider(WebSocketHandlerService, {
         isConnected$: of(true),
       }),
       provideMockStore({

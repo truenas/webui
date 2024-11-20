@@ -3,7 +3,7 @@
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Group' | translate">
+      <ix-fieldset [title]="'Authentication Method and Group' | translate">
         <ix-input
           formControlName="tag"
           type="number"
@@ -11,6 +11,14 @@
           [tooltip]="tooltips.tag | translate"
           [required]="true"
         ></ix-input>
+
+        <ix-select
+          formControlName="discovery_auth"
+          [label]="'Discovery Authentication' | translate"
+          [tooltip]="tooltips.discovery_auth | translate"
+          [options]="discoveryAuthOptions$"
+          [required]="true"
+        ></ix-select>
       </ix-fieldset>
 
       <ix-fieldset [title]="'User' | translate">

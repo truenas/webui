@@ -7,13 +7,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import {
-  DeleteDeviceButtonComponent,
-} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
+  DeviceActionsMenuComponent,
+} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
@@ -33,7 +34,7 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
     NgxSkeletonLoaderModule,
     TestDirective,
     TranslateModule,
-    DeleteDeviceButtonComponent,
+    DeviceActionsMenuComponent,
   ],
 })
 export class InstanceDisksComponent {
@@ -52,7 +53,15 @@ export class InstanceDisksComponent {
   });
 
   protected addDisk(): void {
-    this.slideIn.open(InstanceDiskFormComponent, false, this.instanceStore.selectedInstance().id)
+    this.openDiskForm();
+  }
+
+  protected editDisk(disk: VirtualizationDisk): void {
+    this.openDiskForm(disk);
+  }
+
+  private openDiskForm(disk?: VirtualizationDisk): void {
+    this.slideIn.open(InstanceDiskFormComponent, false, { disk, instanceId: this.instanceStore.selectedInstance().id })
       .pipe(untilDestroyed(this))
       .subscribe((result) => {
         if (!result.response) {

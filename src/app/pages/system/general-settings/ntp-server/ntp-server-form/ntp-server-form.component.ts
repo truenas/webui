@@ -20,8 +20,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { greaterThanFg } from 'app/services/validators';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -79,7 +79,7 @@ export class NtpServerFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
@@ -122,9 +122,9 @@ export class NtpServerFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('system.ntpserver.create', [body]);
+      request$ = this.api.call('system.ntpserver.create', [body]);
     } else {
-      request$ = this.ws.call('system.ntpserver.update', [this.editingServer.id, body]);
+      request$ = this.api.call('system.ntpserver.update', [this.editingServer.id, body]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

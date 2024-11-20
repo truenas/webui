@@ -19,7 +19,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class LicenseComponent {
     private fb: FormBuilder,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<LicenseComponent>,
-    protected ws: ApiService,
+    protected api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
   ) {}
@@ -69,7 +69,7 @@ export class LicenseComponent {
     this.isFormLoading = true;
 
     const { license } = this.form.value;
-    this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.slideInRef.close(true);

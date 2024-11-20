@@ -38,10 +38,10 @@ import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -132,7 +132,7 @@ export class CronCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private taskService: TaskService,
     private matDialog: MatDialog,
@@ -142,7 +142,7 @@ export class CronCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query').pipe(
+    const cronjobs$ = this.api.call('cronjob.query').pipe(
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
@@ -172,7 +172,7 @@ export class CronCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cronjob.run', [row.id])),
+      switchMap(() => this.api.call('cronjob.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

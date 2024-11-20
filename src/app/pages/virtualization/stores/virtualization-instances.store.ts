@@ -5,8 +5,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, filter, repeat } from 'rxjs/operators';
 import { VirtualizationDevice, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
@@ -18,7 +18,7 @@ export interface VirtualizationInstancesState {
 }
 
 const initialState: VirtualizationInstancesState = {
-  isLoading: false,
+  isLoading: true,
   instances: [],
 
   // TODO: May belong to its own store.
@@ -33,13 +33,12 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly instances = computed(() => this.stateAsSignal().instances);
-
   readonly selectedInstance = computed(() => this.stateAsSignal().selectedInstance);
   readonly isLoadingDevices = computed(() => this.stateAsSignal().isLoadingDevices);
   readonly selectedInstanceDevices = computed(() => this.stateAsSignal().selectedInstanceDevices);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -48,10 +47,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
   readonly initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       switchMap(() => {
-        return this.ws.call('virt.instance.query').pipe(
+        return this.api.call('virt.instance.query').pipe(
           tap(() => this.patchState({ isLoading: true })),
           repeat({
-            delay: () => this.ws.subscribe('core.get_jobs').pipe(
+            delay: () => this.api.subscribe('core.get_jobs').pipe(
               filter((event) => [
                 'virt.instance.start',
                 'virt.instance.stop',
@@ -87,7 +86,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
 
         this.patchState({ isLoadingDevices: true });
 
-        return this.ws.call('virt.instance.device_list', [selectedInstance.id]).pipe(
+        return this.api.call('virt.instance.device_list', [selectedInstance.id]).pipe(
           tap((devices) => {
             this.patchState({
               selectedInstanceDevices: devices,

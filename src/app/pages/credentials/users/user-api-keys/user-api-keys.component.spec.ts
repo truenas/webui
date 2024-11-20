@@ -14,11 +14,11 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
-import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('UserApiKeysComponent', () => {
   let spectator: Spectator<UserApiKeysComponent>;
@@ -96,9 +96,9 @@ describe('UserApiKeysComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Username', 'Local', 'Revoked', 'Created date', 'Expires date', ''],
+      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires Date', ''],
       ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 15:36:50', '2002-02-06 05:10:10', ''],
-      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'N/A', ''],
+      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'Never', ''],
     ];
 
     const cells = await table.getCellTexts();

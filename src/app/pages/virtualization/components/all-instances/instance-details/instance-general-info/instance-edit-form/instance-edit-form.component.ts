@@ -28,7 +28,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -58,14 +58,14 @@ export class InstanceEditFormComponent {
   editingInstanceId = this.instance.id;
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    cpu: ['', [Validators.required, cpuValidator()]],
     autostart: [false],
-    memory: [null as number, Validators.required],
+    cpu: ['', [cpuValidator()]],
+    memory: [null as number],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -88,7 +88,7 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
-    const job$ = this.ws.job('virt.instance.update', [this.editingInstanceId, payload]);
+    const job$ = this.api.job('virt.instance.update', [this.editingInstanceId, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant('Updating Instance'),

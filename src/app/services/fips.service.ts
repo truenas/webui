@@ -7,8 +7,8 @@ import {
 } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class FipsService {
     private translate: TranslateService,
     private router: Router,
     private snackbar: SnackbarService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -95,7 +95,7 @@ export class FipsService {
 
   restartRemote(): Observable<unknown> {
     return this.dialog.jobDialog(
-      this.ws.job('failover.reboot.other_node'),
+      this.api.job('failover.reboot.other_node'),
       { title: this.translate.instant('Restarting Standby') },
     )
       .afterClosed()

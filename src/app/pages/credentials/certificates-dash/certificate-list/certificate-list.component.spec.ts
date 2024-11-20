@@ -20,9 +20,9 @@ import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-da
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { CertificateListComponent } from './certificate-list.component';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({

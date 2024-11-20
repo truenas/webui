@@ -27,9 +27,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -108,13 +108,13 @@ export class NtpServerCardComponent implements OnInit {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private slideInService: SlideInService,
   ) {}
 
   ngOnInit(): void {
-    const ntpServers$ = this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this));
+    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
     this.loadItems();
   }
@@ -133,7 +133,7 @@ export class NtpServerCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
+      switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {

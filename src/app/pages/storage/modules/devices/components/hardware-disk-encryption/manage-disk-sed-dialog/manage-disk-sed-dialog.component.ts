@@ -12,14 +12,13 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/disk.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -50,10 +49,9 @@ export class ManageDiskSedDialogComponent implements OnInit {
   readonly helptext = helptextDisks;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<ManageDiskSedDialogComponent>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -74,7 +72,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
   }
 
   private loadDiskSedInfo(): void {
-    this.ws.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
+    this.api.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
@@ -87,7 +85,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
   }
 
   setNewPassword(password: string): void {
-    this.ws.call('disk.update', [this.disk.identifier, { passwd: password }])
+    this.api.call('disk.update', [this.disk.identifier, { passwd: password }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

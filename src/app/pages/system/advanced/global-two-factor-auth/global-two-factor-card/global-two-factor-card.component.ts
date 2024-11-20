@@ -22,8 +22,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class GlobalTwoFactorAuthCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('auth.twofactor.config')),
+    switchMap(() => this.api.call('auth.twofactor.config')),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -63,7 +63,7 @@ export class GlobalTwoFactorAuthCardComponent {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private chainedSlideIns: ChainedSlideInService,
   ) { }

@@ -181,7 +181,7 @@ export class UserListComponent implements OnInit {
   }
 
   navigateToApiKeys(): void {
-    this.router.navigate(['/credentials/user-api-keys']);
+    this.router.navigate(['/credentials/users/api-keys']);
   }
 
   onListFiltered(query: string): void {

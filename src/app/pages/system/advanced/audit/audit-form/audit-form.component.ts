@@ -27,8 +27,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -75,7 +75,7 @@ export class AuditFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -93,7 +93,7 @@ export class AuditFormComponent implements OnInit {
   onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
     this.isFormLoading = true;
-    this.ws.call('audit.update', [configUpdate]).pipe(
+    this.api.call('audit.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
@@ -114,7 +114,7 @@ export class AuditFormComponent implements OnInit {
   private loadForm(): void {
     this.isFormLoading = true;
 
-    this.ws.call('audit.config').pipe(untilDestroyed(this))
+    this.api.call('audit.config').pipe(untilDestroyed(this))
       .subscribe({
         next: (auditConfig) => {
           this.isFormLoading = false;

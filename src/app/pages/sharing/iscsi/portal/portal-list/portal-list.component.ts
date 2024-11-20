@@ -29,10 +29,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -92,14 +92,6 @@ export class PortalListComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    textColumn({
-      title: this.translate.instant('Discovery Auth Method'),
-      propertyName: 'discovery_authmethod',
-    }),
-    textColumn({
-      title: this.translate.instant('Discovery Auth Group'),
-      propertyName: 'discovery_authgroup',
-    }),
     actionsColumn({
       actions: [
         {
@@ -122,7 +114,7 @@ export class PortalListComponent implements OnInit {
               buttonText: this.translate.instant('Delete'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
+              switchMap(() => this.api.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
               next: () => this.refresh(),
@@ -144,7 +136,7 @@ export class PortalListComponent implements OnInit {
     public emptyService: EmptyService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,
@@ -156,7 +148,7 @@ export class PortalListComponent implements OnInit {
     this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
       this.ipChoices = new Map(Object.entries(choices));
     });
-    const portals$ = this.ws.call('iscsi.portal.query', []).pipe(
+    const portals$ = this.api.call('iscsi.portal.query', []).pipe(
       tap((portals) => this.portals = portals),
     );
 
@@ -174,7 +166,7 @@ export class PortalListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setFilter({ query, columnKeys: ['comment', 'discovery_authmethod'] });
+    this.dataProvider.setFilter({ query, columnKeys: ['comment'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

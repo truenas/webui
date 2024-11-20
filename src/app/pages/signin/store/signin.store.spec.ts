@@ -14,12 +14,12 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
@@ -40,9 +40,9 @@ describe('SigninStore', () => {
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
         mockCall('system.advanced.login_banner', ''),
       ]),
-      mockProvider(WebSocketConnectionService, {
+      mockProvider(WebSocketHandlerService, {
         isConnected$: of(true),
-        websocket$: of(),
+        responses$: of(),
       }),
       mockProvider(TokenLastUsedService, {
         isTokenWithinTimeline$,

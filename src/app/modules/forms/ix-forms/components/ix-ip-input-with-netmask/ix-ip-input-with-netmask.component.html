@@ -34,4 +34,11 @@
     }
   </mat-select>
 </div>
+
+@if (hint) {
+  <p class="hint">
+    {{ hint | translate }}
+  </p>
+}
+
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

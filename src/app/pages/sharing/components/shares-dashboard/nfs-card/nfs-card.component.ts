@@ -32,9 +32,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -110,14 +110,14 @@ export class NfsCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private store$: Store<ServicesState>,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const nfsShares$ = this.ws.call('sharing.nfs.query').pipe(untilDestroyed(this));
+    const nfsShares$ = this.api.call('sharing.nfs.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -137,7 +137,7 @@ export class NfsCardComponent implements OnInit {
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('sharing.nfs.delete', [nfs.id])),
+      switchMap(() => this.api.call('sharing.nfs.delete', [nfs.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -152,7 +152,7 @@ export class NfsCardComponent implements OnInit {
   private onChangeEnabledState(row: NfsShare): void {
     const param = 'enabled';
 
-    this.ws.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
+    this.api.call('sharing.nfs.update', [row.id, { [param]: !row[param] }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
       untilDestroyed(this),
     ).subscribe({

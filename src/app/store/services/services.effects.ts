@@ -9,9 +9,9 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ServicesService } from 'app/services/services.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -27,7 +27,7 @@ export class ServicesEffects {
   loadServices$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
+      return this.api.call('service.query', [[], { order_by: ['service'] }]).pipe(
         map((services) => services.filter((service) => !hiddenServices.includes(service.service))),
         map((services) => servicesLoaded({ services })),
         catchError((error) => {
@@ -42,7 +42,7 @@ export class ServicesEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(servicesLoaded),
     switchMap(() => {
-      return this.ws.subscribe('service.query').pipe(
+      return this.api.subscribe('service.query').pipe(
         map((event) => event.fields),
         filter((service) => !hiddenServices.includes(service.service)),
         map((service) => serviceChanged({ service })),
@@ -90,7 +90,7 @@ export class ServicesEffects {
   constructor(
     private store$: Store<AppState>,
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private authService: AuthService,
     private servicesService: ServicesService,

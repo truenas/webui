@@ -6,14 +6,19 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import {
+  debounceTime, merge, Observable, of,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import {
@@ -24,7 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +44,7 @@ import { ApiService } from 'app/services/api.service';
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
+    IxSelectComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -76,6 +82,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       Validators.maxLength(16),
     ]],
     peersecret_confirm: [''],
+    discovery_auth: [IscsiAuthMethod.None],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -97,6 +104,18 @@ export class AuthorizedAccessFormComponent implements OnInit {
   });
 
   isLoading = false;
+  discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
+
+  readonly defaultDiscoveryAuthOptions = [
+    {
+      label: 'NONE',
+      value: IscsiAuthMethod.None,
+    },
+    {
+      label: 'CHAP',
+      value: IscsiAuthMethod.Chap,
+    },
+  ];
 
   readonly tooltips = {
     tag: helptextSharingIscsi.authaccess_tooltip_tag,
@@ -104,6 +123,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     secret: helptextSharingIscsi.authaccess_tooltip_user,
     peeruser: helptextSharingIscsi.authaccess_tooltip_peeruser,
     peersecret: helptextSharingIscsi.authaccess_tooltip_peersecret,
+    discovery_auth: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
   };
 
   readonly requiredRoles = [
@@ -117,13 +137,38 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private validatorService: IxValidatorsService,
     private slideInRef: SlideInRef<AuthorizedAccessFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingAccess: IscsiAuthAccess,
   ) {}
 
   ngOnInit(): void {
+    this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
+
+    merge(
+      this.form.controls.peeruser.valueChanges,
+      this.form.controls.peersecret.valueChanges,
+    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
+      if (this.form.value.peeruser && this.form.value.peersecret) {
+        this.discoveryAuthOptions$ = of([
+          ...this.defaultDiscoveryAuthOptions,
+          {
+            label: 'Mutual CHAP',
+            value: IscsiAuthMethod.ChapMutual,
+          },
+        ]);
+        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
+          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.ChapMutual);
+        }
+      } else {
+        this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
+        if (this.form.value.discovery_auth === IscsiAuthMethod.ChapMutual) {
+          this.form.controls.discovery_auth.setValue(IscsiAuthMethod.None);
+        }
+      }
+    });
+
     if (this.editingAccess) {
       this.setAccessForEdit();
     }
@@ -134,24 +179,28 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   setAccessForEdit(): void {
-    this.form.patchValue(this.editingAccess);
+    this.form.patchValue({
+      ...this.editingAccess,
+      secret_confirm: this.editingAccess.secret,
+      peersecret_confirm: this.editingAccess.peersecret,
+    });
   }
 
   onSubmit(): void {
     const values = this.form.value;
-    delete values.secret_confirm;
-    delete values.peersecret_confirm;
+    const payload = {
+      tag: values.tag,
+      user: values.user,
+      secret: values.secret,
+      peeruser: values.peeruser,
+      peersecret: values.peersecret,
+      discovery_auth: values.discovery_auth,
+    };
 
     this.isLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.ws.call('iscsi.auth.create', [values as IscsiAuthAccessUpdate]);
-    } else {
-      request$ = this.ws.call('iscsi.auth.update', [
-        this.editingAccess.id,
-        values as IscsiAuthAccessUpdate,
-      ]);
-    }
+    const request$ = this.isNew
+      ? this.api.call('iscsi.auth.create', [payload])
+      : this.api.call('iscsi.auth.update', [this.editingAccess.id, payload]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {

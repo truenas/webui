@@ -11,7 +11,7 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
 
 describe('HardwareDiskEncryptionComponent', () => {

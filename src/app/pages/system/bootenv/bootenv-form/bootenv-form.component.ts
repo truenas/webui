@@ -24,7 +24,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class BootEnvironmentFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private slideInRef: SlideInRef<BootEnvironmentFormComponent>,
   ) {}
@@ -79,7 +79,7 @@ export class BootEnvironmentFormComponent implements OnInit {
       target: this.formGroup.value.target,
     }];
 
-    this.ws.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
         this.slideInRef.close(true);

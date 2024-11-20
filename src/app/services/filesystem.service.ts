@@ -7,12 +7,12 @@ import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   /**
@@ -46,7 +46,7 @@ export class FilesystemService {
         limit: 1000,
       };
 
-      return this.ws.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
+      return this.api.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {

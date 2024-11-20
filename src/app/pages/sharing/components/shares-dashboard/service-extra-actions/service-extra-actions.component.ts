@@ -18,10 +18,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +59,7 @@ export class ServiceExtraActionsComponent {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private router: Router,
     private slideInService: SlideInService,
     private urlOptions: UrlOptionsService,
@@ -112,7 +112,7 @@ export class ServiceExtraActionsComponent {
   }
 
   private startService(service: Service): void {
-    this.ws.call('service.start', [service.service, { silent: false }])
+    this.api.call('service.start', [service.service, { silent: false }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
@@ -124,7 +124,7 @@ export class ServiceExtraActionsComponent {
   }
 
   private stopService(service: Service): void {
-    this.ws.call('service.stop', [service.service, { silent: false }])
+    this.api.call('service.stop', [service.service, { silent: false }])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

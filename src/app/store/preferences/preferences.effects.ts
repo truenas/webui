@@ -5,8 +5,8 @@ import { EMPTY, throwError } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
@@ -77,13 +77,13 @@ export class PreferencesEffects {
         return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
-      return this.ws.call('auth.set_attribute', ['preferences', state.preferences]);
+      return this.api.call('auth.set_attribute', ['preferences', state.preferences]);
     }),
   ), { dispatch: false });
 
   constructor(
     private actions$: Actions,
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private authService: AuthService,
   ) {}

@@ -29,10 +29,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -107,7 +107,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               buttonText: this.translate.instant('Delete'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
+              switchMap(() => this.api.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
               next: () => this.refresh(),
@@ -129,7 +129,7 @@ export class AuthorizedAccessListComponent implements OnInit {
     public emptyService: EmptyService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private errorHandler: ErrorHandlerService,

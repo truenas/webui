@@ -16,8 +16,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -59,7 +59,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private chainedRef: ChainedRef<SystemSecurityConfig>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();
@@ -73,7 +73,7 @@ export class SystemSecurityFormComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('system.security.update', [this.form.value as SystemSecurityConfig]),
+      this.api.job('system.security.update', [this.form.value as SystemSecurityConfig]),
       {
         title: this.translate.instant('Saving settings'),
       },
