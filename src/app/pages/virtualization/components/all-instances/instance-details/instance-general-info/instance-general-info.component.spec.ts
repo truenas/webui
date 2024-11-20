@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationImage, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InstanceEditFormComponent,
@@ -30,13 +30,15 @@ const demoInstance = {
     description: 'Almalinux 8 amd64 (20241030_23:38)',
     os: 'Almalinux',
     release: '8',
-  },
+  } as VirtualizationImage,
   memory: 131072000,
   environment: {
     TEST_ENV: 'value1',
     SAMPLE_ENV: 'value2',
   },
-} as unknown as VirtualizationInstance;
+  aliases: null,
+  raw: null,
+} as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {
   let spectator: Spectator<InstanceGeneralInfoComponent>;
