@@ -9,7 +9,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceExtraActionsComponent', () => {
   let spectator: Spectator<ServiceExtraActionsComponent>;
