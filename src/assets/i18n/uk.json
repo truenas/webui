@@ -300,7 +300,6 @@
   "Child Shares": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
   "Choose File for {label}": "",
-  "Choose Shell Details": "",
   "Choose a connection that has been saved in  <b>Credentials > Backup Credentials > SSH Connections</b>.": "",
   "Clear": "",
   "Click \"Add\" to specify NFS client hosts for this share. If both networks and hosts are empty the share will be exported to everyone.": "",

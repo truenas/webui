@@ -169,7 +169,6 @@
   "Child Shares": "",
   "Choose <i>Master</i> if the UPS is plugged directly      into the system serial port. The UPS will remain the      last item to shut down. Choose <i>Slave</i> to have      this system shut down before <i>Master</i>. See the      <a href=\"{url}\"      target=\"_blank\">Network UPS Tools Overview</a>.": "",
   "Choose File for {label}": "",
-  "Choose Shell Details": "",
   "Choose a connection that has been saved in  <b>Credentials > Backup Credentials > SSH Connections</b>.": "",
   "Choose a path to the user's home directory. If the directory exists and matches the username, it is set as the user's home directory. When the path does not end with a subdirectory matching the username, a new subdirectory is created only if the 'Create Home Directory' field is marked checked. The full path to the user's home directory is shown here when editing a user.": "",
   "Choose to connect using either SSH private key stored   in user's home directory or SSH connection from the keychain": "",

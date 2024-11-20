@@ -3,7 +3,6 @@ import { Observable, Subject } from 'rxjs';
 export interface TerminalConfiguration {
   reconnectShell$?: Subject<void>;
   preInit?(): Observable<void>;
-  customReconnectAction?(): void;
   connectionData: TerminalConnectionData;
 }
 
