@@ -140,7 +140,7 @@ export class AcmednsFormComponent implements OnInit {
 
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
-      schema.schema.forEach((input) => {
+      Object.values(schema.schema.properties).forEach((input) => {
         this.form.controls.attributes.addControl(input._name_, new FormControl('', input._required_ ? [Validators.required] : []));
       });
     });
@@ -157,11 +157,11 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
+    return Object.values(schema.schema.properties).map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
-    const variables = schema.schema.map((input) => input._name_);
+    const variables = Object.values(schema.schema.properties).map((input) => input._name_);
     return { key: schema.key, variables };
   }
 
@@ -191,12 +191,11 @@ export class AcmednsFormComponent implements OnInit {
 
   onSubmit(): void {
     const values = {
-      ...this.form.value,
+      name: this.form.value.name,
+      attributes: this.form.value.attributes,
     };
 
-    if (!this.isNew) {
-      delete values.authenticator;
-    }
+    values.attributes.authenticator = this.form.value.authenticator;
 
     for (const [key, value] of Object.entries(values.attributes)) {
       if (value == null || value === '') {
