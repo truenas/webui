@@ -1,18 +1,23 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, map } from 'rxjs';
+import {
+  Observable, finalize, map, of, switchMap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
@@ -26,6 +31,10 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
+import { AppState } from 'app/store';
+import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +75,7 @@ export class PrivilegeFormComponent implements OnInit {
   });
 
   protected readonly helptext = helptextPrivilege;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -122,6 +132,8 @@ export class PrivilegeFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private slideInRef: SlideInRef<PrivilegeFormComponent>,
+    private store$: Store<AppState>,
+    private dialog: DialogService,
     @Inject(SLIDE_IN_DATA) private existingPrivilege: Privilege,
   ) { }
 
@@ -161,7 +173,16 @@ export class PrivilegeFormComponent implements OnInit {
       request$ = this.api.call('privilege.update', [this.existingPrivilege.id, values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(
+      switchMap(() => this.store$.pipe(waitForGeneralConfig)),
+      switchMap((generalConfig) => {
+        if (this.isEnterprise() && !generalConfig.ds_auth) {
+          return this.enableDsAuth();
+        }
+        return of(null);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.isLoading = false;
         this.slideInRef.close(true);
@@ -173,6 +194,22 @@ export class PrivilegeFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private enableDsAuth(): Observable<unknown> {
+    return this.dialog.confirm({
+      title: this.translate.instant('Allow access'),
+      message: this.translate.instant('Allow Directory Service users to access WebUI?'),
+      buttonText: this.translate.instant('Allow'),
+    }).pipe(
+      switchMap((confirmed) => {
+        if (confirmed) {
+          return this.api.call('system.general.update', [{ ds_auth: true }])
+            .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
+        }
+        return of(null);
+      }),
+    );
   }
 
   private get localGroupsUids(): number[] {
