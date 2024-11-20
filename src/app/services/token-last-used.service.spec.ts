@@ -76,16 +76,16 @@ describe('TokenLastUsedService', () => {
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
       const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
-      const ws$ = new Subject<IncomingApiMessage>();
+      const responses$ = new Subject<IncomingApiMessage>();
 
-      jest.spyOn(WebSocketHandlerService.prototype, 'responses$', 'get').mockReturnValue(ws$);
+      jest.spyOn(WebSocketHandlerService.prototype, 'responses$', 'get').mockReturnValue(responses$);
 
       spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
 
       user$.next({} as LoggedInUser);
       expect(updateTokenLastUsedSpy).toHaveBeenCalled();
 
-      ws$.next({ msg: IncomingApiMessageType.Result, id: 'id' });
+      responses$.next({ msg: IncomingApiMessageType.Result, id: 'id' });
       expect(updateTokenLastUsedSpy).toHaveBeenCalled();
     });
   });

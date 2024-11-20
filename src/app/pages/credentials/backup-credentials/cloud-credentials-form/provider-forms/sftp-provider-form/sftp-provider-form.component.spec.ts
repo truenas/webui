@@ -92,9 +92,9 @@ describe('SftpProviderFormComponent', () => {
 
     await lastValueFrom(spectator.component.beforeSubmit());
 
-    const websocket = spectator.inject(ApiService);
-    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
-    expect(websocket.call).toHaveBeenCalledWith('keychaincredential.create', [{
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
+    expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
       attributes: {
         private_key: 'private key',
         public_key: 'public key',

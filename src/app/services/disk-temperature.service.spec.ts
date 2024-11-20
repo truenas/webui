@@ -8,7 +8,7 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 
 describe('DiskTemperatureService', () => {
   let spectator: SpectatorService<DiskTemperatureService>;
-  let websocket: MockApiService;
+  let api: MockApiService;
 
   const createService = createServiceFactory({
     service: DiskTemperatureService,
@@ -32,12 +32,12 @@ describe('DiskTemperatureService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('checks if getTemperature made websocket calls"', async () => {
     await firstValueFrom(spectator.service.getTemperature());
-    expect(websocket.call).toHaveBeenCalledWith('webui.enclosure.dashboard');
-    expect(websocket.call).toHaveBeenCalledWith('disk.temperatures', [['ada1']]);
+    expect(api.call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+    expect(api.call).toHaveBeenCalledWith('disk.temperatures', [['ada1']]);
   });
 });

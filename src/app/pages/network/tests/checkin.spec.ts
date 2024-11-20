@@ -45,7 +45,7 @@ describe('NetworkComponent', () => {
   let spectator: SpectatorHost<NetworkComponent>;
   let loader: HarnessLoader;
   let rootLoader: HarnessLoader;
-  let websocket: MockApiService;
+  let api: MockApiService;
 
   let isTestingChanges = false;
   let wasEditMade = false;
@@ -135,7 +135,7 @@ describe('NetworkComponent', () => {
     `);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    websocket = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
 
     isTestingChanges = false;
     wasEditMade = false;
@@ -157,8 +157,8 @@ describe('NetworkComponent', () => {
   it('shows prompt to test network changes when interface is edited', async () => {
     await makeEdit();
 
-    expect(websocket.call).toHaveBeenCalledWith('interface.has_pending_changes');
-    expect(websocket.call).toHaveBeenCalledWith('interface.checkin_waiting');
+    expect(api.call).toHaveBeenCalledWith('interface.has_pending_changes');
+    expect(api.call).toHaveBeenCalledWith('interface.checkin_waiting');
 
     expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
   });
@@ -169,7 +169,7 @@ describe('NetworkComponent', () => {
     const revertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Revert Changes' }));
     await revertButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('interface.rollback');
+    expect(api.call).toHaveBeenCalledWith('interface.rollback');
 
     expect(spectator.query('.pending-changes-card')).not.toExist();
   });
@@ -180,7 +180,7 @@ describe('NetworkComponent', () => {
     const testButton = await loader.getHarness(MatButtonHarness.with({ text: 'Test Changes' }));
     await testButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
+    expect(api.call).toHaveBeenCalledWith('interface.commit', [{ checkin_timeout: 60 }]);
 
     expect(spectator.query('.pending-changes-card'))
       .toContainText(helptextInterfaces.pending_checkin_text.replace('{x}', '60'));
@@ -200,7 +200,7 @@ describe('NetworkComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Changes' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('interface.checkin');
+    expect(api.call).toHaveBeenCalledWith('interface.checkin');
   }));
 
   it('stops testing changes and goes back to first prompt when another edit is made while the first one is being tested', fakeAsync(async () => {
@@ -211,7 +211,7 @@ describe('NetworkComponent', () => {
 
     await makeEdit();
 
-    expect(websocket.call).toHaveBeenCalledWith('interface.cancel_rollback');
+    expect(api.call).toHaveBeenCalledWith('interface.cancel_rollback');
 
     expect(spectator.query('.pending-changes-card')).toContainText(helptextInterfaces.pending_changes_text);
   }));

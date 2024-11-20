@@ -72,8 +72,8 @@ describe('IpmiEventsDialogComponent', () => {
 
   describe('no events', () => {
     beforeEach(() => {
-      const mockedWebSocket = spectator.inject(MockApiService);
-      mockedWebSocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
 
       spectator.component.ngOnInit();
       spectator.detectChanges();
