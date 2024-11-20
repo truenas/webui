@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class WebSocketConnectionGuard {
   isConnected = false;
   constructor(
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     protected router: Router,
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -20,7 +20,9 @@ export class WebSocketConnectionGuard {
     this.wsManager.isClosed$.pipe(untilDestroyed(this)).subscribe((isClosed) => {
       if (isClosed) {
         this.resetUi();
-        this.wsManager.isClosed$ = false;
+        // TODO: Test why manually changing close status is needed
+        // Test a shutdown function to see how UI acts when this isn't done
+        // this.wsManager.isClosed$ = false;
       }
     });
 
@@ -34,7 +36,7 @@ export class WebSocketConnectionGuard {
 
   private resetUi(): void {
     this.closeAllDialogs();
-    if (!this.wsManager.shutDownInProgress) {
+    if (!this.wsManager.isSystemShuttingDown) {
       this.router.navigate(['/signin']);
     }
   }
@@ -46,11 +48,13 @@ export class WebSocketConnectionGuard {
   }
 
   private showAccessRestrictedDialog(): void {
-    this.dialogService.fullScreenDialog(
-      this.translate.instant('Access restricted'),
-      this.translate.instant('Access from your IP is restricted'),
-    ).pipe(untilDestroyed(this)).subscribe(() => {
-      this.wsManager.reconnect();
+    this.dialogService.fullScreenDialog({
+      title: this.translate.instant('Access restricted'),
+      message: this.translate.instant('Access from your IP is restricted'),
+    }).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.wsManager.reconnect();
+      },
     });
   }
 

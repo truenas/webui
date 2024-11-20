@@ -1,0 +1,31 @@
+<div class="list-item">
+  <div class="disk-title">
+    <span class="disk-name">
+      <h4>{{ disk().name + ' (' + disk().serial + ')' }}</h4>
+      @if (test().wsError || testStartError()) {
+        <a
+          class="link"
+          [ixTest]="[test().diskName, 'view-disk-test-logs']"
+          (click)="showLogs()"
+        >
+          {{ 'View logs' | translate }}
+        </a>
+      }
+    </span>
+    @if (test().wsError || testStartError()) {
+      <ix-icon name="error" class="red-icon"></ix-icon>
+    } @else if (test().finished) {
+      <ix-icon name="check_circle" class="green-icon"></ix-icon>
+    }
+    @if (loading() && !test().finished && !(test().wsError || testStartError())) {
+      <div class="progress-bar">
+        <mat-progress-bar
+          color="primary" 
+          mode="determinate" 
+          [value]="test().progressPercentage || 0"
+        ></mat-progress-bar>
+      </div>
+    }
+  </div>
+  
+</div>

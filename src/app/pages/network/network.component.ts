@@ -23,8 +23,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
@@ -32,11 +32,11 @@ import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { AppState } from 'app/store/index';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { InterfacesCardComponent } from './components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from './components/ipmi-card/ipmi-card.component';
@@ -96,12 +96,12 @@ export class NetworkComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private router: Router,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
@@ -140,7 +140,7 @@ export class NetworkComponent implements OnInit {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
+  handleSlideInClosed(slideInRef: SlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();
@@ -190,19 +190,19 @@ export class NetworkComponent implements OnInit {
 
   private getCheckInWaitingSeconds(): Promise<number> {
     return lastValueFrom(
-      this.ws.call('interface.checkin_waiting'),
+      this.api.call('interface.checkin_waiting'),
     );
   }
 
   private getPendingChanges(): Promise<boolean> {
     return lastValueFrom(
-      this.ws.call('interface.has_pending_changes'),
+      this.api.call('interface.has_pending_changes'),
     );
   }
 
   private async cancelCommit(): Promise<void> {
     await lastValueFrom(
-      this.ws.call('interface.cancel_rollback'),
+      this.api.call('interface.cancel_rollback'),
     );
   }
 
@@ -242,7 +242,7 @@ export class NetworkComponent implements OnInit {
   }
 
   commitPendingChanges(): void {
-    this.ws
+    this.api
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
       .subscribe((services) => {
@@ -281,7 +281,7 @@ export class NetworkComponent implements OnInit {
               return;
             }
 
-            this.ws
+            this.api
               .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
               .pipe(
                 this.loader.withLoader(),
@@ -331,7 +331,7 @@ export class NetworkComponent implements OnInit {
   }
 
   finishCheckin(): void {
-    this.ws
+    this.api
       .call('interface.checkin')
       .pipe(
         this.loader.withLoader(),
@@ -366,7 +366,7 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        this.ws
+        this.api
           .call('interface.rollback')
           .pipe(
             this.loader.withLoader(),
@@ -396,7 +396,7 @@ export class NetworkComponent implements OnInit {
       return;
     }
 
-    this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
+    this.api.call('interface.query', [[['id', '=', state.editInterface]]])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

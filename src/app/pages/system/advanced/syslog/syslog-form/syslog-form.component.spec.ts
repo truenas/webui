@@ -5,28 +5,28 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: SyslogFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('system.advanced.config', {
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
@@ -45,7 +45,7 @@ describe('SyslogFormComponent', () => {
         mockCall('system.advanced.update'),
         mockJob('systemdataset.update'),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -68,7 +68,7 @@ describe('SyslogFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for syslog form and shows them', async () => {
@@ -97,7 +97,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       {
         fqdn_syslog: false,
         sysloglevel: SyslogLevel.Info,
@@ -122,7 +122,7 @@ describe('SyslogFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [
       expect.objectContaining({
         syslog_transport: SyslogTransport.Tls,
         syslog_tls_certificate: 2,

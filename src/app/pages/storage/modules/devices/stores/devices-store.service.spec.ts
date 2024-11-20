@@ -6,7 +6,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DevicesStore', () => {
   let spectator: SpectatorService<DevicesStore>;
@@ -14,7 +14,7 @@ describe('DevicesStore', () => {
   const createService = createServiceFactory({
     service: DevicesStore,
     providers: [
-      mockProvider(WebSocketService),
+      mockProvider(ApiService),
     ],
   });
 
@@ -25,7 +25,7 @@ describe('DevicesStore', () => {
 
   it('loads pool topology, disks and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(WebSocketService);
+      const mockWebSocket = spectator.inject(ApiService);
       jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
         if (method === 'pool.query') {
           return cold('-b|', {
@@ -98,7 +98,7 @@ describe('DevicesStore', () => {
   describe('loadDisksWithSmartTestSupport', () => {
     it('loads disks with SMART support and sets disksWithSmartTestSupport in state', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockWebSocket = spectator.inject(WebSocketService);
+        const mockWebSocket = spectator.inject(ApiService);
         jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
           if (method === 'smart.test.disk_choices') {
             return cold('-b|', {

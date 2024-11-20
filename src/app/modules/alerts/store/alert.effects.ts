@@ -9,6 +9,7 @@ import {
   catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -19,11 +20,13 @@ import {
   alertAdded,
   alertsLoaded,
   alertChanged,
+  alertsDismissedChanged,
 } from 'app/modules/alerts/store/alert.actions';
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services/ws.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -32,7 +35,7 @@ export class AlertEffects {
   loadAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, alertIndicatorPressed, alertReceivedWhenPanelIsOpen),
     switchMap(() => {
-      return this.ws.call('alert.list').pipe(
+      return this.api.call('alert.list').pipe(
         map((alerts) => alertsLoaded({ alerts })),
         catchError((error) => {
           console.error(error);
@@ -48,7 +51,7 @@ export class AlertEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.subscribe('alert.list').pipe(
+      return this.api.subscribe('alert.list').pipe(
         switchMap((event) => {
           return this.store$.select(selectIsAlertPanelOpen).pipe(
             switchMap((isAlertsPanelOpen) => {
@@ -77,14 +80,26 @@ export class AlertEffects {
   dismissAlert$ = createEffect(() => this.actions$.pipe(
     ofType(dismissAlertPressed),
     mergeMap(({ id }) => {
-      return this.ws.call('alert.dismiss', [id]);
+      return this.api.call('alert.dismiss', [id]).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
   reopenAlert$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAlertPressed),
     mergeMap(({ id }) => {
-      return this.ws.call('alert.restore', [id]);
+      return this.api.call('alert.restore', [id]).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
@@ -92,24 +107,38 @@ export class AlertEffects {
     ofType(dismissAllAlertsPressed),
     withLatestFrom(this.store$.select(selectUnreadAlerts).pipe(pairwise())),
     mergeMap(([, [unreadAlerts]]) => {
-      const requests = unreadAlerts.map((alert) => this.ws.call('alert.dismiss', [alert.id]));
-      return forkJoin(requests);
+      const requests = unreadAlerts.map((alert) => this.api.call('alert.dismiss', [alert.id]));
+      return forkJoin(requests).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertsDismissedChanged({ dismissed: false }));
+          return of(EMPTY);
+        }),
+      );
     }),
+    this.errorHandler.catchError(),
   ), { dispatch: false });
 
   reopenAllAlerts$ = createEffect(() => this.actions$.pipe(
     ofType(reopenAllAlertsPressed),
     withLatestFrom(this.store$.select(selectDismissedAlerts).pipe(pairwise())),
     mergeMap(([, [dismissedAlerts]]) => {
-      const requests = dismissedAlerts.map((alert) => this.ws.call('alert.restore', [alert.id]));
-      return forkJoin(requests);
+      const requests = dismissedAlerts.map((alert) => this.api.call('alert.restore', [alert.id]));
+      return forkJoin(requests).pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(alertsDismissedChanged({ dismissed: true }));
+          return of(EMPTY);
+        }),
+      );
     }),
   ), { dispatch: false });
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private api: ApiService,
     private store$: Store<AlertSlice>,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 }

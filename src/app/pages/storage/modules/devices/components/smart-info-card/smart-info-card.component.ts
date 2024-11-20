@@ -29,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class SmartInfoCardComponent implements OnChanges {
   private readonly maxResultCategories = 4;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -89,6 +89,7 @@ export class SmartInfoCardComponent implements OnChanges {
         selectedDisks: [disk],
         diskIdsWithSmart: [disk.identifier],
       } as ManualTestDialogParams,
+      width: '600px',
     });
     testDialog
       .afterClosed()
@@ -99,7 +100,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadTestResults(): void {
-    const results$ = this.ws.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
+    const results$ = this.api.call('smart.test.results', [[['disk', '=', this.topologyDisk().disk]]]).pipe(
       map((testResults) => {
         const results = testResults[0]?.tests ?? [];
         return results.filter((result) => result.status !== SmartTestResultStatus.Running);
@@ -125,7 +126,7 @@ export class SmartInfoCardComponent implements OnChanges {
   }
 
   private loadSmartTasks(): void {
-    this.smartTasksCount$ = this.ws.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
+    this.smartTasksCount$ = this.api.call('smart.test.query_for_disk', [this.topologyDisk().disk]).pipe(
       map((tasks) => tasks.length),
       toLoadingState(),
     );

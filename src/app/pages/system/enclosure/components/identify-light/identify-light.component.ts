@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy, Component, computed,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +19,13 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './identify-light.component.html',
   styleUrls: ['./identify-light.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxIconComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class IdentifyLightComponent {
   protected readonly isStatusKnown = computed(() => Boolean(this.status()));
@@ -23,7 +34,7 @@ export class IdentifyLightComponent {
   protected readonly DriveBayLightStatus = DriveBayLightStatus;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store: EnclosureStore,
   ) {}
@@ -39,7 +50,7 @@ export class IdentifyLightComponent {
       driveBayNumber: slot.drive_bay_number,
     });
 
-    this.ws.call('enclosure2.set_slot_status', [{
+    this.api.call('enclosure2.set_slot_status', [{
       status: newStatus,
       enclosure_id: enclosure.id,
       slot: slot.drive_bay_number,

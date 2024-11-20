@@ -5,7 +5,7 @@ import {
 import { TreeNodeHarness } from 'app/modules/ix-tree/testing/tree-node.harness';
 
 export class TreeHarness extends MatTreeHarness {
-  static override hostSelector = '.ix-tree';
+  static override readonly hostSelector = '.ix-tree';
 
   /**
    * Gets a `HarnessPredicate` that can be used to search for a tree with specific attributes.

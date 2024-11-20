@@ -6,15 +6,15 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {
@@ -28,7 +28,7 @@ describe('BootPoolReplaceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.details', {
           unused: [
             {
@@ -70,7 +70,7 @@ describe('BootPoolReplaceDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job)
+    expect(spectator.inject(ApiService).job)
       .toHaveBeenCalledWith('boot.replace', ['sda3', 'sdb']);
   });
 });

@@ -32,6 +32,7 @@ import { NetworkService } from 'app/services/network.service';
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() tooltip: string;
+  @Input() hint: string;
   @Input() required: boolean;
 
   onChange: (value: string) => void = (): void => {};
@@ -89,8 +90,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.onChange(value);
   }
 
-  private setAddressAndNetmask(ipWithNetmask = ''): void {
-    const [address, netmask] = ipWithNetmask.split('/');
+  private setAddressAndNetmask(ipWithNetmask: string | null): void {
+    const [address, netmask] = (ipWithNetmask || '').split('/');
     this.address = address;
     this.netmask = netmask;
   }

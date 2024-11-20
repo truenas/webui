@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -12,7 +12,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DownloadKeyDialogComponent', () => {
   let spectator: Spectator<DownloadKeyDialogComponent>;
@@ -24,7 +24,7 @@ describe('DownloadKeyDialogComponent', () => {
     imports: [
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('core.download', [null, 'http://localhost:8000/key.json']),
       ]),
       mockProvider(AppLoaderService, {
@@ -61,7 +61,7 @@ describe('DownloadKeyDialogComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Encryption Key' }));
       await downloadButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['pool.dataset.export_keys', ['my-pool'], 'dataset_my-pool_keys.json']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', ['pool.dataset.export_keys', ['my-pool'], 'dataset_my-pool_keys.json']);
       expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith('http://localhost:8000/key.json', 'dataset_my-pool_keys.json', 'application/json');
       expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(fakeBlob, 'dataset_my-pool_keys.json');
 

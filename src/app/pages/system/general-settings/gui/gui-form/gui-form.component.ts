@@ -2,13 +2,12 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
-import {
-  FormBuilder,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
@@ -16,17 +15,25 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -38,6 +45,22 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   selector: 'ix-gui-form',
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    WithManageCertificatesLinkComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class GuiFormComponent {
   isFormLoading = true;
@@ -69,11 +92,11 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private slideInRef: IxSlideInRef<GuiFormComponent, boolean>,
+    private slideInRef: SlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
-    private wsManager: WebSocketConnectionService,
+    private api: ApiService,
+    private wsManager: WebSocketHandlerService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -118,7 +141,7 @@ export class GuiFormComponent {
       }),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
+        return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -189,15 +212,15 @@ export class GuiFormComponent {
 
         this.loader.open();
         this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
-        this.ws.call('system.general.ui_restart').pipe(
+        this.api.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.closeWebSocketConnection();
+            this.wsManager.reconnect();
             this.replaceHrefWhenWsConnected(href);
           },
-          error: (error: WebSocketError) => {
+          error: (error: ApiError) => {
             this.loader.close();
             this.dialog.error({
               title: helptext.dialog_error_title,

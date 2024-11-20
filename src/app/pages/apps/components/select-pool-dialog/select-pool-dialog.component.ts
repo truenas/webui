@@ -1,20 +1,25 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogClose, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,6 +30,18 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: './select-pool-dialog.component.html',
   styleUrls: ['./select-pool-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatDialogTitle,
+    TranslateModule,
+    IxSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+  ],
 })
 export class SelectPoolDialogComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
@@ -50,10 +67,6 @@ export class SelectPoolDialogComponent implements OnInit {
     private dockerStore: DockerStore,
   ) { }
 
-  get canMigrateApplications(): boolean {
-    return Boolean(this.selectedPool) && this.selectedPool !== this.form.value.pool;
-  }
-
   ngOnInit(): void {
     this.loadPools();
   }
@@ -70,10 +83,10 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   private loadPools(): void {
-    forkJoin(([
+    forkJoin([
       this.dockerStore.selectedPool$.pipe(take(1)),
       this.appService.getPoolList(),
-    ]))
+    ])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {

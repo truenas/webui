@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
@@ -17,6 +18,10 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
     AppsStore,
     AppsStatsService,
   ],
+  standalone: true,
+  imports: [
+    RouterOutlet,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppsScopeWrapperComponent implements OnDestroy {
@@ -25,9 +30,8 @@ export class AppsScopeWrapperComponent implements OnDestroy {
     private dockerService: DockerStore,
   ) {
     this.dockerService.initialize();
-    this.dockerService.dockerStatusEventUpdates().pipe(
-      untilDestroyed(this),
-    ).subscribe();
+    this.dockerService.dockerStatusEventUpdates().pipe(untilDestroyed(this)).subscribe();
+    this.dockerService.dockerConfigEventUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   ngOnDestroy(): void {

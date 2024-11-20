@@ -6,9 +6,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -17,7 +17,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
 
@@ -35,7 +35,7 @@ const poolInstance = {
 describe('BootenvStatsDialogComponent', () => {
   let spectator: Spectator<BootenvStatsDialogComponent>;
   let loader: HarnessLoader;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   const createComponent = createComponentFactory({
     component: BootenvStatsDialogComponent,
     imports: [
@@ -47,7 +47,7 @@ describe('BootenvStatsDialogComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebSocket([
+      mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
       ]),
@@ -69,7 +69,7 @@ describe('BootenvStatsDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
   });
 
   function getStatusItems(): Record<string, string> {
@@ -118,7 +118,7 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,

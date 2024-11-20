@@ -7,15 +7,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -25,7 +25,7 @@ import { TargetGlobalConfigurationComponent } from './target-global-configuratio
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -36,7 +36,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
@@ -68,7 +68,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
     mockStore$ = spectator.inject(MockStore);
     store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
@@ -79,7 +79,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('loads iSCSI global config when component is initialized', () => {
-    expect(ws.call).toHaveBeenCalledWith('iscsi.global.config');
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.config');
   });
 
   it('shows current values for iSCSI global settings', async () => {
@@ -108,7 +108,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('iscsi.global.update', [{
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [{
       basename: 'iqn.new.org.freenas.ctl',
       isns_servers: ['32.12.112.42', '8.2.1.2'],
       pool_avail_threshold: 15,

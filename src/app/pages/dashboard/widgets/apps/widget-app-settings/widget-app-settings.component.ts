@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy, Component, effect, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -19,6 +21,12 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   templateUrl: './widget-app-settings.component.html',
   styleUrl: './widget-app-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class WidgetAppSettingsComponent implements WidgetSettingsComponent<WidgetAppSettings>, OnInit {
   form = this.fb.group({
@@ -29,6 +37,7 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
     startWith([]),
     idNameArrayToOptions(),
   );
+
   private firstOption = toSignal(this.installedApps$.pipe(map((opts) => opts[0]?.value)));
 
   private readonly formFieldNames = ['appName'];

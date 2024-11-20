@@ -1,15 +1,19 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, of, filter, tap, combineLatest, map, switchMap,
   take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -18,12 +22,14 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -34,7 +40,7 @@ import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -44,6 +50,16 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   styleUrls: ['update-actions-card.component.scss'],
   templateUrl: './update-actions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    IxIconComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class UpdateActionsCardComponent implements OnInit {
   isUpdateRunning = false;
@@ -71,7 +87,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private ws: WebSocketService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private sysGenService: SystemGeneralService,
     private errorHandler: ErrorHandlerService,
@@ -103,7 +119,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {
@@ -138,12 +154,12 @@ export class UpdateActionsCardComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
       });
   }
 
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((jobs) => {
         if (jobs[0]) {
@@ -173,7 +189,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   startUpdate(): void {
     this.updateService.error$.next(null);
-    this.ws.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
+    this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
         this.updateService.status$.next(update.status);
         if (update.status === SystemUpdateStatus.Available) {
@@ -183,8 +199,8 @@ export class UpdateActionsCardComponent implements OnInit {
               packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                + ' -> ' + change.new.name + '-'
-                + change.new.version,
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               packages.push({
@@ -223,7 +239,7 @@ export class UpdateActionsCardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('No updates available.'));
         }
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,
@@ -281,11 +297,11 @@ export class UpdateActionsCardComponent implements OnInit {
     if (this.isHaLicensed) {
       job$ = this.trainService.trainValue$.pipe(
         take(1),
-        switchMap((trainValue) => this.ws.call('update.set_train', [trainValue])),
-        switchMap(() => this.ws.job('failover.upgrade', [{ resume }])),
+        switchMap((trainValue) => this.api.call('update.set_train', [trainValue])),
+        switchMap(() => this.api.job('failover.upgrade', [{ resume }])),
       );
     } else {
-      job$ = this.ws.job('update.update', [{ resume, reboot: true }]);
+      job$ = this.api.job('update.update', [{ resume, reboot: true }]);
     }
 
     this.dialogService
@@ -313,11 +329,12 @@ export class UpdateActionsCardComponent implements OnInit {
 
   // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (this.updateType) {
       case UpdateType.ApplyPending: {
         const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
-          : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
+          : this.translate.instant('The system will restart and be briefly unavailable while applying updates. Apply updates and restart?');
         this.dialogService.confirm({
           title: this.translate.instant('Apply Pending Updates'),
           message: this.translate.instant(message),
@@ -333,7 +350,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private saveConfigurationIfNecessary(): Observable<void> {
     if (this.wasConfigurationSaved) {
-      return of();
+      return of(null);
     }
 
     return this.matDialog.open(SaveConfigDialogComponent, {
@@ -372,7 +389,7 @@ export class UpdateActionsCardComponent implements OnInit {
 
   private downloadUpdates(): void {
     this.dialogService.jobDialog(
-      this.ws.job('update.download'),
+      this.api.job('update.download'),
       { title: this.updateTitle },
     )
       .afterClosed()

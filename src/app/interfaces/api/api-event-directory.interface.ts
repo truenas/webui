@@ -2,6 +2,7 @@ import { DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { App, AppStats } from 'app/interfaces/app.interface';
+import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -9,6 +10,7 @@ import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-re
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -16,6 +18,7 @@ import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.inte
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
@@ -28,15 +31,22 @@ export interface ApiEventDirectory {
   'disk.query': { response: Disk };
   'docker.state': { response: DockerStatusData };
   'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
+  'failover.reboot.info': { response: FailoverRebootInfo };
   'failover.status': { response: { status: FailoverStatus } };
   'group.query': { response: Group };
   'pool.query': { response: Pool };
+  'virt.global.config': { response: VirtualizationGlobalConfig };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'smart.test.progress': { response: SmartTestProgressUpdate };
+  'system.reboot.info': { response: SystemRebootInfo };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
+  'virt.instance.query': { response: VirtualizationInstance };
+  'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
+  'virt.instance.agent_running': { response: unknown }; // TODO: Fix type
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };
+  'boot.environment.query': { response: BootEnvironment };
 }

@@ -6,26 +6,26 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
-import { IxFilterSelectListHarness } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness';
-import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
+import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
+import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select-list/filter-select-list.harness';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
-  let sortItems: IxFilterSelectListHarness;
+  let sortItems: FilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
   let appsFilterStore: AppsFilterStore;
 
@@ -33,11 +33,11 @@ describe('AvailableAppsHeaderComponent', () => {
     component: AvailableAppsHeaderComponent,
     imports: [
       ReactiveFormsModule,
-      CustomFormsModule,
+      FilterSelectListComponent,
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('app.query', [{}, {}, {}] as App[]),
         mockJob('catalog.sync'),
       ]),
@@ -83,7 +83,7 @@ describe('AvailableAppsHeaderComponent', () => {
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
-    sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
+    sortItems = (await loader.getAllHarnesses(FilterSelectListHarness))[0];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
     appsFilterStore = spectator.inject(AppsFilterStore);
   });
@@ -127,6 +127,6 @@ describe('AvailableAppsHeaderComponent', () => {
     spectator.click(spectator.query(byText('Refresh Catalog')));
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
   });
 });

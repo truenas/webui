@@ -4,22 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaAddFormComponent,
@@ -27,16 +28,19 @@ describe('DatasetQuotaAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(UserService, {
-        userQueryDsCache: () => of(),
+        userQueryDsCache: () => of([
+          { username: 'john', roles: [] },
+          { username: 'jill', roles: [] },
+        ]),
         groupQueryDsCache: () => of(),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(DialogService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -55,7 +59,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -65,22 +69,22 @@ describe('DatasetQuotaAddFormComponent', () => {
       await form.fillForm({
         'User Data Quota (Examples: 500 KiB, 500M, 2 TB)': '500M',
         'User Object Quota': 2000,
-        'Apply To Users': ['jill', 'john'],
       });
+
+      const usersInput = await form.getControl('Apply To Users') as IxChipsHarness;
+      await usersInput.selectSuggestionValue('john');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
-          { id: 'jill', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
-          { id: 'jill', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
           { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -97,7 +101,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           },
         ],
       });
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -112,7 +116,7 @@ describe('DatasetQuotaAddFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
         'my-dataset',
         [
           { id: 'sys', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
@@ -121,7 +125,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

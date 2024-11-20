@@ -8,7 +8,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface Temperature {
   keys: string[];
@@ -30,14 +30,14 @@ export class DiskTemperatureService {
   );
 
   constructor(
-    protected websocket: WebSocketService,
+    protected websocket: ApiService,
   ) { }
 
   getTemperature(): Observable<DiskTemperatures> {
     return this.websocket
       .call('webui.enclosure.dashboard')
       .pipe(
-        repeat(({ delay: () => this.disksChanged$ })),
+        repeat({ delay: () => this.disksChanged$ }),
         map((enclosures) => {
           return enclosures.map((enclosure) => {
             return Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot])

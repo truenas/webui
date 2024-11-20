@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -40,7 +40,7 @@ describe('EncryptionSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.encryption_algorithm_choices', {
           'AES-256-GCM': 'AES-256-GCM',
           'AES-128-GCM': 'AES-128-GCM',
@@ -125,7 +125,7 @@ describe('EncryptionSectionComponent', () => {
         'Inherit (encrypted)': false,
       });
 
-      const encryptionFc = (await form.getControl('Encryption'));
+      const encryptionFc = await form.getControl('Encryption');
       const isEncryptionDisabled = await encryptionFc.isDisabled();
       expect(isEncryptionDisabled).toBe(true);
     });

@@ -87,7 +87,6 @@ describe('CategoryViewComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Back to Discover Page' }));
     await button.click();
 
-    // expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available']);
     jest.spyOn(store$, 'resetFilters').mockImplementation();
     expect(store$.resetFilters).toHaveBeenCalled();
   });

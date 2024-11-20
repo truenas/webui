@@ -1,26 +1,41 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, OnInit, signal,
+} from '@angular/core';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -28,17 +43,37 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dataset-trivial-permissions.component.html',
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatTooltip,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxComboboxComponent,
+    IxCheckboxComponent,
+    IxPermissionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    RouterLink,
+    TranslateModule,
+    AsyncPipe,
+    FakeProgressBarComponent,
+  ],
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   form = this.formBuilder.group({
-    uid: [null as number, [this.validatorService.validateOnCondition(
+    owner: [null as string, [this.validatorService.validateOnCondition(
       () => this.isToApplyUser,
       Validators.required,
     )]],
     applyUser: [false],
-    gid: [null as number, [this.validatorService.validateOnCondition(
+    ownerGroup: [null as string, [this.validatorService.validateOnCondition(
       () => this.isToApplyGroup,
       Validators.required,
     )]],
@@ -49,13 +84,14 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: [false],
   });
 
-  isLoading = false;
+  protected readonly isLoading = signal(false);
+
   aclType: AclType;
   datasetPath: string;
   datasetId: string;
 
-  readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
-  readonly groupProvider = new GroupComboboxProvider(this.userService, 'gid');
+  readonly userProvider = new UserComboboxProvider(this.userService);
+  readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   readonly tooltips = {
     user: helptextPermissions.dataset_permissions_user_tooltip,
@@ -75,7 +111,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
     private translate: TranslateService,
@@ -117,7 +153,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     const payload = this.preparePayload();
 
     this.dialog.jobDialog(
-      this.ws.job('filesystem.setperm', [payload]),
+      this.api.job('filesystem.setperm', [payload]),
       { title: this.translate.instant('Saving Permissions') },
     )
       .afterClosed()
@@ -127,33 +163,33 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Permissions saved.'));
           this.router.navigate(['/datasets', this.datasetId]);
         },
-        error: (error: WebSocketError | Job) => {
+        error: (error: ApiError | Job) => {
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }
 
   private loadPermissionsInformation(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     forkJoin([
-      this.ws.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
+      this.api.call('pool.dataset.query', [[['id', '=', this.datasetId]]]),
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ([datasets, stat]) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           // TODO: DatasetAclType and AclType may represent the same thing
           this.aclType = datasets[0].acltype.value as unknown as AclType;
-          this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
+          const mode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
-            mode: this.oldDatasetMode,
-            uid: stat.uid,
-            gid: stat.gid,
+            mode,
+            owner: stat.user,
+            ownerGroup: stat.group,
           });
         },
         error: (error: unknown) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.dialog.error(this.errorHandler.parseError(error));
         },
       });
@@ -164,23 +200,20 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
     const update = {
       path: this.datasetPath,
+      mode: values.mode,
       options: {
-        stripacl: false,
+        stripacl: values.recursive,
         recursive: values.recursive,
         traverse: values.traverse,
       },
     } as FilesystemSetPermParams;
+
     if (values.applyUser) {
-      update.uid = values.uid;
+      update.user = values.owner;
     }
 
     if (values.applyGroup) {
-      update.gid = values.gid;
-    }
-
-    if (this.oldDatasetMode !== values.mode) {
-      update.mode = values.mode;
-      update.options.stripacl = true;
+      update.group = values.ownerGroup;
     }
 
     return update;

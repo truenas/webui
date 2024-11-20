@@ -9,15 +9,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CsrIdentifierAndTypeComponent,
@@ -35,7 +35,7 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { CsrAddComponent } from './csr-add.component';
 
 describe('CsrAddComponent', () => {
@@ -71,7 +71,7 @@ describe('CsrAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.crypto.csr_profiles', {
           'HTTPS RSA Certificate': profile,
         }),
@@ -83,7 +83,7 @@ describe('CsrAddComponent', () => {
         }),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -152,7 +152,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateCsr,
@@ -185,7 +185,7 @@ describe('CsrAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {
@@ -208,7 +208,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.ImportCsr,
       CSR: '-----BEGIN CERTIFICATE REQUEST-----',

@@ -8,15 +8,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
@@ -37,8 +37,8 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
@@ -63,11 +63,11 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
         mockCall('vm.query', []),
         mockCall('vm.port_wizard', { port: 13669 } as VmPortWizardResult),
@@ -93,13 +93,21 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.nic_attach_choices', {
           eno2: 'eno2',
         }),
-        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('system.advanced.update_gpu_pci_ids'),
+        mockCall('system.advanced.get_gpu_pci_choices', {
+          'GeForce GTX 1080 [0000:03:00.0]': '0000:03:00.0',
+          'GeForce GTX 1070 [0000:02:00.0]': '0000:02:00.0',
+        }),
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
-          { label: 'GeForce GTX 1080', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },
+          { label: 'GeForce GTX 1070 [0000:02:00.0]', value: '0000:02:00.0' },
         ]),
-        addIsolatedGpuPciIds: jest.fn(() => of(undefined)),
+        addIsolatedGpuPciIds: jest.fn(() => of({})),
+        getIsolatedGpuPciIds: jest.fn(() => of([
+          '0000:02:00.0',
+        ])),
       }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(),
@@ -114,7 +122,7 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -165,7 +173,7 @@ describe('VmWizardComponent', () => {
     await updateStepHarnesses();
 
     await form.fillForm({
-      GPUs: ['GeForce GTX 1080'],
+      GPUs: ['GeForce GTX 1080 [0000:03:00.0]'],
     });
     await nextButton.click();
   }
@@ -258,7 +266,7 @@ describe('VmWizardComponent', () => {
     const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await submit.click();
 
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
     expect(websocket.call).toHaveBeenCalledWith('vm.create', [{
       autostart: true,
       bootloader: VmBootloader.Uefi,
@@ -282,8 +290,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Nic,
       attributes: {
+        dtype: VmDeviceType.Nic,
         mac: '00:00:00:00:00:01',
         nic_attach: 'eno2',
         trust_guest_rx_filters: false,
@@ -292,8 +300,8 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         create_zvol: true,
         logical_sectorsize: null,
         physical_sectorsize: null,
@@ -304,14 +312,16 @@ describe('VmWizardComponent', () => {
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
-      dtype: VmDeviceType.Cdrom,
-      attributes: { path: '/mnt/iso/FreeNAS-11.3-U3.iso' },
+      attributes: {
+        dtype: VmDeviceType.Cdrom,
+        path: '/mnt/iso/FreeNAS-11.3-U3.iso',
+      },
     }]);
     expect(websocket.call).toHaveBeenCalledWith('vm.port_wizard');
     expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
-      dtype: VmDeviceType.Display,
       vm: 4,
       attributes: {
+        dtype: VmDeviceType.Display,
         bind: '0.0.0.0',
         password: '12345678',
         port: 13669,
@@ -319,8 +329,10 @@ describe('VmWizardComponent', () => {
         web: true,
       },
     }]);
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0', '10DE:1401']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(
+      ['0000:03:00.0'],
+    );
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });

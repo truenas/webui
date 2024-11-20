@@ -1,11 +1,16 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  FormControl, UntypedFormGroup, Validators, ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import {
@@ -20,11 +25,21 @@ import {
 } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import {
+  IxDynamicFormComponent,
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +47,23 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './reporting-exporters-form.component.html',
   styleUrls: ['./reporting-exporters-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    IxDynamicFormComponent,
+  ],
 })
 export class ReportingExportersFormComponent implements OnInit {
   get isNew(): boolean {
@@ -65,9 +97,9 @@ export class ReportingExportersFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<ReportingExportersFormComponent>,
+    private slideInRef: SlideInRef<ReportingExportersFormComponent>,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -115,7 +147,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   getExportersSchemas(): Observable<ReportingExporterSchema[]> {
-    return this.ws.call('reporting.exporters.exporter_schemas');
+    return this.api.call('reporting.exporters.exporter_schemas');
   }
 
   setExporterTypeOptions(schemas: ReportingExporterSchema[]): void {
@@ -198,9 +230,9 @@ export class ReportingExportersFormComponent implements OnInit {
     let request$: Observable<unknown>;
 
     if (this.isNew) {
-      request$ = this.ws.call('reporting.exporters.create', [values]);
+      request$ = this.api.call('reporting.exporters.create', [values]);
     } else {
-      request$ = this.ws.call('reporting.exporters.update', [
+      request$ = this.api.call('reporting.exporters.update', [
         this.editingExporter.id,
         values,
       ]);

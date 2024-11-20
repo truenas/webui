@@ -3,16 +3,16 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeDataSource: NtpServer[] = [
   {
@@ -47,22 +47,22 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
-  let slideInRef: IxSlideInService;
+  let api: ApiService;
+  let slideInRef: SlideInService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: NtpServerCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('system.ntpserver.query', fakeDataSource),
         mockCall('system.ntpserver.delete', true),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
@@ -72,8 +72,8 @@ describe('NtpServerCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-    slideInRef = spectator.inject(IxSlideInService);
+    api = spectator.inject(ApiService);
+    slideInRef = spectator.inject(SlideInService);
     table = await loader.getHarness(IxTableHarness);
   });
 
@@ -85,7 +85,7 @@ describe('NtpServerCardComponent', () => {
       ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
     ];
 
-    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.query');
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.query');
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
@@ -108,6 +108,6 @@ describe('NtpServerCardComponent', () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
   });
 });

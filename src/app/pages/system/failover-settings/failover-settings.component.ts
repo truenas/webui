@@ -1,24 +1,35 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
@@ -30,6 +41,22 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   templateUrl: './failover-settings.component.html',
   styleUrls: ['./failover-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatCardContent,
+    MatProgressBar,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class FailoverSettingsComponent implements OnInit {
   protected readonly searchableElements = failoverElements;
@@ -56,7 +83,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private authService: AuthService,
@@ -65,7 +92,7 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +103,7 @@ export class FailoverSettingsComponent implements OnInit {
     this.isLoading = true;
     const values = this.form.getRawValue();
 
-    this.ws.call('failover.update', [values])
+    this.api.call('failover.update', [values])
       .pipe(
         map(() => { this.store$.dispatch(haSettingsUpdated()); }),
         untilDestroyed(this),
@@ -91,7 +118,7 @@ export class FailoverSettingsComponent implements OnInit {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.authService.clearAuthToken();
-                this.wsManager.closeWebSocketConnection();
+                this.wsManager.reconnect();
               },
             });
           }
@@ -117,7 +144,7 @@ export class FailoverSettingsComponent implements OnInit {
         switchMap((result) => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
+          return this.api.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         untilDestroyed(this),
       )
@@ -148,7 +175,7 @@ export class FailoverSettingsComponent implements OnInit {
         switchMap(() => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_from_peer');
+          return this.api.call('failover.sync_from_peer');
         }),
         untilDestroyed(this),
       )
@@ -171,7 +198,7 @@ export class FailoverSettingsComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading = true;
 
-    this.ws.call('failover.config')
+    this.api.call('failover.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

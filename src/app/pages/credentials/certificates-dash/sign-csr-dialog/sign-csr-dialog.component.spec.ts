@@ -5,13 +5,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {
@@ -23,7 +23,7 @@ describe('SignCsrDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('certificateauthority.ca_sign_csr'),
       ]),
       mockProvider(MatDialogRef),
@@ -63,7 +63,7 @@ describe('SignCsrDialogComponent', () => {
     const signButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign' }));
     await signButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'certificateauthority.ca_sign_csr',
       [{
         ca_id: 13,

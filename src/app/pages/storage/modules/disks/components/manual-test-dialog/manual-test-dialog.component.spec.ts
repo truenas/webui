@@ -7,14 +7,15 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
@@ -30,7 +31,7 @@ describe('ManualTestDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
           { disk: 'sdb', error: 'Disk is on fire.' },
@@ -59,12 +60,10 @@ describe('ManualTestDialogComponent', () => {
   });
 
   it('shows list of disks that support SMART', () => {
-    const supportedMessage = spectator.query(byText('Run manual test on disks:'));
+    const supportedDisks = spectator.queryAll('h4');
 
-    const supportedDisks = supportedMessage.nextElementSibling;
-
-    expect(supportedDisks).toHaveText('sda (Serial 1)');
-    expect(supportedDisks).toHaveText('sdb (Serial 2)');
+    expect(supportedDisks[0]).toHaveText('sda (Serial 1)');
+    expect(supportedDisks[1]).toHaveText('sdb (Serial 2)');
   });
 
   it('shows list of disks that do not support SMART', () => {
@@ -85,25 +84,15 @@ describe('ManualTestDialogComponent', () => {
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'smart.test.manual_test',
       [[
         { identifier: 'ID1', type: SmartTestType.Short },
         { identifier: 'ID2', type: SmartTestType.Short },
       ]],
     );
-    const tests = spectator.queryAll('.started-tests .test');
 
-    expect(tests[0]).toHaveDescendantWithText({
-      selector: '.device-name',
-      text: 'sda',
-    });
-    expect(tests[0]).toHaveText('1970-01-20 04:37:18');
-
-    expect(tests[1]).toHaveDescendantWithText({
-      selector: '.device-name',
-      text: 'sdb',
-    });
-    expect(tests[1]).toHaveText('Disk is on fire.');
+    const progressComponents = spectator.queryAll(TestProgressRowComponent);
+    expect(progressComponents).toHaveLength(2);
   });
 });

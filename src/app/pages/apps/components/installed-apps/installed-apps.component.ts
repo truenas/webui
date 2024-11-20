@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
+import { AsyncPipe, Location } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -10,23 +10,32 @@ import {
   Inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
-import { Sort } from '@angular/material/sort';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
+import { MatColumnDef } from '@angular/material/table';
+import { MatTooltip } from '@angular/material/tooltip';
 import {
   ActivatedRoute, NavigationEnd, NavigationStart, Router,
+  RouterLink,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
+  forkJoin,
   Observable,
+  switchMap,
 } from 'rxjs';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
@@ -34,18 +43,28 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
+import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
+import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {
@@ -64,6 +83,35 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   templateUrl: './installed-apps.component.html',
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    PageHeaderComponent,
+    DockerStatusComponent,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    IxIconComponent,
+    AppSettingsButtonComponent,
+    RouterLink,
+    MatAnchor,
+    UiSearchDirective,
+    MatMenuTrigger,
+    MatMenu,
+    MatMenuItem,
+    FakeProgressBarComponent,
+    SearchInput1Component,
+    MatSort,
+    AsyncPipe,
+    MatCheckbox,
+    MatColumnDef,
+    MatSortHeader,
+    AppRowComponent,
+    EmptyComponent,
+    MatTooltip,
+    DetailsHeightDirective,
+    AppDetailsPanelComponent,
+  ],
 })
 export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly searchableElements = installedAppsElements;
@@ -82,6 +130,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
+
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
@@ -151,7 +200,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
@@ -236,7 +285,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  showLoadStatus(type: EmptyType): void {
+  showLoadStatus(type: EmptyType.FirstUse | EmptyType.NoPageData | EmptyType.Errors | EmptyType.NoSearchResults): void {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
@@ -280,6 +329,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!pool;
       }),
@@ -288,6 +338,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!dockerStarted;
       }),
@@ -296,6 +347,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!apps.length;
       }),
@@ -312,7 +364,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   start(name: string): void {
     this.appService.startApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Starting "{app}"', { app: name }))),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -326,31 +377,25 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   stop(name: string): void {
     this.appService.stopApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Stopping "{app}"', { app: name }))),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
-      .subscribe((job: Job<void, AppStartQueryParams>) => {
-        if (job.state !== JobState.Running) {
-          this.loader.close();
-        }
-        this.appJobs.set(name, job);
-        this.sortChanged(this.sortingInfo);
-        this.cdr.markForCheck();
+      .subscribe({
+        next: (job: Job<void, AppStartQueryParams>) => {
+          this.appJobs.set(name, job);
+          this.sortChanged(this.sortingInfo);
+          this.cdr.markForCheck();
+        },
       });
   }
 
   restart(name: string): void {
     this.appService.restartApplication(name)
       .pipe(
-        tapOnce(() => this.loader.open(this.translate.instant('Restarting "{app}"', { app: name }))),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe((job: Job<void, AppStartQueryParams>) => {
-        if (job.state !== JobState.Running) {
-          this.loader.close();
-        }
         this.appJobs.set(name, job);
         this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
@@ -393,43 +438,23 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkDelete(): void {
-    const checkedNames = this.checkedAppsNames;
-    const name = checkedNames.join(', ');
-    this.dialogService.confirm({
-      title: helptextApps.apps.delete_dialog.title,
-      message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iX Volumes'),
-    })
-      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
-      .subscribe(({ secondaryCheckbox }) => {
-        this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
-            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
-          )]),
-          { title: helptextApps.apps.delete_dialog.job },
-        )
-          .afterClosed()
-          .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-          .subscribe((job: Job<CoreBulkResponse[]>) => {
-            if (!this.dataSource.length) {
-              this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-            }
-            this.dialogService.closeAllDialogs();
-            let message = '';
-            job.result.forEach((item) => {
-              if (item.error !== null) {
-                message = message + '<li>' + item.error + '</li>';
-              }
-            });
-
-            if (message !== '') {
-              message = '<ul>' + message + '</ul>';
-              this.dialogService.error({ title: helptextApps.bulkActions.title, message });
-            }
+    forkJoin(this.checkedAppsNames.map((appName) => this.appService.checkIfAppIxVolumeExists(appName)))
+      .pipe(
+        this.loader.withLoader(),
+        switchMap((ixVolumesExist) => {
+          return this.dialogService.confirm({
+            title: helptextApps.apps.delete_dialog.title,
+            message: this.translate.instant('Delete {name}?', { name: this.checkedAppsNames.join(', ') }),
+            secondaryCheckbox: ixVolumesExist.some(Boolean),
+            secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
           });
-        this.toggleAppsChecked(false);
-      });
+        }),
+        filter(({ confirmed }) => confirmed),
+        switchMap(({ secondaryCheckbox }) => this.executeBulkDeletion(secondaryCheckbox)),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
   }
 
   sortChanged(sort: Sort, apps?: App[]): void {
@@ -453,6 +478,39 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           return doSortCompare(a.name, b.name, isAsc);
       }
     });
+  }
+
+  private executeBulkDeletion(removeIxVolumes = false): Observable<Job<CoreBulkResponse[]>> {
+    const bulkDeletePayload = this.checkedAppsNames.map((name) => [
+      name,
+      { remove_images: true, remove_ix_volumes: removeIxVolumes },
+    ]);
+
+    return this.dialogService.jobDialog(
+      this.api.job('core.bulk', ['app.delete', bulkDeletePayload]),
+      { title: helptextApps.apps.delete_dialog.job },
+    ).afterClosed();
+  }
+
+  private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
+    if (!this.dataSource.length) {
+      this.redirectToInstalledAppsWithoutDetails();
+    }
+
+    this.dialogService.closeAllDialogs();
+    const errorMessages = this.getErrorMessages(job.result);
+
+    if (errorMessages) {
+      this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
+    }
+
+    this.toggleAppsChecked(false);
+  }
+
+  private getErrorMessages(results: CoreBulkResponse[]): string {
+    const errors = results.filter((item) => item.error).map((item) => `<li>${item.error}</li>`);
+
+    return errors.length ? `<ul>${errors.join('')}</ul>` : '';
   }
 
   private selectAppForDetails(appId: string): void {
@@ -484,6 +542,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   private resetSearch(): void {
     this.onSearch('');
+  }
+
+  private redirectToInstalledAppsWithoutDetails(): void {
+    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
   }
 
   private redirectToAvailableApps(): void {

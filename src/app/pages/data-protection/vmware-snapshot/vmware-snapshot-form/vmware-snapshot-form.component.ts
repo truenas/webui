@@ -1,23 +1,31 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +33,20 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './vmware-snapshot-form.component.html',
   styleUrls: ['./vmware-snapshot-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class VmwareSnapshotFormComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
@@ -74,12 +96,12 @@ export class VmwareSnapshotFormComponent implements OnInit {
   constructor(
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
-    private slideInRef: IxSlideInRef<VmwareSnapshotFormComponent>,
+    private slideInRef: SlideInRef<VmwareSnapshotFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingSnapshot: VmwareSnapshot,
   ) {}
 
@@ -114,7 +136,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.ws.call('vmware.match_datastores_with_datasets', [{
+    this.api.call('vmware.match_datastores_with_datasets', [{
       hostname,
       username,
       password,
@@ -139,10 +161,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
-        if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
+        if (error.reason?.includes('[ETIMEDOUT]')) {
           this.dialogService.error({
             title: helptextVmwareSnapshot.connect_err_dialog.title,
             message: helptextVmwareSnapshot.connect_err_dialog.msg,
@@ -161,9 +183,9 @@ export class VmwareSnapshotFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('vmware.create', [values]);
+      request$ = this.api.call('vmware.create', [values]);
     } else {
-      request$ = this.ws.call('vmware.update', [
+      request$ = this.api.call('vmware.update', [
         this.editingSnapshot.id,
         values,
       ]);

@@ -1,28 +1,58 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
   selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxExplorerComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class InitShutdownFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -71,7 +101,7 @@ export class InitShutdownFormComponent implements OnInit {
   private editingScript: InitShutdownScript;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -104,9 +134,9 @@ export class InitShutdownFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('initshutdownscript.create', [values]);
+      request$ = this.api.call('initshutdownscript.create', [values]);
     } else {
-      request$ = this.ws.call('initshutdownscript.update', [
+      request$ = this.api.call('initshutdownscript.update', [
         this.editingScript.id,
         values,
       ]);

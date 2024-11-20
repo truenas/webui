@@ -10,8 +10,8 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
@@ -30,12 +30,13 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
   let loader: HarnessLoader;
+  let applicationsService: ApplicationsService;
 
   const app = {
     id: 'ix-test-app',
@@ -115,7 +116,7 @@ describe('InstalledAppsComponent', () => {
           },
         },
       },
-      mockWebSocket([]),
+      mockApi([]),
       mockAuth(),
       mockProvider(AppsStatsService),
     ],
@@ -125,6 +126,7 @@ describe('InstalledAppsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.component.dataSource = [app];
+    applicationsService = spectator.inject(ApplicationsService);
   });
 
   it('shows a list of installed apps', () => {
@@ -143,20 +145,22 @@ describe('InstalledAppsComponent', () => {
 
   it('starts application', () => {
     spectator.query(AppRowComponent).startApp.emit();
-    expect(spectator.inject(ApplicationsService).startApplication).toHaveBeenCalledWith('test-app');
+    expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('stops application', () => {
     spectator.query(AppRowComponent).stopApp.emit();
-    expect(spectator.inject(ApplicationsService).stopApplication).toHaveBeenCalledWith('test-app');
+    expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('restarts application', () => {
     spectator.query(AppRowComponent).restartApp.emit();
-    expect(spectator.inject(ApplicationsService).restartApplication).toHaveBeenCalledWith('test-app');
+    expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('removes selected applications', async () => {
+    jest.spyOn(applicationsService, 'checkIfAppIxVolumeExists').mockReturnValue(of(true));
+
     spectator.component.selection.select(app.name);
 
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Select action' }));
@@ -167,10 +171,10 @@ describe('InstalledAppsComponent', () => {
       title: 'Delete',
       message: 'Delete test-app?',
       secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iX Volumes',
+      secondaryCheckboxText: 'Remove iXVolumes',
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'core.bulk',
       ['app.delete', [[app.name, { remove_images: true, remove_ix_volumes: true }]]],
     );

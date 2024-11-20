@@ -7,15 +7,6 @@
       [value]="fontSize"
       (valueChange)="onFontSizeChanged($event)"
     ></ix-toolbar-slider>
-    @if (conf.customReconnectAction) {
-      <button
-        mat-button
-        ixTest="reconnect"
-        (click)="conf.customReconnectAction()"
-      >
-        {{ 'Reconnect' | translate }}
-      </button>
-    }
     <button mat-button color="primary" ixTest="restore-default" (click)="resetDefault()">
       {{ 'Restore Default' | translate }}
     </button>

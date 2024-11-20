@@ -20,15 +20,15 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,8 +76,8 @@ export class CertificateAcmeAddComponent {
   isLoading = false;
   domains: string[] = [];
 
-  readonly acmeDirectoryUris$ = this.ws.call('certificate.acme_server_choices').pipe(choicesToOptions());
-  readonly authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
+  readonly acmeDirectoryUris$ = this.api.call('certificate.acme_server_choices').pipe(choicesToOptions());
+  readonly authenticators$ = this.api.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCertificates;
 
@@ -86,10 +86,10 @@ export class CertificateAcmeAddComponent {
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<CertificateAcmeAddComponent>,
+    private slideInRef: SlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     @Inject(SLIDE_IN_DATA) private csr: Certificate,
@@ -121,7 +121,7 @@ export class CertificateAcmeAddComponent {
     this.cdr.markForCheck();
 
     this.dialogService.jobDialog(
-      this.ws.job('certificate.create', [payload]),
+      this.api.job('certificate.create', [payload]),
       {
         title: this.translate.instant('Creating ACME Certificate'),
       },
@@ -149,7 +149,7 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.ws.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
+    this.api.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (domains) => {

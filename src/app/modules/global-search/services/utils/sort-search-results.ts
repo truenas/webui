@@ -10,10 +10,12 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
     const itemTwoSynonyms = itemTwo.synonyms.map((synonym) => synonym.toLowerCase());
 
     // Check for exact matches in hierarchy or synonyms
-    const itemExactMatchOne = itemOneHierarchy
-      .includes(normalizedTerm) || itemOneSynonyms.includes(normalizedTerm) ? 1 : 0;
-    const itemExactMatchTwo = itemTwoHierarchy
-      .includes(normalizedTerm) || itemTwoSynonyms.includes(normalizedTerm) ? 1 : 0;
+    const itemExactMatchOne = itemOneHierarchy.includes(normalizedTerm) || itemOneSynonyms.includes(normalizedTerm)
+      ? 1
+      : 0;
+    const itemExactMatchTwo = itemTwoHierarchy.includes(normalizedTerm) || itemTwoSynonyms.includes(normalizedTerm)
+      ? 1
+      : 0;
     if (itemExactMatchOne !== itemExactMatchTwo) {
       return itemExactMatchTwo - itemExactMatchOne;
     }
@@ -21,21 +23,25 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
     // Check for first letter matches in hierarchy
     const itemFirstLetterHierarchyMatchOne = itemOneHierarchy.some(
       (hierarchyItem) => hierarchyItem.startsWith(normalizedTerm),
-    ) ? 1 : 0;
+    )
+      ? 1
+      : 0;
     const itemFirstLetterHierarchyMatchTwo = itemTwoHierarchy.some(
       (hierarchyItem) => hierarchyItem.startsWith(normalizedTerm),
-    ) ? 1 : 0;
+    )
+      ? 1
+      : 0;
     if (itemFirstLetterHierarchyMatchOne !== itemFirstLetterHierarchyMatchTwo) {
       return itemFirstLetterHierarchyMatchTwo - itemFirstLetterHierarchyMatchOne;
     }
 
     // Check for first letter matches in synonyms
-    const itemFirstLetterSynonymMatchOne = itemOneSynonyms.some(
-      (synonym) => synonym.startsWith(normalizedTerm),
-    ) ? 1 : 0;
-    const itemFirstLetterSynonymMatchTwo = itemTwoSynonyms.some(
-      (synonym) => synonym.startsWith(normalizedTerm),
-    ) ? 1 : 0;
+    const itemFirstLetterSynonymMatchOne = itemOneSynonyms.some((synonym) => synonym.startsWith(normalizedTerm))
+      ? 1
+      : 0;
+    const itemFirstLetterSynonymMatchTwo = itemTwoSynonyms.some((synonym) => synonym.startsWith(normalizedTerm))
+      ? 1
+      : 0;
     if (itemFirstLetterSynonymMatchOne !== itemFirstLetterSynonymMatchTwo) {
       return itemFirstLetterSynonymMatchTwo - itemFirstLetterSynonymMatchOne;
     }
@@ -50,21 +56,21 @@ export function sortSearchResults(term: string, results: UiSearchableElement[]):
     // Check for partial matches in hierarchy
     const itemPartialHierarchyMatchOne = itemOneHierarchy.some(
       (hierarchyItem) => hierarchyItem.includes(normalizedTerm),
-    ) ? 1 : 0;
+    )
+      ? 1
+      : 0;
     const itemPartialHierarchyMatchTwo = itemTwoHierarchy.some(
       (hierarchyItem) => hierarchyItem.includes(normalizedTerm),
-    ) ? 1 : 0;
+    )
+      ? 1
+      : 0;
     if (itemPartialHierarchyMatchOne !== itemPartialHierarchyMatchTwo) {
       return itemPartialHierarchyMatchTwo - itemPartialHierarchyMatchOne;
     }
 
     // Check for partial matches in synonyms
-    const itemPartialSynonymMatchOne = itemOneSynonyms.some(
-      (synonym) => synonym.includes(normalizedTerm),
-    ) ? 1 : 0;
-    const itemPartialSynonymMatchTwo = itemTwoSynonyms.some(
-      (synonym) => synonym.includes(normalizedTerm),
-    ) ? 1 : 0;
+    const itemPartialSynonymMatchOne = itemOneSynonyms.some((synonym) => synonym.includes(normalizedTerm)) ? 1 : 0;
+    const itemPartialSynonymMatchTwo = itemTwoSynonyms.some((synonym) => synonym.includes(normalizedTerm)) ? 1 : 0;
     if (itemPartialSynonymMatchOne !== itemPartialSynonymMatchTwo) {
       return itemPartialSynonymMatchTwo - itemPartialSynonymMatchOne;
     }

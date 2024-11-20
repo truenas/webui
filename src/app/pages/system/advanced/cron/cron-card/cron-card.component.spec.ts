@@ -5,20 +5,21 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { invalidDate } from 'app/constants/invalid-date';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
@@ -58,14 +59,14 @@ describe('CronCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
@@ -76,8 +77,7 @@ describe('CronCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskNextRun: jest.fn(() => 'in about 10 hours'),
+        getTaskNextTime: jest.fn(() => invalidDate),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -95,7 +95,7 @@ describe('CronCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'in 1 day', ''],
+      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'Invalid Date', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -103,7 +103,7 @@ describe('CronCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
+    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-play-circle' }), 'root');
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -112,14 +112,14 @@ describe('CronCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing cronjob when Edit button is pressed', async () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'root');
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CronFormComponent,
       false,
       expect.objectContaining(cronJobs[0]),

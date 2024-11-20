@@ -1,37 +1,53 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, take, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -40,6 +56,29 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    FakeProgressBarComponent,
+    MatToolbarRow,
+    ServiceStateButtonComponent,
+    SearchInput1Component,
+    MatAnchor,
+    TestDirective,
+    IxTableColumnsSelectorComponent,
+    RequiresRolesDirective,
+    MatButton,
+    UiSearchDirective,
+    MatCardContent,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+    TranslateModule,
+    AsyncPipe,
+    RouterLink,
+  ],
 })
 export class SmbListComponent implements OnInit {
   readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
@@ -68,20 +107,7 @@ export class SmbListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
-      onRowToggle: (row) => {
-        this.ws.call('sharing.smb.update', [row.id, { enabled: row.enabled }]).pipe(
-          this.appLoader.withLoader(),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (share) => {
-            row.enabled = share.enabled;
-          },
-          error: (error: unknown) => {
-            this.dataProvider.load();
-            this.dialog.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
+      onRowToggle: (row) => this.onChangeEnabledState(row),
     }),
     yesNoColumn({
       title: this.translate.instant('Audit Logging'),
@@ -110,7 +136,7 @@ export class SmbListComponent implements OnInit {
               // A home share has a name (homes) set; row.name works for other shares
               const searchName = row.home ? 'homes' : row.name;
               this.appLoader.open();
-              this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+              this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
                 .pipe(untilDestroyed(this))
                 .subscribe((shareAcl) => {
                   this.appLoader.close();
@@ -153,7 +179,7 @@ export class SmbListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => {
-                this.ws.call('sharing.smb.delete', [row.id]).pipe(
+                this.api.call('sharing.smb.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe(() => {
@@ -172,11 +198,11 @@ export class SmbListComponent implements OnInit {
 
   constructor(
     private appLoader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private router: Router,
@@ -184,7 +210,7 @@ export class SmbListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const shares$ = this.ws.call('sharing.smb.query').pipe(
+    const shares$ = this.api.call('sharing.smb.query').pipe(
       tap((shares) => this.smbShares = shares),
       untilDestroyed(this),
     );
@@ -232,6 +258,21 @@ export class SmbListComponent implements OnInit {
     this.dialog.error({
       title: this.translate.instant('Error'),
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    });
+  }
+
+  private onChangeEnabledState(row: SmbShare): void {
+    this.api.call('sharing.smb.update', [row.id, { enabled: !row.enabled }]).pipe(
+      this.appLoader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dataProvider.load();
+      },
+      error: (error: unknown) => {
+        this.dataProvider.load();
+        this.dialog.error(this.errorHandler.parseError(error));
+      },
     });
   }
 }

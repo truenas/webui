@@ -5,7 +5,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -21,9 +21,9 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class TrueCommandStatusComponent {
-  protected isManagedByTruecommand$ = this.ws.call('truenas.managed_by_truecommand');
+  protected isManagedByTruecommand$ = this.api.call('truenas.managed_by_truecommand');
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 }

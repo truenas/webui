@@ -1,35 +1,47 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DatasetQuotaAddFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -37,8 +49,8 @@ import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -52,6 +64,22 @@ interface QuotaData {
   templateUrl: './dataset-quotas-list.component.html',
   styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    MatSlideToggle,
+    TestDirective,
+    RequiresRolesDirective,
+    MatButton,
+    TranslateModule,
+    IxTableComponent,
+    AsyncPipe,
+    IxTableHeadComponent,
+    IxTableEmptyDirective,
+    IxTableBodyComponent,
+    IxTablePagerComponent,
+  ],
 })
 export class DatasetQuotasListComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
@@ -117,7 +145,7 @@ export class DatasetQuotasListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('OQ % Used'),
       propertyName: 'obj_used',
-      getValue: (row) => {
+      getValue: (row: DatasetQuota) => {
         if (row.obj_used && row.obj_quota) {
           return `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%`;
         }
@@ -129,19 +157,19 @@ export class DatasetQuotasListComponent implements OnInit {
         {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
+          onClick: (row: DatasetQuota) => this.doEdit(row),
         },
         {
           iconName: iconMarker('mdi-delete'),
           tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
-          hidden: (row) => of(!(row.quota > 0 || row.obj_quota > 0)),
+          onClick: (row: DatasetQuota) => this.doDelete(row),
+          hidden: (row: DatasetQuota) => of(!(row.quota > 0 || row.obj_quota > 0)),
           requiredRoles: this.requiredRoles,
         },
       ],
     }),
   ], {
-    uniqueRowTag: (row) => `${this.helpTextKey}-quota-` + row.name + this.emptyValue + row.obj_quota,
+    uniqueRowTag: (row: DatasetQuota) => `${this.helpTextKey}-quota-${row.name}${this.emptyValue}${row.obj_quota}`,
     ariaLabels: (row) => [row.name, this.translate.instant('Dataset Quota')],
   });
 
@@ -166,14 +194,14 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected api: ApiService,
     protected formatter: IxFormatterService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     private emptyService: EmptyService,
   ) { }
@@ -204,7 +232,7 @@ export class DatasetQuotasListComponent implements OnInit {
 
   getQuotas(): void {
     this.isLoading = true;
-    this.ws.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
+    this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
       .pipe(untilDestroyed(this)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
@@ -231,7 +259,7 @@ export class DatasetQuotasListComponent implements OnInit {
   };
 
   checkInvalidQuotas(): void {
-    this.ws.call(
+    this.api.call(
       'pool.dataset.get_quota',
       [this.datasetId, this.quotaType, this.invalidFilter],
     ).pipe(untilDestroyed(this)).subscribe({
@@ -276,7 +304,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),
@@ -285,7 +313,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   setQuota(quotas: SetDatasetQuota[]): Observable<void> {
-    return this.ws.call('pool.dataset.set_quota', [this.datasetId, quotas]);
+    return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
   }
 
   doAdd(): void {
@@ -340,7 +368,7 @@ export class DatasetQuotasListComponent implements OnInit {
       tap(() => {
         this.getQuotas();
       }),
-      catchError((error: WebSocketError | Job) => {
+      catchError((error: ApiError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),

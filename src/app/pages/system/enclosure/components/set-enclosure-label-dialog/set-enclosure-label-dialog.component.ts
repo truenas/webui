@@ -1,15 +1,22 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -23,6 +30,18 @@ export interface SetEnclosureLabelDialogData {
   templateUrl: './set-enclosure-label-dialog.component.html',
   styleUrls: ['./set-enclosure-label-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    TranslateModule,
+  ],
 })
 export class SetEnclosureLabelDialogComponent implements OnInit {
   enclosureLabel = 'Enclosure Label';
@@ -39,7 +58,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetEnclosureLabelDialogComponent, string>,
     private errorHandler: ErrorHandlerService,
@@ -61,7 +80,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
     const formValues = this.form.value;
     const newLabel = formValues.resetToDefault ? this.data.defaultLabel : formValues.label;
 
-    this.ws.call('enclosure.update', [this.data.enclosureId, { label: newLabel }])
+    this.api.call('enclosure.update', [this.data.enclosureId, { label: newLabel }])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {

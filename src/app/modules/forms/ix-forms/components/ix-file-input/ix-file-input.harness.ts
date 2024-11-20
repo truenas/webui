@@ -10,7 +10,7 @@ export interface IxFileInputHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxFileInputHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-file-input';
+  static readonly hostSelector = 'ix-file-input';
 
   static with(options: IxFileInputHarnessFilters): HarnessPredicate<IxFileInputHarness> {
     return new HarnessPredicate(IxFileInputHarness, options)

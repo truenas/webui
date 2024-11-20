@@ -6,24 +6,24 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -60,7 +60,7 @@ describe('AccessCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
         mockCall('auth.terminate_other_sessions'),
@@ -90,7 +90,7 @@ describe('AccessCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -129,7 +129,7 @@ describe('AccessCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {
@@ -140,14 +140,14 @@ describe('AccessCardComponent', () => {
       title: 'Terminate session',
       message: 'Are you sure you want to terminate the session?',
     });
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_session', ['e8a2892e-f2a3-429e-bd9e-442db8fc9480']);
   });
 
   it('terminates other sessions when corresponding Terminate Other Sessions is pressed', async () => {
     const terminateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Terminate Other Sessions' }));
     await terminateButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.terminate_other_sessions');
   });
 
   it('should show table rows', async () => {

@@ -28,7 +28,7 @@ import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * Presents unused disks, shows their size and if there is exported pool on them.
@@ -73,7 +73,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     return getNonUniqueSerialDisksWarning(this.nonUniqueSerialDisks(), this.translate);
   });
 
-  private unusedDisks$ = this.ws.call('disk.details').pipe(
+  private unusedDisks$ = this.api.call('disk.details').pipe(
     map((diskDetails) => {
       return [
         ...diskDetails.unused,
@@ -105,7 +105,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   ngOnInit(): void {

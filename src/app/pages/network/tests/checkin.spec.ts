@@ -10,9 +10,9 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
@@ -22,11 +22,11 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -45,7 +45,7 @@ describe('NetworkComponent', () => {
   let spectator: SpectatorHost<NetworkComponent>;
   let loader: HarnessLoader;
   let rootLoader: HarnessLoader;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
 
   let isTestingChanges = false;
   let wasEditMade = false;
@@ -60,7 +60,7 @@ describe('NetworkComponent', () => {
     ],
     declarations: [
       InterfacesCardComponent,
-      IxSlideInComponent,
+      SlideInComponent,
       InterfaceFormComponent,
       MockComponents(
         NetworkConfigurationCardComponent,
@@ -72,7 +72,7 @@ describe('NetworkComponent', () => {
     providers: [
       InterfacesStore,
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
         mockCall('interface.has_pending_changes', () => wasEditMade),
         mockCall('interface.services_restarted_on_sync', []),
@@ -135,7 +135,7 @@ describe('NetworkComponent', () => {
     `);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
 
     isTestingChanges = false;
     wasEditMade = false;

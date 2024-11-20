@@ -1,19 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   stateButtonColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
@@ -22,11 +29,20 @@ import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -37,10 +53,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,6 +64,26 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './replication-list.component.html',
   styleUrls: ['./replication-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    IxTableColumnsSelectorComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableDetailsRowDirective,
+    IxTableDetailsRowComponent,
+    IxIconComponent,
+    IxTablePagerComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class ReplicationListComponent implements OnInit {
   replicationTasks: ReplicationTask[] = [];
@@ -101,14 +137,9 @@ export class ReplicationListComponent implements OnInit {
       propertyName: 'auto',
       hidden: true,
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => {
-        if (row.state?.datetime?.$date) {
-          return formatDistanceToNowShortened(row.state?.datetime?.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -141,9 +172,9 @@ export class ReplicationListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -154,7 +185,7 @@ export class ReplicationListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], {
+    const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: {
         check_dataset_encryption_keys: true,
       },
@@ -186,7 +217,7 @@ export class ReplicationListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
-      switchMap(() => this.ws.job('replication.run', [row.id])),
+      switchMap(() => this.api.job('replication.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
@@ -214,7 +245,7 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.chainedSlideInService.open(ReplicationFormComponent, true, row)
+      this.chainedSlideIn.open(ReplicationFormComponent, true, row)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),
@@ -224,7 +255,7 @@ export class ReplicationListComponent implements OnInit {
           },
         });
     } else {
-      this.chainedSlideInService.open(ReplicationWizardComponent, true)
+      this.chainedSlideIn.open(ReplicationWizardComponent, true)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),
@@ -240,7 +271,7 @@ export class ReplicationListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -265,7 +296,7 @@ export class ReplicationListComponent implements OnInit {
 
   downloadKeys(row: ReplicationTask): void {
     const fileName = `${row.name}_encryption_keys.json`;
-    this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
+    this.api.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
       .pipe(this.appLoader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([, url]) => {
@@ -286,7 +317,7 @@ export class ReplicationListComponent implements OnInit {
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
-    this.ws
+    this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({

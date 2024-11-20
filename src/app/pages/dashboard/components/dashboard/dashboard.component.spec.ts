@@ -12,6 +12,9 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
+import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
+import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -24,8 +27,9 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
-import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };
@@ -42,27 +46,30 @@ describe('DashboardComponent', () => {
     component: DashboardComponent,
     imports: [
       NgTemplateOutlet,
-    ],
-    declarations: [
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
-      MockComponent(NgxSkeletonLoaderComponent),
       MockComponent(WidgetGroupComponent),
       MockDirective(IxDropGridDirective),
+      MockDirective(IxDropGridItemDirective),
+      MockDirective(IxDragDirective),
+      MockDirective(IxDragHandleDirective),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
     ],
-    providers: [
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
+    componentProviders: [
+      mockProvider(WidgetResourcesService),
       mockProvider(DashboardStore, {
         groups$,
         isLoading$,
         entered: jest.fn(),
         save: jest.fn(() => of(undefined)),
       }),
-      mockProvider(IxChainedSlideInService, {
+    ],
+    providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ error: false, response: groupA })),
       }),
       mockProvider(SnackbarService),
@@ -82,7 +89,7 @@ describe('DashboardComponent', () => {
 
   describe('loading', () => {
     it('initializes store when user enters the dashboard', () => {
-      expect(spectator.inject(DashboardStore).entered).toHaveBeenCalled();
+      expect(spectator.inject(DashboardStore, true).entered).toHaveBeenCalled();
     });
 
     it('shows skeleton loader when loading for first time', () => {
@@ -121,14 +128,14 @@ describe('DashboardComponent', () => {
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
 
-      expect(spectator.inject(IxChainedSlideInService).open)
+      expect(spectator.inject(ChainedSlideInService).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
     });
 
     it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
       const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
 
-      jest.spyOn(spectator.inject(IxChainedSlideInService), 'open')
+      jest.spyOn(spectator.inject(ChainedSlideInService), 'open')
         .mockReturnValue(of({ response: updatedGroup } as ChainedComponentResponse));
 
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
@@ -157,11 +164,11 @@ describe('DashboardComponent', () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(IxChainedSlideInService).open)
+      expect(spectator.inject(ChainedSlideInService).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
-    it('resets configuration to defaults when Reset is pressed', async () => {
+    it('resets configuration to defaults with confirmation when Reset is pressed', async () => {
       const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
       await resetButton.click();
 
@@ -170,7 +177,8 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith(getDefaultWidgets());
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith(getDefaultWidgets());
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 
@@ -181,7 +189,7 @@ describe('DashboardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DashboardStore).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
+      expect(spectator.inject(DashboardStore, true).save).toHaveBeenCalledWith([groupB, groupC, groupD]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Dashboard settings saved');
     });
 

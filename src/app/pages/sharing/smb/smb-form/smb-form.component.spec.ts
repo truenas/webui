@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of, throwError } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -22,16 +22,16 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -55,7 +55,7 @@ describe('SmbFormComponent', () => {
     hostsdeny: ['host2'],
     aapl_name_mangling: false,
     abe: true,
-    acl: true,
+    acl: false,
     durablehandle: true,
     streams: true,
     timemachine: true,
@@ -133,7 +133,7 @@ describe('SmbFormComponent', () => {
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -144,7 +144,7 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('group.query', [{ group: 'test' }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
@@ -153,13 +153,12 @@ describe('SmbFormComponent', () => {
           { ...existingShare },
         ]),
         mockCall('filesystem.stat', {
-          acl: false,
+          acl: true,
         } as FileSystemStat),
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
-        mockCall('filesystem.acl_is_trivial', false),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
@@ -173,7 +172,7 @@ describe('SmbFormComponent', () => {
         info: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       provideMockStore({
         selectors: [{
           selector: selectServices,
@@ -196,7 +195,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('shows values of existing share when editing', async () => {
@@ -232,7 +231,7 @@ describe('SmbFormComponent', () => {
       } else {
         await aaplNameManglingCheckbox.setValue(true);
       }
-      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(1, {
+      expect(spectator.inject(DialogService).confirm).toHaveBeenNthCalledWith(2, {
         title: helptextSharingSmb.manglingDialog.title,
         message: helptextSharingSmb.manglingDialog.message,
         hideCheckbox: true,
@@ -247,7 +246,7 @@ describe('SmbFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -418,7 +417,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbPresetType.MultiUserTimeMachine,
         comment: '',
         enabled: true,
-        acl: true,
+        acl: false,
         ro: false,
         browsable: true,
         guestok: true,
@@ -516,7 +515,7 @@ describe('SmbFormComponent', () => {
         purpose: SmbPresetType.MultiUserTimeMachine,
         comment: '',
         enabled: true,
-        acl: true,
+        acl: false,
         ro: false,
         browsable: true,
         guestok: true,
@@ -562,7 +561,7 @@ describe('SmbFormComponent', () => {
   describe('smb validation', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
           return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
@@ -571,7 +570,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -587,7 +586,7 @@ describe('SmbFormComponent', () => {
   describe('handle error', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         switch (method) {
           case 'group.query':
@@ -596,11 +595,9 @@ describe('SmbFormComponent', () => {
           case 'sharing.smb.query':
             return of({ ...existingShare });
           case 'filesystem.stat':
-            return of({ acl: false } as FileSystemStat);
+            return of({ acl: true } as FileSystemStat);
           case 'sharing.smb.presets':
             return of({ ...presets });
-          case 'filesystem.acl_is_trivial':
-            return of(false);
           case 'sharing.smb.create':
             return throwError({ reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' });
           default:

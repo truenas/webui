@@ -5,13 +5,11 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -19,11 +17,13 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeQuotas = [{
   id: 1,
@@ -46,7 +46,7 @@ const fakeQuotas = [{
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -58,7 +58,7 @@ describe('DatasetQuotasListComponent', () => {
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(WebSocketService),
+      mockProvider(ApiService),
       mockProvider(IxFormatterService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
@@ -77,17 +77,17 @@ describe('DatasetQuotasListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({
           slideInClosed$: of(undefined),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.get_quota', fakeQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -96,17 +96,17 @@ describe('DatasetQuotasListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
       ['Test', DatasetQuotaType.User, []],
     );
 
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
       ['Test', DatasetQuotaType.User, [['name', '=', null]]],
     );
@@ -131,7 +131,7 @@ describe('DatasetQuotasListComponent', () => {
         title: 'Delete User Quota',
       }),
     );
-    expect(ws.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'pool.dataset.set_quota',
       ['Test', [{
         id: '1',
@@ -149,7 +149,7 @@ describe('DatasetQuotasListComponent', () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 2, 8);
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
       DatasetQuotaEditFormComponent,
       { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
     );
@@ -159,7 +159,7 @@ describe('DatasetQuotasListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
       DatasetQuotaAddFormComponent,
       { data: { datasetId: 'Test', quotaType: 'USER' } },
     );

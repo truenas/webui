@@ -1,17 +1,28 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport, syslogLevelLabels } from 'app/enums/syslog.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -31,6 +42,22 @@ export interface SyslogConfig {
   styleUrls: ['../../common-card.scss'],
   templateUrl: './syslog-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    WithLoadingStateDirective,
+    TranslateModule,
+    MapValuePipe,
+    YesNoPipe,
+  ],
 })
 export class SyslogCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
@@ -89,7 +116,7 @@ export class SyslogCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 

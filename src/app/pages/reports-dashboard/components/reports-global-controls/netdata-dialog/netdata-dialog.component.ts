@@ -1,15 +1,23 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import { MatDialogTitle, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
 import { FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -17,13 +25,27 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./netdata-dialog.component.scss'],
   templateUrl: './netdata-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatIconButton,
+    MatDialogClose,
+    TestDirective,
+    IxIconComponent,
+    MatDialogContent,
+    IxInputComponent,
+    ReactiveFormsModule,
+    FormActionsComponent,
+    MatButton,
+    TranslateModule,
+  ],
 })
 export class NetdataDialogComponent implements OnInit {
   protected readonly usernameControl = new FormControl('');
   protected readonly passwordControl = new FormControl('');
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private reportsService: ReportsService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -55,7 +77,7 @@ export class NetdataDialogComponent implements OnInit {
   }
 
   private generatePassword(): Observable<string> {
-    return this.ws.call('reporting.netdataweb_generate_password')
+    return this.api.call('reporting.netdataweb_generate_password')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

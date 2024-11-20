@@ -22,13 +22,12 @@ import {
 } from 'app/pages/signin/true-command-status/true-command-status.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
   const wasAdminSet$ = new BehaviorSubject<boolean>(undefined);
   const failover$ = new BehaviorSubject<{
-    // eslint-disable-next-line no-restricted-globals
     status: FailoverStatus;
     ips?: string[];
     disabledReasons?: FailoverDisabledReason[];
@@ -77,7 +76,7 @@ describe('SigninComponent', () => {
       mockProvider(TokenLastUsedService, {
         isTokenWithinTimeline$,
       }),
-      mockProvider(WebSocketConnectionService, {
+      mockProvider(WebSocketHandlerService, {
         isConnected$,
       }),
     ],

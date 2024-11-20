@@ -1,19 +1,27 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Injector, ViewContainerRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CatalogSettingsComponent } from 'app/pages/apps/components/catalog-settings/catalog-settings.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -21,13 +29,27 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './app-settings-button.component.html',
   styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatButton,
+    TestDirective,
+    UiSearchDirective,
+    MatMenuTrigger,
+    TranslateModule,
+    IxIconComponent,
+    MatMenu,
+    RequiresRolesDirective,
+    MatMenuItem,
+    RouterLink,
+    AsyncPipe,
+  ],
 })
 export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   constructor(
-    private ixSlideInService: IxSlideInService,
+    private ixSlideInService: SlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
@@ -57,6 +79,6 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideInService.open(CatalogSettingsComponent, { injector: this.injector });
+    this.ixSlideInService.open(AppsSettingsComponent, { injector: this.injector });
   }
 }

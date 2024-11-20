@@ -1,8 +1,8 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { dygraphs } from 'dygraphs';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -20,7 +20,7 @@ describe('LineChartComponent', () => {
   const createComponent = createComponentFactory({
     component: LineChartComponent,
     providers: [
-      mockWebSocket(),
+      mockApi(),
       mockProvider(ReportsService, {
         emitLegendEvent: jest.fn(),
       }),
@@ -51,7 +51,10 @@ describe('LineChartComponent', () => {
 
   describe('axisLabelFormatter', () => {
     it('returns default formatted value', () => {
+      jest.spyOn(console, 'warn').mockImplementation();
+
       expect(spectator.component.axisLabelFormatter(500000)).toBe('500k');
+      expect(console.warn).toHaveBeenCalled();
     });
 
     it('returns formatted value when labelY is set', () => {

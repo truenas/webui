@@ -7,9 +7,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -25,17 +25,17 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -43,7 +43,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   let form: IxFormHarness;
   let aliasesList: IxListHarness;
   const existingInterface = {
@@ -75,7 +75,6 @@ describe('InterfaceFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
-            isUpgradePending: false,
           },
         },
       }),
@@ -87,7 +86,7 @@ describe('InterfaceFormComponent', () => {
           dispatch: jest.fn(),
         },
       },
-      mockWebSocket([
+      mockApi([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
@@ -128,11 +127,11 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(DialogService),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -144,7 +143,7 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
@@ -166,7 +165,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
+      expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Bridge,
         name: 'br0',
         description: 'Bridge interface',
@@ -181,12 +180,12 @@ describe('InterfaceFormComponent', () => {
         }],
         mtu: 1500,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
 
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
@@ -215,7 +214,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
+      expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.LinkAggregation,
         name: 'bond0',
         description: 'LAG',
@@ -232,8 +231,8 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
@@ -258,7 +257,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('interface.create', [{
+      expect(api.call).toHaveBeenCalledWith('interface.create', [{
         type: NetworkInterfaceType.Vlan,
         name: 'vlan1',
         description: 'New VLAN',
@@ -270,7 +269,7 @@ describe('InterfaceFormComponent', () => {
         mtu: 1500,
         aliases: [],
       }]);
-      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
@@ -309,7 +308,7 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows values for a network interface when it is opened for edit', async () => {
@@ -342,7 +341,7 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('disables parent interface fields when VLAN is opened for edit', async () => {
@@ -369,7 +368,7 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('reloads bridge member choices when bridge interface is opened for edit', () => {
@@ -399,7 +398,7 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('reloads lag ports when link aggregation is opened for edit', () => {
@@ -413,17 +412,17 @@ describe('InterfaceFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       aliasesList = await loader.getHarness(IxListHarness.with({ label: 'Aliases' }));
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebSocketService);
+      const websocketMock = spectator.inject(MockApiService);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });
 
     it('checks whether failover is licensed for', () => {
-      expect(ws.call).toHaveBeenCalledWith('failover.node');
+      expect(api.call).toHaveBeenCalledWith('failover.node');
     });
 
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
@@ -439,13 +438,13 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('interface.create', [
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
           failover_critical: true,
           failover_group: 1,
         }),
       ]);
-      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,
@@ -468,7 +467,7 @@ describe('InterfaceFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('interface.create', [
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
         expect.objectContaining({
           aliases: [{
             address: '10.2.3.4',
@@ -479,7 +478,7 @@ describe('InterfaceFormComponent', () => {
           failover_virtual_aliases: [{ address: '192.168.1.3' }],
         }),
       ]);
-      expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
+      expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
         DefaultGatewayDialogComponent,

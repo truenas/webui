@@ -1,9 +1,14 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatIconButton, MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { cloneDeep, concat } from 'lodash-es';
 import {
   EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
@@ -16,12 +21,16 @@ import {
 } from 'app/interfaces/acl.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -29,18 +38,35 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './save-as-preset-modal.component.html',
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    MatDialogContent,
+    NgClass,
+    MatIconButton,
+    TestDirective,
+    IxIconComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose,
+    TranslateModule,
+  ],
 })
 export class SaveAsPresetModalComponent implements OnInit {
   form = this.fb.group({
     presetName: ['', Validators.required],
   });
+
   presets: AclTemplateByPath[] = [];
   isFormLoading = false;
   acl: Acl;
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -68,7 +94,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.ws.call('filesystem.acltemplate.by_path', [{
+    this.api.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
         resolve_names: true,
@@ -104,7 +130,7 @@ export class SaveAsPresetModalComponent implements OnInit {
           }) as NfsAclItem[] | PosixAclItem[],
         };
 
-        return this.ws.call('filesystem.acltemplate.create', [payload]);
+        return this.api.call('filesystem.acltemplate.create', [payload]);
       }),
       this.loader.withLoader(),
       this.errorHandler.catchError(),
@@ -115,7 +141,7 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onRemovePreset(preset: AclTemplateByPath): void {
-    this.ws.call('filesystem.acltemplate.delete', [preset.id])
+    this.api.call('filesystem.acltemplate.delete', [preset.id])
       .pipe(
         this.errorHandler.catchError(),
         this.loader.withLoader(),

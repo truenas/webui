@@ -7,10 +7,10 @@ import {
   OnInit,
   output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
@@ -44,6 +44,10 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
@@ -51,7 +55,7 @@ import {
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -61,6 +65,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./other-options-section.component.scss'],
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    IxInputComponent,
+    TranslateModule,
+    ReactiveFormsModule,
+    IxSelectComponent,
+    WarningComponent,
+  ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Input() parent: Dataset;
@@ -109,6 +122,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: '2', value: 2 },
     { label: '3', value: 3 },
   ]);
+
   recordsizeOptions$: Observable<Option[]>;
   caseSensitivityOptions$ = of(mapToOptions(datasetCaseSensitivityLabels, this.translate));
   specialSmallBlockSizeOptions$: Observable<Option[]>;
@@ -118,20 +132,23 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: this.translate.instant('SMB/NFSv4'), value: DatasetAclType.Nfsv4 },
     { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
   ]);
+
   aclModeOptions$ = of(mapToOptions(aclModeLabels, this.translate));
 
   private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
-  private readonly defaultCompressionOptions$ = this.ws.call('pool.dataset.compression_choices').pipe(choicesToOptions());
+  private readonly defaultCompressionOptions$ = this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions());
   private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultDeduplicationOptions$ = of(mapToOptions(deduplicationSettingLabels, this.translate));
-  private defaultChecksumOptions$ = this.ws.call('pool.dataset.checksum_choices').pipe(
+  private defaultChecksumOptions$ = this.api.call('pool.dataset.checksum_choices').pipe(
     choicesToOptions(),
   );
+
   private onOffOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultSnapdevOptions$ = of(mapToOptions(datasetSnapdevLabels, this.translate));
-  private defaultRecordSizeOptions$ = this.ws.call('pool.dataset.recordsize_choices').pipe(
+  private defaultRecordSizeOptions$ = this.api.call('pool.dataset.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
+
   private defaultSpecialSmallBlockSizeOptions$ = of(specialSmallBlockSizeOptions);
 
   readonly helptext = helptextDatasetForm;
@@ -144,7 +161,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private formatter: IxFormatterService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private datasetFormService: DatasetFormService,
   ) {}
 
@@ -218,6 +235,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
       if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
         return;
       }
@@ -281,6 +299,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (aclTypeControl.value) {
       case DatasetAclType.Nfsv4:
         if (!this.existing) {
@@ -458,7 +477,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const root = this.parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
-      this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]),
+      this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([recordsizeValue, recommendedAsString]) => {
@@ -466,9 +485,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
-        this.hasRecordsizeWarning = recordsize && recommended
+        this.hasRecordsizeWarning = (recordsize
+          && recommended
           && recordsizeAsString !== inherit
-          && recordsize < recommended;
+          && recordsize < recommended);
+
         this.minimumRecommendedRecordsize = recommendedAsString;
 
         if (this.hasRecordsizeWarning) {

@@ -1,21 +1,31 @@
 import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, finalize, forkJoin, Observable, take,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
@@ -28,6 +38,22 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class AccessFormComponent implements OnInit {
   readonly requiredRoles = [Role.AuthSessionsWrite];
@@ -53,7 +79,7 @@ export class AccessFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
@@ -125,7 +151,7 @@ export class AccessFormComponent implements OnInit {
 
   private updateLoginBanner(): Observable<unknown> {
     const loginBanner = this.form.value.login_banner;
-    return this.ws.call('system.advanced.update', [{ login_banner: loginBanner }])
+    return this.api.call('system.advanced.update', [{ login_banner: loginBanner }])
       .pipe(finalize(() => {
         this.store$.dispatch(advancedConfigUpdated());
         this.store$.dispatch(loginBannerUpdated({ loginBanner }));
@@ -133,7 +159,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   private updateEnterpriseDsAuth(): Observable<unknown> {
-    return this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+    return this.api.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
       .pipe(finalize(() => this.store$.dispatch(generalConfigUpdated())));
   }
 

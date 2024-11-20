@@ -3,7 +3,14 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
+import { MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -14,7 +21,9 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
@@ -27,6 +36,21 @@ import {
   styleUrl: './widget-storage.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe, PercentPipe],
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    MatIconButton,
+    TestDirective,
+    MatTooltip,
+    RouterLink,
+    IxIconComponent,
+    MatGridList,
+    MatGridTile,
+    RequiresRolesDirective,
+    NgxSkeletonLoaderModule,
+    TranslateModule,
+  ],
 })
 export class WidgetStorageComponent {
   size = input.required<SlotSize>();
@@ -228,9 +252,9 @@ export class WidgetStorageComponent {
   }
 
   private getScanItemInfo(pool: Pool): ItemInfo {
-    let level = StatusLevel.Safe;
-    let icon: MarkedIcon = statusIcons.checkCircle;
-    let value = this.translate.instant('Never');
+    let level: StatusLevel;
+    let icon: MarkedIcon;
+    let value: string;
 
     const isScrub = pool.scan?.function === PoolScanFunction.Scrub;
     const isScanFinished = pool.scan?.state === PoolScanState.Finished;

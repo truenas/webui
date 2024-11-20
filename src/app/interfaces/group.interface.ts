@@ -24,7 +24,6 @@ export type DeleteGroupParams = [
 ];
 
 export interface CreateGroup {
-  allow_duplicate_gid: boolean;
   gid: number;
   name: string;
   smb: boolean;
@@ -33,7 +32,6 @@ export interface CreateGroup {
 }
 
 export interface UpdateGroup {
-  allow_duplicate_gid?: boolean;
   name?: string;
   smb?: boolean;
   sudo_commands_nopasswd?: string[];

@@ -9,6 +9,8 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   selector: 'ix-drop-grid-placeholder',
   template: '<div ixDropGridItem></div>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxDropGridItemDirective],
 })
 export class IxDropGridPlaceholderComponent implements AfterViewInit {
   @ViewChild(IxDropGridItemDirective) itemInstance: IxDropGridItemDirective;
@@ -21,7 +23,9 @@ export class IxDropGridPlaceholderComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
-    if (!this.parentGrid) { return; }
+    if (!this.parentGrid) {
+      return;
+    }
 
     const phElement = this.itemInstance.element.nativeElement;
     phElement.style.display = 'none';

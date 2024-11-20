@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,14 +43,14 @@ import { WebSocketService } from 'app/services/ws.service';
 export class HardwareDiskEncryptionComponent implements OnChanges {
   @Input() topologyDisk: TopologyDisk;
 
-  hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
+  hasGlobalEncryption$ = this.api.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
 
   protected readonly Role = Role;
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -76,7 +76,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
   }
 
   private loadDiskEncryption(): void {
-    this.hasDiskEncryption$ = this.ws.call('disk.query', [[['devname', '=', this.topologyDisk.disk]], { extra: { passwords: true } }])
+    this.hasDiskEncryption$ = this.api.call('disk.query', [[['devname', '=', this.topologyDisk.disk]], { extra: { passwords: true } }])
       .pipe(
         map((disks) => disks[0].passwd !== ''),
         toLoadingState(),

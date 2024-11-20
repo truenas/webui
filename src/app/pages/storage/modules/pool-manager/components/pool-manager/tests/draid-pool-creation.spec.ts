@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -22,7 +22,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PoolManagerComponent – creating dRAID pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -34,7 +34,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebSocket([
+      mockApi([
         mockCall('pool.validate_name', true),
         mockCall('disk.details', {
           used: [
@@ -167,7 +167,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     await wizard.clickCreatePoolButton();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.create', [{
       name: 'dRAID',
       allow_duplicate_serials: false,
       encryption: false,

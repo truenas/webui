@@ -4,18 +4,18 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -45,20 +45,20 @@ describe('CloudBackupSnapshotsComponent', () => {
     component: CloudBackupSnapshotsComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(StorageService),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(IxSlideInRef, {
+      mockProvider(SlideInRef, {
         slideInClosed$: of(true),
       }),
       provideMockStore({
@@ -96,7 +96,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('handles restore functionality', async () => {
-    const slideInService = spectator.inject(IxSlideInService);
+    const slideInService = spectator.inject(SlideInService);
 
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 2);
     await restoreButton.click();
@@ -124,6 +124,6 @@ describe('CloudBackupSnapshotsComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.delete_snapshot', [1, 'second']);
   });
 });

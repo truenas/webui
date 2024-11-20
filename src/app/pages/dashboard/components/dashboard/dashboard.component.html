@@ -22,6 +22,7 @@
         type="button"
         ixTest="reset"
         [disabled]="isLoading()"
+        [matTooltip]="'Restore default set of widgets' | translate"
         (click)="onReset()"
       >
         {{ 'Reset' | translate }}
@@ -69,6 +70,7 @@
     ixDropGrid
     [ixDropGridModel]="renderedGroups()"
     [ixUiSearch]="searchableElements.elements.dashboard"
+    [cdkDropListGroupDisabled]="!isEditing()"
     (ixDropGridModelChange)="onGroupsReordered($event)"
   >
     @if (renderedGroups().length > 0) {

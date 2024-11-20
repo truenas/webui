@@ -14,7 +14,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const temperatureAgg = {
   sda: { min: 10, max: 30, avg: 20 },
@@ -70,7 +70,7 @@ describe('PoolsDashboardStore', () => {
     service: PoolsDashboardStore,
     providers: [
       StorageService,
-      mockProvider(WebSocketService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn(() => websocketSubscription$),
       }),
       mockProvider(DialogService),
@@ -84,7 +84,7 @@ describe('PoolsDashboardStore', () => {
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(WebSocketService);
+      const mockWebSocket = spectator.inject(ApiService);
       const pools = [
         { name: 'pool1' },
         { name: 'pool2' },

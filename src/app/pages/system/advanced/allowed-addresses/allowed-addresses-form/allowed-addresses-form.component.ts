@@ -1,24 +1,33 @@
 import {
   Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { ipv4or6OptionalCidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -28,6 +37,21 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   templateUrl: 'allowed-addresses-form.component.html',
   styleUrls: ['./allowed-addresses-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxListComponent,
+    IxListItemComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class AllowedAddressesFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -41,7 +65,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
@@ -51,7 +75,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         config.ui_allowlist.forEach(() => {
           this.addAddress();
@@ -87,8 +111,8 @@ export class AllowedAddressesFormComponent implements OnInit {
         if (!shouldRestart) {
           return of(true);
         }
-        return this.ws.call('system.general.ui_restart').pipe(
-          catchError((error: WebSocketError) => {
+        return this.api.call('system.general.ui_restart').pipe(
+          catchError((error: ApiError) => {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
               message: error.reason,
@@ -106,7 +130,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
 
-    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
+    this.api.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
       tap(() => {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;

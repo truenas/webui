@@ -1,22 +1,31 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GiB } from 'app/constants/bytes.constant';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +33,21 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dataset-capacity-settings.component.html',
   styleUrls: ['./dataset-capacity-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    RequiresRolesDirective,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    TranslateModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+  ],
 })
 export class DatasetCapacitySettingsComponent implements OnInit {
   readonly requiredRoles = [Role.DatasetWrite];
@@ -79,7 +103,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   } as const;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
@@ -87,7 +111,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private validators: IxValidatorsService,
-    private slideInRef: IxSlideInRef<DatasetCapacitySettingsComponent>,
+    private slideInRef: SlideInRef<DatasetCapacitySettingsComponent>,
     @Inject(SLIDE_IN_DATA) public dataset: DatasetDetails,
   ) {
     this.setFormRelations();
@@ -141,7 +165,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     this.cdr.markForCheck();
     const payload = this.getChangedFormValues();
 
-    this.ws.call('pool.dataset.update', [this.dataset.id, payload])
+    this.api.call('pool.dataset.update', [this.dataset.id, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -149,7 +173,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
@@ -21,7 +20,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +32,6 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxCheckboxComponent,
     IxInputComponent,
@@ -65,9 +63,9 @@ export class DeviceDeleteModalComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {
-    if (this.device.dtype !== VmDeviceType.Disk) {
+    if (this.device.attributes.dtype !== VmDeviceType.Disk) {
       return;
     }
 
@@ -76,7 +74,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol is required'),
     );
 
-    const zvolName = this.getZvolName(this.device);
+    const zvolName = this.getZvolName(this.device as VmDiskDevice);
 
     const zvolConfirmMustMatch = this.validatorsService.withMessage(
       Validators.pattern(new RegExp(`^${zvolName}$`)),
@@ -110,7 +108,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
-    this.ws.call('vm.device.delete', [
+    this.api.call('vm.device.delete', [
       this.device.id,
       {
         zvol: value.zvol,

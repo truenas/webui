@@ -28,7 +28,6 @@ import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 @Component({
   selector: 'ix-icon',
   exportAs: 'ixIcon',
-  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {
     class: 'ix-icon',
     '[attr.data-mat-icon-name]': '(_svgIcon && _svgName) || fontIcon',
@@ -74,6 +73,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   private set iconLigature(iconName: string) {
     this._elementRef.nativeElement.innerText = iconName;
   }
+
   private get iconLigature(): string {
     return this._elementRef?.nativeElement?.innerText;
   }

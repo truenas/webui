@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -51,7 +51,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
@@ -120,7 +120,7 @@ describe('PoolManagerWizardComponent', () => {
         startOver$,
         isLoading$: of(false),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.query', []),
         mockJob('pool.create', fakeSuccessfulJob(createdPool)),
       ]),
@@ -221,7 +221,7 @@ describe('PoolManagerWizardComponent', () => {
       spectator.query(ReviewWizardStepComponent).createPool.emit();
 
       expect(spectator.inject(DialogService, true).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService, true).job).toHaveBeenCalledWith('pool.create', [{
+      expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.create', [{
         name: 'pewl',
         allow_duplicate_serials: true,
         encryption: false,

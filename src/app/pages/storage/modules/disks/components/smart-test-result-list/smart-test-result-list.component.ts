@@ -27,7 +27,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -82,10 +82,11 @@ export class SmartTestResultListComponent implements OnInit {
       },
     }),
     textColumn({
-      title: this.translate.instant('Lifetime'),
-      propertyName: 'lifetime',
+      title: this.translate.instant('Power On Hours Ago'),
+      propertyName: 'power_on_hours_ago',
+      headerTooltip: this.translate.instant('"Power On Hours" are how many hours have passed while the disk has been powered on. "Power On Hours Ago" is how many power on hours have passed since each test.'),
       getValue: (row) => {
-        return row.lifetime || this.translate.instant('N/A');
+        return row.power_on_hours_ago || this.translate.instant('N/A');
       },
     }),
     textColumn({
@@ -110,7 +111,7 @@ export class SmartTestResultListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}
@@ -123,13 +124,13 @@ export class SmartTestResultListComponent implements OnInit {
   }
 
   createDataProvider(): void {
-    const smartTestResults$ = this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+    const smartTestResults$ = this.api.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       switchMap((disks) => {
         this.disks = disks;
         const queryParams: QueryParams<SmartTestResults> = this.type === SmartTestResultPageType.Disk
           ? [[['disk', '=', this.pk]]]
           : [[['disk', 'in', this.diskNames]]];
-        return this.ws.call('smart.test.results', queryParams);
+        return this.api.call('smart.test.results', queryParams);
       }),
       map((smartTestResults: SmartTestResults[]) => {
         const rows: SmartTestResultsRow[] = [];

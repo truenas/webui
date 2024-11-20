@@ -5,13 +5,13 @@ import {
   BehaviorSubject, Observable, combineLatest,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({
@@ -31,18 +31,18 @@ export class TrainService {
 
   constructor(
     private updateService: UpdateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
   getAutoDownload(): Observable<boolean> {
-    return this.ws.call('update.get_auto_download');
+    return this.api.call('update.get_auto_download');
   }
 
   getTrains(): Observable<SystemUpdateTrains> {
-    return this.ws.call('update.get_trains');
+    return this.api.call('update.get_trains');
   }
 
   onTrainChanged(newTrain: string, prevTrain: string): void {
@@ -87,14 +87,14 @@ export class TrainService {
   }
 
   toggleAutoCheck(autoCheck: boolean): void {
-    this.ws.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
+    this.api.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     });
   }
 
   setTrainAndCheck(newTrain: string, prevTrain: string): void {
     this.updateService.isLoading$.next(true);
-    this.ws.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.check();
       },
@@ -120,7 +120,7 @@ export class TrainService {
     sessionStorage.updateLastChecked = Date.now();
 
     combineLatest([
-      this.ws.call('update.check_available'),
+      this.api.call('update.check_available'),
       this.currentTrainDescription$,
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([update, currentTrainDescription]) => {
@@ -138,8 +138,8 @@ export class TrainService {
               packages.push({
                 operation: 'Upgrade',
                 name: change.old.name + '-' + change.old.version
-                + ' -> ' + change.new.name + '-'
-                + change.new.version,
+                  + ' -> ' + change.new.name + '-'
+                  + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Install) {
               packages.push({
@@ -171,7 +171,7 @@ export class TrainService {
             this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }
         }
-        if (currentTrainDescription && currentTrainDescription.includes('[release]')) {
+        if (currentTrainDescription?.includes('[release]')) {
           this.releaseTrain$.next(true);
           this.preReleaseTrain$.next(false);
           this.nightlyTrain$.next(false);
@@ -186,7 +186,7 @@ export class TrainService {
         }
         this.updateService.isLoading$.next(false);
       },
-      error: (err: WebSocketError) => {
+      error: (err: ApiError) => {
         this.updateService.generalUpdateError$.next(
           `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`,
         );

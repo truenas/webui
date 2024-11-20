@@ -136,7 +136,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   private andFilters(toAdd: QueryFilters<T>): void {
-    if ((this.isTopConnectorOr() && !this.wasLastConditionGroup)) {
+    if (this.isTopConnectorOr() && !this.wasLastConditionGroup) {
       this.addToLastConditionInOrGroup(toAdd);
     } else {
       this.createNewAndGroup(toAdd);
@@ -187,6 +187,6 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
 }
 
 export type ParamsBuilderGroup<T, ExtraOptions = Record<string, unknown>> = Pick<
-ParamsBuilder<T, ExtraOptions>,
-'filter' | 'andFilter' | 'orFilter' | 'group' | 'andGroup' | 'orGroup' | 'mergeWith' | 'getFilters'
+  ParamsBuilder<T, ExtraOptions>,
+  'filter' | 'andFilter' | 'orFilter' | 'group' | 'andGroup' | 'orGroup' | 'mergeWith' | 'getFilters'
 >;

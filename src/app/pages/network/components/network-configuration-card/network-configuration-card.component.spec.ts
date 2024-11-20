@@ -5,15 +5,15 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;
@@ -24,7 +24,7 @@ describe('NetworkConfigurationCardComponent', () => {
       CastPipe,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('network.configuration.config', {
           hostname: 'truenas',
           domain: 'local',
@@ -49,7 +49,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
@@ -61,7 +61,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('loads network summary and config when component is initialized', () => {
-    const ws = spectator.inject(WebSocketService);
+    const ws = spectator.inject(ApiService);
 
     expect(ws.call).toHaveBeenCalledWith('network.general.summary');
     expect(ws.call).toHaveBeenCalledWith('network.configuration.config');
@@ -124,7 +124,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const slideInRef = spectator.inject(IxSlideInService);
+    const slideInRef = spectator.inject(SlideInService);
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();

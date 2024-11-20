@@ -1,13 +1,22 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -19,6 +28,20 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './widget-memory.component.html',
   styleUrl: './widget-memory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    MatIconButton,
+    TestDirective,
+    MatTooltip,
+    RouterLink,
+    IxIconComponent,
+    NgxSkeletonLoaderModule,
+    BaseChartDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class WidgetMemoryComponent {
   size = input.required<SlotSize>();

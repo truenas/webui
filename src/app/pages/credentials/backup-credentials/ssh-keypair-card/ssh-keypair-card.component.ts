@@ -31,9 +31,9 @@ import {
   SshKeypairFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -96,8 +96,8 @@ export class SshKeypairCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private api: ApiService,
+    private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
@@ -152,7 +152,7 @@ export class SshKeypairCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('keychaincredential.delete', [credential.id])),
+        switchMap(() => this.api.call('keychaincredential.delete', [credential.id])),
         untilDestroyed(this),
       )
       .subscribe(() => {

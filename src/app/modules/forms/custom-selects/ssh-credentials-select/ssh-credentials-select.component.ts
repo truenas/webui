@@ -9,9 +9,9 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { Option } from 'app/interfaces/option.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse } from 'app/services/chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @Component({
@@ -25,6 +25,8 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxSelectComponent],
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() label: string;

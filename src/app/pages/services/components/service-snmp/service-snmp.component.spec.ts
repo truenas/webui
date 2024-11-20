@@ -3,19 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
@@ -25,7 +25,7 @@ describe('ServiceSnmpComponent', () => {
     routes: [],
     providers: [
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('snmp.update'),
         mockCall('snmp.config', {
           location: 'My location',
@@ -42,7 +42,7 @@ describe('ServiceSnmpComponent', () => {
           loglevel: 4,
         } as SnmpConfig),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -50,7 +50,7 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

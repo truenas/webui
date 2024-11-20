@@ -12,18 +12,21 @@ import { pick } from 'lodash-es';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
+import { catchError, defaultIfEmpty } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -43,7 +46,7 @@ import {
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +55,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -72,6 +75,7 @@ import { WebSocketService } from 'app/services/ws.service';
     RequiresRolesDirective,
     MatStepperNext,
     TranslateModule,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class VmWizardComponent implements OnInit {
@@ -115,8 +119,8 @@ export class VmWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<VmWizardComponent>,
-    private ws: WebSocketService,
+    private slideInRef: SlideInRef<VmWizardComponent>,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
@@ -208,7 +212,7 @@ export class VmWizardComponent implements OnInit {
       ]),
     } as VirtualMachineUpdate;
 
-    return this.ws.call('vm.create', [vmPayload]);
+    return this.api.call('vm.create', [vmPayload]);
   }
 
   private createDevices(vm: VirtualMachine): Observable<unknown[]> {
@@ -234,8 +238,8 @@ export class VmWizardComponent implements OnInit {
 
   private getNicRequest(vm: VirtualMachine): Observable<VmDevice> {
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Nic,
       attributes: {
+        dtype: VmDeviceType.Nic,
         type: this.nicForm.nic_type,
         mac: this.nicForm.nic_mac,
         nic_attach: this.nicForm.nic_attach,
@@ -250,8 +254,8 @@ export class VmWizardComponent implements OnInit {
     if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
-        dtype: VmDeviceType.Disk,
         attributes: {
+          dtype: VmDeviceType.Disk,
           create_zvol: true,
           type: this.diskForm.hdd_type,
           physical_sectorsize: null,
@@ -263,8 +267,8 @@ export class VmWizardComponent implements OnInit {
     }
 
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         path: this.diskForm.hdd_path,
         type: this.diskForm.hdd_type,
         physical_sectorsize: null,
@@ -275,8 +279,8 @@ export class VmWizardComponent implements OnInit {
 
   private getCdromRequest(vm: VirtualMachine): Observable<VmDevice> {
     return this.makeDeviceRequest(vm.id, {
-      dtype: VmDeviceType.Cdrom,
       attributes: {
+        dtype: VmDeviceType.Cdrom,
         path: this.mediaForm.iso_path,
       },
     });
@@ -285,26 +289,18 @@ export class VmWizardComponent implements OnInit {
   private getGpuRequests(vm: VirtualMachine): Observable<unknown> {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
-    const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
-    });
-
-    return forkJoin(pciIdsRequests$).pipe(
+    return this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       defaultIfEmpty([]),
-      map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => forkJoin([
-        this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ])),
+      switchMap(() => this.vmGpuService.updateVmGpus(vm, gpusIds)),
     );
   }
 
   private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
-    return this.ws.call('vm.port_wizard').pipe(
+    return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
-          dtype: VmDeviceType.Display,
           attributes: {
+            dtype: VmDeviceType.Display,
             port: port.port,
             bind: this.osForm.bind,
             password: this.osForm.password,
@@ -317,12 +313,12 @@ export class VmWizardComponent implements OnInit {
   }
 
   private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice> {
-    return this.ws.call('vm.device.create', [{
+    return this.api.call('vm.device.create', [{
       vm: vmId,
       ...payload,
     }])
       .pipe(
-        catchError((error: WebSocketError) => {
+        catchError((error: ApiError) => {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,

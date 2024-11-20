@@ -1,16 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  combineLatest, EMPTY, Observable,
+  combineLatest, Observable,
+  of,
 } from 'rxjs';
 import {
   map, shareReplay, switchMap, take,
+  tap,
 } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
+import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @Injectable({
@@ -20,7 +23,7 @@ export class GpuService {
   private allGpus$: Observable<Device[]>;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private store$: Store<AppState>,
   ) {}
 
@@ -29,7 +32,7 @@ export class GpuService {
    */
   getAllGpus(): Observable<Device[]> {
     if (!this.allGpus$) {
-      this.allGpus$ = this.ws.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
+      this.allGpus$ = this.api.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
         shareReplay({
           refCount: false,
           bufferSize: 1,
@@ -41,12 +44,11 @@ export class GpuService {
   }
 
   getGpuOptions(): Observable<Option[]> {
-    return this.getAllGpus().pipe(
-      map((gpus) => {
-        return gpus.map((gpu) => ({
-          label: gpu.description,
-          value: gpu.addr.pci_slot,
-        }));
+    return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
+      map((choices) => {
+        return Object.entries(choices).map(
+          ([value, label]) => ({ value: label, label: value }),
+        );
       }),
     );
   }
@@ -80,11 +82,14 @@ export class GpuService {
           ...idsToIsolate,
         ]);
         if (newIsolatedGpuIds.size === oldIsolatedGpuIds.length) {
-          return EMPTY;
+          return of(undefined);
         }
 
-        return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]);
+        return this.api.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
+          tap(() => this.store$.dispatch(advancedConfigUpdated())),
+        );
       }),
+
     );
   }
 }

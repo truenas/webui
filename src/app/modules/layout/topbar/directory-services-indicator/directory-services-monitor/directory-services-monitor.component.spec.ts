@@ -1,14 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DirectoryServicesMonitorComponent', () => {
   let spectator: Spectator<DirectoryServicesMonitorComponent>;
@@ -19,7 +19,7 @@ describe('DirectoryServicesMonitorComponent', () => {
       MapValuePipe,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Disabled,
           ldap: DirectoryServiceState.Healthy,
@@ -34,7 +34,7 @@ describe('DirectoryServicesMonitorComponent', () => {
   });
 
   it('loads directory services status on component initialization', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('directoryservices.get_state');
   });
 
   it('shows status of a non-disabled directory service', () => {
@@ -48,6 +48,6 @@ describe('DirectoryServicesMonitorComponent', () => {
     const refreshButton = await loader.getHarness(IxIconHarness.with({ name: 'refresh' }));
     await refreshButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('directoryservices.get_state');
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('directoryservices.get_state');
   });
 });

@@ -2,10 +2,14 @@ import {
   ChangeDetectionStrategy, Component, computed,
   input,
 } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 @UntilDestroy()
@@ -14,6 +18,13 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   templateUrl: './app-card.component.html',
   styleUrls: ['./app-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    MatTooltip,
+    TestDirective,
+    AppCardLogoComponent,
+  ],
 })
 export class AppCardComponent {
   readonly app = input.required<AvailableApp>();
@@ -31,7 +42,7 @@ export class AppCardComponent {
   navigateToAllInstalledPage(): void {
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
-        return apps.filter((app) => (app.metadata.name === this.app().name && app.metadata.train === this.app().train));
+        return apps.filter((app) => app.metadata.name === this.app().name && app.metadata.train === this.app().train);
       }),
       untilDestroyed(this),
     ).subscribe((apps) => {

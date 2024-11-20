@@ -15,10 +15,10 @@ import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    IxWarningComponent,
+    WarningComponent,
     ReactiveFormsModule,
     IxSelectComponent,
     FormActionsComponent,
@@ -69,7 +69,7 @@ export class DiskWipeDialogComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
@@ -92,7 +92,7 @@ export class DiskWipeDialogComponent {
 
   private wipeDisk(): void {
     this.dialogService.jobDialog(
-      this.ws.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
+      this.api.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
       {
         canMinimize: true,
         description: this.translate.instant('Wiping disk...'),

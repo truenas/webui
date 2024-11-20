@@ -23,7 +23,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const defaultEncryptionStandard = 'AES-256-GCM';
 
@@ -59,15 +59,18 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   isLoading$ = this.store.isLoading$;
-  poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
+  poolNames$ = this.api.call('pool.query', [[], { select: ['name'], order_by: ['name'] }]).pipe(
+    map((pools) => pools.map((pool) => pool.name)),
+  );
+
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
-  readonly encryptionAlgorithmOptions$ = this.ws
+  readonly encryptionAlgorithmOptions$ = this.api
     .call('pool.dataset.encryption_algorithm_choices')
     .pipe(choicesToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private dialog: DialogService,
     private translate: TranslateService,

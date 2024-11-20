@@ -16,22 +16,22 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +40,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,8 +76,8 @@ export class ImportPoolComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<ImportPoolComponent>,
-    private ws: WebSocketService,
+    private slideInRef: SlideInRef<ImportPoolComponent>,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -89,7 +89,7 @@ export class ImportPoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.ws.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
+    this.api.job('pool.import_find').pipe(untilDestroyed(this)).subscribe({
       next: (importablePoolFindJob) => {
         if (importablePoolFindJob.state !== JobState.Success) {
           return;
@@ -108,7 +108,7 @@ export class ImportPoolComponent implements OnInit {
         this.pool.options = of(opts);
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError | Job) => {
+      error: (error: ApiError | Job) => {
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -119,7 +119,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -138,7 +138,7 @@ export class ImportPoolComponent implements OnInit {
   }
 
   checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
-    return this.ws.call(
+    return this.api.call(
       'pool.dataset.query',
       [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
     )

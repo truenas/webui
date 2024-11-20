@@ -15,8 +15,11 @@ import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -37,7 +40,7 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +50,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -66,6 +69,7 @@ import { WebSocketService } from 'app/services/ws.service';
     RequiresRolesDirective,
     MatStepperNext,
     TranslateModule,
+    UseIxIconsInStepperComponent,
   ],
 })
 export class CsrAddComponent {
@@ -85,12 +89,12 @@ export class CsrAddComponent {
   summary: SummarySection[];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideInRef: IxSlideInRef<CsrAddComponent>,
+    private slideInRef: SlideInRef<CsrAddComponent>,
     private dialogService: DialogService,
   ) { }
 
@@ -139,7 +143,7 @@ export class CsrAddComponent {
     this.cdr.markForCheck();
 
     const payload = this.preparePayload();
-    this.ws.job('certificate.create', [payload])
+    this.api.job('certificate.create', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

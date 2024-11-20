@@ -22,7 +22,7 @@ export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
       if (search) {
         return options.filter((option: Option) => {
           return option.label.toLowerCase().includes(search.toLowerCase())
-              || option.value.toString().toLowerCase().includes(search.toLowerCase());
+            || option.value.toString().toLowerCase().includes(search.toLowerCase());
         });
       }
       return [...options];

@@ -6,12 +6,14 @@ import {
   Inject,
   OnInit,
 } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { noop, Observable, of } from 'rxjs';
 import {
@@ -22,11 +24,13 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -34,21 +38,29 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -58,6 +70,24 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxExplorerComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxChipsComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
   existingSmbShare: SmbShare;
@@ -146,6 +176,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       !this.isNew && this.form.controls.path.value !== this.existingSmbShare?.path
     );
   }
+
   hostsAllowTooltip = this.translate.instant('Enter a list of allowed hostnames or IP addresses.\
     Separate entries by pressing <code>Enter</code>. A more detailed description \
     with examples can be found \
@@ -197,7 +228,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private datasetService: DatasetService,
@@ -208,7 +239,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
-    private slideInRef: IxSlideInRef<SmbFormComponent>,
+    private slideInRef: SlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
     private smbValidationService: SmbValidationService,
     @Inject(SLIDE_IN_DATA) private data: { existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare },
@@ -318,11 +349,11 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     if (this.wasStripAclWarningShown || !path || aclValue) {
       return;
     }
-    this.ws
-      .call('filesystem.acl_is_trivial', [path])
+    this.api
+      .call('filesystem.stat', [path])
       .pipe(untilDestroyed(this))
-      .subscribe((aclIsTrivial) => {
-        if (!aclIsTrivial) {
+      .subscribe((stat) => {
+        if (stat.acl) {
           this.wasStripAclWarningShown = true;
           this.showStripAclWarning();
         }
@@ -348,7 +379,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
   setupAndApplyPurposePresets(): Observable<void> {
-    return this.ws.call('sharing.smb.presets').pipe(
+    return this.api.call('sharing.smb.presets').pipe(
       switchMap((presets) => {
         const nonClusterPresets = Object.entries(presets).reduce(
           (acc, [presetName, preset]) => {
@@ -437,9 +468,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     let request$: Observable<SmbShare>;
 
     if (this.isNew) {
-      request$ = this.ws.call('sharing.smb.create', [smbShare]);
+      request$ = this.api.call('sharing.smb.create', [smbShare]);
     } else {
-      request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
+      request$ = this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -487,7 +518,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
           this.slideInRef.close(true);
         }
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
@@ -532,7 +563,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   restartCifsService = (): Observable<boolean> => {
     this.loader.open();
-    return this.ws.call('service.restart', [ServiceName.Cifs]).pipe(
+    return this.api.call('service.restart', [ServiceName.Cifs]).pipe(
       tap(() => {
         this.loader.close();
         this.snackbar.success(
@@ -547,7 +578,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   shouldRedirectToAclEdit(): Observable<boolean> {
     const sharePath: string = this.form.controls.path.value;
     const datasetId = sharePath.replace('/mnt/', '');
-    return this.ws.call('filesystem.stat', [sharePath]).pipe(
+    return this.api.call('filesystem.stat', [sharePath]).pipe(
       switchMap((stat) => {
         return of(
           stat.acl !== this.form.controls.acl.value && datasetId.includes('/'),

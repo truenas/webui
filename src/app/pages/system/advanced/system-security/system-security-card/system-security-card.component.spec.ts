@@ -4,12 +4,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
@@ -22,10 +22,10 @@ describe('SystemSecurityCardComponent', () => {
     component: SystemSecurityCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
@@ -49,7 +49,7 @@ describe('SystemSecurityCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
       false,
       fakeSystemSecurityConfig,

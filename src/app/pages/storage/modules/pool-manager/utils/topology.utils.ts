@@ -141,7 +141,7 @@ export function parseDraidVdevName(
   }
 
   const [, parityLevelNumber, dataDisks, , spareDisk] = match;
-  let parityLevel = CreateVdevLayout.Draid1;
+  let parityLevel: CreateVdevLayout;
   if (parityLevelNumber === '2') {
     parityLevel = CreateVdevLayout.Draid2;
   } else if (parityLevelNumber === '3') {

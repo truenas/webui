@@ -1,17 +1,30 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -22,6 +35,22 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './target-global-configuration.component.html',
   styleUrls: ['./target-global-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    MatProgressBar,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxChipsComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class TargetGlobalConfigurationComponent implements OnInit {
   isFormLoading = false;
@@ -50,7 +79,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   ];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
@@ -69,7 +98,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     this.setLoading(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
-    this.ws.call('iscsi.global.update', [values])
+    this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
@@ -89,7 +118,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   private loadFormValues(): void {
     this.setLoading(true);
 
-    this.ws.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.setLoading(false);

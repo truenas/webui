@@ -14,10 +14,10 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CertificateDetailsComponent } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import {
@@ -26,7 +26,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -65,12 +65,12 @@ export class CertificateAuthorityEditComponent implements OnInit {
   readonly helptext = helptextSystemCertificates;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: IxSlideInRef<CertificateAuthorityEditComponent>,
+    private slideInRef: SlideInRef<CertificateAuthorityEditComponent>,
     @Inject(SLIDE_IN_DATA) private certificate: CertificateAuthority,
   ) {}
 
@@ -107,7 +107,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.call('certificateauthority.update', [this.certificateAuthority.id, this.form.value])
+    this.api.call('certificateauthority.update', [this.certificateAuthority.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

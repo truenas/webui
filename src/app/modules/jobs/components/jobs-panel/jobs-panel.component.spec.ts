@@ -9,7 +9,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -21,7 +21,7 @@ import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -74,7 +74,7 @@ const transientRunningJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -100,7 +100,7 @@ describe('JobsPanelComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('core.get_jobs', (query) => {
           if (query[0][0][2] === JobState.Success) {
             return [];
@@ -115,7 +115,7 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jobPanel = new JobsPanelPageObject(spectator);
   });

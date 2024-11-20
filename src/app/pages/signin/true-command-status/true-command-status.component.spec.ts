@@ -1,16 +1,16 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TrueCommandStatusComponent', () => {
   let spectator: Spectator<TrueCommandStatusComponent>;
   const createComponent = createComponentFactory({
     component: TrueCommandStatusComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.managed_by_truecommand', true),
       ]),
     ],
@@ -21,7 +21,7 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('makes a websocket call to check TrueCommand status', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.managed_by_truecommand');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.managed_by_truecommand');
   });
 
   it('shows Managed by Truecommand status', () => {

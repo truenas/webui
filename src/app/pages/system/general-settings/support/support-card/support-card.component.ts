@@ -2,24 +2,34 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
   signal,
 } from '@angular/core';
-import { MatCheckboxChange } from '@angular/material/checkbox';
+import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { oneDayMillis } from 'app/constants/time.constant';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getProductImageSrc } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
@@ -29,10 +39,11 @@ import {
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
+import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -42,12 +53,30 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './support-card.component.html',
   styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    MatCardContent,
+    SysInfoComponent,
+    RequiresRolesDirective,
+    TestDirective,
+    ReactiveFormsModule,
+    FormsModule,
+    MatButton,
+    MatMenuTrigger,
+    IxIconComponent,
+    MatMenu,
+    MatMenuItem,
+    TranslateModule,
+    IxSlideToggleComponent,
+  ],
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = supportCardElements;
 
-  isProduction: boolean;
   extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
@@ -57,16 +86,17 @@ export class SupportCardComponent implements OnInit {
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
 
+  protected readonly isProductionControl = new FormControl(false);
+
   get licenseButtonText(): string {
     return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
   }
 
   constructor(
-    protected ws: WebSocketService,
+    protected api: ApiService,
     private loader: AppLoaderService,
-    private dialog: DialogService,
     private matDialog: MatDialog,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -88,12 +118,9 @@ export class SupportCardComponent implements OnInit {
       }
       this.cdr.markForCheck();
     });
-    this.ws.call('truenas.is_production')
-      .pipe(untilDestroyed(this))
-      .subscribe((isProduction) => {
-        this.isProduction = isProduction;
-        this.cdr.markForCheck();
-      });
+
+    this.loadProductionStatus();
+    this.saveProductionStatusOnChange();
   }
 
   private setupProductImage(systemInfo: SystemInfo): void {
@@ -122,7 +149,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
+    return Math.round((then.getTime() - now.getTime()) / oneDayMillis);
   }
 
   updateLicense(): void {
@@ -137,41 +164,56 @@ export class SupportCardComponent implements OnInit {
     this.slideInService.open(ProactiveComponent, { wide: true });
   }
 
-  updateProductionStatus(event: MatCheckboxChange): void {
-    let request$: Observable<boolean | SetProductionStatusDialogResult> = of(false);
-    if (event.checked) {
-      request$ = request$.pipe(
-        switchMap(() => this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
-          tap((confirmed) => {
-            if (confirmed) {
-              return true;
-            }
-            this.isProduction = false;
-            this.cdr.markForCheck();
-            return false;
-          }),
-        )),
-        filter(Boolean),
-      ) as Observable<boolean>;
+  updateProductionStatus(newStatus: boolean): void {
+    let request$: Observable<boolean | SetProductionStatusDialogResult>;
+    if (newStatus) {
+      request$ = this.matDialog.open(SetProductionStatusDialogComponent).afterClosed().pipe(
+        filter((result: SetProductionStatusDialogResult | false) => {
+          if (result) {
+            return true;
+          }
+          this.isProductionControl.setValue(false, { emitEvent: false });
+          this.cdr.markForCheck();
+          return false;
+        }),
+      );
+    } else {
+      request$ = of(false);
     }
 
     request$.pipe(
       switchMap((result) => {
         const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.job('truenas.set_production', [event.checked, attachDebug]).pipe(this.loader.withLoader());
+        return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap({
+            complete: () => {
+              this.snackbar.success(
+                this.translate.instant(helptext.is_production_dialog.message),
+              );
+            },
+          }),
+        );
       }),
       untilDestroyed(this),
     )
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(
-            this.translate.instant(helptext.is_production_dialog.message),
-          );
-        },
-        error: (error: unknown) => {
-          this.dialog.error(this.errorHandler.parseError(error));
-        },
+      .subscribe();
+  }
+
+  private loadProductionStatus(): void {
+    this.api.call('truenas.is_production')
+      .pipe(untilDestroyed(this))
+      .subscribe((isProduction) => {
+        this.isProductionControl.setValue(isProduction, { emitEvent: false });
+        this.cdr.markForCheck();
       });
+  }
+
+  private saveProductionStatusOnChange(): void {
+    this.isProductionControl.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((newStatus) => this.updateProductionStatus(newStatus));
   }
 }

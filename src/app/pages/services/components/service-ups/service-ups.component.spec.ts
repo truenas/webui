@@ -3,29 +3,29 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: ServiceUpsComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('ups.config', {
           complete_identifier: 'ups@localhost:3',
           description: '',
@@ -63,7 +63,7 @@ describe('ServiceUpsComponent', () => {
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -72,14 +72,14 @@ describe('ServiceUpsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current settings for UPS service when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('ups.config');
+    expect(api.call).toHaveBeenCalledWith('ups.config');
     expect(values).toEqual({
       Identifier: 'ups',
       'UPS Mode': 'Master',
@@ -126,7 +126,7 @@ describe('ServiceUpsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('ups.update', [{
+    expect(api.call).toHaveBeenCalledWith('ups.update', [{
       description: 'This is a test',
       driver: 'bcmxcp$R1500 G2',
       extrausers: '',

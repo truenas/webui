@@ -1,10 +1,19 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
 } from '@angular/core';
-import { FormControl, ValidationErrors, Validators } from '@angular/forms';
+import {
+  FormControl, ValidationErrors, Validators, ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { tap } from 'rxjs';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {
@@ -15,6 +24,8 @@ import {
 } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, Widget } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { WidgetEditorGroupComponent } from './widget-editor-group/widget-editor-group.component';
+import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-group-slot-form.component';
 
 @UntilDestroy()
 @Component({
@@ -22,11 +33,25 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   templateUrl: './widget-group-form.component.html',
   styleUrls: ['./widget-group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxIconGroupComponent,
+    WidgetEditorGroupComponent,
+    WidgetGroupSlotFormComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class WidgetGroupFormComponent {
   protected group = signal<WidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
+
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,

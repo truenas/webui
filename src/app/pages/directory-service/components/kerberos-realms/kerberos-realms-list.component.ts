@@ -35,8 +35,8 @@ import { KerberosRealmRow } from 'app/pages/directory-service/components/kerbero
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -113,7 +113,7 @@ export class KerberosRealmsListComponent implements OnInit {
               message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('kerberos.realm.delete', [row.id])),
+              switchMap(() => this.api.call('kerberos.realm.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -134,15 +134,15 @@ export class KerberosRealmsListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) { }
 
   ngOnInit(): void {
-    const kerberosRealsm$ = this.ws.call('kerberos.realm.query').pipe(
+    const kerberosRealsm$ = this.api.call('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {

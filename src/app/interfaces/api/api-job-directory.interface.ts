@@ -42,11 +42,21 @@ import {
   PoolReplaceParams,
   UpdatePool,
 } from 'app/interfaces/pool.interface';
+import { RebootParams } from 'app/interfaces/reboot.interface';
+import { ShutdownParams } from 'app/interfaces/shutdown.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import {
+  CreateVirtualizationInstance,
+  UpdateVirtualizationInstance,
+  VirtualizationGlobalConfig,
+  VirtualizationGlobalConfigUpdate,
+  VirtualizationInstance,
+  VirtualizationStopParams,
+} from 'app/interfaces/virtualization.interface';
 import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
@@ -61,9 +71,6 @@ export interface ApiJobDirectory {
   'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
   'boot.replace': { params: [oldDisk: string, newDisk: string]; response: void };
   'boot.scrub': { params: void; response: void };
-
-  // Boot Environment
-  'bootenv.delete': { params: [string]; response: boolean };
 
   // Catalog
   'catalog.sync': { params: [label: string]; response: void };
@@ -111,7 +118,6 @@ export interface ApiJobDirectory {
   // Failover
   'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
-  'failover.upgrade_finish': { params: void; response: boolean };
 
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
@@ -168,8 +174,8 @@ export interface ApiJobDirectory {
   'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // System
-  'system.reboot': { params: { delay?: number }; response: void };
-  'system.shutdown': { params: { delay?: number }; response: void };
+  'system.reboot': { params: RebootParams; response: void };
+  'system.shutdown': { params: ShutdownParams; response: void };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset
@@ -190,6 +196,19 @@ export interface ApiJobDirectory {
   'update.download': { params: void; response: boolean };
   'update.file': { params: [{ resume: boolean }?]; response: void };
   'update.update': { params: [UpdateParams]; response: void };
+
+  // Virt
+  'virt.instance.create': { params: [CreateVirtualizationInstance]; response: VirtualizationInstance };
+  'virt.instance.delete': { params: [instanceId: string]; response: boolean };
+  'virt.instance.restart': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
+  'virt.instance.start': { params: [instanceId: string]; response: boolean };
+  'virt.instance.stop': { params: [instanceId: string, params: VirtualizationStopParams]; response: boolean };
+  'virt.instance.update': {
+    params: [instanceId: string, update: UpdateVirtualizationInstance];
+    response: VirtualizationInstance;
+  };
+
+  'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
 
   // VM
   'vm.restart': { params: [id: number]; response: void };

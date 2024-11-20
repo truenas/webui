@@ -4,23 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { fillControlValues, getControlValues } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
   let spectator: Spectator<DatasetCapacitySettingsComponent>;
@@ -31,13 +31,13 @@ describe('DatasetCapacitySettingsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.update'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(IxSlideInService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInService),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -156,7 +156,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 110 * GiB,
@@ -169,7 +169,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('only sends updated properties on form submit', async () => {
@@ -183,7 +183,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
       'root/path',
       {
         quota: 105 * GiB,

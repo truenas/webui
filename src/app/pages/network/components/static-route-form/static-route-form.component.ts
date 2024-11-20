@@ -8,20 +8,21 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { WarnAboutUnsavedChangesDirective } from 'app/directives/warn-about-unsaved-changes/warn-about-unsaved-changes.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -41,6 +42,7 @@ import { WebSocketService } from 'app/services/ws.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    WarnAboutUnsavedChangesDirective,
   ],
 })
 export class StaticRouteFormComponent implements OnInit {
@@ -49,9 +51,11 @@ export class StaticRouteFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingRoute;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
   }
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -68,12 +72,12 @@ export class StaticRouteFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<StaticRouteFormComponent>,
+    private slideInRef: SlideInRef<StaticRouteFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingRoute: StaticRoute,
   ) {}
 
@@ -93,9 +97,9 @@ export class StaticRouteFormComponent implements OnInit {
 
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('staticroute.create', [values]);
+      request$ = this.api.call('staticroute.create', [values]);
     } else {
-      request$ = this.ws.call('staticroute.update', [
+      request$ = this.api.call('staticroute.update', [
         this.editingRoute.id,
         values,
       ]);

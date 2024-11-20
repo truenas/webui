@@ -7,21 +7,21 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('RsyncTaskCardComponent', () => {
@@ -91,7 +91,7 @@ describe('RsyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('rsynctask.query', rsyncTasks),
         mockCall('rsynctask.delete'),
         mockCall('rsynctask.update'),
@@ -99,10 +99,10 @@ describe('RsyncTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -136,7 +136,7 @@ describe('RsyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       true,
       rsyncTasks[0],
@@ -147,7 +147,7 @@ describe('RsyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       true,
       undefined,
@@ -156,7 +156,7 @@ describe('RsyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 7);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 7);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -165,7 +165,7 @@ describe('RsyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
@@ -177,7 +177,7 @@ describe('RsyncTaskCardComponent', () => {
       message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {
@@ -187,7 +187,7 @@ describe('RsyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'rsynctask.update',
       [1, { enabled: true }],
     );

@@ -1,18 +1,32 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
+  ChangeDetectionStrategy, Component, OnChanges, OnInit, input, computed, signal,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import {
+  MatCard, MatCardHeader, MatCardTitle, MatCardContent,
+} from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
+import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-posix-permissions/view-posix-permissions.component';
+import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -23,18 +37,39 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: 'permissions-card.component.html',
   styleUrls: ['./permissions-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    NgxSkeletonLoaderModule,
+    ViewTrivialPermissionsComponent,
+    ViewPosixPermissionsComponent,
+    ViewNfsPermissionsComponent,
+    EmptyComponent,
+    TranslateModule,
+    CastPipe,
+    MatTooltip,
+  ],
+  providers: [
+    PermissionsCardStore,
+  ],
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
-  @Input() dataset: DatasetDetails;
+  readonly dataset = input.required<DatasetDetails>();
 
   readonly requiredRoles = [Role.DatasetWrite];
 
-  isLoading: boolean;
-  isMissingMountpoint: boolean;
-  stat: FileSystemStat;
-  acl: Acl;
+  protected readonly isLoading = signal(false);
+  protected readonly isMissingMountpoint = signal(false);
+  protected readonly stat = signal<FileSystemStat | null>(null);
+  protected readonly acl = signal<Acl | null>(null);
 
-  emptyConfig: EmptyConfig = {
+  defaultEmptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: this.translate.instant('No Data'),
   };
@@ -44,11 +79,15 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     title: this.translate.instant('Dataset has no mountpoint'),
   };
 
+  lockedEmptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('Dataset is locked'),
+  };
+
   readonly AclType = AclType;
 
   constructor(
     private store: PermissionsCardStore,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private router: Router,
@@ -56,16 +95,51 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   ) {}
 
   redirectToEditPermissions(): void {
-    if (this.acl.trivial) {
-      this.router.navigate(['/datasets', this.dataset.id, 'permissions', 'edit']);
+    if (this.acl().trivial) {
+      this.router.navigate(['/datasets', this.dataset().id, 'permissions', 'edit']);
     } else {
-      this.router.navigate(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/' + this.dataset.id } });
+      this.router.navigate(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/' + this.dataset().id } });
     }
   }
 
-  get canEditPermissions(): boolean {
-    return this.acl && !isRootDataset(this.dataset) && !this.dataset.locked;
-  }
+  readonly emptyConfig = computed(() => {
+    if (this.isMissingMountpoint()) {
+      return this.missionMountpointEmptyConfig;
+    }
+    if (this.isLocked()) {
+      return this.lockedEmptyConfig;
+    }
+
+    return this.defaultEmptyConfig;
+  });
+
+  readonly canEditPermissions = computed(() => {
+    return this.acl && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
+  });
+
+  readonly isLocked = computed(() => {
+    return this.dataset().locked;
+  });
+
+  readonly reasonEditIsDisabled = computed(() => {
+    if (this.canEditPermissions()) {
+      return null;
+    }
+
+    if (isRootDataset(this.dataset())) {
+      return this.translate.instant(helptextPermissions.editDisabled.root);
+    }
+
+    if (this.isLocked()) {
+      return this.translate.instant(helptextPermissions.editDisabled.locked);
+    }
+
+    if (this.dataset().readonly) {
+      return this.translate.instant(helptextPermissions.editDisabled.readonly);
+    }
+
+    return null;
+  });
 
   ngOnChanges(): void {
     this.loadPermissions();
@@ -76,37 +150,41 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (state) => {
-          this.isLoading = state.isLoading;
-          this.acl = state.acl;
-          this.stat = state.stat;
+          this.isLoading.set(state.isLoading);
+          this.acl.set(state.acl);
+          this.stat.set(state.stat);
 
           // TODO: Move elsewhere
-          if (this.acl?.acl && this.acl.acltype === AclType.Nfs4) {
-            for (const acl of this.acl.acl) {
+          if (this.acl()?.acl && this.acl().acltype === AclType.Nfs4) {
+            for (const acl of this.acl().acl) {
               if (acl.tag === NfsAclTag.Owner && acl.who === null) {
-                acl.who = this.acl.uid.toString();
+                acl.who = this.acl().uid.toString();
               }
               if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who === null) {
-                acl.who = this.acl.gid.toString();
+                acl.who = this.acl().gid.toString();
               }
             }
           }
-
-          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
 
   private loadPermissions(): void {
-    this.isMissingMountpoint = !this.dataset.mountpoint;
-    if (this.isMissingMountpoint) {
+    this.acl.set(null);
+    this.stat.set(null);
+
+    if (this.isLocked()) {
       return;
     }
-    this.store.loadPermissions(this.dataset.mountpoint);
+
+    this.isMissingMountpoint.set(!this.dataset().mountpoint);
+    if (this.isMissingMountpoint()) {
+      return;
+    }
+    this.store.loadPermissions(this.dataset().mountpoint);
   }
 }

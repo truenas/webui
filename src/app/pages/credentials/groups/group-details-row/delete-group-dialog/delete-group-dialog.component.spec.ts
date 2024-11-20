@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -13,7 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeleteGroupDialogComponent', () => {
   let spectator: Spectator<DeleteGroupDialogComponent>;
@@ -25,7 +25,7 @@ describe('DeleteGroupDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('group.delete'),
       ]),
       mockProvider(SnackbarService),
@@ -58,7 +58,7 @@ describe('DeleteGroupDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.delete', [2, { delete_users: true }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Group deleted');
   });

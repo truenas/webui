@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * Creates an async validator that checks if there is enough free space for the selected datastore.
@@ -22,7 +22,7 @@ export class FreeSpaceValidatorService {
   private previousPath: string;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private validators: IxValidatorsService,
     private translate: TranslateService,
   ) {}
@@ -38,6 +38,8 @@ export class FreeSpaceValidatorService {
     const freeSpaceInPath$ = this.getFreeSpaceInPath(path);
 
     return freeSpaceInPath$.pipe(
+      // TODO: Refactor to fix linter rule.
+      // eslint-disable-next-line sonarjs/no-invariant-returns
       map((freeSpace) => {
         this.previousPath = path;
         form.controls.volsize.setErrors(null);
@@ -57,7 +59,7 @@ export class FreeSpaceValidatorService {
 
   private getFreeSpaceInPath(path: string): Observable<number> {
     if (!this.freeSpaceInPath$ || this.previousPath !== path) {
-      this.freeSpaceInPath$ = this.ws.call('filesystem.statfs', [path]).pipe(
+      this.freeSpaceInPath$ = this.api.call('filesystem.statfs', [path]).pipe(
         map((stat) => stat.free_bytes),
         shareReplay({
           refCount: false,

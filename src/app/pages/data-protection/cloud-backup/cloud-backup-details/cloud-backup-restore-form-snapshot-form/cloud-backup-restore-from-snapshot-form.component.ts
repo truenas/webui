@@ -1,12 +1,16 @@
+import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Inject,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -24,19 +28,43 @@ import {
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-restore-from-snapshot-form',
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxRadioGroupComponent,
+    IxExplorerComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    DatePipe,
+  ],
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   readonly requiredRoles = [Role.CloudBackupWrite];
@@ -82,11 +110,11 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: IxSlideInRef<CloudBackupSnapshot>,
+    private slideInRef: SlideInRef<CloudBackupSnapshot>,
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
     @Inject(SLIDE_IN_DATA) public data: { backup: CloudBackup; snapshot: CloudBackupSnapshot },
@@ -105,7 +133,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     const params = this.prepareParams();
 
     this.dialogService.jobDialog(
-      this.ws.job('cloud_backup.restore', params),
+      this.api.job('cloud_backup.restore', params),
       {
         title: this.translate.instant('Restoring backup'),
         canMinimize: true,
@@ -129,7 +157,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
-      return this.ws.call(
+      return this.api.call(
         'cloud_backup.list_snapshot_directory',
         [this.data.backup.id, this.data.snapshot?.id, node.data.path],
       ).pipe(

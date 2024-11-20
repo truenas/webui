@@ -2,8 +2,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LetDirective } from 'app/directives/app-let.directive';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -16,7 +17,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
@@ -56,7 +57,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -71,7 +72,6 @@ describe('AlertsPanelComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
-            isUpgradePending: false,
           },
         },
       }),
@@ -83,7 +83,8 @@ describe('AlertsPanelComponent', () => {
       MockComponent(AlertComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockAuth(),
+      mockApi([
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
@@ -99,7 +100,7 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
   });
 
@@ -157,7 +158,7 @@ describe('AlertsPanelComponent', () => {
   it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Added,
       collection: 'alert.list',
@@ -176,7 +177,7 @@ describe('AlertsPanelComponent', () => {
   it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Changed,
       collection: 'alert.list',

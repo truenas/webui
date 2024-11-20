@@ -13,13 +13,13 @@ import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -57,8 +57,8 @@ export class KerberosSettingsComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<KerberosSettingsComponent>,
+    private api: ApiService,
+    private slideInRef: SlideInRef<KerberosSettingsComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -69,7 +69,7 @@ export class KerberosSettingsComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -87,7 +87,7 @@ export class KerberosSettingsComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('kerberos.update', [values as KerberosConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();

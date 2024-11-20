@@ -6,21 +6,21 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SmartTaskCardComponent', () => {
@@ -85,7 +85,7 @@ describe('SmartTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('smart.test.query', smartTasks),
         mockCall('disk.query', disks),
         mockCall('smart.test.delete'),
@@ -93,12 +93,12 @@ describe('SmartTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -139,22 +139,22 @@ describe('SmartTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
       data: expect.objectContaining(smartTasks[0]),
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query');
   });
 
   it('shows form to create new Smart Task when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
       data: undefined,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query');
   });
 
   it('deletes a Smart Task with confirmation when Delete button is pressed', async () => {
@@ -166,8 +166,8 @@ describe('SmartTaskCardComponent', () => {
       message: 'Delete S.M.A.R.T. Test <b>"LONG - test"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query');
   });
 });

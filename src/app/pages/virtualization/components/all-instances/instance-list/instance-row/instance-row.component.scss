@@ -1,0 +1,42 @@
+:host {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg2);
+  font-weight: 500;
+  grid-gap: 8px;
+  min-height: 48px;
+  position: relative;
+
+  .cell.checkbox {
+    mat-checkbox {
+      margin: 0;
+    }
+  }
+
+  .cell.actions {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+  
+  &:hover {
+    background-color: var(--hover-bg);
+  }
+
+  &.selected {
+    background-color: var(--hover-bg);
+
+    .cell-name::before {
+      background: var(--primary);
+      content: '';
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 6px;
+      z-index: 1;
+    }
+  }
+}

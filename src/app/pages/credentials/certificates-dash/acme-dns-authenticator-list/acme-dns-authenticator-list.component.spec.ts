@@ -4,26 +4,27 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
   name: `dns-authenticator-${index}`,
-  authenticator: `tn-${index}`,
-})) as unknown as DnsAuthenticator[];
+  authenticator: DnsAuthenticatorType.Cloudflare,
+})) as DnsAuthenticator[];
 
 describe('AcmeDnsAuthenticatorListComponent', () => {
   let spectator: Spectator<AcmeDnsAuthenticatorListComponent>;
@@ -36,20 +37,20 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       IxTablePagerShowMoreComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('acme.dns.authenticator.query', authenticators),
         mockCall('acme.dns.authenticator.delete', true),
       ]),
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(IxSlideInRef, {
+      mockProvider(SlideInRef, {
         slideInClosed$: of(true),
       }),
       mockAuth(),
@@ -71,14 +72,14 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
   });
 
   it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
       data: authenticators[0],
     });
   });
@@ -87,16 +88,16 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
   });
 
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Authenticator', ''],
-      ['dns-authenticator-0', 'tn-0', ''],
-      ['dns-authenticator-1', 'tn-1', ''],
-      ['dns-authenticator-2', 'tn-2', ''],
-      ['dns-authenticator-3', 'tn-3', ''],
+      ['dns-authenticator-0', 'cloudflare', ''],
+      ['dns-authenticator-1', 'cloudflare', ''],
+      ['dns-authenticator-2', 'cloudflare', ''],
+      ['dns-authenticator-3', 'cloudflare', ''],
     ];
 
     const cells = await table.getCellTexts();

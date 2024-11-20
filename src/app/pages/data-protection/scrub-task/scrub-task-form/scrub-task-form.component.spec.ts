@@ -4,19 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskFormComponent', () => {
@@ -41,7 +40,6 @@ describe('ScrubTaskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: ScrubTaskFormComponent,
     imports: [
-      SchedulerModule,
       ReactiveFormsModule,
     ],
     providers: [
@@ -50,7 +48,7 @@ describe('ScrubTaskFormComponent', () => {
       }),
       mockAuth(),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),
         mockCall('pool.query', [
@@ -58,7 +56,7 @@ describe('ScrubTaskFormComponent', () => {
           { id: 2, name: 'My pool' },
         ] as Pool[]),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       provideMockStore({
         selectors: [
           {
@@ -67,7 +65,7 @@ describe('ScrubTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -91,7 +89,7 @@ describe('ScrubTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.create', [{
         pool: 1,
         description: 'New task',
         enabled: true,
@@ -104,7 +102,7 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 30,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -143,7 +141,7 @@ describe('ScrubTaskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.update', [13, {
         description: 'Updated task',
         enabled: false,
         pool: 1,
@@ -156,7 +154,7 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 20,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

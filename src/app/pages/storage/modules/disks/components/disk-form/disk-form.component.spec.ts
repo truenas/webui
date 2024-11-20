@@ -3,18 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DiskFormComponent } from './disk-form.component';
 
 describe('DiskFormComponent', () => {
@@ -42,10 +42,10 @@ describe('DiskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebSocket([
+      mockApi([
         mockCall('disk.update', dataDisk),
       ]),
       mockAuth(),
@@ -103,7 +103,7 @@ describe('DiskFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
       advpowermgmt: '64',
       critical: null,
       description: 'New disk description',
@@ -114,7 +114,7 @@ describe('DiskFormComponent', () => {
       togglesmart: true,
       passwd: '',
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

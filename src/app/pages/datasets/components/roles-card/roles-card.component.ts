@@ -1,16 +1,24 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import {
+  MatCard, MatCardContent, MatCardHeader, MatCardTitle,
+} from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -18,6 +26,19 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './roles-card.component.html',
   styleUrls: ['./roles-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    TranslateModule,
+    MatCardContent,
+    IxIconComponent,
+    TranslateModule,
+    RouterLink,
+    TestDirective,
+    RequiresRolesDirective,
+  ],
 })
 export class RolesCardComponent {
   readonly dataset = input.required<DatasetDetails>();
@@ -28,7 +49,7 @@ export class RolesCardComponent {
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   readonly isApplications = computed(() => {
-    return this.dataset().name && this.dataset().name.endsWith(ixAppsDataset);
+    return this.dataset().name?.endsWith(ixAppsDataset);
   });
 
   readonly appNames = computed(() => {
@@ -74,7 +95,7 @@ export class RolesCardComponent {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private datasetStore: DatasetTreeStore,
   ) {}
 

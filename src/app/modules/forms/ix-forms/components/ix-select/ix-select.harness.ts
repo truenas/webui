@@ -10,7 +10,7 @@ export interface IxSelectHarnessFilters extends SelectHarnessFilters {
 }
 
 export class IxSelectHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-select';
+  static readonly hostSelector = 'ix-select';
 
   static with(options: IxSelectHarnessFilters): HarnessPredicate<IxSelectHarness> {
     return new HarnessPredicate(IxSelectHarness, options)
@@ -62,7 +62,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
 
       const labelsToClick = Array.isArray(newLabels) ? newLabels : [newLabels];
       await parallel(() => {
-        return (labelsToClick).map((label) => select.clickOptions({ text: label }));
+        return labelsToClick.map((label) => select.clickOptions({ text: label }));
       });
       return;
     }

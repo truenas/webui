@@ -37,14 +37,14 @@ import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/compon
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { NgxOrderedListboxModule } from 'app/modules/lists/ordered-list/ordered-list.module';
+import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -60,7 +60,7 @@ import {
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -73,7 +73,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -81,7 +81,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     IxSelectComponent,
     IxInputComponent,
     IxCheckboxComponent,
-    NgxOrderedListboxModule,
+    OrderedListboxComponent,
     IxListComponent,
     IxListItemComponent,
     IxIpInputWithNetmaskComponent,
@@ -149,8 +149,8 @@ export class InterfaceFormComponent implements OnInit {
 
   lagProtocols$ = this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions());
   lagPorts$ = this.networkService.getLaggPortsChoices().pipe(choicesToOptions());
-  xmitHashPolicies$ = this.ws.call('interface.xmit_hash_policy_choices').pipe(choicesToOptions());
-  lacpduRates$ = this.ws.call('interface.lacpdu_rate_choices').pipe(choicesToOptions());
+  xmitHashPolicies$ = this.api.call('interface.xmit_hash_policy_choices').pipe(choicesToOptions());
+  lacpduRates$ = this.api.call('interface.lacpdu_rate_choices').pipe(choicesToOptions());
 
   vlanPcpOptions$ = of([
     { value: 0, label: this.translate.instant('Best effort (default)') },
@@ -162,6 +162,7 @@ export class InterfaceFormComponent implements OnInit {
     { value: 6, label: this.translate.instant('Internetwork control') },
     { value: 7, label: this.translate.instant('Network control (highest)') },
   ]);
+
   vlanParentInterfaces$ = this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions());
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
@@ -171,7 +172,7 @@ export class InterfaceFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
@@ -180,7 +181,7 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: IxSlideInRef<InterfaceFormComponent>,
+    private slideInRef: SlideInRef<InterfaceFormComponent>,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}
@@ -267,14 +268,14 @@ export class InterfaceFormComponent implements OnInit {
     const params = this.prepareSubmitParams();
 
     const request$ = this.isNew
-      ? this.ws.call('interface.create', [params])
-      : this.ws.call('interface.update', [this.existingInterface.id, params]);
+      ? this.api.call('interface.create', [params])
+      : this.api.call('interface.update', [this.existingInterface.id, params]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-        this.ws.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
+        this.api.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
           if (approved) {
             this.matDialog.open(DefaultGatewayDialogComponent, {
               width: '600px',
@@ -322,8 +323,8 @@ export class InterfaceFormComponent implements OnInit {
     }
 
     forkJoin([
-      this.ws.call('failover.licensed'),
-      this.ws.call('failover.node'),
+      this.api.call('failover.licensed'),
+      this.api.call('failover.node'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([isHaLicensed, failoverNode]) => {

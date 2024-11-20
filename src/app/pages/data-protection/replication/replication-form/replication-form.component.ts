@@ -1,24 +1,30 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Direction } from 'app/enums/direction.enum';
 import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   GeneralSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/general-section/general-section.component';
@@ -42,7 +48,7 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -51,6 +57,22 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./replication-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    GeneralSectionComponent,
+    TransportSectionComponent,
+    SourceSectionComponent,
+    TargetSectionComponent,
+    ScheduleSectionComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ReplicationFormComponent implements OnInit {
   @ViewChild(GeneralSectionComponent, { static: true }) generalSection: GeneralSectionComponent;
@@ -74,7 +96,7 @@ export class ReplicationFormComponent implements OnInit {
   protected existingReplication: ReplicationTask;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
@@ -145,8 +167,8 @@ export class ReplicationFormComponent implements OnInit {
     const payload = this.getPayload();
 
     const operation$ = this.isNew
-      ? this.ws.call('replication.create', [payload])
-      : this.ws.call('replication.update', [this.existingReplication.id, payload]);
+      ? this.api.call('replication.create', [payload])
+      : this.api.call('replication.update', [this.existingReplication.id, payload]);
 
     this.isLoading = true;
     operation$
@@ -191,7 +213,7 @@ export class ReplicationFormComponent implements OnInit {
       this.generalSection.form.controls.direction.valueChanges,
       this.sourceSection.form.controls.name_regex.valueChanges,
       this.sourceSection.form.controls.also_include_naming_schema.valueChanges,
-      this.targetSection.form.controls.target_dataset.valueChanges,
+      this.sourceSection.form.controls.source_datasets.valueChanges,
     )
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
@@ -206,9 +228,7 @@ export class ReplicationFormComponent implements OnInit {
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
-      && !this.isLocal
-      && formValues.target_dataset
-      && formValues.ssh_credentials
+      && formValues.source_datasets.length
       && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
   }
 
@@ -220,9 +240,9 @@ export class ReplicationFormComponent implements OnInit {
 
     const formValues = this.getPayload();
     const payload: CountManualSnapshotsParams = {
-      datasets: [formValues.target_dataset],
+      datasets: formValues.source_datasets || [],
       transport: formValues.transport,
-      ssh_credentials: formValues.ssh_credentials,
+      ssh_credentials: formValues.transport === TransportMode.Local ? null : formValues.ssh_credentials,
     };
 
     if (formValues.name_regex) {
@@ -237,7 +257,7 @@ export class ReplicationFormComponent implements OnInit {
     this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
         }
         return of({ eligible: 0, total: 0 });
       }),
@@ -246,17 +266,17 @@ export class ReplicationFormComponent implements OnInit {
       next: (eligibleSnapshots) => {
         this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
         this.eligibleSnapshotsMessage = this.translate.instant(
-          '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+          '{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.',
           {
             eligible: eligibleSnapshots.eligible,
             total: eligibleSnapshots.total,
-            targetDataset: formValues.target_dataset,
+            dataset: formValues.source_datasets.toString(),
           },
         );
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebSocketError) => {
+      error: (error: ApiError) => {
         this.isEligibleSnapshotsMessageRed = true;
         this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
         if ('reason' in error) {

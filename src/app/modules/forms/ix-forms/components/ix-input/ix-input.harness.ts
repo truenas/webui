@@ -9,7 +9,7 @@ export interface IxInputHarnessFilters extends BaseHarnessFilters {
 }
 
 export class IxInputHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-input';
+  static readonly hostSelector = 'ix-input';
 
   static with(options: IxInputHarnessFilters): HarnessPredicate<IxInputHarness> {
     return new HarnessPredicate(IxInputHarness, options)
@@ -32,7 +32,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async setValue(value: string | number): Promise<void> {
-    const harness = (await this.getMatInputHarness());
+    const harness = await this.getMatInputHarness();
 
     // MatInputHarness does not properly work with numeric values
     // (for example for <input type="number">).
@@ -45,10 +45,10 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async setValueAndTriggerBlur(value: string | number): Promise<void> {
-    const harness = (await this.getMatInputHarness());
+    const harness = await this.getMatInputHarness();
 
     const nativeInput = await harness.host();
-    await nativeInput.setInputValue(value as unknown as string);
+    await nativeInput.setInputValue(value as string);
     await nativeInput.dispatchEvent('input');
     return nativeInput.blur();
   }

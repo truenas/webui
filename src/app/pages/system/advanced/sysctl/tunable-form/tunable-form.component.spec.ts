@@ -5,32 +5,32 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: TunableFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('tunable.create', fakeSuccessfulJob()),
         mockJob('tunable.update', fakeSuccessfulJob()),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -47,7 +47,7 @@ describe('TunableFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -62,7 +62,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.job).toHaveBeenCalledWith('tunable.create', [{
+      expect(api.job).toHaveBeenCalledWith('tunable.create', [{
         comment: 'Answer to the question',
         enabled: true,
         type: TunableType.Sysctl,
@@ -89,7 +89,7 @@ describe('TunableFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -114,7 +114,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.job).toHaveBeenCalledWith('tunable.update', [
+      expect(api.job).toHaveBeenCalledWith('tunable.update', [
         1,
         {
           comment: 'Existing variable',

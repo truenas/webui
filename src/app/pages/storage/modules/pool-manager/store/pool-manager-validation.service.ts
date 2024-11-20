@@ -65,8 +65,10 @@ export class PoolManagerValidationService {
         return uniqBy(errors, 'text')
           .sort((a, b) => {
             const warningSeverity = PoolCreationSeverity.Warning;
-            // eslint-disable-next-line no-nested-ternary
-            return (a.severity === warningSeverity ? -1 : (b.severity === warningSeverity ? 1 : 0));
+            if (a.severity === warningSeverity) {
+              return -1;
+            }
+            return b.severity === warningSeverity ? 1 : 0;
           });
       }),
     );
@@ -141,7 +143,7 @@ export class PoolManagerValidationService {
           step: PoolCreationWizardStep.Review,
         });
       }
-    } else if (!(topology[VdevType.Data].vdevs.length > 0)) {
+    } else if (topology[VdevType.Data].vdevs.length === 0) {
       errors.push({
         text: this.translate.instant('At least 1 data VDEV is required.'),
         severity: PoolCreationSeverity.Error,

@@ -1,20 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -22,12 +22,13 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 const shares: Partial<SmbShare>[] = [
@@ -63,18 +64,18 @@ describe('SmbListComponent', () => {
     ],
     providers: [
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
       ]),
       mockAuth(),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
       provideMockStore({
@@ -109,14 +110,14 @@ describe('SmbListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbFormComponent);
   });
 
   it('opens smb edit form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
       data: { existingSmbShare: shares[0] },
     });
   });
@@ -125,7 +126,7 @@ describe('SmbListComponent', () => {
     const editShareAclButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
     await editShareAclButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbAclComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbAclComponent, {
       data: 'acl_share_name',
     });
   });
@@ -144,7 +145,20 @@ describe('SmbListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.delete', [1]);
+  });
+
+  it('updates SMB Enabled status once mat-toggle is updated', async () => {
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+
+    expect(await toggle.isChecked()).toBe(true);
+
+    await toggle.uncheck();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'sharing.smb.update',
+      [1, { enabled: false }],
+    );
   });
 
   it('should show table rows', async () => {

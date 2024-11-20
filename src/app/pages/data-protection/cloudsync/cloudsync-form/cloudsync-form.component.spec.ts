@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -14,17 +14,16 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
-  CloudCredentialsSelectModule,
-} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+  CloudCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncFormComponent', () => {
   const existingTask = {
@@ -86,11 +85,8 @@ describe('CloudSyncFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudSyncFormComponent,
     imports: [
-      SchedulerModule,
-      CloudCredentialsSelectModule,
+      CloudCredentialsSelectComponent,
       ReactiveFormsModule,
-    ],
-    declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [
@@ -100,7 +96,7 @@ describe('CloudSyncFormComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.create', existingTask),
         mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [
@@ -141,7 +137,7 @@ describe('CloudSyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
@@ -165,7 +161,7 @@ describe('CloudSyncFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
         attributes: { folder: '/' },
         bwlimit: [],
         create_empty_src_dirs: false,
@@ -248,7 +244,7 @@ describe('CloudSyncFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
           { bandwidth: undefined, time: '9:00' },

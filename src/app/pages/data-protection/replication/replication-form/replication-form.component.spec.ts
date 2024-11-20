@@ -6,8 +6,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -19,8 +19,8 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ReplicationFormComponent,
@@ -43,10 +43,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',
@@ -159,7 +159,7 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.count_eligible_manual_snapshots', {
           eligible: 3,
           total: 5,
@@ -179,12 +179,12 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         components$: of([]),
         open: jest.fn(() => of()),
       }),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(ChainedRef, chainedRef),
     ],
     componentProviders: [
@@ -228,7 +228,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
       expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
         ssh_credentials: 5,
         direction: Direction.Pull,
@@ -241,6 +241,33 @@ describe('ReplicationFormComponent', () => {
       }]);
       expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
+
+    it('shows eligible snapshots message', fakeAsync(() => {
+      generalForm.controls.direction.setValue(Direction.Push);
+      generalForm.controls.transport.setValue(TransportMode.Ssh);
+      tick();
+      spectator.detectChanges();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'replication.count_eligible_manual_snapshots',
+        [
+          {
+            datasets: ['/tank/source'],
+            name_regex: 'test-.*',
+            ssh_credentials: 5,
+            transport: 'SSH',
+          },
+        ],
+      );
+
+      expect(spectator.query('.eligible-snapshots')).toHaveText(
+        '3 of 5 existing snapshots of dataset /tank/source would be replicated with this task.',
+      );
+
+      generalForm.controls.direction.setValue(Direction.Pull);
+      tick();
+      spectator.detectChanges();
+    }));
   });
 
   describe('updates task', () => {
@@ -258,7 +285,7 @@ describe('ReplicationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
         1,
         {
           name: 'dataset',

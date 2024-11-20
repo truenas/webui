@@ -1,39 +1,55 @@
 <h1 matDialogTitle>{{ 'Manual S.M.A.R.T. Test' | translate }}</h1>
-@if (!hasStartedTests) {
-  <form
-    class="ix-form-container"
-    [formGroup]="form"
-    (submit)="onSubmit()"
-  >
-    <div class="disks-list">
-      @if (supportedDisks.length) {
-        <div class="prompt">{{ 'Run manual test on disks:' }}</div>
-        <ul class="disks">
-          @for (disk of supportedDisks; track disk) {
-            <li>{{ disk.name }} ({{ disk.serial }})</li>
-          }
-        </ul>
-      }
-      @if (unsupportedDisks.length) {
-        <div class="prompt">
-          {{ 'These disks do not support S.M.A.R.T. tests:' | translate }}
-        </div>
-        <ul class="disks">
-          @for (disk of unsupportedDisks; track disk) {
-            <li>{{ disk.name }} ({{ disk.serial }})</li>
-          }
-        </ul>
-      }
-    </div>
 
+<form
+  class="ix-form-container"
+  [formGroup]="form"
+  (submit)="onSubmit()"
+>
+  <div class="disks-list">
+    @if (selectedDisksWithSmartSupport.length) {
+      @if (isSubmitted()) {
+        <div class="prompt">{{ 'Running manual test(s) on disk(s):' }}</div>
+      } @else {
+        <div class="prompt">{{ 'Run manual test(s) on disk(s):' }}</div>
+      }
+      <ul class="disks">
+        @for (disk of selectedDisksWithSmartSupport; track disk.name) {
+          <ix-test-progress-row
+            [disk]="disk"
+            [testType]="form.value.type"
+            [loading]="isSubmitted()"
+            [testStartError]="disk.error"
+            [testStarted]="startedTests()"
+          ></ix-test-progress-row>
+        }
+      </ul>
+    }
+    @if (selectedDisksWithoutSmartSupport.length) {
+      <div class="prompt">
+        {{ 'These disks do not support S.M.A.R.T. tests:' | translate }}
+      </div>
+      <ul class="disks">
+        @for (disk of selectedDisksWithoutSmartSupport; track disk) {
+          <li>
+            <div class="list-item">
+              <span>{{ disk.name }} ({{ disk.serial }})</span>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+
+  @if (!isSubmitted()) {
     <ix-select
       formControlName="type"
       [required]="true"
       [label]="'Type' | translate"
       [options]="testTypes$"
     ></ix-select>
-
-    <ix-form-actions>
+  }
+  <ix-form-actions>
+    @if (!isSubmitted()) {
       <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
         {{ 'Cancel' | translate }}
       </button>
@@ -44,51 +60,21 @@
         type="submit"
         color="primary"
         ixTest="start-test"
-        [disabled]="form.invalid || !supportedDisks.length"
+        [disabled]="form.invalid || !selectedDisksWithSmartSupport.length"
       >
         {{ 'Start' | translate }}
       </button>
-    </ix-form-actions>
-  </form>
-} @else {
-  <div class="show-results-content">
-    @if (!endedTests) {
-      <div class="progress-bar-panel">
-        <div>
-
-          <span>smart.test.progress</span>
-          <small>
-            {{ progressTotalPercent || 0 | percent: '1.2-2' }}
-          </small>
-        </div>
-        <mat-progress-bar
-          color="primary"
-          class="entity-job-progress"
-          [value]="progressTotalPercent"
-          [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
-        ></mat-progress-bar>
-      </div>
+    } @else {
+      <button
+        mat-button
+        type="button"
+        ixTest="minimize"
+        [matDialogClose]="false"
+      >
+        {{ 'Continue in background' | translate }}
+      </button>
     }
 
-    <div class="started-tests">
-      @for (test of startedTests; track test) {
-        <div class="test">
-          <h4 class="device-name">{{ test.disk }}</h4>
-          @if (test.expected_result_time) {
-            <div>
-              {{ 'Expected Finished Time:' | translate }}
-              {{ test.expected_result_time.$date | formatDateTime }}
-            </div>
-          } @else {
-            <div class="error">{{ test.error }}</div>
-          }
-        </div>
-      }
-    </div>
-    <ix-form-actions>
-      <button mat-button type="button" ixTest="close" [matDialogClose]="true">
-        {{ 'Close' | translate }}
-      </button>
-    </ix-form-actions>
-  </div>
-}
+  </ix-form-actions>
+</form>
+

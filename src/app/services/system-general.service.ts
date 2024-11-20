@@ -10,7 +10,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -51,7 +51,7 @@ export class SystemGeneralService {
    * @deprecated
    * Use selectProductType selector instead
    */
-  getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
+  getProductType$ = this.api.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
 
   /**
    * @deprecated
@@ -63,39 +63,39 @@ export class SystemGeneralService {
   );
 
   constructor(
-    protected ws: WebSocketService,
+    protected api: ApiService,
   ) {}
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {
-    return this.ws.call(this.caList, []);
+    return this.api.call(this.caList, []);
   }
 
   getCertificates(): Observable<Certificate[]> {
-    return this.ws.call(this.certificateList);
+    return this.api.call(this.certificateList);
   }
 
   getUnsignedCertificates(): Observable<Certificate[]> {
-    return this.ws.call(this.certificateList, [[['CSR', '!=', null]]]);
+    return this.api.call(this.certificateList, [[['CSR', '!=', null]]]);
   }
 
   getUnsignedCas(): Observable<CertificateAuthority[]> {
-    return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
+    return this.api.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
   getCertificateCountryChoices(): Observable<Choices> {
-    return this.ws.call('certificate.country_choices');
+    return this.api.call('certificate.country_choices');
   }
 
   ipChoicesv4(): Observable<Choices> {
-    return this.ws.call('system.general.ui_address_choices');
+    return this.api.call('system.general.ui_address_choices');
   }
 
   ipChoicesv6(): Observable<Choices> {
-    return this.ws.call('system.general.ui_v6address_choices');
+    return this.api.call('system.general.ui_v6address_choices');
   }
 
   kbdMapChoices(): Observable<Option[]> {
-    return this.ws.call('system.general.kbdmap_choices').pipe(
+    return this.api.call('system.general.kbdmap_choices').pipe(
       map((response) => {
         return Object.keys(response || {}).map((key) => ({
           label: `${response[key]} (${key})`,
@@ -106,7 +106,7 @@ export class SystemGeneralService {
   }
 
   languageChoices(): Observable<Choices> {
-    return this.ws.call('system.general.language_choices');
+    return this.api.call('system.general.language_choices');
   }
 
   languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
@@ -126,7 +126,7 @@ export class SystemGeneralService {
   }
 
   timezoneChoices(): Observable<Option[]> {
-    return this.ws.call('system.general.timezone_choices').pipe(
+    return this.api.call('system.general.timezone_choices').pipe(
       map((response) => {
         return Object.keys(response || {}).map((key) => ({
           label: response[key],
@@ -137,15 +137,15 @@ export class SystemGeneralService {
   }
 
   uiCertificateOptions(): Observable<Choices> {
-    return this.ws.call('system.general.ui_certificate_choices');
+    return this.api.call('system.general.ui_certificate_choices');
   }
 
   uiHttpsProtocolsOptions(): Observable<Choices> {
-    return this.ws.call('system.general.ui_httpsprotocols_choices');
+    return this.api.call('system.general.ui_httpsprotocols_choices');
   }
 
   refreshDirServicesCache(): Observable<Job> {
-    return this.ws.job('directoryservices.cache_refresh');
+    return this.api.job('directoryservices.cache_refresh');
   }
 
   updateDone(): void {

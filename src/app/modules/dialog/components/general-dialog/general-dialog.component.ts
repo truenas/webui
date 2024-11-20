@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -35,7 +34,6 @@ export interface GeneralDialogConfig {
   imports: [
     MatDialogTitle,
     IxIconComponent,
-    CdkScrollable,
     MatDialogContent,
     MatDialogActions,
     MatButton,

@@ -5,23 +5,23 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('LdapComponent', () => {
   let spectator: Spectator<LdapComponent>;
@@ -53,7 +53,7 @@ describe('LdapComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('ldap.update', fakeSuccessfulJob()),
         mockCall('ldap.config', existingLdapConfig),
         mockCall('kerberos.keytab.kerberos_principal_choices', [
@@ -66,7 +66,7 @@ describe('LdapComponent', () => {
           { id: 2, realm: 'Realm 2' },
         ] as KerberosRealm[]),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(SystemGeneralService, {
         refreshDirServicesCache: jest.fn(() => of(null)),
         getCertificates: () => of([
@@ -76,11 +76,11 @@ describe('LdapComponent', () => {
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
-          afterClosed: () => of(null),
+          afterClosed: () => of({}),
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -93,7 +93,7 @@ describe('LdapComponent', () => {
   });
 
   it('loads LDAP config and shows it', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ldap.config');
 
     const values = await form.getValues();
     expect(values).toEqual({
@@ -136,7 +136,7 @@ describe('LdapComponent', () => {
     const rebuildCacheButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rebuild Directory Service Cache' }));
     await rebuildCacheButton.click();
 
-    expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       helptextLdap.ldap_custactions_clearcache_dialog_message,
     );
@@ -155,7 +155,7 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'ldap.update',
       [{
         ...existingLdapConfig,
@@ -165,6 +165,6 @@ describe('LdapComponent', () => {
       }],
     );
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });

@@ -6,10 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -17,7 +17,7 @@ import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-lis
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const mockSuccessBulkResponse = [{
   result: null,
@@ -59,7 +59,7 @@ describe('DockerImageDeleteDialogComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockWebSocket([
+      mockApi([
         mockJob('core.bulk'),
         mockCall('app.image.delete'),
       ]),
@@ -79,7 +79,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be deleted. Are you sure you want to proceed?');
 
@@ -91,7 +91,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been deleted.');
 
     const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
@@ -106,7 +106,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: true }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -117,11 +117,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
-    // expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been deleted.');
-
-    // const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    // await closeButton.click();
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
   });
 
   it('checks deleting failures of docker images when form is submitted', async () => {
@@ -132,7 +128,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
+    spectator.inject(MockApiService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -142,7 +138,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="delete"]' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be deleted.');
 
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="close"]' }));

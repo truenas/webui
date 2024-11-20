@@ -25,10 +25,10 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -38,7 +38,7 @@ import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface CloudCredentialFormInput {
   providers: CloudSyncProviderName[];
@@ -53,7 +53,7 @@ export interface CloudCredentialFormInput {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -90,7 +90,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -153,8 +153,8 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const payload = this.preparePayload();
           return this.isNew
-            ? this.ws.call('cloudsync.credentials.create', [payload])
-            : this.ws.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
+            ? this.api.call('cloudsync.credentials.create', [payload])
+            : this.api.call('cloudsync.credentials.update', [this.existingCredential.id, payload]);
         }),
         untilDestroyed(this),
       )
@@ -188,7 +188,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         switchMap(() => {
           const { name, ...payload } = this.preparePayload();
 
-          return this.ws.call('cloudsync.credentials.verify', [payload]);
+          return this.api.call('cloudsync.credentials.verify', [payload]);
         }),
         untilDestroyed(this),
       )

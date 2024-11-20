@@ -12,7 +12,7 @@ import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
@@ -37,7 +37,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     MatCardContent,
     DndDropzoneDirective,
     NgClass,
-    IxWarningComponent,
+    WarningComponent,
     EnclosureWrapperComponent,
     DiskIconComponent,
     DndDraggableDirective,
@@ -73,6 +73,7 @@ export class ManualSelectionVdevComponent implements OnChanges {
       && (this.enclosuresDisks.size > 1
         || !!this.nonEnclosureDisks.length);
   }
+
   constructor(
     private cdr: ChangeDetectorRef,
     protected store$: ManualDiskSelectionStore,

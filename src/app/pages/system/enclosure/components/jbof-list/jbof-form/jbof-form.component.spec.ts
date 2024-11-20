@@ -3,34 +3,34 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('JbofFormComponent', () => {
   let spectator: Spectator<JbofFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: JbofFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('jbof.create'),
         mockCall('jbof.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -40,7 +40,7 @@ describe('JbofFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -56,7 +56,7 @@ describe('JbofFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('jbof.create', [{
+      expect(api.call).toHaveBeenCalledWith('jbof.create', [{
         description: 'new description',
         mgmt_ip1: '11.11.11.11',
         mgmt_ip2: '12.12.12.12',
@@ -64,7 +64,7 @@ describe('JbofFormComponent', () => {
         mgmt_password: 'qwerty',
       }]);
 
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -86,7 +86,7 @@ describe('JbofFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -115,7 +115,7 @@ describe('JbofFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('jbof.update', [
+      expect(api.call).toHaveBeenCalledWith('jbof.update', [
         131,
         {
           description: 'updated description',

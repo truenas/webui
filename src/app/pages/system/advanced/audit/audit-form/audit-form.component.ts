@@ -1,26 +1,34 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
 } from 'rxjs';
 import {
   catchError, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -29,6 +37,20 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class AuditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
@@ -53,7 +75,7 @@ export class AuditFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -71,7 +93,7 @@ export class AuditFormComponent implements OnInit {
   onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
     this.isFormLoading = true;
-    this.ws.call('audit.update', [configUpdate]).pipe(
+    this.api.call('audit.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
@@ -92,7 +114,7 @@ export class AuditFormComponent implements OnInit {
   private loadForm(): void {
     this.isFormLoading = true;
 
-    this.ws.call('audit.config').pipe(untilDestroyed(this))
+    this.api.call('audit.config').pipe(untilDestroyed(this))
       .subscribe({
         next: (auditConfig) => {
           this.isFormLoading = false;

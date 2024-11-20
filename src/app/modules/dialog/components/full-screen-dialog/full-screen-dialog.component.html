@@ -1,10 +1,10 @@
 <div class="wrapper">
   <div class="container">
-    @if (title) {
-      <div class="title">{{ title | translate }}</div>
+    @if (data.title) {
+      <div class="title">{{ data.title | translate }}</div>
     }
-    @if (message) {
-      <p class="message" [class.pre]="data.pre">{{ message | translate }}</p>
+    @if (data.message) {
+      <p class="message" [class.pre]="data.pre">{{ data.message | translate }}</p>
     }
   </div>
   @if (data.showClose) {

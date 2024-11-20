@@ -5,16 +5,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
@@ -27,10 +29,10 @@ describe('TransportSectionComponent', () => {
     component: TransportSectionComponent,
     imports: [
       ReactiveFormsModule,
-      SshCredentialsSelectModule,
+      SshCredentialsSelectComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('keychaincredential.query', [
           { id: 1, name: 'connection 1' },
           { id: 2, name: 'connection 2' },
@@ -41,7 +43,7 @@ describe('TransportSectionComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

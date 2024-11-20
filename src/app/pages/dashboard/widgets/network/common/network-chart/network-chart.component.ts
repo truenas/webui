@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
 import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -12,6 +13,8 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './network-chart.component.html',
   styleUrls: ['./network-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [ViewChartAreaComponent],
 })
 export class NetworkChartComponent {
   data = input<ChartData<'line'>>();
@@ -49,7 +52,7 @@ export class NetworkChartComponent {
                 label += ': ';
               }
               if (tooltipItem.parsed.y === 0) {
-                label += 0;
+                label += '0';
               } else {
                 label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
               }

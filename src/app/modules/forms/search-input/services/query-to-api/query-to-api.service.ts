@@ -10,7 +10,9 @@ import {
 } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class QueryToApiService<T> {
   private builder: ParamsBuilder<T>;
   private searchProperties: SearchProperty<T>[];
@@ -57,7 +59,7 @@ export class QueryToApiService<T> {
       }
     } else {
       // Right AND
-      // eslint-disable-next-line no-lonely-if
+      // eslint-disable-next-line sonarjs/no-lonely-if
       if (isConditionGroup(conditionGroup.right)) {
         paramsGroup.andGroup((rightGroup) => {
           this.buildGroup(rightGroup, conditionGroup.right as ConditionGroup);
@@ -72,7 +74,7 @@ export class QueryToApiService<T> {
     const currentProperty = this.searchProperties.find((value) => {
       return value.label?.toLowerCase() === condition.property?.toLowerCase();
     });
-    const mappedConditionProperty = (currentProperty?.property || condition.property);
+    const mappedConditionProperty = currentProperty?.property || condition.property;
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
 
     return [mappedConditionProperty, condition.comparator.toLowerCase(), mappedConditionValue] as QueryFilter<T>;

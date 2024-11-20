@@ -14,7 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export class AddSpnDialogComponent {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -58,7 +58,7 @@ export class AddSpnDialogComponent {
       password: this.form.value.password,
     };
 
-    this.ws.call('nfs.add_principal', [payload])
+    this.api.call('nfs.add_principal', [payload])
       .pipe(
         this.errorHandler.catchError(),
         this.loader.withLoader(),

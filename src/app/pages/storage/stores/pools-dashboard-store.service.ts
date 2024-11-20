@@ -8,14 +8,14 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -48,7 +48,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
   ) {
     super(initialState);
@@ -107,11 +107,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   getPools(): Observable<Pool[]> {
-    return this.ws.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]);
+    return this.api.callAndSubscribe('pool.query', [[], { extra: { is_upgraded: true } }]);
   }
 
   getRootDatasets(): Observable<Dataset[]> {
-    return this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]);
+    return this.api.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]);
   }
 
   getDisksWithDashboardData(): Observable<StorageDashboardDisk[]> {
@@ -139,7 +139,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   getDisks(): Observable<Disk[]> {
-    return this.ws.call('disk.query', [[], { extra: { pools: true } }]);
+    return this.api.call('disk.query', [[], { extra: { pools: true } }]);
   }
 
   getDashboardDataForDisks(disks: StorageDashboardDisk[]): Observable<{
@@ -158,16 +158,16 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   getTemperatureAlerts(disksNames: string[]): Observable<Alert[]> {
-    return this.ws.call('disk.temperature_alerts', [disksNames]);
+    return this.api.call('disk.temperature_alerts', [disksNames]);
   }
 
   getSmartResults(disksNames: string[]): Observable<SmartTestResults[]> {
-    return this.ws.call('smart.test.results', [[['disk', 'in', disksNames]]]);
+    return this.api.call('smart.test.results', [[['disk', 'in', disksNames]]]);
   }
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
-    return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: WebSocketError) => {
+    return this.api.call('disk.temperature_agg', [disksNames, 14]).pipe(
+      catchError((error: ApiError) => {
         console.error('Error loading temperature: ', error);
         return of({});
       }),
@@ -190,7 +190,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       disk.alerts = [];
     }
     for (const alert of alerts) {
-      const alertArgs = ((alert.args) as { device: string; message: string });
+      const alertArgs = (alert.args) as { device: string; message: string };
       const alertDevice = alertArgs.device.split('/').reverse()[0];
       const alertDisk = disks.find((disk) => disk.name === alertDevice);
       alertDisk.alerts.push(alert);

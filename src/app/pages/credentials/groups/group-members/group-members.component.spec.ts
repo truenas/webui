@@ -5,15 +5,15 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { suppressJsDomCssErrors } from 'app/core/testing/utils/suppress-jsdom-css-errors.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -27,15 +27,15 @@ const fakeGroupDataSource = [{
 describe('GroupMembersComponent', () => {
   let spectator: SpectatorRouting<GroupMembersComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: GroupMembersComponent,
     imports: [
       ReactiveFormsModule,
-      DualListboxComponent,
+      DualListBoxComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('group.query', fakeGroupDataSource),
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),
@@ -51,20 +51,23 @@ describe('GroupMembersComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
+  });
+
+  it('loads local users to show in available users', () => {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.query', [[['local', '=', true]]]);
   });
 
   it('shows current group values when form is being edited', async () => {
-    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"]' }));
+    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
+    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
 
     expect(spectator.query('mat-card-title')).toHaveText('dummy-group');
 
     expect(await userList.getItems()).toHaveLength(1);
     expect(await memberList.getItems()).toHaveLength(1);
 
-    expect(ws.call).toHaveBeenCalledWith('user.query');
-    expect(ws.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
+    expect(api.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
   });
 
   it('redirects to Group List page when Cancel button is pressed', async () => {
@@ -77,8 +80,8 @@ describe('GroupMembersComponent', () => {
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     suppressJsDomCssErrors();
 
-    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"]' }));
+    const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All Users"]' }));
+    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group Members"]' }));
     const users = await userList.getItems();
 
     expect(users).toHaveLength(1);
@@ -86,7 +89,7 @@ describe('GroupMembersComponent', () => {
 
     await (await users[0].host()).click();
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-to-list"]' }));
+    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="move-selected-right"]' }));
     await addButton.click();
 
     expect(await userList.getItems()).toHaveLength(0);
@@ -95,7 +98,7 @@ describe('GroupMembersComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('group.update', [1, { users: [42, 41] }]);
+    expect(api.call).toHaveBeenCalledWith('group.update', [1, { users: [41, 42] }]);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups']);
   });
 });

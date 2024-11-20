@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
   PosixAclTag, posixAclTagLabels, PosixPermission, posixPermissionLabels,
@@ -13,6 +13,11 @@ import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
 
@@ -22,6 +27,16 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './edit-posix-ace.component.html',
   styleUrls: ['./edit-posix-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxCheckboxListComponent,
+    IxCheckboxComponent,
+    TranslateModule,
+  ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
   @Input() ace: PosixAclItem;
@@ -103,8 +118,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
       },
     } as PosixAclItem;
 
-    if (this.isUserTag) { ace.who = formValues.user; }
-    if (this.isGroupTag) { ace.who = formValues.group; }
+    if (this.isUserTag) {
+      ace.who = formValues.user;
+    } else if (this.isGroupTag) {
+      ace.who = formValues.group;
+    }
 
     return ace;
   }
@@ -116,8 +134,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) { userField.addValidators(Validators.required); }
-    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+    if (this.isUserTag) {
+      userField.addValidators(Validators.required);
+    } else if (this.isGroupTag) {
+      groupField.addValidators(Validators.required);
+    }
 
     const formValues = {
       tag: this.ace.tag,

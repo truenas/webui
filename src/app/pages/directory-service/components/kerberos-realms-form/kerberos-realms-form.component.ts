@@ -15,12 +15,12 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -73,12 +73,12 @@ export class KerberosRealmsFormComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<KerberosRealmsFormComponent>,
+    private slideInRef: SlideInRef<KerberosRealmsFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingRealm: KerberosRealm,
   ) {}
 
@@ -100,9 +100,9 @@ export class KerberosRealmsFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
+      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     } else {
-      request$ = this.ws.call('kerberos.realm.update', [
+      request$ = this.api.call('kerberos.realm.update', [
         this.editingRealm.id,
         values as KerberosRealmUpdate,
       ]);
@@ -112,7 +112,7 @@ export class KerberosRealmsFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

@@ -7,26 +7,26 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
   protected diskResource = 'disk.query' as const;
 
   constructor(
-    protected ws: WebSocketService,
+    protected api: ApiService,
   ) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
-    return this.ws.call('filesystem.stat', [path]);
+    return this.api.call('filesystem.stat', [path]);
   }
 
   listDisks(): Observable<Disk[]> {
-    return this.ws.call(this.diskResource, []);
+    return this.api.call(this.diskResource, []);
   }
 
   getDatasetNameOptions(): Observable<Option[]> {
-    return this.ws
+    return this.api
       .call('pool.filesystem_choices')
       .pipe(map((response) => response.map((value) => ({ label: value, value }))));
   }

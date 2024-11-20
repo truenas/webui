@@ -6,11 +6,16 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder, Validators, ReactiveFormsModule, FormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -18,10 +23,17 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   AwsSnsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -53,13 +65,30 @@ import {
 import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-alert-service',
   templateUrl: './alert-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    FormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxSelectComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class AlertServiceComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -86,13 +115,13 @@ export class AlertServiceComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<AlertService>,
+    private slideInRef: SlideInRef<AlertService>,
     @Inject(SLIDE_IN_DATA) private existingAlertService: AlertService,
   ) {
     this.setFormEvents();
@@ -127,7 +156,7 @@ export class AlertServiceComponent implements OnInit {
     this.cdr.detectChanges();
     const payload = this.generatePayload();
 
-    this.ws.call('alertservice.test', [payload])
+    this.api.call('alertservice.test', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (wasAlertSent) => {
@@ -158,8 +187,8 @@ export class AlertServiceComponent implements OnInit {
     const payload = this.generatePayload();
 
     const request$ = this.isNew
-      ? this.ws.call('alertservice.create', [payload])
-      : this.ws.call('alertservice.update', [this.existingAlertService.id, payload]);
+      ? this.api.call('alertservice.create', [payload])
+      : this.api.call('alertservice.update', [this.existingAlertService.id, payload]);
 
     request$
       .pipe(untilDestroyed(this))

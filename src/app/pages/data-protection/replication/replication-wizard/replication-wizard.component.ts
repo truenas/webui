@@ -4,8 +4,10 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { merge } from 'lodash-es';
 import {
   catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
@@ -30,9 +32,13 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
@@ -40,7 +46,7 @@ import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,6 +55,19 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./replication-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    ReplicationWhatAndWhereComponent,
+    ReplicationWhenComponent,
+    TranslateModule,
+    UseIxIconsInStepperComponent,
+  ],
 })
 export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
@@ -67,7 +86,7 @@ export class ReplicationWizardComponent {
   createdReplication: ReplicationTask;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private replicationService: ReplicationService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -90,11 +109,11 @@ export class ReplicationWizardComponent {
     const requests: Observable<unknown>[] = [];
 
     this.createdSnapshots.forEach((snapshot) => {
-      requests.push(this.ws.call('zfs.snapshot.delete', [snapshot.name]));
+      requests.push(this.api.call('zfs.snapshot.delete', [snapshot.name]));
     });
 
     this.createdSnapshotTasks.forEach((task) => {
-      requests.push(this.ws.call('pool.snapshottask.delete', [task.id]));
+      requests.push(this.api.call('pool.snapshottask.delete', [task.id]));
     });
 
     if (requests.length) {
@@ -134,7 +153,10 @@ export class ReplicationWizardComponent {
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
           return this.runReplicationOnce(createdReplication).pipe(
-            catchError((err) => { this.handleError(err); return EMPTY; }),
+            catchError((err) => {
+              this.handleError(err);
+              return EMPTY;
+            }),
             switchMap(() => of(createdReplication)),
           );
         }
@@ -149,7 +171,7 @@ export class ReplicationWizardComponent {
 
   private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
     this.appLoader.open(this.translate.instant('Starting task'));
-    return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
+    return this.api.startJob('replication.run', [createdReplication.id]).pipe(
       switchMap(() => {
         this.appLoader.close();
         return this.dialogService.info(
@@ -178,7 +200,7 @@ export class ReplicationWizardComponent {
     ]).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
-          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
         }
         return of({ eligible: 0, total: 0 });
       }),
@@ -186,19 +208,19 @@ export class ReplicationWizardComponent {
   }
 
   getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
-    return this.ws.call('replication.target_unmatched_snapshots', payload);
+    return this.api.call('replication.target_unmatched_snapshots', payload);
   }
 
   createPeriodicSnapshotTask(payload: PeriodicSnapshotTaskCreate): Observable<PeriodicSnapshotTask> {
-    return this.ws.call('pool.snapshottask.create', [payload]);
+    return this.api.call('pool.snapshottask.create', [payload]);
   }
 
   createSnapshot(payload: CreateZfsSnapshot): Observable<ZfsSnapshot> {
-    return this.ws.call('zfs.snapshot.create', [payload]);
+    return this.api.call('zfs.snapshot.create', [payload]);
   }
 
   createReplication(payload: ReplicationCreate): Observable<ReplicationTask> {
-    return this.ws.call('replication.create', [payload]);
+    return this.api.call('replication.create', [payload]);
   }
 
   getSnapshotsCountPayload(value: ReplicationWizardData): CountManualSnapshotsParams {
@@ -291,6 +313,10 @@ export class ReplicationWizardComponent {
       } else {
         const createdIds = this.createdSnapshotTasks.map((task) => task.id);
         payload.periodic_snapshot_tasks = this.existSnapshotTasks.concat(createdIds);
+
+        if (data.custom_snapshots) {
+          payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
+        }
       }
     } else {
       payload.auto = false;
@@ -326,7 +352,7 @@ export class ReplicationWizardComponent {
     schedule: Schedule;
     naming_schema?: string;
   }): Observable<PeriodicSnapshotTask[]> {
-    return this.ws.call('pool.snapshottask.query', [[
+    return this.api.call('pool.snapshottask.query', [[
       ['dataset', '=', payload.dataset],
       ['schedule.minute', '=', payload.schedule.minute],
       ['schedule.hour', '=', payload.schedule.hour],
@@ -400,7 +426,8 @@ export class ReplicationWizardComponent {
       if (requestsTasks.length) {
         return forkJoin(requestsTasks).pipe(
           map((createdSnapshotTasks) => {
-            return this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((task) => !!task);
+            this.createdSnapshotTasks = (createdSnapshotTasks || []).filter((task) => !!task);
+            return this.createdSnapshotTasks;
           }),
         );
       }

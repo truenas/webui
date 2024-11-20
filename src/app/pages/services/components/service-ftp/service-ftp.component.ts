@@ -22,19 +22,19 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -125,7 +125,7 @@ export class ServiceFtpComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -135,7 +135,7 @@ export class ServiceFtpComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     public iecFormatter: IxFormatterService,
-    private slideInRef: IxSlideInRef<ServiceFtpComponent>,
+    private slideInRef: SlideInRef<ServiceFtpComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -159,13 +159,13 @@ export class ServiceFtpComponent implements OnInit {
     };
 
     this.isFormLoading = true;
-    this.ws.call('ftp.update', [values])
+    this.api.call('ftp.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -182,7 +182,7 @@ export class ServiceFtpComponent implements OnInit {
 
   private loadConfig(): void {
     this.isFormLoading = true;
-    this.ws.call('ftp.config')
+    this.api.call('ftp.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

@@ -1,3 +1,4 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -5,8 +6,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -17,14 +18,16 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import {
+  SshCredentialsSelectComponent,
+} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
@@ -40,11 +43,12 @@ describe('ReplicationWhatAndWhereComponent', () => {
     component: ReplicationWhatAndWhereComponent,
     imports: [
       ReactiveFormsModule,
-      SshCredentialsSelectModule,
+      SshCredentialsSelectComponent,
     ],
     providers: [
+      CdkStepper,
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.query', [
           {
             id: 1,
@@ -67,7 +71,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
       }),
       mockProvider(DatasetService),
@@ -76,7 +80,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),

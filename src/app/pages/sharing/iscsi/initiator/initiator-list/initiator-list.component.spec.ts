@@ -6,12 +6,11 @@ import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -19,9 +18,10 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const initiators: IscsiInitiatorGroup[] = [
   {
@@ -45,15 +45,15 @@ describe('InitiatorListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.initiator.query', initiators),
         mockCall('iscsi.initiator.delete'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
       mockProvider(MatDialog, {
@@ -92,7 +92,7 @@ describe('InitiatorListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.initiator.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.initiator.delete', [1]);
   });
 
   it('should show table rows', async () => {

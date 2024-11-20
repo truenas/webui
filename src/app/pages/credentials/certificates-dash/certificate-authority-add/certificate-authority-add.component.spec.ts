@@ -8,15 +8,15 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CertificateAuthorityAddComponent,
@@ -37,7 +37,7 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Consider building a harness for the wizard.
 describe('CertificateAuthorityAddComponent', () => {
@@ -112,7 +112,7 @@ describe('CertificateAuthorityAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('webui.crypto.certificateauthority_profiles', {
           CA: profile,
         }),
@@ -124,7 +124,7 @@ describe('CertificateAuthorityAddComponent', () => {
         }),
         mockCall('certificateauthority.create'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatSnackBar),
       mockAuth(),
       mockProvider(SystemGeneralService, {
@@ -184,8 +184,8 @@ describe('CertificateAuthorityAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificateauthority.create', [expectedInternalCa]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('certificateauthority.create', [expectedInternalCa]);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('create a new CA when Type = Intermediate and form is submitted', async () => {
@@ -206,14 +206,14 @@ describe('CertificateAuthorityAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificateauthority.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('certificateauthority.create', [{
       ...expectedInternalCa,
       name: 'intermediate',
       add_to_trusted_store: false,
       create_type: CaCreateType.Intermediate,
       signedby: 1,
     }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CA and form is submitted', async () => {
@@ -236,7 +236,7 @@ describe('CertificateAuthorityAddComponent', () => {
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('certificateauthority.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('certificateauthority.create', [{
       add_to_trusted_store: false,
       certificate: '-----BEGIN CERTIFICATE-----',
       create_type: CaCreateType.Import,

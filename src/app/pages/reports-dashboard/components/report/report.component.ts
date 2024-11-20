@@ -1,4 +1,4 @@
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import {
   Component,
   Input,
@@ -6,9 +6,13 @@ import {
   OnChanges,
   OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
   add, isToday, sub,
@@ -20,14 +24,20 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { invalidDate } from 'app/constants/invalid-date';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -49,6 +59,26 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    MatCardTitle,
+    MatButton,
+    MatTooltip,
+    TestDirective,
+    IxIconComponent,
+    MatCardContent,
+    LineChartComponent,
+    IxDateComponent,
+    EmptyComponent,
+    TranslateModule,
+    MapValuePipe,
+    KeyValuePipe,
+  ],
+  providers: [
+    FormatDateTimePipe,
+  ],
 })
 export class ReportComponent implements OnInit, OnChanges {
   @Input() localControls?: boolean = true;
@@ -78,6 +108,7 @@ export class ReportComponent implements OnInit, OnChanges {
     '1M': null as number,
     '6M': null as number,
   };
+
   currentStartDate: number;
   currentEndDate: number;
   customZoom = false;
@@ -91,19 +122,12 @@ export class ReportComponent implements OnInit, OnChanges {
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
+
   readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
-  }
-
-  get zoomInDisabled(): boolean {
-    return this.zoomLevelIndex >= this.zoomLevelMax;
-  }
-
-  get zoomOutDisabled(): boolean {
-    return this.zoomLevelIndex <= this.zoomLevelMin;
   }
 
   get currentZoomLevel(): ReportZoomLevel {
@@ -240,7 +264,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== 'invalid date' ? result : null;
+    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : null;
   }
 
   onZoomChange(interval: number[]): void {
@@ -464,14 +488,14 @@ export class ReportComponent implements OnInit, OnChanges {
         this.data = formatData(cloneDeep(event));
         this.cdr.markForCheck();
       },
-      error: (err: WebSocketError) => {
+      error: (err: ApiError) => {
         this.handleError(err);
         this.cdr.markForCheck();
       },
     });
   }
 
-  handleError(err: WebSocketError): void {
+  handleError(err: ApiError): void {
     if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,

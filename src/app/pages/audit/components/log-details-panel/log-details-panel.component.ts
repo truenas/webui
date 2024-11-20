@@ -3,8 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import {
   EventDataDetailsCardComponent,
 } from 'app/pages/audit/components/event-data-details-card/event-data-details-card.component';
@@ -20,10 +19,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EventDataDetailsCardComponent,
-    IxIconComponent,
     MetadataDetailsCardComponent,
     TranslateModule,
-    TestDirective,
+    MobileBackButtonComponent,
   ],
 })
 export class LogDetailsPanelComponent {

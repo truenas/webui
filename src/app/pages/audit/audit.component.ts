@@ -20,7 +20,7 @@ import {
   combineLatest,
   filter, map, of, shareReplay, take, async,
 } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
@@ -35,7 +35,7 @@ import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
+import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
@@ -67,7 +67,7 @@ import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -85,7 +85,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     RouterLink,
     MatCard,
     FakeProgressBarComponent,
-    SearchInputModule,
     MatButtonToggle,
     NgTemplateOutlet,
     IxTableBodyComponent,
@@ -93,7 +92,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     IxTableCellDirective,
     MatTooltip,
     IxTablePagerComponent,
-    IxDetailsHeightDirective,
+    DetailsHeightDirective,
     ExportButtonComponent,
     LogDetailsPanelComponent,
     IxTableHeadComponent,
@@ -102,6 +101,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatButton,
     TranslateModule,
     AsyncPipe,
+    SearchInputComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -158,7 +158,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
-  private userSuggestions$ = this.ws.call('user.query').pipe(
+  private userSuggestions$ = this.api.call('user.query').pipe(
     map((users) => this.mapUsersForSuggestions(users)),
     take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),
@@ -168,7 +168,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected emptyService: EmptyService,
     private breakpointObserver: BreakpointObserver,
     private cdr: ChangeDetectorRef,
@@ -187,7 +187,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.dataProvider = new AuditApiDataProvider(this.ws);
+    this.dataProvider = new AuditApiDataProvider(this.api);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();
@@ -228,7 +228,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
     this.searchQuery = query;
 
-    if (query && query.isBasicQuery) {
+    if (query?.isBasicQuery) {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<AuditEntry>()
         .filter('event', '~', term)
@@ -280,6 +280,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
+    // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
     return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView ? 15 : 35));
   }
 

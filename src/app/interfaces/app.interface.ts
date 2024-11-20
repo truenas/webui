@@ -29,12 +29,16 @@ export enum AppContainerState {
   Running = 'running',
   Starting = 'starting',
   Exited = 'exited',
+  Crashed = 'crashed',
+  Created = 'created',
 }
 
 export const appContainerStateLabels = new Map<AppContainerState, string>([
   [AppContainerState.Running, T('Running')],
   [AppContainerState.Starting, T('Starting')],
   [AppContainerState.Exited, T('Exited')],
+  [AppContainerState.Crashed, T('Crashed')],
+  [AppContainerState.Created, T('Created')],
 ]);
 
 export interface AppContainerDetails {
@@ -67,12 +71,14 @@ export interface App {
   active_workloads: AppActiveWorkloads;
   state: AppState;
   upgrade_available: boolean;
+  latest_version: string;
   human_version: string;
   metadata: AppMetadata;
   notes: string;
   portals: Record<string, string>;
   version: string;
   migrated: boolean;
+  custom_app: boolean;
   /**
    * Present with `retrieve_config` query param.
    */
@@ -132,7 +138,18 @@ export interface AppCreate {
 }
 
 export interface AppUpdate {
-  values: Record<string, ChartFormValue>;
+  /**
+   * Required when `custom_app = false`
+   */
+  values?: Record<string, ChartFormValue>;
+  /**
+   * Required attr when `custom_app = true`
+   */
+  custom_compose_config?: Record<string, unknown>;
+  /**
+   * Optional attr when `custom_app = true`
+   */
+  custom_compose_config_string?: string;
 }
 
 export interface AppUpgrade {

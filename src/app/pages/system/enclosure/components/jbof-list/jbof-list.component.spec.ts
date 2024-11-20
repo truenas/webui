@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -14,8 +14,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeJbofDataSource: Jbof[] = [
   {
@@ -48,7 +48,7 @@ describe('JbofListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('jbof.query', fakeJbofDataSource),
         mockCall('jbof.delete', true),
         mockCall('jbof.licensed', 1),
@@ -56,7 +56,7 @@ describe('JbofListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -87,7 +87,7 @@ describe('JbofListComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'description 1');
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(JbofFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(JbofFormComponent, {
       data: fakeJbofDataSource[0],
     });
   });
@@ -106,23 +106,23 @@ describe('JbofListComponent', () => {
       buttonColor: 'red',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
   it('enables Add button when existing are less than licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 3);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 3);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeTruthy();
   });
 
   it('disables Add button when existing are equal to licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 2);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 2);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeFalsy();
   });
 
   it('disables Add button when existing are more than licensed', () => {
-    spectator.inject(MockWebSocketService).mockCall('jbof.licensed', 1);
+    spectator.inject(MockApiService).mockCall('jbof.licensed', 1);
     spectator.component.updateAvailableJbof();
     expect(spectator.component.canAddJbof).toBeFalsy();
   });

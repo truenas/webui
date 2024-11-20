@@ -5,18 +5,18 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface DevicesState {
   isLoading: boolean;
   poolId: number | null;
-  error: WebSocketError | null;
+  error: ApiError | null;
   nodes: DeviceNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
@@ -78,12 +78,12 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         });
       }),
       switchMap((poolId) => {
-        return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
+        return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
             if (!pools?.length) {
               return of([]);
             }
-            return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
+            return this.api.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({
                   isLoading: false,
@@ -92,7 +92,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error: WebSocketError) => {
+              catchError((error: ApiError) => {
                 this.patchState({
                   isLoading: false,
                   error,
@@ -121,7 +121,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   readonly loadDisksWithSmartTestSupport = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
       switchMap(() => {
-        return this.ws.call('smart.test.disk_choices').pipe(
+        return this.api.call('smart.test.disk_choices').pipe(
           tap((disks) => {
             this.patchState({ disksWithSmartTestSupport: Object.values(disks) });
           }),
@@ -138,7 +138,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
   ) {
     super(initialState);

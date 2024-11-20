@@ -13,7 +13,7 @@ import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-l
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,
@@ -29,8 +29,8 @@ export class NetworkInterfacesEffects {
     filterAsync(() => this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
-        this.ws.call('interface.has_pending_changes'),
-        this.ws.call('interface.checkin_waiting'),
+        this.api.call('interface.has_pending_changes'),
+        this.api.call('interface.checkin_waiting'),
       ]).pipe(
         this.errorHandler.catchError(),
         map(([hasPendingChanges, checkinWaiting]) => {
@@ -68,7 +68,7 @@ export class NetworkInterfacesEffects {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,

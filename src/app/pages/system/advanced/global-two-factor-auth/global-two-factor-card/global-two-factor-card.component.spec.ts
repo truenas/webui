@@ -4,13 +4,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('GlobalTwoFactorAuthCardComponent', () => {
   let spectator: Spectator<GlobalTwoFactorAuthCardComponent>;
@@ -19,13 +19,13 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     component: GlobalTwoFactorAuthCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('auth.twofactor.config', {
           window: 3,
           enabled: false,
@@ -56,7 +56,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       GlobalTwoFactorAuthFormComponent,
       false,
       {

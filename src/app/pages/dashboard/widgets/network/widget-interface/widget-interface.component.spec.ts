@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { oneHourMillis, oneMinuteMillis } from 'app/constants/time.constant';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -22,6 +23,7 @@ describe('WidgetInterfaceComponent', () => {
     imports: [
       NgxSkeletonLoaderModule,
       NetworkSpeedPipe,
+      WithLoadingStateDirective,
     ],
     declarations: [
       MockComponent(NetworkChartComponent),
@@ -100,13 +102,15 @@ describe('WidgetInterfaceComponent', () => {
       });
     });
 
-    it('shows widget header', () => {
+    it('shows widget header', fakeAsync(() => {
+      spectator.tick(1);
       expect(spectator.query('.header')).toHaveText('Interface');
-    });
+    }));
 
-    it('shows interface name', () => {
+    it('shows interface name', fakeAsync(() => {
+      spectator.tick(1);
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    });
+    }));
 
     it('shows interface state', fakeAsync(() => {
       spectator.tick(1);
@@ -162,6 +166,7 @@ describe('WidgetInterfaceComponent', () => {
 
     it('checks first entry selection when settings are null', () => {
       spectator.setInput('settings', null);
+      spectator.detectChanges();
 
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
@@ -186,9 +191,10 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.header')).toBeNull();
     });
 
-    it('shows interface name', () => {
+    it('shows interface name', fakeAsync(() => {
+      spectator.tick(1);
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    });
+    }));
 
     it('shows interface state', fakeAsync(() => {
       spectator.tick(1);
@@ -259,9 +265,10 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.header')).toBeNull();
     });
 
-    it('shows interface name', () => {
+    it('shows interface name', fakeAsync(() => {
+      spectator.tick(1);
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    });
+    }));
 
     it('shows interface state', fakeAsync(() => {
       spectator.tick(1);

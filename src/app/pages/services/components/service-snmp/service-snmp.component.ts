@@ -17,16 +17,16 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -104,7 +104,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -112,7 +112,7 @@ export class ServiceSnmpComponent implements OnInit {
     private validation: IxValidatorsService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<ServiceSnmpComponent>,
+    private slideInRef: SlideInRef<ServiceSnmpComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -130,11 +130,11 @@ export class ServiceSnmpComponent implements OnInit {
       values.v3_privpassphrase = '';
     }
 
-    this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close();
+        this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
@@ -147,7 +147,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   private loadCurrentSettings(): void {
     this.isFormLoading = true;
-    this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.isFormLoading = false;
         this.form.patchValue(config);

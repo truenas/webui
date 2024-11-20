@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
@@ -6,13 +5,13 @@ import {
 import { Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogActions, MatDialogClose,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, tap } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
@@ -25,7 +24,7 @@ import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -37,8 +36,6 @@ import { WebSocketService } from 'app/services/ws.service';
   imports: [
     MatDialogTitle,
     MatProgressBar,
-    CdkScrollable,
-    MatDialogContent,
     FormsModule,
     ReactiveFormsModule,
     IxInputComponent,
@@ -62,12 +59,13 @@ export class CreateDatasetDialogComponent implements OnInit {
       Validators.pattern(nameValidatorRegex),
     ]],
   });
+
   parent: Dataset;
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
@@ -88,7 +86,7 @@ export class CreateDatasetDialogComponent implements OnInit {
 
   createDataset(): void {
     this.isLoading$.next(true);
-    this.ws.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
+    this.api.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
       .pipe(untilDestroyed(this)).subscribe({
         next: (dataset) => {
           this.isLoading$.next(false);
@@ -103,13 +101,27 @@ export class CreateDatasetDialogComponent implements OnInit {
 
   loadParentDataset(): void {
     this.isLoading$.next(true);
-    this.ws.call('pool.dataset.query', [[['id', '=', this.data.parentId]]])
-      .pipe(untilDestroyed(this)).subscribe((parent) => {
+    const normalizedParentId = this.data.parentId.replace(/\/$/, '');
+    this.api.call('pool.dataset.query', [[['id', '=', normalizedParentId]]]).pipe(
+      tap((parent) => {
+        if (!parent.length) {
+          throw new Error(`Parent dataset ${normalizedParentId} not found`);
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (parent) => {
         this.isLoading$.next(false);
         this.parent = parent[0];
         this.cdr.markForCheck();
         this.addNameValidators();
-      });
+      },
+      error: (error) => {
+        this.isLoading$.next(false);
+        this.dialog.error(this.errorHandler.parseError(error));
+        this.dialogRef.close(false);
+      },
+    });
   }
 
   private addNameValidators(): void {

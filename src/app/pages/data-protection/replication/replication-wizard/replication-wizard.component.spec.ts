@@ -6,8 +6,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -18,16 +18,15 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',
@@ -78,7 +77,6 @@ describe('ReplicationWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatStepperModule,
-      SchedulerModule,
     ],
     declarations: [
       ReplicationWhatAndWhereComponent,
@@ -87,7 +85,7 @@ describe('ReplicationWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.query', []),
         mockCall('keychaincredential.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
@@ -99,7 +97,7 @@ describe('ReplicationWizardComponent', () => {
       ]),
       mockProvider(ChainedRef, chainedRef),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
     ],
   });
 
@@ -143,7 +141,7 @@ describe('ReplicationWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -155,7 +153,7 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool2/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -167,25 +165,26 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
       dataset: 'pool1/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.snapshot.create', [{
       dataset: 'pool2/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('replication.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('replication.create', [{
       auto: true,
       direction: Direction.Push,
       encryption: false,
       lifetime_unit: LifetimeUnit.Week,
       lifetime_value: 2,
       name: 'pool1/,pool2/ - pool3/',
+      naming_schema: ['auto-%Y-%m-%d_%H-%M'],
       periodic_snapshot_tasks: [33, 33],
       readonly: ReadOnlyMode.Set,
       recursive: false,

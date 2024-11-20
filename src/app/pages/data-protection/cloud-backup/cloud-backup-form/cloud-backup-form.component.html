@@ -46,14 +46,23 @@
             ></ix-input>
           }
           @if (form.controls.folder.enabled) {
-            <ix-explorer
-              formControlName="folder"
-              root="/"
-              [label]="helptext.folder_placeholder | translate"
-              [tooltip]="helptext.folder_tooltip | translate"
-              [nodeProvider]="bucketNodeProvider"
-              [required]="true"
-            ></ix-explorer>
+            @if (isNewBucketOptionSelected) {
+              <ix-input
+                formControlName="folder"
+                [label]="helptext.folder_placeholder | translate"
+                [tooltip]="helptext.folder_tooltip | translate"
+                [required]="true"
+              ></ix-input>
+            } @else {
+              <ix-explorer
+                formControlName="folder"
+                root="/"
+                [label]="helptext.folder_placeholder | translate"
+                [tooltip]="helptext.folder_tooltip | translate"
+                [nodeProvider]="bucketNodeProvider"
+                [required]="true"
+              ></ix-explorer>
+            }
           }
         </ix-fieldset>
         <ix-fieldset
@@ -129,17 +138,12 @@
           class="fieldset"
           [title]="helptext.fieldset_advanced_remote_options | translate"
         >
-          <ix-input
-            formControlName="transfers"
-            type="number"
-            [label]="helptext.transfers_placeholder | translate"
-            [tooltip]="helptext.transfers_tooltip | translate"
-          ></ix-input>
-          <ix-chips
-            formControlName="bwlimit"
-            [label]="helptext.bwlimit_placeholder | translate"
-            [tooltip]="helptext.bwlimit_tooltip | translate"
-          ></ix-chips>
+          <ix-select
+            formControlName="transfer_setting"
+            [required]="true"
+            [options]="transferSettings$"
+            [label]="'Transfer Setting' | translate"
+          ></ix-select>
         </ix-fieldset>
       </div>
 

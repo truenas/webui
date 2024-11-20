@@ -6,8 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -17,12 +17,12 @@ import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapsho
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const createComponent = createRoutingFactory({
     component: SnapshotDetailsRowComponent,
@@ -39,7 +39,7 @@ describe('SnapshotDetailsRowComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.hold'),
         mockCall('zfs.snapshot.release'),
@@ -55,7 +55,7 @@ describe('SnapshotDetailsRowComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('renders details rows', () => {
@@ -93,11 +93,11 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(await holdCheckbox.getValue()).toBeTruthy();
 
     await holdCheckbox.toggle();
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
     expect(await holdCheckbox.getValue()).toBeFalsy();
 
     await holdCheckbox.toggle();
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
   });
 
   it('should delete snapshot when `Delete` button click', async () => {
@@ -110,6 +110,6 @@ describe('SnapshotDetailsRowComponent', () => {
         message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
       }),
     );
-    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
   });
 });

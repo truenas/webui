@@ -2,7 +2,7 @@
 
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <form class="ix-form-container" warnAboutUnsavedChanges [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-input
           formControlName="destination"

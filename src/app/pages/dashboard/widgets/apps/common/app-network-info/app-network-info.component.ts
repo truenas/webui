@@ -4,10 +4,14 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -15,11 +19,22 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './app-network-info.component.html',
   styleUrls: ['./app-network-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    WithLoadingStateDirective,
+    NgxSkeletonLoaderModule,
+    NetworkChartComponent,
+    TranslateModule,
+    NetworkSpeedPipe,
+  ],
 })
 export class AppNetworkInfoComponent {
   stats = input.required<LoadingState<AppStats>>();
+  aspectRatio = input<number>(3);
 
-  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
+  isLoading = computed(() => this.stats().isLoading);
+
+  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => [0, 0]);
   cachedNetworkStats = signal<number[][]>([]);
 
   networkStats = computed(() => {

@@ -4,12 +4,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 const fakeEmailConfig: MailConfig = {
   id: 1,
@@ -30,10 +30,10 @@ describe('EmailCardComponent', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('mail.config', fakeEmailConfig),
       ]),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
@@ -58,6 +58,6 @@ describe('EmailCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
   });
 });

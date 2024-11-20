@@ -18,10 +18,10 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CertificateAcmeAddComponent,
@@ -33,8 +33,8 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -79,10 +79,10 @@ export class CertificateEditComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
-    private slideInRef: IxSlideInRef<CertificateEditComponent>,
+    private slideInService: SlideInService,
+    private slideInRef: SlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
     @Inject(SLIDE_IN_DATA) private data: Certificate,
@@ -141,7 +141,7 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.job('certificate.update', [this.certificate.id, this.form.value])
+    this.api.job('certificate.update', [this.certificate.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

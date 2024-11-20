@@ -7,10 +7,9 @@ import { ActivatedRoute } from '@angular/router';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import {
   NetdataDialogComponent,
 } from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
@@ -26,11 +25,10 @@ describe('ReportsGlobalControlsComponent', () => {
   const createComponent = createComponentFactory({
     component: ReportsGlobalControlsComponent,
     imports: [
-      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', []),
         mockCall('disk.temperatures'),
         mockCall('reporting.netdata_graphs', []),
@@ -43,7 +41,7 @@ describe('ReportsGlobalControlsComponent', () => {
         },
       }),
       mockProvider(ReportsService, {
-        getReportTabs: () => ([({ value: ReportType.System, label: 'system' } as ReportTab)] as ReportTab[]),
+        getReportTabs: () => ([{ value: ReportType.System, label: 'system' } as ReportTab] as ReportTab[]),
         getReportGraphs: () => of([]),
       }),
       provideMockStore({

@@ -2,14 +2,17 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
 } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, switchMap, map, combineLatest, filter, catchError,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,9 +20,12 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -35,7 +41,7 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -44,6 +50,22 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    RequiresRolesDirective,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    NameAndOptionsSectionComponent,
+    QuotasSectionComponent,
+    EncryptionSectionComponent,
+    OtherOptionsSectionComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
   @ViewChild(NameAndOptionsSectionComponent) nameAndOptionsSection: NameAndOptionsSectionComponent;
@@ -107,7 +129,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
     private datasetFormService: DatasetFormService,
@@ -115,7 +137,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<DatasetFormComponent>,
+    private slideInRef: SlideInRef<DatasetFormComponent>,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
   ) {}
@@ -201,8 +223,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
     const payload = this.preparePayload();
     const request$ = this.isNew
-      ? this.ws.call('pool.dataset.create', [payload as DatasetCreate])
-      : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
+      ? this.api.call('pool.dataset.create', [payload as DatasetCreate])
+      : this.api.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
       switchMap((dataset) => this.createSmb(dataset)),
@@ -261,7 +283,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     }
 
     const parentPath = `/mnt/${this.parentDataset.id}`;
-    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(map((isTrivial) => !isTrivial));
+    return this.api.call('filesystem.stat', [parentPath]).pipe(map((stat) => stat.acl));
   }
 
   private aclDialog(): Observable<boolean> {
@@ -279,7 +301,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.canCreateSmb) {
       return of(dataset);
     }
-    return this.ws.call('sharing.smb.create', [{
+    return this.api.call('sharing.smb.create', [{
       name: datasetPresetFormValue.smb_name,
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
@@ -293,7 +315,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.canCreateNfs) {
       return of(dataset);
     }
-    return this.ws.call('sharing.nfs.create', [{
+    return this.api.call('sharing.nfs.create', [{
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
       switchMap(() => of(dataset)),
@@ -302,7 +324,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   private rollBack(dataset: Dataset, error: unknown): Observable<Dataset> {
-    return this.ws.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
+    return this.api.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
       switchMap(() => {
         throw error;
       }),

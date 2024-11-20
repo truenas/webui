@@ -36,8 +36,8 @@ import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -90,8 +90,8 @@ export class DeviceListComponent implements OnInit {
     }),
     actionsColumn({}),
   ], {
-    uniqueRowTag: (row) => 'vm-device-' + row.dtype + '-' + row.order,
-    ariaLabels: (row) => [row.dtype, this.translate.instant('Device')],
+    uniqueRowTag: (row) => `vm-device-${row.attributes.dtype}-${row.order}`,
+    ariaLabels: (row) => [row.attributes.dtype, this.translate.instant('Device')],
   });
 
   get vmId(): number {
@@ -99,9 +99,9 @@ export class DeviceListComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private matDialog: MatDialog,
@@ -109,7 +109,7 @@ export class DeviceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+    const devices$ = this.api.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
       tap((devices) => this.devices = devices),
       untilDestroyed(this),
     );
@@ -197,7 +197,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   private getDeviceTypeLabel(device: VmDevice): string {
-    const deviceLabel = vmDeviceTypeLabels.get(device.dtype) ?? device.dtype;
+    const deviceLabel = vmDeviceTypeLabels.get(device.attributes.dtype) ?? device.attributes.dtype;
     return this.translate.instant(deviceLabel);
   }
 }

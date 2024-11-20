@@ -8,16 +8,16 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   BaseProviderFormComponent,
@@ -31,7 +31,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
@@ -44,10 +44,12 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
       formPatcher$ = {
         next: jest.fn(),
       };
+
       getFormSetter$ = jest.fn(() => this.formPatcher$);
       getSubmitAttributes = jest.fn(() => ({
         s3attribute: 's3 value',
       })) as BaseProviderFormComponent['getSubmitAttributes'];
+
       beforeSubmit = jest.fn(() => of(true)) as BaseProviderFormComponent['beforeSubmit'];
       form = {
         get invalid(): boolean {
@@ -111,7 +113,7 @@ describe('CloudCredentialsFormComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockProvider(ChainedRef, chainedRef),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
         mockCall('cloudsync.credentials.update', fakeCloudSyncCredential),
@@ -132,7 +134,7 @@ describe('CloudCredentialsFormComponent', () => {
     });
 
     it('loads a list of providers and shows them in Provider select', async () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.providers');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj iX']);
@@ -176,7 +178,7 @@ describe('CloudCredentialsFormComponent', () => {
         const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
         await verifyButton.click();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
           provider: 'S3',
           attributes: {
             s3attribute: 's3 value',
@@ -198,7 +200,7 @@ describe('CloudCredentialsFormComponent', () => {
       });
 
       it('shows an error when verification fails', async () => {
-        const websocketMock = spectator.inject(MockWebSocketService);
+        const websocketMock = spectator.inject(MockApiService);
         websocketMock.mockCall('cloudsync.credentials.verify', {
           valid: false,
           excerpt: 'Missing some important field',
@@ -244,7 +246,7 @@ describe('CloudCredentialsFormComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
+        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
           provider: CloudSyncProviderName.AmazonS3,
           attributes: {
@@ -325,7 +327,7 @@ describe('CloudCredentialsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.update', [
         233,
         {
           name: 'My updated server',

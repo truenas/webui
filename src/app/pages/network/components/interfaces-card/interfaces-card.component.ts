@@ -43,9 +43,9 @@ import {
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -137,9 +137,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,
@@ -219,7 +219,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   private makeDeleteCall(row: NetworkInterface): void {
-    this.ws.call('interface.delete', [row.id])
+    this.api.call('interface.delete', [row.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

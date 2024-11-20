@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -15,8 +15,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
 
 describe('DockerImagesListComponent', () => {
@@ -34,14 +34,14 @@ describe('DockerImagesListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('app.image.query', fakeDockerImagesDataSource),
         mockCall('app.image.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
@@ -68,7 +68,7 @@ describe('DockerImagesListComponent', () => {
       ['', 'sha256:test2', 'truenas/middleware:0.1.2', '5.82 MiB', ''],
     ];
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('app.image.query');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.image.query');
     expect(await table.getCellTexts()).toEqual(expectedRows);
   });
 
@@ -85,6 +85,6 @@ describe('DockerImagesListComponent', () => {
     const pullImageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pull Image' }));
     await pullImageButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(PullImageFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PullImageFormComponent);
   });
 });

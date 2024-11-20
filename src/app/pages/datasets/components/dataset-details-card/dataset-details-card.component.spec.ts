@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -21,8 +21,8 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const dataset = {
   id: 'pool/child',
@@ -64,7 +64,7 @@ describe('DatasetDetailsCardComponent', () => {
         selectedParentDataset$: of({ id: 'pool' }),
       }),
       mockProvider(MatSnackBar),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
         onClose$: of(),
       }),
@@ -73,7 +73,7 @@ describe('DatasetDetailsCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.promote'),
       ]),
       mockProvider(Router),
@@ -126,7 +126,7 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
         DatasetFormComponent,
         { wide: true, data: { datasetId: 'pool/child', isNew: false } },
       );
@@ -163,7 +163,7 @@ describe('DatasetDetailsCardComponent', () => {
 
       const editZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
         ZvolFormComponent,
         { data: { isNew: false, parentId: 'pool/child' } },
       );
@@ -191,7 +191,7 @@ describe('DatasetDetailsCardComponent', () => {
       const promoteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Promote' }));
       await promoteButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
     });
   });
 });

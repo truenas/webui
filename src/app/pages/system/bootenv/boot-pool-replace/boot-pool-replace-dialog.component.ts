@@ -4,17 +4,26 @@ import {
   Inject,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogClose,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -22,6 +31,20 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './boot-pool-replace-dialog.component.html',
   styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    UnusedDiskSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+    FakeProgressBarComponent,
+    TranslateModule,
+  ],
 })
 export class BootPoolReplaceDialogComponent implements OnInit {
   unusedDisks: DetailsDisk[] = [];
@@ -31,13 +54,14 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   form = this.fb.group({
     dev: ['', Validators.required],
   });
+
   protected readonly Role = Role;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -74,7 +98,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
 
     this.isFormLoading = true;
     this.dialogService.jobDialog(
-      this.ws.job('boot.replace', [oldDisk, newDisk]),
+      this.api.job('boot.replace', [oldDisk, newDisk]),
       { title: this.translate.instant('Replacing Boot Pool Disk') },
     )
       .afterClosed()

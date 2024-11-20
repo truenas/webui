@@ -1,10 +1,13 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -15,7 +18,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -33,15 +36,14 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogClose,
     TranslateModule,
     TestDirective,
+    AsyncPipe,
   ],
 })
 export class ChangePasswordDialogComponent {
   form = this.fb.group({
-    old_password: ['', [Validators.required]],
+    old_password: [''],
     new_password: ['', [Validators.required]],
-    passwordConfirmation: ['', [
-      Validators.required,
-    ]],
+    passwordConfirmation: ['', [Validators.required]],
   }, {
     validators: [
       matchOthersFgValidator(
@@ -58,11 +60,15 @@ export class ChangePasswordDialogComponent {
     password: helptextTopbar.changePasswordDialog.pw_new_pw_tooltip,
   };
 
+  get isFullAdminUser$(): Observable<boolean> {
+    return this.authService.hasRole(Role.FullAdmin);
+  }
+
   constructor(
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ChangePasswordDialogComponent>,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private authService: AuthService,
     private loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
@@ -74,7 +80,7 @@ export class ChangePasswordDialogComponent {
   }
 
   onSubmit(): void {
-    this.ws.call('user.set_password', [{
+    this.api.call('user.set_password', [{
       old_password: this.form.value.old_password,
       new_password: this.form.value.new_password,
       username: this.loggedInUser.pw_name,

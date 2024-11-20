@@ -1,11 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -13,7 +19,9 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import {
   actionsColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -27,8 +35,12 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import {
   toggleColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -38,10 +50,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,6 +61,22 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './replication-task-card.component.html',
   styleUrls: ['./replication-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    TestDirective,
+    RouterLink,
+    IxIconComponent,
+    RequiresRolesDirective,
+    MatButton,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
@@ -93,7 +121,7 @@ export class ReplicationTaskCardComponent implements OnInit {
           onClick: (row) => this.editReplicationTask(row),
         },
         {
-          iconName: iconMarker('play_arrow'),
+          iconName: iconMarker('mdi-play-circle'),
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
@@ -126,10 +154,10 @@ export class ReplicationTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
@@ -138,7 +166,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], {
+    const replicationTasks$ = this.api.call('replication.query', [[], {
       extra: { check_dataset_encryption_keys: true },
     }]).pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
@@ -157,7 +185,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('replication.delete', [replicationTask.id])),
+      switchMap(() => this.api.call('replication.delete', [replicationTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -170,7 +198,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideInService.open(ReplicationWizardComponent, true);
+    const closer$ = this.chainedSlideIn.open(ReplicationWizardComponent, true);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -178,7 +206,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    const closer$ = this.chainedSlideInService.open(ReplicationFormComponent, true, row);
+    const closer$ = this.chainedSlideIn.open(ReplicationFormComponent, true, row);
 
     closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
@@ -192,7 +220,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => row.state.state = JobState.Running),
-      switchMap(() => this.ws.job('replication.run', [row.id])),
+      switchMap(() => this.api.job('replication.run', [row.id])),
       tapOnce(() => {
         this.snackbar.success(
           this.translate.instant('Replication «{name}» has started.', { name: row.name }),
@@ -224,7 +252,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   downloadKeys(row: ReplicationTask): void {
-    this.ws.call('core.download', [
+    this.api.call('core.download', [
       'pool.dataset.export_keys_for_replication',
       [row.id],
       `${row.name}_encryption_keys.json`,
@@ -251,7 +279,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(replicationTask: ReplicationTask): void {
-    this.ws
+    this.api
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))
       .subscribe({

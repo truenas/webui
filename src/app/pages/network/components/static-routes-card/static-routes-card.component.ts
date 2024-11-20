@@ -31,8 +31,8 @@ import {
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -95,14 +95,14 @@ export class StaticRoutesCardComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private api: ApiService,
+    private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const staticRoutes$ = this.ws.call('staticroute.query').pipe(
+    const staticRoutes$ = this.api.call('staticroute.query').pipe(
       tap((staticRoutes) => this.staticRoutes = staticRoutes),
       untilDestroyed(this),
     );

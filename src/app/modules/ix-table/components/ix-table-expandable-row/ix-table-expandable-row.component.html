@@ -4,7 +4,12 @@
       @for (option of data(); track option.label) {
         <div>
           <dt>{{ option.label | translate }}:</dt>
-          <dd>{{ option.value?.toString() || '–' }}</dd>
+          <dd
+            [class.clickable]="!!option.action"
+            (click)="!!option.action ? option.action() : null"
+          >
+            {{ option.value?.toString() || '–' }}
+          </dd>
         </div>
       }
     </dl>

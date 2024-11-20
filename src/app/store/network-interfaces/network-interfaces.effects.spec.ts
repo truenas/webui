@@ -3,11 +3,11 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { provideMockActions } from '@ngrx/effects/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,
@@ -22,7 +22,7 @@ describe('NetworkInterfacesEffects', () => {
     service: NetworkInterfacesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebSocket([
+      mockApi([
         mockCall('interface.has_pending_changes', true),
         mockCall('interface.checkin_waiting', 60),
       ]),
@@ -56,7 +56,7 @@ describe('NetworkInterfacesEffects', () => {
       const authMock = spectator.inject(MockAuthService);
       authMock.setRoles([]);
       actions$.next(adminUiInitialized());
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
     });
   });
 

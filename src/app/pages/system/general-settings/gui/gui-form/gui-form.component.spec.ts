@@ -6,23 +6,23 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -30,7 +30,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const mockSystemGeneralConfig = {
     usage_collection: false,
@@ -61,14 +61,14 @@ describe('GuiFormComponent', () => {
     ],
     providers: [
       DialogService,
-      mockWebSocket([
+      mockApi([
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
       ]),
-      mockProvider(IxSlideInRef, {
+      mockProvider(SlideInRef, {
         slideInClosed$: of(),
       }),
-      mockProvider(WebSocketConnectionService),
+      mockProvider(WebSocketHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -122,7 +122,7 @@ describe('GuiFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current values when form is being edited', async () => {
@@ -155,7 +155,7 @@ describe('GuiFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       {
         ...mockSystemGeneralConfig,
         ui_certificate: 1,
@@ -166,7 +166,7 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const websocketManager = spectator.inject(WebSocketConnectionService);
+    const websocketManager = spectator.inject(WebSocketHandlerService);
     Object.defineProperty(websocketManager, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
@@ -186,7 +186,7 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const websocketManager = spectator.inject(WebSocketConnectionService);
+    const websocketManager = spectator.inject(WebSocketHandlerService);
     Object.defineProperty(websocketManager, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
@@ -203,7 +203,7 @@ describe('GuiFormComponent', () => {
     expect(dialog.confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Restart Web Service',
     }));
-    expect(ws.call).toHaveBeenCalledWith('system.general.ui_restart');
+    expect(api.call).toHaveBeenCalledWith('system.general.ui_restart');
   });
 
   it('dispatches themeChangedInGuiForm when theme is changed', async () => {

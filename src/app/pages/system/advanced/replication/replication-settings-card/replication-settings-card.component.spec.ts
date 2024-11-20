@@ -4,9 +4,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsCardComponent,
@@ -14,7 +14,7 @@ import {
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('ReplicationSettingsCardComponent', () => {
   let spectator: Spectator<ReplicationSettingsCardComponent>;
@@ -23,7 +23,7 @@ describe('ReplicationSettingsCardComponent', () => {
     component: ReplicationSettingsCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.config.config', {
           max_parallel_replication_tasks: 5,
         }),
@@ -31,7 +31,7 @@ describe('ReplicationSettingsCardComponent', () => {
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
@@ -58,7 +58,7 @@ describe('ReplicationSettingsCardComponent', () => {
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
-      spectator.inject(IxChainedSlideInService).open,
+      spectator.inject(ChainedSlideInService).open,
     ).toHaveBeenCalledWith(
       ReplicationSettingsFormComponent,
       false,

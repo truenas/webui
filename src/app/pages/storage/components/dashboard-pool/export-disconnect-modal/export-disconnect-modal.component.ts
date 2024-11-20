@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -7,7 +6,7 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogTitle, MatDialogContent,
+  MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent,
 } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,12 +18,12 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -35,8 +34,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +47,6 @@ import { WebSocketService } from 'app/services/ws.service';
     MatDialogTitle,
     MatProgressBar,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     IxFieldsetComponent,
     IxCheckboxComponent,
@@ -114,12 +111,10 @@ export class ExportDisconnectModalComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ExportDisconnectModalComponent>,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private dialogService: DialogService,
-    private matDialog: MatDialog,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -142,7 +137,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   startExportDisconnectJob(): void {
     const value = this.form.value;
 
-    const job$ = this.ws.job('pool.export', [
+    const job$ = this.api.job('pool.export', [
       this.pool.id,
       {
         destroy: value.destroy,
@@ -191,10 +186,12 @@ export class ExportDisconnectModalComponent implements OnInit {
         && !Array.isArray(failureData.exc_info.extra)
         && failureData.exc_info.extra.code === 'control_services'
       ) {
-        this.showServicesErrorsDialog(failureData); return;
+        this.showServicesErrorsDialog(failureData);
+        return;
       }
       if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-        this.showUnstoppableErrorDialog(failureData); return;
+        this.showUnstoppableErrorDialog(failureData);
+        return;
       }
     }
     this.showExportErrorDialog(failureData);
@@ -210,6 +207,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       backtrace: failureData.exception,
     });
   }
+
   showServicesErrorsDialog(failureData: Job): void {
     const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
     const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
@@ -272,9 +270,9 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   private loadRelatedEntities(): void {
     forkJoin([
-      this.ws.call('pool.attachments', [this.pool.id]),
-      this.ws.call('pool.processes', [this.pool.id]),
-      this.ws.call('systemdataset.config'),
+      this.api.call('pool.attachments', [this.pool.id]),
+      this.api.call('pool.processes', [this.pool.id]),
+      this.api.call('systemdataset.config'),
     ])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
@@ -285,7 +283,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.prepareForm();
           this.cdr.markForCheck();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.dialogService.error({
             title: helptextVolumes.exportError,
             message: error.reason,
@@ -303,7 +301,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
       ? this.translate.instant(helptextVolumes.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
+      + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
       : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {

@@ -30,7 +30,7 @@ import {
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +74,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private loader: AppLoaderService,
@@ -84,12 +84,12 @@ export class TruecommandButtonComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
+    this.api.call('truecommand.config').pipe(untilDestroyed(this)).subscribe((config) => {
       this.tcStatus = config;
       this.tcConnected = !!config.api_key;
       this.cdr.markForCheck();
     });
-    this.ws.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
+    this.api.subscribe('truecommand.config').pipe(untilDestroyed(this)).subscribe((event) => {
       this.tcStatus = event.fields;
       this.tcConnected = !!event.fields.api_key;
       if (this.isTcStatusOpened && this.tcStatusDialogRef) {
@@ -135,7 +135,7 @@ export class TruecommandButtonComponent implements OnInit {
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
         this.loader.open();
-        this.ws.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
+        this.api.call('truecommand.update', [{ enabled: false }]).pipe(untilDestroyed(this)).subscribe({
           next: () => {
             this.loader.close();
           },

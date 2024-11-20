@@ -33,7 +33,7 @@ describe('UrlOptionsService', () => {
         + '"searchQuery":{"isBasicQuery":true,"query":"search query"},'
         + '"pagination":{"pageNumber":2,"pageSize":10},'
         + '"sorting":{"active":1,"direction":"desc","propertyName":"test_column"}'
-      + '}');
+        + '}');
     });
 
     it('sets empty url options', () => {
@@ -80,7 +80,7 @@ describe('UrlOptionsService', () => {
         + '"searchQuery":{"isBasicQuery":true,"query":"search query"},'
         + '"pagination":{"pageNumber":3,"pageSize":50},'
         + '"sorting":{"active":3,"direction":"asc","propertyName":"test_column"}'
-      + '}';
+        + '}';
 
       const options = spectator.service.parseUrlOptions(url);
       expect(options).toEqual({

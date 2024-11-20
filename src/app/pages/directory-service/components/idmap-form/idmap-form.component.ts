@@ -26,23 +26,23 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { greaterThanFg, rangeValidator } from 'app/services/validators';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
-const customIdmapName = 'custom' as const;
+const customIdmapName = 'custom';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ const customIdmapName = 'custom' as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -139,20 +139,24 @@ export class IdmapFormComponent implements OnInit {
     { label: this.translate.instant('LDAP - Primary Domain'), value: IdmapName.DsTypeLdap },
     { label: this.translate.instant('Custom Value'), value: customIdmapName },
   ]);
+
   readonly createIdmapNames$ = of([
     { label: this.translate.instant('SMB - Primary Domain'), value: IdmapName.DsTypeDefaultDomain },
     { label: this.translate.instant('Custom Value'), value: customIdmapName },
   ]);
+
   readonly schemaModes$ = of([
     { label: 'RFC2307', value: IdmapSchemaMode.Rfc2307 },
     { label: 'SFU', value: IdmapSchemaMode.Sfu },
     { label: 'SFU20', value: IdmapSchemaMode.Sfu20 },
   ]);
+
   readonly sslModes$ = of([
     { label: this.translate.instant('Off'), value: IdmapSslEncryptionMode.Off },
     { label: this.translate.instant('On'), value: IdmapSslEncryptionMode.On },
     { label: 'StartTLS', value: IdmapSslEncryptionMode.StartTls },
   ]);
+
   readonly linkedServices$ = of([
     { label: this.translate.instant('Local Account'), value: IdmapLinkedService.LocalAccount },
     { label: 'LDAP', value: IdmapLinkedService.Ldap },
@@ -182,7 +186,7 @@ export class IdmapFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private validationHelpers: IxValidatorsService,
     private idmapService: IdmapService,
     private dialogService: DialogService,
@@ -190,7 +194,7 @@ export class IdmapFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideInRef: IxSlideInRef<IdmapFormComponent>,
+    private slideInRef: SlideInRef<IdmapFormComponent>,
     @Inject(SLIDE_IN_DATA) private existingIdmap: Idmap,
   ) {}
 
@@ -232,8 +236,8 @@ export class IdmapFormComponent implements OnInit {
     const params = this.prepareSubmitParams();
 
     const request$ = this.isNew
-      ? this.ws.call('idmap.create', [params])
-      : this.ws.call('idmap.update', [this.existingIdmap.id, params]);
+      ? this.api.call('idmap.create', [params])
+      : this.api.call('idmap.update', [this.existingIdmap.id, params]);
 
     request$
       .pipe(
@@ -343,7 +347,7 @@ export class IdmapFormComponent implements OnInit {
         }
 
         return this.dialogService.jobDialog(
-          this.ws.job('idmap.clear_idmap_cache'),
+          this.api.job('idmap.clear_idmap_cache'),
           {
             title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.job_title),
           },

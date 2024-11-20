@@ -2,7 +2,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ApiError } from 'app/interfaces/api-error.interface';
 
 export interface PongMessage {
   id: string;
@@ -18,7 +18,7 @@ export interface ResultMessage<T = unknown> {
   id: string;
   msg: IncomingApiMessageType.Result;
   result?: T;
-  error?: WebSocketError;
+  error?: ApiError;
 }
 
 export interface ConnectedMessage {
@@ -31,9 +31,9 @@ export interface ApiEvent<T = unknown> {
   fields: T;
   id: number | string;
   msg: IncomingApiMessageType.Changed
-  | IncomingApiMessageType.Added
-  | IncomingApiMessageType.Removed
-  | IncomingApiMessageType.NoSub;
+    | IncomingApiMessageType.Added
+    | IncomingApiMessageType.Removed
+    | IncomingApiMessageType.NoSub;
 }
 
 export type ApiEventMethod = keyof ApiEventDirectory;
@@ -44,7 +44,7 @@ export type ApiEventTyped<
   T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
 > = ApiEvent<T>;
 
-export type IncomingWebSocketMessage =
+export type IncomingApiMessage =
   | PongMessage
   | SubscriptionReadyMessage
   | ResultMessage

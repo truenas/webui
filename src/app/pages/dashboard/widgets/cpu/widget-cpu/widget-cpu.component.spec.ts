@@ -71,7 +71,7 @@ describe('WidgetCpuComponent', () => {
     expect(stats).toHaveLength(4);
     expect(stats[0]).toHaveText('Cores: 2 cores');
     expect(stats[1]).toHaveText('Threads: 4 threads');
-    expect(stats[2]).toHaveText('Highest Usage: 70% (Thread #2)');
-    expect(stats[3]).toHaveText('Hottest: 83°C (2 cores at 83°C)');
+    expect(stats[2]).toHaveText('Highest Usage: 70% (Thread #3)');
+    expect(stats[3]).toHaveText('Hottest: 83°C (Core #2)');
   });
 });

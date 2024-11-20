@@ -7,10 +7,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -21,13 +20,14 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronListComponent', () => {
@@ -72,14 +72,14 @@ describe('CronListComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
@@ -116,7 +116,7 @@ describe('CronListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(CronFormComponent);
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(CronFormComponent);
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
@@ -131,7 +131,7 @@ describe('CronListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing interface when Edit button is pressed', async () => {
@@ -140,7 +140,7 @@ describe('CronListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CronFormComponent,
       false,
       expect.objectContaining(cronJobs[0]),

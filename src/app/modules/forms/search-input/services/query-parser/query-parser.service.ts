@@ -14,7 +14,9 @@ import {
 } from 'app/modules/forms/search-input/services/query-parser/query-parsing-result.interface';
 import { PropertyType, SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class QueryParserService<T> {
   private input: string;
 
@@ -276,7 +278,7 @@ export class QueryParserService<T> {
     const [property, comparator, value] = condition;
 
     const currentProperty = properties.find((prop) => prop.property === property);
-    const mappedConditionProperty = (currentProperty?.label || property);
+    const mappedConditionProperty = currentProperty?.label || property;
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
 
     if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
@@ -303,7 +305,7 @@ export class QueryParserService<T> {
       }
 
       if (element.length === 3 && typeof element[1] === 'string') {
-        return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
+        return this.conditionToStringFromQueryFilter(element, properties);
       }
 
       return this.parseArrayFromQueryFilter(element as QueryFilter<T>[], 'AND', properties);

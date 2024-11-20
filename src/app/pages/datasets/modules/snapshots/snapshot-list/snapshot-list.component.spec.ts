@@ -8,8 +8,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -20,7 +20,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
@@ -43,14 +43,14 @@ describe('SnapshotListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('zfs.snapshot.query', fakeZfsSnapshotDataSource),
         mockCall('zfs.snapshot.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       provideMockStore({
         selectors: [
           {
@@ -127,6 +127,6 @@ describe('SnapshotListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
   });
 });

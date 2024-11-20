@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -75,7 +75,7 @@ describe('OtherOptionsSectionComponent', () => {
       source: ZfsPropertySource.Inherited,
     },
     snapdir: {
-      value: DatasetSnapdir.Visible,
+      value: DatasetSnapdir.Disabled,
       source: ZfsPropertySource.Inherited,
     },
     snapdev: {
@@ -180,7 +180,7 @@ describe('OtherOptionsSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.checksum_choices', {
           ON: 'ON',
           SHA256: 'SHA256',
@@ -235,6 +235,10 @@ describe('OtherOptionsSectionComponent', () => {
         parent: parentDataset,
       });
 
+      await form.fillForm({
+        'Snapshot Directory': 'Visible',
+      });
+
       expect(await form.getValues()).toEqual({
         Comments: '',
         'Compression Level': 'LZJB',
@@ -273,7 +277,7 @@ describe('OtherOptionsSectionComponent', () => {
         readonly: OnOff.Off,
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
-        snapdir: DatasetSnapdir.Visible,
+        snapdir: DatasetSnapdir.Disabled,
         special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,

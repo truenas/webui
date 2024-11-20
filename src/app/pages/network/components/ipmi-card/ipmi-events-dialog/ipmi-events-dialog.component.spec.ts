@@ -3,16 +3,16 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IpmiEventsDialogComponent', () => {
   let spectator: Spectator<IpmiEventsDialogComponent>;
@@ -25,7 +25,7 @@ describe('IpmiEventsDialogComponent', () => {
       FakeProgressBarComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('ipmi.sel.elist', fakeSuccessfulJob([
           {
             id: 1,
@@ -67,12 +67,12 @@ describe('IpmiEventsDialogComponent', () => {
     const clearButton = await loader.getHarness(MatButtonHarness.with({ text: 'Clear' }));
     await clearButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('ipmi.sel.clear');
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
   });
 
   describe('no events', () => {
     beforeEach(() => {
-      const mockedWebSocket = spectator.inject(MockWebSocketService);
+      const mockedWebSocket = spectator.inject(MockApiService);
       mockedWebSocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
 
       spectator.component.ngOnInit();

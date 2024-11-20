@@ -1,14 +1,21 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -16,18 +23,27 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -39,6 +55,28 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
   styleUrls: ['../../common-card.scss'],
   templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    MatList,
+    MatListItem,
+    WithLoadingStateDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTablePagerShowMoreComponent,
+    TestOverrideDirective,
+    TranslateModule,
+    YesNoPipe,
+    AsyncPipe,
+  ],
 })
 export class AccessCardComponent implements OnInit {
   protected readonly searchableElements = accessCardElements;
@@ -99,19 +137,19 @@ export class AccessCardComponent implements OnInit {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIn: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private advancedSettings: AdvancedSettingsService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const sessions$ = this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
+    const sessions$ = this.api.call('auth.sessions', [[['internal', '=', false]]]).pipe(
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
@@ -164,7 +202,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   private terminateOtherSessions(): void {
-    this.ws.call('auth.terminate_other_sessions').pipe(
+    this.api.call('auth.terminate_other_sessions').pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),
@@ -188,7 +226,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   private terminateSession(sessionId: string): void {
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(
+    this.api.call('auth.terminate_session', [sessionId]).pipe(
       this.loader.withLoader(),
       this.errorHandler.catchError(),
       untilDestroyed(this),

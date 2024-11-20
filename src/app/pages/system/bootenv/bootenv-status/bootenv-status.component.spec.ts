@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -13,7 +13,6 @@ import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
-import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
@@ -59,12 +58,11 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
     imports: [
-      TreeModule,
       FakeProgressBarComponent,
     ],
     providers: [
@@ -73,7 +71,7 @@ describe('BootStatusListComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
-      mockWebSocket([
+      mockApi([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.detach'),
       ]),
@@ -87,7 +85,7 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

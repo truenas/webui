@@ -76,7 +76,6 @@ export const vmNicTypeLabels = new Map<VmNicType, string>([
   [VmNicType.Virtio, 'VirtIO'],
 ]);
 
-// eslint-disable-next-line @shopify/typescript/prefer-singular-enums
 export enum VmOs {
   Windows = 'Windows',
   Linux = 'Linux',

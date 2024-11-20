@@ -1,14 +1,14 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetFormService', () => {
   let spectator: SpectatorService<DatasetFormService>;
@@ -16,13 +16,13 @@ describe('DatasetFormService', () => {
   const createService = createServiceFactory({
     service: DatasetFormService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [dataset]),
       ]),
       mockProvider(DialogService, {
         warn: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
     ],
   });
 
@@ -37,7 +37,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooLongWarning,
       );
-      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideInService).closeLast).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
@@ -48,7 +48,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooDeepWarning,
       );
-      expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideInService).closeLast).toHaveBeenCalled();
     });
   });
 
@@ -56,7 +56,7 @@ describe('DatasetFormService', () => {
     it('loads dataset by id', async () => {
       const loadedDataset = await firstValueFrom(spectator.service.loadDataset('test'));
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'test']]]);
       expect(loadedDataset).toEqual(dataset);
     });
   });

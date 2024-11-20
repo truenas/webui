@@ -8,12 +8,12 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable()
 export class ReplicationService {
   constructor(
-    protected ws: WebSocketService,
+    protected api: ApiService,
     private authService: AuthService,
   ) { }
 
@@ -33,7 +33,7 @@ export class ReplicationService {
         ]).pipe(
           switchMap((hasRole) => {
             if (hasRole) {
-              return this.ws.call(
+              return this.api.call(
                 'replication.list_datasets',
                 [providerOptions.transport, providerOptions.sshCredential],
               ).pipe(tap((datasets) => cachedDatasets = datasets));
@@ -68,7 +68,7 @@ export class ReplicationService {
   }
 
   getReplicationTasks(): Observable<ReplicationTask[]> {
-    return this.ws.call('replication.query');
+    return this.api.call('replication.query');
   }
 
   generateEncryptionHexKey(length: number): string {

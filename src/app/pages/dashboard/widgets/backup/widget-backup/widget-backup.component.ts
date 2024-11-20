@@ -1,22 +1,33 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
   input,
 } from '@angular/core';
+import { MatIconAnchor } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatGridList, MatGridTile } from '@angular/material/grid-list';
+import { MatTooltip } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
 import { filter } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { BackupTaskActionsComponent } from './backup-task-actions/backup-task-actions.component';
+import { BackupTaskEmptyComponent } from './backup-task-empty/backup-task-empty.component';
+import { BackupTaskTileComponent } from './backup-task-tile/backup-task-tile.component';
 
 enum BackupType {
   CloudSync = 'Cloud Sync',
@@ -39,6 +50,23 @@ interface BackupRow {
     './widget-backup.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    IxIconComponent,
+    MatIconAnchor,
+    TestDirective,
+    MatTooltip,
+    RouterLink,
+    MatGridList,
+    MatGridTile,
+    BackupTaskTileComponent,
+    BackupTaskEmptyComponent,
+    BackupTaskActionsComponent,
+    TranslateModule,
+    NgTemplateOutlet,
+  ],
 })
 export class WidgetBackupComponent implements OnInit {
   size = input.required<SlotSize>();
@@ -96,7 +124,7 @@ export class WidgetBackupComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideInService: ChainedSlideInService,
     private widgetResourcesService: WidgetResourcesService,
   ) {}
 
@@ -164,7 +192,7 @@ export class WidgetBackupComponent implements OnInit {
   private getTile(title: string, tasks: BackupRow[]): BackupTile {
     const successfulTasks = tasks.filter((backup) => this.successStates.includes(backup.state));
     const lastSuccessfulTask = successfulTasks
-      .sort((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
+      .toSorted((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
     return {
       title,

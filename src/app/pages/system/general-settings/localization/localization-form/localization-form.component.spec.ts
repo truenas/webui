@@ -6,20 +6,20 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { Observable, of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
@@ -27,14 +27,14 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: LocalizationFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('system.general.update'),
       ]),
       mockProvider(SystemGeneralService, {
@@ -74,7 +74,7 @@ describe('LocalizationFormComponent', () => {
           { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
       provideMockStore({
@@ -92,7 +92,7 @@ describe('LocalizationFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -114,7 +114,7 @@ describe('LocalizationFormComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   describe('saving localization settings', () => {
@@ -149,12 +149,12 @@ describe('LocalizationFormComponent', () => {
         dateFormat: 'MMMM d, yyyy',
         timeFormat: 'hh:mm:ss aa',
       }));
-      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{
+      expect(api.call).toHaveBeenCalledWith('system.general.update', [{
         language: 'en',
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

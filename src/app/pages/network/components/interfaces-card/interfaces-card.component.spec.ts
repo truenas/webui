@@ -4,27 +4,27 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
   InterfaceStatusIconComponent,
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesState, InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;
@@ -79,16 +79,16 @@ describe('InterfacesCardComponent', () => {
           isLoading: false,
         } as InterfacesState),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('interface.delete'),
       ]),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(true),
-        } as IxSlideInRef<unknown>)),
+        } as SlideInRef<unknown>)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -121,7 +121,7 @@ describe('InterfacesCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
@@ -130,7 +130,7 @@ describe('InterfacesCardComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
       data: interfaces[0],
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
@@ -144,7 +144,7 @@ describe('InterfacesCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Delete Interface',
     }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['vlan1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
@@ -156,7 +156,7 @@ describe('InterfacesCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Reset Configuration',
     }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('interface.delete', ['eno1']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('interface.delete', ['eno1']);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });

@@ -40,8 +40,8 @@ import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idma
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -129,7 +129,7 @@ export class IdmapListComponent implements OnInit {
               hideCheckbox: true,
             }).pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('idmap.delete', [row.id])),
+              switchMap(() => this.api.call('idmap.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
               error: (error: unknown) => {
@@ -150,24 +150,24 @@ export class IdmapListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     protected idmapService: IdmapService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) { }
 
   ngOnInit(): void {
-    const idmapsRows$ = this.ws.call('directoryservices.get_state').pipe(
+    const idmapsRows$ = this.api.call('directoryservices.get_state').pipe(
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
+          return this.api.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
         }
         if (state.activedirectory !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
+          return this.api.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
         }
-        return this.ws.call('idmap.query');
+        return this.api.call('idmap.query');
       }),
       map((idmaps) => {
         const transformed = [...idmaps] as IdmapRow[];

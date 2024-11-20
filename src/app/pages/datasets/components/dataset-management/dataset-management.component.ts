@@ -3,7 +3,8 @@ import {
   BreakpointState,
   BreakpointObserver,
 } from '@angular/cdk/layout';
-import { FlatTreeControl } from '@angular/cdk/tree';
+import { CdkTreeNodePadding, FlatTreeControl } from '@angular/cdk/tree';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -19,11 +20,13 @@ import {
   computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, NavigationStart, Router,
+  RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash-es';
 import { Subject, Subscription } from 'rxjs';
@@ -34,23 +37,37 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
+import {
+  TreeVirtualScrollViewComponent,
+} from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
+import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
+import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
+import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -58,6 +75,27 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    EmptyComponent,
+    FakeProgressBarComponent,
+    SearchInput1Component,
+    DatasetNodeComponent,
+    IxIconComponent,
+    RouterLink,
+    MatIconButton,
+    CdkTreeNodePadding,
+    TestDirective,
+    DetailsHeightDirective,
+    DatasetDetailsPanelComponent,
+    AsyncPipe,
+    TranslateModule,
+    TreeVirtualScrollViewComponent,
+    TreeNodeComponent,
+    TreeNodeDefDirective,
+    RouterLinkActive,
+    TreeNodeToggleDirective,
+  ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
@@ -70,7 +108,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
-  systemDataset = toSignal(this.ws.call('systemdataset.config').pipe(map((config) => config.pool)));
+  systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
   isLoading = true;
   subscription = new Subscription();
   ixTreeHeaderWidth: number | null = null;
@@ -115,23 +153,25 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   // Flat API
   getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
   isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
-  treeControl = new FlatTreeControl<DatasetDetails>(
+  treeControl = new FlatTreeControl<DatasetDetails, string>(
     this.getLevel,
     this.isExpandable,
-    { trackBy: (dataset: DatasetDetails) => dataset.id as unknown as DatasetDetails },
+    { trackBy: (dataset: DatasetDetails) => dataset.id },
   );
-  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
+
+  treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails, string>(
     (dataset) => dataset,
     this.getLevel,
     this.isExpandable,
-    () => ([]),
+    () => [],
   );
+
   dataSource = new TreeDataSource(this.treeControl, this.treeFlattener);
   trackById: TrackByFunction<DatasetDetails> = (index: number, dataset: DatasetDetails): string => dataset?.id;
   readonly hasChild = (_: number, dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private datasetStore: DatasetTreeStore,
@@ -193,7 +233,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: WebSocketError | Job): void => {
+  handleError = (error: ApiError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 

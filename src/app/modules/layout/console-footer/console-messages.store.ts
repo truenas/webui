@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { filter, map } from 'rxjs';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface ConsoleMessagesState {
   lines: string[];
@@ -33,13 +33,13 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   });
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {
     super(initialConsoleMessagesState);
   }
 
   subscribeToMessageUpdates(): void {
-    this.ws.subscribeToLogs(this.logPath)
+    this.api.subscribeToLogs(this.logPath)
       .pipe(
         map((event) => event.fields),
         filter((log) => typeof log?.data === 'string'),

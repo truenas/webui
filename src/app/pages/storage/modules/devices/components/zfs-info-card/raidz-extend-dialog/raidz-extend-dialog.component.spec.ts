@@ -9,8 +9,8 @@ import {
 import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -23,7 +23,7 @@ import {
   RaidzExtendDialogComponent, RaidzExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('RaidzExtendDialogComponent', () => {
   let spectator: Spectator<RaidzExtendDialogComponent>;
@@ -38,7 +38,7 @@ describe('RaidzExtendDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockJob('pool.attach', fakeSuccessfulJob()),
         mockCall('disk.details', {
           unused: [
@@ -115,7 +115,7 @@ describe('RaidzExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',

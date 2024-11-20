@@ -16,7 +16,7 @@ import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosur
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];
@@ -53,14 +53,17 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     const elements = this.selectedEnclosure().elements[EnclosureElementType.ArrayDeviceSlot];
     return elements[this.stateAsSignal().selectedSlotNumber];
   });
+
   readonly selectedEnclosure = computed(() => {
     const state = this.stateAsSignal();
     return state.enclosures[state.selectedEnclosureIndex];
   });
+
   readonly selectedEnclosureSlots = computed(() => {
     const slots = this.selectedEnclosure()?.elements?.[EnclosureElementType.ArrayDeviceSlot] || {};
     return Object.values(slots);
   });
+
   readonly selectedView = computed(() => this.stateAsSignal().selectedView);
   readonly selectedSide = computed(() => this.stateAsSignal().selectedSide);
   readonly enclosures = computed(() => this.stateAsSignal().enclosures);
@@ -86,8 +89,17 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
+  readonly hasMoreThanOneSide = computed(() => {
+    return [
+      this.selectedEnclosure().front_loaded,
+      this.selectedEnclosure().top_loaded,
+      this.selectedEnclosure().rear_slots > 0,
+      this.selectedEnclosure().internal_slots > 0,
+    ].filter(Boolean).length > 1;
+  });
+
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private theme: ThemeService,
   ) {
@@ -98,7 +110,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return origin$.pipe(
       tap(() => this.setState(initialState)),
       switchMap(() => {
-        return this.ws.call('webui.enclosure.dashboard').pipe(
+        return this.api.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState((state) => {
               return {
@@ -119,7 +131,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   update = this.effect((origin$) => {
     return origin$.pipe(
       switchMap(() => {
-        return this.ws.call('webui.enclosure.dashboard').pipe(
+        return this.api.call('webui.enclosure.dashboard').pipe(
           tap((enclosures: DashboardEnclosure[]) => {
             this.patchState({ enclosures });
           }),
@@ -130,7 +142,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   listenForDiskUpdates(): Observable<unknown> {
-    return this.ws.subscribe('disk.query').pipe(
+    return this.api.subscribe('disk.query').pipe(
       debounceTime(1 * 1000),
       tap(() => this.update()),
     );

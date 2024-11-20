@@ -10,7 +10,7 @@ import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface AddVdevsState {
   pool: Pool;
@@ -39,7 +39,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
 
   constructor(
     private diskStore: DiskStore,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -60,7 +60,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     return triggers$.pipe(
       tap(() => this.patchState({ isLoading: true })),
       switchMap((poolId) => {
-        return this.ws.call('pool.query', [[['id', '=', +poolId]]]);
+        return this.api.call('pool.query', [[['id', '=', +poolId]]]);
       }),
       tapResponse(
         (pools) => {

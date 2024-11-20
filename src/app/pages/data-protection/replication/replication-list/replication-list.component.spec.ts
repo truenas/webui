@@ -9,8 +9,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -21,7 +21,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -33,12 +32,14 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 const tasks = [{
@@ -135,22 +136,26 @@ describe('ReplicationListComponent', () => {
             selector: selectSystemConfigState,
             value: {},
           },
+          {
+            selector: selectPreferences,
+            value: {},
+          },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('replication.query', tasks),
         mockCall('replication.update', { ...tasks[0], enabled: true }),
         mockJob('replication.run', fakeSuccessfulJob()),
         mockCall('replication.delete'),
         mockCall('core.download', [undefined, 'http://someurl/file.json']),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -192,7 +197,7 @@ describe('ReplicationListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('replication.run', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
   it('shows form to edit an existing interface when edit button is pressed', async () => {
@@ -201,7 +206,7 @@ describe('ReplicationListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
       true,
       expect.objectContaining(tasks[0]),
@@ -221,7 +226,7 @@ describe('ReplicationListComponent', () => {
       message: 'Delete Replication Task <b>"pewl - pewl"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -244,7 +249,7 @@ describe('ReplicationListComponent', () => {
 
     await toggle.toggle();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'replication.update',
       [1, { enabled: true }],
     );
@@ -258,7 +263,7 @@ describe('ReplicationListComponent', () => {
     const downloadKeysButtons = await loader.getHarness(MatButtonHarness.with({ text: 'Download Keys' }));
     await downloadKeysButtons.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.download', [
       'pool.dataset.export_keys_for_replication',
       [1],
       'pewl - pewl_encryption_keys.json',

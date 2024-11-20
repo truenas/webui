@@ -1,19 +1,27 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +29,20 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   styleUrls: ['../../common-card.scss'],
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    MatCardContent,
+    EmptyComponent,
+    MatList,
+    MatListItem,
+    TranslateModule,
+  ],
 })
 export class IsolatedGpusCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -39,7 +61,7 @@ export class IsolatedGpusCardComponent implements OnInit {
     private advancedSettings: AdvancedSettingsService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideIns: IxChainedSlideInService,
+    private chainedSlideIns: ChainedSlideInService,
     private translate: TranslateService,
   ) {}
 

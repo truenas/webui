@@ -1,10 +1,13 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import {
   DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
@@ -18,19 +21,27 @@ import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface ZvolFormData {
   name?: string;
@@ -69,6 +80,23 @@ interface ZvolFormData {
   templateUrl: './zvol-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxSelectComponent,
+    IxTextareaComponent,
+    ReactiveFormsModule,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ZvolFormComponent implements OnInit {
   readonly requiredRoles = [Role.DatasetWrite];
@@ -186,7 +214,7 @@ export class ZvolFormComponent implements OnInit {
   readonly snapdevOptions$ = of(this.snapdevOptions);
   readonly encryptionTypeOptions$ = of(this.encryptionTypeOptions);
 
-  readonly algorithmOptions$ = this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(
+  readonly algorithmOptions$ = this.api.call('pool.dataset.encryption_algorithm_choices').pipe(
     map((algorithms) => Object.keys(algorithms).map((algorithm) => ({ label: algorithm, value: algorithm }))),
   );
 
@@ -194,13 +222,13 @@ export class ZvolFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
-    private slideInRef: IxSlideInRef<ZvolFormComponent>,
+    private slideInRef: SlideInRef<ZvolFormComponent>,
     @Inject(SLIDE_IN_DATA) private slideInData: { isNew: boolean; parentId: string },
   ) {
     this.form.controls.key.disable();
@@ -228,7 +256,7 @@ export class ZvolFormComponent implements OnInit {
     }
 
     this.isLoading = true;
-    this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (parents) => {
         const parent = parents[0];
         if (parent.encrypted) {
@@ -257,7 +285,7 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId.pop();
           parentDatasetId = parentDatasetId.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
+          this.api.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
             this.errorHandler.catchError(),
             untilDestroyed(this),
           ).subscribe({
@@ -345,7 +373,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritTr = this.translate.instant('Inherit');
     if (
       parent.sync.source === ZfsPropertySource.Inherited
-        || parent.sync.source === ZfsPropertySource.Default
+      || parent.sync.source === ZfsPropertySource.Default
     ) {
       this.syncOptions.unshift({ label: `${inheritTr} (${parentDataset[0].sync.rawvalue})`, value: parentDataset[0].sync.value });
     } else {
@@ -393,7 +421,7 @@ export class ZvolFormComponent implements OnInit {
     const inheritTr = this.translate.instant('Inherit');
     if (
       parent.deduplication.source === ZfsPropertySource.Inherited
-        || parent.deduplication.source === ZfsPropertySource.Default
+      || parent.deduplication.source === ZfsPropertySource.Default
     ) {
       this.deduplicationOptions.unshift({ label: `${inheritTr} (${parentDataset[0].deduplication.rawvalue})`, value: parentDataset[0].deduplication.value });
     } else {
@@ -409,7 +437,7 @@ export class ZvolFormComponent implements OnInit {
     this.snapdevOptions.unshift({ label: `${inheritTr} (${parentDataset[0].snapdev.rawvalue})`, value: inherit });
     if (
       parent.snapdev.source === ZfsPropertySource.Inherited
-        || parent.snapdev.source === ZfsPropertySource.Default
+      || parent.snapdev.source === ZfsPropertySource.Default
     ) {
       this.form.controls.snapdev.setValue(inherit);
     } else {
@@ -479,7 +507,7 @@ export class ZvolFormComponent implements OnInit {
     this.form.controls.encryption_type.valueChanges
       .pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
         this.encryptionType = type;
-        const key = (type === 'key');
+        const key = type === 'key';
         this.setPassphraseFieldsDisabled(key);
         if (key) {
           this.form.controls.generate_key.enable();
@@ -548,16 +576,16 @@ export class ZvolFormComponent implements OnInit {
     const data: ZvolFormData = this.sendAsBasicOrAdvanced(this.form.value);
 
     if (data.sync === inherit) {
-      delete (data.sync);
+      delete data.sync;
     }
     if (data.compression === inherit) {
-      delete (data.compression);
+      delete data.compression;
     }
     if (data.deduplication === inherit) {
-      delete (data.deduplication);
+      delete data.deduplication;
     }
     if (data.readonly === inherit) {
-      delete (data.readonly);
+      delete data.readonly;
     }
     if (data.volblocksize !== inherit) {
       let volblocksizeIntegerValue = parseInt(data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0]);
@@ -571,7 +599,7 @@ export class ZvolFormComponent implements OnInit {
       data.volsize = data.volsize as number;
       data.volsize = data.volsize + (volblocksizeIntegerValue - data.volsize % volblocksizeIntegerValue);
     } else {
-      delete (data.volblocksize);
+      delete data.volblocksize;
     }
 
     // encryption values
@@ -598,7 +626,7 @@ export class ZvolFormComponent implements OnInit {
     delete data.encryption_type;
     delete data.algorithm;
 
-    this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
       error: (error: unknown) => {
         this.isLoading = false;
@@ -610,7 +638,7 @@ export class ZvolFormComponent implements OnInit {
 
   editSubmit(): void {
     this.isLoading = true;
-    this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (datasets) => {
         const data: ZvolFormData = this.sendAsBasicOrAdvanced(this.form.value);
 
@@ -658,7 +686,7 @@ export class ZvolFormComponent implements OnInit {
         }
 
         if (!data.volsize || data.volsize >= roundedVolSize) {
-          this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
+          this.api.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
             error: (error: unknown) => {
               this.isLoading = false;
@@ -693,7 +721,7 @@ export class ZvolFormComponent implements OnInit {
 
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+    this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((recommendedSize) => {

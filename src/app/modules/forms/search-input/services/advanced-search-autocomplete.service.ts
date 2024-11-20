@@ -35,7 +35,9 @@ const regexMap = {
   containsWhitespace: /\s/,
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class AdvancedSearchAutocompleteService<T> {
   private properties: SearchProperty<T>[] = [];
   private editorView: EditorView;
@@ -239,7 +241,7 @@ export class AdvancedSearchAutocompleteService<T> {
     const searchedProperty = this.properties?.find((property) => {
       return property.label?.toLowerCase() === thirdLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
         || (property.label?.toLowerCase() === secondLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
-        && this.isPartiallyComparator(lastToken));
+          && this.isPartiallyComparator(lastToken));
     });
 
     this.showDatePicker$.next(false);

@@ -72,7 +72,7 @@ export function ipv4or6OptionalCidrValidator(): ValidatorFn {
     }
 
     if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value)
-          && !ipRegex({ exact: true, includeBoundaries: true }).test(thisControl.value)) {
+      && !ipRegex({ exact: true, includeBoundaries: true }).test(thisControl.value)) {
       return { ip2: true };
     }
 
@@ -133,7 +133,7 @@ export function ipv6Validator(): ValidatorFn {
 
 // Used only on sharing/iscsi/portal/portal-form
 // TODO: Check what difference with ipv4or6Validator
-export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): ValidatorFn {
+export function ipValidator(type: 'ipv4' | 'ipv6' | 'all'): ValidatorFn {
   const ipv4Regex = ipRegex.v4();
   const ipv6Regex = ipRegex.v6();
   let thisControl: FormControl<string>;
@@ -151,7 +151,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): Validator
       return null;
     }
 
-    function checkIp(ipType = 'ipv4' || 'ipv6'): boolean {
+    function checkIp(ipType: 'ipv4' | 'ipv6'): boolean {
       const regex = ipType === 'ipv4' ? ipv4Regex : ipv6Regex;
       const wildcard = ipType === 'ipv4' ? '0.0.0.0' : '::';
       if (indexOf(thisControl.value, wildcard) !== -1) {

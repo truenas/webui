@@ -15,7 +15,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
+import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
@@ -38,8 +38,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    SearchInputModule,
     MatButton,
     TestDirective,
     RequiresRolesDirective,
@@ -62,6 +61,7 @@ import { WebSocketService } from 'app/services/ws.service';
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
+    SearchInputComponent,
   ],
 })
 export class PrivilegeListComponent implements OnInit {
@@ -126,7 +126,7 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
-  private groupsSuggestions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+  private groupsSuggestions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({
       label: group.group,
       value: `"${group.group}"`,
@@ -135,14 +135,16 @@ export class PrivilegeListComponent implements OnInit {
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
-  private rolesSuggestions$ = of(Object.values(Role).map((key) => ({
-    label: this.translate.instant(roleNames.get(key)),
-    value: `"${this.translate.instant(roleNames.get(key))}"`,
-  })));
+  private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
+    map((roles) => roles.map((key) => ({
+      label: this.translate.instant(roleNames.get(key)),
+      value: `"${this.translate.instant(roleNames.get(key))}"`,
+    }))),
+  );
 
   constructor(
-    private slideInService: IxSlideInService,
-    private ws: WebSocketService,
+    private slideInService: SlideInService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
@@ -150,7 +152,7 @@ export class PrivilegeListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'privilege.query');
+    this.dataProvider = new ApiDataProvider(this.api, 'privilege.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
 
@@ -176,7 +178,7 @@ export class PrivilegeListComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('privilege.delete', [privilege.id])),
+        switchMap(() => this.api.call('privilege.delete', [privilege.id])),
         untilDestroyed(this),
       )
       .subscribe({
@@ -196,7 +198,7 @@ export class PrivilegeListComponent implements OnInit {
 
     this.searchQuery = query;
 
-    if (query && query.isBasicQuery) {
+    if (query?.isBasicQuery) {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<Privilege>()
         .filter('name', '~', term)

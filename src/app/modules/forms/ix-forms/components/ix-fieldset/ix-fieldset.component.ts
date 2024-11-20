@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { MatDivider } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
@@ -13,13 +12,11 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   standalone: true,
   imports: [
     TooltipComponent,
-    MatDivider,
     TranslateModule,
   ],
 })
 export class IxFieldsetComponent {
   readonly disable = input<boolean>();
   readonly title = input<string>();
-  readonly divider = input<boolean>();
   readonly tooltip = input<string>();
 }

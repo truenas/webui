@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -22,7 +21,7 @@ import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxWarningComponent } from 'app/modules/forms/ix-forms/components/ix-warning/ix-warning.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
@@ -37,9 +36,8 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
-    IxWarningComponent,
+    WarningComponent,
     IxFieldsetComponent,
     IxRadioGroupComponent,
     IxSelectComponent,

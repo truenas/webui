@@ -1,0 +1,28 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Devices' | translate }}
+    </h3>
+
+    <ix-add-device-menu></ix-add-device-menu>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (device of shownDevices(); track device.name) {
+        <div class="device">
+          <span>{{ getDeviceDescription(device) }}</span>
+
+          <ix-device-actions-menu
+            [device]="device"
+            [showEdit]="false"
+          ></ix-device-actions-menu>
+        </div>
+      } @empty {
+         {{ 'No devices added.' | translate }}
+      }
+    }
+  </mat-card-content>
+</mat-card>

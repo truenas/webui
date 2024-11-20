@@ -1,29 +1,53 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-global-two-factor-auth-form',
   templateUrl: './global-two-factor-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -41,7 +65,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -80,15 +104,17 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       services: { ssh: values.ssh },
       window: values.window,
     };
-    const confirmation$ = shouldWarn ? this.dialogService.confirm({
-      title: this.translate.instant('Warning!'),
-      message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
-    }) : of(true);
+    const confirmation$ = shouldWarn
+      ? this.dialogService.confirm({
+        title: this.translate.instant('Warning!'),
+        message: this.translate.instant('Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?'),
+      })
+      : of(true);
     confirmation$.pipe(
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('auth.twofactor.update', [payload]);
+        return this.api.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
         this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);

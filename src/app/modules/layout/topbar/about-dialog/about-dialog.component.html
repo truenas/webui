@@ -12,7 +12,7 @@
   </div>
 
   <div mat-dialog-content>
-    <div class="help">{{ helptext.help | translate }}</div>
+    <h1 class="help">{{ helptext.help | translate }}</h1>
     <div class="line-item">
       <div>
         <ix-icon name="assignment" class="bullet-icon"></ix-icon>
@@ -30,12 +30,17 @@
         [innerHtml]="helptext.forums | translate"
       ></div>
     </div>
-
+    
+    @if (!isEnterprise()) {
     <div
-      *appLet="systemType | mapValue: productTypeLabels as product"
       id="open-source"
-      [innerHtml]="helptext.opensource | translate: { product }"
-    ></div>
+      [innerHtml]="helptext.opensource | translate"
+      ></div>
+    }
+
+    <div id="system-version">
+      {{ ('System Version' | translate) + ': ' +  (systemVersion$ | async) }}
+    </div>
   </div>
 </div>
 

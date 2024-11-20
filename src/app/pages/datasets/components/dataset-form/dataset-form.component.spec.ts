@@ -8,16 +8,17 @@ import { Store } from '@ngrx/store';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
@@ -33,8 +34,8 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {
@@ -89,14 +90,14 @@ describe('DatasetFormComponent', () => {
       ),
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.create'),
         mockCall('sharing.nfs.create'),
         mockCall('pool.dataset.create', { id: 'saved-id' } as Dataset),
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
-        mockCall('filesystem.acl_is_trivial', false),
+        mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -112,7 +113,7 @@ describe('DatasetFormComponent', () => {
         }),
       }),
       mockProvider(Router),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -184,12 +185,12 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -209,12 +210,12 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -230,7 +231,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         aclmode: AclMode.Passthrough,
@@ -244,7 +245,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         refquota: GiB,
@@ -256,7 +257,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
           title: helptextDatasetForm.afterSubmitDialog.title,
@@ -286,7 +287,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);
@@ -313,7 +314,7 @@ describe('DatasetFormComponent', () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);

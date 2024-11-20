@@ -1,15 +1,15 @@
+import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 
 describe('ReplicationWhenComponent', () => {
@@ -21,11 +21,11 @@ describe('ReplicationWhenComponent', () => {
     component: ReplicationWhenComponent,
     imports: [
       ReactiveFormsModule,
-      SchedulerModule,
     ],
     providers: [
+      CdkStepper,
       mockAuth(),
-      mockWebSocket(),
+      mockApi(),
     ],
   });
 

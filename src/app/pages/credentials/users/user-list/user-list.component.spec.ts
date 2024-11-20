@@ -15,7 +15,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { usersInitialState, UsersState } from 'app/pages/credentials/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
@@ -83,7 +83,7 @@ describe('UserListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(WebSocketService),
+      mockProvider(ApiService),
       mockProvider(DialogService),
       provideMockStore({
         selectors: [

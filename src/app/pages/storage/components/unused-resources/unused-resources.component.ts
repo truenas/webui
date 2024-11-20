@@ -11,7 +11,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.component';
 
 @UntilDestroy()
@@ -30,7 +30,7 @@ export class UnusedResourcesComponent implements OnInit {
   diskQuerySubscription: Subscription;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
@@ -42,7 +42,7 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.details').pipe(
+    this.api.call('disk.details').pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((diskDetails) => {
@@ -54,7 +54,7 @@ export class UnusedResourcesComponent implements OnInit {
 
   private subscribeToDiskQuery(): void {
     this.unsubscribeFromDiskQuery();
-    this.diskQuerySubscription = this.ws.subscribe('disk.query')
+    this.diskQuerySubscription = this.api.subscribe('disk.query')
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),

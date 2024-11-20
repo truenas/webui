@@ -4,7 +4,7 @@ import {
 } from 'app/modules/forms/search-input/components/advanced-search/codemirror-autocomplete.harness';
 
 export class AdvancedSearchHarness extends ComponentHarness {
-  static hostSelector = 'ix-advanced-search';
+  static readonly hostSelector = 'ix-advanced-search';
 
   getResetIcon = this.locatorFor('.reset-icon');
   getInputArea = this.locatorFor('.cm-content');
@@ -12,7 +12,7 @@ export class AdvancedSearchHarness extends ComponentHarness {
   getAutocomplete = this.documentRootLocatorFactory().locatorFor(CodemirrorAutocompleteHarness);
 
   async getValue(): Promise<string> {
-    return (await (this.getInputArea())).text();
+    return (await this.getInputArea()).text();
   }
 
   async setValue(value: string): Promise<void> {

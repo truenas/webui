@@ -1,17 +1,26 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable, of, tap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +28,21 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './app-rollback-modal.component.html',
   styleUrls: ['./app-rollback-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    MatDialogTitle,
+    MatDialogContent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    TranslateModule,
+    FormActionsComponent,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    MatDialogActions,
+    MatDialogClose,
+  ],
 })
 export class AppRollbackModalComponent {
   form = this.formBuilder.group({
@@ -33,7 +57,7 @@ export class AppRollbackModalComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AppRollbackModalComponent>,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -46,7 +70,7 @@ export class AppRollbackModalComponent {
     const rollbackParams = [this.app.name, this.form.value] as Required<AppRollbackParams>;
 
     this.dialogService.jobDialog(
-      this.ws.job('app.rollback', rollbackParams),
+      this.api.job('app.rollback', rollbackParams),
       { title: helptextApps.apps.rollback_dialog.job },
     )
       .afterClosed()
@@ -55,7 +79,7 @@ export class AppRollbackModalComponent {
   }
 
   private setVersionOptions(): void {
-    this.ws.call('app.rollback_versions', [this.app.name]).pipe(
+    this.api.call('app.rollback_versions', [this.app.name]).pipe(
       tap((versions) => {
         const options = versions.map((version) => ({
           label: version,

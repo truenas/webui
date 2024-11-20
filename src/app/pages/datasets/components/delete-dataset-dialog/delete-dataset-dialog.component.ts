@@ -1,26 +1,34 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle,
+} from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, EMPTY, Observable, of, throwError,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -28,6 +36,20 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './delete-dataset-dialog.component.html',
   styleUrls: ['./delete-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    TranslateModule,
+    ReactiveFormsModule,
+    MatDialogContent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+  ],
 })
 export class DeleteDatasetDialogComponent implements OnInit {
   readonly requiredRoles = [Role.DatasetDelete];
@@ -51,7 +73,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<DeleteDatasetDialogComponent>,
     private translate: TranslateService,
@@ -68,7 +90,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.deleteDataset().pipe(
-      catchError((error: WebSocketError) => {
+      catchError((error: ApiError) => {
         if (error.reason.includes('Device busy')) {
           return this.askToForceDelete();
         }
@@ -85,11 +107,11 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private deleteDataset(): Observable<boolean> {
-    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
+    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
   }
 
   private forceDeleteDataset(): Observable<boolean> {
-    return this.ws.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
+    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
   }
 
   private askToForceDelete(): Observable<unknown> {
@@ -124,8 +146,8 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   private loadDatasetRelatedEntities(): void {
     combineLatest([
-      this.ws.call('pool.dataset.attachments', [this.dataset.id]),
-      this.ws.call('pool.dataset.processes', [this.dataset.id]),
+      this.api.call('pool.dataset.attachments', [this.dataset.id]),
+      this.api.call('pool.dataset.processes', [this.dataset.id]),
     ]).pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([attachments, processes]) => {

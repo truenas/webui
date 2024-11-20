@@ -3,13 +3,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
-import {
-  byTitle, createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -29,7 +27,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {
@@ -62,7 +60,7 @@ describe('PermissionsCardComponent', () => {
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),
-      mockWebSocket([
+      mockApi([
         mockCall('filesystem.stat', stat),
         mockCall('filesystem.getacl', {
           trivial: true,
@@ -79,7 +77,7 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(WebSocketService);
+    const websocket = spectator.inject(ApiService);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
     expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
@@ -104,7 +102,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -116,13 +114,25 @@ describe('PermissionsCardComponent', () => {
     expect(permissionsComponent.acl).toBe(acl);
   });
 
+  it('does not load permissions for locked datasets', () => {
+    jest.resetAllMocks();
+
+    spectator.setInput('dataset', {
+      ...dataset,
+      locked: true,
+    });
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('filesystem.getacl', expect.anything());
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset is locked');
+  });
+
   it('shows nfs permissions when acltype is NFS', fakeAsync(() => {
     const acl = {
       trivial: false,
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockApiService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -136,19 +146,42 @@ describe('PermissionsCardComponent', () => {
     expect(permissionsComponent.acl).toBe(acl);
   }));
 
-  it('shows a button to edit permissions when dataset is not root', async () => {
-    const editLink = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
-    await editLink.click();
+  describe('edit button', () => {
+    it('shows a button to edit permissions when dataset can be edited', async () => {
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      await editButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
-  });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'testpool/dataset', 'permissions', 'edit']);
+    });
 
-  it('does not show edit icon when dataset is root', () => {
-    spectator.setInput('dataset', {
-      ...dataset,
-      mountpoint: '/mnt/root',
-    } as DatasetDetails);
+    it('disables Edit button when the dataset is root', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        name: 'testpool',
+      } as DatasetDetails);
 
-    expect(spectator.query(byTitle('Edit permissions'))).not.toExist();
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
+
+    it('does not show edit button when dataset is locked', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        locked: true,
+      } as DatasetDetails);
+
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
+
+    it('does not show edit button when dataset is readonly', async () => {
+      spectator.setInput('dataset', {
+        ...dataset,
+        readonly: true,
+      } as DatasetDetails);
+
+      const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+    });
   });
 });

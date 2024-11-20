@@ -12,14 +12,14 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -36,14 +36,15 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -114,7 +115,8 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
-      getValue: (row) => (buildNormalizedFileSize(row.size)),
+      getValue: (disk) => buildNormalizedFileSize(disk.size),
+      sortBy: (disk) => disk.size,
     }),
     textColumn({
       title: this.translate.instant('Pool'),
@@ -148,13 +150,25 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
-      getValue: (row) => this.translate.instant(stringToTitleCase(row.hddstandby)),
+      getValue: (row) => {
+        if (row.hddstandby === DiskStandby.AlwaysOn) {
+          return this.translate.instant('Always On');
+        }
+
+        return row.hddstandby;
+      },
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
-      getValue: (row) => this.translate.instant(stringToTitleCase(row.advpowermgmt)),
+      getValue: (row) => {
+        if (row.advpowermgmt === DiskPowerLevel.Disabled) {
+          return this.translate.instant('Disabled');
+        }
+
+        return row.advpowermgmt;
+      },
       hidden: true,
     }),
     textColumn({
@@ -186,25 +200,25 @@ export class DiskListComponent implements OnInit {
   private smartDiskChoices: Choices = {};
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     const request$ = forkJoin([
-      this.ws.call('disk.details').pipe(
+      this.api.call('disk.details').pipe(
         map((diskDetails) => [
           ...diskDetails.unused,
           ...diskDetails.used.filter((disk) => disk.exported_zpool),
         ]),
       ),
-      this.ws.call('smart.test.disk_choices'),
-      this.ws.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
+      this.api.call('smart.test.disk_choices'),
+      this.api.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
     ]).pipe(
       map(([unusedDisks, disksThatSupportSmart, disks]) => {
         this.unusedDisks = unusedDisks;
@@ -227,6 +241,7 @@ export class DiskListComponent implements OnInit {
         selectedDisks: this.prepareDisks(disks),
         diskIdsWithSmart: Object.keys(this.smartDiskChoices),
       } as ManualTestDialogParams,
+      width: '600px',
     });
   }
 
@@ -236,14 +251,14 @@ export class DiskListComponent implements OnInit {
 
   edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef: IxSlideInRef<DiskBulkEditComponent | DiskFormComponent>;
+    let slideInRef: SlideInRef<DiskBulkEditComponent | DiskFormComponent>;
 
     if (preparedDisks.length > 1) {
       slideInRef = this.slideInService.open(DiskBulkEditComponent);
-      (slideInRef as IxSlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
+      (slideInRef as SlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
     } else {
       slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
-      (slideInRef as IxSlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
+      (slideInRef as SlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
     }
 
     slideInRef.slideInClosed$.pipe(
@@ -294,8 +309,9 @@ export class DiskListComponent implements OnInit {
 
   private prepareDisks(disks: DiskUi[]): Disk[] {
     return disks.map((disk) => {
-      delete disk.selected;
-      return disk as Disk;
+      const newDisk = { ...disk };
+      delete newDisk.selected;
+      return newDisk as Disk;
     });
   }
 }

@@ -1,14 +1,23 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component, OnInit, output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, take } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   NetdataDialogComponent,
 } from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
@@ -25,6 +34,22 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    IxSlideToggleComponent,
+    MatButton,
+    TestDirective,
+    MatMenuTrigger,
+    UiSearchDirective,
+    IxIconComponent,
+    MatMenu,
+    NgTemplateOutlet,
+    MatMenuItem,
+    TranslateModule,
+    RouterLink,
+  ],
 })
 export class ReportsGlobalControlsComponent implements OnInit {
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
@@ -34,6 +59,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     devices: [[] as string[]],
     metrics: [[] as string[]],
   });
+
   activeTab: ReportTab;
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();

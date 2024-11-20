@@ -35,6 +35,6 @@ export const dashboardStateUpdated = createAction('[Preferences API] Dashboard S
 export const noDashboardStateFound = createAction('[Preferences API] No Dashboard State Found');
 
 export const updateRebootAfterManualUpdate = createAction(
-  '[Preferences] Reboot After Manual Update Option Updated',
+  '[Preferences] Restart After Manual Update Option Updated',
   props<{ rebootAfterManualUpdate: boolean }>(),
 );

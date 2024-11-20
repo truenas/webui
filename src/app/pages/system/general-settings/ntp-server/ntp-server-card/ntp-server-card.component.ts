@@ -1,30 +1,56 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-ntp-server-card',
   templateUrl: './ntp-server-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatToolbarRow,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class NtpServerCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
@@ -74,7 +100,7 @@ export class NtpServerCardComponent implements OnInit {
       ],
     }),
   ], {
-    uniqueRowTag: (row) => 'ntp-server-' + row.address + '-' + row.minpoll + '-' + row.maxpoll,
+    uniqueRowTag: (row) => `ntp-server-${row.address}-${row.minpoll}-${row.maxpoll}`,
     ariaLabels: (row) => [row.address, this.translate.instant('NTP Server')],
   });
 
@@ -82,13 +108,13 @@ export class NtpServerCardComponent implements OnInit {
     protected emptyService: EmptyService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialog: DialogService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
   ) {}
 
   ngOnInit(): void {
-    const ntpServers$ = this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this));
+    const ntpServers$ = this.api.call('system.ntpserver.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
     this.loadItems();
   }
@@ -107,7 +133,7 @@ export class NtpServerCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
+      switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {

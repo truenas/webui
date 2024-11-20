@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -14,15 +14,15 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
@@ -30,7 +30,7 @@ describe('IpmiFormComponent', () => {
   let spectator: Spectator<IpmiFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService;
+  let api: ApiService;
   let productType: ProductType;
   const createComponent = createComponentFactory({
     component: IpmiFormComponent,
@@ -44,7 +44,6 @@ describe('IpmiFormComponent', () => {
               reasons: [],
             },
             isHaLicensed: true,
-            isUpgradePending: false,
           },
         },
       }),
@@ -56,12 +55,12 @@ describe('IpmiFormComponent', () => {
         },
       }),
       mockProvider(RedirectService),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('failover.licensed', true),
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', (params) => {
@@ -111,7 +110,7 @@ describe('IpmiFormComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   }
 
   describe('product type is SCALE_ENTERPRISE', () => {
@@ -175,13 +174,13 @@ describe('IpmiFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
         netmask: '255.255.240.0',
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
 
@@ -198,14 +197,14 @@ describe('IpmiFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
         apply_remote: true,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
   });
@@ -238,7 +237,7 @@ describe('IpmiFormComponent', () => {
       const flashButton = await loader.getHarness(MatButtonHarness.with({ text: 'Flash Identify Light' }));
       await flashButton.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
+      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.On]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
@@ -247,7 +246,7 @@ describe('IpmiFormComponent', () => {
       const stopFlashing = await loader.getHarness(MatButtonHarness.with({ text: 'Stop Flashing' }));
       await stopFlashing.click();
 
-      expect(ws.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
+      expect(api.call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [OnOff.Off]);
     });
   });
 });

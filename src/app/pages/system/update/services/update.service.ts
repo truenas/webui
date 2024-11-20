@@ -5,7 +5,7 @@ import {
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({
@@ -23,11 +23,11 @@ export class UpdateService {
   changeLog$ = new BehaviorSubject<string>('');
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   pendingUpdates(): void {
-    this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
+    this.api.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
       if (pending.length !== 0) {
         this.updateDownloaded$.next(true);
       }

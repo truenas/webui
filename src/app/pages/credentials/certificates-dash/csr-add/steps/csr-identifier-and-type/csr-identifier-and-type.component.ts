@@ -22,7 +22,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -65,12 +65,13 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     [CertificateCreateType.CreateCsr, this.translate.instant('Certificate Signing Request')],
     [CertificateCreateType.ImportCsr, this.translate.instant('Import Certificate Signing Request')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -106,7 +107,7 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.csr_profiles')
+    this.api.call('webui.crypto.csr_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

@@ -8,8 +8,8 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import {
@@ -20,7 +20,7 @@ import {
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const dummyGroup = {
@@ -43,8 +43,8 @@ describe('GroupDetailsRowComponent', () => {
       MockComponent(GroupFormComponent),
     ],
     providers: [
-      mockProvider(IxSlideInService),
-      mockWebSocket([
+      mockProvider(SlideInService),
+      mockApi([
         mockCall('user.query'),
         mockCall('group.delete'),
         mockCall('group.query', []),
@@ -93,7 +93,7 @@ describe('GroupDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

@@ -3,34 +3,34 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KerberosRealmsFormComponent', () => {
   let spectator: Spectator<KerberosRealmsFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: KerberosRealmsFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('kerberos.realm.create'),
         mockCall('kerberos.realm.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -40,7 +40,7 @@ describe('KerberosRealmsFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -55,7 +55,7 @@ describe('KerberosRealmsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('kerberos.realm.create', [{
+      expect(api.call).toHaveBeenCalledWith('kerberos.realm.create', [{
         realm: 'new',
         kdc: ['kdc1', 'kdc2'],
         admin_server: ['10.10.12.1', '10.10.12.2'],
@@ -81,7 +81,7 @@ describe('KerberosRealmsFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -108,7 +108,7 @@ describe('KerberosRealmsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('kerberos.realm.update', [
+      expect(api.call).toHaveBeenCalledWith('kerberos.realm.update', [
         13,
         {
           realm: 'updated',

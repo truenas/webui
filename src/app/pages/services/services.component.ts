@@ -43,10 +43,10 @@ import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/s
 import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServicesService } from 'app/services/services.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
@@ -138,11 +138,11 @@ export class ServicesComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
@@ -195,7 +195,7 @@ export class ServicesComponent implements OnInit {
   private enableToggle(service: ServiceRow): void {
     this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
 
-    this.ws.call('service.update', [service.id, { enable: !service.enable }])
+    this.api.call('service.update', [service.id, { enable: !service.enable }])
       .pipe(
         this.loader.withLoader(),
         take(1),

@@ -1,15 +1,18 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { sortBy, startsWith } from 'lodash-es';
 import {
   BehaviorSubject, combineLatest, Observable, of,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,13 +20,21 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -31,6 +42,23 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './extent-form.component.html',
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    IxCheckboxComponent,
+    IxSelectComponent,
+    IxExplorerComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ExtentFormComponent implements OnInit {
   get isNew(): boolean {
@@ -38,7 +66,7 @@ export class ExtentFormComponent implements OnInit {
   }
 
   get isDevice(): boolean {
-    return (this.form.controls.type.value !== IscsiExtentType.File);
+    return this.form.controls.type.value !== IscsiExtentType.File;
   }
 
   get isAvailableThreshold(): boolean {
@@ -97,6 +125,7 @@ export class ExtentFormComponent implements OnInit {
       return sortBy(options, ['label']);
     }),
   );
+
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   constructor(
@@ -106,9 +135,9 @@ export class ExtentFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private filesystemService: FilesystemService,
-    private slideInRef: IxSlideInRef<ExtentFormComponent>,
+    private slideInRef: SlideInRef<ExtentFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingExtent: IscsiExtent,
   ) {}
 
@@ -155,9 +184,9 @@ export class ExtentFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.extent.create', [values]);
+      request$ = this.api.call('iscsi.extent.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.extent.update', [
+      request$ = this.api.call('iscsi.extent.update', [
         this.editingExtent.id,
         values,
       ]);

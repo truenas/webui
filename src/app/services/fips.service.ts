@@ -8,7 +8,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class FipsService {
     private translate: TranslateService,
     private router: Router,
     private snackbar: SnackbarService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -38,7 +38,7 @@ export class FipsService {
       .pipe(
         tap((approved) => {
           if (approved) {
-            this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+            this.restart();
           }
         }),
       );
@@ -58,7 +58,7 @@ export class FipsService {
       tap((approved) => {
         this.isFailoverPromptOpen = false;
         if (approved) {
-          this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
+          this.failover();
         }
       }),
     );
@@ -85,9 +85,17 @@ export class FipsService {
     );
   }
 
-  private restartRemote(): Observable<unknown> {
+  restart(): void {
+    this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
+  }
+
+  failover(): void {
+    this.router.navigate(['/system-tasks/failover'], { skipLocationChange: true });
+  }
+
+  restartRemote(): Observable<unknown> {
     return this.dialog.jobDialog(
-      this.ws.job('failover.reboot.other_node'),
+      this.api.job('failover.reboot.other_node'),
       { title: this.translate.instant('Restarting Standby') },
     )
       .afterClosed()

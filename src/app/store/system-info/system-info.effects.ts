@@ -4,7 +4,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
@@ -17,7 +17,7 @@ export class SystemInfoEffects {
   loadSystemInfo = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
-      return this.ws.call('system.info').pipe(
+      return this.api.call('system.info').pipe(
         map((systemInfo) => systemInfoLoaded({ systemInfo })),
         catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
@@ -31,7 +31,7 @@ export class SystemInfoEffects {
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('truenas.is_ix_hardware').pipe(
+      return this.api.call('truenas.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
         catchError((error) => {
           // TODO: Show error message to user?
@@ -45,7 +45,7 @@ export class SystemInfoEffects {
   loadProductType = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('system.product_type').pipe(
+      return this.api.call('system.product_type').pipe(
         map((productType) => productTypeLoaded({ productType })),
         catchError((error) => {
           console.error(error);
@@ -57,6 +57,6 @@ export class SystemInfoEffects {
 
   constructor(
     private actions$: Actions,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) { }
 }

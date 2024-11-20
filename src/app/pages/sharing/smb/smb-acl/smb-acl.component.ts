@@ -1,13 +1,17 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNumber } from 'lodash-es';
 import {
   concatMap, firstValueFrom, forkJoin, mergeMap, Observable, of, from,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -21,20 +25,31 @@ import { User } from 'app/interfaces/user.interface';
 import { SmbBothComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-both-combobox-provider';
 import { SmbGroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-group-combobox-provider';
 import { SmbUserComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-user-combobox-provider';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+
+type NameOrId = string | number | null;
 
 interface FormAclEntry {
   ae_who_sid: string;
   ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | NfsAclTag.Both | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  user: string | number | null;
-  group: string | number | null;
-  both: string | number | null;
+  user: NameOrId;
+  group: NameOrId;
+  both: NameOrId;
 }
 
 @UntilDestroy()
@@ -43,6 +58,24 @@ interface FormAclEntry {
   templateUrl: './smb-acl.component.html',
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxListComponent,
+    IxListItemComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxErrorsComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class SmbAclComponent implements OnInit {
   form = this.formBuilder.group({
@@ -90,11 +123,11 @@ export class SmbAclComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private userService: UserService,
-    private slideInRef: IxSlideInRef<SmbAclComponent>,
+    private slideInRef: SlideInRef<SmbAclComponent>,
     @Inject(SLIDE_IN_DATA) public shareName: string,
   ) {}
 
@@ -131,7 +164,7 @@ export class SmbAclComponent implements OnInit {
 
     of(undefined)
       .pipe(mergeMap(() => this.getAclEntriesFromForm()))
-      .pipe(mergeMap((acl) => this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
+      .pipe(mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -148,7 +181,7 @@ export class SmbAclComponent implements OnInit {
 
   private loadSmbAcl(shareName: string): void {
     this.isLoading = true;
-    this.ws.call('sharing.smb.getacl', [{ share_name: shareName }])
+    this.api.call('sharing.smb.getacl', [{ share_name: shareName }])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shareAcl) => {
@@ -214,12 +247,12 @@ export class SmbAclComponent implements OnInit {
   ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
     if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
       const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.ws.call('group.query', [queryArgs]);
+      return this.api.call('group.query', [queryArgs]);
     }
 
     if (ace.ae_who_id?.id_type === NfsAclTag.User) {
       const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.ws.call('user.query', [queryArgs]);
+      return this.api.call('user.query', [queryArgs]);
     }
 
     return of([]);

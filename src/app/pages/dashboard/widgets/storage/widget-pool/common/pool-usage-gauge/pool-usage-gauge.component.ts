@@ -1,16 +1,21 @@
+import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
   OnInit,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool } from 'app/interfaces/pool.interface';
+import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { StorageService } from 'app/services/storage.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -22,6 +27,15 @@ const maxPct = 80;
   templateUrl: './pool-usage-gauge.component.html',
   styleUrl: './pool-usage-gauge.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    NgxSkeletonLoaderModule,
+    GaugeChartComponent,
+    TranslateModule,
+    FormatDateTimePipe,
+    FileSizePipe,
+    PercentPipe,
+  ],
 })
 export class PoolUsageGaugeComponent implements OnInit {
   readonly pool = input.required<Pool>();
@@ -110,7 +124,7 @@ export class PoolUsageGaugeComponent implements OnInit {
     const type = vdevs[0]?.type;
     const size = vdevs[0]?.children.length
       ? disks?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
-      : disks?.find((disk) => disk.name === (vdevs[0])?.disk)?.size;
+      : disks?.find((disk) => disk.name === vdevs[0]?.disk)?.size;
 
     let outputString = `${vdevs.length} x `;
     if (vdevWidth) {

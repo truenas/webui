@@ -1,23 +1,45 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-replication-settings-form',
   templateUrl: 'replication-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ReplicationSettingsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
@@ -36,7 +58,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   constructor(
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -63,7 +85,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
       max_parallel_replication_tasks: maxTasks && maxTasks > 0 ? maxTasks : null,
     };
     this.isFormLoading = true;
-    this.ws.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('replication.config.update', [replicationConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;

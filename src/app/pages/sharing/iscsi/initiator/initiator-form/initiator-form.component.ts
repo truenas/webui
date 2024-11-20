@@ -1,17 +1,30 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit,
+  signal,
 } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { unionBy } from 'lodash-es';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface InitiatorItem {
   id: string;
@@ -24,6 +37,23 @@ interface InitiatorItem {
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatProgressBar,
+    ReactiveFormsModule,
+    MatCardContent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    MatButton,
+    TestDirective,
+    IxIconComponent,
+    MatCardActions,
+    RequiresRolesDirective,
+    TranslateModule,
+    DualListBoxComponent,
+  ],
 })
 export class InitiatorFormComponent implements OnInit {
   protected readonly searchableElements = initiatorFormElements;
@@ -37,16 +67,16 @@ export class InitiatorFormComponent implements OnInit {
     new_initiator: [''],
   });
 
-  connectedInitiators: IscsiGlobalSession[] = [];
-  customInitiators: InitiatorItem[] = [];
-  selectedInitiators: InitiatorItem[] = [];
+  connectedInitiators = signal([] as IscsiGlobalSession[]);
+  customInitiators = signal([] as InitiatorItem[]);
+  selectedInitiators = signal([] as InitiatorItem[]);
 
-  get allInitiators(): InitiatorItem[] {
-    return this.connectedInitiators.map((item) => ({
+  allInitiators = computed(() => {
+    return this.connectedInitiators().map((item) => ({
       id: item.initiator,
       name: `${item.initiator} (${item.initiator_addr})`,
-    })).concat(this.customInitiators);
-  }
+    })).concat(this.customInitiators());
+  });
 
   get isAllowAll(): boolean {
     return this.form.value.all;
@@ -60,7 +90,7 @@ export class InitiatorFormComponent implements OnInit {
   ];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
@@ -90,14 +120,14 @@ export class InitiatorFormComponent implements OnInit {
   onSubmit(): void {
     const payload = {
       comment: this.form.value.comment,
-      initiators: this.isAllowAll ? [] : this.selectedInitiators.map((item) => item.id),
+      initiators: this.isAllowAll ? [] : this.selectedInitiators().map((item) => item.id),
     };
 
     let request;
     if (this.pk === undefined) {
-      request = this.ws.call('iscsi.initiator.create', [payload]);
+      request = this.api.call('iscsi.initiator.create', [payload]);
     } else {
-      request = this.ws.call('iscsi.initiator.update', [this.pk, payload]);
+      request = this.api.call('iscsi.initiator.update', [this.pk, payload]);
     }
 
     this.isFormLoading = true;
@@ -116,9 +146,9 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   getConnectedInitiators(): void {
-    this.ws.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('iscsi.global.sessions').pipe(untilDestroyed(this)).subscribe({
       next: (sessions) => {
-        this.connectedInitiators = unionBy(sessions, (item) => item.initiator && item.initiator_addr);
+        this.connectedInitiators.set(unionBy(sessions, (item) => item.initiator && item.initiator_addr));
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
@@ -130,16 +160,16 @@ export class InitiatorFormComponent implements OnInit {
   onAddInitiator(): void {
     const newInitiator = this.form.value.new_initiator;
     if (newInitiator) {
-      if (!this.allInitiators.find((item) => item.id === newInitiator)) {
-        this.customInitiators.push({ id: newInitiator, name: newInitiator });
-        this.selectedInitiators.push({ id: newInitiator, name: newInitiator });
+      if (!this.allInitiators().find((item) => item.id === newInitiator)) {
+        this.customInitiators.set([...this.customInitiators(), { id: newInitiator, name: newInitiator }]);
+        this.selectedInitiators.set([...this.selectedInitiators(), { id: newInitiator, name: newInitiator }]);
       }
       this.form.controls.new_initiator.setValue('');
     }
   }
 
   setForm(): void {
-    this.ws.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
+    this.api.call('iscsi.initiator.query', [[['id', '=', this.pk]]])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (initiators) => {
@@ -147,8 +177,8 @@ export class InitiatorFormComponent implements OnInit {
             const initiator = initiators[0];
             this.form.controls.comment.setValue(initiator.comment);
             this.form.controls.all.setValue(initiator.initiators.length === 0);
-            this.customInitiators = initiator.initiators.map((item) => ({ id: item, name: item }));
-            this.selectedInitiators = initiator.initiators.map((item) => ({ id: item, name: item }));
+            this.customInitiators.set(initiator.initiators.map((item) => ({ id: item, name: item })));
+            this.selectedInitiators.set(initiator.initiators.map((item) => ({ id: item, name: item })));
           }
           this.isFormLoading = false;
           this.cdr.markForCheck();

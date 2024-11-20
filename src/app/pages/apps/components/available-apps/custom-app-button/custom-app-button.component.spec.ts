@@ -13,7 +13,7 @@ import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-c
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
@@ -29,7 +29,7 @@ describe('CustomAppButtonComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('selected pool'),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
@@ -74,6 +74,6 @@ describe('CustomAppButtonComponent', () => {
     const installButton = await menu.getItems({ text: /Install via YAML$/ });
     await installButton[0].click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
   });
 });

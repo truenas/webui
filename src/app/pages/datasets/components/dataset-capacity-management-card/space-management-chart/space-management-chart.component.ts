@@ -1,13 +1,17 @@
+import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Color, ChartDataset, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   DatasetDetails, DiskSpace, DiskSpaceKey, SwatchColors,
 } from 'app/interfaces/dataset.interface';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -16,12 +20,18 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './space-management-chart.component.html',
   styleUrls: ['./space-management-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    TranslateModule,
+    BaseChartDirective,
+    FileSizePipe,
+    PercentPipe,
+  ],
 })
 export class SpaceManagementChartComponent {
   readonly dataset = input.required<DatasetDetails>();
 
   swatchColors: SwatchColors;
-  filteredData: DiskSpace[];
   chartOptions: ChartOptions<'doughnut'> = {
     plugins: {
       tooltip: {
@@ -40,7 +50,7 @@ export class SpaceManagementChartComponent {
 
   readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  protected readonly chartDatasets = computed(() => {
+  readonly chartDatasets = computed(() => {
     const data: DiskSpace[] = [];
     if (this.isZvol()) {
       data.push(

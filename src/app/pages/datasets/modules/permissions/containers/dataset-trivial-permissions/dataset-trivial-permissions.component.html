@@ -1,4 +1,6 @@
 <mat-card class="card card-square">
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
+
   <mat-card-header class="header">
     <mat-card-title>{{ 'Unix Permissions Editor' | translate }}</mat-card-title>
 
@@ -15,7 +17,7 @@
       <div class="owner-and-access">
         <ix-fieldset class="owner-fields" [title]="'Owner' | translate">
           <ix-combobox
-            formControlName="uid"
+            formControlName="owner"
             [label]="'User' | translate"
             [tooltip]="tooltips.user | translate"
             [provider]="userProvider"
@@ -29,7 +31,7 @@
           ></ix-checkbox>
 
           <ix-combobox
-            formControlName="gid"
+            formControlName="ownerGroup"
             [label]="'Group' | translate"
             [tooltip]="tooltips.group | translate"
             [provider]="groupProvider"
@@ -76,7 +78,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>

@@ -5,7 +5,7 @@ import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   lastParams: AuditQueryParams;
@@ -20,8 +20,8 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
     return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
-  constructor(ws: WebSocketService) {
-    super(ws, 'audit.query');
+  constructor(api: ApiService) {
+    super(api, 'audit.query');
   }
 
   protected override countRows(): Observable<number> {
@@ -39,7 +39,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
       }),
     }];
 
-    return this.ws.call(this.method, params) as unknown as Observable<number>;
+    return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
   protected override prepareParams(params: ApiCallParams<'audit.query'>): ApiCallParams<'audit.query'> {

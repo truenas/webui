@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { MockComponents, MockModule } from 'ng-mocks';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -16,7 +16,7 @@ import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/compo
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 const datasetQuotas = {
   refreservation: {
@@ -60,15 +60,17 @@ describe('DatasetCapacityManagementCardComponent', () => {
     imports: [
       FileSizePipe,
     ],
+    componentProviders: [
+      MockModule(NgxSkeletonLoaderModule),
+    ],
     declarations: [
       MockComponents(
         SpaceManagementChartComponent,
-        NgxSkeletonLoaderComponent,
       ),
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.get_quota', [
           { id: 1 },
           { id: 2 },
@@ -85,7 +87,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
           },
         }]),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
         })),
@@ -195,7 +197,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open)
+    expect(spectator.inject(SlideInService).open)
       .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
   });
 });

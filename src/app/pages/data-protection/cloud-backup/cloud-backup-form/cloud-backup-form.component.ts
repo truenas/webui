@@ -1,33 +1,47 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, debounceTime, distinctUntilChanged, map, of,
-  switchMap,
+  debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudsyncTransferSetting, cloudsyncTransferSettingLabels } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 type FormValue = CloudBackupFormComponent['form']['value'];
 
@@ -37,10 +51,35 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   templateUrl: './cloud-backup-form.component.html',
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeader2Component,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxExplorerComponent,
+    CloudCredentialsSelectComponent,
+    IxSelectComponent,
+    IxInputComponent,
+    SchedulerComponent,
+    IxCheckboxComponent,
+    IxTextareaComponent,
+    IxChipsComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CloudBackupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
+  }
+
+  get isNewBucketOptionSelected(): boolean {
+    return this.form.value.bucket === newOption;
   }
 
   get title(): string {
@@ -55,7 +94,7 @@ export class CloudBackupFormComponent implements OnInit {
     disabled: false,
   };
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     path: ['', [Validators.required]],
     credentials: [null as number, [Validators.required]],
     schedule: [CronPresetValue.Daily, [Validators.required]],
@@ -64,8 +103,7 @@ export class CloudBackupFormComponent implements OnInit {
     post_script: [''],
     description: ['', [Validators.required]],
     snapshot: [false],
-    bwlimit: [[] as string[]],
-    transfers: [null as number],
+    transfer_setting: [CloudsyncTransferSetting.Default],
     args: [''],
     enabled: [true],
     password: ['', [Validators.required]],
@@ -80,6 +118,12 @@ export class CloudBackupFormComponent implements OnInit {
   editingTask: CloudBackup;
 
   bucketOptions$ = of<SelectOption[]>([]);
+  transferSettings$ = this.api.call('cloud_backup.transfer_setting_choices').pipe(
+    map((availableSettings) => {
+      const allOptions = mapToOptions(cloudsyncTransferSettingLabels, this.translate);
+      return allOptions.filter((option) => availableSettings.includes(option.value as CloudsyncTransferSetting));
+    }),
+  );
 
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
@@ -93,7 +137,7 @@ export class CloudBackupFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -202,7 +246,7 @@ export class CloudBackupFormComponent implements OnInit {
         delete data.attributes.bucket;
       }
 
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.api.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
@@ -228,36 +272,23 @@ export class CloudBackupFormComponent implements OnInit {
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       path: this.editingTask.path,
-      credentials: (this.editingTask.credentials).id,
+      credentials: this.editingTask.credentials.id,
       folder: this.editingTask.attributes.folder as string,
       bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
-      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
-        return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
-          : `${bwlimit.time}, off`;
-      }),
     });
   }
 
   onSubmit(): void {
     const payload = this.prepareData(this.form.value);
+    let request$ = this.api.call('cloud_backup.create', [payload]);
 
     this.isLoading = true;
 
-    let createBucket$: Observable<unknown> = of(null);
-    if (!!this.form.value.bucket_input && this.form.value.bucket === newOption) {
-      createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
+    if (!this.isNew) {
+      request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 
-    createBucket$.pipe(
-      switchMap(() => {
-        if (this.isNew) {
-          return this.ws.call('cloud_backup.create', [payload]);
-        }
-        return this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
-      }),
-      untilDestroyed(this),
-    ).subscribe({
+    request$.pipe(untilDestroyed(this)).subscribe({
       next: (response: CloudBackup) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
@@ -279,22 +310,22 @@ export class CloudBackupFormComponent implements OnInit {
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
-      bucket: this.form.value.bucket_input && this.form.value.bucket === newOption
+      bucket: this.form.value.bucket_input && this.isNewBucketOptionSelected
         ? this.form.value.bucket_input
         : formValue.bucket,
     };
 
+    const {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      folder, bucket, bucket_input, ...restOfValues
+    } = formValue;
+
     const value: CloudBackupUpdate = {
-      ...formValue,
+      ...restOfValues,
       attributes,
       include: [],
-      bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: crontabToSchedule(formValue.schedule),
     };
-
-    (['folder', 'bucket', 'bucket_input'] as const).forEach((key) => {
-      delete (value as unknown as FormValue)[key];
-    });
 
     return value;
   }

@@ -1,13 +1,22 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDragDrop, moveItemInArray, CdkDropList, CdkDrag,
+} from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { MatList, MatListItem } from '@angular/material/list';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -15,6 +24,19 @@ import { Option } from 'app/interfaces/option.interface';
   styleUrls: ['./ordered-list.component.scss'],
   templateUrl: 'ordered-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxLabelComponent,
+    CdkDropList,
+    MatList,
+    MatListItem,
+    CdkDrag,
+    MatSlideToggle,
+    TestDirective,
+    IxIconComponent,
+    IxErrorsComponent,
+    TranslateModule,
+  ],
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;
@@ -31,7 +53,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   value: (string | number)[];
 
   get orderedValue(): (string | number)[] {
-    return this.items.filter((item) => this.value.includes(item.value)).map(((item) => item.value));
+    return this.items.filter((item) => this.value.includes(item.value)).map((item) => item.value);
   }
 
   constructor(
@@ -90,7 +112,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   }
 
   orderOptions(): void {
-    this.value.reverse().forEach((value) => {
+    this.value.toReversed().forEach((value) => {
       const idx = this.items.findIndex((option) => option.value === value);
       this.items.unshift(...this.items.splice(idx, 1));
     });

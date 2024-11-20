@@ -1,21 +1,26 @@
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   OnInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, combineLatest, of,
 } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -23,18 +28,30 @@ import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
+import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -50,6 +67,28 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
   templateUrl: './snapshot-list.component.html',
   styleUrls: ['./snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    MatProgressSpinner,
+    ReactiveFormsModule,
+    IxSlideToggleComponent,
+    TranslateModule,
+    SearchInput1Component,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    AsyncPipe,
+    MatTooltip,
+    IxTableEmptyDirective,
+    IxIconComponent,
+    IxTableComponent,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableDetailsRowDirective,
+    SnapshotDetailsRowComponent,
+    IxTablePagerComponent,
+  ],
 })
 export class SnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
@@ -62,6 +101,7 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
   ]).pipe(map(([isLoading, loadingExtraColumns]) => isLoading || loadingExtraColumns));
+
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
@@ -80,6 +120,7 @@ export class SnapshotListComponent implements OnInit {
       }
     }),
   );
+
   columns = createTable<ZfsSnapshotUi>([
     checkboxColumn({
       propertyName: 'selected',
@@ -150,7 +191,7 @@ export class SnapshotListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private route: ActivatedRoute,
   ) {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';

@@ -7,23 +7,23 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const fakePrivilegeDataSource: Privilege[] = [
     {
@@ -60,7 +60,7 @@ describe('GroupFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('group.query', [{ group: 'existing', gid: 1111 }] as Group[]),
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('group.create', 1111),
@@ -68,7 +68,7 @@ describe('GroupFormComponent', () => {
         mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
       mockAuth(),
@@ -80,14 +80,14 @@ describe('GroupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('loads names of existing groups and makes sure new name is unique', async () => {
       const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameInput.setValue('existing');
 
-      expect(ws.call).toHaveBeenCalledWith('group.query');
+      expect(api.call).toHaveBeenCalledWith('group.query');
       expect(await nameInput.getErrorText()).toBe('The name "existing" is already in use.');
     });
 
@@ -95,7 +95,7 @@ describe('GroupFormComponent', () => {
       const gidInput = await loader.getHarness(IxInputHarness.with({ label: 'GID' }));
       const value = await gidInput.getValue();
 
-      expect(ws.call).toHaveBeenCalledWith('group.get_next_gid');
+      expect(api.call).toHaveBeenCalledWith('group.get_next_gid');
       expect(value).toBe('1234');
     });
 
@@ -106,17 +106,15 @@ describe('GroupFormComponent', () => {
         'SMB Group': true,
         'Allow all sudo commands': true,
         'Allowed sudo commands with no password': ['ls'],
-        'Allow Duplicate GIDs': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('group.create', [{
+      expect(api.call).toHaveBeenCalledWith('group.create', [{
         gid: 1234,
         name: 'new',
         smb: true,
-        allow_duplicate_gid: true,
         sudo_commands: [allCommands],
         sudo_commands_nopasswd: ['ls'],
       }]);
@@ -131,7 +129,7 @@ describe('GroupFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {
@@ -167,18 +165,17 @@ describe('GroupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('group.update', [
+      expect(api.call).toHaveBeenCalledWith('group.update', [
         13,
         {
           name: 'updated',
           smb: true,
-          allow_duplicate_gid: true,
           sudo_commands: [],
           sudo_commands_nopasswd: [],
         },
       ]);
 
-      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
         ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
@@ -195,7 +192,7 @@ describe('GroupFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [1, {
         ds_groups: [1223], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });

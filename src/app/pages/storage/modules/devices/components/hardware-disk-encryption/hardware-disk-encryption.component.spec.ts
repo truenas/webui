@@ -3,15 +3,15 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
 
 describe('HardwareDiskEncryptionComponent', () => {
@@ -22,7 +22,7 @@ describe('HardwareDiskEncryptionComponent', () => {
       HasRoleDirective,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', [{ passwd: '' } as Disk]),
         mockCall('system.advanced.sed_global_password_is_set', true),
       ]),
@@ -46,7 +46,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   it('loads and shows whether password is set for the current disk', () => {
-    expect(spectator.inject(WebSocketService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
     const detailsItem = spectator.query(byText('SED Password:', { exact: true }));
@@ -54,7 +54,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   it('loads and shows whether SED password is set globally', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
 
     const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }));
     expect(detailsItem.nextElementSibling).toHaveText('Password is set');

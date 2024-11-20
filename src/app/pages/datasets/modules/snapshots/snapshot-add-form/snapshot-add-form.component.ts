@@ -1,14 +1,19 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
   combineLatest, merge, Observable, of,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -16,24 +21,49 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   snapshotExcludeBootQueryFilter,
 } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    RequiresRolesDirective,
+    MatCard,
+    MatCardContent,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class SnapshotAddFormComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotWrite];
@@ -65,13 +95,13 @@ export class SnapshotAddFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
-    private slideInRef: IxSlideInRef<SnapshotAddFormComponent>,
+    private slideInRef: SlideInRef<SnapshotAddFormComponent>,
     @Inject(SLIDE_IN_DATA) private datasetId: string,
   ) {}
 
@@ -128,7 +158,7 @@ export class SnapshotAddFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('zfs.snapshot.create', [params]).pipe(
+    this.api.call('zfs.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -151,7 +181,7 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getDatasetOptions(): Observable<Option[]> {
-    return this.ws.call('pool.dataset.query', [
+    return this.api.call('pool.dataset.query', [
       snapshotExcludeBootQueryFilter as QueryFilters<Dataset>,
       { extra: { flat: true } },
     ]).pipe(
@@ -166,7 +196,7 @@ export class SnapshotAddFormComponent implements OnInit {
           return of([]);
         }
 
-        return this.ws.call('replication.list_naming_schemas').pipe(
+        return this.api.call('replication.list_naming_schemas').pipe(
           singleArrayToOptions(),
         );
       }),
@@ -175,7 +205,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private checkForVmsInDataset(): void {
     this.isFormLoading = true;
-    this.ws.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
+    this.api.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (hasVmsInDataset) => {

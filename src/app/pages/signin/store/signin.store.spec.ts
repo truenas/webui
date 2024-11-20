@@ -2,9 +2,9 @@ import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -18,12 +18,12 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket: MockWebSocketService;
+  let websocket: MockApiService;
   let authService: AuthService;
   const testScheduler = getTestScheduler();
 
@@ -32,7 +32,7 @@ describe('SigninStore', () => {
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
@@ -40,9 +40,9 @@ describe('SigninStore', () => {
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
         mockCall('system.advanced.login_banner', ''),
       ]),
-      mockProvider(WebSocketConnectionService, {
+      mockProvider(WebSocketHandlerService, {
         isConnected$: of(true),
-        websocket$: of(),
+        responses$: of(),
       }),
       mockProvider(TokenLastUsedService, {
         isTokenWithinTimeline$,
@@ -71,7 +71,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockWebSocketService);
+    websocket = spectator.inject(MockApiService);
     authService = spectator.inject(AuthService);
 
     Object.defineProperty(authService, 'authToken$', {
@@ -123,7 +123,7 @@ describe('SigninStore', () => {
 
   describe('handleSuccessfulLogin', () => {
     it('redirects user', () => {
-      jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValueOnce(of({ enabled: false }));
       jest.spyOn(spectator.inject(Router), 'navigateByUrl');
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');

@@ -1,18 +1,24 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, finalize, noop, Observable, of,
 } from 'rxjs';
 import {
   filter, tap,
 } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -21,14 +27,19 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -41,6 +52,23 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './manual-update-form.component.html',
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    UiSearchDirective,
+    MatCardContent,
+    MatProgressBar,
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxFileInputComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    RequiresRolesDirective,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class ManualUpdateFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -67,7 +95,7 @@ export class ManualUpdateFormComponent implements OnInit {
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private translate: TranslateService,
@@ -110,7 +138,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   setPoolOptions(): void {
-    this.ws.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
+    this.api.call('pool.query').pipe(untilDestroyed(this)).subscribe((pools) => {
       if (!pools) {
         return;
       }
@@ -139,7 +167,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
+    this.api.call('core.get_jobs', [[['method', '=', 'failover.upgrade'], ['state', '=', JobState.Running]]])
       .pipe(untilDestroyed(this)).subscribe({
         next: (jobs) => {
           if (jobs && jobs.length > 0) {
@@ -172,7 +200,7 @@ export class ManualUpdateFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
       });
   }
 
@@ -195,14 +223,14 @@ export class ManualUpdateFormComponent implements OnInit {
 
     const params: UploadOptions = this.isHaLicensed
       ? {
-        method: 'failover.upgrade',
-        file: files[0],
-      }
+          method: 'failover.upgrade',
+          file: files[0],
+        }
       : {
-        method: 'update.file',
-        params: [{ destination: fileLocation }],
-        file: files[0],
-      };
+          method: 'update.file',
+          params: [{ destination: fileLocation }],
+          file: files[0],
+        };
 
     const job$ = this.upload.uploadAsJob(params);
     this.dialogService
@@ -223,7 +251,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   finishNonHaUpdate(): void {
     if (this.form.value.rebootAfterManualUpdate) {
-      this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+      this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Restart'),
@@ -231,7 +259,7 @@ export class ManualUpdateFormComponent implements OnInit {
       }).pipe(
         filter(Boolean),
         untilDestroyed(this),
-      ).subscribe(() => this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true }));
+      ).subscribe(() => this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true }));
     }
   }
 
@@ -278,8 +306,8 @@ export class ManualUpdateFormComponent implements OnInit {
 
   private resumeUpdateAfterFailure(): void {
     const job$: Observable<Job> = this.isHaLicensed
-      ? this.ws.job('failover.upgrade', [{ resume: true, resume_manual: true }])
-      : this.ws.job('update.file', [{ resume: true }]);
+      ? this.api.job('failover.upgrade', [{ resume: true, resume_manual: true }])
+      : this.api.job('update.file', [{ resume: true }]);
 
     this.dialogService
       .jobDialog(job$, { title: helptext.manual_update_action })

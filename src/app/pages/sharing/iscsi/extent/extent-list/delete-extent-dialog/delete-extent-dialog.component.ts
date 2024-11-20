@@ -1,15 +1,23 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogRef, MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +25,20 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './delete-extent-dialog.component.html',
   styleUrls: ['./delete-extent-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    MatDialogContent,
+    ReactiveFormsModule,
+    IxCheckboxComponent,
+    FormActionsComponent,
+    MatDialogActions,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+    TranslateModule,
+  ],
 })
 export class DeleteExtentDialogComponent {
   readonly requiredRoles = [
@@ -31,7 +53,7 @@ export class DeleteExtentDialogComponent {
   });
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -46,7 +68,7 @@ export class DeleteExtentDialogComponent {
   onDelete(): void {
     const { remove, force } = this.form.value;
 
-    this.ws.call('iscsi.extent.delete', [this.extent.id, remove, force])
+    this.api.call('iscsi.extent.delete', [this.extent.id, remove, force])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

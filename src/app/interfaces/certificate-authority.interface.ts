@@ -1,7 +1,6 @@
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
-import { EcCurve } from 'app/enums/ec-curve.enum';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
 export interface BasicConstraints {
@@ -60,7 +59,7 @@ export interface CertificateAuthorityUpdate {
   common: string;
   country: string;
   CSR: string;
-  ec_curve: EcCurve;
+  ec_curve: string;
   email: string;
   key_type: CertificateKeyType;
   name: string;

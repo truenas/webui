@@ -19,7 +19,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +60,7 @@ export class SignCsrDialogComponent {
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private caId: number,
   ) {}
@@ -71,7 +71,7 @@ export class SignCsrDialogComponent {
       ca_id: this.caId,
     };
 
-    this.ws.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
+    this.api.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {

@@ -6,7 +6,14 @@
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
-      <div class="label">{{ 'Ports' | translate }}:</div>
+      <div class="label">
+        {{ 'Ports' | translate }}
+        <ix-tooltip
+          class="ports-tooltip"
+          placement="left"
+          [message]="helptext.ports"
+        ></ix-tooltip>
+      </div>
       <div class="value">
         @for (port of hostPorts(); track port.hostPort) {
           <div>
@@ -46,21 +53,19 @@
             <div class="container-state">
               {{ container.state | mapValue: appContainerStateLabels | translate  }}
             </div>
-            @if (app().state === AppState.Running || app().state === AppState.Deploying) {
+            @if (app().state === AppState.Running || app().state === AppState.Deploying || app().state === AppState.Crashed) {
               <div class="container-action">
-                @if (container.state === AppContainerState.Running) {
-                  <button
-                    *ixRequiresRoles="requiredRoles"
-                    mat-icon-button
-                    matTooltipPosition="above"
-                    [attr.aria-label]="'Shell' | translate"
-                    [ixTest]="[container.service_name, 'shell']"
-                    [matTooltip]="'Shell' | translate"
-                    (click)="shellButtonPressed(container.id)"
-                  >
-                    <ix-icon name="mdi-console"></ix-icon>
-                  </button>
-                }
+                <a
+                  *ixRequiresRoles="requiredRoles"
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [attr.aria-label]="'Shell' | translate"
+                  [ixTest]="[container.service_name, 'shell']"
+                  [matTooltip]="'Shell' | translate"
+                  [routerLink]="getShellLink(container)"
+                >
+                  <ix-icon name="mdi-console"></ix-icon>
+                </a>
                 <button
                   mat-icon-button
                   matTooltipPosition="above"
@@ -72,18 +77,16 @@
                   <ix-icon name="mdi-folder-outline"></ix-icon>
                 </button>
 
-                <button
+                <a
                   mat-icon-button
                   matTooltipPosition="above"
                   [attr.aria-label]="'View Logs' | translate"
                   [ixTest]="[container.service_name, 'view_logs']"
                   [matTooltip]="'View Logs' | translate"
-                  (click)="viewLogsButtonPressed(container)"
+                  [routerLink]="getViewLogsLink(container)"
                 >
                   <ix-icon name="mdi-text-box"></ix-icon>
-                </button>
-
-
+                </a>
               </div>
             }
           </div>

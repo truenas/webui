@@ -2,11 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component, Inject, Input, output,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import {
+  AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
 import { finalize, of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
@@ -21,11 +24,19 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -33,6 +44,22 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['file-ticket-licensed.component.scss'],
   templateUrl: './file-ticket-licensed.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogContent,
+    ReactiveFormsModule,
+    IxInputComponent,
+    IxChipsComponent,
+    IxSelectComponent,
+    IxTextareaComponent,
+    IxCheckboxComponent,
+    IxFileInputComponent,
+    MatDialogActions,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class FileTicketLicensedComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
@@ -92,7 +119,7 @@ export class FileTicketLicensedComponent {
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {
     this.getSystemFileSizeLimit();
   }
@@ -125,7 +152,7 @@ export class FileTicketLicensedComponent {
   }
 
   private getSystemFileSizeLimit(): void {
-    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+    this.api.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(
         this.imageValidator.getImagesValidator(size * MiB),
       );

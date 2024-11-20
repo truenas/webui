@@ -21,7 +21,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface RaidzExtendDialogParams {
   poolId: number;
@@ -61,7 +61,7 @@ export class RaidzExtendDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -84,7 +84,7 @@ export class RaidzExtendDialogComponent {
     } as PoolAttachParams;
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.attach', [this.data.poolId, payload]),
+      this.api.job('pool.attach', [this.data.poolId, payload]),
       { title: this.translate.instant('Extending VDEV') },
     )
       .afterClosed()

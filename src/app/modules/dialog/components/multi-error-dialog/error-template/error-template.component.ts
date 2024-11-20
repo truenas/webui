@@ -12,7 +12,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export class ErrorTemplateComponent {
   @Input() logs: Job;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -57,10 +57,6 @@ export class ErrorTemplateComponent {
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
-      let errMsgHeight = messageWrapper.offsetHeight - 21;
-      if (errMsgHeight > 63) {
-        errMsgHeight = 63;
-      }
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
       btPanel.setAttribute('style', 'width: 750px; max-height: calc(80vh - 240px)');
     } else {
@@ -72,7 +68,7 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
+    this.api.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';

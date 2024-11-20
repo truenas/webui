@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { Option } from 'app/interfaces/option.interface';
+import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -19,7 +19,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -45,15 +45,22 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,
     private router: Router,
   ) {}
 
-  getDetails(user: User): Option[] {
+  getDetails(user: User): ActionOption[] {
     const details = [
+      {
+        label: this.translate.instant('API Keys'),
+        value: this.translate.instant('{n, plural, =0 {No keys} =1 {# key} other {# keys}}', {
+          n: user.api_keys?.length,
+        }),
+        action: () => this.viewUserApiKeys(user),
+      },
       { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
       { label: this.translate.instant('Home Directory'), value: user.home },
       { label: this.translate.instant('Shell'), value: user.shell },
@@ -120,6 +127,12 @@ export class UserDetailsRowComponent {
       },
     });
     this.router.navigateByUrl(url);
+  }
+
+  viewUserApiKeys(user: User): void {
+    this.router.navigate(['/credentials/users/api-keys'], {
+      queryParams: { userName: user.username },
+    });
   }
 
   private getSshStatus(user: User): string {

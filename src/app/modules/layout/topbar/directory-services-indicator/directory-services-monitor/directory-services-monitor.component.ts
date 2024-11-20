@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, OnInit,
   signal,
@@ -15,7 +14,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +24,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     MatDialogContent,
     MatIconButton,
     IxIconComponent,
@@ -46,7 +44,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   protected readonly directoryServiceStateLabels = directoryServiceStateLabels;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -56,7 +54,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
 
   getStatus(): void {
     this.isLoading.set(true);
-    this.ws.call('directoryservices.get_state')
+    this.api.call('directoryservices.get_state')
       .pipe(
         this.errorHandler.catchError(),
         finalize(() => this.isLoading.set(false)),

@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
@@ -29,7 +29,7 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
@@ -108,7 +108,7 @@ describe('DiskListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(Router),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => mockSlideInRef),
       }),
       mockProvider(MatDialog, {
@@ -116,7 +116,7 @@ describe('DiskListComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('disk.query', fakeDisks),
         mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
         mockCall('smart.test.disk_choices', fakeSmartDiskChoices),
@@ -166,7 +166,7 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
     expect(mockSlideInRef.componentInstance.setFormDisk).toHaveBeenCalledWith(fakeDisk);
   });
 
@@ -182,6 +182,7 @@ describe('DiskListComponent', () => {
         selectedDisks: [fakeDisk],
         diskIdsWithSmart: [fakeDisk.identifier],
       },
+      width: '600px',
     });
   });
 

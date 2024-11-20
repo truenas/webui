@@ -24,8 +24,8 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -33,7 +33,7 @@ import {
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -92,7 +92,7 @@ export class ActiveDirectoryComponent implements OnInit {
   hasKerberosPrincipal$ = this.form.select((values) => values.kerberos_principal);
 
   readonly helptext = helptextActiveDirectory;
-  readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
+  readonly kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
         label: realm.realm,
@@ -100,11 +100,12 @@ export class ActiveDirectoryComponent implements OnInit {
       }));
     }),
   );
-  readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
-  readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
+
+  readonly kerberosPrincipals$ = this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
+  readonly nssOptions$ = this.api.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -112,7 +113,7 @@ export class ActiveDirectoryComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<ActiveDirectoryComponent>,
+    private slideInRef: SlideInRef<ActiveDirectoryComponent>,
     private snackbarService: SnackbarService,
   ) {}
 
@@ -126,20 +127,25 @@ export class ActiveDirectoryComponent implements OnInit {
 
   onRebuildCachePressed(): void {
     this.isLoading = true;
-    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.snackbarService.success(
-          this.translate.instant(helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message),
-        );
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
-        this.cdr.markForCheck();
-      },
-    });
+    this.dialogService
+      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
+      .afterClosed()
+      .pipe(untilDestroyed(this)).subscribe({
+        next: ({ description }) => {
+          this.isLoading = false;
+          this.snackbarService.success(
+            this.translate.instant(
+              description || helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
+            ),
+          );
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseError(error));
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   onLeaveDomainPressed(): void {
@@ -161,7 +167,7 @@ export class ActiveDirectoryComponent implements OnInit {
     };
 
     this.dialogService.jobDialog(
-      this.ws.job('activedirectory.update', [values]),
+      this.api.job('activedirectory.update', [values]),
       { title: this.translate.instant('Active Directory') },
     )
       .afterClosed()
@@ -200,7 +206,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   private loadDirectoryState(): Observable<void> {
-    return this.ws.call('directoryservices.get_state').pipe(
+    return this.api.call('directoryservices.get_state').pipe(
       map((adState) => {
         const isHealthy = adState.activedirectory === DirectoryServiceState.Healthy;
         this.canLeaveDomain = isHealthy;
@@ -214,7 +220,7 @@ export class ActiveDirectoryComponent implements OnInit {
   }
 
   private loadDirectoryConfig(): Observable<void> {
-    return this.ws.call('activedirectory.config').pipe(
+    return this.api.call('activedirectory.config').pipe(
       map((config) => {
         this.form.patchValue(config);
       }),

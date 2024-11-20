@@ -8,10 +8,10 @@ import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloud
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { ChainedComponentResponse } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
 
 @Component({
   selector: 'ix-cloud-credentials-select',
@@ -24,6 +24,8 @@ import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.servi
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [IxSelectComponent],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() label: string;

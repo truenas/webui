@@ -13,7 +13,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -22,7 +21,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -67,14 +66,14 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
     [CertificateCreateType.CreateInternal, this.translate.instant('Internal Certificate')],
     [CertificateCreateType.Import, this.translate.instant('Import Certificate')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private ws: WebSocketService,
-    private dialogService: DialogService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}
@@ -89,7 +88,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.certificate_profiles')
+    this.api.call('webui.crypto.certificate_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

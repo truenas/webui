@@ -21,6 +21,10 @@
   mat-hint {
     color: var(--fg2) !important;
     margin-left: 30px;
-    margin-top: -8px;
+    margin-top: 0;
   }
+}
+
+.required {
+  margin-left: 2px;
 }

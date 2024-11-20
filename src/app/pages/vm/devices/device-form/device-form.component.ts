@@ -34,15 +34,15 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const specifyCustom = T('Specify custom');
 
@@ -54,7 +54,7 @@ const specifyCustom = T('Specify custom');
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -139,7 +139,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
-  readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
+  readonly usbDeviceOptions$ = this.api.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
       const options = Object.entries(usbDevices).map(([id, device]) => {
         let label = id;
@@ -154,7 +154,8 @@ export class DeviceFormComponent implements OnInit {
       return options;
     }),
   );
-  readonly usbControllerOptions$ = this.ws.call('vm.device.usb_controller_choices').pipe(
+
+  readonly usbControllerOptions$ = this.api.call('vm.device.usb_controller_choices').pipe(
     map((usbControllers) => {
       return Object.entries(usbControllers).map(([key, controller]) => {
         return {
@@ -164,12 +165,14 @@ export class DeviceFormComponent implements OnInit {
       });
     }),
   );
-  readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
-  readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
-  readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+
+  readonly bindOptions$ = this.api.call('vm.device.bind_choices').pipe(choicesToOptions());
+  readonly resolutions$ = this.api.call('vm.resolution_choices').pipe(choicesToOptions());
+  readonly nicOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
   readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
+
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
-    this.ws.call('vm.device.passthrough_device_choices').pipe(
+    this.api.call('vm.device.passthrough_device_choices').pipe(
       map((passthroughDevices) => {
         return Object.keys(passthroughDevices).map((id) => {
           return {
@@ -180,8 +183,9 @@ export class DeviceFormComponent implements OnInit {
       }),
     ),
   );
+
   readonly zvolProvider = new SimpleAsyncComboboxProvider(
-    this.ws.call('vm.device.disk_choices').pipe(choicesToOptions()),
+    this.api.call('vm.device.disk_choices').pipe(choicesToOptions()),
   );
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
@@ -197,12 +201,12 @@ export class DeviceFormComponent implements OnInit {
   ]);
 
   get typeSpecificForm(): DeviceFormComponent['cdromForm']
-  | DeviceFormComponent['diskForm']
-  | DeviceFormComponent['nicForm']
-  | DeviceFormComponent['rawFileForm']
-  | DeviceFormComponent['pciForm']
-  | DeviceFormComponent['usbForm']
-  | DeviceFormComponent['displayForm'] {
+    | DeviceFormComponent['diskForm']
+    | DeviceFormComponent['nicForm']
+    | DeviceFormComponent['rawFileForm']
+    | DeviceFormComponent['pciForm']
+    | DeviceFormComponent['usbForm']
+    | DeviceFormComponent['displayForm'] {
     switch (this.typeControl.value) {
       case VmDeviceType.Cdrom:
         return this.cdromForm;
@@ -228,7 +232,7 @@ export class DeviceFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private networkService: NetworkService,
@@ -236,7 +240,7 @@ export class DeviceFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<DeviceFormComponent>,
+    private slideInRef: SlideInRef<DeviceFormComponent>,
     @Inject(SLIDE_IN_DATA) private slideInData: { virtualMachineId: number; device: VmDevice },
   ) {}
 
@@ -268,9 +272,9 @@ export class DeviceFormComponent implements OnInit {
   }
 
   setDeviceForEdit(): void {
-    this.typeControl.setValue(this.existingDevice.dtype);
+    this.typeControl.setValue(this.existingDevice.attributes.dtype);
     this.orderControl.setValue(this.existingDevice.order);
-    switch (this.existingDevice.dtype) {
+    switch (this.existingDevice.attributes.dtype) {
       case VmDeviceType.Pci:
         this.pciForm.patchValue(this.existingDevice.attributes);
         break;
@@ -306,12 +310,12 @@ export class DeviceFormComponent implements OnInit {
         this.usbForm.patchValue(this.existingDevice.attributes);
         break;
       default:
-        assertUnreachable(this.existingDevice);
+        assertUnreachable(this.existingDevice as never);
     }
   }
 
   generateMacAddress(): void {
-    this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
+    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
       this.nicForm.patchValue({ mac: randomMac });
     });
   }
@@ -329,8 +333,8 @@ export class DeviceFormComponent implements OnInit {
 
     if (this.typeControl.value === VmDeviceType.Pci) {
       forkJoin([
-        this.ws.call('vm.device.passthrough_device_choices'),
-        this.ws.call('system.advanced.config'),
+        this.api.call('vm.device.passthrough_device_choices'),
+        this.api.call('system.advanced.config'),
       ]).pipe(untilDestroyed(this)).subscribe(([passthroughDevices, advancedConfig]) => {
         const dev = this.pciForm.controls.pptdev.value;
         if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
@@ -352,14 +356,13 @@ export class DeviceFormComponent implements OnInit {
 
     const update: VmDeviceUpdate = {
       vm: this.virtualMachineId,
-      dtype: this.typeControl.value,
       order: this.orderControl.value,
       attributes: this.getUpdateAttributes(),
     };
 
     const request$ = this.isNew
-      ? this.ws.call('vm.device.create', [update])
-      : this.ws.call('vm.device.update', [this.existingDevice.id, update]);
+      ? this.api.call('vm.device.create', [update])
+      : this.api.call('vm.device.update', [this.existingDevice.id, update]);
 
     request$
       .pipe(untilDestroyed(this))
@@ -383,7 +386,11 @@ export class DeviceFormComponent implements OnInit {
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
-    const values = this.typeSpecificForm.value;
+    const values = {
+      ...this.typeSpecificForm.value,
+      dtype: this.typeControl.value,
+    };
+
     if ('device' in values && values.device === specifyCustom) {
       values.device = null;
     }
@@ -393,17 +400,17 @@ export class DeviceFormComponent implements OnInit {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
         physical_sectorsize: sectorsize === 0 ? null : sectorsize,
-      };
+      } as VmDeviceUpdate['attributes'];
     }
 
-    return values;
+    return values as VmDeviceUpdate['attributes'];
   }
 
   /**
    * Only one display of each type can be added.
    */
   private hideDisplayIfCannotBeAdded(): void {
-    this.ws.call('vm.get_display_devices', [this.virtualMachineId])
+    this.api.call('vm.get_display_devices', [this.virtualMachineId])
       .pipe(untilDestroyed(this))
       .subscribe((devices) => {
         if (devices.length < 2) {

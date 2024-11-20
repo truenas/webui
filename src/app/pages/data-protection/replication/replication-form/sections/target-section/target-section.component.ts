@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
@@ -15,7 +15,12 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReplicationService } from 'app/services/replication.service';
 
 @UntilDestroy()
@@ -24,6 +29,16 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./target-section.component.scss'],
   templateUrl: './target-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    IxFieldsetComponent,
+    ReactiveFormsModule,
+    IxExplorerComponent,
+    IxSelectComponent,
+    IxCheckboxComponent,
+    IxInputComponent,
+    TranslateModule,
+  ],
 })
 export class TargetSectionComponent implements OnInit, OnChanges {
   @Input() replication: ReplicationTask;
@@ -63,7 +78,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private replicationService: ReplicationService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   get hasEncryption(): boolean {

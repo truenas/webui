@@ -1,27 +1,30 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormsModule } from '@angular/forms';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import {
+  IxSlideToggleComponent,
+} from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
+import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {
@@ -35,17 +38,17 @@ describe('SupportCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SupportCardComponent,
     imports: [
-      FormsModule,
+      ReactiveFormsModule,
+      IxSlideToggleComponent,
     ],
     providers: [
       mockAuth(),
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockProvider(AppLoaderService),
-      mockWebSocket([
+      mockApi([
         mockCall('truenas.is_production', true),
-        mockJob('truenas.set_production'),
+        mockJob('truenas.set_production', fakeSuccessfulJob()),
         mockCall('system.product_type', ProductType.Scale),
       ]),
       provideMockStore({
@@ -83,35 +86,35 @@ describe('SupportCardComponent', () => {
       store$.refreshState();
     });
 
-    describe('"This is a production system checkbox"', () => {
-      let isProductionSystemCheckbox: MatCheckboxHarness;
+    describe('"This is a production system toggle"', () => {
+      let isProductionSystemToggle: IxSlideToggleHarness;
       beforeEach(async () => {
-        isProductionSystemCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+        isProductionSystemToggle = await loader.getHarness(IxSlideToggleHarness.with({
           label: 'This is a production system',
         }));
       });
 
       it('shows current production status of the system', async () => {
-        expect(await isProductionSystemCheckbox.isChecked()).toBe(true);
+        expect(await isProductionSystemToggle.getValue()).toBe(true);
       });
 
-      it('shows SetProductionStatusDialog and sets production status when checkbox is ticked', async () => {
+      it('shows SetProductionStatusDialog and sets production status when toggle is set', async () => {
         const matDialog = spectator.inject(MatDialog);
         jest.spyOn(matDialog, 'open').mockReturnValue({
           afterClosed: () => of({ sendInitialDebug: true }),
         } as MatDialogRef<SetProductionStatusDialogComponent, SetProductionStatusDialogResult>);
 
-        await isProductionSystemCheckbox.uncheck();
-        await isProductionSystemCheckbox.check();
+        await isProductionSystemToggle.setValue(false);
+        await isProductionSystemToggle.setValue(true);
 
         expect(matDialog.open).toHaveBeenCalledWith(SetProductionStatusDialogComponent);
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
-      it('sets production status to false when checkbox is unticked', async () => {
-        await isProductionSystemCheckbox.uncheck();
+      it('sets production status to false when toggle is unset', async () => {
+        await isProductionSystemToggle.setValue(false);
 
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
       });
     });
   });

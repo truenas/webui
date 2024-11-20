@@ -21,7 +21,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -67,13 +67,14 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     [CaCreateType.Intermediate, this.translate.instant('Intermediate CA')],
     [CaCreateType.Import, this.translate.instant('Import CA')],
   ]);
+
   readonly createTypes$ = of(mapToOptions(this.createTypes, this.translate));
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private validators: IxValidatorsService,
   ) {}
@@ -92,7 +93,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   private loadProfiles(): void {
-    this.ws.call('webui.crypto.certificateauthority_profiles')
+    this.api.call('webui.crypto.certificateauthority_profiles')
       .pipe(
         this.errorHandler.catchError(),
         untilDestroyed(this),

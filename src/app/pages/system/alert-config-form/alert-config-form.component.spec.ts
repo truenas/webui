@@ -2,26 +2,26 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AlertConfigFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('alert.list_categories', [
           {
             id: 'APPLICATIONS',
@@ -85,13 +85,13 @@ describe('AlertConfigFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   // TODO: Does not interact with the form as a user.
   it('loads current config and shows values in the form', () => {
-    expect(ws.call).toHaveBeenCalledWith('alert.list_categories');
-    expect(ws.call).toHaveBeenCalledWith('alertclasses.config');
+    expect(api.call).toHaveBeenCalledWith('alert.list_categories');
+    expect(api.call).toHaveBeenCalledWith('alertclasses.config');
     expect(spectator.component.form.value).toEqual({
       app_1: { level: AlertLevel.Error, policy: AlertPolicy.Never },
       app_2: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
@@ -110,7 +110,7 @@ describe('AlertConfigFormComponent', () => {
 
     spectator.component.onSubmit();
 
-    expect(ws.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
+    expect(api.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
       classes: {
         app_2: { level: AlertLevel.Notice },
         cert_1: { policy: AlertPolicy.Never },

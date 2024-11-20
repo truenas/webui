@@ -19,7 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private servicesService = inject(ServicesService);
-  private ws = inject(WebSocketService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(AppLoaderService);
@@ -97,7 +97,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private stopService(toggle: MatSlideToggle): void {
-    this.ws.call('service.stop', [this.service().service, { silent: false }]).pipe(
+    this.api.call('service.stop', [this.service().service, { silent: false }]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({
@@ -110,7 +110,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
   }
 
   private startService(toggle: MatSlideToggle): void {
-    this.ws.call('service.start', [this.service().service, { silent: false }]).pipe(
+    this.api.call('service.start', [this.service().service, { silent: false }]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({

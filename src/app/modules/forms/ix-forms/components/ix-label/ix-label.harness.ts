@@ -8,7 +8,7 @@ export interface IxLabelFilters extends BaseHarnessFilters {
 }
 
 export class IxLabelHarness extends ComponentHarness {
-  static hostSelector = 'ix-label';
+  static readonly hostSelector = 'ix-label';
 
   readonly getTooltip = this.locatorFor(IxTooltipHarness);
 

@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -16,9 +16,9 @@ import {
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -66,7 +66,7 @@ describe('ScrubListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
@@ -74,7 +74,7 @@ describe('ScrubListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('pool.scrub.query', scrubTasks),
       ]),
       mockProvider(TaskService, {
@@ -149,7 +149,7 @@ describe('ScrubListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Apps');
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: scrubTasks[0],
     });
   });
@@ -161,6 +161,6 @@ describe('ScrubListComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Delete Task',
     }));
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
   });
 });

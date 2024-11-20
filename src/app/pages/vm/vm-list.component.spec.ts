@@ -5,8 +5,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Subject, of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -19,7 +19,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 
@@ -63,7 +63,7 @@ describe('VmListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('vm.query', virtualMachines),
       ]),
       mockProvider(SystemGeneralService, {
@@ -74,7 +74,7 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -104,6 +104,6 @@ describe('VmListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(VmWizardComponent);
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(VmWizardComponent);
   });
 });

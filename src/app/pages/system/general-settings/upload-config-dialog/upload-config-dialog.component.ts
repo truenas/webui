@@ -1,12 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -16,6 +22,18 @@ import { UploadService } from 'app/services/upload.service';
   templateUrl: './upload-config-dialog.component.html',
   styleUrls: ['./upload-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    IxFileInputComponent,
+    FormActionsComponent,
+    MatButton,
+    TestDirective,
+    MatDialogClose,
+    RequiresRolesDirective,
+    TranslateModule,
+  ],
 })
 export class UploadConfigDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
@@ -50,7 +68,7 @@ export class UploadConfigDialogComponent {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.router.navigate(['/system-tasks/reboot'], { skipLocationChange: true });
+        this.router.navigate(['/system-tasks/restart'], { skipLocationChange: true });
       });
   }
 }

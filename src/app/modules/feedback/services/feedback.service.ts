@@ -29,10 +29,10 @@ import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snac
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 type ReviewData = FileReviewComponent['form']['value'];
 type TicketData = FileTicketComponent['form']['value'];
@@ -47,7 +47,7 @@ export class FeedbackService {
 
   constructor(
     private httpClient: HttpClient,
-    private ws: WebSocketService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
@@ -120,7 +120,7 @@ export class FeedbackService {
           observer.next(file);
           observer.complete();
         }, type);
-      }).catch((error) => {
+      }).catch((error: unknown) => {
         observer.error(error);
       });
     });
@@ -132,7 +132,7 @@ export class FeedbackService {
     }
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
-      this.systemGeneralService.getProductType$,
+      this.store$.select(selectProductType),
     ]).pipe(
       first(),
       switchMap(([systemInfo, productType]) => {
@@ -157,7 +157,7 @@ export class FeedbackService {
   }
 
   getSimilarIssues(query: string): Observable<SimilarIssue[]> {
-    return this.ws.call('support.similar_issues', [query]);
+    return this.api.call('support.similar_issues', [query]);
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
@@ -261,12 +261,12 @@ export class FeedbackService {
         filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
         take(1),
       ),
-      this.ws.call('system.host_id'),
+      this.api.call('system.host_id'),
     ]);
   }
 
   private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {
-    return this.ws.job('support.new_ticket', [ticket]).pipe(
+    return this.api.job('support.new_ticket', [ticket]).pipe(
       filter((job) => job.state === JobState.Success),
       map((job) => job.result),
     );

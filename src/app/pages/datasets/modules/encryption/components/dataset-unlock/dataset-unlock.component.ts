@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, Validators,
+  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   Observable,
   from, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
@@ -17,11 +20,19 @@ import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetE
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface DatasetFormGroup {
   key?: FormControl<string>;
@@ -37,6 +48,23 @@ interface DatasetFormGroup {
   templateUrl: './dataset-unlock.component.html',
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardContent,
+    IxRadioGroupComponent,
+    ReactiveFormsModule,
+    IxCheckboxComponent,
+    IxFileInputComponent,
+    IxListComponent,
+    IxListItemComponent,
+    TranslateModule,
+    IxInputComponent,
+    IxTextareaComponent,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+  ],
 })
 export class DatasetUnlockComponent implements OnInit {
   readonly requiredRoles = [Role.DatasetWrite];
@@ -72,7 +100,7 @@ export class DatasetUnlockComponent implements OnInit {
   private apiEndPoint: string;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private aroute: ActivatedRoute,
     private authService: AuthService,
@@ -115,7 +143,7 @@ export class DatasetUnlockComponent implements OnInit {
 
   getEncryptionSummary(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.dataset.encryption_summary', [this.pk]),
+      this.api.job('pool.dataset.encryption_summary', [this.pk]),
       {
         title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),
         description: this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
@@ -184,7 +212,7 @@ export class DatasetUnlockComponent implements OnInit {
         method: 'pool.dataset.unlock',
         params: [this.pk, payload],
       })
-      : this.ws.job('pool.dataset.unlock', [this.pk, payload]);
+      : this.api.job('pool.dataset.unlock', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.unlocking_datasets_title),
@@ -226,7 +254,7 @@ export class DatasetUnlockComponent implements OnInit {
         method: 'pool.dataset.encryption_summary',
         params: [this.pk, payload],
       })
-      : this.ws.job('pool.dataset.encryption_summary', [this.pk, payload]);
+      : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),

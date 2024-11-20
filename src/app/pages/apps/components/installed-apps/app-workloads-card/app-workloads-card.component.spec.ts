@@ -2,9 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,8 +16,6 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
 import {
   VolumeMountsDialogComponent,
 } from 'app/pages/apps/components/installed-apps/app-workloads-card/volume-mounts-dialog/volume-mounts-dialog.component';
-import { ShellDetailsDialogComponent } from 'app/pages/apps/components/shell-details-dialog/shell-details-dialog.component';
-import { ShellDetailsType } from 'app/pages/apps/enum/shell-details-type.enum';
 
 describe('AppContainersCardComponent', () => {
   let spectator: Spectator<AppWorkloadsCardComponent>;
@@ -79,7 +78,6 @@ describe('AppContainersCardComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => of(true)),
       }),
-      mockProvider(Router),
       mockAuth(),
     ],
   });
@@ -101,7 +99,7 @@ describe('AppContainersCardComponent', () => {
     const details = spectator.queryAll('.details-item');
     expect(details).toHaveLength(1);
 
-    expect(details[0].querySelector('.label')).toHaveText('Ports:');
+    expect(details[0].querySelector('.label')).toHaveText('Ports');
     expect(details[0].querySelector('.value')).toHaveText('tcp://0.0.0.0:20489:20489');
     expect(details[0].querySelector('.value')).toHaveText('tcp://0.0.0.0:8080:80');
   });
@@ -116,7 +114,7 @@ describe('AppContainersCardComponent', () => {
 
     expect(containers[0].querySelector('.service-name')).toHaveText('netdata');
     expect(containers[0].querySelector('.container-state')).toHaveText('Running');
-    expect(containers[0].querySelectorAll('.container-action button')).toHaveLength(3);
+    expect(containers[0].querySelectorAll('.container-action > *')).toHaveLength(3);
   });
 
   it('opens volume mounts dialog when Volume Mounts button is pressed', async () => {
@@ -125,34 +123,21 @@ describe('AppContainersCardComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(VolumeMountsDialogComponent, {
       data: app.active_workloads.container_details[0],
+      minWidth: '60vw',
     });
   });
 
-  it('opens shell app dialog when Shell button is pressed', async () => {
+  it('has a Shell button that links to shell page', async () => {
     const shellButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Shell"]' }));
-    await shellButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      ShellDetailsDialogComponent,
-      {
-        minWidth: '650px',
-        maxWidth: '850px',
-        data: {
-          appName: app.name,
-          title: 'Choose Shell Details',
-          type: ShellDetailsType.Shell,
-          customSubmit: expect.any(Function),
-        },
-      },
-    );
+    const host = await shellButton.host();
+    expect(await host.getAttribute('href')).toBe('/apps/installed/ix-test-train/ix-test-app/shell/1');
   });
 
-  it('redirects to logs page when View Logs button is pressed', async () => {
+  it('has a View Logs button that links to logs page', async () => {
     const showLogsButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="View Logs"]' }));
-    await showLogsButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
-      ['/apps', 'installed', 'ix-test-train', 'ix-test-app', 'logs', '1'],
-    );
+    const host = await showLogsButton.host();
+    expect(await host.getAttribute('href')).toBe('/apps/installed/ix-test-train/ix-test-app/logs/1');
   });
 });

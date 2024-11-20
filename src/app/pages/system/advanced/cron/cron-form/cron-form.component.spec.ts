@@ -5,19 +5,18 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('CronFormComponent', () => {
@@ -49,7 +48,6 @@ describe('CronFormComponent', () => {
   const createComponent = createComponentFactory({
     component: CronFormComponent,
     imports: [
-      SchedulerModule,
       ReactiveFormsModule,
     ],
     providers: [
@@ -57,7 +55,7 @@ describe('CronFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('cronjob.create'),
         mockCall('cronjob.update'),
       ]),
@@ -69,7 +67,7 @@ describe('CronFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -105,7 +103,7 @@ describe('CronFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.create', [{
         command: 'rm -rf /',
         description: 'Final cron job',
         enabled: true,
@@ -159,7 +157,7 @@ describe('CronFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.update', [234, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
         command: 'ls -la',
         description: 'Updated cron job',
         enabled: false,

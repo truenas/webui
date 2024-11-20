@@ -6,8 +6,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
@@ -16,7 +16,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialogComponent>;
@@ -30,7 +30,7 @@ describe('ExtendDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockJob('pool.attach', fakeSuccessfulJob()),
         mockCall('disk.details', {
           unused: [
@@ -84,7 +84,7 @@ describe('ExtendDialogComponent', () => {
     await extendButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',

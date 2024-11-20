@@ -1,6 +1,5 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { EMPTY, of } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
@@ -25,9 +24,6 @@ describe('EnclosureSvgComponent', () => {
 </svg>`;
   const createComponent = createComponentFactory({
     component: EnclosureSvgComponent,
-    declarations: [
-      MockComponent(NgxSkeletonLoaderComponent),
-    ],
   });
 
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -177,7 +173,7 @@ describe('EnclosureSvgComponent', () => {
   describe('svg is not loaded yet', () => {
     beforeEach(fakeAsync(() => {
       mockGetBBox();
-      setupComponent(undefined);
+      setupComponent();
     }));
 
     it('shows skeleton loader while SVG is loading', fakeAsync(() => {

@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { DecimalPipe } from '@angular/common';
 import {
   AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, output,
@@ -16,7 +15,7 @@ import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface JobProgressDialogConfig<Result> {
   job$: Observable<Job<Result>>;
@@ -53,7 +52,6 @@ export interface JobProgressDialogConfig<Result> {
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     MatProgressBar,
     MatDialogActions,
@@ -109,7 +107,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   constructor(
     private dialogRef: MatDialogRef<JobProgressDialogComponent<T>, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) { }
@@ -160,6 +158,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
         this.dialogRef.close();
       },
       complete: () => {
+        // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
         switch (this.job.state) {
           case JobState.Failed:
             this.jobFailure.emit(this.job);
@@ -198,7 +197,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).pipe(
+    this.api.call('core.job_abort', [this.job.id]).pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     )
@@ -217,7 +216,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
     this.realtimeLogsSubscribed = true;
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
     this.cdr.markForCheck();
-    return this.ws.subscribeToLogs(subName)
+    return this.api.subscribeToLogs(subName)
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((logs) => {
         if (logs?.data && typeof logs.data === 'string') {

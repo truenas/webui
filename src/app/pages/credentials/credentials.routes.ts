@@ -16,8 +16,8 @@ export const credentialsRoutes: Routes = [{
     },
     {
       path: 'users',
-      loadComponent: () => import('app/pages/credentials/users/user-list/user-list.component').then((module) => module.UserListComponent),
-      data: { title: T('Users'), breadcrumb: T('Users'), icon: 'group' },
+      data: { title: T('Users'), breadcrumb: T('Users') },
+      loadChildren: () => import('app/pages/credentials/users/user.routes').then((module) => module.userRoutes),
     },
     {
       path: 'groups',
@@ -42,7 +42,7 @@ export const credentialsRoutes: Routes = [{
     },
     {
       path: 'two-factor',
-      loadChildren: () => import('app/pages/two-factor-auth/two-factor-auth.module').then((module) => module.TwoFactorAuthModule),
+      loadComponent: () => import('app/pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
       data: { title: T('Two Factor Auth'), breadcrumb: T('Two Factor Auth') },
     },
     {

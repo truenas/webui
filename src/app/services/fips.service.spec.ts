@@ -6,10 +6,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FipsService } from 'app/services/fips.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('FipsService', () => {
   let spectator: SpectatorService<FipsService>;
@@ -23,7 +23,7 @@ describe('FipsService', () => {
         })),
       }),
       mockProvider(Router),
-      mockWebSocket([
+      mockApi([
         mockJob('failover.reboot.other_node', fakeSuccessfulJob()),
       ]),
     ],
@@ -34,7 +34,7 @@ describe('FipsService', () => {
   });
 
   describe('promptForLocalRestart', () => {
-    it('prompts for local standby and redirects to reboot page', () => {
+    it('prompts for local standby and redirects to restart page', () => {
       spectator.service.promptForRestart().subscribe();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -42,7 +42,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Now',
         }),
       );
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/reboot'], { skipLocationChange: true });
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], { skipLocationChange: true });
     });
   });
 
@@ -68,7 +68,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Standby',
         }),
       );
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('failover.reboot.other_node');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.reboot.other_node');
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     });
   });

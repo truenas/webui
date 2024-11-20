@@ -5,10 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
-} from 'app/core/testing/utils/mock-websocket.utils';
+  mockCall, mockJob, mockApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,14 +16,14 @@ import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   let saveButton: MatButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -35,7 +35,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,
@@ -46,18 +46,18 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
           mode: 16877,
-          uid: 0,
-          gid: 1001,
+          user: 'root',
+          group: 'kmem',
         })),
       }),
       mockProvider(UserService, {
         groupQueryDsCache: () => of([
-          { group: 'kmem', gid: 1001 },
-          { group: 'wheel', gid: 1002 },
+          { group: 'kmem' },
+          { group: 'wheel' },
         ]),
         userQueryDsCache: () => of([
-          { username: 'root', uid: 0 },
-          { username: 'games', uid: 103 },
+          { username: 'root' },
+          { username: 'games' },
         ]),
       }),
       mockProvider(DialogService, {
@@ -74,7 +74,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    websocket = spectator.inject(WebSocketService);
+    websocket = spectator.inject(ApiService);
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
   });
 
@@ -100,7 +100,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('saves new user and group when form is saved', async () => {
     await form.fillForm({
       User: 'games',
-      Group: 'kmem',
+      Group: 'wheel',
       'Apply User': true,
       'Apply Group': true,
     });
@@ -109,8 +109,9 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
       path: '/mnt/pool/trivial',
-      uid: 103,
-      gid: 1001,
+      mode: '755',
+      user: 'games',
+      group: 'wheel',
       options: {
         recursive: false,
         stripacl: false,
@@ -131,7 +132,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mode: '777',
       options: {
         recursive: false,
-        stripacl: true,
+        stripacl: false,
         traverse: false,
       },
     }]);

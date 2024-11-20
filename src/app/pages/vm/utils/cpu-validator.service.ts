@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * An async validator.
@@ -22,7 +22,7 @@ export class CpuValidatorService {
   constructor(
     private validators: IxValidatorsService,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   createValidator(): (control: AbstractControl) => Observable<ValidationErrors | null> {
@@ -56,7 +56,7 @@ export class CpuValidatorService {
    */
   private getMaxVcpus(): Observable<number> {
     if (!this.maximumCpus$) {
-      this.maximumCpus$ = this.ws.call('vm.maximum_supported_vcpus').pipe(shareReplay({
+      this.maximumCpus$ = this.api.call('vm.maximum_supported_vcpus').pipe(shareReplay({
         refCount: false,
         bufferSize: 1,
       }));

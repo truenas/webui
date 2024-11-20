@@ -4,7 +4,7 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -18,7 +18,7 @@ import {
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;
@@ -61,7 +61,7 @@ describe('PoolManagerStore', () => {
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('enclosure2.query', enclosures),
       ]),
       mockProvider(DiskStore, {
@@ -120,7 +120,7 @@ describe('PoolManagerStore', () => {
 
       const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VdevType.Data));
       expect(inventory).toHaveLength(2);
-      const diskNames = inventory.map((disk) => disk.devname).sort();
+      const diskNames = inventory.map((disk) => disk.devname).sort((a, b) => a.localeCompare(b));
       expect(diskNames).toEqual(['sdb', 'sdc']);
     });
   });
@@ -129,7 +129,7 @@ describe('PoolManagerStore', () => {
     it('loads enclosures', async () => {
       spectator.service.initialize();
 
-      const websocket = spectator.inject(WebSocketService);
+      const websocket = spectator.inject(ApiService);
       expect(websocket.call).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
@@ -314,7 +314,7 @@ describe('PoolManagerStore', () => {
       openFnSpy.mockImplementation(() => {
         return {
           afterClosed: () => of([]),
-        } as unknown as MatDialogRef<unknown>;
+        } as MatDialogRef<unknown>;
       });
       spectator.service.openManualSelectionDialog(VdevType.Data);
       expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);

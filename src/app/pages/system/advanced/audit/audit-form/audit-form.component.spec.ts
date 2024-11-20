@@ -5,27 +5,27 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AuditFormComponent', () => {
   let spectator: Spectator<AuditFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AuditFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('audit.config', {
           retention: 30,
           reservation: 100,
@@ -35,7 +35,7 @@ describe('AuditFormComponent', () => {
         } as AuditConfig),
         mockCall('audit.update'),
       ]),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -49,14 +49,14 @@ describe('AuditFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for audit form and shows them', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('audit.config');
+    expect(api.call).toHaveBeenCalledWith('audit.config');
     expect(values).toEqual({
       'Retention (in days)': '30',
       'Reservation (in GiB)': '100',
@@ -79,7 +79,7 @@ describe('AuditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('audit.update', [
+    expect(api.call).toHaveBeenCalledWith('audit.update', [
       {
         retention: 29,
         reservation: 99,

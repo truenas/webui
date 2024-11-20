@@ -1,0 +1,15 @@
+@import 'scss-imports/variables';
+@import 'mixins/layout';
+
+@include tree-node-with-details-container;
+
+:host {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .table-container {
+    background: var(--bg2);
+  }
+}

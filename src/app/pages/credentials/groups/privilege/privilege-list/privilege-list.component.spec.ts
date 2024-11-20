@@ -2,19 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const fakePrivilegeDataSource: Privilege[] = [
   {
@@ -44,10 +43,9 @@ describe('PrivilegeListComponent', () => {
     component: PrivilegeListComponent,
     imports: [
       PageHeaderComponent,
-      SearchInputModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('privilege.delete', true),
         mockCall('group.query', []),
@@ -55,7 +53,7 @@ describe('PrivilegeListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -86,7 +84,7 @@ describe('PrivilegeListComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'privilege1');
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(PrivilegeFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PrivilegeFormComponent, {
       data: fakePrivilegeDataSource[0],
     });
   });
@@ -95,6 +93,6 @@ describe('PrivilegeListComponent', () => {
     const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'privilege2');
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('privilege.delete', [2]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('privilege.delete', [2]);
   });
 });

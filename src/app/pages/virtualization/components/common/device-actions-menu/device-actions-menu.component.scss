@@ -1,0 +1,17 @@
+.disabled {
+  cursor: not-allowed;
+}
+
+.delete-button {
+  opacity: 0.6;
+
+  &:focus,
+  &:hover {
+    opacity: 1;
+  }
+
+  ix-icon {
+    height: 20px;
+    width: 20px;
+  }
+}

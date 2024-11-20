@@ -9,8 +9,8 @@ import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-pr
 
 export class JobProgressDialogRef<T> {
   constructor(
-    readonly matDialogRef: MatDialogRef<JobProgressDialogComponent<T>>,
-    readonly translate: TranslateService,
+    private readonly matDialogRef: MatDialogRef<JobProgressDialogComponent<T>>,
+    private readonly translate: TranslateService,
   ) {}
 
   afterClosed(): Observable<Job<T>> {

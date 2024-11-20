@@ -9,7 +9,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class VmGpuService {
   constructor(
     private gpuService: GpuService,
-    private ws: WebSocketService,
+    private api: ApiService,
   ) {}
 
   /**
@@ -30,8 +30,8 @@ export class VmGpuService {
     return this.gpuService.getAllGpus().pipe(
       switchMap((allGpus) => {
         const previousVmPciDevices = vm.devices.filter((device) => {
-          return device.dtype === VmDeviceType.Pci;
-        });
+          return device.attributes.dtype === VmDeviceType.Pci;
+        }) as VmPciPassthroughDevice[];
         const previousSlots = previousVmPciDevices.map((device) => device.attributes.pptdev);
         const previousGpus = allGpus.filter(byVmPciSlots(previousSlots));
 
@@ -69,10 +69,10 @@ export class VmGpuService {
   }
 
   private createVmPciDevice(vm: VirtualMachine, device: PciDevice): Observable<unknown> {
-    return this.ws.call('vm.device.create', [{
-      dtype: VmDeviceType.Pci,
+    return this.api.call('vm.device.create', [{
       vm: vm.id,
       attributes: {
+        dtype: VmDeviceType.Pci,
         pptdev: device.vm_pci_slot,
       },
     }]);
@@ -80,7 +80,7 @@ export class VmGpuService {
 
   private deleteGpus(previousVmPciDevices: VmPciPassthroughDevice[], gpusToRemove: Device[]): Observable<unknown>[] {
     const slotsToRemove = this.findSlotsToRemove(previousVmPciDevices, gpusToRemove);
-    return slotsToRemove.map((device) => this.ws.call('vm.device.delete', [device.id]));
+    return slotsToRemove.map((device) => this.api.call('vm.device.delete', [device.id]));
   }
 
   private findSlotsToRemove(

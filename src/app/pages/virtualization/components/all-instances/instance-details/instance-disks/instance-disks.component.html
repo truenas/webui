@@ -1,0 +1,36 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Disks' | translate }}
+    </h3>
+
+    <button
+      mat-button
+      ixTest="add-disk"
+      (click)="addDisk()"
+    >{{ 'Add' | translate }}</button>
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (disk of visibleDisks(); track disk.name) {
+        <div class="disk">
+          <div>
+            {{ disk.source }}
+            →
+            {{ disk.destination }}
+          </div>
+
+          <ix-device-actions-menu
+            [device]="disk"
+            (edit)="editDisk(disk)"
+          ></ix-device-actions-menu>
+        </div>
+      } @empty {
+        {{ 'No disks added.' | translate }}
+      }
+    }
+  </mat-card-content>
+</mat-card>

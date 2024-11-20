@@ -24,8 +24,8 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
@@ -57,10 +57,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
   isLoading = false;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
   ) {}
@@ -154,8 +154,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
     this.cdr.markForCheck();
 
     combineLatest([
-      this.ws.call('network.general.summary'),
-      this.ws.call('network.configuration.config'),
+      this.api.call('network.general.summary'),
+      this.api.call('network.configuration.config'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe(([summary, config]) => {

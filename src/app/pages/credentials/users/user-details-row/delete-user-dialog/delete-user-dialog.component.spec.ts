@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeleteUserDialogComponent', () => {
   let spectator: Spectator<DeleteUserDialogComponent>;
@@ -27,7 +27,7 @@ describe('DeleteUserDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('user.delete'),
         mockCall('group.query', [
           {
@@ -65,13 +65,13 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('User deleted');
   });
 
   it('shows Delete primary group checkbox if this is the last user in the group', async () => {
-    const websocketMock = spectator.inject(MockWebSocketService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.mockCall('group.query', [
       {
         users: [1],
@@ -80,7 +80,7 @@ describe('DeleteUserDialogComponent', () => {
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('group.query', [[['id', '=', 23]]]);
 
     const deleteGroupCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Delete user primary group `swine`' }));
     await deleteGroupCheckbox.setValue(true);
@@ -88,6 +88,6 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
   });
 });

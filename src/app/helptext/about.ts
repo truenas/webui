@@ -17,7 +17,7 @@ target="_blank">Enterprise level</a> support and services? Contact \
 <a href="https://www.ixsystems.com/quote-form/?utm_source=truenas+core+ui&utm_medium=os&utm_campaign=welcome"\
 target="_blank">iXsystems</a> for more information.'),
 
-  opensource: T('TrueNAS {product} is Free and <a href="https://github.com/truenas/" target="_blank"> \
+  opensource: T('TrueNAS is Free and <a href="https://github.com/truenas/" target="_blank"> \
 Open Source</a> software, which is provided as-is with no warranty.'),
 
   actionBtnText: {

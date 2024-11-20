@@ -3,10 +3,14 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
+import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -14,11 +18,21 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './app-disk-info.component.html',
   styleUrls: ['./app-disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    WithLoadingStateDirective,
+    NgxSkeletonLoaderModule,
+    NetworkChartComponent,
+    TranslateModule,
+    FileSizePipe,
+  ],
 })
 export class AppDiskInfoComponent {
   stats = input.required<LoadingState<AppStats>>();
+  aspectRatio = input<number>(3);
 
-  protected readonly initialDiskStats = Array.from({ length: 60 }, () => ([0, 0]));
+  isLoading = computed(() => this.stats().isLoading);
+  protected readonly initialDiskStats = Array.from({ length: 60 }, () => [0, 0]);
   protected readonly cachedDiskStats = signal<number[][]>([]);
   readonly diskStats = computed(() => {
     const cachedStats = this.cachedDiskStats();

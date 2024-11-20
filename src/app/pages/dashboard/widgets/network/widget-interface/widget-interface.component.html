@@ -16,10 +16,10 @@
       </div>
     }
 
-    <div [class]="['container', size()]">
+    <div *ixWithLoadingState="interface() as interface" [class]="['container', size()]">
       <div class="nic-info">
         <div class="info-header">
-          <h3 *ixWithLoadingState="interface() as interface" class="info-header-title">{{ interface.name }}</h3>
+          <h3 class="info-header-title">{{ interface.name }}</h3>
         </div>
         <div class="info-body">
           <div class="info-column primary">
@@ -70,7 +70,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Type' | translate }}:</span>
-                  <span>{{ interface().value.state.active_media_type }}</span>
+                  <span>{{ interface.state.active_media_type }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -78,7 +78,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'Media Subtype' | translate }}:</span>
-                  <span>{{ interface().value.state.active_media_subtype }}</span>
+                  <span>{{ interface.state.active_media_subtype }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -86,7 +86,7 @@
               @if (!isLoading()) {
                 <div class="info-list-item">
                   <span>{{ 'IP' | translate }}:</span>
-                  <span>{{ getIpAddress(interface().value) }}</span>
+                  <span>{{ getIpAddress(interface) }}</span>
                 </div>
               } @else {
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
@@ -97,33 +97,22 @@
       </div>
       @if (showChart()) {
         <div class="nic-chart">
-          <div class="chart-body">
-            @if (isLoading()) {
-              <ngx-skeleton-loader
-                class="skeleton"
-                [theme]="{
-                  width: 'calc(100% - 16px)',
-                  height: '184px',
-                  background: 'var(--alt-bg2)',
-                  opacity: 0.25,
-                  margin: '8px 0 0',
-                }"
-              ></ngx-skeleton-loader>
-            } @else {
-              <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
-            }
-          </div>
+          @if (isLoading()) {
+            <ngx-skeleton-loader
+              class="skeleton"
+              [theme]="{
+                width: 'calc(100% - 16px)',
+                height: '184px',
+                background: 'var(--alt-bg2)',
+                opacity: 0.25,
+                margin: '8px 0 0',
+              }"
+            ></ngx-skeleton-loader>
+          } @else {
+            <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
+          }
         </div>
       }
     </div>
   </mat-card-content>
 </mat-card>
-
-<ng-template #chart>
-  <ix-network-chart [data]="chartData()" [aspectRatio]="aspectRatio()"></ix-network-chart>
-</ng-template>
-
-<ng-template #skeleton>
-  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-</ng-template>
-

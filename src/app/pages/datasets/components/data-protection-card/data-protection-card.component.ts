@@ -1,15 +1,21 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +23,19 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './data-protection-card.component.html',
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatCardHeader,
+    MatButton,
+    RequiresRolesDirective,
+    TestDirective,
+    UiSearchDirective,
+    TranslateModule,
+    MatCardContent,
+    RouterLink,
+
+  ],
 })
 export class DataProtectionCardComponent {
   readonly dataset = input.required<DatasetDetails>();
@@ -25,7 +44,7 @@ export class DataProtectionCardComponent {
   protected readonly searchableElements = dataProtectionCardElements;
 
   constructor(
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
   ) {}

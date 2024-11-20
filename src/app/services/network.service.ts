@@ -4,7 +4,7 @@ import { filter, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
@@ -24,22 +24,22 @@ export class NetworkService {
 
   hostnameRegex = /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/;
 
-  constructor(protected ws: WebSocketService) {}
+  constructor(protected api: ApiService) {}
 
   getVlanParentInterfaceChoices(): Observable<Choices> {
-    return this.ws.call('interface.vlan_parent_interface_choices');
+    return this.api.call('interface.vlan_parent_interface_choices');
   }
 
   getLaggPortsChoices(id: string = null): Observable<Choices> {
-    return this.ws.call('interface.lag_ports_choices', [id]);
+    return this.api.call('interface.lag_ports_choices', [id]);
   }
 
   getLaggProtocolChoices(): Observable<string[]> {
-    return this.ws.call('interface.lag_supported_protocols');
+    return this.api.call('interface.lag_supported_protocols');
   }
 
   getBridgeMembersChoices(id: string = null): Observable<Choices> {
-    return this.ws.call('interface.bridge_members_choices', [id]);
+    return this.api.call('interface.bridge_members_choices', [id]);
   }
 
   getV4Netmasks(): Option[] {
@@ -65,7 +65,7 @@ export class NetworkService {
   }
 
   subscribeToInOutUpdates(): Observable<AllNetworkInterfacesUpdate> {
-    return this.ws.subscribe('reporting.realtime').pipe(
+    return this.api.subscribe('reporting.realtime').pipe(
       map((event) => event.fields?.interfaces),
       filter(Boolean),
     );

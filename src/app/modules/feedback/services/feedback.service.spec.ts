@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
@@ -20,9 +20,9 @@ import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snac
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
-import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
+import { selectProductType, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackService', () => {
   let spectator: SpectatorService<FeedbackService>;
@@ -42,12 +42,16 @@ describe('FeedbackService', () => {
   const createService = createServiceFactory({
     service: FeedbackService,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockJob('support.new_ticket', fakeSuccessfulJob(newTicket)),
         mockCall('system.host_id', 'testHostId'),
       ]),
       provideMockStore({
         selectors: [
+          {
+            selector: selectProductType,
+            value: ProductType.ScaleEnterprise,
+          },
           {
             selector: selectSystemInfoState,
             value: {
@@ -60,7 +64,6 @@ describe('FeedbackService', () => {
           },
         ],
       }),
-      mockProvider(SystemGeneralService),
       mockProvider(HttpClient, {
         post: jest.fn(() => of(newReview)),
       }),
@@ -121,7 +124,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
         body: 'Help me\n\nSession ID: testSessionId',
         title: 'Cannot shutdown',
@@ -144,7 +147,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
         body: 'Help me\n\nSession ID: testSessionId',
         title: 'Cannot shutdown',
@@ -176,7 +179,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Suggestion, data));
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
         body: 'test msg\n\nSession ID: testSessionId',
         title: 'test title',
@@ -243,7 +246,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicketLicensed(data));
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         body: 'New request\n\nSession ID: testSessionId',
         attach_debug: true,
         category: TicketCategory.Performance,

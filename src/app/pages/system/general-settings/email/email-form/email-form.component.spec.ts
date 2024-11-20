@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -15,14 +15,14 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig, MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
-import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { EmailFormComponent } from './email-form.component';
 
@@ -43,13 +43,13 @@ describe('EmailFormComponent', () => {
   let spectator: Spectator<EmailFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
     imports: [
       ReactiveFormsModule,
-      OauthButtonModule,
+      OauthButtonComponent,
     ],
     providers: [
       provideMockStore({
@@ -57,7 +57,7 @@ describe('EmailFormComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
         mockCall('mail.update'),
         mockCall('user.query', [
@@ -93,7 +93,7 @@ describe('EmailFormComponent', () => {
         }),
         removeEventListener: jest.fn(),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: fakeEmailConfig },
       mockAuth(),
     ],
@@ -104,16 +104,16 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-      spectator.inject(MockWebSocketService).mockCall('mail.local_administrator_email', null);
+      spectator.inject(MockApiService).mockCall('mail.local_administrator_email', null);
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await button.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('mail.local_administrator_email');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
         'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
@@ -164,7 +164,7 @@ describe('EmailFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('mail.update', [{
+      expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: '',
         fromname: '',
         oauth: {
@@ -189,7 +189,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -218,7 +218,7 @@ describe('EmailFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
@@ -234,7 +234,7 @@ describe('EmailFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('mail.update', [{
+      expect(api.call).toHaveBeenCalledWith('mail.update', [{
         fromemail: 'newfrom@ixsystems.com',
         fromname: 'Jeremy',
         oauth: null,
@@ -268,7 +268,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -312,7 +312,7 @@ describe('EmailFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current Gmail config when Gmail is set', async () => {

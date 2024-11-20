@@ -19,6 +19,7 @@ import {
     { provide: ixDropGridDirectiveToken, useValue: undefined },
     { provide: ixDropGridItemDirectiveToken, useExisting: IxDropGridItemDirective },
   ],
+  standalone: true,
 })
 export class IxDropGridItemDirective<T = unknown> extends CdkDropList<T> implements AfterViewInit {
   constructor(
@@ -47,7 +48,9 @@ export class IxDropGridItemDirective<T = unknown> extends CdkDropList<T> impleme
   }
 
   ngAfterViewInit(): void {
-    if (!this.parentGrid) { return; }
+    if (!this.parentGrid) {
+      return;
+    }
     this.parentGrid.registerItem(this);
   }
 }

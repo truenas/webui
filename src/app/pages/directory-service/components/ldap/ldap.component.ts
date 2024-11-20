@@ -20,16 +20,16 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -87,7 +87,7 @@ export class LdapComponent implements OnInit {
   });
 
   readonly helptext = helptextLdap;
-  readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
+  readonly kerberosRealms$ = this.api.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
         label: realm.realm,
@@ -95,21 +95,22 @@ export class LdapComponent implements OnInit {
       }));
     }),
   );
-  readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
-  readonly sslOptions$ = this.ws.call('ldap.ssl_choices').pipe(singleArrayToOptions());
+
+  readonly kerberosPrincipals$ = this.api.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
+  readonly sslOptions$ = this.api.call('ldap.ssl_choices').pipe(singleArrayToOptions());
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly schemaOptions$ = this.ws.call('ldap.schema_choices').pipe(singleArrayToOptions());
+  readonly schemaOptions$ = this.api.call('ldap.schema_choices').pipe(singleArrayToOptions());
   readonly isEnabled$ = this.form.select((values) => values.enable);
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: IxSlideInRef<LdapComponent>,
+    private slideInRef: SlideInRef<LdapComponent>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -124,20 +125,23 @@ export class LdapComponent implements OnInit {
 
   onRebuildCachePressed(): void {
     this.isLoading = true;
-    this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.snackbar.success(
-          this.translate.instant(helptextLdap.ldap_custactions_clearcache_dialog_message),
-        );
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseError(error));
-        this.cdr.markForCheck();
-      },
-    });
+    this.dialogService
+      .jobDialog(this.systemGeneralService.refreshDirServicesCache())
+      .afterClosed()
+      .pipe(untilDestroyed(this)).subscribe({
+        next: ({ description }) => {
+          this.isLoading = false;
+          this.snackbar.success(
+            this.translate.instant(description || helptextLdap.ldap_custactions_clearcache_dialog_message),
+          );
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseError(error));
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   onSubmit(): void {
@@ -145,7 +149,7 @@ export class LdapComponent implements OnInit {
     const values = this.form.value;
 
     this.dialogService.jobDialog(
-      this.ws.job('ldap.update', [values]),
+      this.api.job('ldap.update', [values]),
       {
         title: 'LDAP',
       },
@@ -170,7 +174,7 @@ export class LdapComponent implements OnInit {
   private loadFormValues(): void {
     this.isLoading = true;
 
-    this.ws.call('ldap.config')
+    this.api.call('ldap.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {

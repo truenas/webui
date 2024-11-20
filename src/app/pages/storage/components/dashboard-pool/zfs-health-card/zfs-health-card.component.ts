@@ -39,7 +39,7 @@ import {
 import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -84,7 +84,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -195,7 +195,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
+        switchMap(() => this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -210,20 +210,20 @@ export class ZfsHealthCardComponent implements OnChanges {
       buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
+      switchMap(() => this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }
 
   onPauseScrub(): void {
-    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+    this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
   onResumeScrub(): void {
-    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+    this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
@@ -240,7 +240,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     if (this.poolScanSubscription && !this.poolScanSubscription.closed) {
       this.poolScanSubscription.unsubscribe();
     }
-    this.poolScanSubscription = this.ws.subscribe('zfs.pool.scan')
+    this.poolScanSubscription = this.api.subscribe('zfs.pool.scan')
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool.name),
@@ -254,7 +254,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   private loadScrubTaskStatus(): void {
-    this.hasScrubTask$ = this.ws.call('pool.scrub.query', [[['pool_name', '=', this.pool.name]]]).pipe(
+    this.hasScrubTask$ = this.api.call('pool.scrub.query', [[['pool_name', '=', this.pool.name]]]).pipe(
       map((scrubTasks) => scrubTasks.length > 0),
       toLoadingState(),
     );

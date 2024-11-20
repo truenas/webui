@@ -16,7 +16,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class LeaveDomainDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<LeaveDomainDialogComponent>,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -59,7 +59,7 @@ export class LeaveDomainDialogComponent {
   onSubmit(): void {
     const params = this.form.value;
 
-    this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
+    this.api.job('activedirectory.leave', [params as LeaveActiveDirectory])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {

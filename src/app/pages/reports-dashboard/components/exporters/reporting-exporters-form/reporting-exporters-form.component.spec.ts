@@ -3,19 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { Schema } from 'app/interfaces/schema.interface';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReportingExportersFormComponent', () => {
   let spectator: Spectator<ReportingExportersFormComponent>;
@@ -36,12 +35,11 @@ describe('ReportingExportersFormComponent', () => {
   const createComponent = createComponentFactory({
     component: ReportingExportersFormComponent,
     imports: [
-      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
-      mockWebSocket([
+      mockProvider(SlideInRef),
+      mockApi([
         mockCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
           schema: [
@@ -93,7 +91,7 @@ describe('ReportingExportersFormComponent', () => {
 
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
         type: ReportingExporterKey.Graphite,
         enabled: true,
@@ -102,7 +100,7 @@ describe('ReportingExportersFormComponent', () => {
           secret_access_key: 'abcd',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -118,7 +116,7 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('shows values for existing exporter', async () => {
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
 
       const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
       const typeOptions = await typeSelect.getOptionLabels();
@@ -154,7 +152,7 @@ describe('ReportingExportersFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'reporting.exporters.update',
         [
           123,
@@ -168,7 +166,7 @@ describe('ReportingExportersFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

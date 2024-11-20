@@ -19,6 +19,7 @@ import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -26,25 +27,24 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxModalHeader2Component } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header2/ix-modal-header2.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
@@ -57,7 +57,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeader2Component,
+    ModalHeader2Component,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -163,7 +163,7 @@ export class SshConnectionFormComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
@@ -205,7 +205,7 @@ export class SshConnectionFormComponent implements OnInit {
       connect_timeout: this.form.controls.connect_timeout.value,
     };
 
-    this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
+    this.api.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (remoteHostKey) => {
@@ -273,8 +273,8 @@ export class SshConnectionFormComponent implements OnInit {
       };
     }
 
-    return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
-      catchError((error: WebSocketError) => {
+    return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
+      catchError((error: ApiError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
@@ -286,7 +286,7 @@ export class SshConnectionFormComponent implements OnInit {
             switchMap((retry) => {
               if (retry) {
                 params.semi_automatic_setup.verify_ssl = false;
-                return this.ws.call('keychaincredential.setup_ssh_connection', [params]);
+                return this.api.call('keychaincredential.setup_ssh_connection', [params]);
               }
               return throwError(() => error);
             }),
@@ -311,6 +311,6 @@ export class SshConnectionFormComponent implements OnInit {
       } as SshCredentials,
     };
 
-    return this.ws.call('keychaincredential.update', [this.existingConnection.id, params]);
+    return this.api.call('keychaincredential.update', [this.existingConnection.id, params]);
   }
 }

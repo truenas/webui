@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -16,18 +16,18 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
 
   const existingTarget = {
     id: 123,
@@ -56,11 +56,11 @@ describe('TargetFormComponent', () => {
       IxIpInputWithNetmaskComponent,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(DialogService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
         mockCall('iscsi.target.validate_name', null),
@@ -68,15 +68,11 @@ describe('TargetFormComponent', () => {
           comment: 'comment_1',
           id: 1,
           tag: 11,
-          discovery_authgroup: 111,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '1.1.1.1' }],
         }, {
           comment: 'comment_2',
           id: 2,
           tag: 22,
-          discovery_authgroup: 222,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
         mockCall('iscsi.initiator.query', [{
@@ -113,7 +109,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('add new target when form is submitted', async () => {
@@ -167,7 +163,7 @@ describe('TargetFormComponent', () => {
         ],
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -180,7 +176,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
@@ -218,11 +214,14 @@ describe('TargetFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
-      let portal; let initiator; let auth: Option[];
+      let portal;
+      let initiator;
+      let auth: Option[];
+
       spectator.component.portals$.subscribe((options) => portal = options);
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
@@ -257,7 +256,7 @@ describe('TargetFormComponent', () => {
 
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(WebSocketService);
+      websocket = spectator.inject(ApiService);
       jest.spyOn(websocket, 'call').mockImplementation((method) => {
         if (method === 'iscsi.target.validate_name') {
           return of('Target with this name already exists');

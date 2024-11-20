@@ -24,14 +24,14 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -43,7 +43,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -203,7 +203,7 @@ export class NetworkConfigurationComponent implements OnInit {
     fcName: 'outbound_network_value',
     label: helptextNetworkConfiguration.outbound_network_value.placeholder,
     tooltip: helptextNetworkConfiguration.outbound_network_value.tooltip,
-    options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
+    options: this.api.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
 
@@ -220,9 +220,9 @@ export class NetworkConfigurationComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: IxSlideInRef<NetworkConfigurationComponent>,
+    private slideInRef: SlideInRef<NetworkConfigurationComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -264,7 +264,7 @@ export class NetworkConfigurationComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.ws.call('network.configuration.config')
+    this.api.call('network.configuration.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config: NetworkConfiguration) => {
@@ -311,7 +311,7 @@ export class NetworkConfigurationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = { ...this.form.value };
     let activity: NetworkConfigurationActivity;
 
     if ([NetworkActivityType.Allow, NetworkActivityType.Deny].includes(values.outbound_network_activity)) {
@@ -344,7 +344,7 @@ export class NetworkConfigurationComponent implements OnInit {
     };
 
     this.isFormLoading = true;
-    this.ws.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
+    this.api.call('network.configuration.update', [params] as [NetworkConfigurationUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

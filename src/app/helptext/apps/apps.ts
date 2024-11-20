@@ -38,6 +38,10 @@ export const helptextApps = {
   advanced: T('Advanced Settings'),
   unset_pool: T('Unset Pool'),
 
+  dockerSettings: {
+    addressPoolsSize: T('Network size of each docker network which will be cut off from base subnet.'),
+  },
+
   bulkActions: {
     title: T('Bulk actions'),
     finished: T('Requested action performed for selected Applications'),
@@ -254,4 +258,8 @@ export const helptextApps = {
      process may stall as images cannot be pulled. The current limit will be renewed in {seconds}. The application\
       can still be staged for installation.'),
   },
+
+  ports: T('Host ports are listed on the left and associated container ports are on the right.\
+  \
+  0.0.0.0 on the host side represents binding to any IP address on the host.'),
 };

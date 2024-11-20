@@ -1,30 +1,46 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatButton } from '@angular/material/button';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { IxTableDetailsRowComponent } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -33,6 +49,27 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './snapshot-task-list.component.html',
   providers: [TaskService, StorageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    PageHeaderComponent,
+    SearchInput1Component,
+    MatButton,
+    TestDirective,
+    RouterLink,
+    IxTableColumnsSelectorComponent,
+    RequiresRolesDirective,
+    UiSearchDirective,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    IxTableDetailsRowDirective,
+    IxTableDetailsRowComponent,
+    IxIconComponent,
+    IxTablePagerComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class SnapshotTaskListComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -73,27 +110,20 @@ export class SnapshotTaskListComponent implements OnInit {
       propertyName: 'frequency',
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
       getValue: (task) => {
         if (task.enabled) {
-          return task.schedule
-            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
-            : this.translate.instant('N/A');
+          return this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule));
         }
         return this.translate.instant('Disabled');
       },
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
       hidden: true,
-      getValue: (row) => {
-        if (row.state?.datetime?.$date) {
-          return formatDistanceToNowShortened(row.state?.datetime?.$date);
-        }
-        return this.translate.instant('N/A');
-      },
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     textColumn({
       title: this.translate.instant('Keep snapshot for'),
@@ -139,11 +169,11 @@ export class SnapshotTaskListComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private taskService: TaskService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private slideInService: SlideInService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {
@@ -151,7 +181,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const tasks$ = this.ws.call('pool.snapshottask.query').pipe(
+    const tasks$ = this.api.call('pool.snapshottask.query').pipe(
       tap((tasks) => {
         this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
       }),
@@ -202,7 +232,7 @@ export class SnapshotTaskListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

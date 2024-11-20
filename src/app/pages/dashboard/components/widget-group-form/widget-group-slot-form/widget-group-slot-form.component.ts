@@ -21,14 +21,16 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormBuilder, ValidationErrors, Validators,
+  FormBuilder, ValidationErrors, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   Observable, Subscription, combineLatest, map, of, switchMap,
 } from 'rxjs';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -44,6 +46,13 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   templateUrl: './widget-group-slot-form.component.html',
   styleUrl: './widget-group-slot-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    TranslateModule,
+  ],
 })
 export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
@@ -286,7 +295,6 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
             },
             (errors: ValidationErrors): void => {
               if (!errors) {
-                errors = {} as ValidationErrors;
                 return;
               }
               this.validityChange.emit([this.slot().slotPosition, errors]);

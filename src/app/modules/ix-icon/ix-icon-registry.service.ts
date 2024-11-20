@@ -5,17 +5,19 @@ import {
 } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import iconConfig from 'app/../assets/icons/sprite-config.json';
 
 @Injectable({ providedIn: 'root' })
 export class IxIconRegistry extends MatIconRegistry {
   constructor(
-  @Optional() httpClient: HttpClient,
+    @Optional() httpClient: HttpClient,
     sanitizer: DomSanitizer,
     @Optional() @Inject(DOCUMENT) document: Document,
     errorHandler: ErrorHandler,
   ) {
     super(httpClient, sanitizer, document, errorHandler);
 
-    this.addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl('assets/icons/sprite.svg'));
+    // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
+    this.addSvgIconSet(sanitizer.bypassSecurityTrustResourceUrl(iconConfig.iconUrl));
   }
 }

@@ -1,15 +1,21 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import {
+  MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
+} from '@angular/material/stepper';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
   IscsiAuthMethod,
@@ -22,8 +28,6 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
-  IscsiAuthAccess,
-  IscsiAuthAccessUpdate,
   IscsiExtent,
   IscsiExtentUpdate,
   IscsiInitiatorGroup,
@@ -37,17 +41,24 @@ import {
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
+import {
+  UseIxIconsInStepperComponent,
+} from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
+import { DeviceWizardStepComponent } from './steps/device-wizard-step/device-wizard-step.component';
+import { InitiatorWizardStepComponent } from './steps/initiator-wizard-step/initiator-wizard-step.component';
+import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wizard-step.component';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +66,25 @@ import { ServicesState } from 'app/store/services/services.reducer';
   templateUrl: './iscsi-wizard.component.html',
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ModalHeaderComponent,
+    MatCard,
+    ReactiveFormsModule,
+    MatStepper,
+    MatStep,
+    MatStepLabel,
+    DeviceWizardStepComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    PortalWizardStepComponent,
+    MatStepperPrevious,
+    InitiatorWizardStepComponent,
+    RequiresRolesDirective,
+    TranslateModule,
+    UseIxIconsInStepperComponent,
+  ],
 })
 export class IscsiWizardComponent implements OnInit {
   isLoading = false;
@@ -63,7 +93,6 @@ export class IscsiWizardComponent implements OnInit {
 
   createdZvol: Dataset;
   createdExtent: IscsiExtent;
-  createdAuthgroup: IscsiAuthAccess;
   createdPortal: IscsiPortal;
   createdInitiator: IscsiInitiatorGroup;
   createdTarget: IscsiTarget;
@@ -87,12 +116,6 @@ export class IscsiWizardComponent implements OnInit {
     }),
     portal: this.fb.group({
       portal: [null as typeof newOption | number, [Validators.required]],
-      discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
-      discovery_authgroup: [null as typeof newOption | number],
-      tag: [0, [Validators.min(0), Validators.required]],
-      user: ['', [Validators.required]],
-      secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
-      secret_confirm: ['', [Validators.required]],
       listen: this.fb.array<string>([]),
     }),
     initiator: this.fb.group({
@@ -116,11 +139,6 @@ export class IscsiWizardComponent implements OnInit {
 
   get isNewZvol(): boolean {
     return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
-  }
-
-  get isNewAuthgroup(): boolean {
-    return this.form.controls.portal.controls.discovery_authgroup.enabled
-      && this.form.value.portal.discovery_authgroup === newOption;
   }
 
   get isNewPortal(): boolean {
@@ -160,7 +178,8 @@ export class IscsiWizardComponent implements OnInit {
     if (extentPayload.type === IscsiExtentType.File) {
       const filesize = value.filesize;
       extentPayload.filesize = filesize % blocksizeDefault
-        ? (filesize + (blocksizeDefault - filesize % blocksizeDefault)) : filesize;
+        ? (filesize + (blocksizeDefault - filesize % blocksizeDefault))
+        : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
       if (value.disk === newOption) {
@@ -172,22 +191,11 @@ export class IscsiWizardComponent implements OnInit {
     return extentPayload;
   }
 
-  get authgroupPayload(): IscsiAuthAccessUpdate {
-    const value = this.form.value.portal;
-    return {
-      tag: value.tag,
-      user: value.user,
-      secret: value.secret,
-    } as IscsiAuthAccessUpdate;
-  }
-
   get portalPayload(): IscsiPortalUpdate {
     const value = this.form.value;
     return {
       comment: value.device.name,
-      discovery_authmethod: value.portal.discovery_authmethod,
       listen: value.portal.listen.map((ip) => ({ ip } as IscsiInterface)),
-      discovery_authgroup: this.isNewAuthgroup ? this.createdAuthgroup.tag : undefined,
     };
   }
 
@@ -224,9 +232,9 @@ export class IscsiWizardComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<IscsiWizardComponent>,
+    private slideInRef: SlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -262,72 +270,58 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   disablePortalGroup(): void {
-    this.form.controls.portal.controls.discovery_authmethod.disable();
-    this.form.controls.portal.controls.discovery_authgroup.disable();
-    this.form.controls.portal.controls.tag.disable();
-    this.form.controls.portal.controls.user.disable();
-    this.form.controls.portal.controls.secret.disable();
-    this.form.controls.portal.controls.secret_confirm.disable();
     this.form.controls.portal.controls.listen.disable();
   }
 
   createZvol(payload: DatasetCreate): Promise<Dataset> {
-    return lastValueFrom(this.ws.call('pool.dataset.create', [payload]));
+    return lastValueFrom(this.api.call('pool.dataset.create', [payload]));
   }
 
   createExtent(payload: IscsiExtentUpdate): Promise<IscsiExtent> {
-    return lastValueFrom(this.ws.call('iscsi.extent.create', [payload]));
-  }
-
-  createAuthgroup(payload: IscsiAuthAccessUpdate): Promise<IscsiAuthAccess> {
-    return lastValueFrom(this.ws.call('iscsi.auth.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.extent.create', [payload]));
   }
 
   createPortal(payload: IscsiPortalUpdate): Promise<IscsiPortal> {
-    return lastValueFrom(this.ws.call('iscsi.portal.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.portal.create', [payload]));
   }
 
   createInitiator(payload: IscsiInitiatorGroupUpdate): Promise<IscsiInitiatorGroup> {
-    return lastValueFrom(this.ws.call('iscsi.initiator.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.initiator.create', [payload]));
   }
 
   createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
-    return lastValueFrom(this.ws.call('iscsi.target.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
   }
 
   createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
-    return lastValueFrom(this.ws.call('iscsi.targetextent.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.targetextent.create', [payload]));
   }
 
   rollBack(): void {
     const requests = [];
 
     if (this.createdZvol) {
-      requests.push(this.ws.call('pool.dataset.delete', [this.createdZvol.id, { recursive: true, force: true }]));
+      requests.push(this.api.call('pool.dataset.delete', [this.createdZvol.id, { recursive: true, force: true }]));
     }
 
     if (this.createdExtent) {
-      requests.push(this.ws.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
-    }
-
-    if (this.createdAuthgroup) {
-      requests.push(this.ws.call('iscsi.auth.delete', [this.createdAuthgroup.id]));
+      requests.push(this.api.call('iscsi.extent.delete', [this.createdExtent.id, true, true]));
     }
 
     if (this.createdPortal) {
-      requests.push(this.ws.call('iscsi.portal.delete', [this.createdPortal.id]));
+      requests.push(this.api.call('iscsi.portal.delete', [this.createdPortal.id]));
     }
 
     if (this.createdInitiator) {
-      requests.push(this.ws.call('iscsi.initiator.delete', [this.createdInitiator.id]));
+      requests.push(this.api.call('iscsi.initiator.delete', [this.createdInitiator.id]));
     }
 
     if (this.createdTarget) {
-      requests.push(this.ws.call('iscsi.target.delete', [this.createdTarget.id]));
+      requests.push(this.api.call('iscsi.target.delete', [this.createdTarget.id]));
     }
 
     if (this.createdTargetExtent) {
-      requests.push(this.ws.call('iscsi.targetextent.delete', [this.createdTargetExtent.id]));
+      requests.push(this.api.call('iscsi.targetextent.delete', [this.createdTargetExtent.id]));
     }
 
     if (requests.length) {
@@ -352,7 +346,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.createdZvol = undefined;
     this.createdExtent = undefined;
-    this.createdAuthgroup = undefined;
     this.createdPortal = undefined;
     this.createdInitiator = undefined;
     this.createdTarget = undefined;
@@ -361,7 +354,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewZvol) {
       await this.createZvol(this.zvolPayload).then(
         (createdZvol) => this.createdZvol = createdZvol,
-        (err: WebSocketError) => this.handleError(err),
+        (err: unknown) => this.handleError(err),
       );
     }
 
@@ -372,20 +365,8 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createExtent(this.extentPayload).then(
       (createdExtent) => this.createdExtent = createdExtent,
-      (err: WebSocketError) => this.handleError(err),
+      (err: unknown) => this.handleError(err),
     );
-
-    if (this.toStop) {
-      this.rollBack();
-      return;
-    }
-
-    if (this.isNewAuthgroup) {
-      await this.createAuthgroup(this.authgroupPayload).then(
-        (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
-        (err: WebSocketError) => this.handleError(err),
-      );
-    }
 
     if (this.toStop) {
       this.rollBack();
@@ -395,7 +376,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewPortal) {
       await this.createPortal(this.portalPayload).then(
         (createdPortal) => this.createdPortal = createdPortal,
-        (err: WebSocketError) => this.handleError(err),
+        (err: unknown) => this.handleError(err),
       );
     }
 
@@ -407,7 +388,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewInitiator) {
       await this.createInitiator(this.initiatorPayload).then(
         (createdInitiator) => this.createdInitiator = createdInitiator,
-        (err: WebSocketError) => this.handleError(err),
+        (err: unknown) => this.handleError(err),
       );
     }
 
@@ -419,7 +400,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewTarget) {
       await this.createTarget(this.targetPayload).then(
         (createdTarget) => this.createdTarget = createdTarget,
-        (err: WebSocketError) => this.handleError(err),
+        (err: unknown) => this.handleError(err),
       );
     }
 
@@ -430,7 +411,7 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createTargetExtent(this.targetExtentPayload).then(
       (createdTargetExtent) => this.createdTargetExtent = createdTargetExtent,
-      (err: WebSocketError) => this.handleError(err),
+      (err: unknown) => this.handleError(err),
     );
 
     if (this.toStop) {

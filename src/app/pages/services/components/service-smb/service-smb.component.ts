@@ -26,15 +26,15 @@ import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -123,20 +123,23 @@ export class ServiceSmbComponent implements OnInit {
     { label: this.translate.instant('Full'), value: LogLevel.Full },
     { label: this.translate.instant('Debug'), value: LogLevel.Debug },
   ]);
-  readonly unixCharsetOptions$ = this.ws.call('smb.unixcharset_choices').pipe(choicesToOptions());
-  readonly guestAccountOptions$ = this.ws.call('user.query').pipe(
+
+  readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
+  readonly guestAccountOptions$ = this.api.call('user.query').pipe(
     map((users) => users.map((user) => ({ label: user.username, value: user.username }))),
   );
+
   readonly adminGroupProvider = new SimpleAsyncComboboxProvider(
     this.userService.groupQueryDsCache('', true).pipe(
       map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
     ),
   );
-  readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
+
+  readonly bindIpAddressOptions$ = this.api.call('smb.bindip_choices').pipe(choicesToOptions());
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -146,13 +149,13 @@ export class ServiceSmbComponent implements OnInit {
     private userService: UserService,
     private validatorsService: IxValidatorsService,
     private snackbar: SnackbarService,
-    private slideInRef: IxSlideInRef<ServiceSmbComponent>,
+    private slideInRef: SlideInRef<ServiceSmbComponent>,
   ) {}
 
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('smb.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -174,13 +177,13 @@ export class ServiceSmbComponent implements OnInit {
     const values: SmbConfigUpdate = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('smb.update', [values])
+    this.api.call('smb.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

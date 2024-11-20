@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
+import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
 import { LocaleService } from 'app/services/locale.service';
@@ -109,6 +110,7 @@ export class TaskService {
     { label: '23:45:00', value: '23:45' },
     { label: '23:59:00', value: '23:59' },
   ];
+
   protected cronOptions: CronOptions = {
     verbose: true,
     locale: this.language.currentLanguage,
@@ -125,26 +127,34 @@ export class TaskService {
   }
 
   getTaskNextRun(scheduleExpression: string): string {
-    const schedule = cronParser.parseExpression(scheduleExpression, {
-      iterator: true,
-      tz: this.localeService.timezone,
-    });
+    try {
+      const schedule = cronParser.parseExpression(scheduleExpression, {
+        iterator: true,
+        tz: this.localeService.timezone,
+      });
 
-    const date = schedule?.next()?.value?.toDate();
-    if (!date) {
-      return this.translate.instant('N/A');
+      const date = schedule?.next()?.value?.toDate();
+      if (!date) {
+        return this.translate.instant('N/A');
+      }
+
+      return formatDistanceToNowShortened(date);
+    } catch {
+      return this.translate.instant(invalidDate);
     }
-
-    return formatDistanceToNowShortened(date);
   }
 
-  getTaskNextTime(scheduleExpression: string): Date {
-    const schedule = cronParser.parseExpression(scheduleExpression, {
-      iterator: true,
-      tz: this.localeService.timezone,
-    });
+  getTaskNextTime(scheduleExpression: string): Date | string {
+    try {
+      const schedule = cronParser.parseExpression(scheduleExpression, {
+        iterator: true,
+        tz: this.localeService.timezone,
+      });
 
-    return schedule.next().value.toDate();
+      return schedule.next().value.toDate();
+    } catch {
+      return this.translate.instant(invalidDate);
+    }
   }
 
   /**

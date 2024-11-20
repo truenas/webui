@@ -2,10 +2,12 @@ import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, output,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperNext } from '@angular/material/stepper';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
@@ -17,25 +19,33 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { ixManualValidateError } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
+import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,6 +54,21 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./replication-what-and-where.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, DatePipe, KeychainCredentialService],
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxSelectComponent,
+    SshCredentialsSelectComponent,
+    IxExplorerComponent,
+    IxCheckboxComponent,
+    IxRadioGroupComponent,
+    IxInputComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   readonly customRetentionVisibleChange = output<boolean>();
@@ -87,7 +112,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     sudo: [false],
     name: ['', [Validators.required],
       forbiddenAsyncValues(
-        this.ws.call('replication.query').pipe(
+        this.api.call('replication.query').pipe(
           map((replications) => replications.map((replication) => replication.name)),
         ),
       ),
@@ -146,7 +171,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -275,7 +300,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     merge(
       this.form.controls.naming_schema.valueChanges,
       this.form.controls.name_regex.valueChanges,
-    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => (this.getSnapshots()));
+    ).pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => this.getSnapshots());
 
     merge(
       this.form.controls.ssh_credentials_source.valueChanges,
@@ -395,7 +420,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ]).pipe(
         switchMap((hasRole) => {
           if (hasRole) {
-            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+            return this.api.call('replication.count_eligible_manual_snapshots', [payload]);
           }
           return of({ eligible: 0, total: 0 });
         }),
@@ -414,7 +439,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: (error: WebSocketError) => {
+        error: (error: ApiError) => {
           this.snapshotsText = '';
           this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
           this.cdr.markForCheck();
@@ -498,7 +523,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       return;
     }
     const suggestName = source.length > 3
-      ? `${source[0]},...,${source[source.length - 1]} - ${target}` : `${source.join(',')} - ${target}`;
+      ? `${source[0]},...,${source[source.length - 1]} - ${target}`
+      : `${source.join(',')} - ${target}`;
     this.form.controls.name.setValue(suggestName);
   }
 

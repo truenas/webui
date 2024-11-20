@@ -14,7 +14,7 @@ import {
  * When possibilities of this class are not enough, use individual harnesses such as IxInputHarness, etc.
  */
 export class IxFormHarness extends ComponentHarness {
-  static hostSelector = 'form';
+  static readonly hostSelector = 'form';
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
 

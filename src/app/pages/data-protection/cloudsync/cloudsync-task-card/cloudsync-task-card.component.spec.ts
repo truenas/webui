@@ -7,8 +7,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -16,10 +16,10 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -29,11 +29,11 @@ import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudSyncTaskCardComponent', () => {
@@ -114,7 +114,7 @@ describe('CloudSyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebSocket([
+      mockApi([
         mockCall('cloudsync.query', cloudsyncTasks),
         mockCall('cloudsync.delete'),
         mockCall('cloudsync.update'),
@@ -122,11 +122,11 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(IxSlideInRef),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInRef),
+      mockProvider(SlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
         })),
@@ -165,7 +165,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
       true,
       cloudsyncTasks[0],
@@ -176,7 +176,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
       true,
     );
@@ -184,7 +184,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 6);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 6);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -193,7 +193,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -206,7 +206,7 @@ describe('CloudSyncTaskCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -229,7 +229,7 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Delete Cloud Sync Task <b>"custom-cloudsync"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {
@@ -239,7 +239,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloudsync.update',
       [3, { enabled: true }],
     );

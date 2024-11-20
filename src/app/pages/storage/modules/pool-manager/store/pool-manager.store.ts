@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
-import { Store } from '@ngrx/store';
 import { differenceBy, isEqual, without } from 'lodash-es';
 import {
   combineLatest,
@@ -34,8 +33,7 @@ import {
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
@@ -145,6 +143,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.topology$,
     (topology) => categoryCapacity(topology[VdevType.Data]),
   );
+
   readonly allowedDisks$ = this.select(
     this.diskStore.selectableDisks$,
     this.diskSettings$,
@@ -228,11 +227,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   constructor(
     private diskStore: DiskStore,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
-    private settingsStore$: Store<AppState>,
     private matDialog: MatDialog,
   ) {
     super(initialState);
@@ -262,7 +260,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   loadStateInitialData(): Observable<[Enclosure[], DiskDetailsResponse]> {
     return forkJoin([
-      this.ws.call('enclosure2.query'),
+      this.api.call('enclosure2.query'),
       this.diskStore.loadDisks(),
     ]).pipe(
       tapResponse(

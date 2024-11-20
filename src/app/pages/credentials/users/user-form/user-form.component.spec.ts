@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -17,16 +17,16 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { UserFormComponent } from './user-form.component';
 
 describe('UserFormComponent', () => {
@@ -63,7 +63,7 @@ describe('UserFormComponent', () => {
   const builtinUser = { ...mockUser, builtin: true, immutable: true };
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: UserFormComponent,
     imports: [
@@ -71,7 +71,7 @@ describe('UserFormComponent', () => {
       IxPermissionsComponent,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('user.query'),
         mockCall('user.create'),
         mockCall('user.update'),
@@ -86,7 +86,7 @@ describe('UserFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({ mode: 16832 })),
       }),
@@ -115,7 +115,7 @@ describe('UserFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 
@@ -123,13 +123,13 @@ describe('UserFormComponent', () => {
       const uidInput = await loader.getHarness(IxInputHarness.with({ label: 'UID' }));
       const value = await uidInput.getValue();
 
-      expect(ws.call).toHaveBeenCalledWith('user.get_next_uid');
+      expect(api.call).toHaveBeenCalledWith('user.get_next_uid');
       expect(value).toBe('1234');
     });
 
     it('loads home share path and puts it in home field', async () => {
       const homeInput = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      expect(ws.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
+      expect(api.call).toHaveBeenCalledWith('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]]);
       expect(await homeInput.getValue()).toBe('/mnt/users');
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
@@ -153,7 +153,7 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
+      expect(api.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
         full_name: 'John Smith',
         group_create: true,
         password: 'test-pass',
@@ -185,7 +185,7 @@ describe('UserFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 
@@ -204,7 +204,7 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
+      expect(api.call).toHaveBeenCalledWith('user.update', [69, expect.objectContaining({
         password: 'changepwd',
       })]);
     });
@@ -278,11 +278,11 @@ describe('UserFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('user.update', [
+      expect(api.call).toHaveBeenCalledWith('user.update', [
         69, { home: '/home/updated', home_create: true },
       ]);
 
-      expect(ws.call).toHaveBeenLastCalledWith('user.update', [
+      expect(api.call).toHaveBeenLastCalledWith('user.update', [
         69,
         {
           email: null,
@@ -312,7 +312,7 @@ describe('UserFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(WebSocketService);
+      api = spectator.inject(ApiService);
       spectator.component.setupForm();
     });
 
@@ -326,6 +326,7 @@ describe('UserFormComponent', () => {
         'Home Directory': true,
         'Primary Group': true,
         Username: true,
+        'SMB User': true,
       }));
     });
   });

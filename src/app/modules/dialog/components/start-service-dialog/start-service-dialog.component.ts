@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -20,7 +19,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -37,7 +36,6 @@ export interface StartServiceDialogResult {
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     IxSlideToggleComponent,
     ReactiveFormsModule,
@@ -63,7 +61,7 @@ export class StartServiceDialogComponent implements OnInit {
   }
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -94,11 +92,11 @@ export class StartServiceDialogComponent implements OnInit {
     };
 
     if (result.start && result.startAutomatically && this.isDisabled) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
+      requests.push(this.api.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
     }
 
     if (result.start) {
-      requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
+      requests.push(this.api.call('service.start', [this.serviceName, { silent: false }]));
     }
 
     forkJoin(requests)
@@ -108,7 +106,7 @@ export class StartServiceDialogComponent implements OnInit {
           if (result.startAutomatically) {
             this.snackbar.success(
               this.translate.instant(
-                'The {service} service is running and will auto-start after a system reboot.',
+                'The {service} service is running and will auto-start after a system restart.',
                 { service: this.serviceHumanName },
               ),
             );

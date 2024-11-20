@@ -1,4 +1,3 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
@@ -21,7 +20,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +31,6 @@ import { WebSocketService } from 'app/services/ws.service';
   standalone: true,
   imports: [
     MatDialogTitle,
-    CdkScrollable,
     MatDialogContent,
     ReactiveFormsModule,
     IxCheckboxComponent,
@@ -58,7 +56,7 @@ export class DeleteVmDialogComponent implements OnInit {
   readonly helptext = helptextVmList;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DeleteVmDialogComponent>,
     private validators: IxValidatorsService,
@@ -73,7 +71,7 @@ export class DeleteVmDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.ws.call('vm.delete', [this.vm.id, {
+    this.api.call('vm.delete', [this.vm.id, {
       force: this.form.value.force,
       zvols: this.form.value.zvols,
     }])

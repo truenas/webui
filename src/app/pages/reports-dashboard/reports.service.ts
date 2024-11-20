@@ -14,7 +14,7 @@ import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashbo
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,16 +31,16 @@ export class ReportsService {
   constructor(
     private authService: AuthService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private http: HttpClient,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
+    this.api.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
       this.reportingGraphs$.next(reportingGraphs);
     });
 
-    this.ws.call('disk.temperatures').subscribe((values) => {
+    this.api.call('disk.temperatures').subscribe((values) => {
       this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
     });
   }
@@ -57,7 +57,7 @@ export class ReportsService {
       truncate: boolean;
     },
   ): Observable<ReportingData> {
-    return this.ws.call(
+    return this.api.call(
       'reporting.netdata_get_data',
       [[queryData.params], queryData.timeFrame],
     ).pipe(
@@ -111,7 +111,7 @@ export class ReportsService {
   }
 
   getDiskDevices(): Observable<Option[]> {
-    return this.ws.call('disk.query').pipe(
+    return this.api.call('disk.query').pipe(
       map((disks) => {
         return disks
           .filter((disk) => !disk.devname.includes('multipath'))

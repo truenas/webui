@@ -23,17 +23,17 @@ import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/ch
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxModalHeaderComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
 import { UserService } from 'app/services/user.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -63,9 +63,11 @@ export class GroupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingGroup;
   }
+
   get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
+
   isFormLoading = false;
 
   privilegesList: Privilege[];
@@ -79,7 +81,6 @@ export class GroupFormComponent implements OnInit {
     sudo_commands_nopasswd: [[] as string[]],
     sudo_commands_nopasswd_all: [false],
     smb: [false],
-    allowDuplicateGid: [false],
     privileges: [[] as string[] | number[]],
   });
 
@@ -89,17 +90,16 @@ export class GroupFormComponent implements OnInit {
     privileges: helptextGroups.privileges_tooltip,
     sudo: helptextGroups.bsdgrp_sudo_tooltip,
     smb: helptextGroups.smb_tooltip,
-    allowDuplicateGid: helptextGroups.allow_tooltip,
   };
 
-  readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
+  readonly privilegeOptions$ = this.api.call('privilege.query').pipe(
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
 
   constructor(
     private fb: FormBuilder,
-    private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<GroupFormComponent>,
+    private api: ApiService,
+    private slideInRef: SlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -114,7 +114,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   readonly privilegesProvider: ChipsProvider = (query: string) => {
-    return this.ws.call('privilege.query', []).pipe(
+    return this.api.call('privilege.query', []).pipe(
       map((privileges) => {
         const chips = privileges.map((privilege) => privilege.name);
         return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
@@ -126,7 +126,7 @@ export class GroupFormComponent implements OnInit {
     this.setFormRelations();
 
     if (this.isNew) {
-      this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
+      this.api.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
         this.form.patchValue({
           gid: nextId,
         });
@@ -145,7 +145,6 @@ export class GroupFormComponent implements OnInit {
           : this.editingGroup.sudo_commands_nopasswd,
         sudo_commands_nopasswd_all: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands),
         smb: this.editingGroup.smb,
-        allowDuplicateGid: true,
       });
       this.setNamesInUseValidator(this.editingGroup.group);
     }
@@ -158,25 +157,24 @@ export class GroupFormComponent implements OnInit {
       smb: values.smb,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
-      allow_duplicate_gid: values.allowDuplicateGid,
     };
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('group.create', [{
+      request$ = this.api.call('group.create', [{
         ...commonBody,
         gid: values.gid,
       }]);
     } else {
-      request$ = this.ws.call('group.update', [
+      request$ = this.api.call('group.update', [
         this.editingGroup.id,
         commonBody,
       ]);
     }
 
     request$.pipe(
-      switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
+      switchMap((id) => this.api.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
       switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
       untilDestroyed(this),
@@ -195,7 +193,7 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
@@ -215,7 +213,7 @@ export class GroupFormComponent implements OnInit {
 
       privileges.forEach((privilege) => {
         requests$.push(
-          this.ws.call('privilege.update', [
+          this.api.call('privilege.update', [
             privilege.id,
             this.mapPrivilegeToPrivilegeUpdate(
               privilege,
@@ -232,7 +230,7 @@ export class GroupFormComponent implements OnInit {
 
       privileges.forEach((privilege) => {
         requests$.push(
-          this.ws.call('privilege.update', [
+          this.api.call('privilege.update', [
             privilege.id,
             this.mapPrivilegeToPrivilegeUpdate(
               privilege,
@@ -247,7 +245,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private getPrivilegesList(): void {
-    this.ws.call('privilege.query', [])
+    this.api.call('privilege.query', [])
       .pipe(untilDestroyed(this)).subscribe((privileges) => {
         this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
           return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
@@ -262,7 +260,7 @@ export class GroupFormComponent implements OnInit {
   }
 
   private setNamesInUseValidator(currentName?: string): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.api.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       let forbiddenNames = groups.map((group) => group.group);
       if (currentName) {
         forbiddenNames = forbiddenNames.filter((name) => name !== currentName);

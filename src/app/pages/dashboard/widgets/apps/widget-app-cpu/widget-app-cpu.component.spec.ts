@@ -26,14 +26,14 @@ describe('WidgetAppCpuComponent', () => {
   const app = {
     id: 'testapp',
     name: 'TestApp',
-    status: AppState.Running,
+    state: AppState.Running,
     upgrade_available: true,
     metadata: {
       icon: 'http://localhost/test-app.png',
       train: 'charts',
       app_version: '1.0',
     },
-  } as unknown as App;
+  } as App;
 
   const createComponent = createComponentFactory({
     component: WidgetAppCpuComponent,

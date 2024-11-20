@@ -4,21 +4,29 @@ import {
   Component,
   OnInit, output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
+import { MatStepperNext } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { pairwise, startWith } from 'rxjs';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import {
+  catchError, EMPTY, pairwise, startWith,
+} from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -26,6 +34,17 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './cloudsync-provider.component.html',
   styleUrls: ['./cloudsync-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    CloudCredentialsSelectComponent,
+    FormActionsComponent,
+    MatButton,
+    MatStepperNext,
+    TestDirective,
+    TranslateModule,
+  ],
 })
 export class CloudSyncProviderComponent implements OnInit {
   readonly save = output<CloudSyncCredential>();
@@ -43,7 +62,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private ws: WebSocketService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private chainedComponentRef: ChainedRef<unknown>,
     private cdr: ChangeDetectorRef,
@@ -66,14 +85,23 @@ export class CloudSyncProviderComponent implements OnInit {
 
   getExistingCredentials(): void {
     this.loading.emit(true);
-    this.cloudCredentialService.getCloudSyncCredentials().pipe(untilDestroyed(this)).subscribe({
-      next: (creds) => {
-        this.credentials = creds;
-      },
-      complete: () => {
-        this.loading.emit(false);
-      },
-    });
+    this.cloudCredentialService.getCloudSyncCredentials()
+      .pipe(
+        catchError((error: unknown) => {
+          this.loading.emit(false);
+          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+          return EMPTY;
+        }),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (creds) => {
+          this.credentials = creds;
+        },
+        complete: () => {
+          this.loading.emit(false);
+        },
+      });
   }
 
   subToLoading(): void {
@@ -91,7 +119,7 @@ export class CloudSyncProviderComponent implements OnInit {
       provider: this.existingCredential.provider,
       attributes: { ...this.existingCredential.attributes },
     };
-    this.ws.call('cloudsync.credentials.verify', [payload]).pipe(
+    this.api.call('cloudsync.credentials.verify', [payload]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (response) => {

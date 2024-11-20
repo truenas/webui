@@ -117,7 +117,8 @@ export interface PoolReplaceParams {
   disk: string;
   force?: boolean;
   passphrase?: string;
-  preserve_settings?: string;
+  preserve_settings?: boolean;
+  preserve_description?: boolean;
 }
 
 export type PoolExpandParams = [

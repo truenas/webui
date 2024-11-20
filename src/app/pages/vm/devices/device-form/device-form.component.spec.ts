@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -23,28 +23,28 @@ import {
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SlideInService } from 'app/services/slide-in.service';
 import { VmService } from 'app/services/vm.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let saveButton: MatButtonHarness;
-  let websocket: WebSocketService;
+  let websocket: ApiService;
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
@@ -94,9 +94,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(FilesystemService),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
@@ -107,8 +107,8 @@ describe('DeviceFormComponent', () => {
   describe('CD-ROM', () => {
     const existingCdRom = {
       id: 5,
-      dtype: VmDeviceType.Cdrom,
       attributes: {
+        dtype: VmDeviceType.Cdrom,
         path: '/mnt/bassein/cdrom',
       },
       order: 4,
@@ -130,7 +130,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new CD-ROM device', async () => {
@@ -143,12 +143,14 @@ describe('DeviceFormComponent', () => {
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
-          dtype: VmDeviceType.Cdrom,
-          attributes: { path: '/mnt/cdrom' },
+          attributes: {
+            path: '/mnt/cdrom',
+            dtype: VmDeviceType.Cdrom,
+          },
           order: 1002,
           vm: 45,
         }]);
-        expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+        expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       });
     });
 
@@ -168,7 +170,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing CD-ROM device', async () => {
@@ -186,8 +188,10 @@ describe('DeviceFormComponent', () => {
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [5, {
-          attributes: { path: '/mnt/newcdrom' },
-          dtype: VmDeviceType.Cdrom,
+          attributes: {
+            path: '/mnt/newcdrom',
+            dtype: VmDeviceType.Cdrom,
+          },
           order: 4,
           vm: 45,
         }]);
@@ -198,12 +202,12 @@ describe('DeviceFormComponent', () => {
   describe('NIC', () => {
     const existingNic = {
       id: 2,
-      dtype: VmDeviceType.Nic,
       attributes: {
         type: 'E1000',
         mac: '00:a0:98:53:a5:ac',
         nic_attach: 'enp0s3',
         trust_guest_rx_filters: false,
+        dtype: VmDeviceType.Nic,
       },
       order: 1002,
       vm: 1,
@@ -224,7 +228,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new NIC device', async () => {
@@ -246,8 +250,8 @@ describe('DeviceFormComponent', () => {
             nic_attach: 'enp0s4',
             type: VmNicType.Virtio,
             trust_guest_rx_filters: true,
+            dtype: VmDeviceType.Nic,
           },
-          dtype: VmDeviceType.Nic,
           order: 1006,
           vm: 45,
         }]);
@@ -269,7 +273,7 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           Type: 'NIC',
         });
-        spectator.inject(MockWebSocketService).call.mockClear();
+        spectator.inject(MockApiService).call.mockClear();
 
         const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
         await generateButton.click();
@@ -298,7 +302,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing NIC device', async () => {
@@ -317,8 +321,8 @@ describe('DeviceFormComponent', () => {
   describe('Disk', () => {
     const existingDisk = {
       id: 3,
-      dtype: VmDeviceType.Disk,
       attributes: {
+        dtype: VmDeviceType.Disk,
         path: '/dev/zvol/bassein/zvol1',
         type: VmDiskMode.Ahci,
         physical_sectorsize: 4096,
@@ -343,7 +347,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new disk', async () => {
@@ -365,8 +369,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: 512,
             path: '/dev/zvol/bassein/zvol1',
             type: VmDiskMode.Virtio,
+            dtype: VmDeviceType.Disk,
           },
-          dtype: VmDeviceType.Disk,
           order: 1002,
           vm: 45,
         }]);
@@ -389,7 +393,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Disk', async () => {
@@ -416,8 +420,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: null,
             path: '/dev/zvol/bassein/zvol1',
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Disk,
           },
-          dtype: VmDeviceType.Disk,
           order: 1001,
           vm: 45,
         }]);
@@ -428,8 +432,8 @@ describe('DeviceFormComponent', () => {
   describe('Raw File', () => {
     const existingRawFile = {
       id: 6,
-      dtype: VmDeviceType.Raw,
       attributes: {
+        dtype: VmDeviceType.Raw,
         path: '/mnt/bassein/raw',
         type: VmDiskMode.Ahci,
         size: 3,
@@ -456,7 +460,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new Raw File device', async () => {
@@ -479,8 +483,8 @@ describe('DeviceFormComponent', () => {
             path: '/mnt/bassein/newraw',
             size: 3,
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
           },
-          dtype: VmDeviceType.Raw,
           order: 6,
           vm: 45,
         }]);
@@ -503,7 +507,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Raw File device', async () => {
@@ -531,8 +535,8 @@ describe('DeviceFormComponent', () => {
             physical_sectorsize: null,
             size: 5,
             type: VmDiskMode.Ahci,
+            dtype: VmDeviceType.Raw,
           },
-          dtype: VmDeviceType.Raw,
           order: 5,
           vm: 45,
         }]);
@@ -543,8 +547,8 @@ describe('DeviceFormComponent', () => {
   describe('PCI Passthrough Device', () => {
     const existingPassthrough = {
       id: 4,
-      dtype: VmDeviceType.Pci,
       attributes: {
+        dtype: VmDeviceType.Pci,
         pptdev: 'pci_0000_00_1c_0',
       },
       order: 5,
@@ -566,7 +570,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new PCI Passthrough device', async () => {
@@ -584,8 +588,8 @@ describe('DeviceFormComponent', () => {
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
           attributes: {
             pptdev: 'pci_0000_00_1c_0',
+            dtype: VmDeviceType.Pci,
           },
-          dtype: VmDeviceType.Pci,
           order: 6,
           vm: 45,
         }]);
@@ -608,7 +612,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing PCI Passthrough device', async () => {
@@ -635,8 +639,8 @@ describe('DeviceFormComponent', () => {
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [4, {
           attributes: {
             pptdev: 'pci_0000_00_1c_5',
+            dtype: VmDeviceType.Pci,
           },
-          dtype: VmDeviceType.Pci,
           order: 5,
           vm: 45,
         }]);
@@ -647,8 +651,8 @@ describe('DeviceFormComponent', () => {
   describe('Display', () => {
     const existingDisplay = {
       id: 1,
-      dtype: VmDeviceType.Display,
       attributes: {
+        dtype: VmDeviceType.Display,
         bind: '0.0.0.0',
         password: '12345678910',
         web: true,
@@ -676,7 +680,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing Display device', async () => {
@@ -707,11 +711,11 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockWebSocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+        spectator.inject(MockApiService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(websocket.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');
@@ -722,8 +726,8 @@ describe('DeviceFormComponent', () => {
   describe('USB Passthrough Device', () => {
     const existingUsb = {
       id: 1,
-      dtype: VmDeviceType.Usb,
       attributes: {
+        dtype: VmDeviceType.Usb,
         controller_type: 'pci-ohci',
         device: 'usb_device_2',
       },
@@ -746,7 +750,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('adds a new USB Passthrough device', async () => {
@@ -763,8 +767,8 @@ describe('DeviceFormComponent', () => {
           attributes: {
             controller_type: 'pci-ohci',
             device: 'usb_device_2',
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: null,
           vm: 45,
         }]);
@@ -787,7 +791,7 @@ describe('DeviceFormComponent', () => {
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
         saveButton = await loader.getHarness(MatButtonHarness);
-        websocket = spectator.inject(WebSocketService);
+        websocket = spectator.inject(ApiService);
       });
 
       it('shows values for an existing USB Passthrough device', async () => {
@@ -810,8 +814,8 @@ describe('DeviceFormComponent', () => {
           attributes: {
             controller_type: 'piix3-uhci',
             device: 'usb_device_1',
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: 7,
           vm: 45,
         }]);
@@ -838,8 +842,8 @@ describe('DeviceFormComponent', () => {
               vendor_id: 'vendor_1',
               product_id: 'product_1',
             },
+            dtype: VmDeviceType.Usb,
           },
-          dtype: VmDeviceType.Usb,
           order: 7,
           vm: 45,
         }]);

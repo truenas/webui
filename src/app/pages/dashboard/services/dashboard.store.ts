@@ -12,7 +12,7 @@ import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -51,7 +51,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
   constructor(
     private authService: AuthService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
   ) {
@@ -92,7 +92,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   save(groups: WidgetGroup[]): Observable<void> {
     this.toggleLoadingState(true);
 
-    return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
+    return this.api.call('auth.set_attribute', ['dashState', groups]).pipe(
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );

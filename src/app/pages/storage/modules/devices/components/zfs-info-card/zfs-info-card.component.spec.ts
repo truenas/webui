@@ -6,8 +6,8 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
@@ -22,7 +22,7 @@ import {
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ZfsInfoCardComponent', () => {
   let spectator: Spectator<ZfsInfoCardComponent>;
@@ -30,7 +30,7 @@ describe('ZfsInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsInfoCardComponent,
     providers: [
-      mockWebSocket([
+      mockApi([
         mockCall('pool.detach'),
         mockCall('pool.offline'),
         mockCall('pool.online'),
@@ -117,7 +117,7 @@ describe('ZfsInfoCardComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
       expect(spectator.inject(DevicesStore).reloadList).toHaveBeenCalled();
     });
 
@@ -152,7 +152,7 @@ describe('ZfsInfoCardComponent', () => {
       await detachButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
     });
 
     it('offlines a device with confirmation when Offline is pressed', async () => {
@@ -160,7 +160,7 @@ describe('ZfsInfoCardComponent', () => {
       await offlineButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
     });
   });
 

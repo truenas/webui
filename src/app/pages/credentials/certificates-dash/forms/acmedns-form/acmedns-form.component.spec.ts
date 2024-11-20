@@ -5,19 +5,18 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AcmednsFormComponent', () => {
   let spectator: Spectator<AcmednsFormComponent>;
@@ -37,17 +36,16 @@ describe('AcmednsFormComponent', () => {
   const createComponent = createComponentFactory({
     component: AcmednsFormComponent,
     imports: [
-      IxDynamicFormModule,
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(DialogService),
       {
         provide: SLIDE_IN_DATA,
         useValue: undefined,
       },
-      mockWebSocket([
+      mockApi([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
         mockCall('acme.dns.authenticator.authenticator_schemas', [{
@@ -96,7 +94,7 @@ describe('AcmednsFormComponent', () => {
       let authenticator: Option[];
       spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
 
       expect(authenticator).toEqual([
         { label: 'cloudflare', value: 'cloudflare' },
@@ -133,7 +131,7 @@ describe('AcmednsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'acme.dns.authenticator.update',
         [
           123,
@@ -145,7 +143,7 @@ describe('AcmednsFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -167,7 +165,7 @@ describe('AcmednsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
         name: 'name_new',
         authenticator: 'cloudflare',
         attributes: {
@@ -175,7 +173,7 @@ describe('AcmednsFormComponent', () => {
           cloudflare_email: 'aaa@aaa.com',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

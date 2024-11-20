@@ -1,12 +1,18 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
+import { MatToolbarRow } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -15,21 +21,27 @@ import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
+import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
+import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -38,6 +50,22 @@ import { AppState } from 'app/store';
   templateUrl: './rsync-task-card.component.html',
   styleUrls: ['./rsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    MatCard,
+    MatToolbarRow,
+    TestDirective,
+    RouterLink,
+    IxIconComponent,
+    RequiresRolesDirective,
+    MatButton,
+    IxTableComponent,
+    IxTableEmptyDirective,
+    IxTableHeadComponent,
+    IxTableBodyComponent,
+    TranslateModule,
+    AsyncPipe,
+  ],
 })
 export class RsyncTaskCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
@@ -90,7 +118,7 @@ export class RsyncTaskCardComponent implements OnInit {
           onClick: (row) => this.openForm(row),
         },
         {
-          iconName: iconMarker('play_arrow'),
+          iconName: iconMarker('mdi-play-circle'),
           tooltip: this.translate.instant('Run job'),
           requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.job?.state === JobState.Running),
@@ -112,17 +140,17 @@ export class RsyncTaskCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: WebSocketService,
+    private api: ApiService,
     private dialogService: DialogService,
     private taskService: TaskService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
-    private chainedSlideInService: IxChainedSlideInService,
+    private chainedSlideIn: ChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
-    const rsyncTasks$ = this.ws.call('rsynctask.query').pipe(
+    const rsyncTasks$ = this.api.call('rsynctask.query').pipe(
       map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
       tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
       untilDestroyed(this),
@@ -143,7 +171,7 @@ export class RsyncTaskCardComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('rsynctask.delete', [row.id])),
+      switchMap(() => this.api.call('rsynctask.delete', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -156,7 +184,7 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true, row);
+    const closer$ = this.chainedSlideIn.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getRsyncTasks();
     });
@@ -172,7 +200,7 @@ export class RsyncTaskCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => row.state = { state: JobState.Running }),
-      switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+      switchMap(() => this.api.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
           name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
@@ -213,7 +241,7 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(rsyncTask: RsyncTaskUi): void {
-    this.ws
+    this.api
       .call('rsynctask.update', [rsyncTask.id, { enabled: !rsyncTask.enabled } as RsyncTaskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({

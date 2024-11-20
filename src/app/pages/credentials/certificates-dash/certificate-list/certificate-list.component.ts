@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -17,10 +16,10 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -48,8 +47,8 @@ import {
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -137,9 +136,8 @@ export class CertificateListComponent implements OnInit {
   });
 
   constructor(
-    private matDialog: MatDialog,
-    private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private api: ApiService,
+    private slideInService: SlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private download: DownloadService,
@@ -148,7 +146,7 @@ export class CertificateListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const certificates$ = this.ws.call('certificate.query').pipe(
+    const certificates$ = this.api.call('certificate.query').pipe(
       map((certificates) => {
         return certificates
           .map((certificate) => {
@@ -211,7 +209,7 @@ export class CertificateListComponent implements OnInit {
         const force = confirmation.secondaryCheckbox;
 
         const jobDialogRef = this.dialogService.jobDialog(
-          this.ws.job('certificate.delete', [certificate.id, force]),
+          this.api.job('certificate.delete', [certificate.id, force]),
           { title: this.translate.instant('Deleting...') },
         );
 
@@ -229,7 +227,7 @@ export class CertificateListComponent implements OnInit {
     const isCsr = certificate.cert_type_CSR;
     const path = isCsr ? certificate.csr_path : certificate.certificate_path;
     const fileName = `${certificate.name}.${isCsr ? 'csr' : 'crt'}`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [path], fileName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -251,12 +249,12 @@ export class CertificateListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebSocketError | Job) => {
+        error: (err: ApiError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
     const keyName = `${certificate.name}.key`;
-    this.ws
+    this.api
       .call('core.download', ['filesystem.get', [certificate.privatekey_path], keyName])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -299,7 +297,7 @@ export class CertificateListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.dialogService.jobDialog(
-            this.ws.job('certificate.update', [certificate.id, { revoked: true }]),
+            this.api.job('certificate.update', [certificate.id, { revoked: true }]),
             { title: this.translate.instant('Revoking Certificate') },
           ).afterClosed();
         }),

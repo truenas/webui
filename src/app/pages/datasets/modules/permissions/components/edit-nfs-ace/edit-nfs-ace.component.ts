@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { fromPairs } from 'lodash-es';
 import { of } from 'rxjs';
 import {
@@ -25,6 +25,11 @@ import {
 } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
+import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
+import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
 import { UserService } from 'app/services/user.service';
@@ -41,6 +46,16 @@ import {
   templateUrl: './edit-nfs-ace.component.html',
   styleUrls: ['./edit-nfs-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [
+    ReactiveFormsModule,
+    IxFieldsetComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxRadioGroupComponent,
+    IxCheckboxListComponent,
+    TranslateModule,
+  ],
 })
 export class EditNfsAceComponent implements OnChanges, OnInit {
   @Input() ace: NfsAclItem;
@@ -142,8 +157,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
       type: formValues.type,
     } as NfsAclItem;
 
-    if (this.isUserTag) { ace.who = formValues.user; }
-    if (this.isGroupTag) { ace.who = formValues.group; }
+    if (this.isUserTag) {
+      ace.who = formValues.user;
+    } else if (this.isGroupTag) {
+      ace.who = formValues.group;
+    }
 
     if (formValues.permissionType === NfsFormPermsType.Basic) {
       if (!formValues.basicPermission) {
@@ -175,8 +193,11 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     userField.clearValidators();
     groupField.clearValidators();
 
-    if (this.isUserTag) { userField.addValidators(Validators.required); }
-    if (this.isGroupTag) { groupField.addValidators(Validators.required); }
+    if (this.isUserTag) {
+      userField.addValidators(Validators.required);
+    } else if (this.isGroupTag) {
+      groupField.addValidators(Validators.required);
+    }
 
     const formValues = {
       tag: this.ace.tag,

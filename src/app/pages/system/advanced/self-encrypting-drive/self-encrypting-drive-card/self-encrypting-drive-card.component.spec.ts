@@ -5,8 +5,8 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   SelfEncryptingDriveCardComponent,
@@ -14,7 +14,7 @@ import {
 import {
   SelfEncryptingDriveFormComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SelfEncryptingDriveCardComponent', () => {
@@ -24,7 +24,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     component: SelfEncryptingDriveCardComponent,
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('system.advanced.sed_global_password', '12345678'),
       ]),
       provideMockStore({
@@ -37,7 +37,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
           },
         ],
       }),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -66,7 +66,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
       false,
       { sedPassword: '********', sedUser: 'admin' },

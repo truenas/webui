@@ -4,16 +4,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
@@ -45,13 +45,13 @@ describe('AssociatedTargetFormComponent', () => {
           { id: 2, name: 'extent-2' },
         ]),
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(SlideInService),
       mockProvider(DialogService),
-      mockWebSocket([
+      mockApi([
         mockCall('iscsi.targetextent.create'),
         mockCall('iscsi.targetextent.update'),
       ]),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -78,12 +78,12 @@ describe('AssociatedTargetFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
         extent: 1,
         lunid: 234,
         target: 1,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -118,7 +118,7 @@ describe('AssociatedTargetFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'iscsi.targetextent.update',
         [
           12,
@@ -129,7 +129,7 @@ describe('AssociatedTargetFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

@@ -14,18 +14,19 @@ export const helptextActiveDirectory = {
   activedirectory_bindpw_tooltip: T('Password for the Active Directory administrator account. \
  Required the first time a domain is configured. After initial configuration, the password \
  is not needed to edit, start, or stop the service.'),
-  activedirectory_verbose_logging_tooltip: T('Set to log attempts to join the domain to\
- /var/log/messages.'),
-  activedirectory_trusted_doms_tooltip: T('When set, usernames do not include a domain name.\
- Unset to force domain names to be prepended to user names. One possible reason for unsetting this value\
- is to prevent username collisions when Allow Trusted Domains is set and there are identical usernames in\
- more than one domain.'),
-  activedirectory_default_dom_tooltip: T('Set the domain name to the username.\
- Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same\
- username.'),
+  activedirectory_verbose_logging_tooltip: T('Increase logging verbosity related to the\
+ active directory service in /var/log/middlewared.log'),
+  activedirectory_trusted_doms_tooltip: T('Allow clients to access the TrueNAS server if they are members\
+ of domains that have a trust relationship with the domain to which TrueNAS is joined.\
+ This requires valid idmap backend configuration for all trusted domains.'),
+  activedirectory_default_dom_tooltip: T('AD users and groups by default will have a domain name prefix (`DOMAIN\\`).\
+ In some edge cases this may cause erratic behavior from some clients and applications that are poorly\
+ designed and cannot handle the prefix. Set only if required for a specific application or client.\
+ Note that using this setting is not recommended as it may cause collisions with local user account names.'),
   activedirectory_dns_updates_tooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),
-  activedirectory_disable_fn_cache_tooltip: T('Set to disable caching AD users and groups. This can\
- help when unable to bind to a domain with a large number of users or groups.'),
+  activedirectory_disable_fn_cache_tooltip: T('TrueNAS maintains a cache of users and groups for API consumers\
+ (including the WebUI). This is a convenience feature that may be disabled if the domain contains large\
+ numbers of users and groups or if the caching generates excessive load on the domain controller.'),
 
   restrict_pam: {
     tooltip: T('Set to restrict SSH access in certain circumstances to only members of \

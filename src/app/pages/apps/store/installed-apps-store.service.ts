@@ -2,9 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  EMPTY,
-  Observable, Subscription, catchError, filter, of, switchMap, tap,
-  withLatestFrom,
+  EMPTY, Observable, Subscription, catchError,
+  combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -83,22 +82,20 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   }
 
   private loadInstalledApps(): Observable<App[]> {
-    return this.dockerStore.isLoading$.pipe(
-      withLatestFrom(this.dockerStore.isDockerStarted$),
+    return combineLatest([
+      this.dockerStore.isLoading$,
+      this.dockerStore.isDockerStarted$,
+    ]).pipe(
       filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
+      tap(() => this.patchState({ isLoading: true })),
       switchMap(([, isDockerStarted]) => {
-        this.subscribeToInstalledAppsUpdates();
-
         if (!isDockerStarted) {
           return of([]);
         }
 
         return this.appsService.getAllApps().pipe(
-          tap((installedApps) => {
-            this.patchState({
-              installedApps: [...installedApps],
-            });
-          }),
+          tap((installedApps) => this.patchState({ installedApps })),
+          tap(() => this.subscribeToInstalledAppsUpdates()),
         );
       }),
       tap(() => this.patchState({ isLoading: false })),
@@ -163,6 +160,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private handleAddedOrUpdatedEvent(apiEvent: ApiEvent<App>): void {
     const app = apiEvent.fields;
     if (!app) {
+      console.error('No app data in API event');
       return;
     }
 

@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component, HostBinding, Input,
 } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { TranslateService, TranslateModule } from '@ngx-translate/core';
 
 export enum VmwareSnapshotStatus {
   Pending = 'PENDING',
@@ -21,6 +22,8 @@ export interface VmwareState {
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [MatTooltip, TranslateModule],
 })
 export class VmwareStatusCellComponent {
   @Input() state: VmwareState;
@@ -37,5 +40,6 @@ export class VmwareStatusCellComponent {
   @HostBinding('class') get hostClasses(): string[] {
     return ['status', this.state?.state.toLowerCase()];
   }
+
   constructor(private translate: TranslateService) { }
 }

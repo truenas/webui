@@ -4,14 +4,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockComponents } from 'ng-mocks';
+import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -19,14 +19,16 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
@@ -55,16 +57,15 @@ describe('CloudBackupListComponent', () => {
     imports: [
       MockComponent(PageHeaderComponent),
       SearchInput1Component,
-    ],
-    declarations: [
       MockComponents(
         CloudBackupListComponent,
         CloudBackupDetailsComponent,
       ),
+      MockDirective(DetailsHeightDirective),
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('cloud_backup.query', cloudBackups),
         mockCall('cloud_backup.delete'),
         mockCall('cloud_backup.update'),
@@ -73,8 +74,8 @@ describe('CloudBackupListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
-      mockProvider(IxChainedSlideInService, {
+      mockProvider(SlideInRef),
+      mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({
           response: true,
         })),
@@ -86,7 +87,7 @@ describe('CloudBackupListComponent', () => {
             value: {},
           },
           {
-            selector: selectAdvancedConfig,
+            selector: selectPreferences,
             value: {},
           },
           {
@@ -113,7 +114,7 @@ describe('CloudBackupListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       true,
       cloudBackups[0],
@@ -124,7 +125,7 @@ describe('CloudBackupListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
       true,
       undefined,
@@ -132,7 +133,7 @@ describe('CloudBackupListComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-play-circle' }), 1, 5);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -141,7 +142,7 @@ describe('CloudBackupListComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
     expect(spectator.component.dataProvider.expandedRow).toEqual({ ...cloudBackups[0] });
   });
 
@@ -154,7 +155,7 @@ describe('CloudBackupListComponent', () => {
       message: 'Delete Cloud Backup <b>"UA"</b>?',
     });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('updates Cloud Backup Enabled status once mat-toggle is updated', async () => {
@@ -164,7 +165,7 @@ describe('CloudBackupListComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',
       [1, { enabled: true }],
     );

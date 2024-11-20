@@ -7,10 +7,10 @@ import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebSocket,
-} from 'app/core/testing/utils/mock-websocket.utils';
+  mockCall, mockJob, mockApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -19,7 +19,7 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
 const fakeData = {
@@ -67,7 +67,7 @@ describe('ExportDisconnectModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebSocket([
+        mockApi([
           mockCall('pool.attachments', data.attachments),
           mockCall('pool.processes', data.processes),
           mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),
@@ -195,7 +195,7 @@ describe('ExportDisconnectModalComponent', () => {
         await submitButton.click();
 
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported/disconnected successfully.');
-        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.export', [
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
           fakeData.pool.id,
           {
             cascade: true,

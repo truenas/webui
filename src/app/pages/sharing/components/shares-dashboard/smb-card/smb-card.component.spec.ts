@@ -8,26 +8,26 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresetType, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('SmbCardComponent', () => {
@@ -65,7 +65,7 @@ describe('SmbCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
+      mockApi([
         mockCall('sharing.smb.query', smbShares),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
@@ -74,12 +74,12 @@ describe('SmbCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
+      mockProvider(SlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -121,7 +121,7 @@ describe('SmbCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
       data: { existingSmbShare: expect.objectContaining(smbShares[0]) },
     });
   });
@@ -140,7 +140,7 @@ describe('SmbCardComponent', () => {
 
     await toggle.uncheck();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.update',
       [3, { enabled: false }],
     );
@@ -150,12 +150,12 @@ describe('SmbCardComponent', () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'sharing.smb.getacl',
       [{ share_name: 'homes' }],
     );
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbAclComponent, { data: 'test' });
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SmbAclComponent, { data: 'test' });
   });
 
   it('handles edit Filesystem ACL', async () => {
