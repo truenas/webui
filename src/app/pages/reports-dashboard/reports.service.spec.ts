@@ -38,4 +38,46 @@ describe('ReportsService', () => {
       expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('/netdata/');
     });
   });
+
+  describe('removeDstGaps', () => {
+    it('returns normal data without changes', () => {
+      expect(spectator.service.removeDstGaps([
+        [1732000500, 0],
+        [1732000501, 1],
+        [1732000502, 2],
+      ])).toEqual([
+        [1732000500, 0],
+        [1732000501, 1],
+        [1732000502, 2],
+      ]);
+    });
+
+    it('removes gap from data', () => {
+      expect(spectator.service.removeDstGaps([
+        [1732000500, 0],
+        [1732000501 + 3600, 1],
+        [1732000502 + 3600, 2],
+      ])).toEqual([
+        [1732000500, 0],
+        [1732000501, 1],
+        [1732000502, 2],
+      ]);
+    });
+
+    it('removes several gaps from data', () => {
+      expect(spectator.service.removeDstGaps([
+        [1732000500, 0],
+        [1732000501 + 3600, 1],
+        [1732000502 + 3600, 2],
+        [1732000503 + 3600 * 2, 3],
+        [1732000504 + 3600 * 2, 4],
+      ])).toEqual([
+        [1732000500, 0],
+        [1732000501, 1],
+        [1732000502, 2],
+        [1732000503, 3],
+        [1732000504, 4],
+      ]);
+    });
+  });
 });
