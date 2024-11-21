@@ -99,10 +99,10 @@ export class ServiceSshComponent implements OnInit {
   readonly sftpLogLevels$ = of(helptextServiceSsh.ssh_sftp_log_level_options);
   readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
   readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
-  readonly bindInterfaces$ = this.ws.call('ssh.bindiface_choices').pipe(choicesToOptions());
+  readonly bindInterfaces$ = this.api.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
@@ -116,7 +116,7 @@ export class ServiceSshComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    this.ws.call('ssh.config').pipe(untilDestroyed(this)).subscribe({
+    this.api.call('ssh.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
@@ -138,7 +138,7 @@ export class ServiceSshComponent implements OnInit {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('ssh.update', [values as SshConfigUpdate])
+    this.api.call('ssh.update', [values as SshConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -149,7 +149,7 @@ export class ServiceSshComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });

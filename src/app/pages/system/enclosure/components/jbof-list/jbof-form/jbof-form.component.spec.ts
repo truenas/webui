@@ -17,7 +17,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('JbofFormComponent', () => {
   let spectator: Spectator<JbofFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: JbofFormComponent,
     imports: [
@@ -40,7 +40,7 @@ describe('JbofFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -56,7 +56,7 @@ describe('JbofFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('jbof.create', [{
+      expect(api.call).toHaveBeenCalledWith('jbof.create', [{
         description: 'new description',
         mgmt_ip1: '11.11.11.11',
         mgmt_ip2: '12.12.12.12',
@@ -86,7 +86,7 @@ describe('JbofFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -115,7 +115,7 @@ describe('JbofFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('jbof.update', [
+      expect(api.call).toHaveBeenCalledWith('jbof.update', [
         131,
         {
           description: 'updated description',

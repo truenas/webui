@@ -38,7 +38,7 @@ export class VmService {
   } as const;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -53,11 +53,11 @@ export class VmService {
   }
 
   getVirtualizationDetails(): Observable<VirtualizationDetails> {
-    return this.ws.call('vm.virtualization_details');
+    return this.api.call('vm.virtualization_details');
   }
 
   getAvailableMemory(): Observable<number> {
-    return this.ws.call('vm.get_available_memory').pipe(
+    return this.api.call('vm.get_available_memory').pipe(
       repeat({ delay: () => this.checkMemory$ }),
     );
   }
@@ -84,7 +84,7 @@ export class VmService {
   }
 
   doRestart(vm: VirtualMachine): Observable<number> {
-    return this.ws.startJob(this.wsMethods.restart, [vm.id]).pipe(this.loader.withLoader());
+    return this.api.startJob(this.wsMethods.restart, [vm.id]).pipe(this.loader.withLoader());
   }
 
   doPowerOff(vm: VirtualMachine): void {
@@ -93,13 +93,13 @@ export class VmService {
 
   downloadLogs(vm: VirtualMachine): Observable<Blob> {
     const filename = `${vm.id}_${vm.name}.log`;
-    return this.ws.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
+    return this.api.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
       switchMap(([, url]) => this.download.downloadUrl(url, filename, 'text/plain')),
     );
   }
 
   openDisplay(vm: VirtualMachine): void {
-    this.ws.call('vm.get_display_devices', [vm.id])
+    this.api.call('vm.get_display_devices', [vm.id])
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
         next: () => this.openDisplayWebUri(vm.id),
@@ -116,7 +116,7 @@ export class VmService {
   }
 
   toggleVmAutostart(vm: VirtualMachine): void {
-    this.ws.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
+    this.api.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
         next: () => {
@@ -135,7 +135,7 @@ export class VmService {
     method: T,
     params: ApiCallParams<T> = [vm.id],
   ): void {
-    this.ws.call(method, params)
+    this.api.call(method, params)
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
         next: () => {
@@ -165,7 +165,7 @@ export class VmService {
       displayOptions,
     ];
 
-    this.ws.call('vm.get_display_web_uri', requestParams)
+    this.api.call('vm.get_display_web_uri', requestParams)
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
         next: (webUri) => {
@@ -183,7 +183,7 @@ export class VmService {
 
   private doStopJob(vm: VirtualMachine, forceAfterTimeout: boolean): void {
     this.dialogService.jobDialog(
-      this.ws.job('vm.stop', [vm.id, {
+      this.api.job('vm.stop', [vm.id, {
         force: false,
         force_after_timeout: forceAfterTimeout,
       }]),

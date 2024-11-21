@@ -95,7 +95,7 @@ export class PortalFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
-    protected ws: ApiService,
+    protected api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     protected iscsiService: IscsiService,
@@ -143,9 +143,9 @@ export class PortalFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.portal.create', [params]);
+      request$ = this.api.call('iscsi.portal.create', [params]);
     } else {
-      request$ = this.ws.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
+      request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -156,7 +156,7 @@ export class PortalFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

@@ -79,7 +79,7 @@ export class NtpServerFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
@@ -122,9 +122,9 @@ export class NtpServerFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('system.ntpserver.create', [body]);
+      request$ = this.api.call('system.ntpserver.create', [body]);
     } else {
-      request$ = this.ws.call('system.ntpserver.update', [this.editingServer.id, body]);
+      request$ = this.api.call('system.ntpserver.update', [this.editingServer.id, body]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -136,7 +136,7 @@ export class NtpServerFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
       },
     });
   }

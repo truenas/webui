@@ -136,7 +136,7 @@ export class TargetFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private slideInRef: SlideInRef<TargetFormComponent>,
     private targetNameValidationService: TargetNameValidationService,
     @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
@@ -164,9 +164,9 @@ export class TargetFormComponent implements OnInit {
     this.cdr.markForCheck();
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.target.create', [values]);
+      request$ = this.api.call('iscsi.target.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.target.update', [this.editingTarget.id, values]);
+      request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -176,7 +176,7 @@ export class TargetFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

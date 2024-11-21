@@ -75,7 +75,7 @@ export class AuditFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -93,7 +93,7 @@ export class AuditFormComponent implements OnInit {
   onSubmit(): void {
     const configUpdate = this.form.value as AuditConfig;
     this.isFormLoading = true;
-    this.ws.call('audit.update', [configUpdate]).pipe(
+    this.api.call('audit.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
@@ -103,7 +103,7 @@ export class AuditFormComponent implements OnInit {
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
         return EMPTY;
       }),
@@ -114,7 +114,7 @@ export class AuditFormComponent implements OnInit {
   private loadForm(): void {
     this.isFormLoading = true;
 
-    this.ws.call('audit.config').pipe(untilDestroyed(this))
+    this.api.call('audit.config').pipe(untilDestroyed(this))
       .subscribe({
         next: (auditConfig) => {
           this.isFormLoading = false;

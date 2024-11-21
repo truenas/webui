@@ -71,7 +71,7 @@ export class DiskBulkEditComponent {
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInRef: SlideInRef<DiskBulkEditComponent, boolean>,
     private snackbarService: SnackbarService,
@@ -147,7 +147,7 @@ export class DiskBulkEditComponent {
       { n: req.length },
     );
     this.isLoading = true;
-    this.ws.job('core.bulk', ['disk.update', req])
+    this.api.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
@@ -176,7 +176,7 @@ export class DiskBulkEditComponent {
         error: (error: unknown) => {
           this.isLoading = false;
           this.slideInRef.close(false);
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

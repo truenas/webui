@@ -21,7 +21,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
@@ -94,9 +93,8 @@ export class SupportCardComponent implements OnInit {
   }
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private loader: AppLoaderService,
-    private dialog: DialogService,
     private matDialog: MatDialog,
     private slideInService: SlideInService,
     private store$: Store<AppState>,
@@ -187,7 +185,7 @@ export class SupportCardComponent implements OnInit {
       switchMap((result) => {
         const attachDebug = (isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.job('truenas.set_production', [newStatus, attachDebug]).pipe(
+        return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap({
@@ -205,7 +203,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   private loadProductionStatus(): void {
-    this.ws.call('truenas.is_production')
+    this.api.call('truenas.is_production')
       .pipe(untilDestroyed(this))
       .subscribe((isProduction) => {
         this.isProductionControl.setValue(isProduction, { emitEvent: false });

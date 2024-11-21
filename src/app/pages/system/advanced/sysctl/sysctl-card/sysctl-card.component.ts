@@ -105,7 +105,7 @@ export class SysctlCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
@@ -114,7 +114,7 @@ export class SysctlCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(untilDestroyed(this));
+    const tunables$ = this.api.call('tunable.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.loadItems();
   }
@@ -137,7 +137,7 @@ export class SysctlCardComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.job('tunable.delete', [row.id])),
+        switchMap(() => this.api.job('tunable.delete', [row.id])),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )

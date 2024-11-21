@@ -11,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -61,14 +60,13 @@ export class BootenvStatsDialogComponent implements OnInit {
   protected readonly Role = Role;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private store$: Store<AppState>,
     private dialogRef: MatDialogRef<BootenvStatsDialogComponent>,
     private translate: TranslateService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -85,7 +83,7 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   onSubmit(): void {
     const interval = this.form.value.interval;
-    this.ws.call('boot.set_scrub_interval', [interval])
+    this.api.call('boot.set_scrub_interval', [interval])
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -96,7 +94,7 @@ export class BootenvStatsDialogComponent implements OnInit {
           );
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -108,7 +106,7 @@ export class BootenvStatsDialogComponent implements OnInit {
   }
 
   private loadBootState(): void {
-    this.ws.call('boot.get_state')
+    this.api.call('boot.get_state')
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

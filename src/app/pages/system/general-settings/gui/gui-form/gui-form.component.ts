@@ -95,7 +95,7 @@ export class GuiFormComponent {
     private slideInRef: SlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private wsManager: WebSocketHandlerService,
     private dialog: DialogService,
     private loader: AppLoaderService,
@@ -141,7 +141,7 @@ export class GuiFormComponent {
       }),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
+        return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -154,7 +154,7 @@ export class GuiFormComponent {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });
@@ -212,7 +212,7 @@ export class GuiFormComponent {
 
         this.loader.open();
         this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
-        this.ws.call('system.general.ui_restart').pipe(
+        this.api.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe({
           next: () => {

@@ -28,7 +28,7 @@ export function globalStore<
 ): Type<GlobalStoreMembers<M1, M2, M3>> {
   @Injectable({ providedIn: 'root' })
   class GlobalStore implements GlobalStoreMembers<M1, M2, M3> {
-    private ws = inject(ApiService);
+    private api = inject(ApiService);
     private callResult$ = new BehaviorSubject<ApiCallResponse<M1>>(undefined);
     private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2>>(undefined);
     private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[]>(undefined);
@@ -37,7 +37,7 @@ export function globalStore<
       return this.callResult$.pipe(
         switchMap((callResult) => {
           if (callResult === undefined) {
-            return this.ws
+            return this.api
               .call(method as M1, params as ApiCallParams<M1>)
               .pipe(tap((result) => this.callResult$.next(result)));
           }
@@ -50,7 +50,7 @@ export function globalStore<
       return this.subscribeResult$.pipe(
         switchMap((subscribeResult) => {
           if (subscribeResult === undefined) {
-            return this.ws
+            return this.api
               .subscribe(method as M2)
               .pipe(tap((result) => this.subscribeResult$.next(result)));
           }
@@ -63,7 +63,7 @@ export function globalStore<
       return this.callAndSubscribeResult$.pipe(
         switchMap((callAndSubscribeResult) => {
           if (callAndSubscribeResult === undefined) {
-            return this.ws
+            return this.api
               .callAndSubscribe(method as M3, params as ApiCallParams<M3>)
               .pipe(tap((result) => this.callAndSubscribeResult$.next(result)));
           }

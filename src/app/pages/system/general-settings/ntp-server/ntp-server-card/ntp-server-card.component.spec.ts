@@ -47,7 +47,7 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let slideInRef: SlideInService;
   let table: IxTableHarness;
 
@@ -72,7 +72,7 @@ describe('NtpServerCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     slideInRef = spectator.inject(SlideInService);
     table = await loader.getHarness(IxTableHarness);
   });
@@ -85,7 +85,7 @@ describe('NtpServerCardComponent', () => {
       ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
     ];
 
-    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.query');
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.query');
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
@@ -108,6 +108,6 @@ describe('NtpServerCardComponent', () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 6);
     await deleteIcon.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
   });
 });

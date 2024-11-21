@@ -126,7 +126,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private poolManagerValidation: PoolManagerValidationService,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -169,7 +169,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     const payload = this.prepareCreatePayload();
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.create', [payload]),
+      this.api.job('pool.create', [payload]),
       { title: this.translate.instant('Create Pool') },
     )
       .afterClosed()
@@ -275,7 +275,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     };
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.update', [this.existingPool.id, payload]),
+      this.api.job('pool.update', [this.existingPool.id, payload]),
       { title: this.translate.instant('Update Pool') },
     )
       .afterClosed()

@@ -25,8 +25,8 @@ describe('DevicesStore', () => {
 
   it('loads pool topology, disks and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(ApiService);
-      jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
+      const mockedApi = spectator.inject(ApiService);
+      jest.spyOn(mockedApi, 'call').mockImplementation((method) => {
         if (method === 'pool.query') {
           return cold('-b|', {
             b: [{
@@ -98,8 +98,8 @@ describe('DevicesStore', () => {
   describe('loadDisksWithSmartTestSupport', () => {
     it('loads disks with SMART support and sets disksWithSmartTestSupport in state', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        const mockWebSocket = spectator.inject(ApiService);
-        jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
+        const mockApi = spectator.inject(ApiService);
+        jest.spyOn(mockApi, 'call').mockImplementation((method) => {
           if (method === 'smart.test.disk_choices') {
             return cold('-b|', {
               b: {
@@ -123,7 +123,7 @@ describe('DevicesStore', () => {
 
         spectator.service.loadDisksWithSmartTestSupport();
 
-        expect(mockWebSocket.call).toHaveBeenCalledWith('smart.test.disk_choices');
+        expect(mockApi.call).toHaveBeenCalledWith('smart.test.disk_choices');
         expectObservable(spectator.service.state$).toBe('ab', {
           a: expect.objectContaining({
             disksWithSmartTestSupport: [],

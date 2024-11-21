@@ -90,7 +90,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
     private dialog: DialogService,
     private chainedSlideIns: ChainedSlideInService,
@@ -101,7 +101,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const config$ = this.ws.call('system.general.config').pipe(
+    const config$ = this.api.call('system.general.config').pipe(
       map((config) => this.getAddressesSourceFromConfig(config)),
       untilDestroyed(this),
     );
@@ -139,7 +139,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     this.dataProvider.currentPage$.pipe(
       switchMap((currentPage) => {
         const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
-        return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
+        return this.api.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
       }),
       untilDestroyed(this),
     ).subscribe({

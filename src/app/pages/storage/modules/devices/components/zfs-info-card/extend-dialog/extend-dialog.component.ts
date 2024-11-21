@@ -54,7 +54,7 @@ export class ExtendDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -74,7 +74,7 @@ export class ExtendDialogComponent {
     } as PoolAttachParams;
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.attach', [this.data.poolId, payload]),
+      this.api.job('pool.attach', [this.data.poolId, payload]),
       { title: this.translate.instant('Extending VDEV'), canMinimize: true },
     )
       .afterClosed()

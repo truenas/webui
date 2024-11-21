@@ -93,7 +93,7 @@ export class CronFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -126,9 +126,9 @@ export class CronFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('cronjob.create', [values]);
+      request$ = this.api.call('cronjob.create', [values]);
     } else {
-      request$ = this.ws.call('cronjob.update', [
+      request$ = this.api.call('cronjob.update', [
         this.editingCron.id,
         values,
       ]);
@@ -146,7 +146,7 @@ export class CronFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

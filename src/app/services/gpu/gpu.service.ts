@@ -23,7 +23,7 @@ export class GpuService {
   private allGpus$: Observable<Device[]>;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private store$: Store<AppState>,
   ) {}
 
@@ -32,7 +32,7 @@ export class GpuService {
    */
   getAllGpus(): Observable<Device[]> {
     if (!this.allGpus$) {
-      this.allGpus$ = this.ws.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
+      this.allGpus$ = this.api.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
         shareReplay({
           refCount: false,
           bufferSize: 1,
@@ -44,7 +44,7 @@ export class GpuService {
   }
 
   getGpuOptions(): Observable<Option[]> {
-    return this.ws.call('system.advanced.get_gpu_pci_choices').pipe(
+    return this.api.call('system.advanced.get_gpu_pci_choices').pipe(
       map((choices) => {
         return Object.entries(choices).map(
           ([value, label]) => ({ value: label, label: value }),
@@ -85,7 +85,7 @@ export class GpuService {
           return of(undefined);
         }
 
-        return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
+        return this.api.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]).pipe(
           tap(() => this.store$.dispatch(advancedConfigUpdated())),
         );
       }),

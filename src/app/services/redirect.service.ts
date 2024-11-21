@@ -17,7 +17,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class RedirectService {
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private store$: Store<AppState>,

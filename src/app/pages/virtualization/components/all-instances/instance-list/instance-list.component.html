@@ -19,14 +19,16 @@
     <div class="instances">
       <div class="instances-header-row">
         <div class="cell checkbox">
-          <mat-checkbox
-            color="primary"
-            ixTest="select-all-app"
-            [checked]="isAllSelected()"
-            [indeterminate]="!isAllSelected() && !!selection.selected.length"
-            [disabled]="filteredInstances()?.length === 0"
-            (change)="toggleAllChecked($event.checked)"
-          ></mat-checkbox>
+          @if (instances().length) {
+            <mat-checkbox
+              color="primary"
+              ixTest="select-all-app"
+              [checked]="isAllSelected()"
+              [indeterminate]="!isAllSelected() && !!selection.selected.length"
+              [disabled]="filteredInstances()?.length === 0"
+              (change)="toggleAllChecked($event.checked)"
+            ></mat-checkbox>
+          }
         </div>
         <div class="cell">{{ 'Name' | translate }}</div>
         <div class="cell">{{ 'Type' | translate }}</div>
@@ -45,9 +47,6 @@
           [selected]="selection.isSelected(instance.id)"
           (click)="navigateToDetails(instance)"
           (keydown.enter)="navigateToDetails(instance)"
-          (onStart)="start(instance.id)"
-          (onStop)="stop(instance.id)"
-          (onRestart)="restart(instance.id)"
         ></ix-instance-row>
       }
     </div>

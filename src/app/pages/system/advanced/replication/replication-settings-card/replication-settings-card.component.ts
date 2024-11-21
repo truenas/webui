@@ -53,7 +53,7 @@ export class ReplicationSettingsCardComponent {
   protected readonly searchableElements = replicationSettingsCardElements;
   taskLimit$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('replication.config.config')),
+    switchMap(() => this.api.call('replication.config.config')),
     tap((config) => this.replicationConfig = config),
     map((config) => config.max_parallel_replication_tasks),
     toLoadingState(),
@@ -64,7 +64,7 @@ export class ReplicationSettingsCardComponent {
   );
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}

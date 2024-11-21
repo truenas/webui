@@ -43,7 +43,7 @@ export class CronDeleteDialogComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<CronDeleteDialogComponent>,
@@ -52,7 +52,7 @@ export class CronDeleteDialogComponent {
   ) { }
 
   onDelete(): void {
-    this.ws.call('cronjob.delete', [this.cronjob.id])
+    this.api.call('cronjob.delete', [this.cronjob.id])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

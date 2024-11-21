@@ -48,12 +48,12 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
 
   readonly helptext = helptextVmWizard;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
-  readonly nicAttachOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicAttachOptions$ = this.api.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
 
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -76,7 +76,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   private generateRandomMac(): void {
-    this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
+    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
       this.form.patchValue({ nic_mac: mac });
       this.cdr.markForCheck();
     });

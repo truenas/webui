@@ -84,7 +84,7 @@ export class AuthService {
   constructor(
     private wsManager: WebSocketHandlerService,
     private store$: Store<AppState>,
-    private ws: ApiService,
+    private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -98,7 +98,7 @@ export class AuthService {
       return of(this.cachedGlobalTwoFactorConfig);
     }
 
-    return this.ws.call('auth.twofactor.config').pipe(
+    return this.api.call('auth.twofactor.config').pipe(
       tap((config) => {
         this.cachedGlobalTwoFactorConfig = config;
       }),
@@ -124,8 +124,8 @@ export class AuthService {
 
   login(username: string, password: string, otp: string = null): Observable<LoginResult> {
     return (otp
-      ? this.ws.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
-      : this.ws.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
+      ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
+      : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])
     ).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
     );
@@ -137,7 +137,7 @@ export class AuthService {
     }
 
     performance.mark('Login Start');
-    return this.ws.call('auth.login_ex', [{
+    return this.api.call('auth.login_ex', [{
       mechanism: LoginExMechanism.TokenPlain,
       token: this.token,
     }]).pipe(
@@ -171,10 +171,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.ws.call('auth.logout').pipe(
+    return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
-        this.ws.clearSubscriptions();
+        this.api.clearSubscriptions();
         this.isLoggedIn$.next(false);
       }),
     );
@@ -220,14 +220,14 @@ export class AuthService {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.isAuthenticated$.pipe(take(1))),
         filter((isAuthenticated) => isAuthenticated),
-        switchMap(() => this.ws.call('auth.generate_token')),
+        switchMap(() => this.api.call('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
       ).subscribe();
     }
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
-    return this.ws.call('auth.me').pipe(
+    return this.api.call('auth.me').pipe(
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),

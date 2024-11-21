@@ -85,7 +85,7 @@ export class AssociatedTargetFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private iscsiService: IscsiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -109,9 +109,9 @@ export class AssociatedTargetFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.targetextent.create', [values]);
+      request$ = this.api.call('iscsi.targetextent.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.targetextent.update', [
+      request$ = this.api.call('iscsi.targetextent.update', [
         this.editingTarget.id,
         values,
       ]);
@@ -124,7 +124,7 @@ export class AssociatedTargetFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

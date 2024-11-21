@@ -115,7 +115,7 @@ export class EmailFormComponent implements OnInit {
   private oauthCredentials: GmailOauthConfig | Record<string, never>;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -154,7 +154,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   onSendTestEmailPressed(): void {
-    this.ws.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
+    this.api.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
       if (!email) {
         this.dialogService.info(
           this.translate.instant('Email'),
@@ -176,7 +176,7 @@ export class EmailFormComponent implements OnInit {
     this.isLoading = true;
     const update = this.prepareConfigUpdate();
 
-    this.ws.call('mail.update', [update])
+    this.api.call('mail.update', [update])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -188,7 +188,7 @@ export class EmailFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -212,7 +212,7 @@ export class EmailFormComponent implements OnInit {
     const config = this.prepareConfigUpdate();
 
     this.dialogService.jobDialog(
-      this.ws.job('mail.send', [email, config]),
+      this.api.job('mail.send', [email, config]),
       { title: this.translate.instant('Email') },
     )
       .afterClosed()

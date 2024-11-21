@@ -61,7 +61,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -98,7 +98,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
 
     this.isFormLoading = true;
     this.dialogService.jobDialog(
-      this.ws.job('boot.replace', [oldDisk, newDisk]),
+      this.api.job('boot.replace', [oldDisk, newDisk]),
       { title: this.translate.instant('Replacing Boot Pool Disk') },
     )
       .afterClosed()

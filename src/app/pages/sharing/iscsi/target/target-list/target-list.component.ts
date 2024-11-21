@@ -112,7 +112,7 @@ export class TargetListComponent implements OnInit {
                   buttonText: this.translate.instant('Delete'),
                 }).pipe(
                   filter(Boolean),
-                  switchMap(() => this.ws.call('iscsi.target.delete', [row.id, true]).pipe(this.loader.withLoader())),
+                  switchMap(() => this.api.call('iscsi.target.delete', [row.id, true]).pipe(this.loader.withLoader())),
                   untilDestroyed(this),
                 ).subscribe({
                   next: () => this.refresh(),
@@ -140,7 +140,7 @@ export class TargetListComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}
 

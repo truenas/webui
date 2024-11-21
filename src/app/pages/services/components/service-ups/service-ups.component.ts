@@ -108,8 +108,8 @@ export class ServiceUpsComponent implements OnInit {
   };
 
   readonly providers: Record<string, IxComboboxProvider> = {
-    driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
-    port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
+    driver: new SimpleAsyncComboboxProvider(this.api.call('ups.driver_choices').pipe(choicesToOptions())),
+    port: new SimpleAsyncComboboxProvider(this.api.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
 
   readonly tooltips = {
@@ -146,7 +146,7 @@ export class ServiceUpsComponent implements OnInit {
   readonly shutdownOptions$ = of(helptextServiceUps.ups_shutdown_options);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -181,7 +181,7 @@ export class ServiceUpsComponent implements OnInit {
   }
 
   private loadConfig(): void {
-    this.ws.call('ups.config')
+    this.api.call('ups.config')
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
@@ -208,7 +208,7 @@ export class ServiceUpsComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('ups.update', [params as UpsConfigUpdate])
+    this.api.call('ups.update', [params as UpsConfigUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -219,7 +219,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });

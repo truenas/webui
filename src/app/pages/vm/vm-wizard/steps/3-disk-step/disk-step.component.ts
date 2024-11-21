@@ -69,9 +69,9 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     },
   ]);
 
-  readonly hddPathOptions$ = this.ws.call('vm.device.disk_choices').pipe(choicesToOptions());
+  readonly hddPathOptions$ = this.api.call('vm.device.disk_choices').pipe(choicesToOptions());
 
-  readonly datastoreOptions$ = this.ws
+  readonly datastoreOptions$ = this.api
     .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
     .pipe(singleArrayToOptions());
 
@@ -80,7 +80,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private freeSpaceValidator: FreeSpaceValidatorService,
     public formatter: IxFormatterService,
   ) { }

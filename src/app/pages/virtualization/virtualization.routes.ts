@@ -4,7 +4,9 @@ import { AllInstancesComponent } from 'app/pages/virtualization/components/all-i
 import { InstanceShellComponent } from 'app/pages/virtualization/components/instance-shell/instance-shell.component';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 export const virtualizationRoutes: Routes = [{
   path: '',
@@ -12,6 +14,8 @@ export const virtualizationRoutes: Routes = [{
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
+    VirtualizationViewStore,
+    VirtualizationDevicesStore,
   ],
   children: [
     {

@@ -17,7 +17,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('ReplicationSettingsFormComponent', () => {
   let spectator: Spectator<ReplicationSettingsFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: ReplicationSettingsFormComponent,
     imports: [
@@ -41,7 +41,7 @@ describe('ReplicationSettingsFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current system advanced replication values when form is being edited', async () => {
@@ -62,7 +62,7 @@ describe('ReplicationSettingsFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('replication.config.update', [
+    expect(api.call).toHaveBeenCalledWith('replication.config.update', [
       {
         max_parallel_replication_tasks: null,
       },

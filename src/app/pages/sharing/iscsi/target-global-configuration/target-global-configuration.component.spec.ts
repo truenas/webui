@@ -25,7 +25,7 @@ import { TargetGlobalConfigurationComponent } from './target-global-configuratio
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -68,7 +68,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     mockStore$ = spectator.inject(MockStore);
     store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
@@ -79,7 +79,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('loads iSCSI global config when component is initialized', () => {
-    expect(ws.call).toHaveBeenCalledWith('iscsi.global.config');
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.config');
   });
 
   it('shows current values for iSCSI global settings', async () => {
@@ -108,7 +108,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('iscsi.global.update', [{
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.update', [{
       basename: 'iqn.new.org.freenas.ctl',
       isns_servers: ['32.12.112.42', '8.2.1.2'],
       pool_avail_threshold: 15,

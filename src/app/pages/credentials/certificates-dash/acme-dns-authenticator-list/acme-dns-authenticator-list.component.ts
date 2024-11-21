@@ -69,7 +69,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Authenticator'),
-      propertyName: 'authenticator',
+      getValue: (row) => row.attributes?.authenticator,
     }),
     actionsColumn({
       actions: [

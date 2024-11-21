@@ -2,9 +2,9 @@ import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { SchemaType } from 'app/enums/schema.enum';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { DynamicFormSchemaCheckbox, DynamicFormSchemaInput, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
-import { Schema } from 'app/interfaces/schema.interface';
+import { Schema, SchemaProperties } from 'app/interfaces/schema.interface';
 
-export function getDynamicFormSchemaNode(schema: Schema): DynamicFormSchemaNode {
+export function getDynamicFormSchemaNode(schema: SchemaProperties | Schema): DynamicFormSchemaNode {
   const baseSchema = {
     controlName: schema._name_,
     type: DynamicFormSchemaType.Input,

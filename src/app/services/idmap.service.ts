@@ -7,17 +7,17 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdmapService {
-  constructor(protected ws: ApiService) {}
+  constructor(protected api: ApiService) {}
 
   getCerts(): Observable<Certificate[]> {
-    return this.ws.call('certificate.query');
+    return this.api.call('certificate.query');
   }
 
   getBackendChoices(): Observable<IdmapBackendOptions> {
-    return this.ws.call('idmap.backend_options');
+    return this.api.call('idmap.backend_options');
   }
 
   getActiveDirectoryStatus(): Observable<ActiveDirectoryConfig> {
-    return this.ws.call('activedirectory.config');
+    return this.api.call('activedirectory.config');
   }
 }

@@ -120,7 +120,7 @@ export class VmWizardComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<VmWizardComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
@@ -212,7 +212,7 @@ export class VmWizardComponent implements OnInit {
       ]),
     } as VirtualMachineUpdate;
 
-    return this.ws.call('vm.create', [vmPayload]);
+    return this.api.call('vm.create', [vmPayload]);
   }
 
   private createDevices(vm: VirtualMachine): Observable<unknown[]> {
@@ -296,7 +296,7 @@ export class VmWizardComponent implements OnInit {
   }
 
   private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
-    return this.ws.call('vm.port_wizard').pipe(
+    return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
           attributes: {
@@ -313,7 +313,7 @@ export class VmWizardComponent implements OnInit {
   }
 
   private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice> {
-    return this.ws.call('vm.device.create', [{
+    return this.api.call('vm.device.create', [{
       vm: vmId,
       ...payload,
     }])

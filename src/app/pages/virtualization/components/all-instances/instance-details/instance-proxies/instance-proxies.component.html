@@ -23,7 +23,10 @@
             {{ proxy.dest_port }} {{ proxy.dest_proto }} <span class="hint">({{ 'Instance' | translate }})</span>
           </div>
 
-          <ix-delete-device-button [device]="proxy"></ix-delete-device-button>
+          <ix-device-actions-menu
+            [device]="proxy"
+            (edit)="editProxy(proxy)"
+          ></ix-device-actions-menu>
         </div>
       } @empty {
         {{ 'No proxies added.' | translate }}

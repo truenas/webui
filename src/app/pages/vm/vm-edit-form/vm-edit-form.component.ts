@@ -96,9 +96,9 @@ export class VmEditFormComponent implements OnInit {
 
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
-  bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
+  bootloaderOptions$ = this.api.call('vm.bootloader_options').pipe(choicesToOptions());
   cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
-  cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
+  cpuModelOptions$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 
   readonly helptext = helptextVmWizard;
@@ -106,7 +106,7 @@ export class VmEditFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private errorHandler: ErrorHandlerService,
@@ -164,7 +164,7 @@ export class VmEditFormComponent implements OnInit {
     const gpusIds = this.form.value.gpus;
     this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       switchMap(() => forkJoin([
-        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+        this.api.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
         this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
       ])),
       untilDestroyed(this),

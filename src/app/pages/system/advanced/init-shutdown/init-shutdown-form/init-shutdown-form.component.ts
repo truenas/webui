@@ -101,7 +101,7 @@ export class InitShutdownFormComponent implements OnInit {
   private editingScript: InitShutdownScript;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -134,9 +134,9 @@ export class InitShutdownFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('initshutdownscript.create', [values]);
+      request$ = this.api.call('initshutdownscript.create', [values]);
     } else {
-      request$ = this.ws.call('initshutdownscript.update', [
+      request$ = this.api.call('initshutdownscript.update', [
         this.editingScript.id,
         values,
       ]);
@@ -154,7 +154,7 @@ export class InitShutdownFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

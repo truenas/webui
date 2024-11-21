@@ -74,7 +74,7 @@ export class CloudSyncProviderComponent implements OnInit {
   ) {}
 
   get areActionsDisabled(): boolean {
-    return this.form.invalid || !this.form.controls.exist_credential.value;
+    return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
   }
 
   ngOnInit(): void {
@@ -89,7 +89,7 @@ export class CloudSyncProviderComponent implements OnInit {
       .pipe(
         catchError((error: unknown) => {
           this.loading.emit(false);
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
           return EMPTY;
         }),
@@ -138,7 +138,7 @@ export class CloudSyncProviderComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.loading.emit(false);
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

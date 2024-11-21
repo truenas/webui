@@ -30,7 +30,7 @@ export class UnusedResourcesComponent implements OnInit {
   diskQuerySubscription: Subscription;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
@@ -42,7 +42,7 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.details').pipe(
+    this.api.call('disk.details').pipe(
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((diskDetails) => {
@@ -54,7 +54,7 @@ export class UnusedResourcesComponent implements OnInit {
 
   private subscribeToDiskQuery(): void {
     this.unsubscribeFromDiskQuery();
-    this.diskQuerySubscription = this.ws.subscribe('disk.query')
+    this.diskQuerySubscription = this.api.subscribe('disk.query')
       .pipe(
         debounceTime(300),
         distinctUntilChanged(),

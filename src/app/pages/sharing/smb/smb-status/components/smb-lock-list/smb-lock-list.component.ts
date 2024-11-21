@@ -84,14 +84,14 @@ export class SmbLockListComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Locks]).pipe(
+    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Locks]).pipe(
       tap((locks: SmbLockInfo[]) => {
         this.locks = locks;
         if (this.filterString) {

@@ -165,7 +165,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.dialogRef.close(true);
         },
         error: (error: ApiError) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -196,7 +196,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.dialogRef.close(true);
         },
         error: (error: ApiError) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

@@ -19,7 +19,7 @@ describe('InitiatorFormComponent', () => {
   let spectator: SpectatorRouting<InitiatorFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: InitiatorFormComponent,
     imports: [
@@ -45,7 +45,7 @@ describe('InitiatorFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current initiator values when form is being edited', async () => {
@@ -57,8 +57,8 @@ describe('InitiatorFormComponent', () => {
     expect(await availableList.getItems()).toHaveLength(1);
     expect(await selectedList.getItems()).toHaveLength(2);
 
-    expect(ws.call).toHaveBeenCalledWith('iscsi.global.sessions');
-    expect(ws.call).toHaveBeenCalledWith('iscsi.initiator.query', [[['id', '=', 1]]]);
+    expect(api.call).toHaveBeenCalledWith('iscsi.global.sessions');
+    expect(api.call).toHaveBeenCalledWith('iscsi.initiator.query', [[['id', '=', 1]]]);
 
     expect(await form.getValues()).toEqual({
       'Allow All Initiators': false,
@@ -95,7 +95,7 @@ describe('InitiatorFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('iscsi.initiator.update', [1, {
+    expect(api.call).toHaveBeenLastCalledWith('iscsi.initiator.update', [1, {
       comment: 'new_comment',
       initiators: ['inr11', 'inr12', 'inr1'],
     }]);
@@ -113,7 +113,7 @@ describe('InitiatorFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('iscsi.initiator.update', [1, {
+    expect(api.call).toHaveBeenLastCalledWith('iscsi.initiator.update', [1, {
       comment: 'new_comment',
       initiators: [],
     }]);
@@ -141,7 +141,7 @@ describe('InitiatorFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('iscsi.initiator.create', [{
+    expect(api.call).toHaveBeenLastCalledWith('iscsi.initiator.create', [{
       comment: '',
       initiators: ['new_initiator_1', 'new_initiator_2'],
     }]);
@@ -159,6 +159,6 @@ describe('InitiatorFormComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Refresh' }));
     await button.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('iscsi.global.sessions');
+    expect(api.call).toHaveBeenLastCalledWith('iscsi.global.sessions');
   });
 });

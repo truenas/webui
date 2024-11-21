@@ -82,7 +82,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
-  usbDevices$ = this.ws.call('virt.device.usb_choices').pipe(
+  usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
       label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
@@ -90,14 +90,13 @@ export class InstanceWizardComponent implements OnInit {
   );
 
   // TODO: MV supports only [Container, Physical] for now (based on the response)
-  gpuDevices$ = this.ws.call(
+  gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
     [VirtualizationType.Container, VirtualizationGpuType.Physical],
   ).pipe(
-    map((choices: Record<string, AvailableGpu>) => Object.values(choices).map((choice) => ({
-      label: choice.description,
-      // TODO: Incorrect value – doesn't uniquely identify the GPU
-      value: choice.vendor,
+    map((choices: Record<string, AvailableGpu>) => Object.entries(choices).map(([pci, gpu]) => ({
+      label: gpu.description,
+      value: pci,
     }))),
   );
 
@@ -132,7 +131,7 @@ export class InstanceWizardComponent implements OnInit {
   }
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formBuilder: FormBuilder,
     private matDialog: MatDialog,
     private router: Router,
@@ -200,7 +199,7 @@ export class InstanceWizardComponent implements OnInit {
 
   protected onSubmit(): void {
     const payload = this.getPayload();
-    const job$ = this.ws.job('virt.instance.create', [payload]);
+    const job$ = this.api.job('virt.instance.create', [payload]);
 
     this.dialogService
       .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
@@ -212,7 +211,7 @@ export class InstanceWizardComponent implements OnInit {
           this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -272,9 +271,9 @@ export class InstanceWizardComponent implements OnInit {
 
     const gpuDevices = Object.entries(this.form.controls.gpu_devices.value || {})
       .filter(([_, isSelected]) => isSelected)
-      .map(([gpuType]) => ({
+      .map(([pci]) => ({
+        pci,
         dev_type: VirtualizationDeviceType.Gpu,
-        gpu_type: gpuType,
       }));
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({

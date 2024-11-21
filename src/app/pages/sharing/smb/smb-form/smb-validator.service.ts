@@ -20,7 +20,7 @@ export class SmbValidationService {
   private wasNoSmbUsersWarningShown = false;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) { }
@@ -37,7 +37,7 @@ export class SmbValidationService {
             return of(null);
           }
 
-          return this.ws.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
+          return this.api.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
             switchMap((response) => this.handleError(response)),
             catchError((error: { reason: string }) => this.handleError(error)),
           );

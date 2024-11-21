@@ -11,6 +11,18 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 
+export interface VirtualizationInstanceMetrics {
+  cpu: {
+    cpu_user_percentage: number;
+  };
+  mem_usage: {
+    mem_usage_ram_mib: number;
+  };
+  io_full_pressure: {
+    io_full_pressure_full_60_percentage: number;
+  };
+}
+
 export interface VirtualizationInstance {
   id: string;
   name: string;
@@ -135,13 +147,10 @@ export interface VirtualizationImage {
   variant: string;
 }
 
-export type VirtualizationStopParams = [
-  instanceId: string,
-  {
-    timeout?: number;
-    force?: boolean;
-  },
-];
+export interface VirtualizationStopParams {
+  timeout?: number;
+  force?: boolean;
+}
 
 export interface VirtualizationGlobalConfigUpdate {
   pool: string;
@@ -178,6 +187,11 @@ export interface AvailableGpu {
   slot: number;
   description: string;
   vendor: string | null;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface AvailableGpus {
+  [pci: string]: AvailableGpu;
 }
 
 export interface AvailableUsb {

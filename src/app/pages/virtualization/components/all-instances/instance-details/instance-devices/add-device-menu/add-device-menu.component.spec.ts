@@ -9,7 +9,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   AddDeviceMenuComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AddDeviceMenuComponent', () => {
@@ -30,29 +30,30 @@ describe('AddDeviceMenuComponent', () => {
           } as AvailableUsb,
         }),
         mockCall('virt.device.gpu_choices', {
-          gpu1: {
+          pci_0000_01_00_0: {
             description: 'NDIVIA XTR 2000',
           } as AvailableGpu,
-          gpu2: {
+          pci_0000_01_00_1: {
             description: 'MAD Galeon 5000',
           } as AvailableGpu,
         }),
         mockCall('virt.instance.device_add'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(VirtualizationDevicesStore, {
         selectedInstance: () => ({ id: 'my-instance' }),
-        selectedInstanceDevices: () => [
+        devices: () => [
           {
             dev_type: VirtualizationDeviceType.Usb,
             product_id: 'already-added',
           },
           {
             dev_type: VirtualizationDeviceType.Gpu,
+            pci: 'pci_0000_01_00_0',
             description: 'NDIVIA XTR 2000',
           },
         ] as VirtualizationDevice[],
         loadDevices: jest.fn(),
-        isLoadingDevices: () => false,
+        isLoading: () => false,
       }),
       mockProvider(SnackbarService),
     ],
@@ -83,7 +84,7 @@ describe('AddDeviceMenuComponent', () => {
       dev_type: VirtualizationDeviceType.Usb,
       product_id: 'new',
     } as VirtualizationDevice]);
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
   });
 
@@ -95,9 +96,9 @@ describe('AddDeviceMenuComponent', () => {
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
       dev_type: VirtualizationDeviceType.Gpu,
-      description: 'MAD Galeon 5000',
+      pci: 'pci_0000_01_00_1',
     } as VirtualizationDevice]);
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device was added');
   });
 });

@@ -92,7 +92,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private translate: TranslateService,
     protected matDialog: MatDialog,
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -158,7 +158,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
     return this.authService.user$.pipe(
       take(1),
-      switchMap((user) => this.ws.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
+      switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {
         this.userTwoFactorAuthConfigured = true;

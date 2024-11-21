@@ -72,7 +72,7 @@ export class SelectImageDialogComponent implements OnInit {
   } as EmptyConfig);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<SelectImageDialogComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -95,7 +95,7 @@ export class SelectImageDialogComponent implements OnInit {
   }
 
   private getImages(): void {
-    this.ws.call('virt.instance.image_choices', [this.data])
+    this.api.call('virt.instance.image_choices', [this.data])
       .pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);

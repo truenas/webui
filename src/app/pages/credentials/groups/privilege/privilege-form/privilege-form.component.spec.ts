@@ -3,17 +3,22 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { ApiService } from 'app/services/websocket/api.service';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
@@ -54,8 +59,26 @@ describe('PrivilegeFormComponent', () => {
           { name: Role.SharingSmbRead, title: Role.SharingSmbRead, builtin: false },
           { name: Role.SharingSmbWrite, title: Role.SharingSmbWrite, builtin: false },
         ] as PrivilegeRole[]),
+        mockCall('system.general.update'),
       ]),
       mockProvider(SlideInRef),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectIsEnterprise,
+            value: true,
+          },
+          {
+            selector: selectGeneralConfig,
+            value: {
+              ds_auth: false,
+            },
+          },
+        ],
+      }),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -91,7 +114,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenLastCalledWith('privilege.create', [{
+      expect(api.call).toHaveBeenCalledWith('privilege.create', [{
         ds_groups: [],
         local_groups: [],
         name: 'new privilege',
@@ -136,7 +159,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenLastCalledWith('privilege.update', [10, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         name: 'updated privilege',
@@ -175,7 +198,7 @@ describe('PrivilegeFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(api.call).toHaveBeenLastCalledWith('privilege.update', [10, {
+      expect(api.call).toHaveBeenCalledWith('privilege.update', [10, {
         ds_groups: [],
         local_groups: [111, 222],
         web_shell: false,

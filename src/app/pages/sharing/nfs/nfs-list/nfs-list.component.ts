@@ -134,7 +134,7 @@ export class NfsListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => {
-                this.ws.call('sharing.nfs.delete', [row.id]).pipe(
+                this.api.call('sharing.nfs.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
@@ -154,7 +154,7 @@ export class NfsListComponent implements OnInit {
 
   constructor(
     private appLoader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -164,7 +164,7 @@ export class NfsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const shares$ = this.ws.call('sharing.nfs.query').pipe(
+    const shares$ = this.api.call('sharing.nfs.query').pipe(
       tap((shares) => this.nfsShares = shares),
       untilDestroyed(this),
     );
@@ -213,7 +213,7 @@ export class NfsListComponent implements OnInit {
   }
 
   private onChangeEnabledState(row: NfsShare): void {
-    this.ws.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
+    this.api.call('sharing.nfs.update', [row.id, { enabled: !row.enabled }]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {

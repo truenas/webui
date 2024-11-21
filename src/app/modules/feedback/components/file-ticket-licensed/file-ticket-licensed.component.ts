@@ -142,7 +142,7 @@ export class FileTicketLicensedComponent {
       untilDestroyed(this),
     ).subscribe({
       next: (createdTicket) => this.onSuccess(createdTicket.url),
-      error: (error) => this.formErrorHandler.handleWsFormError(error, this.form),
+      error: (error) => this.formErrorHandler.handleValidationErrors(error, this.form),
     });
   }
 
