@@ -176,7 +176,7 @@ export class DiskBulkEditComponent {
         error: (error: unknown) => {
           this.isLoading = false;
           this.slideInRef.close(false);
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

@@ -20,7 +20,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;
   let loader: HarnessLoader;
-  let websocket: ApiService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -54,7 +54,7 @@ describe('BootEnvironmentListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 
@@ -83,7 +83,7 @@ describe('BootEnvironmentListComponent', () => {
       ],
     ];
 
-    expect(websocket.call).toHaveBeenCalledWith('boot.environment.query');
+    expect(api.call).toHaveBeenCalledWith('boot.environment.query');
     expect(cells).toEqual(expectedRows);
   });
 });

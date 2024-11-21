@@ -61,10 +61,10 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('loads network summary and config when component is initialized', () => {
-    const ws = spectator.inject(ApiService);
+    const api = spectator.inject(ApiService);
 
-    expect(ws.call).toHaveBeenCalledWith('network.general.summary');
-    expect(ws.call).toHaveBeenCalledWith('network.configuration.config');
+    expect(api.call).toHaveBeenCalledWith('network.general.summary');
+    expect(api.call).toHaveBeenCalledWith('network.configuration.config');
   });
 
   it('shows nameservers assigned via settings', () => {

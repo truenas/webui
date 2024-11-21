@@ -172,7 +172,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.commonForm);
+          this.formErrorHandler.handleValidationErrors(error, this.commonForm);
           this.cdr.markForCheck();
         },
       });
@@ -209,7 +209,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.commonForm);
+          this.formErrorHandler.handleValidationErrors(error, this.commonForm);
           this.cdr.markForCheck();
         },
       });

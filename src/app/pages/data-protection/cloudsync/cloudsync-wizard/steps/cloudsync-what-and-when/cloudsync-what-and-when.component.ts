@@ -181,7 +181,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.cdr.markForCheck();
       }),
       catchError((error: unknown) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
         return EMPTY;
       }),

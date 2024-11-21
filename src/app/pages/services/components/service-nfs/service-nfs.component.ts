@@ -163,7 +163,7 @@ export class ServiceNfsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

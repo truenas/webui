@@ -9,7 +9,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
@@ -32,7 +32,7 @@ describe('AppResourcesCardComponent', () => {
         isLoading: false,
       },
     });
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows header', () => {
@@ -40,7 +40,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('shows information about available resources', () => {
-    expect(websocket.subscribe).toHaveBeenCalledWith('reporting.realtime');
+    expect(api.subscribe).toHaveBeenCalledWith('reporting.realtime');
 
     expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage:0% Avg. Usage');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage: N/A');
@@ -48,7 +48,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('loads and reports available space on apps dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('app.available_space');
+    expect(api.call).toHaveBeenCalledWith('app.available_space');
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

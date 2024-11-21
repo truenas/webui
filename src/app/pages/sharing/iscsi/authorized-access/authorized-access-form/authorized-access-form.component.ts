@@ -209,7 +209,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
