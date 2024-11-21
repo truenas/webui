@@ -3038,6 +3038,7 @@
   "Remote SSH Port": "",
   "Remote machine": "",
   "Remote system SSH key for this system to  authenticate the connection. When all other fields are properly  configured, click <b>DISCOVER REMOTE HOST KEY</b> to query the remote  system and automatically populate this field.": "",
+  "Remove Images": "",
   "Remove Invalid Quotas": "",
   "Remove Keep Flag": "",
   "Remove device": "",
