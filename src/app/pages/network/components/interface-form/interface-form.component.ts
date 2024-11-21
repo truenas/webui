@@ -292,7 +292,7 @@ export class InterfaceFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

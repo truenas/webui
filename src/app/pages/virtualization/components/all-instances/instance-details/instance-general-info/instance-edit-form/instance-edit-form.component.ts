@@ -101,7 +101,7 @@ export class InstanceEditFormComponent {
           this.slideInRef.close(true);
         },
         error: (error) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

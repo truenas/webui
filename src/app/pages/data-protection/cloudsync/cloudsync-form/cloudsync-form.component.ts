@@ -265,7 +265,7 @@ export class CloudSyncFormComponent implements OnInit {
       catchError((error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -750,7 +750,7 @@ export class CloudSyncFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

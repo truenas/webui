@@ -23,7 +23,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket: MockApiService;
+  let api: MockApiService;
   let authService: AuthService;
   const testScheduler = getTestScheduler();
 
@@ -71,7 +71,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
     authService = spectator.inject(AuthService);
 
     Object.defineProperty(authService, 'authToken$', {
@@ -132,7 +132,7 @@ describe('SigninStore', () => {
 
   describe('init', () => {
     it('checks login banner and show if set', async () => {
-      websocket.mockCall('system.advanced.login_banner', 'HELLO USER');
+      api.mockCall('system.advanced.login_banner', 'HELLO USER');
       spectator.service.init();
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
@@ -148,8 +148,8 @@ describe('SigninStore', () => {
     it('checks if root password is set and loads failover status', async () => {
       spectator.service.init();
 
-      expect(websocket.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
-      expect(websocket.call).toHaveBeenCalledWith('failover.status');
+      expect(api.call).toHaveBeenCalledWith('user.has_local_administrator_set_up');
+      expect(api.call).toHaveBeenCalledWith('failover.status');
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
@@ -162,12 +162,12 @@ describe('SigninStore', () => {
     });
 
     it('loads additional failover info if failover status is not Single', async () => {
-      websocket.mockCall('failover.status', FailoverStatus.Master);
+      api.mockCall('failover.status', FailoverStatus.Master);
 
       spectator.service.init();
 
-      expect(websocket.call).toHaveBeenCalledWith('failover.get_ips');
-      expect(websocket.call).toHaveBeenCalledWith('failover.disabled.reasons');
+      expect(api.call).toHaveBeenCalledWith('failover.get_ips');
+      expect(api.call).toHaveBeenCalledWith('failover.disabled.reasons');
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
@@ -199,18 +199,18 @@ describe('SigninStore', () => {
 
   describe('init - failover subscriptions', () => {
     beforeEach(() => {
-      websocket.mockCall('failover.status', FailoverStatus.Master);
+      api.mockCall('failover.status', FailoverStatus.Master);
     });
 
     it('subscribes to failover updates if failover status is not Single', () => {
       spectator.service.init();
 
-      expect(websocket.subscribe).toHaveBeenCalledWith('failover.status');
-      expect(websocket.subscribe).toHaveBeenCalledWith('failover.disabled.reasons');
+      expect(api.subscribe).toHaveBeenCalledWith('failover.status');
+      expect(api.subscribe).toHaveBeenCalledWith('failover.disabled.reasons');
     });
 
     it('changes failover status in store when websocket event is emitted', async () => {
-      jest.spyOn(websocket, 'subscribe').mockImplementation((method) => {
+      jest.spyOn(api, 'subscribe').mockImplementation((method) => {
         if (method !== 'failover.status') {
           return of();
         }
@@ -234,7 +234,7 @@ describe('SigninStore', () => {
 
     it('changes disabled reasons in store when websocket event is emitted', () => {
       testScheduler.run(({ cold, expectObservable }) => {
-        jest.spyOn(websocket, 'subscribe').mockImplementation((method) => {
+        jest.spyOn(api, 'subscribe').mockImplementation((method) => {
           if (method !== 'failover.disabled.reasons') {
             return of();
           }
