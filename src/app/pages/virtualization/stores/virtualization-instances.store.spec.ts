@@ -35,9 +35,6 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: true,
       instances: [],
-      selectedInstance: null,
-      isLoadingDevices: false,
-      selectedInstanceDevices: [],
     });
   });
 
@@ -48,37 +45,7 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
       isLoading: false,
-      selectedInstance: null,
-      isLoadingDevices: false,
-      selectedInstanceDevices: [],
     });
-  });
-
-  it('selectInstance - selects an instance and loads its devices', () => {
-    jest.spyOn(spectator.service, 'loadDevices');
-
-    spectator.service.initialize();
-    spectator.service.selectInstance('instance1');
-
-    expect(spectator.service.selectedInstance()).toBe(instances[0]);
-    expect(spectator.service.loadDevices).toHaveBeenCalled();
-  });
-
-  it('loadDevices – loads a list of devices for the selected instance', () => {
-    spectator.service.initialize();
-    spectator.service.selectInstance('instance1');
-    spectator.service.loadDevices();
-
-    expect(spectator.service.selectedInstanceDevices()).toBe(devices);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_list', ['instance1']);
-  });
-
-  it('deviceDeleted – removes a device from list of devices for selected instance', () => {
-    spectator.service.initialize();
-    spectator.service.selectInstance('instance1');
-    spectator.service.deviceDeleted('device1');
-
-    expect(spectator.service.selectedInstanceDevices()).toEqual([devices[1]]);
   });
 
   describe('selectors', () => {
@@ -90,18 +57,6 @@ describe('VirtualizationInstancesStore', () => {
 
     it('instances - returns instances part of the state', () => {
       expect(spectator.service.instances()).toBe(instances);
-    });
-
-    it('selectedInstance - returns selected instance from the state', () => {
-      expect(spectator.service.selectedInstance()).toBeNull();
-    });
-
-    it('isLoadingDevices - returns flag showing whether devices are being loaded', () => {
-      expect(spectator.service.isLoadingDevices()).toBe(false);
-    });
-
-    it('selectedInstanceDevices - returns flag showing whether devices are being loaded', () => {
-      expect(spectator.service.selectedInstanceDevices()).toEqual([]);
     });
   });
 });

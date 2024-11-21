@@ -9,7 +9,6 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Option } from 'app/interfaces/option.interface';
 import { VirtualizationStopParams } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -35,7 +34,6 @@ export enum StopOptionsOperation {
     MatButton,
     MatDialogTitle,
     ReactiveFormsModule,
-    RequiresRolesDirective,
     TestDirective,
     TranslateModule,
     MatDialogClose,

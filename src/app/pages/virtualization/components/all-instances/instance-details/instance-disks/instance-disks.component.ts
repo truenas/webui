@@ -6,16 +6,15 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
-import {
-  DeviceActionsMenuComponent,
-} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { DeviceActionsMenuComponent } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 @UntilDestroy()
@@ -38,15 +37,15 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   ],
 })
 export class InstanceDisksComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   constructor(
     private slideIn: ChainedSlideInService,
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   protected readonly visibleDisks = computed(() => {
-    return this.instanceStore.selectedInstanceDevices()
+    return this.deviceStore.devices()
       .filter((device) => device.dev_type === VirtualizationDeviceType.Disk)
       // TODO: Second filter is due to Typescript issues.
       .filter((disk) => disk.source);
@@ -61,13 +60,8 @@ export class InstanceDisksComponent {
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
-    this.slideIn.open(InstanceDiskFormComponent, false, { disk, instanceId: this.instanceStore.selectedInstance().id })
-      .pipe(untilDestroyed(this))
-      .subscribe((result) => {
-        if (!result.response) {
-          return;
-        }
-        this.instanceStore.loadDevices();
-      });
+    this.slideIn.open(InstanceDiskFormComponent, false, { disk, instanceId: this.deviceStore.selectedInstance().id })
+      .pipe(filter((result) => !!result.response), untilDestroyed(this))
+      .subscribe(() => this.deviceStore.loadDevices());
   }
 }
