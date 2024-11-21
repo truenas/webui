@@ -139,7 +139,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({
       query,
       columnKeys: ['repo_tags'],
