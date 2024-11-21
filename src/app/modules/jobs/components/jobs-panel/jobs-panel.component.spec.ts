@@ -74,7 +74,7 @@ const transientRunningJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -115,7 +115,7 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jobPanel = new JobsPanelPageObject(spectator);
   });
@@ -123,11 +123,11 @@ describe('JobsPanelComponent', () => {
   it('loads jobs when adminUiInitialized is dispatched', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'core.get_jobs',
       [[['state', '!=', JobState.Success]]],
     );
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'core.get_jobs',
       [[['state', '=', JobState.Success]], { limit: 30, order_by: ['-id'] }],
     );
@@ -160,7 +160,7 @@ describe('JobsPanelComponent', () => {
     const abortButton = spectator.query('.job-button-abort');
     spectator.click(abortButton);
 
-    expect(websocket.call).toHaveBeenCalledWith('core.job_abort', [1]);
+    expect(api.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });
 
   it('checks redirect when "History" button is pressed', async () => {

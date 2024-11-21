@@ -23,7 +23,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: ApiService;
+  let api: ApiService;
   let saveButton: MatButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -74,7 +74,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
   });
 
@@ -107,7 +107,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+    expect(api.job).toHaveBeenCalledWith('filesystem.setperm', [{
       path: '/mnt/pool/trivial',
       mode: '755',
       user: 'games',
@@ -127,7 +127,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+    expect(api.job).toHaveBeenCalledWith('filesystem.setperm', [{
       path: '/mnt/pool/trivial',
       mode: '777',
       options: {
@@ -161,7 +161,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+    expect(api.job).toHaveBeenCalledWith('filesystem.setperm', [{
       path: '/mnt/pool/trivial',
       mode: '555',
       options: {

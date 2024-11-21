@@ -272,7 +272,7 @@ export class IpmiFormComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });

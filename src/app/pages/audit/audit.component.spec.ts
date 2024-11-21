@@ -23,7 +23,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const auditEntries = [
@@ -112,13 +112,13 @@ describe('AuditComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     // Do it in this weird way because table header is outside the table element.
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
   it('loads and shows a table with audit entries', async () => {
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'audit.query',
       [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] } }],
     );
@@ -141,7 +141,7 @@ describe('AuditComponent', () => {
 
     search.runSearch.emit();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
@@ -155,7 +155,7 @@ describe('AuditComponent', () => {
     spectator.component.controllerTypeChanged({ value: ControllerType.Standby } as MatButtonToggleChange);
     spectator.detectChanges();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [],
@@ -176,7 +176,7 @@ describe('AuditComponent', () => {
     };
     search.runSearch.emit();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],

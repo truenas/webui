@@ -28,12 +28,12 @@ describe('DatasetTreeStore', () => {
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(ApiService);
-      jest.spyOn(mockWebSocket, 'call').mockReturnValue(cold('-b|', { b: datasets }));
+      const mockedApi = spectator.inject(ApiService);
+      jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
 
       spectator.service.loadDatasets();
 
-      expect(mockWebSocket.call).toHaveBeenCalledWith('pool.dataset.details');
+      expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
       expectObservable(spectator.service.state$).toBe('ab', {
         a: {
           error: null,
