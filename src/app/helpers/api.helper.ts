@@ -46,7 +46,5 @@ export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method'
   return {
     jsonrpc: '2.0',
     ...message,
-    // TODO: Workaround for: https://ixsystems.atlassian.net/browse/NAS-132605
-    params: message.params || [],
   };
 }

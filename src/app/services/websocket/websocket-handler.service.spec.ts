@@ -20,7 +20,7 @@ function fakeSocketFactory<T>(urlConfigOrSource: WebSocketSubjectConfig<T>): Web
   return fakeSocket$;
 }
 
-describe('WebSocketConnectionService', () => {
+describe('WebSocketHandlerService', () => {
   let spectator: SpectatorService<WebSocketHandlerService>;
   let responseStream$: Subject<unknown>;
 
@@ -78,13 +78,13 @@ describe('WebSocketConnectionService', () => {
     fakeSocketConfig.openObserver.next({} as Event);
 
     tick(20 * 1000);
-    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(1, { jsonrpc: '2.0', method: 'core.ping', params: [] });
+    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(1, { jsonrpc: '2.0', method: 'core.ping' });
     expect(WebSocketConnection.prototype.send).toHaveBeenCalledTimes(1);
     tick(20 * 1000);
-    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(2, { jsonrpc: '2.0', method: 'core.ping', params: [] });
+    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(2, { jsonrpc: '2.0', method: 'core.ping' });
     expect(WebSocketConnection.prototype.send).toHaveBeenCalledTimes(2);
     tick(20 * 1000);
-    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(3, { jsonrpc: '2.0', method: 'core.ping', params: [] });
+    expect(WebSocketConnection.prototype.send).toHaveBeenNthCalledWith(3, { jsonrpc: '2.0', method: 'core.ping' });
     expect(WebSocketConnection.prototype.send).toHaveBeenCalledTimes(3);
 
     fakeSocketConfig.closeObserver.next({} as CloseEvent);
