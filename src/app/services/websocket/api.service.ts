@@ -5,7 +5,6 @@ import {
   filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, throwError,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -21,8 +20,7 @@ import {
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
 import {
-  JsonRpcError,
-  ApiEvent, ApiEventMethod, ApiEventTyped, ResponseMessage,
+  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingMessage, SuccessfulResponse, ErrorResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
@@ -68,7 +66,8 @@ export class ApiService {
   }
 
   /**
-   * Use `job` when you care about job progress or result.
+   * Use this method when you want to start a job, but don't care about the progress or result.
+   * Use `job` otherwise.
    */
   startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
     return this.callMethod(method, params);
@@ -106,7 +105,7 @@ export class ApiService {
       };
     }).pipe(
       switchMap((apiEvent) => {
-        const erroredEvent = apiEvent as unknown as ResponseMessage;
+        const erroredEvent = apiEvent as unknown as IncomingMessage;
         if (isErrorResponse(erroredEvent)) {
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
@@ -141,13 +140,13 @@ export class ApiService {
           id: uuid, method, params,
         });
         return this.wsHandler.responses$.pipe(
-          filter((message) => message.id === uuid),
+          filter((message) => 'id' in message && message.id === uuid),
         );
       }),
-      switchMap((message) => {
+      switchMap((message: SuccessfulResponse | ErrorResponse) => {
         if (isErrorResponse(message)) {
-          this.printError(message.error, { method, params });
-          const error = this.enhanceError(message.error, { method });
+          this.printError(message, { method, params });
+          const error = this.enhanceError(message, { method });
           return throwError(() => error);
         }
 
@@ -169,31 +168,34 @@ export class ApiService {
     );
   }
 
-  private printError(error: JsonRpcError, context: { method: string; params: unknown }): void {
-    if (error.data?.errname === ApiErrorName.NoAccess) {
+  private printError(response: ErrorResponse, context: { method: string; params: unknown }): void {
+    if (response.error.data?.errname === ApiErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
     }
 
     // Do not log validation errors.
-    if (error.data?.type === ResponseErrorType.Validation) {
+    if (response.error.data?.errname === ApiErrorName.Validation) {
       return;
     }
 
-    console.error('Error: ', error);
+    console.error('Error: ', response.error);
   }
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(error: JsonRpcError, context: { method: string }): JsonRpcError {
-    if (error.data?.errname === ApiErrorName.NoAccess) {
+  private enhanceError(response: ErrorResponse, context: { method: string }): ErrorResponse {
+    if (response.error.data?.errname === ApiErrorName.NoAccess) {
       return {
-        ...error,
-        data: {
-          ...error.data,
-          reason: this.translate.instant('Access denied to {method}', { method: context.method }),
+        ...response,
+        error: {
+          ...response.error,
+          data: {
+            ...response.error.data,
+            reason: this.translate.instant('Access denied to {method}', { method: context.method }),
+          },
         },
       };
     }
-    return error;
+    return response;
   }
 }

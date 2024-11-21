@@ -21,12 +21,11 @@ import {
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { makeRequestMessage } from 'app/helpers/api.helper';
+import { isCollectionUpdateMessage, makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import {
-  ApiEventMethod, ApiEventTyped, RequestMessage, ResponseMessage,
+  ApiEventMethod, ApiEventTyped, RequestMessage, IncomingMessage, CollectionUpdateMessage,
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
@@ -68,8 +67,8 @@ export class WebSocketHandlerService {
     return this.isConnectionLive$.pipe(map((isLive) => !isLive));
   }
 
-  get responses$(): Observable<ResponseMessage> {
-    return this.wsConnection.stream$ as Observable<ResponseMessage>;
+  get responses$(): Observable<IncomingMessage> {
+    return this.wsConnection.stream$ as Observable<IncomingMessage>;
   }
 
   private readonly triggerNextCall$ = new Subject<void>();
@@ -118,7 +117,7 @@ export class WebSocketHandlerService {
     this.wsConnection.send(call);
 
     return this.responses$.pipe(
-      filter((message) => message.id === call.id),
+      filter((message) => 'id' in message && message.id === call.id),
       take(1),
       tap(() => {
         this.activeCalls--;
@@ -237,13 +236,15 @@ export class WebSocketHandlerService {
   buildSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
     const id = UUID.UUID();
     return this.wsConnection.event(
-      () => ({
-        id, jsonrpc: '2.0', method: 'core.subscribe', params: [name],
+      () => makeRequestMessage({
+        id, method: 'core.subscribe', params: [name],
       }),
-      () => ({
-        id, jsonrpc: '2.0', method: 'core.unsubscribe', params: [name],
+      () => makeRequestMessage({
+        id, method: 'core.unsubscribe', params: [name],
       }),
-      (message: R) => (message.collection === name && message.msg !== IncomingApiMessageType.NoSub),
+      (message: IncomingMessage) => isCollectionUpdateMessage(message) && message.params.collection === name,
+    ).pipe(
+      map((message: CollectionUpdateMessage) => message.params as R),
     );
   }
 

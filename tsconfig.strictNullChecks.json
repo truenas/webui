@@ -44,7 +44,6 @@
     "./src/app/enums/alert-level.enum.ts",
     "./src/app/enums/alert-policy.enum.ts",
     "./src/app/enums/alert-service-type.enum.ts",
-    "./src/app/enums/api-message-type.enum.ts",
     "./src/app/enums/app-extra-category.enum.ts",
     "./src/app/enums/audit.enum.ts",
     "./src/app/enums/ca-create-type.enum.ts",

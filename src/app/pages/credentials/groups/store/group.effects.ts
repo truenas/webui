@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
@@ -49,7 +49,7 @@ export class GroupEffects {
     ofType(groupsLoaded),
     switchMap(() => {
       return this.api.subscribe('group.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        filter((event) => event.msg === CollectionChangeType.Removed),
         map((event) => groupRemoved({ id: event.id as number })),
       );
     }),

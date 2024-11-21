@@ -4,6 +4,7 @@ export enum ApiErrorName {
   NoMemory = 'ENOMEM',
   AlreadyExists = 'EEXIST',
   Again = 'EAGAIN',
+  Validation = 'EINVAL',
 }
 
 export enum JsonRpcErrorCode {
@@ -13,4 +14,14 @@ export enum JsonRpcErrorCode {
   InternalError = -32603,
   TooManyConcurrentCalls = -32000,
   CallError = -32001,
+}
+
+export enum CollectionChangeType {
+  Changed = 'changed',
+  Added = 'added',
+  Removed = 'removed',
+}
+
+export enum ShellMessageType {
+  Connected = 'connected',
 }
