@@ -114,7 +114,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/', 'sharing', 'iscsi', 'initiator']);
+    this.router.navigate(['/', 'sharing', 'iscsi', 'initiators']);
   }
 
   onSubmit(): void {

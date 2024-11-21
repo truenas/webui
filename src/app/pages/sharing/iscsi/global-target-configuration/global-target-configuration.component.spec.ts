@@ -14,23 +14,24 @@ import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface'
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
-import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
 describe('TargetGlobalConfigurationComponent', () => {
-  let spectator: Spectator<TargetGlobalConfigurationComponent>;
+  let spectator: Spectator<GlobalTargetConfigurationComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
-    component: TargetGlobalConfigurationComponent,
+    component: GlobalTargetConfigurationComponent,
     imports: [
       ReactiveFormsModule,
     ],
@@ -50,6 +51,7 @@ describe('TargetGlobalConfigurationComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
+      mockProvider(SlideInRef),
       provideMockStore({
         selectors: [
           {
@@ -115,6 +117,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       listen_port: 3270,
       alua: false,
     }]);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('checks if iSCSI service is enabled and does nothing if it is', async () => {
