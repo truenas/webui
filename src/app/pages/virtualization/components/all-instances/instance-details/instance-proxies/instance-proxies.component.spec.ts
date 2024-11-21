@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
@@ -15,7 +17,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('InstanceProxiesComponent', () => {
@@ -56,10 +58,10 @@ describe('InstanceProxiesComponent', () => {
           error: false,
         })),
       }),
-      mockProvider(VirtualizationInstancesStore, {
-        isLoadingDevices: () => false,
+      mockProvider(VirtualizationDevicesStore, {
+        isLoading: () => false,
         selectedInstance: () => ({ id: 'my-instance' }),
-        selectedInstanceDevices: () => devices,
+        devices: () => devices,
         loadDevices: jest.fn(),
       }),
     ],
@@ -84,7 +86,7 @@ describe('InstanceProxiesComponent', () => {
 
     expect(spectator.inject(ChainedSlideInService).open)
       .toHaveBeenCalledWith(InstanceProxyFormComponent, false, { instanceId: 'my-instance', proxy: undefined });
-    expect(spectator.inject(VirtualizationInstancesStore).loadDevices).toHaveBeenCalled();
+    expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
   });
 
   it('opens proxy for for edit when actions menu emits (edit)', () => {

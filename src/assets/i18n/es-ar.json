@@ -64,6 +64,8 @@
   "Address Pools": "",
   "Adjust Resilver Priority": "",
   "Adjust Scrub Priority": "",
+  "Allow Directory Service users to access WebUI?": "",
+  "Allow access": "",
   "Allow group members to use <a href=\"https://man7.org/linux/man-pages/man8/sudo.8.html\" target=\"_blank\">sudo</a>. Group members are prompted for their password when using <b>sudo</b>.": "",
   "Allow more ciphers for  <a href=\"https://man7.org/linux/man-pages/man8/sshd.8.html\" target=\"_blank\">sshd(8)</a>  in addition to the defaults in  <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a>.  <code>None</code> allows unencrypted SSH connections and  <code>AES128-CBC</code> allows the 128-bit  <a href=\"https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf\" target=\"_blank\">Advanced Encryption Standard</a>.<br><br>  WARNING: these ciphers are considered security vulnerabilities and  should only be allowed in a secure network environment.": "",
   "Allow non-unique serialed disks (not recommended)": "",

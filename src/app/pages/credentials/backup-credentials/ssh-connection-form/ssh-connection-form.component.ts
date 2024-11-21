@@ -214,7 +214,7 @@ export class SshConnectionFormComponent implements OnInit {
           });
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -237,7 +237,7 @@ export class SshConnectionFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

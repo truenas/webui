@@ -266,8 +266,8 @@ describe('VmWizardComponent', () => {
     const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await submit.click();
 
-    const websocket = spectator.inject(ApiService);
-    expect(websocket.call).toHaveBeenCalledWith('vm.create', [{
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledWith('vm.create', [{
       autostart: true,
       bootloader: VmBootloader.Uefi,
       cores: 1,
@@ -288,7 +288,7 @@ describe('VmWizardComponent', () => {
       time: VmTime.Local,
       vcpus: 2,
     }]);
-    expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+    expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
       attributes: {
         dtype: VmDeviceType.Nic,
@@ -298,7 +298,7 @@ describe('VmWizardComponent', () => {
         type: 'E1000',
       },
     }]);
-    expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+    expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
       attributes: {
         dtype: VmDeviceType.Disk,
@@ -310,15 +310,15 @@ describe('VmWizardComponent', () => {
         zvol_volsize: 40 * GiB,
       },
     }]);
-    expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+    expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
       attributes: {
         dtype: VmDeviceType.Cdrom,
         path: '/mnt/iso/FreeNAS-11.3-U3.iso',
       },
     }]);
-    expect(websocket.call).toHaveBeenCalledWith('vm.port_wizard');
-    expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+    expect(api.call).toHaveBeenCalledWith('vm.port_wizard');
+    expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
       vm: 4,
       attributes: {
         dtype: VmDeviceType.Display,

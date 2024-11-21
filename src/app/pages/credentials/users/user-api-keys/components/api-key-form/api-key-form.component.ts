@@ -155,7 +155,7 @@ export class ApiKeyFormComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading.set(false);
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.loader.close();
         },
       });

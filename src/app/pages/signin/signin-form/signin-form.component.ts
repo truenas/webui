@@ -129,7 +129,7 @@ export class SigninFormComponent implements OnInit {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });
@@ -193,7 +193,7 @@ export class SigninFormComponent implements OnInit {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });

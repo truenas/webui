@@ -133,7 +133,7 @@ describe('SmbFormComponent', () => {
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: ApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -180,7 +180,7 @@ describe('SmbFormComponent', () => {
         }],
       }),
       mockProvider(FormErrorHandlerService, {
-        handleWsFormError: jest.fn(),
+        handleValidationErrors: jest.fn(),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -195,7 +195,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows values of existing share when editing', async () => {
@@ -246,7 +246,7 @@ describe('SmbFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -411,7 +411,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
         path: '/mnt/pool123/ds222',
         name: 'ds223',
         purpose: SmbPresetType.MultiUserTimeMachine,
@@ -458,7 +458,7 @@ describe('SmbFormComponent', () => {
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
 
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
+      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
 
       const homeShare = await (await loader.getHarness(
         IxCheckboxHarness.with({ label: formLabels.home }),
@@ -509,7 +509,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(api.call).toHaveBeenCalledWith('sharing.smb.create', [{
         path: '/mnt/pool123/ds222',
         name: 'ds223',
         purpose: SmbPresetType.MultiUserTimeMachine,
@@ -542,7 +542,7 @@ describe('SmbFormComponent', () => {
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
 
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
+      expect(api.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
 
       const homeShare = await (await loader.getHarness(
         IxCheckboxHarness.with({ label: formLabels.home }),
@@ -561,8 +561,8 @@ describe('SmbFormComponent', () => {
   describe('smb validation', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(ApiService);
-      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+      api = spectator.inject(ApiService);
+      jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
           return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
         }
@@ -570,7 +570,7 @@ describe('SmbFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -586,8 +586,8 @@ describe('SmbFormComponent', () => {
   describe('handle error', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(ApiService);
-      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+      api = spectator.inject(ApiService);
+      jest.spyOn(api, 'call').mockImplementation((method) => {
         switch (method) {
           case 'group.query':
             return of([{ group: 'test' }] as Group[]);
@@ -630,7 +630,7 @@ describe('SmbFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(FormErrorHandlerService).handleWsFormError).toHaveBeenCalledWith(
+      expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
         { reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' },
         spectator.component.form,
         {},

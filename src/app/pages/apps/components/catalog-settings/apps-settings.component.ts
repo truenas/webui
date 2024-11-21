@@ -171,7 +171,7 @@ export class AppsSettingsComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

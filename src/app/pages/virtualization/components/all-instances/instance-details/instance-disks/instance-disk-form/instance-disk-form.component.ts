@@ -98,7 +98,7 @@ export class InstanceDiskFormComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.isLoading.set(false);
         },
       });

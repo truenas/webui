@@ -139,7 +139,7 @@ export class ServiceSnmpComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
