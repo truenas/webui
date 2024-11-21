@@ -49,7 +49,7 @@ import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let websocket: MockApiService;
+  let api: MockApiService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -124,7 +124,7 @@ describe('DatasetAclEditorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -153,8 +153,8 @@ describe('DatasetAclEditorComponent', () => {
 
   describe('loading and layout', () => {
     it('loads acl and stats for the dataset specified', () => {
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
-      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+      expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
+      expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
     });
 
     it('shows loaded acl', () => {

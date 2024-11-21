@@ -11,7 +11,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;
-  let websocket: SpyObject<ApiService>;
+  let api: SpyObject<ApiService>;
 
   const radeon = {
     addr: {
@@ -84,15 +84,15 @@ describe('VmGpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   describe('updateVmGpus', () => {
     it('creates new VM PCI device when new GPU is added', async () => {
       await lastValueFrom(spectator.service.updateVmGpus(vm, ['0000:01:00.0', '0000:02:00.0']));
 
-      expect(websocket.call).toHaveBeenCalledTimes(1);
-      expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
         attributes: {
           dtype: VmDeviceType.Pci,
@@ -104,23 +104,23 @@ describe('VmGpuService', () => {
     it('removes existing VM PCI device when associated GPU is removed', async () => {
       await lastValueFrom(spectator.service.updateVmGpus(vm, []));
 
-      expect(websocket.call).toHaveBeenCalledTimes(1);
-      expect(websocket.call).toHaveBeenCalledWith('vm.device.delete', [13]);
+      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(api.call).toHaveBeenCalledWith('vm.device.delete', [13]);
     });
 
     it('both creates and removes VM PCI devices to match selected GPUs', async () => {
       await lastValueFrom(spectator.service.updateVmGpus(vm, ['0000:01:00.0', '0000:03:00.0']));
 
-      expect(websocket.call).toHaveBeenCalledTimes(3);
-      expect(websocket.call).toHaveBeenCalledWith('vm.device.delete', [13]);
-      expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+      expect(api.call).toHaveBeenCalledTimes(3);
+      expect(api.call).toHaveBeenCalledWith('vm.device.delete', [13]);
+      expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
         attributes: {
           dtype: VmDeviceType.Pci,
           pptdev: 'pci_0000_01_00_0',
         },
       }]);
-      expect(websocket.call).toHaveBeenCalledWith('vm.device.create', [{
+      expect(api.call).toHaveBeenCalledWith('vm.device.create', [{
         vm: 2,
         attributes: {
           dtype: VmDeviceType.Pci,
@@ -132,7 +132,7 @@ describe('VmGpuService', () => {
     it('does nothing when already existing VM PCI devices match selected GPUs', async () => {
       await lastValueFrom(spectator.service.updateVmGpus(vm, ['0000:02:00.0']));
 
-      expect(websocket.call).not.toHaveBeenCalled();
+      expect(api.call).not.toHaveBeenCalled();
     });
   });
 });

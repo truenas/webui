@@ -85,7 +85,7 @@ export class SetAdminPasswordFormComponent {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });

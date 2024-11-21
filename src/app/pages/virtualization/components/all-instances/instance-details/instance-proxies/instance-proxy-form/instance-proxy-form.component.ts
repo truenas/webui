@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   VirtualizationDeviceType,
   VirtualizationProxyProtocol,
@@ -24,6 +24,11 @@ import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-he
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
+
+interface FormOptions {
+  instanceId: string;
+  proxy: VirtualizationProxy | undefined;
+}
 
 @UntilDestroy()
 @Component({
@@ -46,7 +51,9 @@ import { ApiService } from 'app/services/websocket/api.service';
     ModalHeader2Component,
   ],
 })
-export class InstanceProxyFormComponent {
+export class InstanceProxyFormComponent implements OnInit {
+  private existingProxy = signal<VirtualizationProxy | null>(null);
+
   protected readonly isLoading = signal(false);
 
   protected form = this.formBuilder.nonNullable.group({
@@ -56,31 +63,38 @@ export class InstanceProxyFormComponent {
     dest_port: [null as number, Validators.required],
   });
 
+  protected title = computed(() => {
+    return this.existingProxy() ? this.translate.instant('Edit Proxy') : this.translate.instant('Add Proxy');
+  });
+
   protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: ChainedRef<string>,
+    private slideInRef: ChainedRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
 
+  ngOnInit(): void {
+    const proxy = this.slideInRef.getData().proxy;
+    if (proxy) {
+      this.existingProxy.set(proxy);
+      this.form.patchValue(proxy);
+    }
+  }
+
   onSubmit(): void {
-    const instanceId = this.slideInRef.getData();
-
     this.isLoading.set(true);
-    const payload = {
-      ...this.form.value,
-      dev_type: VirtualizationDeviceType.Proxy,
-    } as VirtualizationProxy;
 
-    this.api.call('virt.instance.device_add', [instanceId, payload])
+    const request$ = this.prepareRequest();
+    request$
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.snackbar.success(this.translate.instant('Proxy added'));
+          this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
             error: false,
             response: true,
@@ -88,9 +102,24 @@ export class InstanceProxyFormComponent {
           this.isLoading.set(false);
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.isLoading.set(false);
         },
       });
+  }
+
+  private prepareRequest(): Observable<unknown> {
+    const instanceId = this.slideInRef.getData().instanceId;
+    const payload = {
+      ...this.form.value,
+      dev_type: VirtualizationDeviceType.Proxy,
+    } as VirtualizationProxy;
+
+    return this.existingProxy()
+      ? this.api.call('virt.instance.device_update', [instanceId, {
+        ...payload,
+        name: this.existingProxy().name,
+      }])
+      : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }
 }

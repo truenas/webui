@@ -94,10 +94,9 @@ export class InstanceWizardComponent implements OnInit {
     'virt.device.gpu_choices',
     [VirtualizationType.Container, VirtualizationGpuType.Physical],
   ).pipe(
-    map((choices: Record<string, AvailableGpu>) => Object.values(choices).map((choice) => ({
-      label: choice.description,
-      // TODO: Incorrect value – doesn't uniquely identify the GPU
-      value: choice.vendor,
+    map((choices: Record<string, AvailableGpu>) => Object.entries(choices).map(([pci, gpu]) => ({
+      label: gpu.description,
+      value: pci,
     }))),
   );
 
@@ -212,7 +211,7 @@ export class InstanceWizardComponent implements OnInit {
           this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -272,9 +271,9 @@ export class InstanceWizardComponent implements OnInit {
 
     const gpuDevices = Object.entries(this.form.controls.gpu_devices.value || {})
       .filter(([_, isSelected]) => isSelected)
-      .map(([gpuType]) => ({
+      .map(([pci]) => ({
+        pci,
         dev_type: VirtualizationDeviceType.Gpu,
-        gpu_type: gpuType,
       }));
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({

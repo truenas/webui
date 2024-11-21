@@ -58,7 +58,7 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockApiService;
+  let api: MockApiService;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
@@ -85,11 +85,11 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {
-    expect(websocket.call).toHaveBeenCalledWith('boot.get_state');
+    expect(api.call).toHaveBeenCalledWith('boot.get_state');
 
     const tree = await loader.getHarness(TreeHarness);
     const nodes = await tree.getNodes();

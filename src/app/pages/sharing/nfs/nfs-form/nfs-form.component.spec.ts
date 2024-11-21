@@ -57,7 +57,7 @@ describe('NfsFormComponent', () => {
   let spectator: Spectator<NfsFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: ApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -114,7 +114,7 @@ describe('NfsFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -173,7 +173,7 @@ describe('NfsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/new',
         comment: 'New share',
         enabled: true,
@@ -200,7 +200,7 @@ describe('NfsFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -247,7 +247,7 @@ describe('NfsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.update', [
+      expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,
         {
           comment: 'Updated share',

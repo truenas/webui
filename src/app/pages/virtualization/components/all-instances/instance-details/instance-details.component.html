@@ -2,7 +2,7 @@
   <h3 class="title">
     <div class="mobile-prefix">
       <ix-mobile-back-button
-        (onClose)="onCloseMobileDetails()"
+        (onClose)="onCloseMobileDetails.emit()"
       ></ix-mobile-back-button>
       {{ 'Details for' | translate }}
     </div>
@@ -23,7 +23,7 @@
     <ix-instance-devices></ix-instance-devices>
     <ix-instance-disks></ix-instance-disks>
     <ix-instance-proxies></ix-instance-proxies>
-
     <ix-instance-tools [instance]="instance()"></ix-instance-tools>
+    <ix-instance-metrics [instance]="instance()"></ix-instance-metrics>
   </div>
 </div>

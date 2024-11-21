@@ -1,15 +1,142 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
 
-@include tree-node-with-details-container;
-
 :host {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
 
+  .container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .details-container {
+    color: var(--fg2);
+    display: flex;
+    flex: 1;
+    min-width: inherit;
+    overflow: hidden;
+    padding: 0;
+    position: sticky;
+    top: 0;
+
+    // Hide Details
+    @media (max-width: calc($breakpoint-sm - 1px)) {
+      display: none;
+    }
+
+    // One Card Column
+    @media (min-width: $breakpoint-sm) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      max-width: $singlecolumn-max-width;
+    }
+
+    // Two Cards Columns
+    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+      max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
+    }
+
+    // Two Cards Columns
+    @media (min-width: $breakpoint-dualcolumn) {
+      max-width: 70%;
+    }
+  }
+
+  .item-search {
+    background-color: var(--bg2);
+    padding: 16px;
+    position: sticky;
+    top: -16.5px;
+    z-index: 2;
+  }
+
+  .details-container.details-container-mobile {
+    // Hide Details
+    @media (max-width: $breakpoint-sm) {
+      background: var(--bg1);
+      display: flex;
+      height: 100% !important;
+      left: 0;
+      max-width: 100%;
+      padding-top: 24px;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 3;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      display: block;
+      overflow-y: auto;
+      padding-bottom: 96px;
+    }
+
+    ::ng-deep .header h3.title {
+      width: calc(100% - 16px);
+
+      @media(max-width: $breakpoint-tablet) {
+        width: 100%;
+      }
+    }
+
+    ::ng-deep .cards .scroll-window {
+      display: inline-table;
+    }
+  }
+
   .table-container {
     background: var(--bg2);
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    margin-right: 16px;
+    max-width: $table-width;
+    min-width: $table-min-width;
+    position: relative;
+
+    // Hide Details and stop compressing table width
+    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
+      margin-right: unset;
+      min-width: $breakpoint-min-mobile;
+      width: 100%;
+    }
+
+    // Hide Details and stretch table
+    @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
+      margin-right: unset;
+      min-width: 100%;
+    }
+
+    // One Cards Column
+    @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
+      max-width: calc(100% - $singlecolumn-max-width - 16px);
+      min-width: calc($table-min-width + 0px);
+    }
+
+    // Two Cards Slim Columns
+    @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
+      max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
+      min-width: calc($table-min-width + 0px);
+    }
+
+    // Two Cards Columns
+    @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+      min-width: calc(98% - 2 * ($card-width + $gap));
+    }
+
+    // Three Cards Columns
+    @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
+      min-width: calc(98% - 3 * ($card-width + $gap));
+    }
+
+    // Cards spill to the right
+    @media (min-width: $breakpoint-flex) {
+      max-width: 1200px;
+      width: 50%;
+    }
   }
 }
+

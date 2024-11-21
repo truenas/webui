@@ -24,15 +24,16 @@
       }
     }
 
-    @if (availableGpuDevices().length) {
+    @let gpus = availableGpuDevices() | keyvalue;
+    @if (gpus.length) {
       <h4 class="menu-header">{{ 'GPUs' | translate }}</h4>
-      @for (gpu of availableGpuDevices(); track gpu) {
+      @for (gpu of gpus; track gpu.key) {
         <button
           mat-menu-item
-          [ixTest]="['add-gpu-device', gpu.description]"
-          (click)="addGpu(gpu)"
+          [ixTest]="['add-gpu-device', gpu.value.description]"
+          (click)="addGpu(gpu.key)"
         >
-          {{ gpu.description }}
+          {{ gpu.value.description }}
         </button>
       }
     }

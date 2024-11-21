@@ -109,7 +109,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.setLoading(false);
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });
