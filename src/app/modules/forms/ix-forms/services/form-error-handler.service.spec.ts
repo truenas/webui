@@ -70,7 +70,7 @@ describe('FormErrorHandlerService', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
 
-      spectator.service.handleWsFormError(errorResponse, formGroup);
+      spectator.service.handleValidationErrors(errorResponse, formGroup);
 
       expect(formGroup.controls.test_control_1.setErrors).toHaveBeenCalledWith({
         ixManualValidateError: {
@@ -101,7 +101,7 @@ describe('FormErrorHandlerService', () => {
           ],
         },
       } as Job;
-      spectator.service.handleWsFormError(failedJob, formGroup);
+      spectator.service.handleValidationErrors(failedJob, formGroup);
 
       expect(formGroup.controls.test_control_1.setErrors).toHaveBeenCalledWith({
         ixManualValidateError: {
@@ -114,7 +114,7 @@ describe('FormErrorHandlerService', () => {
     });
 
     it('shows error dialog and error message in logs when control is not found', () => {
-      spectator.service.handleWsFormError(errorResponse, formGroup);
+      spectator.service.handleValidationErrors(errorResponse, formGroup);
 
       expect(console.error).not.toHaveBeenCalledWith('Could not find control test_control_1.');
       expect(console.error).toHaveBeenCalledWith('Could not find control test_control_2.');

@@ -28,7 +28,7 @@ export class FormErrorHandlerService {
    * @param fieldsMap Overrides backend field names with frontend field names.
    * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
    */
-  handleWsFormError(
+  handleValidationErrors(
     error: unknown,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},

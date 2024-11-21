@@ -162,7 +162,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.router.navigate(['/datasets', this.datasetId]);
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

@@ -25,7 +25,7 @@ describe('IdmapListComponent', () => {
   let spectator: Spectator<IdmapListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  let webSocket: ApiService;
+  let api: ApiService;
 
   let servicesState: DirectoryServicesState;
   const idmapRecords = [
@@ -85,7 +85,7 @@ describe('IdmapListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
-    webSocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
 
     servicesState = {
       activedirectory: DirectoryServiceState.Disabled,
@@ -95,23 +95,23 @@ describe('IdmapListComponent', () => {
 
   describe('loading', () => {
     it('checks directory services state before loading records', () => {
-      expect(webSocket.call).toHaveBeenCalledWith('directoryservices.get_state');
+      expect(api.call).toHaveBeenCalledWith('directoryservices.get_state');
     });
 
     it('loads all idmap records when directory services are disabled', () => {
-      expect(webSocket.call).toHaveBeenCalledWith('idmap.query');
+      expect(api.call).toHaveBeenCalledWith('idmap.query');
     });
 
     it('loads LDAP entries when LDAP is on', () => {
       servicesState.ldap = DirectoryServiceState.Healthy;
       spectator.component.ngOnInit();
-      expect(webSocket.call).toHaveBeenCalledWith('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
+      expect(api.call).toHaveBeenCalledWith('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
     });
 
     it('loads records other than LDAP when Active Directory is on', () => {
       servicesState.activedirectory = DirectoryServiceState.Joining;
       spectator.component.ngOnInit();
-      expect(webSocket.call).toHaveBeenCalledWith('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
+      expect(api.call).toHaveBeenCalledWith('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
     });
   });
 
@@ -167,7 +167,7 @@ describe('IdmapListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(webSocket.call).toHaveBeenCalledWith('idmap.delete', [5]);
+    expect(api.call).toHaveBeenCalledWith('idmap.delete', [5]);
   });
 
   it('opens form when "Add" button is pressed', async () => {

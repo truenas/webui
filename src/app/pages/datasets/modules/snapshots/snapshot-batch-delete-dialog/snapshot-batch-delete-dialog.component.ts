@@ -10,7 +10,6 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -26,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -73,10 +71,9 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private websocket: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private snapshots: ZfsSnapshot[],
     private dialogService: DialogService,
   ) { }
@@ -103,7 +100,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   onSubmit(): void {
     const snapshots = this.snapshots.map((item) => [item.name]);
     const params: CoreBulkQuery = ['zfs.snapshot.delete', snapshots];
-    this.websocket.job('core.bulk', params).pipe(
+    this.api.job('core.bulk', params).pipe(
       filter((job: Job<CoreBulkResponse<boolean>[]>) => !!job.result),
       map((job: Job<CoreBulkResponse<boolean>[]>) => job.result),
       untilDestroyed(this),

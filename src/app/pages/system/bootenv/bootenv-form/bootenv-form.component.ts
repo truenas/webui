@@ -86,7 +86,7 @@ export class BootEnvironmentFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading.set(false);
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
       },
     });
   }

@@ -57,7 +57,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -100,14 +100,14 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
   });
 
   it('loads alerts when adminUiInitialized is dispatched', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    expect(websocket.call).toHaveBeenCalledWith('alert.list');
+    expect(api.call).toHaveBeenCalledWith('alert.list');
   });
 
   it('selects HA status from store and passes it to the ix-alert', () => {
@@ -134,8 +134,8 @@ describe('AlertsPanelComponent', () => {
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
     spectator.click(alertPanel.dismissAllButton);
 
-    expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
-    expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
 
     expect(alertPanel.dismissAllButton).not.toExist();
 
@@ -146,8 +146,8 @@ describe('AlertsPanelComponent', () => {
   it('reopens all alerts when Reopen All Alerts is pressed', () => {
     spectator.click(alertPanel.reopenAllButton);
 
-    expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['3']);
-    expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['4']);
+    expect(api.call).toHaveBeenCalledWith('alert.restore', ['3']);
+    expect(api.call).toHaveBeenCalledWith('alert.restore', ['4']);
 
     expect(alertPanel.reopenAllButton).not.toExist();
 
@@ -196,6 +196,6 @@ describe('AlertsPanelComponent', () => {
 
   it('calls alert.list when alerts panel is open', () => {
     spectator.inject(Store).dispatch(alertIndicatorPressed());
-    expect(websocket.call).toHaveBeenCalledWith('alert.list');
+    expect(api.call).toHaveBeenCalledWith('alert.list');
   });
 });

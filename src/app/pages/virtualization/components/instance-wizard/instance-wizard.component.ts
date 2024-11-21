@@ -211,7 +211,7 @@ export class InstanceWizardComponent implements OnInit {
           this.router.navigate(['/virtualization/view', result?.id]);
         },
         error: (error) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

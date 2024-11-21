@@ -165,7 +165,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       }),
       catchError((error: ApiError | Job) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
         return EMPTY;
       }),
@@ -220,7 +220,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

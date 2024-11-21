@@ -7,13 +7,16 @@
     <ix-instance-list></ix-instance-list>
   </div>
 
-  <div
-    ixDetailsHeight="rightside-content-hold"
-    class="details-container"
-    [class.details-container-mobile]="showMobileDetails()"
-  >
-    @if (selectedInstance()) {
-      <ix-instance-details [instance]="selectedInstance()"></ix-instance-details>
-    }
-  </div>
+  @if (selectedInstance()) {
+    <div
+      ixDetailsHeight="rightside-content-hold"
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails()"
+    >
+      <ix-instance-details
+        [instance]="selectedInstance()"
+        (onCloseMobileDetails)="closeMobileDetails()"
+      ></ix-instance-details>
+    </div>
+  }
 </div>

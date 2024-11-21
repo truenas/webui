@@ -34,9 +34,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   standalone: true,
   imports: [
     IxIconComponent,
-    MatTooltipModule,
     TestDirective,
     TranslateModule,
+    MatTooltipModule,
     MatButtonModule,
     MatCheckboxModule,
     RequiresRolesDirective,
@@ -47,7 +47,6 @@ export class InstanceRowComponent {
   protected readonly requiredRoles = [Role.VirtInstanceWrite];
   readonly instance = input.required<VirtualizationInstance>();
   readonly selected = input<boolean>(false);
-
   protected readonly isStopped = computed(() => this.instance().status === VirtualizationStatus.Stopped);
 
   readonly selectionChange = output();

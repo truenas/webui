@@ -61,8 +61,8 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    const websocket = spectator.inject(ApiService);
-    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
     const authService = spectator.inject(AuthService);
     expect(authService.login).toHaveBeenCalledWith('truenas_admin', '12345678');
 
