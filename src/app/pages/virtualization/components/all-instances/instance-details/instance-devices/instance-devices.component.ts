@@ -16,7 +16,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 
 @UntilDestroy()
 @Component({
@@ -36,17 +36,17 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
   ],
 })
 export class InstanceDevicesComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
-    return this.instanceStore.selectedInstanceDevices().filter((device) => {
+    return this.deviceStore.devices().filter((device) => {
       return [VirtualizationDeviceType.Usb, VirtualizationDeviceType.Gpu].includes(device.dev_type);
     });
   });
 
   constructor(
+    private deviceStore: VirtualizationDevicesStore,
     private translate: TranslateService,
-    private instanceStore: VirtualizationInstancesStore,
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {

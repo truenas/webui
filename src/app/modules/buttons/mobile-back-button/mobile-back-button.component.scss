@@ -1,14 +1,10 @@
 @import 'scss-imports/variables';
 
-a.mobile-back-button {
-  cursor: pointer;
-  display: none;
-  padding: 5px 10px;
-
-  @media (max-width: $breakpoint-hidden) {
-    display: inline-block;
-    left: 2px;
-    position: relative;
-    top: 3px;
-  }
+:host {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
 }

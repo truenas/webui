@@ -15,7 +15,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 
 describe('InstanceDisksComponent', () => {
@@ -42,10 +42,10 @@ describe('InstanceDisksComponent', () => {
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
-      mockProvider(VirtualizationInstancesStore, {
-        isLoadingDevices: () => false,
+      mockProvider(VirtualizationDevicesStore, {
+        isLoading: () => false,
         selectedInstance: () => ({ id: 'my-instance' }),
-        selectedInstanceDevices: () => disks,
+        devices: () => disks,
         loadDevices: jest.fn(),
       }),
       mockProvider(ChainedSlideInService, {

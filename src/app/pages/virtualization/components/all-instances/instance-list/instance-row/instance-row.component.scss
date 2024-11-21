@@ -1,3 +1,5 @@
+@import 'scss-imports/variables';
+
 :host {
   align-items: center;
   border-bottom: 1px solid var(--lines);
@@ -7,7 +9,38 @@
   min-height: 48px;
   position: relative;
 
+  .cell {
+    align-items: center;
+    display: inline-flex;
+    min-height: 48px;
+
+    @media (max-width: $breakpoint-xs) {
+      display: none;
+    }
+
+    &:first-child {
+      left: 0;
+      position: sticky;
+
+      @media (max-width: $breakpoint-xs) {
+        display: inline-flex;
+      }
+    }
+
+    &:nth-child(2) {
+      @media (max-width: $breakpoint-xs) {
+        display: inline-flex;
+
+        > div {
+          padding: 0;
+        }
+      }
+    }
+  }
+
   .cell.checkbox {
+    padding-left: 6px;
+
     mat-checkbox {
       margin: 0;
     }
@@ -19,7 +52,7 @@
     justify-content: flex-end;
     padding-right: 8px;
   }
-  
+
   &:hover {
     background-color: var(--hover-bg);
   }
@@ -37,6 +70,16 @@
       top: 0;
       width: 6px;
       z-index: 1;
+    }
+  }
+
+  .instance-details {
+    display: none;
+
+    @media(max-width: $breakpoint-md) {
+      align-items: center;
+      display: inline-flex;
+      min-width: 24px;
     }
   }
 }
