@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -34,6 +34,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() hint: string;
   @Input() required: boolean;
+  @Input() formControlName: string | number;
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};
@@ -50,6 +51,10 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName.toString() || '';
   }
 
   onAddressInput(input: HTMLInputElement): void {

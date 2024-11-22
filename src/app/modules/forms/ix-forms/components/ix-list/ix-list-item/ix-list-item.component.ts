@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, Input, input, output,
+  Component, HostBinding, Input, input, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,10 +23,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxListItemComponent {
   readonly canDelete = input(true);
   @Input() label?: string;
+  @Input() formControlName: string;
 
   readonly delete = output();
 
   deleteItem(): void {
     this.delete.emit();
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 }

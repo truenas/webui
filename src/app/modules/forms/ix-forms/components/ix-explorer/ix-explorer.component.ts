@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -67,6 +68,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   @Input() nodeProvider: TreeNodeProvider;
   @Input() canCreateDataset = false;
   @Input() createDatasetProps: Omit<DatasetCreate, 'name'> = {};
+  @Input() formControlName: string;
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
 
@@ -87,6 +89,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
       || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
       || this.isDisabled;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   private readonly actionMapping: IActionMapping = {

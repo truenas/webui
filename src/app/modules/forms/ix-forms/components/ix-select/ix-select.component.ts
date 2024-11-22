@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnChanges, OnInit,
+  Component, HostBinding, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -58,6 +58,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
   @Input() showSelectAll = false;
+  @Input() formControlName: string | number;
   @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
   protected value: IxSelectValue;
@@ -138,6 +139,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
         this.cdr.markForCheck();
       });
     }
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName.toString() || '';
   }
 
   onChange: (value: IxSelectValue) => void = (): void => {};

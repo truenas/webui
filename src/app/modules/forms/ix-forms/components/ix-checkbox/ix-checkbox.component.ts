@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostBinding, Input, OnDestroy,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -36,6 +36,7 @@ export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit,
   @Input() tooltip: string;
   @Input() warning: string;
   @Input() required: boolean;
+  @Input() formControlName: string;
 
   isDisabled = false;
   value: boolean;
@@ -47,6 +48,10 @@ export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit,
     private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   ngAfterViewInit(): void {

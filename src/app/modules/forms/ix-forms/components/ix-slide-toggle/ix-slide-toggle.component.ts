@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -29,6 +29,7 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() formControlName: string;
 
   isDisabled = false;
   value: boolean;
@@ -46,6 +47,10 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
   writeValue(value: boolean): void {
     this.value = value;
     this.cdr.markForCheck();
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   registerOnChange(onChange: (value: boolean) => void): void {
