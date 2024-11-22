@@ -78,6 +78,7 @@ describe('CloudBackupFormComponent', () => {
   const getData = jest.fn(() => existingTask);
   const chainedComponentRef: ChainedRef<CloudBackup> = {
     close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
     swap: jest.fn(),
   };

@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -27,6 +28,7 @@ describe('WidgetGroupFormComponent', () => {
     close: jest.fn(),
     getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
     swap: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -80,6 +82,7 @@ describe('WidgetGroupFormComponent', () => {
                 ],
               }) as WidgetGroup,
               close: jest.fn(),
+              requireConfirmationWhen: () => of(false),
             } as ChainedRef<WidgetGroup>,
           },
         ],
