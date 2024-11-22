@@ -11,6 +11,18 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 
+export interface VirtualizationInstanceMetrics {
+  cpu: {
+    cpu_user_percentage: number;
+  };
+  mem_usage: {
+    mem_usage_ram_mib: number;
+  };
+  io_full_pressure: {
+    io_full_pressure_full_60_percentage: number;
+  };
+}
+
 export interface VirtualizationInstance {
   id: string;
   name: string;
@@ -65,6 +77,7 @@ export interface VirtualizationDisk {
   readonly: boolean;
   source: string | null;
   destination: string | null;
+  product_id: string;
 }
 
 export interface VirtualizationGpu {
@@ -80,8 +93,7 @@ export interface VirtualizationGpu {
   mdev: string;
   mig_uuid: string;
   pci: string;
-  productid: string;
-  vendorid: string;
+  product_id: string;
 }
 
 export interface VirtualizationProxy {
@@ -93,6 +105,7 @@ export interface VirtualizationProxy {
   source_port: number;
   dest_proto: VirtualizationProxyProtocol;
   dest_port: number;
+  product_id: string;
 }
 
 export interface VirtualizationNic {
@@ -101,6 +114,7 @@ export interface VirtualizationNic {
   dev_type: VirtualizationDeviceType.Nic;
   readonly: boolean;
   network: string;
+  product_id: string;
 }
 
 export interface VirtualizationTpm {
@@ -110,6 +124,7 @@ export interface VirtualizationTpm {
   readonly: boolean;
   path: string;
   pathrm: string;
+  product_id: string;
 }
 
 export interface VirtualizationUsb {
@@ -132,13 +147,10 @@ export interface VirtualizationImage {
   variant: string;
 }
 
-export type VirtualizationStopParams = [
-  instanceId: string,
-  {
-    timeout?: number;
-    force?: boolean;
-  },
-];
+export interface VirtualizationStopParams {
+  timeout?: number;
+  force?: boolean;
+}
 
 export interface VirtualizationGlobalConfigUpdate {
   pool: string;
@@ -175,6 +187,11 @@ export interface AvailableGpu {
   slot: number;
   description: string;
   vendor: string | null;
+}
+
+// eslint-disable-next-line @typescript-eslint/consistent-indexed-object-style
+export interface AvailableGpus {
+  [pci: string]: AvailableGpu;
 }
 
 export interface AvailableUsb {

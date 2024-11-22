@@ -27,7 +27,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class DiskFormComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -140,7 +140,7 @@ export class DiskFormComponent implements OnInit {
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
     this.isLoading = true;
-    this.ws.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
+    this.api.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -152,7 +152,7 @@ export class DiskFormComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

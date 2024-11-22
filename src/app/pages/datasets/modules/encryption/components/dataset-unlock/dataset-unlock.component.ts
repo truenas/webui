@@ -29,10 +29,10 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface DatasetFormGroup {
   key?: FormControl<string>;

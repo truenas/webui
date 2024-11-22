@@ -42,9 +42,9 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
 const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
@@ -214,7 +214,7 @@ export class SshConnectionFormComponent implements OnInit {
           });
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }
@@ -237,7 +237,7 @@ export class SshConnectionFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

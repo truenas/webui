@@ -13,7 +13,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted,
@@ -31,7 +31,7 @@ const cifsService = {
 
 describe('ServicesEffects', () => {
   let spectator: SpectatorService<ServicesEffects>;
-  let ws: ApiService;
+  let api: ApiService;
   let store$: MockStore<ServicesState>;
 
   const afterClosed$ = new BehaviorSubject<StartServiceDialogResult>({
@@ -69,7 +69,7 @@ describe('ServicesEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
   });
 
@@ -84,7 +84,7 @@ describe('ServicesEffects', () => {
     it('should handle errors when loading services', () => {
       jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Service loading error');
-      jest.spyOn(ws, 'call').mockReturnValue(throwError(() => error));
+      jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
 
       actions$.next(adminUiInitialized());
 
@@ -98,7 +98,7 @@ describe('ServicesEffects', () => {
 
   describe('subscribeToUpdates$', () => {
     it('should subscribe to service updates', async () => {
-      jest.spyOn(ws, 'subscribe').mockImplementation((method) => {
+      jest.spyOn(api, 'subscribe').mockImplementation((method) => {
         if (method === 'service.query') {
           return of({ fields: { ...cifsService, state: ServiceStatus.Running } } as ApiEvent<Service>);
         }

@@ -36,7 +36,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -142,7 +142,7 @@ export class FileTicketLicensedComponent {
       untilDestroyed(this),
     ).subscribe({
       next: (createdTicket) => this.onSuccess(createdTicket.url),
-      error: (error) => this.formErrorHandler.handleWsFormError(error, this.form),
+      error: (error) => this.formErrorHandler.handleValidationErrors(error, this.form),
     });
   }
 

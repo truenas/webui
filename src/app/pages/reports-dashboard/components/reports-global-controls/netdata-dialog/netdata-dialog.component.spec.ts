@@ -10,7 +10,7 @@ import {
   NetdataDialogComponent,
 } from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('NetdataDialogComponent', () => {
   let spectator: Spectator<NetdataDialogComponent>;

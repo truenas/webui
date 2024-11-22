@@ -35,9 +35,9 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -120,14 +120,14 @@ export class InitShutdownListComponent implements OnInit {
     private translate: TranslateService,
     private chainedSlideIns: ChainedSlideInService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider = new AsyncDataProvider(this.ws.call('initshutdownscript.query'));
+    this.dataProvider = new AsyncDataProvider(this.api.call('initshutdownscript.query'));
     this.dataProvider.load();
   }
 
@@ -151,7 +151,7 @@ export class InitShutdownListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('initshutdownscript.delete', [script.id]).pipe(
+        return this.api.call('initshutdownscript.delete', [script.id]).pipe(
           this.errorHandler.catchError(),
           this.loader.withLoader(),
         );

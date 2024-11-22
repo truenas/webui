@@ -11,9 +11,9 @@ import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,
@@ -29,8 +29,8 @@ export class NetworkInterfacesEffects {
     filterAsync(() => this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
-        this.ws.call('interface.has_pending_changes'),
-        this.ws.call('interface.checkin_waiting'),
+        this.api.call('interface.has_pending_changes'),
+        this.api.call('interface.checkin_waiting'),
       ]).pipe(
         this.errorHandler.catchError(),
         map(([hasPendingChanges, checkinWaiting]) => {
@@ -68,7 +68,7 @@ export class NetworkInterfacesEffects {
   constructor(
     private actions$: Actions,
     private router: Router,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,

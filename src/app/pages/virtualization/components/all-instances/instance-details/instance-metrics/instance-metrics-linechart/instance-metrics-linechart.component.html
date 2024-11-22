@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <h4 class="title">
+    {{ title() | translate }}
+    <span>
+      ({{ postfix() }})
+    </span>
+  </h4>
+  @if (isLoading()) {
+    <ngx-skeleton-loader
+      class="skeleton"
+      [theme]="{ width: '100%', height: '150px', background: 'var(--alt-bg2)', opacity: 0.25 }"
+    ></ngx-skeleton-loader>
+  } @else {
+    <div class="chart">
+      <canvas
+        baseChart
+        type="line"
+        [data]="chartData()"
+        [options]="chartOptions()"
+      ></canvas>
+    </div>
+  }
+</div>

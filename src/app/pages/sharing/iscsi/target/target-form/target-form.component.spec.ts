@@ -20,14 +20,14 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: ApiService;
+  let api: ApiService;
 
   const existingTarget = {
     id: 123,
@@ -68,15 +68,11 @@ describe('TargetFormComponent', () => {
           comment: 'comment_1',
           id: 1,
           tag: 11,
-          discovery_authgroup: 111,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '1.1.1.1' }],
         }, {
           comment: 'comment_2',
           id: 2,
           tag: 22,
-          discovery_authgroup: 222,
-          discovery_authmethod: IscsiAuthMethod.Chap,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
         mockCall('iscsi.initiator.query', [{
@@ -113,7 +109,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('add new target when form is submitted', async () => {
@@ -147,7 +143,7 @@ describe('TargetFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('iscsi.target.create', [{
+      expect(api.call).toHaveBeenCalledWith('iscsi.target.create', [{
         name: 'name_new',
         alias: 'alias_new',
         mode: 'ISCSI',
@@ -180,7 +176,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
@@ -192,7 +188,7 @@ describe('TargetFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenLastCalledWith(
+      expect(api.call).toHaveBeenLastCalledWith(
         'iscsi.target.update',
         [
           123,
@@ -230,9 +226,9 @@ describe('TargetFormComponent', () => {
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
 
-      expect(websocket.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-      expect(websocket.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-      expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
       expect(portal).toEqual([
         { label: '1 (comment_1)', value: 1 },
@@ -260,8 +256,8 @@ describe('TargetFormComponent', () => {
 
     beforeEach(async () => {
       spectator = createComponent();
-      websocket = spectator.inject(ApiService);
-      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+      api = spectator.inject(ApiService);
+      jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'iscsi.target.validate_name') {
           return of('Target with this name already exists');
         }

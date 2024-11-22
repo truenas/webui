@@ -22,8 +22,8 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class AlertSettings2Component implements OnInit {
   policyOptions: string[] = [];
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private themeService: ThemeService,
@@ -75,7 +75,7 @@ export class AlertSettings2Component implements OnInit {
   }
 
   loadCategories(): void {
-    this.ws.call('alert.list_categories').pipe(
+    this.api.call('alert.list_categories').pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (categories) => {
@@ -87,7 +87,7 @@ export class AlertSettings2Component implements OnInit {
   }
 
   loadClassesConfig(): void {
-    this.ws.call('alertclasses.config').pipe(
+    this.api.call('alertclasses.config').pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (alertConfig) => {
@@ -98,7 +98,7 @@ export class AlertSettings2Component implements OnInit {
   }
 
   loadPolicyOptions(): void {
-    this.ws.call('alert.list_policies').pipe(
+    this.api.call('alert.list_policies').pipe(
       untilDestroyed(this),
     ).subscribe({
       next: (policies) => {

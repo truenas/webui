@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class UpdateService {
   private lastSeenBootId: string;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -19,7 +19,7 @@ export class UpdateService {
    * Hard refresh is needed to load new html and js after the update.
    */
   hardRefreshIfNeeded(): Observable<string> {
-    return this.ws.call('system.boot_id').pipe(
+    return this.api.call('system.boot_id').pipe(
       tap((bootId) => {
         if (!this.lastSeenBootId) {
           // First boot.

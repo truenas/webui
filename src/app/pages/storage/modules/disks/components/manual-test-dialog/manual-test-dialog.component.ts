@@ -18,7 +18,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TestProgressRowComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/test-progress-row/test-progress-row.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -82,7 +82,7 @@ export class ManualTestDialogComponent {
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
     public dialogRef: MatDialogRef<ManualTestDialogComponent>,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {
     this.setDisksBySupport();
@@ -95,7 +95,7 @@ export class ManualTestDialogComponent {
       type: this.form.value.type,
     }));
 
-    this.ws.call('smart.test.manual_test', [params])
+    this.api.call('smart.test.manual_test', [params])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (startedTests) => {

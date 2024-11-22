@@ -19,7 +19,7 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ExportDisconnectModalComponent } from './export-disconnect-modal.component';
 
 const fakeData = {

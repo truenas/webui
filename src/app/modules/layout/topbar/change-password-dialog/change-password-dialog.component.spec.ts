@@ -12,12 +12,12 @@ import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChangePasswordDialogComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ChangePasswordDialogComponent', () => {
   let spectator: Spectator<ChangePasswordDialogComponent>;
   let loader: HarnessLoader;
-  let websocket: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: ChangePasswordDialogComponent,
     imports: [
@@ -36,7 +36,7 @@ describe('ChangePasswordDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('does not show current password field for full admin', async () => {
@@ -61,7 +61,7 @@ describe('ChangePasswordDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('user.set_password', [{
+    expect(api.call).toHaveBeenCalledWith('user.set_password', [{
       old_password: 'correct',
       new_password: '123456',
       username: 'root',
@@ -74,7 +74,7 @@ describe('ChangePasswordDialogComponent', () => {
     authMock.setRoles([Role.ReadonlyAdmin]);
 
     const error = new Error('error');
-    jest.spyOn(websocket, 'call').mockReturnValue(throwError(() => error));
+    jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -86,7 +86,7 @@ describe('ChangePasswordDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(FormErrorHandlerService).handleWsFormError)
+    expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
       .toHaveBeenCalledWith(error, expect.any(FormGroup));
   });
 });

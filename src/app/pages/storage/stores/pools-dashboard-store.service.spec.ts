@@ -13,8 +13,8 @@ import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/d
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/api.service';
 import { StorageService } from 'app/services/storage.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const temperatureAgg = {
   sda: { min: 10, max: 30, avg: 20 },
@@ -84,7 +84,7 @@ describe('PoolsDashboardStore', () => {
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(ApiService);
+      const mockedApi = spectator.inject(ApiService);
       const pools = [
         { name: 'pool1' },
         { name: 'pool2' },
@@ -93,7 +93,7 @@ describe('PoolsDashboardStore', () => {
         { id: 'pool1' },
         { id: 'pool2' },
       ] as Dataset[];
-      jest.spyOn(mockWebSocket, 'call').mockImplementation((method: string) => {
+      jest.spyOn(mockedApi, 'call').mockImplementation((method: string) => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });
@@ -109,7 +109,7 @@ describe('PoolsDashboardStore', () => {
             throw new Error(`Unexpected method: ${method}`);
         }
       });
-      jest.spyOn(mockWebSocket, 'callAndSubscribe').mockImplementation((method: string) => {
+      jest.spyOn(mockedApi, 'callAndSubscribe').mockImplementation((method: string) => {
         if (method === 'pool.query') {
           return cold('-a|', { a: pools });
         }

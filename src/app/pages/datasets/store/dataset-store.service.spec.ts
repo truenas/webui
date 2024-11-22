@@ -5,7 +5,7 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeState, DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetTreeStore', () => {
   let spectator: SpectatorService<DatasetTreeStore>;
@@ -28,12 +28,12 @@ describe('DatasetTreeStore', () => {
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebSocket = spectator.inject(ApiService);
-      jest.spyOn(mockWebSocket, 'call').mockReturnValue(cold('-b|', { b: datasets }));
+      const mockedApi = spectator.inject(ApiService);
+      jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
 
       spectator.service.loadDatasets();
 
-      expect(mockWebSocket.call).toHaveBeenCalledWith('pool.dataset.details');
+      expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
       expectObservable(spectator.service.state$).toBe('ab', {
         a: {
           error: null,

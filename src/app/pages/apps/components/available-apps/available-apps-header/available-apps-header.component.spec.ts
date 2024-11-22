@@ -19,7 +19,7 @@ import { FilterSelectListHarness } from 'app/pages/apps/components/filter-select
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;

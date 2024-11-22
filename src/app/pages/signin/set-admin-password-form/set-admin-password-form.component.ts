@@ -15,8 +15,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const adminUsername = 'truenas_admin';
 
@@ -58,7 +58,7 @@ export class SetAdminPasswordFormComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -69,7 +69,7 @@ export class SetAdminPasswordFormComponent {
     const { username, password } = this.form.value;
     this.signinStore.setLoadingState(true);
 
-    const request$ = this.ws.call('user.setup_local_administrator', [username, password]);
+    const request$ = this.api.call('user.setup_local_administrator', [username, password]);
 
     request$.pipe(
       switchMap(() => this.authService.login(username, password)),
@@ -85,7 +85,7 @@ export class SetAdminPasswordFormComponent {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });

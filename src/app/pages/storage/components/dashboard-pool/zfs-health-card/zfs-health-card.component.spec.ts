@@ -28,7 +28,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ZfsHealthCardComponent', () => {
   let spectator: Spectator<ZfsHealthCardComponent>;
@@ -61,7 +61,7 @@ describe('ZfsHealthCardComponent', () => {
     percentage: 17.43,
     total_secs_left: 574,
   } as PoolScanUpdate;
-  let websocket: ApiService;
+  let api: ApiService;
   const websocketSubscription$ = new Subject<ApiEvent<PoolScan>>();
 
   const createComponent = createComponentFactory({
@@ -105,7 +105,7 @@ describe('ZfsHealthCardComponent', () => {
       props: { pool },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   describe('health indication', () => {
@@ -127,7 +127,7 @@ describe('ZfsHealthCardComponent', () => {
 
   describe('scrub tasks', () => {
     it('loads and shows if scrub task is set along with a link to view all scrub tasks', () => {
-      expect(websocket.call).toHaveBeenCalledWith('pool.scrub.query', [[['pool_name', '=', 'tank']]]);
+      expect(api.call).toHaveBeenCalledWith('pool.scrub.query', [[['pool_name', '=', 'tank']]]);
 
       const detailsItem = spectator.query(byText('Scheduled Scrub Task:')).parentElement;
       expect(detailsItem.querySelector('.value')).toHaveText('Set');
@@ -153,11 +153,11 @@ describe('ZfsHealthCardComponent', () => {
       await scrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      expect(api.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
 
     it('shows information about an active scan task', async () => {
-      expect(websocket.subscribe).toHaveBeenLastCalledWith('zfs.pool.scan');
+      expect(api.subscribe).toHaveBeenLastCalledWith('zfs.pool.scan');
 
       websocketSubscription$.next({
         id: 2,
@@ -188,7 +188,7 @@ describe('ZfsHealthCardComponent', () => {
       await stopScrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
+      expect(api.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
     });
 
     it('shows information about an active resilver', () => {

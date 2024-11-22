@@ -10,7 +10,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { advancedSettingsElements } from 'app/pages/system/advanced/advanced-settings.elements';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AccessCardComponent } from './access/access-card/access-card.component';
 import { AllowedAddressesCardComponent } from './allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AuditCardComponent } from './audit/audit-card/audit-card.component';
@@ -58,9 +58,9 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
   ],
 })
 export class AdvancedSettingsComponent {
-  isSystemLicensed$: Observable<boolean> = this.ws.call('system.security.info.fips_available');
+  isSystemLicensed$: Observable<boolean> = this.api.call('system.security.info.fips_available');
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
 
-  constructor(private ws: ApiService) {}
+  constructor(private api: ApiService) {}
 }

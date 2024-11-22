@@ -13,12 +13,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
   let spectator: Spectator<EncryptionOptionsDialogComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>;
@@ -69,7 +69,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: dialogData },
       ],
     });
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     dialogRef = spectator.inject(MatDialogRef);
     form = await loader.getHarness(IxFormHarness);
@@ -77,7 +77,7 @@ describe('EncryptionOptionsDialogComponent', () => {
 
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     await setupTest();
-    expect(websocket.call)
+    expect(api.call)
       .toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'pool/parent/child']]]);
     spectator.component.ngOnInit();
 
@@ -96,7 +96,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties', ['pool/parent/child']);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties', ['pool/parent/child']);
     expect(dialogRef.close).toHaveBeenCalled();
   });
 
@@ -120,7 +120,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).not.toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties');
+    expect(api.call).not.toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties');
     expect(dialogRef.close).toHaveBeenCalled();
   });
 
@@ -150,7 +150,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith(
+    expect(api.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { key, generate_key: false }],
     );
@@ -171,7 +171,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith(
+    expect(api.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { generate_key: true }],
     );
@@ -194,7 +194,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith(
+    expect(api.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 350001 }],
     );

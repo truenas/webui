@@ -38,10 +38,10 @@ import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap
 import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -238,7 +238,7 @@ export class IdmapListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['label', 'idmap_backend'] });
   }
 }

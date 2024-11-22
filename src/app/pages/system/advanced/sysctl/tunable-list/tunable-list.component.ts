@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -33,9 +32,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -110,18 +109,17 @@ export class TunableListComponent implements OnInit {
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
-    private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private chainedSlideIns: ChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(
+    const tunables$ = this.api.call('tunable.query').pipe(
       tap((tunables) => this.tunables = tunables),
       untilDestroyed(this),
     );
@@ -165,7 +163,7 @@ export class TunableListComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.dialogService.jobDialog(
-            this.ws.job('tunable.delete', [tunable.id]),
+            this.api.job('tunable.delete', [tunable.id]),
             {
               title: this.translate.instant('Deleting...'),
             },
@@ -185,7 +183,7 @@ export class TunableListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({
       query,
       columnKeys: ['var', 'value', 'comment'],

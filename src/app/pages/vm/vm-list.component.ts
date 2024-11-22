@@ -47,10 +47,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -183,7 +183,7 @@ export class VmListComponent implements OnInit {
     private slideInService: SlideInService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private vmService: VmService,
     private fileSizePipe: FileSizePipe,
@@ -200,7 +200,7 @@ export class VmListComponent implements OnInit {
 
   createDataProvider(): void {
     // TODO: Refactor VM data provider to use ngrx/store
-    const virtualMachines$ = this.ws.call('vm.query').pipe(
+    const virtualMachines$ = this.api.call('vm.query').pipe(
       tap((vms) => this.vmMachines = vms),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
@@ -252,7 +252,7 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 

@@ -18,8 +18,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -79,7 +79,7 @@ export class SignCsrDialogComponent {
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

@@ -16,14 +16,14 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
-import { ApiService } from 'app/services/api.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const auditEntries = [
@@ -112,13 +112,13 @@ describe('AuditComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     // Do it in this weird way because table header is outside the table element.
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
   it('loads and shows a table with audit entries', async () => {
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(api.call).toHaveBeenCalledWith(
       'audit.query',
       [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] } }],
     );
@@ -141,7 +141,7 @@ describe('AuditComponent', () => {
 
     search.runSearch.emit();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
@@ -155,7 +155,7 @@ describe('AuditComponent', () => {
     spectator.component.controllerTypeChanged({ value: ControllerType.Standby } as MatButtonToggleChange);
     spectator.detectChanges();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [],
@@ -176,7 +176,7 @@ describe('AuditComponent', () => {
     };
     search.runSearch.emit();
 
-    expect(websocket.call).toHaveBeenLastCalledWith(
+    expect(api.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],

@@ -14,12 +14,12 @@ import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DeleteDatasetDialogComponent } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
   let spectator: Spectator<DeleteDatasetDialogComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DeleteDatasetDialogComponent,
@@ -65,7 +65,7 @@ describe('DeleteDatasetDialogComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -81,7 +81,7 @@ describe('DeleteDatasetDialogComponent', () => {
   }
 
   it('loads and shows services that use dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.attachments', ['lab1']);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.attachments', ['lab1']);
 
     const attachmentsSection = spectator.query('.attachments');
     expect(attachmentsSection).toHaveText(
@@ -109,7 +109,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('loads and shows known processes that use dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.processes', ['lab1']);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.processes', ['lab1']);
 
     const processesSection = spectator.query('.known-processes');
     expect(processesSection).toHaveText('These running processes are using Lab 1:');
@@ -133,7 +133,7 @@ describe('DeleteDatasetDialogComponent', () => {
   it('deletes dataset and closes modal when deletion is confirmed', async () => {
     await confirmAndDelete();
 
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true }]);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true }]);
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
@@ -147,6 +147,6 @@ describe('DeleteDatasetDialogComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Device Busy',
     }));
-    expect(websocket.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true, force: true }]);
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true, force: true }]);
   });
 });

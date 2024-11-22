@@ -17,8 +17,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -60,7 +60,7 @@ export class ReplaceDiskDialogComponent {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<ReplaceDiskDialogComponent>,
     private snackbar: SnackbarService,
@@ -71,7 +71,7 @@ export class ReplaceDiskDialogComponent {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.ws.job('pool.replace', [this.data.poolId, {
+      this.api.job('pool.replace', [this.data.poolId, {
         label: this.data.guid,
         disk: this.form.value.replacement,
         force: this.form.value.force,

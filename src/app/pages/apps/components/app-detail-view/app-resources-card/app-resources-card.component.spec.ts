@@ -5,11 +5,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
@@ -32,7 +32,7 @@ describe('AppResourcesCardComponent', () => {
         isLoading: false,
       },
     });
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows header', () => {
@@ -40,7 +40,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('shows information about available resources', () => {
-    expect(websocket.subscribe).toHaveBeenCalledWith('reporting.realtime');
+    expect(api.subscribe).toHaveBeenCalledWith('reporting.realtime');
 
     expect(spectator.queryAll('.app-list-item')[0]).toHaveText('CPU Usage:0% Avg. Usage');
     expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Memory Usage: N/A');
@@ -48,7 +48,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('loads and reports available space on apps dataset', () => {
-    expect(websocket.call).toHaveBeenCalledWith('app.available_space');
+    expect(api.call).toHaveBeenCalledWith('app.available_space');
     expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Available Space: 2.44 KiB');
   });
 });

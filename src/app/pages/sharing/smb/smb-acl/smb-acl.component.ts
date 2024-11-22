@@ -37,8 +37,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 type NameOrId = string | number | null;
 
@@ -123,7 +123,7 @@ export class SmbAclComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private userService: UserService,
@@ -164,7 +164,7 @@ export class SmbAclComponent implements OnInit {
 
     of(undefined)
       .pipe(mergeMap(() => this.getAclEntriesFromForm()))
-      .pipe(mergeMap((acl) => this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
+      .pipe(mergeMap((acl) => this.api.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -173,7 +173,7 @@ export class SmbAclComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -181,7 +181,7 @@ export class SmbAclComponent implements OnInit {
 
   private loadSmbAcl(shareName: string): void {
     this.isLoading = true;
-    this.ws.call('sharing.smb.getacl', [{ share_name: shareName }])
+    this.api.call('sharing.smb.getacl', [{ share_name: shareName }])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (shareAcl) => {
@@ -247,12 +247,12 @@ export class SmbAclComponent implements OnInit {
   ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
     if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
       const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.ws.call('group.query', [queryArgs]);
+      return this.api.call('group.query', [queryArgs]);
     }
 
     if (ace.ae_who_id?.id_type === NfsAclTag.User) {
       const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
-      return this.ws.call('user.query', [queryArgs]);
+      return this.api.call('user.query', [queryArgs]);
     }
 
     return of([]);

@@ -31,9 +31,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { sysctlCardElements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -105,7 +105,7 @@ export class SysctlCardComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
@@ -114,7 +114,7 @@ export class SysctlCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(untilDestroyed(this));
+    const tunables$ = this.api.call('tunable.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.loadItems();
   }
@@ -137,7 +137,7 @@ export class SysctlCardComponent implements OnInit {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.job('tunable.delete', [row.id])),
+        switchMap(() => this.api.job('tunable.delete', [row.id])),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )

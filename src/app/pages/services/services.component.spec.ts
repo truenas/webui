@@ -29,9 +29,9 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
-import { ApiService } from 'app/services/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
@@ -50,7 +50,7 @@ const fakeDataSource: Service[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -86,7 +86,7 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(IxTableHarness);
   });
 
@@ -205,7 +205,7 @@ describe('ServicesComponent', () => {
 
     await toggle.check();
 
-    expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
+    expect(api.call).toHaveBeenCalledWith('service.start', [ServiceName.Ftp, { silent: false }]);
   });
 
   it('should change service autostart state when checkbox is ticked', async () => {
@@ -215,7 +215,7 @@ describe('ServicesComponent', () => {
 
     await toggle.check();
 
-    expect(ws.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
+    expect(api.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
   });
 
   it('should show audit log icon for SMB service', async () => {

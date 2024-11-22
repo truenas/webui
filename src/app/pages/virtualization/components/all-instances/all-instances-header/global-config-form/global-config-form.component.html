@@ -1,5 +1,5 @@
 <ix-modal-header2
-  [title]="'Global Config' | translate"
+  [title]="'Global Settings' | translate"
   [requiredRoles]="requiredRoles"
   [loading]="isLoading()"
 ></ix-modal-header2>
@@ -28,11 +28,13 @@
           <ix-ip-input-with-netmask
             formControlName="v4_network"
             [label]="'IPv4 Network' | translate"
+            [hint]="'Leave empty for default values' | translate"
           ></ix-ip-input-with-netmask>
 
           <ix-ip-input-with-netmask
             formControlName="v6_network"
             [label]="'IPv6 Network' | translate"
+            [hint]="'Leave empty for default values' | translate"
           ></ix-ip-input-with-netmask>
         }
       </ix-fieldset>

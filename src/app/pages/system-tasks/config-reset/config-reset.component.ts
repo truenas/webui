@@ -12,9 +12,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
   private connectedSubscription: Timeout;
 
   constructor(
-    private wsManager: WebSocketConnectionService,
+    private wsManager: WebSocketHandlerService,
     protected router: Router,
     protected loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -42,7 +42,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
     protected dialogService: DialogService,
     protected matDialog: MatDialog,
     private location: Location,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   isWsConnected(): void {
@@ -78,7 +78,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
 
   resetConfig(): void {
     this.dialogService.jobDialog(
-      this.ws.job('config.reset', [{ reboot: true }]),
+      this.api.job('config.reset', [{ reboot: true }]),
       {
         title: this.translate.instant('Resetting. Please wait...'),
         description: this.translate.instant('Resetting system configuration to default settings. The system will restart.'),

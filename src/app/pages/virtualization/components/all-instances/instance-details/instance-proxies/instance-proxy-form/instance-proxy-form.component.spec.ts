@@ -10,7 +10,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   InstanceProxyFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InstanceProxyFormComponent', () => {
   let spectator: Spectator<InstanceProxyFormComponent>;
@@ -20,44 +20,122 @@ describe('InstanceProxyFormComponent', () => {
     providers: [
       mockApi([
         mockCall('virt.instance.device_add'),
+        mockCall('virt.instance.device_update'),
       ]),
-      mockProvider(ChainedRef, {
-        getData: () => 'my-instance',
-        close: jest.fn(),
-      }),
       mockProvider(SnackbarService),
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  describe('creating a proxy', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ChainedRef, {
+            getData: () => ({
+              instanceId: 'my-instance',
+            }),
+            close: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows a title for creating a proxy', () => {
+      expect(spectator.query('ix-modal-header2')).toHaveText('Add Proxy');
+    });
+
+    it('creates a new proxy for the instance provided when form is submitted', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        'Host Port': '2000',
+        'Host Protocol': 'TCP',
+        'Instance Port': '3000',
+        'Instance Protocol': 'UDP',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+        response: true,
+        error: false,
+      });
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
+        source_port: 2000,
+        source_proto: VirtualizationProxyProtocol.Tcp,
+        dest_port: 3000,
+        dest_proto: VirtualizationProxyProtocol.Udp,
+        dev_type: VirtualizationDeviceType.Proxy,
+      }]);
+    });
   });
 
-  it('creates a new proxy for the instance provided when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-
-    await form.fillForm({
-      'Host Port': '2000',
-      'Host Protocol': 'TCP',
-      'Instance Port': '3000',
-      'Instance Protocol': 'UDP',
+  describe('editing a proxy', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(ChainedRef, {
+            getData: () => ({
+              instanceId: 'my-instance',
+              proxy: {
+                name: 'my-proxy',
+                source_port: 5000,
+                source_proto: VirtualizationProxyProtocol.Tcp,
+                dest_port: 6000,
+                dest_proto: VirtualizationProxyProtocol.Udp,
+              },
+            }),
+            close: jest.fn(),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    await addButton.click();
-
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
-      response: true,
-      error: false,
+    it('shows a title for editing a proxy', () => {
+      expect(spectator.query('ix-modal-header2')).toHaveText('Edit Proxy');
     });
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_add', ['my-instance', {
-      source_port: 2000,
-      source_proto: VirtualizationProxyProtocol.Tcp,
-      dest_port: 3000,
-      dest_proto: VirtualizationProxyProtocol.Udp,
-      dev_type: VirtualizationDeviceType.Proxy,
-    }]);
+
+    it('shows values for the proxy that is being edited', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Host Port': '5000',
+        'Host Protocol': 'TCP',
+        'Instance Port': '6000',
+        'Instance Protocol': 'UDP',
+      });
+    });
+
+    it('saves updated proxy when form is saved', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Host Port': '5001',
+        'Host Protocol': 'UDP',
+        'Instance Port': '6001',
+        'Instance Protocol': 'UDP',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_update', ['my-instance', {
+        name: 'my-proxy',
+        source_port: 5001,
+        source_proto: VirtualizationProxyProtocol.Udp,
+        dest_port: 6001,
+        dest_proto: VirtualizationProxyProtocol.Udp,
+        dev_type: VirtualizationDeviceType.Proxy,
+      }]);
+
+      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+        response: true,
+        error: false,
+      });
+    });
   });
 });

@@ -22,7 +22,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -77,14 +77,14 @@ export class SmbSessionListComponent implements OnInit {
   });
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
+    const smbStatus$ = this.api.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
       tap((sessions: SmbSession[]) => {
         this.sessions = sessions;
         if (this.filterString) {

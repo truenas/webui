@@ -27,7 +27,7 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {
@@ -77,10 +77,10 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(ApiService);
+    const api = spectator.inject(ApiService);
 
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
+    expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
+    expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
   });
 
   it('shows dataset ownership information', () => {

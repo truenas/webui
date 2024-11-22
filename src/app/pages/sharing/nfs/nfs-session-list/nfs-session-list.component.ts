@@ -26,7 +26,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -127,7 +127,7 @@ export class NfsSessionListComponent implements OnInit {
     ariaLabels: (row) => [row.name, this.translate.instant('NFS4 Session')],
   });
 
-  nfs3ProviderRequest$ = this.ws.call('nfs.get_nfs3_clients', []).pipe(
+  nfs3ProviderRequest$ = this.api.call('nfs.get_nfs3_clients', []).pipe(
     tap((sessions) => {
       this.sessions = sessions;
       if (this.filterString) {
@@ -139,7 +139,7 @@ export class NfsSessionListComponent implements OnInit {
 
   nfs3DataProvider = new AsyncDataProvider<Nfs3Session>(this.nfs3ProviderRequest$);
 
-  nfs4ProviderRequest$ = this.ws.call('nfs.get_nfs4_clients', []).pipe(
+  nfs4ProviderRequest$ = this.api.call('nfs.get_nfs4_clients', []).pipe(
     map((sessions) => sessions.map((session) => session.info)),
     tap((sessions) => {
       this.sessions = sessions;
@@ -153,7 +153,7 @@ export class NfsSessionListComponent implements OnInit {
   nfs4DataProvider = new AsyncDataProvider<Nfs4Session['info']>(this.nfs4ProviderRequest$);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,

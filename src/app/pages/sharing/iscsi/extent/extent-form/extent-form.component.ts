@@ -32,9 +32,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -135,7 +135,7 @@ export class ExtentFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private filesystemService: FilesystemService,
     private slideInRef: SlideInRef<ExtentFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingExtent: IscsiExtent,
@@ -184,9 +184,9 @@ export class ExtentFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('iscsi.extent.create', [values]);
+      request$ = this.api.call('iscsi.extent.create', [values]);
     } else {
-      request$ = this.ws.call('iscsi.extent.update', [
+      request$ = this.api.call('iscsi.extent.update', [
         this.editingExtent.id,
         values,
       ]);
@@ -199,7 +199,7 @@ export class ExtentFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

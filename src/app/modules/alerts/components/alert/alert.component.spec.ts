@@ -15,7 +15,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -32,7 +32,7 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let alert: AlertPageObject;
   const createComponent = createComponentFactory({
     component: AlertComponent,
@@ -71,7 +71,7 @@ describe('AlertComponent', () => {
       },
     });
 
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     alert = new AlertPageObject(spectator);
   });
 
@@ -103,7 +103,7 @@ describe('AlertComponent', () => {
   it('dismisses an open alert when Dismiss link is pressed', async () => {
     alert.clickDismissLink();
 
-    expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
+    expect(api.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
 
     const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
     expect(state).toEqual([
@@ -122,7 +122,7 @@ describe('AlertComponent', () => {
 
     alert.clickReopenLink();
 
-    expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['79']);
+    expect(api.call).toHaveBeenCalledWith('alert.restore', ['79']);
 
     const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
     expect(state).toEqual([dummyAlert]);

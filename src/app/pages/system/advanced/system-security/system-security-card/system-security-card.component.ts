@@ -17,8 +17,8 @@ import { SystemSecurityConfig } from 'app/interfaces/system-security-config.inte
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ export class SystemSecurityCardComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('system.security.config').pipe(toLoadingState())),
+    switchMap(() => this.api.call('system.security.config').pipe(toLoadingState())),
     shareReplay({
       refCount: false,
       bufferSize: 1,
@@ -53,7 +53,7 @@ export class SystemSecurityCardComponent {
 
   constructor(
     private chainedSlideIns: ChainedSlideInService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {

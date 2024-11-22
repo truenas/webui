@@ -12,7 +12,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IpmiEventsDialogComponent', () => {
   let spectator: Spectator<IpmiEventsDialogComponent>;
@@ -72,8 +72,8 @@ describe('IpmiEventsDialogComponent', () => {
 
   describe('no events', () => {
     beforeEach(() => {
-      const mockedWebSocket = spectator.inject(MockApiService);
-      mockedWebSocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
 
       spectator.component.ngOnInit();
       spectator.detectChanges();

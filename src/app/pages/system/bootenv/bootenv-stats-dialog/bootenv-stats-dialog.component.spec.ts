@@ -17,7 +17,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
 
@@ -35,7 +35,7 @@ const poolInstance = {
 describe('BootenvStatsDialogComponent', () => {
   let spectator: Spectator<BootenvStatsDialogComponent>;
   let loader: HarnessLoader;
-  let websocket: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: BootenvStatsDialogComponent,
     imports: [
@@ -69,7 +69,7 @@ describe('BootenvStatsDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   function getStatusItems(): Record<string, string> {
@@ -84,7 +84,7 @@ describe('BootenvStatsDialogComponent', () => {
   }
 
   it('loads boot pool state and shows it', () => {
-    expect(websocket.call).toHaveBeenCalledWith('boot.get_state');
+    expect(api.call).toHaveBeenCalledWith('boot.get_state');
 
     expect(getStatusItems()).toEqual({
       'Boot Pool Condition:': 'Online',
@@ -112,7 +112,7 @@ describe('BootenvStatsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update Interval' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);
+    expect(api.call).toHaveBeenCalledWith('boot.set_scrub_interval', [3]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Scrub interval set to 3 days');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });

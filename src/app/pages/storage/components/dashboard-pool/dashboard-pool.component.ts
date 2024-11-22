@@ -29,8 +29,8 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
 import { TopologyCardComponent } from './topology-card/topology-card.component';
@@ -73,7 +73,7 @@ export class DashboardPoolComponent implements OnChanges {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private ws: ApiService,
+    private api: ApiService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
     private searchDirectives: UiSearchDirectivesService,
@@ -109,7 +109,7 @@ export class DashboardPoolComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
+          return this.api.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
         }),
         filter((job) => job.state === JobState.Success),
         tap(() => {
@@ -131,7 +131,7 @@ export class DashboardPoolComponent implements OnChanges {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
+        return this.api.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
       }),
       tap(() => {
         this.snackbar.success(

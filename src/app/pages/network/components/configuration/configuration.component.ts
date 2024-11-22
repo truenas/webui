@@ -29,9 +29,9 @@ import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validat
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -354,7 +354,7 @@ export class NetworkConfigurationComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });

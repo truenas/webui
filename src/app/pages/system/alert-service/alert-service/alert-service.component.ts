@@ -65,7 +65,7 @@ import {
 import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -115,7 +115,7 @@ export class AlertServiceComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
@@ -156,7 +156,7 @@ export class AlertServiceComponent implements OnInit {
     this.cdr.detectChanges();
     const payload = this.generatePayload();
 
-    this.ws.call('alertservice.test', [payload])
+    this.api.call('alertservice.test', [payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (wasAlertSent) => {
@@ -174,7 +174,7 @@ export class AlertServiceComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.errorHandler.handleValidationErrors(error, this.commonForm);
         },
       });
   }
@@ -187,8 +187,8 @@ export class AlertServiceComponent implements OnInit {
     const payload = this.generatePayload();
 
     const request$ = this.isNew
-      ? this.ws.call('alertservice.create', [payload])
-      : this.ws.call('alertservice.update', [this.existingAlertService.id, payload]);
+      ? this.api.call('alertservice.create', [payload])
+      : this.api.call('alertservice.update', [this.existingAlertService.id, payload]);
 
     request$
       .pipe(untilDestroyed(this))
@@ -202,7 +202,7 @@ export class AlertServiceComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.errorHandler.handleValidationErrors(error, this.commonForm);
         },
       });
   }

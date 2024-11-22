@@ -25,8 +25,8 @@ import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -200,10 +200,10 @@ describe('CloudBackupListComponent', () => {
       setFilter: jest.fn(),
     } as unknown as AsyncDataProvider<CloudBackup>;
 
-    const queryString = 'UA';
+    const queryString = 'ua';
     spectator.component.onListFiltered(queryString);
 
-    expect(spectator.component.filterString).toBe(queryString.toLowerCase());
+    expect(spectator.component.filterString).toBe(queryString);
 
     expect(spectator.component.dataProvider.setFilter).toHaveBeenCalledWith({
       query: queryString,

@@ -11,16 +11,17 @@ import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { ApiService } from 'app/services/api.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -58,57 +59,21 @@ export class ServiceExtraActionsComponent {
 
   constructor(
     private translate: TranslateService,
-    private ws: ApiService,
-    private dialogService: DialogService,
+    private api: ApiService,
     private router: Router,
     private slideInService: SlideInService,
     private urlOptions: UrlOptionsService,
+    private errorHandler: ErrorHandlerService,
+    private loader: AppLoaderService,
+    private snackbar: SnackbarService,
   ) {}
 
   changeServiceState(service: Service): void {
-    const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
-    this.ws.call(rpc, [service.service, { silent: false }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (hasChanged: boolean) => {
-          if (hasChanged) {
-            if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-              this.dialogService.warn(
-                this.translate.instant('Service failed to stop'),
-                this.translate.instant(
-                  'The {service} service failed to stop.',
-                  { service: serviceNames.get(service.service) || service.service },
-                ),
-              );
-            }
-          } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-            this.dialogService.warn(
-              this.translate.instant('Service failed to start'),
-              this.translate.instant(
-                'The {service} service failed to start.',
-                { service: serviceNames.get(service.service) || service.service },
-              ),
-            );
-          }
-        },
-        error: (error: ApiError) => {
-          let message = this.translate.instant(
-            'Error starting service {serviceName}.',
-            { serviceName: serviceNames.get(service.service) || service.service },
-          );
-          if (rpc === 'service.stop') {
-            message = this.translate.instant(
-              'Error stopping service {serviceName}.',
-              { serviceName: serviceNames.get(service.service) || service.service },
-            );
-          }
-          this.dialogService.error({
-            title: message,
-            message: error.reason,
-            backtrace: error.trace?.formatted,
-          });
-        },
-      });
+    if (service.state === ServiceStatus.Running) {
+      this.stopService(service);
+    } else {
+      this.startService(service);
+    }
   }
 
   configureService(service: Service): void {
@@ -144,5 +109,29 @@ export class ServiceExtraActionsComponent {
       },
     });
     this.router.navigateByUrl(url);
+  }
+
+  private startService(service: Service): void {
+    this.api.call('service.start', [service.service, { silent: false }])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Service started'));
+      });
+  }
+
+  private stopService(service: Service): void {
+    this.api.call('service.stop', [service.service, { silent: false }])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Service stopped'));
+      });
   }
 }

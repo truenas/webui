@@ -15,7 +15,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
 const mockJobSuccessResponse = [{
@@ -30,7 +30,7 @@ describe('DiskBulkEditComponent', () => {
   let spectator: Spectator<DiskBulkEditComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: ApiService;
+  let api: ApiService;
   const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
@@ -67,7 +67,7 @@ describe('DiskBulkEditComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('sets disks settings when form is opened', async () => {
@@ -123,7 +123,7 @@ describe('DiskBulkEditComponent', () => {
       ],
     ];
 
-    expect(ws.job).toHaveBeenCalledWith('core.bulk', req);
+    expect(api.job).toHaveBeenCalledWith('core.bulk', req);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });

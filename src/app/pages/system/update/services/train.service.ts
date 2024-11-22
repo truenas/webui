@@ -10,8 +10,8 @@ import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-upd
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({
@@ -31,18 +31,18 @@ export class TrainService {
 
   constructor(
     private updateService: UpdateService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
   getAutoDownload(): Observable<boolean> {
-    return this.ws.call('update.get_auto_download');
+    return this.api.call('update.get_auto_download');
   }
 
   getTrains(): Observable<SystemUpdateTrains> {
-    return this.ws.call('update.get_trains');
+    return this.api.call('update.get_trains');
   }
 
   onTrainChanged(newTrain: string, prevTrain: string): void {
@@ -87,14 +87,14 @@ export class TrainService {
   }
 
   toggleAutoCheck(autoCheck: boolean): void {
-    this.ws.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
+    this.api.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     });
   }
 
   setTrainAndCheck(newTrain: string, prevTrain: string): void {
     this.updateService.isLoading$.next(true);
-    this.ws.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.check();
       },
@@ -120,7 +120,7 @@ export class TrainService {
     sessionStorage.updateLastChecked = Date.now();
 
     combineLatest([
-      this.ws.call('update.check_available'),
+      this.api.call('update.check_available'),
       this.currentTrainDescription$,
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([update, currentTrainDescription]) => {

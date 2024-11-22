@@ -30,10 +30,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -95,8 +95,8 @@ export class GuiFormComponent {
     private slideInRef: SlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
-    private wsManager: WebSocketConnectionService,
+    private api: ApiService,
+    private wsManager: WebSocketHandlerService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -141,7 +141,7 @@ export class GuiFormComponent {
       }),
       switchMap(() => {
         this.isFormLoading = true;
-        return this.ws.call('system.general.update', [params as SystemGeneralConfigUpdate]);
+        return this.api.call('system.general.update', [params as SystemGeneralConfigUpdate]);
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -154,7 +154,7 @@ export class GuiFormComponent {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });
@@ -212,12 +212,12 @@ export class GuiFormComponent {
 
         this.loader.open();
         this.wsManager.prepareShutdown(); // not really shutting down, just stop websocket detection temporarily
-        this.ws.call('system.general.ui_restart').pipe(
+        this.api.call('system.general.ui_restart').pipe(
           untilDestroyed(this),
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.closeWebSocketConnection();
+            this.wsManager.reconnect();
             this.replaceHrefWhenWsConnected(href);
           },
           error: (error: ApiError) => {

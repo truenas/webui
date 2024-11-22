@@ -18,8 +18,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -55,14 +55,14 @@ export class IsolatedGpusFormComponent implements OnInit {
     }),
   });
 
-  readonly options$ = this.ws.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
+  readonly options$ = this.api.call('system.advanced.get_gpu_pci_choices').pipe(map((choices) => {
     return Object.entries(choices).map(
       ([value, label]) => ({ value: label, label: value }),
     );
   }));
 
   constructor(
-    protected ws: ApiService,
+    protected api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -87,7 +87,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     this.isFormLoading = true;
     const isolatedGpuPciIds = this.formGroup.controls.isolated_gpu_pci_ids.value;
 
-    this.ws.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
+    this.api.call('system.advanced.update_gpu_pci_ids', [isolatedGpuPciIds]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -99,7 +99,7 @@ export class IsolatedGpusFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });

@@ -15,7 +15,7 @@ import {
   usersLoaded,
   usersNotLoaded,
 } from 'app/pages/credentials/users/store/user.actions';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';

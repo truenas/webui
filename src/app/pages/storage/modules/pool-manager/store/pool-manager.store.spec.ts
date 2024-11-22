@@ -18,7 +18,7 @@ import {
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;
@@ -129,8 +129,8 @@ describe('PoolManagerStore', () => {
     it('loads enclosures', async () => {
       spectator.service.initialize();
 
-      const websocket = spectator.inject(ApiService);
-      expect(websocket.call).toHaveBeenCalledWith('enclosure2.query');
+      const api = spectator.inject(ApiService);
+      expect(api.call).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,

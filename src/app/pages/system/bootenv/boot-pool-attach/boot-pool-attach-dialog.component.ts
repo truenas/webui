@@ -20,7 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<BootPoolAttachDialogComponent>,
     private translate: TranslateService,
-    protected ws: ApiService,
+    protected api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
@@ -103,7 +103,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
 
     const { dev, expand } = this.form.value;
     this.dialogService.jobDialog(
-      this.ws.job('boot.attach', [dev, { expand }]),
+      this.api.job('boot.attach', [dev, { expand }]),
       { title: this.translate.instant('Attaching Disk to Boot Pool') },
     )
       .afterClosed()
@@ -117,7 +117,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });

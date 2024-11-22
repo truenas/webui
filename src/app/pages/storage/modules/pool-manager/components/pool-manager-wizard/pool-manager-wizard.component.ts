@@ -37,8 +37,8 @@ import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/page
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 import { GeneralWizardStepComponent } from './steps/1-general-wizard-step/general-wizard-step.component';
@@ -126,7 +126,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private poolManagerValidation: PoolManagerValidationService,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -169,7 +169,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     const payload = this.prepareCreatePayload();
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.create', [payload]),
+      this.api.job('pool.create', [payload]),
       { title: this.translate.instant('Create Pool') },
     )
       .afterClosed()
@@ -275,7 +275,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     };
 
     this.dialogService.jobDialog(
-      this.ws.job('pool.update', [this.existingPool.id, payload]),
+      this.api.job('pool.update', [this.existingPool.id, payload]),
       { title: this.translate.instant('Update Pool') },
     )
       .afterClosed()

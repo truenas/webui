@@ -8,19 +8,19 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialog: DialogService,
     private translate: TranslateService,
   ) {}
 
   getDatasetNodeProvider(): TreeNodeProvider {
     return () => {
-      return this.ws.call('pool.filesystem_choices').pipe(
+      return this.api.call('pool.filesystem_choices').pipe(
         map((filesystems) => {
           const nodes: ExplorerNodeData[] = [];
           filesystems.forEach((filesystem) => {

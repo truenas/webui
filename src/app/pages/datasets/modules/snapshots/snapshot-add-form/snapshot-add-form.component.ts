@@ -38,8 +38,8 @@ import {
   snapshotExcludeBootQueryFilter,
 } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -121,7 +121,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
@@ -169,7 +169,7 @@ export class SnapshotAddFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -214,7 +214,7 @@ export class SnapshotAddFormComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

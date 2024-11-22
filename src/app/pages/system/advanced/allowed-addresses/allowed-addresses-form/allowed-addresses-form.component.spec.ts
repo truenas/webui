@@ -14,13 +14,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const componentRef: ChainedRef<unknown> = {
     close: jest.fn(),
     getData: jest.fn(),
@@ -55,7 +55,7 @@ describe('AllowedAddressesComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows allowed addresses when editing a form', async () => {
@@ -72,7 +72,7 @@ describe('AllowedAddressesComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['2.2.2.2'] },
     ]);
   });
@@ -84,7 +84,7 @@ describe('AllowedAddressesComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+    expect(api.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['192.168.1.0/24'] },
     ]);
   });

@@ -22,7 +22,6 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -68,7 +67,6 @@ export class SigninFormComponent implements OnInit {
     private signinStore: SigninStore,
     private translate: TranslateService,
     private authService: AuthService,
-    private ws: ApiService,
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -131,7 +129,7 @@ export class SigninFormComponent implements OnInit {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });
@@ -195,7 +193,7 @@ export class SigninFormComponent implements OnInit {
         }
       },
       error: (error: unknown) => {
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });

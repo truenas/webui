@@ -33,8 +33,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 export interface ContainerImageUi extends ContainerImage {
@@ -109,6 +109,7 @@ export class DockerImagesListComponent implements OnInit {
           ? this.fileSizePipe.transform(row.size)
           : this.translate.instant('Unknown');
       },
+      sortBy: (row) => row.size,
     }),
     actionsColumn({
       actions: [
@@ -167,7 +168,7 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({
       query,
       columnKeys: ['repo_tags'],

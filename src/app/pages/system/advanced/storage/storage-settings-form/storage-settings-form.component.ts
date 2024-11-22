@@ -23,12 +23,11 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -67,16 +66,15 @@ export class StorageSettingsFormComponent implements OnInit {
     pool: ['', Validators.required],
   });
 
-  readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
+  readonly poolOptions$ = this.api.call('systemdataset.pool_choices').pipe(choicesToOptions());
 
   private storageSettings: StorageSettings;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
-    private ixValidator: IxValidatorsService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
@@ -98,7 +96,7 @@ export class StorageSettingsFormComponent implements OnInit {
       switchMap(() => {
         this.isFormLoading = true;
         this.cdr.markForCheck();
-        return this.ws.job('systemdataset.update', [{ pool }])
+        return this.api.job('systemdataset.update', [{ pool }])
           .pipe(
             tap((job) => {
               if (job.state !== JobState.Success) {
@@ -112,7 +110,7 @@ export class StorageSettingsFormComponent implements OnInit {
             }),
             catchError((error: unknown) => {
               this.isFormLoading = false;
-              this.formErrorHandler.handleWsFormError(error, this.form);
+              this.formErrorHandler.handleValidationErrors(error, this.form);
               this.cdr.markForCheck();
               return EMPTY;
             }),

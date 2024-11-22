@@ -21,8 +21,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export type VirtualizationImageWithId = VirtualizationImage & {
   id: string;
@@ -72,7 +72,7 @@ export class SelectImageDialogComponent implements OnInit {
   } as EmptyConfig);
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private dialogRef: MatDialogRef<SelectImageDialogComponent>,
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -95,7 +95,7 @@ export class SelectImageDialogComponent implements OnInit {
   }
 
   private getImages(): void {
-    this.ws.call('virt.instance.image_choices', [this.data])
+    this.api.call('virt.instance.image_choices', [this.data])
       .pipe(
         catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);

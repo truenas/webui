@@ -13,13 +13,13 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: TunableFormComponent,
     imports: [
@@ -47,7 +47,7 @@ describe('TunableFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes modal form is saved', async () => {
@@ -62,7 +62,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.job).toHaveBeenCalledWith('tunable.create', [{
+      expect(api.job).toHaveBeenCalledWith('tunable.create', [{
         comment: 'Answer to the question',
         enabled: true,
         type: TunableType.Sysctl,
@@ -89,7 +89,7 @@ describe('TunableFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current group values when form is being edited', async () => {
@@ -114,7 +114,7 @@ describe('TunableFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.job).toHaveBeenCalledWith('tunable.update', [
+      expect(api.job).toHaveBeenCalledWith('tunable.update', [
         1,
         {
           comment: 'Existing variable',

@@ -26,10 +26,10 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -141,7 +141,7 @@ export class LocalizationFormComponent implements OnInit {
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
     public localeService: LocaleService,
-    protected ws: ApiService,
+    protected api: ApiService,
     protected langService: LanguageService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -187,7 +187,7 @@ export class LocalizationFormComponent implements OnInit {
     }));
     delete body.date_format;
     delete body.time_format;
-    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
@@ -199,7 +199,7 @@ export class LocalizationFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });

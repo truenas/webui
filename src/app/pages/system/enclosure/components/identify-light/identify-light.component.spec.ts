@@ -10,7 +10,7 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdentifyLightComponent', () => {
   let spectator: Spectator<IdentifyLightComponent>;
@@ -157,8 +157,8 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('reverts to old status if status could not be changed', async () => {
-      const websocket = spectator.inject(ApiService);
-      websocket.call.mockImplementationOnce(() => throwError(() => new Error('Failed to change status')));
+      const api = spectator.inject(ApiService);
+      api.call.mockImplementationOnce(() => throwError(() => new Error('Failed to change status')));
 
       const identifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Identify' }));
       await identifyButton.click();

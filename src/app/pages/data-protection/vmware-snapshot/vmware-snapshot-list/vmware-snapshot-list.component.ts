@@ -27,9 +27,9 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
 @UntilDestroy()
@@ -114,7 +114,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 

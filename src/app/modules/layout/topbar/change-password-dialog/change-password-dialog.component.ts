@@ -17,8 +17,8 @@ import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/pa
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -95,7 +95,7 @@ export class ChangePasswordDialogComponent {
         this.dialogRef.close();
       },
       error: (error: unknown) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

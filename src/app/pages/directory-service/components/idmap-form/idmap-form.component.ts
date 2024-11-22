@@ -35,10 +35,10 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { greaterThanFg, rangeValidator } from 'app/services/validators';
+import { ApiService } from 'app/services/websocket/api.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
@@ -250,7 +250,7 @@ export class IdmapFormComponent implements OnInit {
           this.slideInRef.close(true);
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },

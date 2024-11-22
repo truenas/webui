@@ -41,12 +41,12 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
@@ -138,7 +138,7 @@ export class ServicesComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private servicesService: ServicesService,
-    private ws: ApiService,
+    private api: ApiService,
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -154,7 +154,7 @@ export class ServicesComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({
       list: this.services,
       query,
@@ -195,7 +195,7 @@ export class ServicesComponent implements OnInit {
   private enableToggle(service: ServiceRow): void {
     this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
 
-    this.ws.call('service.update', [service.id, { enable: !service.enable }])
+    this.api.call('service.update', [service.id, { enable: !service.enable }])
       .pipe(
         this.loader.withLoader(),
         take(1),

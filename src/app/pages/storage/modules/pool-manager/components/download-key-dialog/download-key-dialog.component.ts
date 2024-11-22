@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, Component, Inject,
   signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -16,9 +16,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface DownloadKeyDialogParams {
   id: number;
@@ -49,8 +49,7 @@ export class DownloadKeyDialogComponent {
   private filename: string;
 
   constructor(
-    private ws: ApiService,
-    private cdr: ChangeDetectorRef,
+    private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private download: DownloadService,
@@ -63,7 +62,7 @@ export class DownloadKeyDialogComponent {
   downloadKey(): void {
     this.loader.open();
 
-    this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
+    this.api.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
       switchMap(([, url]) => {
         return this.download.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {

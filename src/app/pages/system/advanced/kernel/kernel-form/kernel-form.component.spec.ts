@@ -10,13 +10,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KernelFormComponent', () => {
   let spectator: Spectator<KernelFormComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: KernelFormComponent,
     imports: [
@@ -43,7 +43,7 @@ describe('KernelFormComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current system advanced kernel values when form is being edited', async () => {
@@ -64,6 +64,6 @@ describe('KernelFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [{ debugkernel: false }]);
+    expect(api.call).toHaveBeenCalledWith('system.advanced.update', [{ debugkernel: false }]);
   });
 });

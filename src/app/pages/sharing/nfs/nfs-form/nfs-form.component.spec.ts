@@ -29,10 +29,10 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -57,7 +57,7 @@ describe('NfsFormComponent', () => {
   let spectator: Spectator<NfsFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let websocket: ApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -114,7 +114,7 @@ describe('NfsFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -173,7 +173,7 @@ describe('NfsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(api.call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/new',
         comment: 'New share',
         enabled: true,
@@ -200,7 +200,7 @@ describe('NfsFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      websocket = spectator.inject(ApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -247,7 +247,7 @@ describe('NfsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(websocket.call).toHaveBeenCalledWith('sharing.nfs.update', [
+      expect(api.call).toHaveBeenCalledWith('sharing.nfs.update', [
         1,
         {
           comment: 'Updated share',

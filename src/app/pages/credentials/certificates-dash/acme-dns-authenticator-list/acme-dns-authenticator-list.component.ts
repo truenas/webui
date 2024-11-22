@@ -28,8 +28,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Authenticator'),
-      propertyName: 'authenticator',
+      getValue: (row) => row.attributes?.authenticator,
     }),
     actionsColumn({
       actions: [

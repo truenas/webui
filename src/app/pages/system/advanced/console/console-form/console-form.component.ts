@@ -24,7 +24,7 @@ import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-he
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -81,13 +81,13 @@ export class ConsoleFormComponent implements OnInit {
     { label: '115200', value: '115200' },
   ]);
 
-  readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
+  readonly serialPortOptions$ = this.api.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
   private consoleConfig: ConsoleConfig;
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -117,7 +117,7 @@ export class ConsoleFormComponent implements OnInit {
     this.isFormLoading = true;
     const values = this.form.value;
 
-    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
+    this.api.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
@@ -127,7 +127,7 @@ export class ConsoleFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

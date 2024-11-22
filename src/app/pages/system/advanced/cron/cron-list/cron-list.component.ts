@@ -35,10 +35,10 @@ import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-d
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ApiService } from 'app/services/api.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -129,7 +129,7 @@ export class CronListComponent implements OnInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private taskService: TaskService,
     private dialog: DialogService,
@@ -140,7 +140,7 @@ export class CronListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query').pipe(
+    const cronjobs$ = this.api.call('cronjob.query').pipe(
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
@@ -185,7 +185,7 @@ export class CronListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('cronjob.run', [row.id])),
+      switchMap(() => this.api.call('cronjob.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -212,7 +212,7 @@ export class CronListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 

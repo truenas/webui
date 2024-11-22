@@ -27,8 +27,8 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { SmbListComponent } from 'app/pages/sharing/smb/smb-list/smb-list.component';
-import { ApiService } from 'app/services/api.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 const shares: Partial<SmbShare>[] = [

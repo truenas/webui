@@ -32,7 +32,7 @@ import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-he
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -89,18 +89,18 @@ export class SyslogFormComponent implements OnInit {
 
   readonly levelOptions$ = of(helptextSystemAdvanced.sysloglevel.options);
   readonly transportOptions$ = of(helptextSystemAdvanced.syslog_transport.options);
-  readonly certificateOptions$ = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
+  readonly certificateOptions$ = this.api.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
   );
 
-  readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
+  readonly certificateAuthorityOptions$ = this.api.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 
   private syslogConfig: SyslogConfig;
 
   constructor(
     private fb: FormBuilder,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
@@ -138,7 +138,7 @@ export class SyslogFormComponent implements OnInit {
     }
 
     this.isFormLoading = true;
-    this.ws.call('system.advanced.update', [configUpdate]).pipe(
+    this.api.call('system.advanced.update', [configUpdate]).pipe(
       tap(() => {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
@@ -148,7 +148,7 @@ export class SyslogFormComponent implements OnInit {
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
         return EMPTY;
       }),

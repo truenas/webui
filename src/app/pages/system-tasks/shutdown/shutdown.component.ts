@@ -7,9 +7,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
+import { ApiService } from 'app/services/websocket/api.service';
+import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -28,8 +28,8 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 })
 export class ShutdownComponent implements OnInit {
   constructor(
-    protected ws: ApiService,
-    private wsManager: WebSocketConnectionService,
+    protected api: ApiService,
+    private wsManager: WebSocketHandlerService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,
     private route: ActivatedRoute,
@@ -43,7 +43,7 @@ export class ShutdownComponent implements OnInit {
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/signin');
 
-    this.ws.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
+    this.api.job('system.shutdown', [reason]).pipe(untilDestroyed(this)).subscribe({
       error: (error: unknown) => { // error on shutdown
         this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))

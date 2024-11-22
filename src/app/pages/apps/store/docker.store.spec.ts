@@ -5,7 +5,7 @@ import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;
@@ -63,28 +63,28 @@ describe('DockerStore', () => {
         enable_image_updates: false,
       } as DockerConfig;
 
-      const mockWebsocket = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockApiService);
       jest.resetAllMocks();
-      mockWebsocket.mockCall('docker.config', newDockerConfig);
+      mockedApi.mockCall('docker.config', newDockerConfig);
 
       spectator.service.reloadDockerConfig().subscribe();
       spectator.service.reloadDockerNvidiaStatus().subscribe();
 
-      expect(mockWebsocket.call).toHaveBeenCalledWith('docker.config');
+      expect(mockedApi.call).toHaveBeenCalledWith('docker.config');
       expect(spectator.service.state().dockerConfig).toEqual(newDockerConfig);
     });
   });
 
   describe('reloadDockerNvidiaStatus', () => {
     it('reloads docker nvidia status and updates the state', () => {
-      const mockWebsocket = spectator.inject(MockApiService);
+      const mockedApi = spectator.inject(MockApiService);
       jest.resetAllMocks();
-      mockWebsocket.mockCall('docker.nvidia_status', { status: DockerNvidiaStatus.Installed });
+      mockedApi.mockCall('docker.nvidia_status', { status: DockerNvidiaStatus.Installed });
 
       spectator.service.reloadDockerConfig().subscribe();
       spectator.service.reloadDockerNvidiaStatus().subscribe();
 
-      expect(mockWebsocket.call).toHaveBeenCalledWith('docker.nvidia_status');
+      expect(mockedApi.call).toHaveBeenCalledWith('docker.nvidia_status');
       expect(spectator.service.state().nvidiaStatus).toEqual(DockerNvidiaStatus.Installed);
     });
   });

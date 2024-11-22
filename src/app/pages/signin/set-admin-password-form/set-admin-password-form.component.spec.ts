@@ -12,8 +12,8 @@ import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { ApiService } from 'app/services/api.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
@@ -61,8 +61,8 @@ describe('SetAdminPasswordFormComponent', () => {
     const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Sign In' }));
     await submitButton.click();
 
-    const websocket = spectator.inject(ApiService);
-    expect(websocket.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledWith('user.setup_local_administrator', ['truenas_admin', '12345678']);
     const authService = spectator.inject(AuthService);
     expect(authService.login).toHaveBeenCalledWith('truenas_admin', '12345678');
 

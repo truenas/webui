@@ -31,10 +31,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -131,7 +131,7 @@ export class AssociatedTargetListComponent implements OnInit {
                     buttonText: this.translate.instant('Delete'),
                   }).pipe(
                     filter(Boolean),
-                    switchMap(() => this.ws.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
+                    switchMap(() => this.api.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
                     untilDestroyed(this),
                   ).subscribe({
                     next: () => this.dataProvider.load(),
@@ -157,7 +157,7 @@ export class AssociatedTargetListComponent implements OnInit {
     private iscsiService: IscsiService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: ApiService,
+    private api: ApiService,
     private translate: TranslateService,
     private slideInService: SlideInService,
     private cdr: ChangeDetectorRef,
@@ -199,7 +199,7 @@ export class AssociatedTargetListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     const extentNames = this.extents.map((extent) => ({ name: extent.name.toLowerCase(), id: extent.id }));
     const targetNames = this.targets.map((target) => ({ name: target.name.toLowerCase(), id: target.id }));
     this.dataProvider.setFilter({

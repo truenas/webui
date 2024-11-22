@@ -32,8 +32,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
-import { ApiService } from 'app/services/api.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -198,7 +198,7 @@ export class GroupFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

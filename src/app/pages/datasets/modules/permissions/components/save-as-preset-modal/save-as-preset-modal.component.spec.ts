@@ -13,8 +13,8 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { ApiService } from 'app/services/api.service';
 import { UserService } from 'app/services/user.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SaveAsPresetModalComponent', () => {
   let spectator: Spectator<SaveAsPresetModalComponent>;
@@ -76,9 +76,9 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('loads acl presets and shows them', () => {
-    const ws = spectator.inject(ApiService);
+    const api = spectator.inject(ApiService);
 
-    expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
+    expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
         resolve_names: true,
       },

@@ -41,9 +41,9 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -143,7 +143,7 @@ export class SmbCardComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private router: Router,
@@ -151,7 +151,7 @@ export class SmbCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const smbShares$ = this.ws.call('sharing.smb.query').pipe(untilDestroyed(this));
+    const smbShares$ = this.api.call('sharing.smb.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -170,7 +170,7 @@ export class SmbCardComponent implements OnInit {
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('sharing.smb.delete', [smb.id])),
+      switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -188,7 +188,7 @@ export class SmbCardComponent implements OnInit {
     } else {
       // A home share has a name (homes) set; row.name works for other shares
       const searchName = row.home ? 'homes' : row.name;
-      this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+      this.api.call('sharing.smb.getacl', [{ share_name: searchName }])
         .pipe(untilDestroyed(this))
         .subscribe({
           next: (shareAcl: SmbSharesec) => {
@@ -227,7 +227,7 @@ export class SmbCardComponent implements OnInit {
   private onChangeEnabledState(row: SmbShare): void {
     const param = 'enabled';
 
-    this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(
+    this.api.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(
       accumulateLoadingState(row.id, this.loadingMap$),
       untilDestroyed(this),
     ).subscribe({

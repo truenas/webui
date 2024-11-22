@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
@@ -13,9 +13,10 @@ import {
   AddDeviceMenuComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import {
-  DeleteDeviceButtonComponent,
-} from 'app/pages/virtualization/components/common/delete-device-button/delete-device-button.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+  DeviceActionsMenuComponent,
+} from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
+import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 
 @UntilDestroy()
 @Component({
@@ -30,29 +31,25 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     TranslateModule,
     MatCardContent,
     NgxSkeletonLoaderModule,
-    DeleteDeviceButtonComponent,
+    DeviceActionsMenuComponent,
     AddDeviceMenuComponent,
   ],
 })
 export class InstanceDevicesComponent {
-  protected readonly isLoadingDevices = this.instanceStore.isLoadingDevices;
+  protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   protected readonly shownDevices = computed(() => {
-    return this.instanceStore.selectedInstanceDevices().filter((device) => {
+    return this.deviceStore.devices().filter((device) => {
       return [VirtualizationDeviceType.Usb, VirtualizationDeviceType.Gpu].includes(device.dev_type);
     });
   });
 
   constructor(
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
+    private translate: TranslateService,
   ) {}
 
   protected getDeviceDescription(device: VirtualizationDevice): string {
-    // TODO: Add type back after https://ixsystems.atlassian.net/browse/NAS-132543
-    // const type = virtualizationDeviceTypeLabels.has(device.dev_type)
-    //   ? virtualizationDeviceTypeLabels.get(device.dev_type)
-    //   : device.dev_type;
-
-    return device.description;
+    return getDeviceDescription(this.translate, device);
   }
 }

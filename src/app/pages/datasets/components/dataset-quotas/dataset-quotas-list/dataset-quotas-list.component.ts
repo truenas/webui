@@ -48,9 +48,9 @@ import {
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -286,7 +286,7 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
 
     if (!this.dataProvider.totalRows) {

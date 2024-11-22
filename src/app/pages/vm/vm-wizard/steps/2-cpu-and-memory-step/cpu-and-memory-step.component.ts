@@ -23,7 +23,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   readonly helptext = helptextVmWizard;
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
-  readonly cpuModels$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
+  readonly cpuModels$ = this.api.call('vm.cpu_model_choices').pipe(choicesToOptions());
 
   constructor(
     public formatter: IxFormatterService,
@@ -89,7 +89,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
     private validator: IxValidatorsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private ws: ApiService,
+    private api: ApiService,
   ) {}
 
   get isCpuCustom(): boolean {
@@ -144,7 +144,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   }
 
   private loadMaxSupportedVcpus(): void {
-    this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((maxVcpus) => {
+    this.api.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((maxVcpus) => {
       this.maxVcpus = maxVcpus;
       this.cdr.markForCheck();
     });

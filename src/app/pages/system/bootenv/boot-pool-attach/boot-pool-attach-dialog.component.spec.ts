@@ -15,13 +15,13 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 
 describe('BootPoolAttachDialogComponent', () => {
   let spectator: Spectator<BootPoolAttachDialogComponent>;
   let loader: HarnessLoader;
-  let ws: ApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: BootPoolAttachDialogComponent,
@@ -58,7 +58,7 @@ describe('BootPoolAttachDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('sends an update payload to websocket when save is pressed', async () => {
@@ -71,7 +71,7 @@ describe('BootPoolAttachDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);
+    expect(api.job).toHaveBeenCalledWith('boot.attach', ['sdb', { expand: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Device «sdb» was successfully attached.');
   });
 });

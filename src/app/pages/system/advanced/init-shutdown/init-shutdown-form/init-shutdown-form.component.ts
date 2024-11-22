@@ -27,8 +27,8 @@ import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -101,7 +101,7 @@ export class InitShutdownFormComponent implements OnInit {
   private editingScript: InitShutdownScript;
 
   constructor(
-    private ws: ApiService,
+    private api: ApiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -134,9 +134,9 @@ export class InitShutdownFormComponent implements OnInit {
     this.isFormLoading = true;
     let request$: Observable<unknown>;
     if (this.isNew) {
-      request$ = this.ws.call('initshutdownscript.create', [values]);
+      request$ = this.api.call('initshutdownscript.create', [values]);
     } else {
-      request$ = this.ws.call('initshutdownscript.update', [
+      request$ = this.api.call('initshutdownscript.update', [
         this.editingScript.id,
         values,
       ]);
@@ -154,7 +154,7 @@ export class InitShutdownFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

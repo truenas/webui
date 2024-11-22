@@ -8,7 +8,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
-import { ApiService } from 'app/services/api.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 export interface Temperature {
   keys: string[];
@@ -21,7 +21,7 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskTemperatureService {
-  private disksChanged$ = this.websocket.subscribe('disk.query').pipe(
+  private disksChanged$ = this.api.subscribe('disk.query').pipe(
     filter((event) => [
       IncomingApiMessageType.Added,
       IncomingApiMessageType.Changed,
@@ -30,11 +30,11 @@ export class DiskTemperatureService {
   );
 
   constructor(
-    protected websocket: ApiService,
+    protected api: ApiService,
   ) { }
 
   getTemperature(): Observable<DiskTemperatures> {
-    return this.websocket
+    return this.api
       .call('webui.enclosure.dashboard')
       .pipe(
         repeat({ delay: () => this.disksChanged$ }),
@@ -46,7 +46,7 @@ export class DiskTemperatureService {
           }).flat();
         }),
         switchMap((disks) => {
-          return this.websocket.call('disk.temperatures', [disks]).pipe(
+          return this.api.call('disk.temperatures', [disks]).pipe(
             repeat({ delay: 10000 }),
             takeUntil(this.disksChanged$),
           );

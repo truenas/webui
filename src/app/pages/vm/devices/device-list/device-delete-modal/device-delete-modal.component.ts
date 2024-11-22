@@ -19,8 +19,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -63,7 +63,7 @@ export class DeviceDeleteModalComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    private ws: ApiService,
+    private api: ApiService,
   ) {
     if (this.device.attributes.dtype !== VmDeviceType.Disk) {
       return;
@@ -108,7 +108,7 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
-    this.ws.call('vm.device.delete', [
+    this.api.call('vm.device.delete', [
       this.device.id,
       {
         zvol: value.zvol,

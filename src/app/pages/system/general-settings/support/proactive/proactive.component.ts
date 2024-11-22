@@ -26,8 +26,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class ProactiveComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: ErrorHandlerService,
-    private ws: ApiService,
+    private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInRef: SlideInRef<ProactiveComponent>,
@@ -90,7 +90,7 @@ export class ProactiveComponent implements OnInit {
     const values = this.form.value as SupportConfigUpdate;
     this.isLoading = true;
 
-    this.ws.call('support.update', [values])
+    this.api.call('support.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -104,7 +104,7 @@ export class ProactiveComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -114,9 +114,9 @@ export class ProactiveComponent implements OnInit {
     this.isLoading = true;
 
     forkJoin([
-      this.ws.call('support.config'),
-      this.ws.call('support.is_available'),
-      this.ws.call('support.is_available_and_enabled'),
+      this.api.call('support.config'),
+      this.api.call('support.is_available'),
+      this.api.call('support.is_available_and_enabled'),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({
