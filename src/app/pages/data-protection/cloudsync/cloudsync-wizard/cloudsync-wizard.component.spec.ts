@@ -29,7 +29,7 @@ describe('CloudSyncWizardComponent', () => {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
-    requireConfirmationWhen: undefined,
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
