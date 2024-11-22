@@ -54,7 +54,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName.toString() || '';
+    return this.formControlName?.toString() || '';
   }
 
   onAddressInput(input: HTMLInputElement): void {

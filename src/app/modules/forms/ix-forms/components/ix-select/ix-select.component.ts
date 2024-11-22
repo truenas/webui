@@ -142,7 +142,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName.toString() || '';
+    return this.formControlName?.toString() || '';
   }
 
   onChange: (value: IxSelectValue) => void = (): void => {};

@@ -108,7 +108,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName.toString() || '';
+    return this.formControlName?.toString() || '';
   }
 
   ngOnInit(): void {
