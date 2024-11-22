@@ -2,19 +2,17 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  contentChildren,
   input,
   OnDestroy,
   OnInit,
   output,
-  QueryList,
   signal,
-  ViewChildren,
 } from '@angular/core';
 import {
-  FormBuilder, ReactiveFormsModule,
+  FormBuilder, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -27,7 +25,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Option } from 'app/interfaces/option.interface';
-import { IxFullPageForSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
+import { IxFullPageFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -39,9 +37,9 @@ import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-app-wizard',
-  templateUrl: './app-wizard.component.html',
-  styleUrls: ['./app-wizard.component.scss'],
+  selector: 'ix-full-page-form',
+  templateUrl: './ix-full-page-form.component.html',
+  styleUrls: ['./ix-full-page-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -58,14 +56,14 @@ import { AuthService } from 'app/services/auth/auth.service';
     IxIconComponent,
   ],
 })
-export class AppWizardComponent implements OnInit, OnDestroy {
-  formGroup = input.required<FormGroup<unknown>>();
+export class IxFullPageFormComponent implements OnInit, OnDestroy {
+  formGroup = input.required<FormGroup>();
   requiredRoles = input<Role[]>();
   searchMap = input<Map<string, string>>();
   pageTitle = input.required<string>();
   isLoading = input.required<boolean>();
   subscription = new Subscription();
-  @ViewChildren(IxFullPageForSectionComponent) sections: QueryList<IxFullPageForSectionComponent>;
+  sections = contentChildren(IxFullPageFormSectionComponent);
   searchControl = this.formBuilder.control('');
   searchOptions = signal<Option[]>([]);
   onSubmit = output();
@@ -84,6 +82,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.handleSearchControl();
+    this.updateSearchOption('');
   }
 
   ngOnDestroy(): void {
@@ -92,8 +91,12 @@ export class AppWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSectionClick(sectionName: string): void {
-    const nextElement = document.getElementById(sectionName);
+  onSectionClick(id: string, label: string = null): void {
+    const nextElement = document.getElementById(id)
+      || document.getElementById(label);
+    if (!nextElement) {
+      return;
+    }
 
     nextElement?.scrollIntoView({ block: 'center' });
     nextElement.classList.add('highlighted');
@@ -127,12 +130,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
         || this.searchOptions().find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
 
       if (option) {
-        const path = option.value.toString().split('.');
-        path.forEach((id, idx) => {
-          if (idx === path.length - 1) {
-            this.onSectionClick(id);
-          }
-        });
+        this.onSectionClick(option.value.toString(), option.label);
       }
     });
   }

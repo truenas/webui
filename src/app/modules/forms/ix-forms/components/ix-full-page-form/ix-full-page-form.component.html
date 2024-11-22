@@ -11,20 +11,20 @@
         [prefixIcon]="iconMarker('search')"
         [formControl]="searchControl"
         [placeholder]="'Search Input Fields' | translate"
-        [autocompleteOptions]="searchOptions"
+        [autocompleteOptions]="searchOptions()"
       ></ix-input>
     </div>
-    <form [formGroup]="formGroup" (submit)="onSubmit.emit()">
+    <form [formGroup]="formGroup()" (submit)="onSubmit.emit()">
       <ng-content></ng-content>
 
       <div class="actions">
         <button
-          *ixRequiresRoles="requiredRoles"
+          *ixRequiresRoles="requiredRoles()"
           mat-button
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading()"
+          [disabled]="formGroup().invalid || isLoading()"
         >
           {{ buttonText() | translate }}
         </button>
@@ -34,16 +34,19 @@
 
   <div class="search-container">
     <div class="search-card">
-      <ix-input
-        [prefixIcon]="iconMarker('search')"
-        [formControl]="searchControl"
-        [placeholder]="'Search Input Fields' | translate"
-        [autocompleteOptions]="searchOptions"
-      ></ix-input>
-      @for (section of sections; track section) {
-        <div class="section" (click)="onSectionClick(section.name)">
+      @if (searchMap()) {
+        <ix-input
+          [prefixIcon]="iconMarker('search')"
+          [formControl]="searchControl"
+          [placeholder]="'Search Input Fields' | translate"
+          [autocompleteOptions]="searchOptions()"
+        ></ix-input>
+      }
+      
+      @for (section of sections(); track section) {
+        <div class="section" (click)="onSectionClick(section.label)">
           {{ section.label }}
-          @if (!section.valid) {
+          @if (!section.valid()) {
             <ix-icon name="warning"></ix-icon>
           }
         </div>

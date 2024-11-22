@@ -1,215 +1,220 @@
-<ix-page-header [pageTitle]="'Create Instance' | translate">
-  @if (!(hasRequiredRoles | async)) {
-    <ix-readonly-badge></ix-readonly-badge>
-  }
-</ix-page-header>
+<ix-full-page-form
+  [pageTitle]="'Create Instance' | translate"
+  [formGroup]="form"
+  [buttonText]="'Create' | translate"
+  [isLoading]="isLoading()"
+  [searchMap]="searchMap"
+>
+  <ix-full-page-form-section
+    [label]="'Instance Configuration' | translate"
+    [valid]="isInstaceConfigValid()"
+    [help]="'This is Rehan'"
+  >
+    <ix-input
+      formControlName="name"
+      [label]="'Name' | translate"
+      [required]="true"
+    ></ix-input>
 
-<div class="container">
-  <form class="form" [formGroup]="form" (submit)="onSubmit()">
-    <ix-fieldset [title]="'Instance Configuration' | translate">
+    <ix-checkbox
+      formControlName="autostart"
+      [label]="'Autostart' | translate"
+    ></ix-checkbox>
 
+    <div class="image-field">
       <ix-input
-        formControlName="name"
-        [label]="'Name' | translate"
+        class="input"
+        formControlName="visibleImageName"
+        [readonly]="true"
+        [label]="'Image' | translate"
         [required]="true"
       ></ix-input>
 
-      <ix-checkbox
-        formControlName="autostart"
-        [label]="'Autostart' | translate"
-      ></ix-checkbox>
-
-      <div class="image-field">
-        <ix-input
-          class="input"
-          [formControl]="visibleImageName"
-          [readonly]="true"
-          [label]="'Image' | translate"
-          [required]="true"
-        ></ix-input>
-
-        <button
-          mat-button
-          ixTest="browse-images"
-          type="button"
-          (click)="onBrowseImages()"
-        >{{ 'Browse Catalog' | translate }}</button>
-      </div>
-    </ix-fieldset>
-
-    <ix-fieldset [title]="'CPU & Memory' | translate">
-      <ix-input
-        formControlName="cpu"
-        [label]="'CPU Configuration' | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="memory"
-        [label]="'Memory Size' | translate"
-        [format]="formatter.memorySizeFormatting"
-        [parse]="formatter.memorySizeParsing"
-      ></ix-input>
-    </ix-fieldset>
-
-    <ix-fieldset [title]="'Environment' | translate">
-      <ix-list
-        formArrayName="environmentVariables"
-        [empty]="form.controls.environmentVariables.controls.length === 0"
-        [label]="'Environment Variables' | translate"
-        (add)="addEnvironmentVariable()"
-      >
-        @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
-          <ix-list-item
-            [formGroupName]="i"
-            [label]="'Environment Variable' | translate"
-            (delete)="removeEnvironmentVariable(i)"
-          >
-            <div class="environment-variable">
-              <ix-input
-                formControlName="name"
-                [label]="'Name' | translate"
-                [required]="true"
-              ></ix-input>
-
-              <ix-input
-                formControlName="value"
-                [label]="'Value' | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-fieldset>
-
-    <ix-fieldset [title]="'Disks' | translate">
-      <ix-list
-        formArrayName="disks"
-        [empty]="form.controls.disks.controls.length === 0"
-        [label]="'Disks' | translate"
-        [formArray]="form.controls.disks"
-        (add)="addDisk()"
-      >
-        @for (disk of form.controls.disks.controls; track disk; let i = $index) {
-          <ix-list-item
-            [formGroupName]="i"
-            [label]="'Disk' | translate"
-            (delete)="removeDisk(i)"
-          >
-            <ix-explorer
-              formControlName="source"
-              [label]="'Source' | translate"
-              [required]="true"
-              [nodeProvider]="directoryNodeProvider"
-            ></ix-explorer>
-
-            <ix-input
-              formControlName="destination"
-              [label]="'Destination' | translate"
-              [required]="true"
-            ></ix-input>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-fieldset>
-
-    <ix-fieldset [title]="'Network' | translate">
-    </ix-fieldset>
-
-    <ix-fieldset [title]="'Proxies' | translate">
-      <ix-list
-        formArrayName="proxies"
-        [empty]="form.controls.proxies.controls.length === 0"
-        [label]="'Proxies' | translate"
-        [formArray]="form.controls.proxies"
-        (add)="addProxy()"
-      >
-        @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
-          <ix-list-item
-            [formGroupName]="i"
-            [label]="'Proxy' | translate"
-            (delete)="removeProxy(i)"
-          >
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="source_proto"
-                [label]="'Host Protocol' | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
-
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="source_port"
-                [label]="'Host Port' | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-
-            <div class="protocol-and-port">
-              <ix-select
-                class="protocol"
-                formControlName="dest_proto"
-                [label]="'Instance Protocol' | translate"
-                [required]="true"
-                [options]="proxyProtocols$"
-              ></ix-select>
-
-              <ix-input
-                class="port"
-                type="number"
-                formControlName="dest_port"
-                [label]="'Instance Port' | translate"
-                [required]="true"
-              ></ix-input>
-            </div>
-          </ix-list-item>
-        }
-      </ix-list>
-    </ix-fieldset>
-
-    @if ((usbDevices$ | async); as usbDevices) {
-      @if (usbDevices.length > 0) {
-        <ix-fieldset [title]="'USB Devices' | translate">
-          <div formGroupName="usb_devices">
-            @for (device of usbDevices; track device) {
-              <ix-checkbox
-                [formControlName]="device.value"
-                [label]="device.label"
-              ></ix-checkbox>
-            }
-          </div>
-        </ix-fieldset>
-      }
-    }
-
-    @if ((gpuDevices$ | async); as gpuDevices) {
-      @if (gpuDevices.length > 0) {
-        <ix-fieldset [title]="'GPU Devices' | translate">
-          <div formGroupName="gpu_devices">
-            @for (device of gpuDevices; track device) {
-              <ix-checkbox
-                [formControlName]="device.value"
-                [label]="device.label"
-              ></ix-checkbox>
-            }
-          </div>
-        </ix-fieldset>
-      }
-    }
-
-    <div class="actions">
       <button
         mat-button
-        type="submit"
-        color="primary"
-        ixTest="create"
-        [disabled]="form.invalid || isLoading()"
-      >
-        {{ 'Create' | translate }}
-      </button>
+        ixTest="browse-images"
+        type="button"
+        (click)="onBrowseImages()"
+      >{{ 'Browse Catalog' | translate }}</button>
     </div>
-  </form>
-</div>
+  </ix-full-page-form-section>
+  <ix-full-page-form-section
+    [label]="'CPU & Memory' | translate"
+    [valid]="isCpuAndMemoryValid()"
+  >
+    <ix-input
+      formControlName="cpu"
+      [label]="'CPU Configuration' | translate"
+    ></ix-input>
+
+    <ix-input
+      formControlName="memory"
+      [label]="'Memory Size' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+    ></ix-input>
+  </ix-full-page-form-section>
+  <ix-full-page-form-section
+    [label]="'Environment' | translate"
+    [valid]="isEnvironmentValid()"
+  >
+    <ix-list
+      formArrayName="environmentVariables"
+      [empty]="form.controls.environmentVariables.controls.length === 0"
+      [label]="'Environment Variables' | translate"
+      (add)="addEnvironmentVariable()"
+    >
+      @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
+        <ix-list-item
+          [formGroupName]="i"
+          [label]="'Environment Variable' | translate"
+          (delete)="removeEnvironmentVariable(i)"
+        >
+          <div class="environment-variable">
+            <ix-input
+              formControlName="name"
+              [label]="'Name' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <ix-input
+              formControlName="value"
+              [label]="'Value' | translate"
+              [required]="true"
+            ></ix-input>
+          </div>
+        </ix-list-item>
+      }
+    </ix-list>
+  </ix-full-page-form-section>
+  <ix-full-page-form-section
+    [label]="'Disks' | translate"
+    [valid]="isDisksValid()"
+  >
+    <ix-list
+      formArrayName="disks"
+      [empty]="form.controls.disks.controls.length === 0"
+      [label]="'Disks' | translate"
+      [formArray]="form.controls.disks"
+      (add)="addDisk()"
+    >
+      @for (disk of form.controls.disks.controls; track disk; let i = $index) {
+        <ix-list-item
+          [formGroupName]="i"
+          [label]="'Disk' | translate"
+          (delete)="removeDisk(i)"
+        >
+          <ix-explorer
+            formControlName="source"
+            [label]="'Source' | translate"
+            [required]="true"
+            [nodeProvider]="directoryNodeProvider"
+          ></ix-explorer>
+
+          <ix-input
+            formControlName="destination"
+            [label]="'Destination' | translate"
+            [required]="true"
+          ></ix-input>
+        </ix-list-item>
+      }
+    </ix-list>
+  </ix-full-page-form-section>
+  <ix-full-page-form-section
+    [label]="'Network' | translate"
+    [valid]="true"
+  >
+  </ix-full-page-form-section>
+  <ix-full-page-form-section
+    [label]="'Proxies' | translate"
+    [valid]="isProxiesValid()"
+  >
+    <ix-list
+      formArrayName="proxies"
+      [empty]="form.controls.proxies.controls.length === 0"
+      [label]="'Proxies' | translate"
+      [formArray]="form.controls.proxies"
+      (add)="addProxy()"
+    >
+      @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
+        <ix-list-item
+          [formGroupName]="i"
+          [label]="'Proxy' | translate"
+          (delete)="removeProxy(i)"
+        >
+          <div class="protocol-and-port">
+            <ix-select
+              class="protocol"
+              formControlName="source_proto"
+              [label]="'Host Protocol' | translate"
+              [required]="true"
+              [options]="proxyProtocols$"
+            ></ix-select>
+
+            <ix-input
+              class="port"
+              type="number"
+              formControlName="source_port"
+              [label]="'Host Port' | translate"
+              [required]="true"
+            ></ix-input>
+          </div>
+
+          <div class="protocol-and-port">
+            <ix-select
+              class="protocol"
+              formControlName="dest_proto"
+              [label]="'Instance Protocol' | translate"
+              [required]="true"
+              [options]="proxyProtocols$"
+            ></ix-select>
+
+            <ix-input
+              class="port"
+              type="number"
+              formControlName="dest_port"
+              [label]="'Instance Port' | translate"
+              [required]="true"
+            ></ix-input>
+          </div>
+        </ix-list-item>
+      }
+    </ix-list>
+  </ix-full-page-form-section>
+
+  @if ((usbDevices$ | async); as usbDevices) {
+    @if (usbDevices.length > 0) {
+      <ix-full-page-form-section
+        [label]="'USB Devices' | translate"
+        [valid]="isUsbDevicesValid()"
+      >
+        <div formGroupName="usb_devices">
+          @for (device of usbDevices; track device) {
+            <ix-checkbox
+              [formControlName]="device.value"
+              [label]="device.label"
+            ></ix-checkbox>
+          }
+        </div>
+      </ix-full-page-form-section>
+    }
+  }
+  @if ((gpuDevices$ | async); as gpuDevices) {
+    @if (gpuDevices.length > 0) {
+      <ix-full-page-form-section
+        [label]="'GPU Devices' | translate"
+        [valid]="isGpuDevicesValid()"
+      >
+        <div formGroupName="gpu_devices">
+          @for (device of gpuDevices; track device) {
+            <ix-checkbox
+              [formControlName]="device.value"
+              [label]="device.label"
+            ></ix-checkbox>
+          }
+        </div>
+      </ix-full-page-form-section>
+    }
+  }
+
+</ix-full-page-form>

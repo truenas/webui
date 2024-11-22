@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, signal, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
@@ -12,7 +13,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
+  combineLatest,
   map, Observable, of,
+  startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -36,6 +39,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFullPageFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
+import { IxFullPageFormComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -72,6 +77,8 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
+    IxFullPageFormComponent,
+    IxFullPageFormSectionComponent,
     IxExplorerComponent,
   ],
   templateUrl: './instance-wizard.component.html',
@@ -89,6 +96,19 @@ export class InstanceWizardComponent implements OnInit {
     }))),
   );
 
+  protected searchMap = new Map<string, string>([
+    ['name', 'Name'],
+    ['autostart', 'Autostart'],
+    ['visibleImageName', 'Image'],
+    ['cpu', 'CPU Configuration'],
+    ['memory', 'Memory Size'],
+    ['environmentVariables', 'Environment Variables'],
+    ['disks', 'Disks'],
+    ['proxies', 'Proxies'],
+    ['usb_devices', 'USB Devices'],
+    ['gpu_devices', 'GPU Devices'],
+  ]);
+
   // TODO: MV supports only [Container, Physical] for now (based on the response)
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
@@ -103,6 +123,7 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     autostart: [false],
+    visibleImageName: ['', Validators.required],
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
@@ -121,7 +142,53 @@ export class InstanceWizardComponent implements OnInit {
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
-  protected readonly visibleImageName = new FormControl('');
+  protected isInstaceConfigValid = toSignal(combineLatest([
+    this.form.controls.name.valueChanges.pipe(startWith('')),
+    this.form.controls.autostart.valueChanges.pipe(startWith(false)),
+    this.form.controls.visibleImageName.valueChanges.pipe(startWith('')),
+  ]).pipe(
+    map(() => {
+      return this.form.controls.name.valid
+        && this.form.controls.autostart.valid
+        && this.form.controls.visibleImageName.valid;
+    }),
+  ));
+
+  protected isCpuAndMemoryValid = toSignal(combineLatest([
+    this.form.controls.cpu.valueChanges.pipe(startWith('')),
+    this.form.controls.memory.valueChanges.pipe(startWith(false)),
+  ]).pipe(
+    map(() => {
+      return this.form.controls.cpu.valid
+        && this.form.controls.memory.valid;
+    }),
+  ));
+
+  protected isEnvironmentValid = toSignal(this.form.controls.environmentVariables.valueChanges.pipe(
+    startWith(''),
+    map(() => this.form.controls.environmentVariables.valid),
+  ));
+
+  protected isDisksValid = toSignal(this.form.controls.disks.valueChanges.pipe(
+    startWith(''),
+    map(() => this.form.controls.disks.valid),
+  ));
+
+  protected isProxiesValid = toSignal(this.form.controls.proxies.valueChanges.pipe(
+    startWith(''),
+    map(() => this.form.controls.proxies.valid),
+  ));
+
+  protected isUsbDevicesValid = toSignal(this.form.controls.usb_devices.valueChanges.pipe(
+    startWith(''),
+    map(() => this.form.controls.usb_devices.valid),
+  ));
+
+  protected isGpuDevicesValid = toSignal(this.form.controls.gpu_devices.valueChanges.pipe(
+    startWith(''),
+    map(() => this.form.controls.gpu_devices.valid),
+  ));
+
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
@@ -165,7 +232,7 @@ export class InstanceWizardComponent implements OnInit {
         }
 
         this.form.controls.image.setValue(image.id);
-        this.visibleImageName.setValue(image.label);
+        this.form.controls.visibleImageName.setValue(image.label);
       });
   }
 

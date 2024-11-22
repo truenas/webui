@@ -8,9 +8,9 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-full-page-form',
-  styleUrls: ['./ix-full-page-form.component.scss'],
-  templateUrl: './ix-full-page-form.component.html',
+  selector: 'ix-full-page-form-section',
+  styleUrls: ['./ix-full-page-form-section.component.scss'],
+  templateUrl: './ix-full-page-form-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -19,7 +19,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
     TranslateModule,
   ],
 })
-export class IxFullPageForSectionComponent {
+export class IxFullPageFormSectionComponent {
   @Input() help: string;
   @Input() label: string;
   valid = input.required<boolean>();
