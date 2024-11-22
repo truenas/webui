@@ -189,4 +189,8 @@ export class CloudSyncProviderComponent implements OnInit {
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();
   }
+
+  isDirty(): boolean {
+    return this.form.dirty;
+  }
 }

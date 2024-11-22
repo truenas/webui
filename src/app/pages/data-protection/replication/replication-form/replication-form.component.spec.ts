@@ -88,6 +88,7 @@ describe('ReplicationFormComponent', () => {
   const localNodeProvider = jest.fn();
   const chainedRef: ChainedRef<ReplicationTask> = {
     close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(() => undefined),
   };

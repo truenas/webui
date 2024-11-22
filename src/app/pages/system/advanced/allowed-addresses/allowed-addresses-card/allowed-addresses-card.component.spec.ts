@@ -21,7 +21,11 @@ describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
+  const componentRef: ChainedRef<unknown> = {
+    close: jest.fn(),
+    getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
+  };
 
   const config = {
     ui_allowlist: [
