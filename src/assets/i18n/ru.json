@@ -3211,6 +3211,7 @@
   "Validate Remote Path": "",
   "Validate effective ACL": "",
   "Value must be a number": "",
+  "Value must be a valid date": "",
   "Value must be a valid email address": "",
   "Value must be a {type}": "",
   "Value must be greater than Range Low": "",

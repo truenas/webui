@@ -14,13 +14,13 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxDatepickerComponent } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -44,22 +44,24 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ReactiveFormsModule,
-    IxInputComponent,
-    IxComboboxComponent,
-    IxCheckboxComponent,
     FormActionsComponent,
+    IxCheckboxComponent,
+    IxComboboxComponent,
+    IxDatepickerComponent,
+    IxFieldsetComponent,
+    IxInputComponent,
     MatButton,
-    TestDirective,
-    RequiresRolesDirective,
-    TranslateModule,
-    ModalHeaderComponent,
     MatCard,
     MatCardContent,
-    IxFieldsetComponent,
+    ModalHeaderComponent,
+    ReactiveFormsModule,
+    RequiresRolesDirective,
+    TestDirective,
+    TranslateModule,
   ],
 })
 export class ApiKeyFormComponent implements OnInit {
+  protected readonly minDateToday = new Date();
   protected readonly isNew = computed(() => !this.editingRow());
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
@@ -81,7 +83,7 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     username: ['', [Validators.required]],
-    expiresAt: [null as string],
+    expires_at: [null as string],
     nonExpiring: [true],
     reset: [false],
   });
@@ -121,22 +123,22 @@ export class ApiKeyFormComponent implements OnInit {
     } else {
       this.form.patchValue({
         ...this.editingRow(),
-        expiresAt: this.editingRow().expires_at?.$date?.toString() || null,
-        nonExpiring: !this.editingRow().expires_at,
+        expires_at: new Date(this.editingRow().expires_at.$date).toISOString(),
+        nonExpiring: !this.editingRow()?.expires_at?.$date,
       });
     }
-
     this.handleNonExpiringChanges();
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
     const {
-      name, username, reset, nonExpiring, expiresAt,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      name, username, reset, nonExpiring, expires_at,
     } = this.form.value;
 
-    // TODO: Implement IxDatePickerComponent https://ixsystems.atlassian.net/browse/NAS-132423 and correctly send expires_at prop
-    const expiresAtTimestamp = nonExpiring ? null : { $date: +expiresAt } as ApiTimestamp;
+    // TODO: Revisit date format later
+    const expiresAtTimestamp = nonExpiring ? null : { $date: new Date(expires_at).getTime() };
 
     const request$ = this.isNew()
       ? this.api.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
@@ -176,9 +178,9 @@ export class ApiKeyFormComponent implements OnInit {
   private handleNonExpiringChanges(): void {
     this.form.controls.nonExpiring.valueChanges.pipe(untilDestroyed(this)).subscribe((nonExpiring) => {
       if (nonExpiring) {
-        this.form.controls.expiresAt.disable();
+        this.form.controls.expires_at.disable();
       } else {
-        this.form.controls.expiresAt.enable();
+        this.form.controls.expires_at.enable();
       }
     });
   }

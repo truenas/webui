@@ -1,0 +1,50 @@
+@if (label || tooltip) {
+  <ix-label
+    [label]="label"
+    [tooltip]="tooltip"
+    [required]="required"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
+
+<div class="input-container">
+  <mat-datepicker #datepicker></mat-datepicker>
+  @if (type === 'range') {
+    // TODO: Implement date range picker
+    <mat-date-range-input [rangePicker]="datepicker">
+      <input matStartDate ixTest="start-date" placeholder="Start date">
+      <input matEndDate ixTest="end-date" placeholder="End date">
+    </mat-date-range-input>
+  } @else {
+    <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+    <input
+      matInput
+      [value]="formatted"
+      [placeholder]="placeholder"
+      [matDatepicker]="datepicker"
+      [min]="min"
+      [ixTest]="controlDirective.name"
+      [attr.aria-label]="label"
+      [readonly]="readonly"
+      [disabled]="isDisabled"
+      (dateInput)="onDateInput($event)"
+      (dateChange)="onDateChanged($event)"
+      (focus)="datepicker.open()"
+      (blur)="blurred()"
+    >
+  }
+</div>
+
+@if (invalid) {
+  <div>
+    <mat-error>
+      <div [innerHTML]="invalidMessage()"></div>
+    </mat-error>
+  </div>
+}
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+@if (hint) {
+  <mat-hint>{{ hint }}</mat-hint>
+}

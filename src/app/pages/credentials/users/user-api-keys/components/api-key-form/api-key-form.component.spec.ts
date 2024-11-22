@@ -84,6 +84,7 @@ describe('ApiKeyFormComponent', () => {
       id: 1,
       name: 'existing key',
       username: 'root',
+      expires_at: { $date: 1732278712293 },
     });
 
     await form.fillForm({
@@ -110,6 +111,7 @@ describe('ApiKeyFormComponent', () => {
       id: 1,
       name: 'existing key',
       username: 'root',
+      expires_at: { $date: 1732278712293 },
     });
     spectator.inject(MockApiService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
@@ -127,7 +129,7 @@ describe('ApiKeyFormComponent', () => {
       name: 'My key',
       reset: true,
       expires_at: {
-        $date: NaN,
+        $date: 1735689599000,
       },
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
