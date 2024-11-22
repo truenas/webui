@@ -125,6 +125,13 @@ export class WidgetResourcesService {
     );
   }
 
+  getPoolByName(poolName: string): Observable<Pool> {
+    return this.ws.call('pool.query', [[['name', '=', poolName]]]).pipe(
+      map((pools) => pools[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
   getDatasetById(datasetId: string): Observable<Dataset> {
     return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
       map((response) => response[0]),

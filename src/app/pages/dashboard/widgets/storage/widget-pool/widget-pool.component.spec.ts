@@ -14,7 +14,29 @@ import { DisksWithZfsErrorsComponent } from 'app/pages/dashboard/widgets/storage
 import { LastScanErrorsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/last-scan-errors/last-scan-errors.component';
 import { PoolStatusComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-status/pool-status.component';
 import { PoolUsageGaugeComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/common/pool-usage-gauge/pool-usage-gauge.component';
+import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { WidgetPoolComponent } from './widget-pool.component';
+
+const pool = {
+  name: 'Test Pool',
+  status: 'Online',
+  topology: {
+    data: [
+      {
+        type: 'raidz2',
+        children: [
+          {
+            disk: 'sda',
+          },
+        ],
+      },
+    ],
+  },
+  scan: {
+    end_time: { $date: 1687455632000 },
+    start_time: { $date: 1687452032000 },
+  },
+};
 
 describe('WidgetPoolComponent', () => {
   let spectator: Spectator<WidgetPoolComponent>;
@@ -30,36 +52,21 @@ describe('WidgetPoolComponent', () => {
     ],
     providers: [
       mockProvider(WidgetResourcesService, {
-        getPoolById: jest.fn().mockReturnValue(of({
-          name: 'Test Pool',
-          status: 'Online',
-          topology: {
-            data: [
-              {
-                type: 'raidz2',
-                children: [
-                  {
-                    disk: 'sda',
-                  },
-                ],
-              },
-            ],
-          },
-          scan: {
-            end_time: { $date: 1687455632000 },
-            start_time: { $date: 1687452032000 },
-          },
-        })),
+        getPoolById: jest.fn().mockReturnValue(of(pool)),
+        getPoolByName: jest.fn().mockRejectedValue(of(pool)),
       }),
     ],
   });
 
-  beforeEach(() => {
+  function setupComponent(byName = false): void {
+    const settings: WidgetPoolSettings = { poolId: 1 };
+    if (byName) {
+      delete settings.poolId;
+      settings.name = 'Pool:pool';
+    }
     spectator = createComponent({
       props: {
-        settings: {
-          poolId: 1,
-        },
+        settings,
         size: SlotSize.Full,
       },
       providers: [
@@ -118,13 +125,20 @@ describe('WidgetPoolComponent', () => {
         }),
       ],
     });
+  }
+
+  it('should get pool if pool name is available instead of pool id', () => {
+    setupComponent(true);
+    expect(spectator.query('h3')).toHaveText('Pool');
   });
 
   it('should display pool name when pool exists', () => {
+    setupComponent();
     expect(spectator.query('h3')).toHaveText('Pool');
   });
 
   it('should have pool info components', () => {
+    setupComponent();
     expect(spectator.query(PoolUsageGaugeComponent)).toBeTruthy();
     expect(spectator.query(PoolStatusComponent)).toBeTruthy();
     expect(spectator.query(DisksWithZfsErrorsComponent)).toBeTruthy();
@@ -132,6 +146,7 @@ describe('WidgetPoolComponent', () => {
   });
 
   it('should have a disk reports button', () => {
+    setupComponent();
     expect(spectator.query('button[aria-label="Disk Reports"]')).toBeTruthy();
   });
 });
