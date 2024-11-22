@@ -89,7 +89,7 @@ export class InstanceListComponent {
     }
 
     const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
-    if (instanceId) {
+    if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
       this.deviceStore.selectInstance(instanceId);
     } else {
       const [firstInstance] = this.instances();
