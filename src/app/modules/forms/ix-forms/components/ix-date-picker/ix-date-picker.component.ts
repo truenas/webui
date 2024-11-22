@@ -99,17 +99,6 @@ export class IxDatepickerComponent implements ControlValueAccessor, AfterViewIni
     this.cdr.markForCheck();
   }
 
-  input(ixInput: HTMLInputElement): void {
-    this.invalid = ixInput.validity?.badInput;
-    const value = ixInput.value;
-    this.value = value;
-    this.formatted = value;
-    if (value && this.parse) {
-      this.value = this.parse(value);
-    }
-    this.onChange(this.value);
-  }
-
   focus(matInput: HTMLInputElement): void {
     this.onTouch();
     if (this.readonly) {
