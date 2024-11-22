@@ -66,7 +66,7 @@ describe('SigninStore', () => {
           },
         },
       },
-      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn() } } }),
+      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn(() => null) } } }),
     ],
   });
 
@@ -83,7 +83,7 @@ describe('SigninStore', () => {
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
     jest.spyOn(authService, 'clearAuthToken').mockReturnValue(null);
-    jest.spyOn(authService, 'setQueryTokenIfExists').mockReturnValue(undefined)
+    jest.spyOn(authService, 'setQueryToken').mockReturnValue(undefined);
   });
 
   describe('selectors', () => {
@@ -97,6 +97,7 @@ describe('SigninStore', () => {
       wasAdminSet: true,
       isLoading: false,
       loginBanner: '',
+      queryToken: null as string | null,
     };
     beforeEach(() => {
       spectator.service.setState(initialState);
@@ -144,6 +145,7 @@ describe('SigninStore', () => {
         failover: {
           status: FailoverStatus.Single,
         },
+        queryToken: null,
       });
     });
 
@@ -160,6 +162,7 @@ describe('SigninStore', () => {
         failover: {
           status: FailoverStatus.Single,
         },
+        queryToken: null,
       });
     });
 
@@ -179,6 +182,7 @@ describe('SigninStore', () => {
           ips: ['123.23.44.54'],
           status: FailoverStatus.Master,
         },
+        queryToken: null,
       });
     });
 
@@ -189,13 +193,25 @@ describe('SigninStore', () => {
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
 
-    it('should not call "loginWithToken" if token is not within timeline and clear auth token', () => {
+    it('should not call "loginWithToken" if token is not within timeline and clear auth token and queryToken is null', () => {
       isTokenWithinTimeline$.next(false);
       spectator.service.init();
 
       expect(authService.clearAuthToken).toHaveBeenCalled();
       expect(authService.loginWithToken).not.toHaveBeenCalled();
       expect(spectator.inject(Router).navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('should call "loginWithToken" if queryToken is not null', async () => {
+      isTokenWithinTimeline$.next(false);
+      const token = 'token';
+      const activatedRoute = spectator.inject(ActivatedRoute);
+      jest.spyOn(activatedRoute.snapshot.queryParamMap, 'get').mockImplementationOnce(() => token);
+      spectator.service.init();
+      const state = await firstValueFrom(spectator.service.state$);
+      expect(state.queryToken).toBe(token);
+      expect(authService.setQueryToken).toHaveBeenCalledWith(token);
+      expect(authService.loginWithToken).toHaveBeenCalled();
     });
   });
 
@@ -231,6 +247,7 @@ describe('SigninStore', () => {
           ips: ['123.23.44.54'],
           status: FailoverStatus.Importing,
         },
+        queryToken: null,
       });
     });
 
@@ -262,6 +279,7 @@ describe('SigninStore', () => {
               ips: ['123.23.44.54'],
               status: FailoverStatus.Master,
             },
+            queryToken: null,
           },
         });
       });

@@ -18,7 +18,7 @@ export class WebSocketConnectionGuard {
     private translate: TranslateService,
   ) {
     this.wsManager.isClosed$.pipe(untilDestroyed(this)).subscribe((isClosed) => {
-      if (isClosed) {
+      if (isClosed && this.wsManager.hasOpenedOnce) {
         this.resetUi();
         // TODO: Test why manually changing close status is needed
         // Test a shutdown function to see how UI acts when this isn't done

@@ -67,6 +67,11 @@ export class WebSocketHandlerService {
     return this.wsConnection.stream$ as Observable<IncomingApiMessage>;
   }
 
+  private hasOpened = false;
+  get hasOpenedOnce(): boolean {
+    return this.hasOpened;
+  }
+
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
   private readonly queuedCalls: { id: string; [key: string]: unknown }[] = [];
@@ -228,6 +233,7 @@ export class WebSocketHandlerService {
   }
 
   private onOpen(): void {
+    this.hasOpened = true;
     if (this.reconnectTimerSubscription) {
       this.wsConnection.close();
       return;

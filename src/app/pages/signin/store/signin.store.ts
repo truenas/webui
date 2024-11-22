@@ -35,6 +35,7 @@ interface SigninState {
     disabledReasons?: FailoverDisabledReason[];
   };
   loginBanner: string;
+  queryToken: string | null;
 }
 
 const initialState: SigninState = {
@@ -42,6 +43,7 @@ const initialState: SigninState = {
   wasAdminSet: true,
   failover: null,
   loginBanner: null,
+  queryToken: null,
 };
 
 @UntilDestroy()
@@ -51,6 +53,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
+  queryToken$ = this.select((state) => state.queryToken);
   failoverAllowsLogin$ = this.select((state) => {
     return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
   });
@@ -88,9 +91,13 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
+  setQueryToken = this.updater((state, queryToken: string | null) => ({ ...state, queryToken }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
-    tap(() => this.setLoadingState(true)),
+    tap(() => {
+      this.setLoadingState(true);
+      this.setQueryToken(this.activatedRoute.snapshot.queryParamMap.get('token'));
+    }),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),
@@ -241,11 +248,14 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private handleLoginWithToken(): Observable<LoginResult> {
-    this.authService.setQueryTokenIfExists(
-      this.activatedRoute.snapshot.queryParamMap.get('token'),
-    );
-    return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(take(1)).pipe(
-      filter((isTokenWithinTimeline) => {
+    return combineLatest([this.tokenLastUsedService.isTokenWithinTimeline$, this.queryToken$]).pipe(
+      take(1),
+      tap(([_, queryToken]) => this.authService.setQueryToken(queryToken)),
+      filter(([isTokenWithinTimeline, queryToken]) => {
+        if (queryToken) {
+          return true;
+        }
+
         if (!isTokenWithinTimeline) {
           this.authService.clearAuthToken();
         }

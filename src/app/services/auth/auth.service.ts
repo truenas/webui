@@ -131,14 +131,12 @@ export class AuthService {
     );
   }
 
-  setQueryTokenIfExists(token: string | null): void {
+  setQueryToken(token: string | null): void {
     if (!token || this.window.location.protocol !== 'https:') {
       return;
     }
 
     this.token = token;
-    this.tokenLastUsedService.updateTokenLastUsed();
-    this.latestTokenGenerated$.next(token);
   }
 
   loginWithToken(): Observable<LoginResult> {
