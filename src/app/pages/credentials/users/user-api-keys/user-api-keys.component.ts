@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -67,6 +67,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
+    MatAnchor,
   ],
 })
 export class UserApiKeysComponent implements OnInit {

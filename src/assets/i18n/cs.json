@@ -40,6 +40,7 @@
   "A unique name to identify this keypair. Automatically generated keypairs are named after the object that generated the keypair with \" Key\" appended to the name.": "",
   "A username on the FTP Host system. This user must already exist  on the FTP Host.": "",
   "AD users and groups by default will have a domain name prefix (`DOMAIN\\`). In some edge cases this may cause erratic behavior from some clients and applications that are poorly designed and cannot handle the prefix. Set only if required for a specific application or client. Note that using this setting is not recommended as it may cause collisions with local user account names.": "",
+  "API Docs": "",
   "API Key Read": "",
   "API Key Write": "",
   "Absent": "",
