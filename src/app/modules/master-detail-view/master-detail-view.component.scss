@@ -1,0 +1,9 @@
+@import 'scss-imports/variables';
+@import 'mixins/layout';
+
+:host {
+  &::ng-deep {
+    @include tree-node-with-details-container;
+  }
+}
+

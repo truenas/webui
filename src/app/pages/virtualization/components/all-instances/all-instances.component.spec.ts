@@ -1,26 +1,52 @@
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents, MockDirective } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponents } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import {
-  AllInstancesHeaderComponent,
-} from 'app/pages/virtualization/components/all-instances/all-instances-header/all-instances-header.component';
+import { AllInstancesHeaderComponent } from 'app/pages/virtualization/components/all-instances/all-instances-header/all-instances-header.component';
 import { AllInstancesComponent } from 'app/pages/virtualization/components/all-instances/all-instances.component';
-import {
-  InstanceDetailsComponent,
-} from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
+import { InstanceDetailsComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
 import { InstanceListComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-list.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
+
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  selector: 'ix-master-detail-view',
+  exportAs: 'masterDetailViewContext',
+  template: '<ng-content></ng-content>',
+})
+class MockMasterDetailViewComponent {
+  isMobileView = jest.fn(() => false);
+  showMobileDetails = jest.fn(() => false);
+  toggleShowMobileDetails = jest.fn();
+}
 
 describe('AllInstancesComponent', () => {
   let spectator: Spectator<AllInstancesComponent>;
   const createComponent = createComponentFactory({
     component: AllInstancesComponent,
+    declarations: [
+      MockComponents(
+        MockMasterDetailViewComponent,
+        AllInstancesHeaderComponent,
+        InstanceDetailsComponent,
+        InstanceListComponent,
+      ),
+    ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockAuth(),
       mockProvider(VirtualizationConfigStore, {
         initialize: jest.fn(),
@@ -28,23 +54,10 @@ describe('AllInstancesComponent', () => {
       mockProvider(VirtualizationInstancesStore, {
         initialize: jest.fn(),
       }),
-      mockProvider(VirtualizationViewStore, {
-        initialize: jest.fn(),
-        showMobileDetails: jest.fn(),
-        setMobileDetails: jest.fn(),
-      }),
       mockProvider(VirtualizationDevicesStore, {
         selectedInstance: jest.fn(() => ({ id: 'instance1' } as VirtualizationInstance)),
         resetInstance: jest.fn(),
       }),
-    ],
-    declarations: [
-      MockDirective(DetailsHeightDirective),
-      MockComponents(
-        AllInstancesHeaderComponent,
-        InstanceDetailsComponent,
-        InstanceListComponent,
-      ),
     ],
   });
 
@@ -55,6 +68,5 @@ describe('AllInstancesComponent', () => {
   it('initializes config store on init', () => {
     expect(spectator.inject(VirtualizationConfigStore).initialize).toHaveBeenCalled();
     expect(spectator.inject(VirtualizationInstancesStore).initialize).toHaveBeenCalled();
-    expect(spectator.inject(VirtualizationViewStore).initialize).toHaveBeenCalled();
   });
 });

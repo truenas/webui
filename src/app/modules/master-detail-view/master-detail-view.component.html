@@ -1,0 +1,16 @@
+<ng-content select="[header]"></ng-content>
+
+<div class="container">
+  <div class="table-container">
+    <ng-content select="[master]"></ng-content>
+  </div>
+
+  <div
+    ixDetailsHeight="rightside-content-hold"
+    class="details-container"
+    [class.details-container-mobile]="showMobileDetails()"
+  >
+    <ng-content select="[detail]"></ng-content>
+  </div>
+</div>
+
