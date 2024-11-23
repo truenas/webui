@@ -7,16 +7,16 @@
 
   <ix-instance-list
     master
-    [isMobileView]="masterDetailView?.isMobileView()"
-    [showMobileDetails]="masterDetailView?.showMobileDetails()"
-    (toggleShowMobileDetails)="masterDetailView?.toggleShowMobileDetails($event)"
+    [isMobileView]="masterDetailView.isMobileView()"
+    [showMobileDetails]="masterDetailView.showMobileDetails()"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-instance-list>
 
   <ng-container detail>
     @if (selectedInstance()) {
       <ix-instance-details
         [instance]="selectedInstance()"
-        (onCloseMobileDetails)="masterDetailView?.toggleShowMobileDetails(false)"
+        (onCloseMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
       ></ix-instance-details>
     }
   </ng-container>
