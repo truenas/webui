@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input,
+  input,
   OnChanges,
   OnInit,
   ViewChild,
@@ -41,11 +41,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
-  @Input() crontab: string;
-  @Input() timezone: string;
+  readonly crontab = input.required<string>();
+  readonly timezone = input.required<string>();
 
-  @Input() startTime: string;
-  @Input() endTime: string;
+  readonly startTime = input<string>();
+  readonly endTime = input<string>();
 
   /**
    * 1 for 1st day of the month, etc.
@@ -58,7 +58,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   get startDate(): Date {
     if (!this.calendar.activeDate || differenceInCalendarMonths(this.calendar.activeDate, new Date()) < 1) {
-      return utcToZonedTime(new Date(), this.timezone);
+      return utcToZonedTime(new Date(), this.timezone());
     }
 
     return startOfMonth(this.calendar.activeDate);
@@ -101,9 +101,9 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
     try {
       this.cronPreview = new CronSchedulePreview({
-        crontab: this.crontab,
-        startTime: this.startTime,
-        endTime: this.endTime,
+        crontab: this.crontab(),
+        startTime: this.startTime(),
+        endTime: this.endTime(),
       });
 
       this.highlightedCalendarDays = this.cronPreview.getNextDaysInMonthWithRuns(this.startDate);

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit, output,
+  ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
@@ -9,7 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -35,8 +35,6 @@ const critical = 95;
   ],
 })
 export class QuotasSectionComponent implements OnInit {
-  @Input() parent: Dataset;
-
   readonly formValidityChange = output<boolean>();
 
   readonly form = this.formBuilder.group({
