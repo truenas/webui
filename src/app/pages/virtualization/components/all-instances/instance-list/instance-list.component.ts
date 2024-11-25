@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -21,6 +20,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { InstanceListBulkActionsComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
@@ -40,6 +40,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
     MatCheckboxModule,
     EmptyComponent,
     TestDirective,
+    InstanceListBulkActionsComponent,
   ],
 })
 
@@ -48,7 +49,6 @@ export class InstanceListComponent {
   readonly showMobileDetails = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
-  protected readonly requireRoles = [Role.VirtInstanceWrite];
   protected readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
@@ -58,16 +58,18 @@ export class InstanceListComponent {
 
   protected readonly selectedInstance = this.deviceStore.selectedInstance;
 
-  protected readonly isAllSelected = computed(() => {
-    return this.selection.selected.length === this.instances().length;
-  });
+  get isAllSelected(): boolean {
+    return this.selection.selected.length === this.filteredInstances().length;
+  }
+
+  get checkedInstances(): VirtualizationInstance[] {
+    return this.selection.selected.map((id) => this.instances().find((instance) => instance.id === id));
+  }
 
   protected readonly filteredInstances = computed(() => {
-    return this.instances()
-      .filter((instance) => {
-        return instance?.name?.toLocaleLowerCase()
-          .includes(this.searchQuery().toLocaleLowerCase());
-      });
+    return this.instances().filter((instance) => {
+      return instance?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
+    });
   });
 
   protected readonly emptyConfig = computed<EmptyConfig>(() => {
@@ -76,7 +78,7 @@ export class InstanceListComponent {
         type: EmptyType.NoSearchResults,
         title: this.translate.instant('No Search Results.'),
         message: this.translate.instant('No matching results found'),
-        large: true,
+        large: false,
       };
     }
     return {
@@ -133,5 +135,9 @@ export class InstanceListComponent {
 
   closeMobileDetails(): void {
     this.toggleShowMobileDetails.emit(false);
+  }
+
+  resetSelection(): void {
+    this.selection.clear();
   }
 }

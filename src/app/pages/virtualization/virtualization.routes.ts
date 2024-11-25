@@ -9,7 +9,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
 
 export const virtualizationRoutes: Routes = [{
   path: '',
-  data: { title: T('Containers') },
+  data: { title: T('Containers'), breadcrumb: T('Virtualization') },
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
@@ -23,10 +23,11 @@ export const virtualizationRoutes: Routes = [{
     {
       path: 'new',
       component: InstanceWizardComponent,
+      data: { title: T('Add Container') },
     },
     {
       path: 'view/:id',
-      data: { breadcrumb: T('Containers') },
+      data: { title: T('Containers'), breadcrumb: null },
       children: [
         {
           path: '',

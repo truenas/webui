@@ -1,0 +1,31 @@
+.bulk-selected {
+  align-items: center;
+  align-self: flex-end;
+  display: inline-flex;
+  font-size: 16px;
+  gap: 4px;
+  height: 36px;
+}
+
+.bulk-actions-container {
+  align-items: flex-end;
+  display: flex;
+  gap: 12px;
+}
+
+.bulk-button-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    color: var(--fg2);
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+
+  button {
+    background-color: var(--bg1);
+    border: 1px solid var(--lines);
+    font-size: 12px;
+  }
+}
