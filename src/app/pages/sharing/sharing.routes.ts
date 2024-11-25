@@ -4,8 +4,6 @@ import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-da
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
-import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
-import { IscsiComponent } from './iscsi/iscsi.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 
 export const sharingRoutes: Routes = [
@@ -59,39 +57,11 @@ export const sharingRoutes: Routes = [
             },
           ],
         }],
-      }, {
+      },
+      {
         path: 'iscsi',
         data: { title: T('iSCSI'), breadcrumb: null },
-
-        children: [
-          {
-            path: '',
-            data: { title: T('iSCSI'), breadcrumb: null },
-            children: [
-              {
-                path: '',
-                redirectTo: 'configuration',
-                pathMatch: 'full',
-              },
-              {
-                path: ':activeTab',
-                component: IscsiComponent,
-                data: { breadcrumb: null },
-              },
-              {
-                path: 'initiators',
-                data: { title: T('Initiators'), breadcrumb: T('Initiators') },
-                children: [{
-                  path: 'add',
-                  component: InitiatorFormComponent,
-                  data: { title: T('Add Initiator'), breadcrumb: T('Add') },
-                }, {
-                  path: 'edit/:pk',
-                  component: InitiatorFormComponent,
-                  data: { title: T('Add Initiator'), breadcrumb: T('Edit') },
-                }],
-              }],
-          }],
+        loadChildren: () => import('./iscsi/iscsi.routes').then((module) => module.iscsiRoutes),
       },
     ],
   },

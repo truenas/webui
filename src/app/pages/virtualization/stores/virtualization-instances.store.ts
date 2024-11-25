@@ -46,7 +46,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
                   return [...instances, event.fields];
                 case IncomingApiMessageType.Changed:
                   // TODO: Keep it until API improvements
-                  if (Object.keys(event.fields).length === 1 && 'status' in event.fields) {
+                  if (event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields) {
                     return instances.map((instance) => {
                       if (instance.name === event.id) {
                         return { ...instance, status: event.fields.status };
@@ -54,7 +54,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
                       return instance;
                     });
                   }
-                  return instances.map((item) => (item.id === event.id ? event.fields : item));
+                  return instances.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item));
                 case IncomingApiMessageType.Removed:
                   return instances.filter((item) => item.id !== event.id);
                 default:

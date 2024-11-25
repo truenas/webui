@@ -36,6 +36,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
   const chainedRef: ChainedRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
   };
 

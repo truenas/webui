@@ -38,7 +38,7 @@ describe('ServiceExtraActionsComponent', () => {
     menu = await loader.getHarness(MatMenuHarness);
   }
 
-  it('show a menu with available actions for NFS', async () => {
+  it('shows a menu with available actions for NFS', async () => {
     await setupTest({
       id: 1,
       service: ServiceName.Nfs,
@@ -56,7 +56,7 @@ describe('ServiceExtraActionsComponent', () => {
     expect(await items[2].getText()).toBe('NFS Sessions');
   });
 
-  it('show a menu with available actions for SMB', async () => {
+  it('shows a menu with available actions for SMB', async () => {
     await setupTest({
       id: 1,
       service: ServiceName.Cifs,
@@ -73,6 +73,23 @@ describe('ServiceExtraActionsComponent', () => {
     expect(await items[1].getText()).toBe('Config Service');
     expect(await items[2].getText()).toBe('SMB Sessions');
     expect(await items[3].getText()).toBe('Audit Logs');
+  });
+
+  it('shows a menu with available actions for iSCSI', async () => {
+    await setupTest({
+      id: 1,
+      service: ServiceName.Iscsi,
+      state: ServiceStatus.Running,
+      enable: false,
+    } as Service);
+
+    expect(menu).toExist();
+    await menu.open();
+
+    const items = await menu.getItems();
+    expect(items).toHaveLength(2);
+    expect(await items[0].getText()).toBe('Turn Off Service');
+    expect(await items[1].getText()).toBe('Config Service');
   });
 
   it('stops the service when Turn Off Service is selected', async () => {
