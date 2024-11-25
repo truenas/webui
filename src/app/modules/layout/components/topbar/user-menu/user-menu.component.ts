@@ -50,8 +50,9 @@ export class UserMenuComponent {
   }
 
   onSignOut(): void {
-    this.authService.logout().pipe(untilDestroyed(this)).subscribe();
-    this.authService.clearAuthToken();
-    this.wsManager.isClosed$ = true;
+    this.authService.logout().pipe(untilDestroyed(this)).subscribe(() => {
+      this.authService.clearAuthToken();
+      this.wsManager.isClosed$ = true;
+    });
   }
 }

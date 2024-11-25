@@ -1,6 +1,5 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { UUID } from 'angular2-uuid';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
@@ -75,32 +74,6 @@ describe('WebSocketConnectionService', () => {
     expect(nextFakeSocket$.next).not.toHaveBeenCalled();
     expect(nextFakeSocket$.complete).toHaveBeenCalled();
   });
-
-  it('sends pings', fakeAsync(() => {
-    jest.spyOn(nextFakeSocket$, 'next');
-    jest.spyOn(UUID, 'UUID')
-      .mockReturnValueOnce('ping-pong-uuid-1')
-      .mockReturnValueOnce('ping-pong-uuid-2')
-      .mockReturnValueOnce('ping-pong-uuid-3');
-
-    spectator.service.isConnected$.next(true);
-
-    tick(20 * 1000);
-    expect(nextFakeSocket$.next).toHaveBeenNthCalledWith(1, { id: 'ping-pong-uuid-1', msg: OutgoingApiMessageType.Ping });
-    expect(nextFakeSocket$.next).toHaveBeenCalledTimes(1);
-    tick(20 * 1000);
-    expect(nextFakeSocket$.next).toHaveBeenNthCalledWith(2, { id: 'ping-pong-uuid-2', msg: OutgoingApiMessageType.Ping });
-    expect(nextFakeSocket$.next).toHaveBeenCalledTimes(2);
-    tick(20 * 1000);
-    expect(nextFakeSocket$.next).toHaveBeenNthCalledWith(3, { id: 'ping-pong-uuid-3', msg: OutgoingApiMessageType.Ping });
-    expect(nextFakeSocket$.next).toHaveBeenCalledTimes(3);
-
-    spectator.service.isConnected$.next(false);
-    tick(20 * 1000);
-    expect(nextFakeSocket$.next).toHaveBeenCalledTimes(3);
-
-    discardPeriodicTasks();
-  }));
 
   it('resumes calls that were paused because of broken connection', () => {
     jest.spyOn(nextFakeSocket$, 'next');

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, interval, NEVER, Observable, of, switchMap, tap, timer,
+  BehaviorSubject, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -16,7 +16,6 @@ import { ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage } from 'app/int
 export class WebSocketConnectionService {
   private ws$: WebSocketSubject<unknown>;
 
-  private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private pendingCallsBeforeConnectionReady = new Map<string, unknown>();
 
@@ -57,7 +56,6 @@ export class WebSocketConnectionService {
   ) {
     this.initializeWebSocket();
     this.subscribeToConnectionStatus();
-    this.setupPing();
   }
 
   private initializeWebSocket(): void {
@@ -128,20 +126,6 @@ export class WebSocketConnectionService {
 
   private hasAuthError(data: IncomingWebSocketMessage): boolean {
     return 'error' in data && data.error.error === 207;
-  }
-
-  private setupPing(): void {
-    this.isConnected$.pipe(
-      switchMap((isConnected) => {
-        if (!isConnected) {
-          return NEVER;
-        }
-
-        return interval(this.pingTimeoutMillis);
-      }),
-    ).subscribe(() => {
-      this.ws$.next({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
-    });
   }
 
   private sendConnectMessage(): void {

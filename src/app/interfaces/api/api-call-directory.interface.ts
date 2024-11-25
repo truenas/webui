@@ -422,6 +422,7 @@ export interface ApiCallDirectory {
   'core.job_abort': { params: [jobId: number]; response: void };
   'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
+  'core.ping': { params: void; response: 'pong' };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
