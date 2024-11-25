@@ -7,11 +7,7 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/mater
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
-  withPreloading,
-  provideRouter,
-  PreloadAllModules,
-  withComponentInputBinding,
-  withDebugTracing,
+  withPreloading, provideRouter, PreloadAllModules, withComponentInputBinding,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -122,6 +118,6 @@ bootstrapApplication(AppComponent, {
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding(), withDebugTracing()),
+    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
   ],
 });
