@@ -1,15 +1,14 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef,
-  Input, AfterViewInit, OnDestroy,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+  Input, input, signal,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatError, MatHint } from '@angular/material/form-field';
+import { MatError, MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -33,28 +32,30 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TestOverrideDirective,
     TooltipComponent,
     TranslateModule,
+    MatSuffix,
   ],
 })
-export class IxDatepickerComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
-  @Input() label: string;
-  @Input() placeholder: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() readonly: boolean;
-  @Input() type: 'default' | 'range' = 'default';
-  @Input() min: Date;
-  @Input() max: Date;
+export class IxDatepickerComponent implements ControlValueAccessor {
+  readonly label = input<string>();
+  readonly placeholder = input<string>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input(false);
+  readonly readonly = input(false);
+  readonly min = input<Date>();
+  readonly max = input<Date>();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   @Input() format: (value: string | number) => string;
   @Input() parse: (value: string | number) => string | number;
 
-  isDisabled = false;
+  protected isDisabled = signal(false);
+
   formatted: string | number = '';
-  private _value: string | number = this.controlDirective.value as string;
-  private lastKnownValue: string | number = this._value;
+  private value: string | number = this.controlDirective.value as string;
+  private lastKnownValue: string | number = this.value;
+  // TODO: Not wired to anything.
   invalid = false;
 
   onChange: (value: string | number) => void = (): void => {};
@@ -64,18 +65,8 @@ export class IxDatepickerComponent implements ControlValueAccessor, AfterViewIni
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private formService: IxFormService,
-    private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
-  }
-
-  get value(): string | number {
-    return this._value;
-  }
-
-  set value(val: string | number) {
-    this._value = val;
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -101,7 +92,7 @@ export class IxDatepickerComponent implements ControlValueAccessor, AfterViewIni
 
   focus(matInput: HTMLInputElement): void {
     this.onTouch();
-    if (this.readonly) {
+    if (this.readonly()) {
       matInput.select();
     }
   }
@@ -148,15 +139,6 @@ export class IxDatepickerComponent implements ControlValueAccessor, AfterViewIni
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-    this.cdr.markForCheck();
-  }
-
-  ngAfterViewInit(): void {
-    this.formService.registerControl(this.controlDirective, this.elementRef);
-  }
-
-  ngOnDestroy(): void {
-    this.formService.unregisterControl(this.controlDirective);
+    this.isDisabled.set(isDisabled);
   }
 }
