@@ -77,10 +77,10 @@ describe('PermissionsCardComponent', () => {
   });
 
   it('loads stat and acl for dataset provided in Input', () => {
-    const websocket = spectator.inject(ApiService);
+    const api = spectator.inject(ApiService);
 
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
+    expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
+    expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
   });
 
   it('shows dataset ownership information', () => {

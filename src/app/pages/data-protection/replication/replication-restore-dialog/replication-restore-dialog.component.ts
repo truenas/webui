@@ -70,7 +70,7 @@ export class ReplicationRestoreDialogComponent {
           this.dialogRef.close(true);
         },
         error: (error: unknown) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

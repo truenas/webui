@@ -16,7 +16,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -50,7 +50,7 @@ export class DeviceActionsMenuComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private instanceStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
     private loader: AppLoaderService,
   ) {}
 
@@ -76,13 +76,14 @@ export class DeviceActionsMenuComponent {
   }
 
   private deleteDevice(): Observable<unknown> {
-    return this.api.call('virt.instance.device_delete', [this.instanceStore.selectedInstance().id, this.device().name]).pipe(
-      this.loader.withLoader(),
-      this.errorHandler.catchError(),
-      tap(() => {
-        this.snackbar.success(this.translate.instant('Device deleted'));
-        this.instanceStore.deviceDeleted(this.device().name);
-      }),
-    );
+    return this.api.call('virt.instance.device_delete', [this.deviceStore.selectedInstance().id, this.device().name])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        tap(() => {
+          this.snackbar.success(this.translate.instant('Device deleted'));
+          this.deviceStore.deviceDeleted(this.device().name);
+        }),
+      );
   }
 }

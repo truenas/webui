@@ -138,7 +138,7 @@ export class CertificateAcmeAddComponent {
           this.cdr.markForCheck();
         },
         error: (error) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },

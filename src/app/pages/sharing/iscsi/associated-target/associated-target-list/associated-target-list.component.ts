@@ -199,7 +199,7 @@ export class AssociatedTargetListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     const extentNames = this.extents.map((extent) => ({ name: extent.name.toLowerCase(), id: extent.id }));
     const targetNames = this.targets.map((target) => ({ name: target.name.toLowerCase(), id: target.id }));
     this.dataProvider.setFilter({

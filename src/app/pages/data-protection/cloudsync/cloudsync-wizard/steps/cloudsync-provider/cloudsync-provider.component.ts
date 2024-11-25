@@ -89,7 +89,7 @@ export class CloudSyncProviderComponent implements OnInit {
       .pipe(
         catchError((error: unknown) => {
           this.loading.emit(false);
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
           return EMPTY;
         }),
@@ -138,7 +138,7 @@ export class CloudSyncProviderComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.loading.emit(false);
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -188,5 +188,9 @@ export class CloudSyncProviderComponent implements OnInit {
     this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
     this.save.emit(this.existingCredential);
     this.cdr.markForCheck();
+  }
+
+  isDirty(): boolean {
+    return this.form.dirty;
   }
 }

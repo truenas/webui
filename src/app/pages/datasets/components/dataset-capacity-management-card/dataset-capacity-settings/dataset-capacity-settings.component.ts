@@ -177,7 +177,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },

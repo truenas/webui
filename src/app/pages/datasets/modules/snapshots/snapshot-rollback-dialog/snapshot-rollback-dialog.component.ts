@@ -98,7 +98,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
   };
 
   constructor(
-    private websocket: ApiService,
+    private api: ApiService,
     private loader: AppLoaderService,
     private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
@@ -118,7 +118,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
    * Possibly can be removed
    */
   getSnapshotCreationInfo(): void {
-    this.websocket.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
+    this.api.call('zfs.snapshot.query', [[['id', '=', this.snapshotName]]]).pipe(
       map((snapshots) => snapshots[0]),
       untilDestroyed(this),
     ).subscribe({
@@ -148,7 +148,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
       body.recursive_clones = true;
     }
 
-    this.websocket.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
+    this.api.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
       this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({
@@ -157,7 +157,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
   }

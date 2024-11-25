@@ -10,7 +10,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
-import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceActionsMenuComponent', () => {
@@ -26,7 +26,7 @@ describe('DeviceActionsMenuComponent', () => {
       mockApi([
         mockCall('virt.instance.device_delete'),
       ]),
-      mockProvider(VirtualizationInstancesStore, {
+      mockProvider(VirtualizationDevicesStore, {
         selectedInstance: () => ({
           id: 'my-instance',
         }),
@@ -65,7 +65,7 @@ describe('DeviceActionsMenuComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('virt.instance.device_delete', ['my-instance', 'my-device']);
-      expect(spectator.inject(VirtualizationInstancesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
+      expect(spectator.inject(VirtualizationDevicesStore).deviceDeleted).toHaveBeenCalledWith('my-device');
     });
   });
 

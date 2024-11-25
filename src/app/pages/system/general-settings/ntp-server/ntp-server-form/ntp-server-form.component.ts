@@ -136,7 +136,7 @@ export class NtpServerFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
       },
     });
   }

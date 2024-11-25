@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { ApiErrorName } from 'app/enums/api-error-name.enum';
@@ -64,7 +65,7 @@ describe('FormErrorHandlerService', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
 
-      spectator.service.handleWsFormError(fakeError, formGroup);
+      spectator.service.handleValidationErrors(fakeError, formGroup);
 
       expect(formGroup.controls.test_control_1.setErrors).toHaveBeenCalledWith({
         ixManualValidateError: {
@@ -77,7 +78,7 @@ describe('FormErrorHandlerService', () => {
     });
 
     it('shows error dialog and error message in logs when control is not found', () => {
-      spectator.service.handleWsFormError(fakeError, formGroup);
+      spectator.service.handleValidationErrors(fakeError, formGroup);
 
       expect(console.error).not.toHaveBeenCalledWith('Could not find control test_control_1.');
       expect(console.error).toHaveBeenCalledWith('Could not find control test_control_2.');
@@ -87,5 +88,20 @@ describe('FormErrorHandlerService', () => {
         backtrace: fakeError.trace.formatted,
       });
     });
+
+    it('scrolls element with an error into view', fakeAsync(() => {
+      const elementMock = {
+        scrollIntoView: jest.fn(),
+        focus: jest.fn(),
+      } as unknown as HTMLElement;
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
+
+      spectator.service.handleWsFormError(fakeError, formGroup);
+
+      tick();
+
+      expect(elementMock.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
+      expect(elementMock.focus).toHaveBeenCalled();
+    }));
   });
 });
