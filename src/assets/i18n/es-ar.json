@@ -300,6 +300,7 @@
   "Delay VM Boot Until SPICE Connects": "",
   "Delete <b>{deviceType} {device}</b>": "",
   "Delete Alert Service <b>\"{name}\"</b>?": "",
+  "Delete App": "",
   "Delete Cloud Backup <b>\"{name}\"</b>?": "",
   "Delete Cloud Credential": "",
   "Delete Cloud Sync Task <b>\"{name}\"</b>?": "",

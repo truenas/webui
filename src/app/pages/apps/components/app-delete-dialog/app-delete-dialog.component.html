@@ -1,5 +1,5 @@
 <h1 matDialogTitle>
-  {{ 'Delete' | translate }}
+  {{ 'Delete App' | translate }}
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <p class="message">
@@ -16,11 +16,6 @@
   <ix-checkbox
     formControlName="remove_images"
     [label]="'Remove Images' | translate"
-  ></ix-checkbox>
-
-  <ix-checkbox
-    formControlName="confirm"
-    [label]="'Confirm' | translate"
   ></ix-checkbox>
 
   <ix-form-actions>

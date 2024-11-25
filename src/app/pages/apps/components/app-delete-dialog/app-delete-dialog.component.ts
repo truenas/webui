@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
@@ -35,7 +35,6 @@ export class AppDeleteDialogComponent {
   form = this.formBuilder.group({
     remove_volumes: [false],
     remove_images: [true],
-    confirm: [false, [Validators.requiredTrue]],
   });
 
   constructor(
@@ -45,11 +44,9 @@ export class AppDeleteDialogComponent {
   ) { }
 
   onSubmit(): void {
-    if (this.form.value.confirm) {
-      this.dialogRef.close({
-        removeVolumes: this.form.value.remove_volumes,
-        removeImages: this.form.value.remove_images,
-      });
-    }
+    this.dialogRef.close({
+      removeVolumes: this.form.value.remove_volumes,
+      removeImages: this.form.value.remove_images,
+    });
   }
 }

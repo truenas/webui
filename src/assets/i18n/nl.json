@@ -17,6 +17,7 @@
   "Creating Instance": "",
   "Current status: {status}": "",
   "Dataset for use by an application. If you plan to deploy container applications, the system automatically creates the ix-apps dataset but this is not used for application data storage.": "",
+  "Delete App": "",
   "Delete Item": "",
   "Device deleted": "",
   "Device is readonly and cannot be removed.": "",

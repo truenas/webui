@@ -45,7 +45,6 @@ describe('AppDeleteDialogComponent', () => {
     await form.fillForm({
       'Remove iXVolumes': true,
       'Remove Images': true,
-      Confirm: true,
     });
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
