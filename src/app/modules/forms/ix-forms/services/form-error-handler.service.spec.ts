@@ -60,7 +60,7 @@ describe('FormErrorHandlerService', () => {
     spectator = createService();
   });
 
-  describe('handleWsFormError', () => {
+  describe('handleValidationErrors', () => {
     it('sets errors for controls', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
@@ -96,7 +96,7 @@ describe('FormErrorHandlerService', () => {
       } as unknown as HTMLElement;
       jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
 
-      spectator.service.handleWsFormError(fakeError, formGroup);
+      spectator.service.handleValidationErrors(fakeError, formGroup);
 
       tick();
 
