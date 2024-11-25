@@ -124,7 +124,7 @@ export class FailoverSettingsComponent implements OnInit {
           }
         },
         error: (error: unknown) => {
-          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleValidationErrors(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },

@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.list">
   <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Initiators Groups' | translate }}</h3>

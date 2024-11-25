@@ -524,7 +524,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form, {}, 'smb-form-toggle-advanced-options');
+        this.formErrorHandler.handleValidationErrors(error, this.form, {}, 'smb-form-toggle-advanced-options');
       },
     });
   }

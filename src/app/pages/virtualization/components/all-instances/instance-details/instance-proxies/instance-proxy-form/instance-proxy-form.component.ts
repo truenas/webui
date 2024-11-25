@@ -102,7 +102,7 @@ export class InstanceProxyFormComponent implements OnInit {
           this.isLoading.set(false);
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form);
           this.isLoading.set(false);
         },
       });

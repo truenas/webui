@@ -174,7 +174,7 @@ export class AlertServiceComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.errorHandler.handleValidationErrors(error, this.commonForm);
         },
       });
   }
@@ -202,7 +202,7 @@ export class AlertServiceComponent implements OnInit {
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
-          this.errorHandler.handleWsFormError(error, this.commonForm);
+          this.errorHandler.handleValidationErrors(error, this.commonForm);
         },
       });
   }

@@ -93,8 +93,8 @@ describe('DashboardStore', () => {
     },
     ]).subscribe();
 
-    const websocket = spectator.inject(ApiService);
-    expect(websocket.call).toHaveBeenCalledWith('auth.set_attribute', [
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledWith('auth.set_attribute', [
       'dashState',
       [{
         layout: WidgetGroupLayout.Full,

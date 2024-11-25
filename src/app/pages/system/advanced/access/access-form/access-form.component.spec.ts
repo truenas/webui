@@ -24,7 +24,11 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
-  const chainedRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
+  const chainedRef: ChainedRef<unknown> = {
+    close: jest.fn(),
+    getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
+  };
   const createComponent = createComponentFactory({
     component: AccessFormComponent,
     imports: [

@@ -160,8 +160,8 @@ describe('AuthService', () => {
 
   describe('hasRole', () => {
     async function setUserRoles(roles: Role[]): Promise<void> {
-      const mockedWebSocket = spectator.inject(MockApiService);
-      mockedWebSocket.mockCall('auth.me', {
+      const mockedApi = spectator.inject(MockApiService);
+      mockedApi.mockCall('auth.me', {
         ...authMeUser,
         privilege: {
           ...authMeUser.privilege,
