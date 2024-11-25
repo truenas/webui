@@ -36,7 +36,7 @@
         <div class="cell actions">{{ 'Controls' | translate }}</div>
       </div>
 
-      @if (!filteredInstances()?.length) {
+      @if (!filteredInstances()?.length && isInit()) {
         <ix-empty [conf]="emptyConfig()"></ix-empty>
       }
 
