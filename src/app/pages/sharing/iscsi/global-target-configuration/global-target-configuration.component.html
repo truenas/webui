@@ -1,11 +1,13 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'Global Configuration' | translate"
+  [loading]="isLoading()"
+></ix-modal-header>
+
 <mat-card>
   <mat-card-content>
-    @if (isFormLoading) {
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    }
-
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Global Configuration' | translate">
+      <ix-fieldset>
         <ix-input
           formControlName="basename"
           [label]="'Base Name' | translate"
@@ -49,16 +51,11 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isLoading()"
         >
           {{ 'Save' | translate }}
         </button>
       </ix-form-actions>
-      @if (areSettingsSaved) {
-        <div class="saved-message">
-          {{ 'Settings saved.' | translate }}
-        </div>
-      }
     </form>
   </mat-card-content>
 </mat-card>

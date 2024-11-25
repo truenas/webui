@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
@@ -9,7 +9,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -22,6 +22,9 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -31,9 +34,9 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-target-global-configuration',
-  templateUrl: './target-global-configuration.component.html',
-  styleUrls: ['./target-global-configuration.component.scss'],
+  selector: 'ix-global-target-configuration',
+  templateUrl: './global-target-configuration.component.html',
+  styleUrls: ['./global-target-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -50,11 +53,11 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     MatButton,
     TestDirective,
     TranslateModule,
+    ModalHeaderComponent,
   ],
 })
-export class TargetGlobalConfigurationComponent implements OnInit {
-  isFormLoading = false;
-  areSettingsSaved = false;
+export class GlobalTargetConfigurationComponent implements OnInit {
+  protected isLoading = signal(false);
   isHaSystem = false;
 
   form = this.fb.group({
@@ -72,11 +75,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
   };
 
-  readonly requiredRoles = [
-    Role.SharingIscsiGlobalWrite,
-    Role.SharingIscsiWrite,
-    Role.SharingWrite,
-  ];
+  readonly requiredRoles = [Role.SharingIscsiGlobalWrite];
 
   constructor(
     private api: ApiService,
@@ -86,6 +85,9 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
+    private slideInRef: SlideInRef<GlobalTargetConfigurationComponent>,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -94,21 +96,21 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.areSettingsSaved = false;
-    this.setLoading(true);
+    this.isLoading.set(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
     this.api.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
-          this.setLoading(false);
-          this.areSettingsSaved = true;
+          this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
           this.cdr.markForCheck();
+          this.slideInRef.close(true);
+          this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {
-          this.setLoading(false);
+          this.isLoading.set(false);
           this.formErrorHandler.handleValidationErrors(error, this.form);
           this.cdr.markForCheck();
         },
@@ -116,23 +118,18 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   }
 
   private loadFormValues(): void {
-    this.setLoading(true);
+    this.isLoading.set(true);
 
     this.api.call('iscsi.global.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.form.patchValue(config);
-        this.setLoading(false);
+        this.isLoading.set(false);
       },
       error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
-        this.setLoading(false);
+        this.isLoading.set(false);
       },
     });
-  }
-
-  private setLoading(value: boolean): void {
-    this.isFormLoading = value;
-    this.cdr.markForCheck();
   }
 
   private listenForHaStatus(): void {
