@@ -1,0 +1,37 @@
+<div class="container">
+  <div class="table-container">
+    <ng-content select="[master]"></ng-content>
+  </div>
+
+  @if (selectedItem()) {
+    <div
+      class="details-container"
+      ixDetailsHeight
+      [class.details-container-mobile]="showMobileDetails()"
+    >
+      <div class="header">
+        <h3 class="title">
+          <div class="mobile-prefix">
+            <ix-mobile-back-button
+              (onClose)="toggleShowMobileDetails(false)"
+            ></ix-mobile-back-button>
+            {{ 'Details for' | translate }}
+          </div>
+
+          <span class="prefix">
+            {{ 'Details for' | translate }}
+          </span>
+
+          <span class="name">
+            <ng-content select="[detail-name]"></ng-content>
+          </span>
+        </h3>
+      </div>
+
+      <div>
+        <ng-content select="[detail]"></ng-content>
+      </div>
+    </div>
+  }
+</div>
+

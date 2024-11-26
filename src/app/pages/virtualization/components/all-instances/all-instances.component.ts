@@ -5,7 +5,7 @@ import { Router, NavigationStart } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   AllInstancesHeaderComponent,
@@ -17,13 +17,11 @@ import { InstanceListComponent } from 'app/pages/virtualization/components/all-i
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-all-instances',
   templateUrl: './all-instances.component.html',
-  styleUrls: ['./all-instances.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -32,17 +30,15 @@ import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtual
     AllInstancesHeaderComponent,
     InstanceDetailsComponent,
     InstanceListComponent,
-    DetailsHeightDirective,
+    MasterDetailViewComponent,
   ],
 })
 export class AllInstancesComponent implements OnInit {
   readonly selectedInstance = this.deviceStore.selectedInstance;
-  readonly showMobileDetails = this.viewStore.showMobileDetails;
 
   constructor(
     private configStore: VirtualizationConfigStore,
     private instancesStore: VirtualizationInstancesStore,
-    private viewStore: VirtualizationViewStore,
     private deviceStore: VirtualizationDevicesStore,
     private router: Router,
   ) {
@@ -51,7 +47,6 @@ export class AllInstancesComponent implements OnInit {
       .subscribe(() => {
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.deviceStore.resetInstance();
-          this.closeMobileDetails();
         }
       });
   }
@@ -59,10 +54,5 @@ export class AllInstancesComponent implements OnInit {
   ngOnInit(): void {
     this.configStore.initialize();
     this.instancesStore.initialize();
-    this.viewStore.initialize();
-  }
-
-  closeMobileDetails(): void {
-    this.viewStore.closeMobileDetails();
   }
 }
