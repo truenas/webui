@@ -32,7 +32,7 @@ describe('UserMenuComponent', () => {
       mockProvider(MatDialog),
       mockWebSocket(),
       mockProvider(AuthService, {
-        logout: jest.fn(() => of()),
+        logout: jest.fn(() => of(null)),
         user$: of(dummyUser),
       }),
       mockProvider(WebSocketConnectionService),
