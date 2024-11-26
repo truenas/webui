@@ -35,7 +35,6 @@ interface SigninState {
     disabledReasons?: FailoverDisabledReason[];
   };
   loginBanner: string;
-  queryToken: string | null;
 }
 
 const initialState: SigninState = {
@@ -43,7 +42,6 @@ const initialState: SigninState = {
   wasAdminSet: true,
   failover: null,
   loginBanner: null,
-  queryToken: null,
 };
 
 @UntilDestroy()
@@ -53,7 +51,6 @@ export class SigninStore extends ComponentStore<SigninState> {
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
-  queryToken$ = this.select((state) => state.queryToken);
   failoverAllowsLogin$ = this.select((state) => {
     return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
   });
@@ -70,6 +67,14 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private failoverStatusSubscription: Subscription;
   private disabledReasonsSubscription: Subscription;
+
+  private handleLoginResult = (loginResult: LoginResult): void => {
+    if (loginResult !== LoginResult.Success) {
+      this.authService.clearAuthToken();
+    } else {
+      this.handleSuccessfulLogin();
+    }
+  };
 
   constructor(
     private api: ApiService,
@@ -91,13 +96,9 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
-  setQueryToken = this.updater((state, queryToken: string | null) => ({ ...state, queryToken }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
-    tap(() => {
-      this.setLoadingState(true);
-      this.setQueryToken(this.activatedRoute.snapshot.queryParamMap.get('token'));
-    }),
+    tap(() => this.setLoadingState(true)),
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),
@@ -105,7 +106,14 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.updateService.hardRefreshIfNeeded(),
     ])),
     tap(() => this.setLoadingState(false)),
-    switchMap(() => this.handleLoginWithToken()),
+    switchMap(() => {
+      const queryToken = this.activatedRoute.snapshot.queryParamMap.get('token');
+      if (queryToken) {
+        return this.handleLoginWithQueryToken(queryToken);
+      }
+
+      return this.handleLoginWithToken();
+    }),
   ));
 
   handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
@@ -247,15 +255,24 @@ export class SigninStore extends ComponentStore<SigninState> {
       .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }
 
-  private handleLoginWithToken(): Observable<LoginResult> {
-    return combineLatest([this.tokenLastUsedService.isTokenWithinTimeline$, this.queryToken$]).pipe(
-      take(1),
-      tap(([_, queryToken]) => this.authService.setQueryToken(queryToken)),
-      filter(([isTokenWithinTimeline, queryToken]) => {
-        if (queryToken) {
-          return true;
-        }
+  private handleLoginWithQueryToken(token: string): Observable<LoginResult> {
+    this.authService.setQueryToken(token);
 
+    return this.authService.loginWithToken().pipe(
+      tap(this.handleLoginResult.bind(this)),
+      tapResponse(
+        () => {},
+        (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      ),
+    );
+  }
+
+  private handleLoginWithToken(): Observable<LoginResult> {
+    return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(
+      take(1),
+      filter((isTokenWithinTimeline) => {
         if (!isTokenWithinTimeline) {
           this.authService.clearAuthToken();
         }
@@ -263,13 +280,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         return isTokenWithinTimeline;
       }),
       switchMap(() => this.authService.loginWithToken()),
-      tap((loginResult) => {
-        if (loginResult !== LoginResult.Success) {
-          this.authService.clearAuthToken();
-        } else {
-          this.handleSuccessfulLogin();
-        }
-      }),
+      tap(this.handleLoginResult.bind(this)),
       tapResponse(
         () => {},
         (error: unknown) => {

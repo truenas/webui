@@ -97,7 +97,6 @@ describe('SigninStore', () => {
       wasAdminSet: true,
       isLoading: false,
       loginBanner: '',
-      queryToken: null as string | null,
     };
     beforeEach(() => {
       spectator.service.setState(initialState);
@@ -145,7 +144,6 @@ describe('SigninStore', () => {
         failover: {
           status: FailoverStatus.Single,
         },
-        queryToken: null,
       });
     });
 
@@ -162,7 +160,6 @@ describe('SigninStore', () => {
         failover: {
           status: FailoverStatus.Single,
         },
-        queryToken: null,
       });
     });
 
@@ -182,7 +179,6 @@ describe('SigninStore', () => {
           ips: ['123.23.44.54'],
           status: FailoverStatus.Master,
         },
-        queryToken: null,
       });
     });
 
@@ -202,14 +198,12 @@ describe('SigninStore', () => {
       expect(spectator.inject(Router).navigateByUrl).not.toHaveBeenCalled();
     });
 
-    it('should call "loginWithToken" if queryToken is not null', async () => {
+    it('should call "loginWithToken" if queryToken is not null', () => {
       isTokenWithinTimeline$.next(false);
       const token = 'token';
       const activatedRoute = spectator.inject(ActivatedRoute);
       jest.spyOn(activatedRoute.snapshot.queryParamMap, 'get').mockImplementationOnce(() => token);
       spectator.service.init();
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state.queryToken).toBe(token);
       expect(authService.setQueryToken).toHaveBeenCalledWith(token);
       expect(authService.loginWithToken).toHaveBeenCalled();
     });
@@ -247,7 +241,6 @@ describe('SigninStore', () => {
           ips: ['123.23.44.54'],
           status: FailoverStatus.Importing,
         },
-        queryToken: null,
       });
     });
 
@@ -279,7 +272,6 @@ describe('SigninStore', () => {
               ips: ['123.23.44.54'],
               status: FailoverStatus.Master,
             },
-            queryToken: null,
           },
         });
       });
