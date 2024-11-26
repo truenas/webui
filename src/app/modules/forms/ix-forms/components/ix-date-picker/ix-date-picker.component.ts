@@ -1,18 +1,24 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef,
-  Input, input, signal,
+  Component, ChangeDetectionStrategy, input, signal,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatError, MatHint, MatSuffix } from '@angular/material/form-field';
+import { MatHint, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { LocaleService } from 'app/services/locale.service';
+
+type OnChangeFn = (value: Date) => void;
+type OnTouchedFn = () => void;
 
 @Component({
   standalone: true,
@@ -22,17 +28,22 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxErrorsComponent,
-    IxIconComponent,
     IxLabelComponent,
     MatDatepickerModule,
     MatHint,
     MatInput,
-    MatError,
     TestDirective,
     TestOverrideDirective,
-    TooltipComponent,
     TranslateModule,
     MatSuffix,
+    RegisteredControlDirective,
+  ],
+  providers: [
+    FormatDateTimePipe,
+    {
+      provide: DateAdapter,
+      useClass: IxDateAdapter,
+    },
   ],
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
@@ -42,100 +53,48 @@ export class IxDatepickerComponent implements ControlValueAccessor {
   readonly tooltip = input<string>();
   readonly required = input(false);
   readonly readonly = input(false);
+
+  /**
+   * Specified in machine timezone.
+   */
   readonly min = input<Date>();
   readonly max = input<Date>();
 
-  /** If formatted value returned by parseAndFormatInput has non-numeric letters
-   * and input 'type' is a number, the input will stay empty on the form */
-  @Input() format: (value: string | number) => string;
-  @Input() parse: (value: string | number) => string | number;
-
   protected isDisabled = signal(false);
 
-  formatted: string | number = '';
-  private value: string | number = this.controlDirective.value as string;
-  private lastKnownValue: string | number = this.value;
-  // TODO: Not wired to anything.
-  invalid = false;
+  protected value = signal<Date>(this.controlDirective.value as Date);
 
-  onChange: (value: string | number) => void = (): void => {};
-  onTouch: () => void = (): void => {};
+  private onChange: OnChangeFn = () => {};
+  private onTouched: OnTouchedFn = () => {};
 
   constructor(
-    public controlDirective: NgControl,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
+    protected controlDirective: NgControl,
+    private locale: LocaleService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = (val) => {
-      this.lastKnownValue = val;
-      onChange(val);
-    };
+  registerOnChange(onChange: OnChangeFn): void {
+    this.onChange = onChange;
   }
 
-  registerOnTouched(onTouched: () => void): void {
-    this.onTouch = onTouched;
+  registerOnTouched(onTouched: OnTouchedFn): void {
+    this.onTouched = onTouched;
   }
 
-  writeValue(value: string | number): void {
-    let formatted = value;
-    if (value && this.format) {
-      formatted = this.format(value);
-    }
-    this.formatted = formatted;
-    this.value = value;
-    this.cdr.markForCheck();
-  }
-
-  focus(matInput: HTMLInputElement): void {
-    this.onTouch();
-    if (this.readonly()) {
-      matInput.select();
-    }
+  writeValue(value: Date): void {
+    const dateInMachineTimezone = utcToZonedTime(value, this.locale.timezone);
+    this.value.set(dateInMachineTimezone);
   }
 
   blurred(): void {
-    this.onTouch();
-
-    if (this.formatted) {
-      if (this.parse) {
-        this.value = this.parse(this.formatted);
-        this.formatted = this.value;
-      }
-      if (this.format) {
-        this.formatted = this.format(this.value);
-      }
-    }
-
-    if (this.value !== this.lastKnownValue) {
-      this.lastKnownValue = this.value;
-      this.onChange(this.value);
-    }
-
-    this.cdr.markForCheck();
+    this.onTouched();
   }
 
-  onDateChanged(event: MatDatepickerInputEvent<string>): void {
-    this.writeValue(event.value);
-    this.cdr.markForCheck();
-  }
-
-  onDateInput(event: MatDatepickerInputEvent<string>): void {
-    const value = event.value;
-    this.value = value;
-    this.formatted = value;
-    if (value && this.parse) {
-      this.value = this.parse(value);
-    }
-    this.onChange(this.value);
-    this.cdr.markForCheck();
-  }
-
-  invalidMessage(): string {
-    return this.translate.instant('Value must be a valid date');
+  onDateChanged(event: MatDatepickerInputEvent<Date>): void {
+    this.value.set(event.value);
+    const dateInUtc = zonedTimeToUtc(event.value, this.locale.timezone);
+    this.onChange(dateInUtc);
   }
 
   setDisabledState(isDisabled: boolean): void {

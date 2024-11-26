@@ -83,7 +83,7 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     username: ['', [Validators.required]],
-    expires_at: [null as string],
+    expires_at: [null as Date],
     nonExpiring: [true],
     reset: [false],
   });
@@ -123,7 +123,9 @@ export class ApiKeyFormComponent implements OnInit {
     } else {
       this.form.patchValue({
         ...this.editingRow(),
-        expires_at: new Date(this.editingRow().expires_at.$date).toISOString(),
+        expires_at: this.editingRow().expires_at?.$date
+          ? new Date(this.editingRow().expires_at.$date)
+          : null,
         nonExpiring: !this.editingRow()?.expires_at?.$date,
       });
     }
@@ -133,16 +135,14 @@ export class ApiKeyFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
     const {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      name, username, reset, nonExpiring, expires_at,
+      name, username, reset, nonExpiring,
     } = this.form.value;
 
-    // TODO: Revisit date format later
-    const expiresAtTimestamp = nonExpiring ? null : { $date: new Date(expires_at).getTime() };
+    const expiresAt = nonExpiring ? null : { $date: this.form.value.expires_at.getTime() };
 
     const request$ = this.isNew()
-      ? this.api.call('api_key.create', [{ name, username, expires_at: expiresAtTimestamp }])
-      : this.api.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAtTimestamp }]);
+      ? this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }])
+      : this.api.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAt }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))

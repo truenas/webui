@@ -1,17 +1,26 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
 import { MatInputModule } from '@angular/material/input';
-import { TooltipComponent } from '@angular/material/tooltip';
-import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
+import { MatInputHarness } from '@angular/material/input/testing';
+import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
+import { parseISO } from 'date-fns';
 import { MockComponent } from 'ng-mocks';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LocaleService } from 'app/services/locale.service';
 import { IxDatepickerComponent } from './ix-date-picker.component';
 
 describe('IxDatePickerComponent', () => {
   let spectator: SpectatorHost<IxDatepickerComponent>;
-  const formControl = new FormControl<unknown>('');
+  let loader: HarnessLoader;
+  const formControl = new FormControl<Date>(null);
 
   const createHost = createHostFactory({
     component: IxDatepickerComponent,
@@ -23,110 +32,128 @@ describe('IxDatePickerComponent', () => {
     declarations: [
       MockComponent(IxErrorsComponent),
       MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
       MockComponent(IxIconComponent),
+    ],
+    providers: [
+      mockProvider(LocaleService, {
+        // User timezone is UTC+2, as set in jest config.
+        // Machine timezone is UTC+1, resulting machine timezone being -1 compared to user timezone.
+        timezone: 'Europe/Berlin',
+      }),
+    ],
+    componentProviders: [
+      IxDateAdapter,
+      FormatDateTimePipe,
+      {
+        provide: DateAdapter,
+        deps: [IxDateAdapter],
+        useFactory: (dateAdapter: IxDateAdapter) => {
+          jest.spyOn(dateAdapter, 'format').mockImplementation(() => 'January 1st, 2021');
+          jest.spyOn(dateAdapter, 'parse').mockImplementation(() => new Date(2021, 0, 2, 0, 0, 0));
+          return dateAdapter;
+        },
+      },
     ],
   });
 
-  describe('default `updateOn: change` strategy', () => {
-    beforeEach(() => {
-      spectator = createHost(
-        `<ix-datepicker
-          [formControl]="formControl"
-          [label]="label"
-          [required]="required"
-          [tooltip]="tooltip"
-          [hint]="hint"
-          [readonly]="readonly"
-          [type]="type"
-          [parse]="parse"
-          [format]="format"
-          [min]="min"
-          [max]="max"
-        ></ix-datepicker>`,
-        {
-          hostProps: {
-            formControl,
-            label: undefined,
-            required: false,
-            tooltip: undefined,
-            hint: undefined,
-            readonly: false,
-            type: 'default',
-            parse: undefined,
-            format: undefined,
-            min: undefined,
-            max: undefined,
-          },
+  describe('rendering', () => {
+    it('shows label with form label, tooltip and required values', () => {
+      spectator = createHost(`<ix-datepicker
+        label="Label"
+        tooltip="Tooltip"
+        [required]="true"
+        [formControl]="formControl"
+      ></ix-datepicker>`, {
+        hostProps: {
+          formControl,
         },
-      );
+      });
+
+      const label = spectator.query(IxLabelComponent);
+      expect(label).toExist();
+      expect(label.label).toBe('Label');
+      expect(label.tooltip).toBe('Tooltip');
+      expect(label.required).toBe(true);
     });
 
-    describe('rendering', () => {
-      it('renders a label and passes properties to it', () => {
-        spectator.setHostInput('label', 'Expires at');
-        spectator.setHostInput('required', true);
-        spectator.setHostInput('tooltip', 'Select a date');
-
-        const label = spectator.query(IxLabelComponent);
-        expect(label).toExist();
-        expect(label.label).toBe('Expires at');
-        expect(label.required).toBe(true);
-        expect(label.tooltip).toBe('Select a date');
+    it('opens datepicker when input is clicked', async () => {
+      spectator = createHost('<ix-datepicker [formControl]="formControl"></ix-datepicker>', {
+        hostProps: {
+          formControl,
+        },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      it('renders a hint when it is provided', () => {
-        spectator.setHostInput('hint', 'YYYY-MM-DD');
+      const input = await loader.getHarness(MatInputHarness);
+      await input.focus();
 
-        expect(spectator.query('mat-hint')).toHaveText('YYYY-MM-DD');
-      });
-
-      it('marks input element as readonly when readonly input is true', () => {
-        spectator.setHostInput('readonly', true);
-
-        expect(spectator.query('input')).toHaveAttribute('readonly');
-      });
+      const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+      expect(await datepicker.isCalendarOpen()).toBe(true);
     });
 
-    describe('form control', () => {
-      // TODO: Fix this test
-      it.skip('shows value provided in form control', () => {
-        formControl.setValue('22/11/2024');
-        spectator.detectComponentChanges();
-
-        expect(spectator.query('input')).toHaveValue('22/11/2024');
+    it('passes min and max in browser timezone params to mat-datepicker', async () => {
+      spectator = createHost('<ix-datepicker [formControl]="formControl" [min]="min" [max]="max"></ix-datepicker>', {
+        hostProps: {
+          formControl,
+          min: new Date(2020, 0, 1, 12, 0, 0),
+          max: new Date(2020, 0, 2, 12, 0, 0),
+        },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      it('updates form control value when user types in value in input element', () => {
-        spectator.typeInElement('22/11/2024', 'input');
+      const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+      expect(await datepicker.getMin()).toBe('2020-01-01');
+      expect(await datepicker.getMax()).toBe('2020-01-02');
+    });
+  });
 
-        expect(formControl.value).toBe('22/11/2024');
+  describe('form control', () => {
+    it('shows form control value in browser timezone in the input', async () => {
+      spectator = createHost('<ix-datepicker [formControl]="formControl"></ix-datepicker>', {
+        hostProps: {
+          formControl,
+        },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      it('disables input when form control is disabled', () => {
-        formControl.disable();
-        spectator.detectComponentChanges();
+      formControl.setValue(parseISO('2021-01-01T23:00:00+01:00'));
 
-        expect(spectator.query('input')).toBeDisabled();
-      });
+      const input = await loader.getHarness(MatInputHarness);
+
+      expect(await input.getValue()).toMatch('January 1st, 2021');
     });
 
-    describe('parsing and formatting', () => {
-      it('uses parse function to transform user input when parse function is provided', () => {
-        spectator.setHostInput('parse', (value: string) => new Date(value).getTime());
-
-        spectator.typeInElement('22/11/2024', 'input');
-
-        expect(formControl.value).toBe('22/11/2024');
+    it('updates form control with date in machine timezone when user types in new date', async () => {
+      spectator = createHost('<ix-datepicker [formControl]="formControl"></ix-datepicker>', {
+        hostProps: {
+          formControl,
+        },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-      // TODO: Fix this test
-      it.skip('uses format function to transform form control value when format function is provided', () => {
-        spectator.setHostInput('format', (value: string) => new Date(Number(value)).toLocaleDateString());
-        formControl.setValue('2024/11/22');
+      const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+      await datepicker.setValue('January 2nd, 2021');
 
-        expect(spectator.query('input')).toHaveValue('22/11/2024');
+      expect(formControl.value).toEqual(parseISO('2021-01-01T23:00:00Z'));
+    });
+
+    it('updates form control with date in machine timezone when user selects new date in datepicker', async () => {
+      spectator = createHost('<ix-datepicker [formControl]="formControl"></ix-datepicker>', {
+        hostProps: {
+          formControl,
+        },
       });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+      await datepicker.openCalendar();
+      const calendar = await datepicker.getCalendar();
+      await calendar.changeView(); // Switch to years
+      await calendar.selectCell({ text: '2024' });
+      await calendar.selectCell({ text: 'JAN' });
+      await calendar.selectCell({ text: '4' });
+
+      expect(formControl.value).toEqual(parseISO('2024-01-03T23:00:00.000Z'));
     });
   });
 });

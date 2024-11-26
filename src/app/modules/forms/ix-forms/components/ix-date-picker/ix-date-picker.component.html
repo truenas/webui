@@ -7,12 +7,11 @@
   ></ix-label>
 }
 
-<div class="input-container">
+<div class="input-container" ixRegisteredControl>
   <mat-datepicker #datepicker></mat-datepicker>
-  <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
   <input
     matInput
-    [value]="formatted"
+    [value]="value()"
     [placeholder]="placeholder()"
     [matDatepicker]="datepicker"
     [min]="min()"
@@ -21,20 +20,12 @@
     [attr.aria-label]="label()"
     [readonly]="readonly()"
     [disabled]="isDisabled()"
-    (dateInput)="onDateInput($event)"
     (dateChange)="onDateChanged($event)"
     (focus)="datepicker.open()"
     (blur)="blurred()"
   >
+  <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
 </div>
-
-@if (invalid) {
-  <div>
-    <mat-error>
-      <div [innerHTML]="invalidMessage()"></div>
-    </mat-error>
-  </div>
-}
 
 <ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 

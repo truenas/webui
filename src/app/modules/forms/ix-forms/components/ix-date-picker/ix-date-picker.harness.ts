@@ -36,15 +36,6 @@ export class IxDatepickerHarness extends ComponentHarness implements IxFormContr
     return harness.setValue(value);
   }
 
-  async setValueAndTriggerBlur(value: string | number): Promise<void> {
-    const harness = await this.getMatDatepickerInputHarness();
-
-    const nativeInput = await harness.host();
-    await nativeInput.setInputValue(value as string);
-    await nativeInput.dispatchEvent('input');
-    return nativeInput.blur();
-  }
-
   async isDisabled(): Promise<boolean> {
     return (await this.getMatDatepickerInputHarness()).isDisabled();
   }

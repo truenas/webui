@@ -26,4 +26,8 @@
       outline: none;
     }
   }
+
+  ::ng-deep mat-datepicker-toggle svg {
+    width: 18px;
+  }
 }
