@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { parseISO } from 'date-fns';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -39,6 +40,7 @@ describe('ApiKeyFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(LocaleService, {
         timezone: 'UTC',
+        getDateFromString: (date: string) => parseISO(date),
       }),
       {
         provide: SLIDE_IN_DATA,
@@ -83,12 +85,29 @@ describe('ApiKeyFormComponent', () => {
     });
   });
 
+  it('shows values for the existing key when form is opened for edit', async () => {
+    await setupTest({
+      id: 1,
+      name: 'existing key',
+      username: 'root',
+      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
+    });
+
+    expect(await form.getValues()).toEqual({
+      Name: 'existing key',
+      'Non-expiring': false,
+      Username: 'root',
+      'Expires at': expect.stringMatching('2024-11-22'),
+      Reset: false,
+    });
+  });
+
   it('edits key name when dialog is opened with existing api key', async () => {
     await setupTest({
       id: 1,
       name: 'existing key',
       username: 'root',
-      expires_at: { $date: 1732278712293 },
+      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
     });
 
     await form.fillForm({
@@ -115,7 +134,7 @@ describe('ApiKeyFormComponent', () => {
       id: 1,
       name: 'existing key',
       username: 'root',
-      expires_at: { $date: 1732278712293 },
+      expires_at: { $date: parseISO('2024-11-22T00:00:00Z').getTime() },
     });
     spectator.inject(MockApiService).mockCallOnce('api_key.update', { key: 'generated-key' } as ApiKey);
 
@@ -123,7 +142,7 @@ describe('ApiKeyFormComponent', () => {
       Name: 'My key',
       Reset: true,
       'Non-expiring': false,
-      'Expires at': '2024-12-31T23:59:59.000Z',
+      'Expires at': '2024-12-22T00:00:00Z',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -133,7 +152,7 @@ describe('ApiKeyFormComponent', () => {
       name: 'My key',
       reset: true,
       expires_at: {
-        $date: 1735689599000,
+        $date: parseISO('2024-12-22T00:00:00Z').getTime(),
       },
     }]);
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
