@@ -65,6 +65,7 @@ describe('SshConnectionFormComponent', () => {
         close: closeChainedRef,
         getData: getNoData,
         swap: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
       } as ChainedRef<KeychainSshCredentials>),
     ],
   });
@@ -77,6 +78,7 @@ describe('SshConnectionFormComponent', () => {
             close: closeChainedRef,
             getData,
             swap: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           } as ChainedRef<KeychainSshCredentials>),
         ],
       });

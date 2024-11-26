@@ -163,7 +163,7 @@ export class ApiService {
 
   private printError(error: ApiError, context: { method: string; params: unknown }): void {
     if (error.errname === ApiErrorName.NoAccess) {
-      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
+      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}. Original message: ${error.message}`);
       return;
     }
 
@@ -180,7 +180,7 @@ export class ApiService {
     if (error.errname === ApiErrorName.NoAccess) {
       return {
         ...error,
-        reason: this.translate.instant('Access denied to {method}', { method: context.method }),
+        reason: error.message || this.translate.instant('Access denied to {method}', { method: context.method }),
       };
     }
     return error;
