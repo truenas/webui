@@ -1,5 +1,16 @@
 <div class="container">
   <div class="table-container">
+    <div class="table-header">
+      <h2>{{ 'Instances' | translate }}</h2>
+
+      @if (checkedInstances?.length > 0) {
+        <ix-instance-list-bulk-actions
+          [checkedInstances]="checkedInstances"
+          (resetBulkSelection)="resetSelection()"
+        ></ix-instance-list-bulk-actions>
+      }
+    </div>
+
     <div class="item-search">
       @if (!showMobileDetails()) {
         <ix-fake-progress-bar
@@ -23,8 +34,8 @@
             <mat-checkbox
               color="primary"
               ixTest="select-all-app"
-              [checked]="isAllSelected()"
-              [indeterminate]="!isAllSelected() && !!selection.selected.length"
+              [checked]="isAllSelected"
+              [indeterminate]="!isAllSelected && !!selection.selected.length"
               [disabled]="filteredInstances()?.length === 0"
               (change)="toggleAllChecked($event.checked)"
             ></mat-checkbox>
@@ -46,6 +57,7 @@
           [class.selected]="selectedInstance()?.id === instance.id"
           [selected]="selection.isSelected(instance.id)"
           (click)="navigateToDetails(instance)"
+          (selectionChange)="selection.toggle(instance.id)"
           (keydown.enter)="navigateToDetails(instance)"
         ></ix-instance-row>
       }

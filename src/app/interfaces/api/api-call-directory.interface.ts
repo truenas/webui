@@ -110,6 +110,11 @@ import {
   FailoverConfig,
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
+import {
+  FibreChannelPort,
+  FibreChannelPortChoices,
+  FibreChannelPortUpdate,
+} from 'app/interfaces/fibre-channel.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -448,6 +453,16 @@ export interface ApiCallDirectory {
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
+
+  // Fibre Channel
+  'fc.capable': { params: []; response: boolean };
+
+  // Fibre Channel Port
+  'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
+  'fcport.update': { params: [id: number, update: FibreChannelPortUpdate]; response: FibreChannelPort };
+  'fcport.delete': { params: [id: number]; response: true };
+  'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
+  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
