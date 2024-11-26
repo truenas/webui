@@ -4,14 +4,18 @@ import { AllInstancesComponent } from 'app/pages/virtualization/components/all-i
 import { InstanceShellComponent } from 'app/pages/virtualization/components/instance-shell/instance-shell.component';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 export const virtualizationRoutes: Routes = [{
   path: '',
-  data: { title: T('Containers') },
+  data: { title: T('Containers'), breadcrumb: T('Virtualization') },
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
+    VirtualizationViewStore,
+    VirtualizationDevicesStore,
   ],
   children: [
     {
@@ -21,10 +25,11 @@ export const virtualizationRoutes: Routes = [{
     {
       path: 'new',
       component: InstanceWizardComponent,
+      data: { title: T('Add Container') },
     },
     {
       path: 'view/:id',
-      data: { breadcrumb: T('Containers') },
+      data: { title: T('Containers'), breadcrumb: null },
       children: [
         {
           path: '',

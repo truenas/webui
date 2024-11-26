@@ -27,6 +27,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({

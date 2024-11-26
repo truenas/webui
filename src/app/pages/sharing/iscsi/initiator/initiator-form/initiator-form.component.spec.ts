@@ -99,7 +99,7 @@ describe('InitiatorFormComponent', () => {
       comment: 'new_comment',
       initiators: ['inr11', 'inr12', 'inr1'],
     }]);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiator']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
   });
 
   it('sends empty initiators when allow all is secected', async () => {
@@ -117,7 +117,7 @@ describe('InitiatorFormComponent', () => {
       comment: 'new_comment',
       initiators: [],
     }]);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiator']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
   });
 
   it('adds a new initiator and closes modal when Save button is pressed', async () => {
@@ -145,14 +145,14 @@ describe('InitiatorFormComponent', () => {
       comment: '',
       initiators: ['new_initiator_1', 'new_initiator_2'],
     }]);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiator']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
   });
 
   it('redirects to Initiator List page when Cancel button is pressed', async () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
     await button.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiator']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'sharing', 'iscsi', 'initiators']);
   });
 
   it('loads connected initiators when Refresh button is pressed', async () => {

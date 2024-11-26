@@ -31,6 +31,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -157,22 +159,23 @@ export class AppInfoCardComponent {
     this.appService.checkIfAppIxVolumeExists(name).pipe(
       this.loader.withLoader(),
       switchMap((ixVolumeExists) => {
-        return this.dialogService.confirm({
-          title: helptextApps.apps.delete_dialog.title,
-          message: this.translate.instant('Delete {name}?', { name }),
-          secondaryCheckbox: ixVolumeExists,
-          secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-        });
+        return this.matDialog.open<
+          AppDeleteDialogComponent,
+          AppDeleteDialogInputData,
+          AppDeleteDialogOutputData
+        >(AppDeleteDialogComponent, {
+          data: { name, showRemoveVolumes: ixVolumeExists },
+        }).afterClosed();
       }),
-      filter(({ confirmed }) => confirmed),
+      filter(Boolean),
       untilDestroyed(this),
     )
-      .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));
+      .subscribe(({ removeVolumes, removeImages }) => this.executeDelete(name, removeVolumes, removeImages));
   }
 
-  executeDelete(name: string, removeIxVolumes = false): void {
+  executeDelete(name: string, removeVolumes = false, removeImages = true): void {
     this.dialogService.jobDialog(
-      this.api.job('app.delete', [name, { remove_images: true, remove_ix_volumes: removeIxVolumes }]),
+      this.api.job('app.delete', [name, { remove_images: removeImages, remove_ix_volumes: removeVolumes }]),
       { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()

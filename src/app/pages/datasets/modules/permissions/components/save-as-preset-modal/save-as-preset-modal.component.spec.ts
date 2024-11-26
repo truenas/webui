@@ -76,9 +76,9 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('loads acl presets and shows them', () => {
-    const ws = spectator.inject(ApiService);
+    const api = spectator.inject(ApiService);
 
-    expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
+    expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
         resolve_names: true,
       },

@@ -1,4 +1,5 @@
 import { Type } from '@angular/core';
+import { Observable } from 'rxjs';
 import { ChainedComponentResponse as ChainedResponse } from 'app/services/chained-slide-in.service';
 
 export class ChainedRef<T> {
@@ -12,4 +13,5 @@ export class ChainedRef<T> {
    */
   swap?: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
   getData: () => T;
+  requireConfirmationWhen: (confirm: () => Observable<boolean>) => void;
 }

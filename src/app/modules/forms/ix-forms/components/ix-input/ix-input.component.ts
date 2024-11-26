@@ -1,12 +1,10 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -27,7 +25,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -55,9 +53,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
 })
-export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: MarkedIcon;
@@ -93,8 +92,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private formService: IxFormService,
-    private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -109,14 +106,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if (this.autocompleteOptions) {
       this.handleAutocompleteOptionsOnInit();
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.formService.registerControl(this.controlDirective, this.elementRef);
-  }
-
-  ngOnDestroy(): void {
-    this.formService.unregisterControl(this.controlDirective);
   }
 
   get value(): string | number {

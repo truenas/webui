@@ -199,7 +199,7 @@ export class LocalizationFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.formGroup);
+        this.errorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });

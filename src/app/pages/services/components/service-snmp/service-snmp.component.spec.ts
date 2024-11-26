@@ -15,7 +15,7 @@ import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let websocket: ApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   const createComponent = createRoutingFactory({
     component: ServiceSnmpComponent,
@@ -50,7 +50,7 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(ApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -58,7 +58,7 @@ describe('ServiceSnmpComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(websocket.call).toHaveBeenCalledWith('snmp.config');
+    expect(api.call).toHaveBeenCalledWith('snmp.config');
     expect(values).toEqual({
       Location: 'My location',
       Contact: 'test@truenas.org',
@@ -99,7 +99,7 @@ describe('ServiceSnmpComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('snmp.update', [{
+    expect(api.call).toHaveBeenCalledWith('snmp.update', [{
       location: 'New location',
       contact: 'contact@truenas.org',
       community: 'public',
@@ -133,7 +133,7 @@ describe('ServiceSnmpComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith('snmp.update', [
+    expect(api.call).toHaveBeenCalledWith('snmp.update', [
       expect.objectContaining({
         v3: false,
         v3_username: '',

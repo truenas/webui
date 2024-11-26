@@ -14,8 +14,12 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import { Subscription, timer } from 'rxjs';
+import {
+  filter, Observable, of, Subscription, switchMap, timer,
+} from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
   ChainedComponentResponse,
@@ -37,6 +41,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   @Input() index: number;
   @Input() lastIndex: number;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
+  private needConfirmation: () => Observable<boolean>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();
@@ -54,6 +59,8 @@ export class SlideIn2Component implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
+    private dialogService: DialogService,
+    private translate: TranslateService,
     private renderer: Renderer2,
     private chainedSlideInService: ChainedSlideInService,
     private cdr: ChangeDetectorRef,
@@ -90,9 +97,17 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     if (!this.element || !this.isSlideInOpen) {
       return;
     }
-    this.componentInfo.close$.next({ response: false, error: null });
-    this.componentInfo.close$.complete();
-    this.closeSlideIn();
+
+    this.canCloseSlideIn().pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.componentInfo.close$.next({ response: false, error: null });
+        this.componentInfo.close$.complete();
+        this.closeSlideIn();
+      },
+    });
   }
 
   closeSlideIn(): void {
@@ -147,27 +162,65 @@ export class SlideIn2Component implements OnInit, OnDestroy {
         {
           provide: ChainedRef<D>,
           useValue: {
-            close: (response: ChainedComponentResponse) => {
-              this.componentInfo.close$.next(response);
-              this.componentInfo.close$.complete();
-              this.closeSlideIn();
-            },
-            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
-              this.chainedSlideInService.swapComponent({
-                swapComponentId: this.componentInfo.id,
-                component,
-                wide,
-                data: incomingComponentData,
+            close: (response: ChainedComponentResponse): void => {
+              (!response.response ? this.canCloseSlideIn() : of(true)).pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe({
+                next: () => {
+                  this.componentInfo.close$.next(response);
+                  this.componentInfo.close$.complete();
+                  this.closeSlideIn();
+                },
               });
-              this.closeSlideIn();
+            },
+            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown): void => {
+              this.canCloseSlideIn().pipe(
+                filter(Boolean),
+                untilDestroyed(this),
+              ).subscribe({
+                next: () => {
+                  this.chainedSlideInService.swapComponent({
+                    swapComponentId: this.componentInfo.id,
+                    component,
+                    wide,
+                    data: incomingComponentData,
+                  });
+                  this.closeSlideIn();
+                },
+              });
             },
             getData: (): D => {
               return cloneDeep(data);
+            },
+            requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
+              this.needConfirmation = needConfirmation;
             },
           } as ChainedRef<D>,
         },
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
+  }
+
+  private canCloseSlideIn(): Observable<boolean> {
+    if (!this.needConfirmation) {
+      return of(true);
+    }
+
+    return this.needConfirmation().pipe(
+      switchMap((needConfirmation) => (needConfirmation ? this.showConfirmDialog() : of(true))),
+    );
+  }
+
+  private showConfirmDialog(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant('Unsaved Changes'),
+      message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
+      cancelText: this.translate.instant('No'),
+      buttonText: this.translate.instant('Yes'),
+      buttonColor: 'red',
+      hideCheckbox: true,
+    });
   }
 }
