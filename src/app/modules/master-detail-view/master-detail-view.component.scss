@@ -21,12 +21,22 @@
   }
 }
 
+.details-container {
+  flex-direction: column;
+  overflow: auto;
+}
+
 .header {
+  background: var(--bg1);
   color: var(--fg1);
+  position: sticky;
+  top: 0;
+  z-index: 5;
 
   @media (max-width: calc($breakpoint-hidden - 1px)) {
     border-bottom: solid 1px var(--lines);
     margin: 0 16px 16px 0;
+    position: static;
   }
 }
 

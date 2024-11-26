@@ -30,8 +30,8 @@ import { FocusService } from 'app/services/focus.service';
   ],
   exportAs: 'masterDetailViewContext',
 })
-export class MasterDetailViewComponent implements AfterViewInit {
-  readonly itemDetailName = input<string>(null);
+export class MasterDetailViewComponent<T> implements AfterViewInit {
+  readonly selectedItem = input<T>(null);
   readonly showMobileDetails = signal<boolean>(false);
   readonly isMobileView = signal<boolean>(false);
 

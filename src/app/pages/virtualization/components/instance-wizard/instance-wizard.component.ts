@@ -208,7 +208,7 @@ export class InstanceWizardComponent implements OnInit {
       .subscribe({
         next: ({ result }) => {
           this.snackbar.success(this.translate.instant('Instance created'));
-          this.router.navigate(['/virtualization/view', result?.id]);
+          this.router.navigate(['/virtualization', 'view', result?.id]);
         },
         error: (error) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

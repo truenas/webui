@@ -45,8 +45,8 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     this.listenForConsoleFooterChanges();
     this.precalculateHeights();
     this.applyHeight();
-
     this.window.addEventListener('scroll', this.onScroll.bind(this), true);
+    setTimeout(() => this.onResize());
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

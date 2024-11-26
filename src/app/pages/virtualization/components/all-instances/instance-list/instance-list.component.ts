@@ -2,7 +2,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
   signal, computed, inject,
-  ChangeDetectorRef,
   output,
   input,
 } from '@angular/core';
@@ -95,7 +94,6 @@ export class InstanceListComponent {
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
-    private cdr: ChangeDetectorRef,
   ) {
     toObservable(this.instances).pipe(
       filter((instances) => !!instances.length),

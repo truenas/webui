@@ -4,7 +4,7 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [itemDetailName]="selectedInstance()?.name"
+  [selectedItem]="selectedInstance()"
 >
   <ix-instance-list
     master
@@ -12,6 +12,10 @@
     [showMobileDetails]="masterDetailView.showMobileDetails()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-instance-list>
+
+  <ng-container detail-name>
+    {{ selectedInstance()?.name }}
+  </ng-container>
 
   <ng-container detail>
     @if (selectedInstance()) {
@@ -22,4 +26,3 @@
     }
   </ng-container>
 </ix-master-detail-view>
-

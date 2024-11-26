@@ -3,8 +3,12 @@
     <ng-content select="[master]"></ng-content>
   </div>
 
-  <div>
-    @if (itemDetailName(); as detailName) {
+  @if (selectedItem()) {
+    <div
+      class="details-container"
+      ixDetailsHeight
+      [class.details-container-mobile]="showMobileDetails()"
+    >
       <div class="header">
         <h3 class="title">
           <div class="mobile-prefix">
@@ -19,19 +23,15 @@
           </span>
 
           <span class="name">
-            {{ detailName }}
+            <ng-content select="[detail-name]"></ng-content>
           </span>
         </h3>
       </div>
-    }
 
-    <div
-      ixDetailsHeight
-      class="details-container"
-      [class.details-container-mobile]="showMobileDetails()"
-    >
-      <ng-content select="[detail]"></ng-content>
+      <div>
+        <ng-content select="[detail]"></ng-content>
+      </div>
     </div>
-  </div>
+  }
 </div>
 
