@@ -6,11 +6,14 @@ import {
   signal,
   ChangeDetectorRef,
   Inject,
+  input,
 } from '@angular/core';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
+import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
@@ -22,10 +25,13 @@ import { FocusService } from 'app/services/focus.service';
   standalone: true,
   imports: [
     DetailsHeightDirective,
+    MobileBackButtonComponent,
+    TranslateModule,
   ],
   exportAs: 'masterDetailViewContext',
 })
 export class MasterDetailViewComponent implements AfterViewInit {
+  readonly itemDetailName = input<string>(null);
   readonly showMobileDetails = signal<boolean>(false);
   readonly isMobileView = signal<boolean>(false);
 

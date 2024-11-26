@@ -1,10 +1,11 @@
+<ix-page-header>
+  <ix-all-instances-header></ix-all-instances-header>
+</ix-page-header>
+
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
+  [itemDetailName]="selectedInstance()?.name"
 >
-  <ix-page-header header>
-    <ix-all-instances-header></ix-all-instances-header>
-  </ix-page-header>
-
   <ix-instance-list
     master
     [isMobileView]="masterDetailView.isMobileView()"

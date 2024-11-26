@@ -1,16 +1,37 @@
-<ng-content select="[header]"></ng-content>
-
 <div class="container">
   <div class="table-container">
     <ng-content select="[master]"></ng-content>
   </div>
 
-  <div
-    ixDetailsHeight
-    class="details-container"
-    [class.details-container-mobile]="showMobileDetails()"
-  >
-    <ng-content select="[detail]"></ng-content>
+  <div>
+    @if (itemDetailName(); as detailName) {
+      <div class="header">
+        <h3 class="title">
+          <div class="mobile-prefix">
+            <ix-mobile-back-button
+              (onClose)="toggleShowMobileDetails(false)"
+            ></ix-mobile-back-button>
+            {{ 'Details for' | translate }}
+          </div>
+
+          <span class="prefix">
+            {{ 'Details for' | translate }}
+          </span>
+
+          <span class="name">
+            {{ detailName }}
+          </span>
+        </h3>
+      </div>
+    }
+
+    <div
+      ixDetailsHeight
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails()"
+    >
+      <ng-content select="[detail]"></ng-content>
+    </div>
   </div>
 </div>
 
