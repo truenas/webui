@@ -5,9 +5,11 @@ import {
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { Compartment } from '@codemirror/state';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorView, EditorViewConfig, placeholder } from '@codemirror/view';
+import {
+  EditorView, EditorViewConfig, lineNumbers, placeholder,
+} from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { material } from '@uiw/codemirror-theme-material';
 import { basicSetup } from 'codemirror';
 import {
   BehaviorSubject, Observable, combineLatest, filter, take, tap,
@@ -132,7 +134,8 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
         basicSetup,
         updateListener,
         languageFunctionsMap[this.language](),
-        oneDark,
+        lineNumbers(),
+        material,
         this.editableCompartment.of(EditorView.editable.of(true)),
         placeholder(this.placeholder),
       ],

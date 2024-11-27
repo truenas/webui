@@ -115,6 +115,7 @@
     "@types/randomcolor": "~0.5.9",
     "@types/svg-sprite": "~0.0.39",
     "@types/vinyl": "~2.0.12",
+    "@uiw/codemirror-theme-material": "~4.23.6",
     "@vendure/ngx-translate-extract": "~9.2.1",
     "@xterm/addon-fit": "~0.10.0",
     "@xterm/xterm": "~5.5.0",
