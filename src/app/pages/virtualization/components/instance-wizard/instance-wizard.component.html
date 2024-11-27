@@ -40,6 +40,7 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
+        [hint]="containersHelptext.cpuHint"
       ></ix-input>
 
       <ix-input
@@ -47,6 +48,7 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
+        [hint]="containersHelptext.memoryHint"
       ></ix-input>
     </ix-fieldset>
 
@@ -172,7 +174,7 @@
     <ix-fieldset [title]="'NIC' | translate">
       @if (hasPendingInterfaceChanges()) {
         <p class="warning">
-          {{ 'NIC changes are not allowed since there are pending network changes' | translate }}
+          {{ 'NIC modifications are currently restricted due to pending network changes.' | translate }}
         </p>
       } @else {
         <ix-button-group

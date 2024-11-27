@@ -100,7 +100,7 @@ export class NavigationService {
       tooltip: T('Containers'),
       icon: iconMarker('view_in_ar'),
       state: 'virtualization',
-      isVisible$: this.hasVms$,
+      isVisible$: this.hasApps$,
     },
     {
       name: T('Apps'),

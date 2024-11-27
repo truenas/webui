@@ -18,7 +18,7 @@
             <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
           </span>
           <span class="label">
-            {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
+            {{ '{tasks, plural, =1 {# send task} other {# send tasks} }' | translate : { tasks: tile.totalSend } }}
           </span>
         </li>
         <li>
@@ -26,7 +26,7 @@
             <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
           </span>
           <span class="label">
-            {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
+            {{ '{tasks, plural, =1 {# receive task} other {# receive tasks} }' | translate : { tasks: tile.totalReceive } }}
           </span>
         </li>
         <li>
