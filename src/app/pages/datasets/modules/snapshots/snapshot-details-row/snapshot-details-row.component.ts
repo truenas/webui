@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, OnInit, OnDestroy,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, input,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -51,7 +51,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
-  @Input() snapshot: ZfsSnapshotUi;
+  readonly snapshot = input.required<ZfsSnapshotUi>();
 
   isLoading = true;
   snapshotInfo: ZfsSnapshotUi;
@@ -89,7 +89,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     this.api.call(
       'zfs.snapshot.query',
       [
-        [['id', '=', this.snapshot.name]], {
+        [['id', '=', this.snapshot().name]], {
           extra: {
             retention: true,
             holds: true,
@@ -98,7 +98,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       ],
     )
       .pipe(
-        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot.selected })),
+        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
         untilDestroyed(this),
       )
       .subscribe({

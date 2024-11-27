@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -42,10 +42,10 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class NormalSelectionComponent implements OnInit, OnChanges {
-  @Input() type: VdevType;
-  @Input() layout: CreateVdevLayout;
-  @Input() isStepActive: boolean;
-  @Input() inventory: DetailsDisk[];
+  readonly type = input.required<VdevType>();
+  readonly layout = input.required<CreateVdevLayout>();
+  readonly isStepActive = input<boolean>();
+  readonly inventory = input.required<DetailsDisk[]>();
 
   form = this.formBuilder.group({
     width: [{ value: null as number, disabled: true }, Validators.required],
@@ -75,7 +75,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   }
 
   get isNumberOfVdevsLimitedToOne(): boolean {
-    return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
+    return this.type() === VdevType.Spare || this.type() === VdevType.Cache || this.type() === VdevType.Log;
   }
 
   protected onDisksSelected(disks: DetailsDisk[]): void {
@@ -87,7 +87,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   private listenForResetEvents(): void {
     merge(
       this.store.startOver$,
-      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type)),
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -119,7 +119,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       const values = this.form.value;
 
-      this.store.setAutomaticTopologyCategory(this.type, {
+      this.store.setAutomaticTopologyCategory(this.type(), {
         width: values.width,
         vdevsNumber: this.isNumberOfVdevsLimitedToOne ? 1 : values.vdevsNumber,
       });
@@ -131,7 +131,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     if (!availableDisks) {
       return;
     }
-    const minRequired = minDisksPerLayout[this.layout];
+    const minRequired = minDisksPerLayout[this.layout()];
     let nextOptions: Option[] = [];
 
     if (availableDisks && minRequired && availableDisks >= minRequired) {
@@ -142,7 +142,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.width, nextOptions);
 
-    if (nextOptions.length === 1 && this.isStepActive) {
+    if (nextOptions.length === 1 && this.isStepActive()) {
       setValueIfNotSame(this.form.controls.width, Number(nextOptions[0].value));
     }
 
@@ -167,7 +167,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
-    if (nextOptions.length === 1 && this.isStepActive) {
+    if (nextOptions.length === 1 && this.isStepActive()) {
       setValueIfNotSame(this.form.controls.vdevsNumber, Number(nextOptions[0].value));
     }
   }

@@ -20,9 +20,9 @@
   }
 </ng-container>
 
-@if (stepWarning) {
+@if (stepWarning()) {
   <p class="error-warning">
-    {{ stepWarning }}
+    {{ stepWarning() }}
   </p>
 }
 

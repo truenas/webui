@@ -2,16 +2,16 @@
   <div class="automated-disk-selection-container" [formGroup]="form">
     <h3>{{ 'Automated Disk Selection' | translate }}</h3>
     <ix-disk-size-dropdowns
-      [type]="type"
-      [layout]="layout"
-      [inventory]="inventory"
-      [isStepActive]="isStepActive"
+      [type]="type()"
+      [layout]="layout()"
+      [inventory]="inventory()"
+      [isStepActive]="isStepActive()"
       (disksSelected)="onDisksSelected($event)"
     ></ix-disk-size-dropdowns>
 
     <ix-select
       formControlName="width"
-      [ixTestOverride]="['width', type]"
+      [ixTestOverride]="['width', type()]"
       [label]="'Width' | translate"
       [options]="widthOptions$"
       [required]="true"
@@ -20,7 +20,7 @@
     @if (!isNumberOfVdevsLimitedToOne) {
       <ix-select
         formControlName="vdevsNumber"
-        [ixTestOverride]="['vdevs-number', type]"
+        [ixTestOverride]="['vdevs-number', type()]"
         [label]="'Number of VDEVs' | translate"
         [options]="numberOptions$"
         [required]="true"
@@ -36,9 +36,9 @@
       mat-button
       type="button"
       class="manual-disk-selection"
-      [ixTest]="['manual', type]"
-      [disabled]="!layout"
-      (click)="store.openManualSelectionDialog(type)"
+      [ixTest]="['manual', type()]"
+      [disabled]="!layout()"
+      (click)="store.openManualSelectionDialog(type())"
     >
       {{ 'Manual Disk Selection' | translate }}
     </button>

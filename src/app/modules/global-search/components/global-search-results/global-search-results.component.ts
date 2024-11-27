@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, Input, OnChanges, output, TrackByFunction,
+  ChangeDetectionStrategy, Component, Inject, input, OnChanges, output, TrackByFunction,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -36,10 +36,10 @@ import { AuthService } from 'app/services/auth/auth.service';
   ],
 })
 export class GlobalSearchResultsComponent implements OnChanges {
-  @Input() searchTerm = '';
-  @Input() isLoading = false;
-  @Input() isSearchInputFocused = false;
-  @Input() results: UiSearchableElement[] = [];
+  readonly searchTerm = input('');
+  readonly isLoading = input(false);
+  readonly isSearchInputFocused = input(false);
+  readonly results = input<UiSearchableElement[]>([]);
 
   readonly recentSearchRemoved = output();
 
@@ -57,10 +57,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
   showAll = { ...this.initialShowAll };
 
   get availableSections(): Option<GlobalSearchSection>[] {
-    const uniqueSectionValues = new Set(this.results.map((result) => result.section));
+    const uniqueSectionValues = new Set(this.results().map((result) => result.section));
 
     if (
-      this.searchTerm
+      this.searchTerm()
       && !uniqueSectionValues.has(GlobalSearchSection.Ui)
       && !uniqueSectionValues.has(GlobalSearchSection.RecentSearches)
     ) {
@@ -113,7 +113,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
   }
 
   getLimitedSectionResults(section: GlobalSearchSection): UiSearchableElement[] {
-    const sectionResults = this.results.filter((element) => element.section === section);
+    const sectionResults = this.results().filter((element) => element.section === section);
 
     if (this.showAll[section] || sectionResults.length <= this.initialResultsLimit) {
       return sectionResults;
@@ -123,7 +123,7 @@ export class GlobalSearchResultsComponent implements OnChanges {
   }
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
-    return this.results.filter((element) => element?.section === section);
+    return this.results().filter((element) => element?.section === section);
   }
 
   isSameHierarchyResult(a: UiSearchableElement, b: UiSearchableElement): boolean {
