@@ -174,7 +174,7 @@
     <ix-fieldset [title]="'NIC' | translate">
       @if (hasPendingInterfaceChanges()) {
         <p class="warning">
-          {{ 'NIC modifications are currently restricted due to pending network changes.' | translate }}
+          {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
         </p>
       } @else {
         <ix-button-group
