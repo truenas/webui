@@ -24,6 +24,7 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { containersHelptext } from 'app/helptext/virtualization/containers';
 import { Option } from 'app/interfaces/option.interface';
 import {
   AvailableGpu,
@@ -300,4 +301,6 @@ export class InstanceWizardComponent implements OnInit {
       });
     });
   }
+
+  protected readonly containersHelptext = containersHelptext;
 }

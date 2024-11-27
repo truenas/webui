@@ -41,6 +41,7 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
+        [hint]="containersHelptext.cpuHint"
       ></ix-input>
 
       <ix-input
@@ -48,6 +49,7 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
+        [hint]="containersHelptext.memoryHint"
       ></ix-input>
     </ix-fieldset>
 
