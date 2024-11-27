@@ -13,7 +13,7 @@ export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
 export enum VirtualizationStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
-  Unknown = 'Unknown',
+  Unknown = 'UNKNOWN',
 }
 
 export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>([
