@@ -7,7 +7,6 @@
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-fieldset [title]="'Instance Configuration' | translate">
-
       <ix-input
         formControlName="name"
         [label]="'Name' | translate"
@@ -53,12 +52,12 @@
 
     <ix-fieldset [title]="'Environment' | translate">
       <ix-list
-        formArrayName="environmentVariables"
-        [empty]="form.controls.environmentVariables.controls.length === 0"
+        formArrayName="environment_variables"
+        [empty]="form.controls.environment_variables.controls.length === 0"
         [label]="'Environment Variables' | translate"
         (add)="addEnvironmentVariable()"
       >
-        @for (envControl of form.controls.environmentVariables.controls; track envControl; let i = $index) {
+        @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
           <ix-list-item
             [formGroupName]="i"
             [label]="'Environment Variable' | translate"
@@ -168,6 +167,59 @@
           </ix-list-item>
         }
       </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'NIC' | translate">
+      @if (hasPendingInterfaceChanges()) {
+        <p class="warning">
+          {{ 'NIC changes are not allowed since there are pending network changes' | translate }}
+        </p>
+      } @else {
+        <ix-button-group
+          formControlName="nic_type"
+          [options]="nicType$"
+          [inlineFields]="true"
+          [attr.aria-label]="'NIC Type' | translate"
+        ></ix-button-group>
+
+        @if (form.controls.nic_type.value === VirtualizationNicType.Bridged) {
+          @if ((bridgedNicDevices$ | async); as devices) {
+            @if (devices.length > 0) {
+              <div formGroupName="bridged_nics">
+                @for (device of devices; track device) {
+                  <ix-checkbox
+                    [formControlName]="device.value"
+                    [label]="device.label"
+                  ></ix-checkbox>
+                }
+              </div>
+            } @else {
+              <p>{{ 'No NICs Found' | translate }}</p>
+            }
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        }
+
+        @if (form.controls.nic_type.value === VirtualizationNicType.Macvlan) {
+          @if ((macVlanNicDevices$ | async); as devices) {
+            @if (devices.length > 0) {
+              <div formGroupName="mac_vlan_nics">
+                @for (device of devices; track device) {
+                  <ix-checkbox
+                    [formControlName]="device.value"
+                    [label]="device.label"
+                  ></ix-checkbox>
+                }
+              </div>
+            } @else {
+              <p>{{ 'No NICs Found' | translate }}</p>
+            }
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        }
+      }
     </ix-fieldset>
 
     @if ((usbDevices$ | async); as usbDevices) {
