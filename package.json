@@ -64,6 +64,7 @@
     "@biesbjerg/ngx-translate-extract-marker": "~1.0.0",
     "@bugsplat/angular-tree-component": "~18.0.0",
     "@codemirror/autocomplete": "~6.18.1",
+    "@codemirror/commands": "~6.7.1",
     "@codemirror/lang-json": "~6.0.1",
     "@codemirror/lang-yaml": "~6.1.1",
     "@codemirror/language": "~6.10.1",

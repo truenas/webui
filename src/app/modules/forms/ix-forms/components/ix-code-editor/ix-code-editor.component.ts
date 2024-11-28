@@ -4,9 +4,10 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
 import {
-  EditorView, EditorViewConfig, lineNumbers, placeholder,
+  EditorView, EditorViewConfig, keymap, lineNumbers, placeholder,
 } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { material } from '@uiw/codemirror-theme-material';
@@ -135,6 +136,8 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
         updateListener,
         languageFunctionsMap[this.language](),
         lineNumbers(),
+        history(),
+        keymap.of([...defaultKeymap as unknown[], ...historyKeymap]),
         material,
         this.editableCompartment.of(EditorView.editable.of(true)),
         placeholder(this.placeholder),
