@@ -1,5 +1,9 @@
 <div class="cards">
   <div class="scroll-window">
-    <p>// TODO: Implement cards 🧑‍💻 </p>
+    @if (hasIscsiCards()) {
+      @if (target().auth_networks.length) {
+        <ix-authorized-networks-card [target]="target()"></ix-authorized-networks-card>
+      }
+    }
   </div>
 </div>

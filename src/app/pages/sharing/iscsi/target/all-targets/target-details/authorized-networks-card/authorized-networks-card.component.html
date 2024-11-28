@@ -1,0 +1,14 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'iSCSI Authorized Networks' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    @for (network of target().auth_networks; track network) {
+      <div class="network">
+        {{ network }}
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
