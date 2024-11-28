@@ -43,7 +43,7 @@ interface Conversion {
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly chartId = input<string>();
   readonly chartColors = input<string[]>([]);
-  readonly data = input.required<ReportingData>();
+  readonly data = input<ReportingData>();
   readonly report = input<Report>();
   readonly timezone = input<string>();
   readonly stacked = input(false);

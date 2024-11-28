@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -49,9 +49,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class SmartTestResultListComponent implements OnInit {
-  readonly type = input.required<SmartTestResultPageType>();
-  readonly pk = input<string>();
-
+  @Input() type: SmartTestResultPageType;
+  @Input() pk: string;
   disks: Disk[] = [];
   smartTestResults: SmartTestResultsRow[];
   filterString = '';
@@ -107,7 +106,7 @@ export class SmartTestResultListComponent implements OnInit {
   }
 
   get diskNames(): string[] {
-    return this.disks.filter((disk) => disk.pool === this.pk()).map((disk) => disk.name);
+    return this.disks.filter((disk) => disk.pool === this.pk).map((disk) => disk.name);
   }
 
   constructor(
@@ -128,8 +127,8 @@ export class SmartTestResultListComponent implements OnInit {
     const smartTestResults$ = this.api.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       switchMap((disks) => {
         this.disks = disks;
-        const queryParams: QueryParams<SmartTestResults> = this.type() === SmartTestResultPageType.Disk
-          ? [[['disk', '=', this.pk()]]]
+        const queryParams: QueryParams<SmartTestResults> = this.type === SmartTestResultPageType.Disk
+          ? [[['disk', '=', this.pk]]]
           : [[['disk', 'in', this.diskNames]]];
         return this.api.call('smart.test.results', queryParams);
       }),

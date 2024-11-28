@@ -25,10 +25,10 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   ],
 })
 export class OauthButtonComponent implements OnDestroy {
-  readonly oauthType = input.required<OauthButtonType>();
+  readonly oauthType = input<OauthButtonType>();
   readonly isLoggedIn = input(false);
   readonly disabled = input(false);
-  readonly oauthUrl = input.required<string>();
+  readonly oauthUrl = input<string>();
   // TODO: Figure out in another way.
   readonly testId = input<string>();
 

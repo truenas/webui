@@ -8,7 +8,8 @@ import {
 import { DOCUMENT } from '@angular/common';
 import {
   Directive,
-  Inject, Injector, input,
+  Inject, Injector,
+  Input,
   OnInit, output,
   ViewContainerRef,
 } from '@angular/core';
@@ -30,7 +31,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   standalone: true,
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
-  readonly ixDropGridModel = input.required<T[]>();
+  @Input() ixDropGridModel: T[];
 
   readonly ixDropGridModelChange = output<T[]>();
 
@@ -134,7 +135,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     this.source = null;
 
     if (this.sourceIndex !== this.targetIndex) {
-      const newModel = [...this.ixDropGridModel()];
+      const newModel = [...this.ixDropGridModel];
 
       moveItemInArray(newModel, this.sourceIndex, this.targetIndex);
 

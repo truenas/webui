@@ -8,8 +8,9 @@ import {
   Component,
   ContentChild,
   ContentChildren,
+  Input,
   QueryList,
-  TemplateRef, output, input,
+  TemplateRef, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -48,10 +49,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
-  readonly columns = input.required<Column<T, ColumnComponent<T>>[]>();
-  readonly dataProvider = input.required<DataProvider<T>>();
-  readonly isLoading = input(false);
-  readonly detailsRowIdentifier = input<keyof T>('id' as keyof T);
+  @Input() columns: Column<T, ColumnComponent<T>>[];
+  @Input() dataProvider: DataProvider<T>;
+  @Input() isLoading = false;
+  @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
   readonly expanded = output<T>();
 
@@ -60,7 +61,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @ContentChild(IxTableDetailsRowDirective) detailsRow: IxTableDetailsRowDirective<T>;
 
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
-    return this.columns()?.filter((column) => !column?.hidden);
+    return this.columns?.filter((column) => !column?.hidden);
   }
 
   get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
@@ -71,7 +72,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
-    const availableIndexes = Array.from({ length: this.columns().length }, (_, idx) => idx)
+    const availableIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
       .filter((idx) => !templatedCellIndexes.includes(idx));
 
     this.customCells.forEach((cell) => {
@@ -80,14 +81,14 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
       }
     });
 
-    this.dataProvider().currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
       this.cdr.detectChanges();
       this.cdr.markForCheck();
     });
   }
 
   getRowTag(row: T): string {
-    return this.columns()[0]?.uniqueRowTag(row) ?? '';
+    return this.columns[0]?.uniqueRowTag(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -95,13 +96,13 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   onToggle(row: T): void {
-    this.dataProvider().expandedRow = this.isExpanded(row) ? null : row;
-    this.expanded.emit(this.dataProvider().expandedRow);
+    this.dataProvider.expandedRow = this.isExpanded(row) ? null : row;
+    this.expanded.emit(this.dataProvider.expandedRow);
   }
 
   isExpanded(row: T): boolean {
-    return this.detailsRowIdentifier()
-      && (this.dataProvider()?.expandedRow?.[this.detailsRowIdentifier()] === row?.[this.detailsRowIdentifier()]);
+    return this.detailsRowIdentifier
+      && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
 
   protected trackRowByIdentity(item: T): string {

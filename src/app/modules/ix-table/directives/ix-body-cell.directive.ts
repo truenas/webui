@@ -1,7 +1,8 @@
 import {
   AfterViewInit, ChangeDetectorRef,
   ComponentRef,
-  Directive, input,
+  Directive,
+  Input,
   OnChanges,
   ViewContainerRef,
 } from '@angular/core';
@@ -13,8 +14,8 @@ import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interf
   standalone: true,
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
-  readonly row = input.required<T>();
-  readonly column = input.required<Column<T, ColumnComponent<T>>>();
+  @Input() row: T;
+  @Input() column: Column<T, ColumnComponent<T>>;
 
   private componentRef: ComponentRef<ColumnComponent<T>>;
 
@@ -35,21 +36,21 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
   }
 
   createComponent(): void {
-    if (!this.column().type) {
-      this.column().type = IxCellTextComponent;
+    if (!this.column.type) {
+      this.column.type = IxCellTextComponent;
     }
     this.viewContainer.clear();
     this.componentRef = this.viewContainer.createComponent(
-      this.column().type,
+      this.column.type,
     );
 
     this.setComponentProps();
   }
 
   private setComponentProps(): void {
-    this.componentRef.instance.setRow(this.row());
+    this.componentRef.instance.setRow(this.row);
     Object.keys(this.column).forEach((key: ColumnKeys<T>) => {
-      this.componentRef.instance[key] = this.column()[key] as never;
+      this.componentRef.instance[key] = this.column[key] as never;
     });
 
     this.cdr.detectChanges();
