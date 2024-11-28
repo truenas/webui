@@ -23,7 +23,7 @@ export class CpuChartGaugeComponent {
   protected isLoading = computed(() => !this.cpuData());
 
   protected cpuAvg: Signal<GaugeConfig> = computed(() => {
-    const data = ['Load', parseInt(this.cpuData().average.usage?.toFixed(1)) || 0];
+    const data = ['Load', parseInt(this.cpuData().average.usage?.toFixed(1) || '0')];
     return {
       label: false,
       data,
