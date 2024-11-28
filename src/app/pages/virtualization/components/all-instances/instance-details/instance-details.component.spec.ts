@@ -41,11 +41,6 @@ describe('InstanceDetailsComponent', () => {
     });
   });
 
-  it('shows name of the selected instance', () => {
-    expect(spectator.query('.title')).toHaveText('Details for');
-    expect(spectator.query('.title')).toHaveText('my-instance');
-  });
-
   it('shows details sub-components related to selected instance', () => {
     expect(spectator.query(InstanceGeneralInfoComponent)).toExist();
     expect(spectator.query(InstanceDevicesComponent)).toExist();

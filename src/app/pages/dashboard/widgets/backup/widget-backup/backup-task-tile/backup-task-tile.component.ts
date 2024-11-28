@@ -4,8 +4,8 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 
 @Component({

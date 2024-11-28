@@ -100,10 +100,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     if (this.value && this.options?.length) {
       this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
-    if (this.selectedOption) {
-      this.filterChanged$.next('');
-    }
-
     this.cdr.markForCheck();
   }
 
@@ -125,6 +121,14 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     });
 
     this.filterChanged$.next('');
+  }
+
+  inputBlurred(): void {
+    this.onTouch();
+
+    if (!this.allowCustomValue && !this.selectedOption) {
+      this.resetInput();
+    }
   }
 
   filterOptions(filterValue: string): void {
@@ -150,10 +154,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         this.selectedOption = selectedOptionFromValue
           ? { ...selectedOptionFromValue }
           : { label: this.value as string, value: this.value };
-
-        if (this.selectedOption.value) {
-          this.filterChanged$.next('');
-        }
       }
 
       this.loading = false;
@@ -219,7 +219,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   onChanged(changedValue: string): void {
-    if (this.selectedOption || this.value) {
+    if (this.selectedOption?.value || this.value) {
       this.resetInput();
     }
     this.textContent = changedValue;

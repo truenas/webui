@@ -122,6 +122,13 @@ html .ix-dark {
 
   --mat-autocomplete-background-color: var(--bg2);
 
+  --mat-datepicker-toggle-icon-color: inherit;
+  --mat-datepicker-calendar-container-background-color: var(--bg2);
+  --mat-datepicker-calendar-container-text-color: var(--fg1);
+  --mat-datepicker-calendar-text-font: var(--font-family-body);
+  --mat-datepicker-calendar-date-selected-state-background-color: variable(--primary);
+  --mat-datepicker-calendar-navigation-button-icon-color: var(--fg2);
+
   .mat-mdc-slide-toggle {
     --mat-switch-label-text-color: var(--fg2);
   }

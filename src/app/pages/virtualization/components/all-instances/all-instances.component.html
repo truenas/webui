@@ -2,21 +2,27 @@
   <ix-all-instances-header></ix-all-instances-header>
 </ix-page-header>
 
-<div class="container">
-  <div class="table-container">
-    <ix-instance-list></ix-instance-list>
-  </div>
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [selectedItem]="selectedInstance()"
+>
+  <ix-instance-list
+    master
+    [isMobileView]="masterDetailView.isMobileView()"
+    [showMobileDetails]="masterDetailView.showMobileDetails()"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+  ></ix-instance-list>
 
-  @if (selectedInstance()) {
-    <div
-      ixDetailsHeight="rightside-content-hold"
-      class="details-container"
-      [class.details-container-mobile]="showMobileDetails()"
-    >
+  <ng-container detail-name>
+    {{ selectedInstance()?.name }}
+  </ng-container>
+
+  <ng-container detail>
+    @if (selectedInstance()) {
       <ix-instance-details
         [instance]="selectedInstance()"
-        (onCloseMobileDetails)="closeMobileDetails()"
+        (onCloseMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
       ></ix-instance-details>
-    </div>
-  }
-</div>
+    }
+  </ng-container>
+</ix-master-detail-view>

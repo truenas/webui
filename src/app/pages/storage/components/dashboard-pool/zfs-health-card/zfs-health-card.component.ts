@@ -27,9 +27,9 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';

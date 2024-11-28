@@ -53,6 +53,8 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -442,15 +444,19 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .pipe(
         this.loader.withLoader(),
         switchMap((ixVolumesExist) => {
-          return this.dialogService.confirm({
-            title: helptextApps.apps.delete_dialog.title,
-            message: this.translate.instant('Delete {name}?', { name: this.checkedAppsNames.join(', ') }),
-            secondaryCheckbox: ixVolumesExist.some(Boolean),
-            secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-          });
+          return this.matDialog.open<
+            AppDeleteDialogComponent,
+            AppDeleteDialogInputData,
+            AppDeleteDialogOutputData
+          >(AppDeleteDialogComponent, {
+            data: {
+              name: this.checkedAppsNames.join(', '),
+              showRemoveVolumes: ixVolumesExist.some(Boolean),
+            },
+          }).afterClosed();
         }),
-        filter(({ confirmed }) => confirmed),
-        switchMap(({ secondaryCheckbox }) => this.executeBulkDeletion(secondaryCheckbox)),
+        filter(Boolean),
+        switchMap(({ removeVolumes, removeImages }) => this.executeBulkDeletion(removeVolumes, removeImages)),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -480,10 +486,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private executeBulkDeletion(removeIxVolumes = false): Observable<Job<CoreBulkResponse[]>> {
+  private executeBulkDeletion(
+    removeVolumes = false,
+    removeImages = true,
+  ): Observable<Job<CoreBulkResponse[]>> {
     const bulkDeletePayload = this.checkedAppsNames.map((name) => [
       name,
-      { remove_images: true, remove_ix_volumes: removeIxVolumes },
+      { remove_images: removeImages, remove_ix_volumes: removeVolumes },
     ]);
 
     return this.dialogService.jobDialog(

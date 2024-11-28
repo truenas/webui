@@ -3,6 +3,7 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxDatepickerHarness } from 'app/modules/forms/ix-forms/components/ix-date-picker/ix-date-picker.harness';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -37,6 +38,7 @@ export const supportedFormControlSelectors = [
   IxStarRatingHarness,
   IxButtonGroupHarness,
   IxIconGroupHarness,
+  IxDatepickerHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;

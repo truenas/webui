@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -93,7 +94,6 @@ describe('AppInfoCardComponent', () => {
         installedApps$: of([]),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -211,17 +211,18 @@ describe('AppInfoCardComponent', () => {
 
   it('opens delete app dialog when Delete button is pressed', async () => {
     setupTest(fakeApp);
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
+    } as MatDialogRef<unknown>);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Delete',
-      message: 'Delete test-user-app-name?',
-      secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iXVolumes',
-    });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      AppDeleteDialogComponent,
+      { data: { name: 'test-user-app-name', showRemoveVolumes: true } },
+    );
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'app.delete',
       [fakeApp.name, { remove_images: true, remove_ix_volumes: true }],

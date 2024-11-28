@@ -63,6 +63,10 @@ export class DockerImageDeleteDialogComponent {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
 
+  get runningCount(): number {
+    return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Running).length;
+  }
+
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ContainerImage>>> = (_, entry) => entry.key;
 
   constructor(
