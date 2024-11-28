@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import ipRegex from 'ip-regex';
 import { isEmpty } from 'lodash';
 import {
   filter, map, switchMap, take, tap,
@@ -97,7 +98,9 @@ export class AppInfoCardComponent {
     const portalUrl = new URL(app.portals[name]);
 
     if (portalUrl.hostname === '0.0.0.0') {
-      portalUrl.hostname = this.window.location.hostname;
+      const hostname = this.window.location.hostname;
+      const isIpv6 = ipRegex.v6().test(hostname);
+      portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
     }
 
     this.redirect.openWindow(portalUrl.href);
