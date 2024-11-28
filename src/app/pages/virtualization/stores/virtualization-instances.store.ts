@@ -10,13 +10,11 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
-  isInit: boolean;
   isLoading: boolean;
   instances: VirtualizationInstance[];
 }
 
 const initialState: VirtualizationInstancesState = {
-  isInit: false,
   isLoading: true,
   instances: [],
 };
@@ -25,7 +23,6 @@ const initialState: VirtualizationInstancesState = {
 @Injectable()
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
-  readonly isInit = computed(() => this.stateAsSignal().isInit);
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly instances = computed(() => this.stateAsSignal().instances);
 
@@ -70,11 +67,10 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
             this.patchState({
               instances,
               isLoading: false,
-              isInit: true,
             });
           }),
           catchError((error) => {
-            this.patchState({ isLoading: false, isInit: true, instances: [] });
+            this.patchState({ isLoading: false, instances: [] });
             this.errorHandler.showErrorModal(error);
             return undefined;
           }),

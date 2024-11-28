@@ -49,7 +49,6 @@ export class InstanceListComponent {
 
   protected readonly instances = this.store.instances;
   protected readonly isLoading = this.store.isLoading;
-  protected readonly isInit = this.store.isInit;
 
   protected readonly selectedInstance = this.deviceStore.selectedInstance;
   protected readonly showMobileDetails = this.viewStore.showMobileDetails;

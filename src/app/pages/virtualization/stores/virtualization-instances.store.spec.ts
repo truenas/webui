@@ -34,7 +34,6 @@ describe('VirtualizationInstancesStore', () => {
   it('should have initial state', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       isLoading: true,
-      isInit: false,
       instances: [],
     });
   });
@@ -46,7 +45,6 @@ describe('VirtualizationInstancesStore', () => {
     expect(spectator.service.stateAsSignal()).toEqual({
       instances,
       isLoading: false,
-      isInit: true,
     });
   });
 
