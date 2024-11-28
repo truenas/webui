@@ -18,21 +18,20 @@
     @if (dataProvider.expandedRow; as target) {
       <div class="detail-actions">
         <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="delete-target"
+          (click)="deleteTarget(target)"
+        >
+          {{ 'Delete' | translate }}
+        </button>
+
+        <button
           mat-button
           ixTest="edit-target"
           (click)="editTarget(target)"
         >
           {{ 'Edit' | translate }}
-        </button>
-
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="warn"
-          ixTest="delete-target"
-          (click)="deleteTarget(target)"
-        >
-          {{ 'Delete' | translate }}
         </button>
       </div>
     }
