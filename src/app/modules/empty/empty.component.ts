@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
@@ -28,25 +30,26 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class EmptyComponent {
-  @Input() conf: EmptyConfig;
-  @Input() requiredRoles: Role[];
+  readonly conf = input.required<EmptyConfig>();
+  readonly requiredRoles = input<Role[]>();
 
   doAction(): void {
-    if (this.conf.button.action) {
-      this.conf.button.action();
+    if (this.conf().button.action) {
+      this.conf().button.action();
     }
   }
 
   get isLoading(): boolean {
-    return this.conf.type === EmptyType.Loading;
+    return this.conf().type === EmptyType.Loading;
   }
 
   getIcon(): MarkedIcon {
     let icon = iconMarker('ix-truenas-logo');
-    if (this.conf.icon) {
-      icon = this.conf.icon;
+    if (this.conf().icon) {
+      icon = this.conf().icon;
     } else {
-      switch (this.conf.type) {
+      const type = this.conf().type;
+      switch (type) {
         case EmptyType.Loading:
           icon = iconMarker('ix-truenas-logo');
           break;
@@ -63,7 +66,7 @@ export class EmptyComponent {
           icon = iconMarker('mdi-magnify-scan');
           break;
         default:
-          assertUnreachable(this.conf.type);
+          assertUnreachable(type);
       }
     }
     return icon;

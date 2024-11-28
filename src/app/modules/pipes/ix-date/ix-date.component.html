@@ -1,6 +1,6 @@
 <span
   class="date-spanner"
-  [matTooltip]="'Browser time: {time}' | translate: { time: (date | formatDateTime) }"
+  [matTooltip]="'Browser time: {time}' | translate: { time: (date() | formatDateTime) }"
   [matTooltipDisabled]="!isTimezoneDifference"
 >
   {{ machineTime | formatDateTime }}

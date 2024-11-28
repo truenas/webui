@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
@@ -18,17 +20,18 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class IxDateComponent {
   /** Date must be in browser timezone */
-  @Input() date: number | Date;
+  readonly date = input<number | Date>();
+
   machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
-    const utc = zonedTimeToUtc(this.date, this.defaultTz);
+    const utc = zonedTimeToUtc(this.date(), this.defaultTz);
     return utcToZonedTime(utc, this.machineTimezone);
   }
 
   get isTimezoneDifference(): boolean {
-    return this.machineTime < this.date || this.machineTime > this.date;
+    return this.machineTime < this.date() || this.machineTime > this.date();
   }
 
   constructor(
