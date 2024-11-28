@@ -71,7 +71,7 @@ export class FilesystemService {
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
-            if (file.type === FileType.Symlink || !file.hasOwnProperty('name')) {
+            if ((!options.dsAndZvols && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
               return;
             }
 

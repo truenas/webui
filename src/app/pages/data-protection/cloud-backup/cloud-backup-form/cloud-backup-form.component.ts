@@ -333,7 +333,6 @@ export class CloudBackupFormComponent implements OnInit {
   private setFileNodeProvider(): void {
     this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({
       dsAndZvols: true,
-      directoriesOnly: true,
     });
   }
 
