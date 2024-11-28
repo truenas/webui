@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
+import { map, of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -9,6 +9,12 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { ApiService } from 'app/services/websocket/api.service';
 
+export interface ProviderOptions {
+  directoriesOnly?: boolean;
+  showHiddenFiles?: boolean;
+  includeSnapshots?: boolean;
+  dsAndZvols?: boolean;
+}
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
@@ -18,19 +24,34 @@ export class FilesystemService {
   /**
    * Returns a pre-configured node provider for files and directories.
    */
-  getFilesystemNodeProvider(providerOptions?: {
-    directoriesOnly?: boolean;
-    showHiddenFiles?: boolean;
-    includeSnapshots?: boolean;
-  }): TreeNodeProvider {
-    const options = {
+  getFilesystemNodeProvider(providerOptions?: ProviderOptions): TreeNodeProvider {
+    const options: ProviderOptions = {
       directoriesOnly: false,
       showHiddenFiles: false,
       includeSnapshots: true,
+      dsAndZvols: false,
       ...providerOptions,
     };
 
     return (node: TreeNode<ExplorerNodeData>) => {
+      if (options.dsAndZvols) {
+        if (node.data.path.trim() === '/') {
+          return of([
+            {
+              path: '/mnt',
+              name: '/mnt',
+              hasChildren: true,
+              type: ExplorerNodeType.Directory,
+            },
+            {
+              path: '/dev/zvol',
+              name: '/dev/zvol',
+              hasChildren: true,
+              type: ExplorerNodeType.Directory,
+            },
+          ] as ExplorerNodeData[]);
+        }
+      }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
         typeFilter.push(['type', '=', FileType.Directory]);
