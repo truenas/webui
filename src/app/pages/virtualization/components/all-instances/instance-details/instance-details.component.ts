@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component, input,
-  output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -38,5 +37,4 @@ import {
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
-  onCloseMobileDetails = output();
 }
