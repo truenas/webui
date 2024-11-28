@@ -103,11 +103,11 @@ jobs:
       - name: Remove shard data
         run: rm -rf coverage/coverage-*.json coverage/junit-*.xml
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
-          file: coverage/merged-coverage.json
+          files: coverage/merged-coverage.json
           fail_ci_if_error: true
       - name: Upload extra test data to Codecov
         if: ${{ !cancelled() }}
