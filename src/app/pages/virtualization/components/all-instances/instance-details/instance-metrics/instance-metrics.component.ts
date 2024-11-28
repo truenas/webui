@@ -35,6 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class InstanceMetricsComponent {
   instance = input.required<VirtualizationInstance>();
+  maxItemsCount = 60 * 10 / 2; // latest 10 minutes with 2 seconds API interval
 
   virtualizationStatus = VirtualizationStatus;
 
@@ -74,26 +75,26 @@ export class InstanceMetricsComponent {
   private updateData(fields: VirtualizationInstanceMetrics): void {
     const now = Date.now();
 
+    const updateArray = <T>(current: T[], newValue: T): T[] => {
+      const updated = [...current, newValue];
+      return updated.length > this.maxItemsCount ? updated.slice(-this.maxItemsCount) : updated;
+    };
+
     if (fields.cpu?.cpu_user_percentage !== undefined) {
-      this.cpuData.update((current) => ([
-        ...current, fields.cpu.cpu_user_percentage,
-      ]));
+      this.cpuData.update((current) => updateArray(current, fields.cpu.cpu_user_percentage));
     }
 
     if (fields.mem_usage?.mem_usage_ram_mib !== undefined) {
-      this.memoryData.update((current) => ([
-        ...current,
-        fields.mem_usage.mem_usage_ram_mib,
-      ]));
+      this.memoryData.update((current) => updateArray(current, fields.mem_usage.mem_usage_ram_mib));
     }
 
     if (fields.io_full_pressure?.io_full_pressure_full_60_percentage !== undefined) {
-      this.ioPressureData.update((current) => ([
-        ...current,
+      this.ioPressureData.update((current) => updateArray(
+        current,
         fields.io_full_pressure.io_full_pressure_full_60_percentage,
-      ]));
+      ));
     }
 
-    this.timeLabels.update((current) => ([...current, now]));
+    this.timeLabels.update((current) => updateArray(current, now));
   }
 }
