@@ -11,12 +11,12 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
-  instances: VirtualizationInstance[];
+  instances: VirtualizationInstance[] | undefined;
 }
 
 const initialState: VirtualizationInstancesState = {
   isLoading: true,
-  instances: [],
+  instances: undefined,
 };
 
 @UntilDestroy()

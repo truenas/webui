@@ -59,7 +59,7 @@ export class InstanceListComponent {
   });
 
   protected readonly filteredInstances = computed(() => {
-    return this.instances()
+    return (this.instances() || [])
       .filter((instance) => {
         return instance?.name?.toLocaleLowerCase()
           .includes(this.searchQuery().toLocaleLowerCase());
