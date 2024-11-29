@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -9,7 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -30,9 +29,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UnusedDiskCardComponent {
-  @Input() pools: Pool[];
-  @Input() title: string;
-  @Input() disks: DetailsDisk[];
+  readonly title = input<string>();
+  readonly disks = input<DetailsDisk[]>();
 
   readonly addToStorage = output();
 
