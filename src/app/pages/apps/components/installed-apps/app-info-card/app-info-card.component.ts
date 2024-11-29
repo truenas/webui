@@ -13,6 +13,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, switchMap, take, tap,
@@ -111,7 +112,9 @@ export class AppInfoCardComponent {
     const portalUrl = new URL(app.portals[name]);
 
     if (portalUrl.hostname === '0.0.0.0') {
-      portalUrl.hostname = this.window.location.hostname;
+      const hostname = this.window.location.hostname;
+      const isIpv6 = ipRegex.v6().test(hostname);
+      portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
     }
 
     this.redirect.openWindow(portalUrl.href);

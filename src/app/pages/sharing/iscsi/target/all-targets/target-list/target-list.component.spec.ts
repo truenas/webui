@@ -9,17 +9,16 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { TargetListComponent } from 'app/pages/sharing/iscsi/target/target-list/target-list.component';
 import { SlideInService } from 'app/services/slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const targets: IscsiTarget[] = [{
   id: 1,
@@ -58,7 +57,11 @@ describe('TargetListComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        dataProvider: new AsyncDataProvider(of(targets)),
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTableHarness);
   });
@@ -75,29 +78,10 @@ describe('TargetListComponent', () => {
     expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(TargetFormComponent, { wide: true });
   });
 
-  it('opens target form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
-    await editButton.click();
-
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
-      data: targets[0],
-      wide: true,
-    });
-  });
-
-  it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
-    await deleteButton.click();
-
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.global.sessions');
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.target.delete', [1, true]);
-  });
-
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Target Name', 'Target Alias', ''],
-      ['test-iscsi-target', 'test-iscsi-target-alias', ''],
+      ['Target Name', 'Target Alias'],
+      ['test-iscsi-target', 'test-iscsi-target-alias'],
     ];
 
     const cells = await table.getCellTexts();
