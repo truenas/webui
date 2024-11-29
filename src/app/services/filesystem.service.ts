@@ -16,7 +16,7 @@ export interface ProviderOptions {
   directoriesOnly?: boolean;
   showHiddenFiles?: boolean;
   includeSnapshots?: boolean;
-  dsAndZvols?: boolean;
+  datasetsAndZvols?: boolean;
 }
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
@@ -32,12 +32,12 @@ export class FilesystemService {
       directoriesOnly: false,
       showHiddenFiles: false,
       includeSnapshots: true,
-      dsAndZvols: false,
+      datasetsAndZvols: false,
       ...providerOptions,
     };
 
     return (node: TreeNode<ExplorerNodeData>) => {
-      if (options.dsAndZvols) {
+      if (options.datasetsAndZvols) {
         if (node.data.path.trim() === '/') {
           return of([
             {
@@ -75,7 +75,7 @@ export class FilesystemService {
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
-            if ((!options.dsAndZvols && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
+            if ((!options.datasetsAndZvols && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
               return;
             }
 
