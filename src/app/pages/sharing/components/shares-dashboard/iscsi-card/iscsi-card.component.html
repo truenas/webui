@@ -1,7 +1,7 @@
 <mat-card>
   <mat-toolbar-row>
     <div class="toolbar-row-title">
-      <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'target']">
+      <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'targets']">
         <h3 class="card-title">
           {{ 'Block (iSCSI) Shares Targets' | translate }}
           <ix-icon name="open_in_new" class="title-icon"></ix-icon>
@@ -15,16 +15,6 @@
     </div>
 
     <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        [ixTest]="['iscsi-share', 'configure']"
-        [routerLink]="['/sharing', 'iscsi', 'configuration']"
-        [ixUiSearch]="searchableElements.elements.configure"
-      >
-        {{ 'Configure' | translate }}
-      </button>
-
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
@@ -64,6 +54,6 @@
     [pageSize]="4"
     [dataProvider]="dataProvider"
     [ixTestOverride]="['iscsi']"
-    [routerLink]="['/sharing', 'iscsi', 'target']"
+    [routerLink]="['/sharing', 'iscsi', 'targets']"
   ></ix-table-pager-show-more>
 </mat-card>

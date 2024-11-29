@@ -1,10 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, input,
-  output,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';
@@ -25,7 +23,6 @@ import {
 @Component({
   selector: 'ix-instance-details',
   templateUrl: './instance-details.component.html',
-  styleUrls: ['./instance-details.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -36,10 +33,8 @@ import {
     InstanceDisksComponent,
     InstanceToolsComponent,
     InstanceMetricsComponent,
-    MobileBackButtonComponent,
   ],
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
-  onCloseMobileDetails = output();
 }

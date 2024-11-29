@@ -608,7 +608,7 @@ describe('SmbFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
-    it('calls handleWsFormError when an error occurs during save', async () => {
+    it('calls handleValidationErrors when an error occurs during save', async () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 

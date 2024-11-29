@@ -77,8 +77,8 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['clone', snapshot.snapshot_name]"
-    (click)="doClone(snapshot)"
+    [ixTest]="['clone', snapshot().snapshot_name]"
+    (click)="doClone(snapshot())"
   >
     {{ 'Clone To New Dataset' | translate }}
   </button>
@@ -86,8 +86,8 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['rollback', snapshot.snapshot_name]"
-    (click)="doRollback(snapshot)"
+    [ixTest]="['rollback', snapshot().snapshot_name]"
+    (click)="doRollback(snapshot())"
   >
     {{ 'Rollback' | translate }}
   </button>
@@ -99,9 +99,9 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
-      [ixTest]="['delete', snapshot.snapshot_name]"
+      [ixTest]="['delete', snapshot().snapshot_name]"
       [disabled]="hasClones"
-      (click)="doDelete(snapshot)"
+      (click)="doDelete(snapshot())"
     >
       {{ 'Delete' | translate }}
     </button>

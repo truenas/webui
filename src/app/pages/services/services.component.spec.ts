@@ -10,6 +10,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -73,6 +74,7 @@ describe('ServicesComponent', () => {
       mockProvider(DialogService),
       mockProvider(SlideInService),
       mockProvider(IscsiService),
+      mockProvider(NavigateAndInteractService),
       provideMockStore({
         initialState,
         selectors: [{
@@ -105,15 +107,13 @@ describe('ServicesComponent', () => {
   });
 
   describe('edit', () => {
-    it('should redirect to configure iSCSI service page when edit button is pressed', async () => {
-      const router = spectator.inject(Router);
-      jest.spyOn(router, 'navigate').mockResolvedValue(true);
-
+    it('should redirect and open form to configure iSCSI service page when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Iscsi) + 1;
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'iscsi']);
+      expect(spectator.inject(NavigateAndInteractService).navigateAndInteract)
+        .toHaveBeenCalledWith(['/sharing', 'iscsi'], 'global-configuration');
     });
 
     it('should open FTP configuration when edit button is pressed', async () => {

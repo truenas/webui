@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, output,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -48,7 +48,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvider {
-  @Input() isCustomRetentionVisible = true;
+  readonly isCustomRetentionVisible = input(true);
+
   readonly save = output();
 
   form = this.formBuilder.group({
@@ -82,7 +83,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   ]);
 
   get retentionPolicyOptions$(): Observable<Option[]> {
-    return this.isCustomRetentionVisible
+    return this.isCustomRetentionVisible()
       ? of([
         ...this.defaultRetentionPolicyOptions,
         { label: this.translate.instant('Custom'), value: RetentionPolicy.Custom },

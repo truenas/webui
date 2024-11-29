@@ -48,7 +48,6 @@
               mat-button
               ixTest="bulk-actions-menu"
               [matMenuTriggerFor]="menu"
-              [disabled]="!hasCheckedApps"
             >
               {{ 'Select action' | translate }}
               <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
@@ -210,7 +209,7 @@
 
   @if (selectedApp) {
     <div
-      ixDetailsHeight="rightside-content-hold"
+      ixDetailsHeight
       class="details-container"
       [class.details-container-mobile]="showMobileDetails()"
     >

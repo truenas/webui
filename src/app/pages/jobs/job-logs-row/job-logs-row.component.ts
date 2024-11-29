@@ -1,7 +1,7 @@
 import { JsonPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, Input,
+  Component, input,
 } from '@angular/core';
 import { json } from '@codemirror/lang-json';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,7 +25,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   ],
 })
 export class JobLogsRowComponent {
-  @Input() job: Job;
+  readonly job = input.required<Job>();
 
   readonly credentialTypeLabels = credentialTypeLabels;
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
