@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
-import { map, of } from 'rxjs';
+import {
+  catchError, map, of, throwError,
+} from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { ApiError } from 'app/interfaces/api-error.interface';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -68,6 +71,7 @@ export class FilesystemService {
       };
 
       return this.api.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
+
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
@@ -90,6 +94,12 @@ export class FilesystemService {
           });
 
           return children;
+        }),
+        catchError((error: ApiError) => {
+          if (error.reason === '[ENOENT] Directory /dev/zvol does not exist') {
+            return of([]);
+          }
+          return throwError(() => (error));
         }),
       );
     };
