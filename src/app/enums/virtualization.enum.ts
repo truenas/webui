@@ -72,3 +72,13 @@ export enum VirtualizationGlobalState {
   Error = 'ERROR',
   Initialized = 'INITIALIZED',
 }
+
+export enum VirtualizationNicType {
+  Bridged = 'BRIDGED',
+  Macvlan = 'MACVLAN',
+}
+
+export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string>([
+  [VirtualizationNicType.Bridged, T('Bridged')],
+  [VirtualizationNicType.Macvlan, T('Macvlan')],
+]);
