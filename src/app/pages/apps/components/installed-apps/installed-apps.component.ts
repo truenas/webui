@@ -1,13 +1,12 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import { AsyncPipe, Location } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
   OnInit,
   ChangeDetectorRef,
-  AfterViewInit,
-  Inject, signal,
+  Inject,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor, MatButton } from '@angular/material/button';
@@ -30,9 +29,7 @@ import {
   Observable,
   switchMap,
 } from 'rxjs';
-import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -50,6 +47,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -97,7 +95,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     AppSettingsButtonComponent,
     RouterLink,
     MatAnchor,
-    UiSearchDirective,
     MatMenuTrigger,
     MatMenu,
     MatMenuItem,
@@ -111,17 +108,15 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     AppRowComponent,
     EmptyComponent,
     MatTooltip,
-    DetailsHeightDirective,
     AppDetailsPanelComponent,
+    MasterDetailViewComponent,
   ],
 })
-export class InstalledAppsComponent implements OnInit, AfterViewInit {
+export class InstalledAppsComponent implements OnInit {
   protected readonly searchableElements = installedAppsElements;
 
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
-
-  readonly isMobileView = signal(false);
-  readonly showMobileDetails = signal(false);
+  readonly masterDetailView = viewChild(MasterDetailViewComponent);
 
   dataSource: App[] = [];
   selectedApp: App;
@@ -213,7 +208,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private installedAppsStore: InstalledAppsStore,
     private dockerStore: DockerStore,
-    private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
     private store$: Store<WebuiAppState>,
     private location: Location,
@@ -240,23 +234,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.listenForStatusUpdates();
   }
 
-  ngAfterViewInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView.set(true);
-        } else {
-          this.isMobileView.set(false);
-          this.closeMobileDetails();
-        }
-        this.cdr.markForCheck();
-      });
-  }
-
   closeMobileDetails(): void {
-    this.showMobileDetails.set(false);
+    this.masterDetailView().toggleShowMobileDetails(false);
   }
 
   viewDetails(app: App): void {
@@ -264,10 +243,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     this.router.navigate(['/apps/installed', app.metadata.train, app.id]);
 
-    if (this.isMobileView()) {
-      this.showMobileDetails.set(true);
-
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+    if (this.masterDetailView().isMobileView()) {
+      this.masterDetailView().toggleShowMobileDetails(true);
     }
   }
 

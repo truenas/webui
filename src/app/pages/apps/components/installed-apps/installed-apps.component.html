@@ -29,8 +29,11 @@
   >{{ 'Discover Apps' | translate }}</a>
 </ix-page-header>
 
-<div class="container" [ixUiSearch]="searchableElements.elements.installed">
-  <div class="table-container">
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [selectedItem]="selectedApp"
+>
+  <ng-container master>
     <div class="table-header">
       <h2>{{ 'Applications' | translate }}</h2>
 
@@ -96,7 +99,7 @@
     </div>
 
     <div class="item-search">
-      @if (!showMobileDetails()) {
+      @if (!masterDetailView.showMobileDetails()) {
         <ix-fake-progress-bar
           class="loader-bar"
           [loading]="isLoading()"
@@ -205,20 +208,20 @@
         </div>
       </div>
     </div>
-  </div>
+  </ng-container>
 
-  @if (selectedApp) {
-    <div
-      ixDetailsHeight
-      class="details-container"
-      [class.details-container-mobile]="showMobileDetails()"
-    >
+  <ng-container detail-name>
+    {{ selectedApp?.name }}
+  </ng-container>
+
+  <ng-container detail>
+    @if (selectedApp) {
       <ix-app-details-panel
         [app]="selectedApp"
         (startApp)="start(selectedApp.name)"
         (stopApp)="stop(selectedApp.name)"
-        (closeMobileDetails)="closeMobileDetails()"
+        (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
       ></ix-app-details-panel>
-    </div>
-  }
-</div>
+    }
+  </ng-container>
+</ix-master-detail-view>

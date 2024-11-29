@@ -1,7 +1,4 @@
 @import 'scss-imports/variables';
-@import 'mixins/layout';
-
-@include tree-node-with-details-container;
 
 :host {
   display: block;
@@ -121,12 +118,6 @@ ix-app-row,
       margin-left: 4px;
     }
   }
-}
-
-ix-app-details-panel {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
 }
 
 .bulk-selected {
