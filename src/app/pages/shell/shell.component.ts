@@ -18,9 +18,4 @@ export class ShellComponent implements TerminalConfiguration {
   get conf(): typeof this {
     return this;
   }
-
-  someDummyChange(): void {
-    const dummy = 'dummy';
-    console.warn(dummy);
-  }
 }
