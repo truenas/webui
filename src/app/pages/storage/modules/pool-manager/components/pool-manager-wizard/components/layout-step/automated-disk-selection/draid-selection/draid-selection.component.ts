@@ -193,11 +193,10 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     let nextOptions: Option[] = [];
     if ((groupSize + hotSpares) <= maxPossibleWidth && dataDevices) {
-      nextOptions = _.range(groupSize + hotSpares, maxPossibleWidth).map((item) => {
-        const disks = item + 1;
+      nextOptions = _.range(groupSize + hotSpares, maxPossibleWidth + 1).map((noOfChildren) => {
         return {
-          label: String(disks),
-          value: disks,
+          label: String(noOfChildren),
+          value: noOfChildren,
         };
       });
     }

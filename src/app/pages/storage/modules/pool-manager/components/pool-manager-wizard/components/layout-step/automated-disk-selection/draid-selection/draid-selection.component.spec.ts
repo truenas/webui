@@ -109,7 +109,7 @@ describe('DraidSelectionComponent', () => {
     expect(await spares.getValue()).toBe('0');
 
     const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['4', '5']);
+    expect(await children.getOptionLabels()).toEqual(['3', '4', '5']);
   });
 
   it('updates Children when Spares are selected', async () => {
@@ -122,7 +122,7 @@ describe('DraidSelectionComponent', () => {
     );
 
     const children = await form.getControl('Children') as IxSelectHarness;
-    expect(await children.getOptionLabels()).toEqual(['5']);
+    expect(await children.getOptionLabels()).toEqual(['4', '5']);
   });
 
   it('defaults Children to optimal number, but only once', async () => {
