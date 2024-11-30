@@ -4,7 +4,6 @@ import {
   Component,
   contentChildren,
   input,
-  OnDestroy,
   OnInit,
   output,
   signal,
@@ -16,7 +15,7 @@ import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, Subscription, timer,
+  Observable, timer,
 } from 'rxjs';
 import {
   debounceTime,
@@ -56,18 +55,18 @@ import { AuthService } from 'app/services/auth/auth.service';
     IxIconComponent,
   ],
 })
-export class IxFullPageFormComponent implements OnInit, OnDestroy {
+export class IxFullPageFormComponent implements OnInit {
   formGroup = input.required<FormGroup>();
   requiredRoles = input<Role[]>();
   searchMap = input<Map<string, string>>();
   pageTitle = input.required<string>();
   isLoading = input.required<boolean>();
-  subscription = new Subscription();
-  sections = contentChildren(IxFullPageFormSectionComponent);
-  searchControl = this.formBuilder.control('');
-  searchOptions = signal<Option[]>([]);
-  onSubmit = output();
   buttonText = input.required<string>();
+  onSubmit = output();
+
+  protected sections = contentChildren(IxFullPageFormSectionComponent);
+  protected searchControl = this.formBuilder.control('');
+  protected searchOptions = signal<Option[]>([]);
 
   readonly iconMarker = iconMarker;
 
@@ -83,12 +82,6 @@ export class IxFullPageFormComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.handleSearchControl();
     this.updateSearchOption('');
-  }
-
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 
   onSectionClick(id: string, label: string = null): void {
