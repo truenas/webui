@@ -80,7 +80,7 @@ describe('TargetListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Target Name', 'Target Alias'],
+      ['Name', 'Alias'],
       ['test-iscsi-target', 'test-iscsi-target-alias'],
     ];
 
