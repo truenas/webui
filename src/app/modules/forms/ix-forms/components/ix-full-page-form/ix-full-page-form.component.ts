@@ -84,7 +84,7 @@ export class IxFullPageFormComponent implements OnInit {
     this.updateSearchOption('');
   }
 
-  onSectionClick(id: string, label: string = null): void {
+  protected onSectionClick(id: string, label: string = null): void {
     const nextElement = document.getElementById(id)
       || document.getElementById(label);
     if (!nextElement) {
@@ -99,7 +99,7 @@ export class IxFullPageFormComponent implements OnInit {
       .subscribe(() => nextElement.classList.remove('highlighted'));
   }
 
-  updateSearchOption(searchQuery: string): void {
+  private updateSearchOption(searchQuery: string): void {
     const options: Option[] = [];
     const query = searchQuery.toLowerCase().trim();
     for (const [key, label] of this.searchMap().entries()) {
