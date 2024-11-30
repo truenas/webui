@@ -80,5 +80,5 @@ export enum VirtualizationNicType {
 
 export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string>([
   [VirtualizationNicType.Bridged, T('Bridged')],
-  [VirtualizationNicType.Macvlan, T('Macvlan')],
+  [VirtualizationNicType.Macvlan, T('MAC VLAN')],
 ]);
