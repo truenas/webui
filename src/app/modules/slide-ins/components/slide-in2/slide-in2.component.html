@@ -2,8 +2,8 @@
   cdkTrapFocus
   [class.not-top]="!isTop"
   [class.is-top]="isTop"
-  [id]="componentInfo.id"
-  [class]="['ix-' + componentInfo.id, 'ix-slide-in2-form']"
+  [id]="componentInfo().id"
+  [class]="['ix-' + componentInfo().id, 'ix-slide-in2-form']"
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
   [cdkTrapFocusAutoCapture]="true"
@@ -16,8 +16,8 @@
 </div>
 
 <div
-  [id]="componentInfo.id + '-background'"
-  [class]="['ix-slide-in2-background', 'ix-' + componentInfo.id + '-background', 'ix-slide-in2-'+index+'-background']"
+  [id]="componentInfo().id + '-background'"
+  [class]="['ix-slide-in2-background', 'ix-' + componentInfo().id + '-background', 'ix-slide-in2-' + index() + '-background']"
   [class.open]="isSlideInOpen"
   (click)="onBackdropClicked()"
 ></div>

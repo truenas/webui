@@ -92,12 +92,12 @@ describe('TargetSectionComponent', () => {
   });
 
   describe('explorer', () => {
-    it('uses tree node provider from @Input() in explorer component', () => {
+    it('uses tree node provider from input in explorer component', () => {
       const destinationProvided = jest.fn();
       spectator.setInput('nodeProvider', destinationProvided);
 
       const explorer = spectator.query(IxExplorerComponent);
-      expect(explorer.nodeProvider).toBe(destinationProvided);
+      expect(explorer.nodeProvider()).toBe(destinationProvided);
     });
 
     it('disables explorer when nodeProvider is not provided', async () => {

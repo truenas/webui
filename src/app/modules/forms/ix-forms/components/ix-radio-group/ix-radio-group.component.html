@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -10,15 +10,15 @@
 <mat-radio-group
   color="primary"
   ixRegisteredControl
-  [class.inline]="inlineFields"
-  [required]="required"
+  [class.inline]="inlineFields()"
+  [required]="required()"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
   [value]="value"
-  [attr.aria-label]="label"
+  [attr.aria-label]="label()"
   (change)="onRadiosChanged($event)"
 >
-  @for (option of options | async; track option) {
+  @for (option of options() | async; track option) {
     <div
       class="radio-item"
       [style.flex-basis]="fieldFlex"
@@ -41,4 +41,4 @@
   }
 </mat-radio-group>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

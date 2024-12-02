@@ -1,6 +1,6 @@
 import { NgClass } from '@angular/common';
 import {
-  Component, AfterViewInit, Input, OnChanges, ChangeDetectionStrategy,
+  Component, AfterViewInit, OnChanges, ChangeDetectionStrategy, input,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
@@ -30,6 +30,8 @@ export interface GaugeConfig {
   imports: [NgClass],
 })
 export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
+  readonly config = input.required<GaugeConfig>();
+
   subtitle = '';
   chartType = 'gauge';
   chartClass = 'view-chart-gauge';
@@ -39,8 +41,6 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
   diameter = 120; // default diameter
-
-  @Input() config: GaugeConfig;
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.config) {
@@ -60,7 +60,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
 
   ngAfterViewInit(): void {
     this.render();
-    this.update(this.config.data[1]);
+    this.update(this.config().data[1]);
   }
 
   get data(): GaugeData {
@@ -72,14 +72,14 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   }
 
   render(): void {
-    const lineWidth = this.config.diameter / 10; // 10 percent of diameter
+    const lineWidth = this.config().diameter / 10; // 10 percent of diameter
     this.arc = d3.arc()
-      .innerRadius(this.config.diameter / 2 - lineWidth) // 80
-      .outerRadius(this.config.diameter / 2) // 90
+      .innerRadius(this.config().diameter / 2 - lineWidth) // 80
+      .outerRadius(this.config().diameter / 2) // 90
       .startAngle(0);
 
-    const width = this.config.diameter;
-    const height = this.config.diameter;
+    const width = this.config().diameter;
+    const height = this.config().diameter;
     const svg = d3.select('#gauge-' + this.chartId).append('svg')
       .attr('width', width)
       .attr('height', height);
@@ -99,7 +99,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
 
     // Value as text
     text.style('fill', 'var(--fg2)')
-      .style('font-size', this.config.fontSize.toString() + 'px')
+      .style('font-size', this.config().fontSize.toString() + 'px')
       .style('font-weight', 500)
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central');
@@ -112,7 +112,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     }
     // Subtitle as text
     subtext.style('fill', 'var(--fg2)')
-      .style('font-size', `${this.config.fontSize / 2}px`)
+      .style('font-size', `${this.config().fontSize / 2}px`)
       .style('font-weight', 400)
       .attr('text-anchor', 'middle')
       .attr('alignment-baseline', 'central');
@@ -154,7 +154,7 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
         .attrTween('d', this.load(this.percentToAngle(Number(value))));
 
       d3.select('#gauge-' + this.chartId + ' text#text-value')
-        .text(String(value) + this.config.units);
+        .text(String(value) + this.config().units);
     }
   }
 

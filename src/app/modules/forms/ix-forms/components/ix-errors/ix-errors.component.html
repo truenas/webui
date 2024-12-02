@@ -1,13 +1,13 @@
-@if (control.touched || control.dirty) {
+@if (control().touched || control().dirty) {
   <div class="form-error">
     @for (message of messages; track trackMessage(message)) {
       <mat-error>
         <span [innerHTML]="message | translate"></span>
       </mat-error>
     }
-    @if (control.errors && control.errors[ixManualValidateError]) {
+    @if (control().errors && control().errors[ixManualValidateError]) {
       <mat-error class="manual-error">
-        <span class="manual-message" [innerHTML]="control.errors && control.errors[ixManualValidateError]?.message"></span>
+        <span class="manual-message" [innerHTML]="control().errors && control().errors[ixManualValidateError]?.message"></span>
         <ix-icon
           class="close-icon"
           [matTooltip]="'Remove this error to try again' | translate"

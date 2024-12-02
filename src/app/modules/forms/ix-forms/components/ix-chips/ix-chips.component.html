@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -13,8 +13,8 @@
     class="form-chip"
     ixRegisteredControl
     [disabled]="isDisabled"
-    [required]="required"
-    [attr.aria-label]="label"
+    [required]="required()"
+    [attr.aria-label]="label()"
   >
     @for (chipLabel of labels; track trackByIdentity(chipLabel)) {
       <mat-chip-row
@@ -33,14 +33,14 @@
 
     <input
       #chipInput
-      [placeholder]="placeholder"
+      [placeholder]="placeholder()"
       [ixTest]="controlDirective.name"
       [disabled]="isDisabled"
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       (blur)="onInputBlur()"
-      (matChipInputTokenEnd)="allowNewEntries ? onAdd($event.value) : null"
+      (matChipInputTokenEnd)="allowNewEntries() ? onAdd($event.value) : null"
     />
   </mat-chip-grid>
 
@@ -58,8 +58,8 @@
   </mat-autocomplete>
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }

@@ -1,25 +1,25 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
 
 <div class="input-container" [class.disabled]="isDisabled">
   <div>
-    <label tabindex="0" [attr.aria-label]="'Choose File for {label}' | translate: { label }" (keydown.enter)="fileInput.click()">
+    <label tabindex="0" [attr.aria-label]="'Choose File for {label}' | translate: { label: label() }" (keydown.enter)="fileInput.click()">
       {{ 'Choose File' | translate }}
       <input
         #fileInput
         type="file"
         ixRegisteredControl
-        [accept]="acceptedFiles"
+        [accept]="acceptedFiles()"
         [ixTest]="controlDirective.name"
-        [required]="required"
+        [required]="required()"
         [disabled]="isDisabled"
-        [multiple]="multiple"
+        [multiple]="multiple()"
         (change)="onChanged(asFileInput($event.target).files)"
       />
     </label>
@@ -46,5 +46,5 @@
 </div>
 <ix-errors
   [control]="controlDirective.control"
-  [label]="label"
+  [label]="label()"
 ></ix-errors>
