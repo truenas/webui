@@ -1,9 +1,11 @@
+import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+
 export interface FibreChannelPort {
   id: number;
   port: string;
   wwpn: string | null;
   wwpn_b: string | null;
-  target: unknown; // TODO: Probably IscsiTarget
+  target: IscsiTarget;
 }
 
 export interface FibreChannelPortUpdate {
