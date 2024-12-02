@@ -16,8 +16,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -71,6 +72,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     private chainedSlideinService: IxChainedSlideInService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -135,6 +137,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.ws.call('cloudsync.credentials.delete', [credential.id])),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe(() => {
