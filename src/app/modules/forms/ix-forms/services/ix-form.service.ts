@@ -1,5 +1,7 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { NgControl } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
+import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 
 @Injectable({ providedIn: 'root' })
 export class IxFormService {
@@ -13,6 +15,28 @@ export class IxFormService {
     return this.getControls().map((ctrl) => ctrl.name);
   }
 
+  getControlsOptions(query = ''): Option[] {
+    const options: Option[] = [];
+    const cleanedQuery = query.toLowerCase().trim();
+    for (const [control, element] of this.controls.entries()) {
+      const name = control.name?.toString();
+      if (!name) {
+        continue;
+      }
+      const label = element.getAttribute(ixControlLabelTag)?.toString() || name;
+      if (!query) {
+        options.push({ label, value: name });
+      } else {
+        const cleanedLabel = label.trim().toLowerCase();
+        const cleanedName = name.trim().toLowerCase();
+        if (cleanedName.includes(cleanedQuery) || cleanedLabel.includes(cleanedQuery)) {
+          options.push({ label, value: name });
+        }
+      }
+    }
+    return options;
+  }
+
   getControlByName(controlName: string): NgControl | undefined {
     return this.getControls().find((control) => control.name === controlName);
   }
@@ -20,6 +44,15 @@ export class IxFormService {
   getElementByControlName(controlName: string): HTMLElement | undefined {
     const control = this.getControlByName(controlName);
     return control ? this.controls.get(control) : undefined;
+  }
+
+  getElementByLabel(label: string): HTMLElement | undefined {
+    for (const htmlElement of this.controls.values()) {
+      if (htmlElement.getAttribute(ixControlLabelTag) === label) {
+        return htmlElement;
+      }
+    }
+    return undefined;
   }
 
   registerControl(control: NgControl, elementRef: ElementRef<HTMLElement>): void {
