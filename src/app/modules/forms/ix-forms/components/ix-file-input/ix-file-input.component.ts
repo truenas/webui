@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -39,6 +39,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   @Input() acceptedFiles = '*.*';
   @Input() multiple: boolean;
   @Input() required: boolean;
+  @Input() formControlName: string;
 
   value: FileList;
   isDisabled = false;
@@ -52,6 +53,10 @@ export class IxFileInputComponent implements ControlValueAccessor {
     private formatter: IxFormatterService,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   onChanged(value: FileList): void {

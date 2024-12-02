@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -43,6 +43,7 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   @Input() options: Observable<RadioOption[]>;
   @Input() inlineFields: boolean;
   @Input() inlineFieldFlex: string;
+  @Input() formControlName: string;
 
   isDisabled = false;
   value: string;
@@ -72,6 +73,10 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   writeValue(value: string): void {
     this.value = value;
     this.cdr.markForCheck();
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   registerOnChange(onChange: (value: string) => void): void {

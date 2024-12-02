@@ -1,0 +1,69 @@
+@import 'scss-imports/variables';
+
+:host {
+  color: var(--fg1);
+  margin: 15px;
+}
+
+.divider {
+  margin: -12px 0 12px !important;
+}
+
+.section {
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: $breakpoint-sm) {
+    flex-direction: column;
+
+    .fieldset {
+      order: 2;
+      padding: 0;
+    }
+
+    .help {
+      order: 1;
+      padding: 0 !important;
+    }
+  }
+
+  .fieldset {
+    max-width: 425px;
+    width: 37%;
+
+    @media (max-width: $breakpoint-md) {
+      width: 50%;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+
+  .help {
+    padding: 0 20px;
+    width: 62%;
+
+    @media (max-width: $breakpoint-md) {
+      width: 50%;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+      background-color: var(--contrast-darker);
+      margin-bottom: 16px;
+      padding: 16px;
+      width: 100%;
+    }
+
+    .title {
+      font-family: var(--font-family-body);
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .value {
+      font-size: 1rem;
+      white-space: pre-wrap;
+    }
+  }
+}

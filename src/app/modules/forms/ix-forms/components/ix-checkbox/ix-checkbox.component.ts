@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -34,6 +34,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() warning: string;
   @Input() required: boolean;
+  @Input() formControlName: string;
 
   isDisabled = false;
   value: boolean;
@@ -43,6 +44,10 @@ export class IxCheckboxComponent implements ControlValueAccessor {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   onChange: (value: boolean) => void = (): void => {};

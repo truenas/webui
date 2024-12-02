@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -68,6 +69,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   @Input() autocomplete = 'off';
   @Input() autocompleteOptions: Option[];
   @Input() maxLength = 524288;
+  @Input() formControlName: string | number;
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -100,6 +102,10 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if ('autocompleteOptions' in changes) {
       this.filterOptions();
     }
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName?.toString() || '';
   }
 
   ngOnInit(): void {

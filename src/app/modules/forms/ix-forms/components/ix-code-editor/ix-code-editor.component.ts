@@ -1,6 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnChanges,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
@@ -42,6 +51,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   @Input() tooltip: string;
   @Input() language: CodeEditorLanguage;
   @Input() placeholder: string;
+  @Input() formControlName: string;
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -66,6 +76,10 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

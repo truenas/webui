@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
+  HostBinding,
   Input,
   OnInit,
   ViewChild,
@@ -66,6 +67,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.cdr.markForCheck();
   }
 
+  @Input() formControlName: string;
+
   private comboboxProviderHandler: IxComboboxProviderManager;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
@@ -93,6 +96,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
   }
 
   writeValue(value: string | number): void {

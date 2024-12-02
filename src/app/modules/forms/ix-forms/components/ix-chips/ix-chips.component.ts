@@ -5,6 +5,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  HostBinding,
   Input,
   OnChanges,
   ViewChild,
@@ -62,6 +63,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() allowNewEntries = true;
+  @Input() formControlName: string;
   /**
    * A function that provides the options for the autocomplete dropdown.
    * This function is called when the user types into the input field,
@@ -107,6 +109,10 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   inputReset$ = new Subject<void>();
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName || '';
+  }
 
   onChange: (value: string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};

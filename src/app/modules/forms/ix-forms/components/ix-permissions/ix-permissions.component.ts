@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -33,6 +33,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   readonly tooltip = input<string>();
   readonly required = input(false);
   readonly hideOthersPermissions = input(false);
+  formControlName = input<string>();
 
   isDisabled = false;
 
@@ -63,6 +64,10 @@ export class IxPermissionsComponent implements ControlValueAccessor {
 
   writeValue(value: string): void {
     this.setPermissionsAndUpdateValue(value);
+  }
+
+  @HostBinding('attr.id') get id(): string {
+    return this.formControlName() || '';
   }
 
   setPermissionsAndUpdateValue(value = '000'): void {
