@@ -75,11 +75,11 @@ export class TargetListComponent implements OnInit {
 
   columns = createTable<IscsiTarget>([
     textColumn({
-      title: this.translate.instant('Target Name'),
+      title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
-      title: this.translate.instant('Target Alias'),
+      title: this.translate.instant('Alias'),
       propertyName: 'alias',
     }),
   ], {

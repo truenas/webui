@@ -18,6 +18,14 @@
     @if (dataProvider.expandedRow; as target) {
       <div class="detail-actions">
         <button
+          mat-button
+          ixTest="edit-target"
+          (click)="editTarget(target)"
+        >
+          {{ 'Edit' | translate }}
+        </button>
+
+        <button
           *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="delete-target"
@@ -25,21 +33,13 @@
         >
           {{ 'Delete' | translate }}
         </button>
-
-        <button
-          mat-button
-          ixTest="edit-target"
-          (click)="editTarget(target)"
-        >
-          {{ 'Edit' | translate }}
-        </button>
       </div>
     }
   </ng-container>
 
   <ng-container detail>
     @if (dataProvider.expandedRow) {
-      <ix-target-details></ix-target-details>
+      <ix-target-details [target]="dataProvider.expandedRow"></ix-target-details>
     }
   </ng-container>
 </ix-master-detail-view>
