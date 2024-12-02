@@ -1,6 +1,6 @@
 import {
-  Directive, ElementRef, Renderer2, OnInit,
-  OnDestroy, input,
+  Directive, Input, ElementRef, Renderer2, OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -13,20 +13,18 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
   standalone: true,
 })
 export class UiSearchDirective implements OnInit, OnDestroy {
-  readonly config = input.required<UiSearchableElement>({
-    alias: 'ixUiSearch',
-  });
+  @Input({ required: true, alias: 'ixUiSearch' }) config: UiSearchableElement;
 
   get id(): string {
-    return getSearchableElementId(this.config());
+    return getSearchableElementId(this.config);
   }
 
   get ariaLabel(): string {
-    const hierarchyItem = this.config().hierarchy?.[this.config().hierarchy.length - 1] || '';
+    const hierarchyItem = this.config.hierarchy?.[this.config.hierarchy.length - 1] || '';
     const isSingleWord = hierarchyItem.trim().split(/\s+/).length === 1;
 
-    if (isSingleWord && this.config().synonyms?.length > 0) {
-      return this.config().synonyms.reduce((best, synonym) => {
+    if (isSingleWord && this.config.synonyms?.length > 0) {
+      return this.config.synonyms.reduce((best, synonym) => {
         const synonymWordCount = synonym.trim().split(/\s+/).length;
         const bestWordCount = best.trim().split(/\s+/).length;
         return synonymWordCount > bestWordCount ? synonym : best;
