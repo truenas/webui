@@ -15,6 +15,7 @@ import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { InstanceMetricsLineChartComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-metrics/instance-metrics-linechart/instance-metrics-linechart.component';
+import { metricsMaxItemsCount } from 'app/pages/virtualization/virtualization.constants';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -35,7 +36,6 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class InstanceMetricsComponent {
   instance = input.required<VirtualizationInstance>();
-  maxItemsCount = 60 * 10 / 2; // latest 10 minutes with 2 seconds API interval
 
   virtualizationStatus = VirtualizationStatus;
 
@@ -77,7 +77,7 @@ export class InstanceMetricsComponent {
 
     const updateArray = <T>(current: T[], newValue: T): T[] => {
       const updated = [...current, newValue];
-      return updated.length > this.maxItemsCount ? updated.slice(-this.maxItemsCount) : updated;
+      return updated.length > metricsMaxItemsCount ? updated.slice(-metricsMaxItemsCount) : updated;
     };
 
     if (fields.cpu?.cpu_user_percentage !== undefined) {
