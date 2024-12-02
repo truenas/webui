@@ -299,6 +299,8 @@ export class CloudBackupFormComponent implements OnInit {
       delete (value as unknown as FormValue)[key];
     });
 
+    delete value.snapshot;
+
     return value;
   }
 
