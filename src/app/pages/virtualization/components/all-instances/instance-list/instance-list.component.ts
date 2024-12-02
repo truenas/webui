@@ -131,10 +131,6 @@ export class InstanceListComponent {
     }
   }
 
-  closeMobileDetails(): void {
-    this.toggleShowMobileDetails.emit(false);
-  }
-
   resetSelection(): void {
     this.selection.clear();
   }

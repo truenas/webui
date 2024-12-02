@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -91,7 +91,7 @@
         ></mat-checkbox>
       </td>
     </tr>
-    @if (!hideOthersPermissions) {
+    @if (!hideOthersPermissions()) {
       <tr [ixTest]="[controlDirective.name, 'other-permissions']">
         <td>
           <span class="header-label">{{ 'Other' | translate }}</span>
@@ -131,4 +131,4 @@
   </table>
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

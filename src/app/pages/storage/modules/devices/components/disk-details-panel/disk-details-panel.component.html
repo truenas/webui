@@ -12,8 +12,8 @@
     <div class="full-path" [matTooltip]="title | translate">
       <ix-topology-item-icon
         class="title-icon"
-        [topologyItem]="topologyItem"
-        [disk]="disk"
+        [topologyItem]="topologyItem()"
+        [disk]="disk()"
       ></ix-topology-item-icon>
       <span class="device-name">
         {{ title | translate }}
@@ -25,31 +25,31 @@
 <div class="cards">
   <div class="cards-column scroll-window">
     <ix-zfs-info-card
-      [topologyItem]="topologyItem"
-      [disk]="disk"
-      [topologyParentItem]="topologyParentItem"
-      [poolId]="poolId"
-      [topologyCategory]="topologyCategory"
-      [hasTopLevelRaidz]="hasTopLevelRaidz"
+      [topologyItem]="topologyItem()"
+      [disk]="disk()"
+      [topologyParentItem]="topologyParentItem()"
+      [poolId]="poolId()"
+      [topologyCategory]="topologyCategory()"
+      [hasTopLevelRaidz]="hasTopLevelRaidz()"
       (deviceRemoved)="onCloseMobileDetails()"
     ></ix-zfs-info-card>
 
     @if (isTopologyDisk && hasTopologyItemDisk) {
       <ix-hardware-disk-encryption
-        [topologyDisk]="topologyItem | cast"
+        [topologyDisk]="topologyItem() | cast"
       ></ix-hardware-disk-encryption>
 
       <ix-smart-info-card
-        [topologyDisk]="topologyItem | cast"
-        [disk]="disk"
+        [topologyDisk]="topologyItem() | cast"
+        [disk]="disk()"
         [hasSmartTestSupport]="hasSmartTestSupport"
       ></ix-smart-info-card>
     }
 
     @if (isTopologyDisk) {
       <ix-disk-info-card
-        [topologyDisk]="topologyItem | cast"
-        [disk]="disk"
+        [topologyDisk]="topologyItem() | cast"
+        [disk]="disk()"
       ></ix-disk-info-card>
     }
   </div>

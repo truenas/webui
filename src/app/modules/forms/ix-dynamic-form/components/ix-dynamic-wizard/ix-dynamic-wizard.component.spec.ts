@@ -30,23 +30,17 @@ describe('IxDynamicWizardComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: { dynamicForm, dynamicSection },
+    });
   });
 
   describe('Component rendering', () => {
     it('renders a correct number of sections', () => {
-      spectator = createComponent({
-        props: { dynamicForm, dynamicSection },
-      });
-
       expect(spectator.queryAll('ix-fieldset')).toHaveLength(dynamicSection.length);
     });
 
     it('renders a correct number of dynamic form', () => {
-      spectator = createComponent({
-        props: { dynamicForm, dynamicSection },
-      });
-
       let dynamicFormsAmount = 0;
       dynamicSection.forEach((section) => dynamicFormsAmount += section.schema.length);
 

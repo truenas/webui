@@ -58,18 +58,18 @@ describe('LineChartComponent', () => {
     });
 
     it('returns formatted value when labelY is set', () => {
-      spectator.component.labelY = 'Mebibytes';
+      spectator.setInput('labelY', 'Mebibytes');
       expect(spectator.component.axisLabelFormatter(500)).toBe('500');
     });
 
     it('returns formatted value when report name is NetworkInterface and less than 1000', () => {
-      spectator.component.report = { name: ReportingGraphName.NetworkInterface } as Report;
+      spectator.setInput('report', { name: ReportingGraphName.NetworkInterface } as Report);
       spectator.component.yLabelPrefix = 'Mb';
       expect(spectator.component.axisLabelFormatter(500)).toBe('0.5');
     });
 
     it('returns formatted value when report name is NetworkInterface and greater than 100', () => {
-      spectator.component.report = { name: ReportingGraphName.NetworkInterface } as Report;
+      spectator.setInput('report', { name: ReportingGraphName.NetworkInterface } as Report);
       spectator.component.yLabelPrefix = 'kb';
       expect(spectator.component.axisLabelFormatter(1500)).toBe('1.5');
     });
