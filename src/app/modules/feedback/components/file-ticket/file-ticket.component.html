@@ -55,7 +55,7 @@
       testId="login-to-jira"
       [oauthType]="OauthButtonType.Jira"
       [oauthUrl]="oauthUrl"
-      [disabled]="form.invalid || isLoading"
+      [disabled]="form.invalid || isLoading()"
       (loggedIn)="onSubmit($event);"
     ></ix-oauth-button>
   </ix-form-actions>

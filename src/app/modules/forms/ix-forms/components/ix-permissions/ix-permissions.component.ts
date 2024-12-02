@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -8,6 +8,7 @@ import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -24,14 +25,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxPermissionsComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() hideOthersPermissions = false;
-  @Input() formControlName: string;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input(false);
+  readonly hideOthersPermissions = input(false);
+  formControlName = input<string>();
 
   isDisabled = false;
 
@@ -65,7 +67,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.formControlName() || '';
   }
 
   setPermissionsAndUpdateValue(value = '000'): void {
@@ -73,7 +75,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
       this.value = value;
     } else {
       this.value = '000';
-      console.error('Invalid value format for ', this.label);
+      console.error('Invalid value format for ', this.label());
     }
 
     this.owner = parseInt(this.value[0]);

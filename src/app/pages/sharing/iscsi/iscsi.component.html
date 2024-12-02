@@ -2,17 +2,26 @@
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
+    color="default"
+    id="global-configuration"
+    ixTest="global-target-configuration"
+    [ixUiSearch]="searchableElements.elements.config"
+    (click)="openGlobalTargetConfiguration()"
+  >{{ 'Global Target Configuration' | translate }}</button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
     color="primary"
-    id="iscsi_wizard_action_button"
     ixTest="wizard"
-    (click)="gotoWizard()"
+    (click)="openWizard()"
   >
     {{ 'Wizard' | translate }}
   </button>
 </ix-page-header>
 
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-  @for (link of navLinks; track link.label) {
+  @for (link of (navLinks$ | async); track link.label) {
     <a
       #rla="routerLinkActive"
       mat-tab-link
@@ -25,50 +34,6 @@
     </a>
   }
 </nav>
-<router-outlet mat-tab-nav-panel>
-  <mat-tab-nav-panel #tabPanel>
-    @switch (activeTab()) {
-      @case ('configuration') {
-        <ix-target-global-configuration
-          [ixUiSearch]="searchableElements.elements.configuration"
-        ></ix-target-global-configuration>
-      }
-
-      @case ('portals') {
-        <ix-iscsi-portal-list
-          [ixUiSearch]="searchableElements.elements.portals"
-        ></ix-iscsi-portal-list>
-      }
-
-      @case ('initiator') {
-        <ix-iscsi-initiator-list
-          [ixUiSearch]="searchableElements.elements.initiator"
-        ></ix-iscsi-initiator-list>
-      }
-
-      @case ('auth') {
-        <ix-iscsi-authorizedaccess-list
-          [ixUiSearch]="searchableElements.elements.auth"
-        ></ix-iscsi-authorizedaccess-list>
-      }
-
-      @case ('target') {
-        <ix-iscsi-target-list
-          [ixUiSearch]="searchableElements.elements.target"
-        ></ix-iscsi-target-list>
-      }
-
-      @case ('extent') {
-        <ix-iscsi-extent-list
-          [ixUiSearch]="searchableElements.elements.extent"
-        ></ix-iscsi-extent-list>
-      }
-
-      @case ('associatedtarget') {
-        <ix-iscsi-associated-target-list
-          [ixUiSearch]="searchableElements.elements.associatedTarget"
-        ></ix-iscsi-associated-target-list>
-      }
-    }
-  </mat-tab-nav-panel>
-</router-outlet>
+<mat-tab-nav-panel #tabPanel>
+  <router-outlet></router-outlet>
+</mat-tab-nav-panel>

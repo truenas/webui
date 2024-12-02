@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  Input, output,
+  input, output,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -35,38 +35,38 @@ import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/componen
   ],
 })
 export class DiskDetailsPanelComponent {
-  @Input() topologyItem: TopologyItem;
-  @Input() topologyParentItem: TopologyItem;
-  @Input() disk: Disk;
-  @Input() poolId: number;
-  @Input() topologyCategory: VdevType;
-  @Input() hasTopLevelRaidz: boolean;
-  @Input() disksWithSmartTestSupport: string[];
+  readonly topologyItem = input.required<TopologyItem>();
+  readonly topologyParentItem = input<TopologyItem>();
+  readonly disk = input<Disk>();
+  readonly poolId = input<number>();
+  readonly topologyCategory = input<VdevType>();
+  readonly hasTopLevelRaidz = input<boolean>();
+  readonly disksWithSmartTestSupport = input<string[]>();
 
   readonly closeMobileDetails = output();
 
   get title(): string {
-    if (isTopologyDisk(this.topologyItem)) {
-      return this.topologyItem.disk || this.topologyItem.guid;
+    if (isTopologyDisk(this.topologyItem())) {
+      return this.topologyItem().disk || this.topologyItem().guid;
     }
 
-    return this.topologyItem.type;
+    return this.topologyItem().type;
   }
 
   get isTopologyDisk(): boolean {
-    return isTopologyDisk(this.topologyItem);
+    return isTopologyDisk(this.topologyItem());
   }
 
   get hasTopologyItemDisk(): boolean {
-    if (isTopologyDisk(this.topologyItem)) {
-      return this.topologyItem.disk !== null;
+    if (isTopologyDisk(this.topologyItem())) {
+      return this.topologyItem().disk !== null;
     }
 
     return false;
   }
 
   get hasSmartTestSupport(): boolean {
-    return this.disksWithSmartTestSupport.includes(this.disk.devname);
+    return this.disksWithSmartTestSupport().includes(this.disk().devname);
   }
 
   onCloseMobileDetails(): void {

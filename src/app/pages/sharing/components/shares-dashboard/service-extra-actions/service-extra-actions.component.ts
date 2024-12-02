@@ -6,6 +6,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -66,6 +67,7 @@ export class ServiceExtraActionsComponent {
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
+    private navigateAndInteract: NavigateAndInteractService,
   ) {}
 
   changeServiceState(service: Service): void {
@@ -79,7 +81,7 @@ export class ServiceExtraActionsComponent {
   configureService(service: Service): void {
     switch (service.service) {
       case ServiceName.Iscsi:
-        this.router.navigate(['/sharing', 'iscsi']);
+        this.navigateAndInteract.navigateAndInteract(['/sharing', 'iscsi'], 'global-configuration');
         break;
       case ServiceName.Nfs:
         this.slideInService.open(ServiceNfsComponent, { wide: true });

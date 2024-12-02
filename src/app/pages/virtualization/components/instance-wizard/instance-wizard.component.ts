@@ -12,30 +12,31 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  combineLatest,
   map, Observable, of,
-  startWith,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
   VirtualizationGpuType,
+  VirtualizationNicType,
+  virtualizationNicTypeLabels,
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
   VirtualizationRemote,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { containersHelptext } from 'app/helptext/virtualization/containers';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  AvailableGpu,
-  AvailableUsb,
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -79,7 +80,9 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxSelectComponent,
     IxFullPageFormComponent,
     IxFullPageFormSectionComponent,
+    IxButtonGroupComponent,
     IxExplorerComponent,
+    NgxSkeletonLoaderModule,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -88,9 +91,21 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
+  protected readonly visibleImageName = new FormControl('');
+  protected readonly VirtualizationNicType = VirtualizationNicType;
+
+  protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
+
+  protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
+  readonly nicType$ = of(mapToOptions(virtualizationNicTypeLabels, this.translate));
+
+  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
+
+  bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
+  macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
 
   usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
-    map((choices: Record<string, AvailableUsb>) => Object.values(choices).map((choice) => ({
+    map((choices) => Object.values(choices).map((choice) => ({
       label: `${choice.product} (${choice.product_id})`,
       value: choice.product_id,
     }))),
@@ -114,7 +129,7 @@ export class InstanceWizardComponent implements OnInit {
     'virt.device.gpu_choices',
     [VirtualizationType.Container, VirtualizationGpuType.Physical],
   ).pipe(
-    map((choices: Record<string, AvailableGpu>) => Object.entries(choices).map(([pci, gpu]) => ({
+    map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
       label: gpu.description,
       value: pci,
     }))),
@@ -129,6 +144,8 @@ export class InstanceWizardComponent implements OnInit {
     memory: [null as number],
     usb_devices: this.formBuilder.record<boolean>({}),
     gpu_devices: this.formBuilder.record<boolean>({}),
+    bridged_nics: this.formBuilder.record<boolean>({}),
+    mac_vlan_nics: this.formBuilder.record<boolean>({}),
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number>;
@@ -139,59 +156,9 @@ export class InstanceWizardComponent implements OnInit {
       source: FormControl<string>;
       destination: FormControl<string>;
     }>>([]),
-    environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
+    environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
+    nic_type: [VirtualizationNicType.Bridged],
   });
-
-  protected isInstaceConfigValid = toSignal(combineLatest([
-    this.form.controls.name.valueChanges.pipe(startWith('')),
-    this.form.controls.autostart.valueChanges.pipe(startWith(false)),
-    this.form.controls.visibleImageName.valueChanges.pipe(startWith('')),
-  ]).pipe(
-    map(() => {
-      return this.form.controls.name.valid
-        && this.form.controls.autostart.valid
-        && this.form.controls.visibleImageName.valid;
-    }),
-  ));
-
-  protected isCpuAndMemoryValid = toSignal(combineLatest([
-    this.form.controls.cpu.valueChanges.pipe(startWith('')),
-    this.form.controls.memory.valueChanges.pipe(startWith(false)),
-  ]).pipe(
-    map(() => {
-      return this.form.controls.cpu.valid
-        && this.form.controls.memory.valid;
-    }),
-  ));
-
-  protected isEnvironmentValid = toSignal(this.form.controls.environmentVariables.valueChanges.pipe(
-    startWith(''),
-    map(() => this.form.controls.environmentVariables.valid),
-  ));
-
-  protected isDisksValid = toSignal(this.form.controls.disks.valueChanges.pipe(
-    startWith(''),
-    map(() => this.form.controls.disks.valid),
-  ));
-
-  protected isProxiesValid = toSignal(this.form.controls.proxies.valueChanges.pipe(
-    startWith(''),
-    map(() => this.form.controls.proxies.valid),
-  ));
-
-  protected isUsbDevicesValid = toSignal(this.form.controls.usb_devices.valueChanges.pipe(
-    startWith(''),
-    map(() => this.form.controls.usb_devices.valid),
-  ));
-
-  protected isGpuDevicesValid = toSignal(this.form.controls.gpu_devices.valueChanges.pipe(
-    startWith(''),
-    map(() => this.form.controls.gpu_devices.valid),
-  ));
-
-  protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
-
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
@@ -214,6 +181,8 @@ export class InstanceWizardComponent implements OnInit {
   ngOnInit(): void {
     this.setupDeviceControls(this.usbDevices$, 'usb_devices');
     this.setupDeviceControls(this.gpuDevices$, 'gpu_devices');
+    this.setupDeviceControls(this.bridgedNicDevices$, 'bridged_nics');
+    this.setupDeviceControls(this.macVlanNicDevices$, 'mac_vlan_nics');
   }
 
   protected onBrowseImages(): void {
@@ -275,7 +244,7 @@ export class InstanceWizardComponent implements OnInit {
       .subscribe({
         next: ({ result }) => {
           this.snackbar.success(this.translate.instant('Instance created'));
-          this.router.navigate(['/virtualization/view', result?.id]);
+          this.router.navigate(['/virtualization', 'view', result?.id]);
         },
         error: (error) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -289,11 +258,11 @@ export class InstanceWizardComponent implements OnInit {
       value: ['', Validators.required],
     });
 
-    this.form.controls.environmentVariables.push(control);
+    this.form.controls.environment_variables.push(control);
   }
 
   removeEnvironmentVariable(index: number): void {
-    this.form.controls.environmentVariables.removeAt(index);
+    this.form.controls.environment_variables.removeAt(index);
   }
 
   private getPayload(): CreateVirtualizationInstance {
@@ -310,8 +279,17 @@ export class InstanceWizardComponent implements OnInit {
     } as CreateVirtualizationInstance;
   }
 
+  private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
+    return this.api.call('virt.device.nic_choices', [nicType]).pipe(
+      map((choices) => Object.values(choices).map((choice) => ({
+        label: choice,
+        value: choice,
+      }))),
+    );
+  }
+
   private get environmentVariablesPayload(): Record<string, string> {
-    return this.form.controls.environmentVariables.controls.reduce((env: Record<string, string>, control) => {
+    return this.form.controls.environment_variables.controls.reduce((env: Record<string, string>, control) => {
       const name = control.get('name')?.value;
       const value = control.get('value')?.value;
 
@@ -343,6 +321,22 @@ export class InstanceWizardComponent implements OnInit {
         dev_type: VirtualizationDeviceType.Gpu,
       }));
 
+    const macVlanNics = Object.entries(this.form.controls.mac_vlan_nics.value)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([parent]) => ({
+        parent,
+        dev_type: VirtualizationDeviceType.Nic,
+        nic_type: VirtualizationNicType.Macvlan,
+      }));
+
+    const bridgedNics = Object.entries(this.form.controls.bridged_nics.value)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([parent]) => ({
+        parent,
+        dev_type: VirtualizationDeviceType.Nic,
+        nic_type: VirtualizationNicType.Bridged,
+      }));
+
     const proxies = this.form.controls.proxies.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Proxy,
       source_proto: proxy.source_proto,
@@ -354,17 +348,21 @@ export class InstanceWizardComponent implements OnInit {
     return [
       ...disks,
       ...proxies,
+      ...macVlanNics,
+      ...bridgedNics,
       ...usbDevices,
       ...gpuDevices,
     ] as VirtualizationDevice[];
   }
 
-  private setupDeviceControls(devices$: Observable<Option[]>, controlName: 'usb_devices' | 'gpu_devices'): void {
+  private setupDeviceControls(devices$: Observable<Option[]>, controlName: keyof typeof this.form.controls): void {
     devices$.pipe(untilDestroyed(this)).subscribe((devices) => {
-      const deviceGroup = this.form.controls[controlName];
+      const deviceGroup = this.form.controls[controlName] as FormGroup;
       devices.forEach((device) => {
         deviceGroup.addControl(device.value as string, this.formBuilder.control(false));
       });
     });
   }
+
+  protected readonly containersHelptext = containersHelptext;
 }

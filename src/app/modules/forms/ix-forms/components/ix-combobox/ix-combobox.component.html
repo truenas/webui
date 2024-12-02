@@ -12,6 +12,7 @@
     <input
       #ixInput
       matInput
+      ixRegisteredControl
       [value]="selectedOption?.label || textContent"
       [placeholder]="allowCustomValue ? ('Search or enter value' | translate) : ('Search' | translate)"
       [disabled]="isDisabled"
@@ -20,7 +21,7 @@
       [ixTest]="controlDirective.name"
       [class.has-value]="selectedOption?.label || textContent"
       (input)="onChanged(ixInput.value)"
-      (blur)="onTouch()"
+      (blur)="inputBlurred()"
     />
     <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
       @if (loading) {

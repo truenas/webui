@@ -11,7 +11,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationGpuType, VirtualizationNicType, VirtualizationType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -110,6 +110,11 @@ import {
   FailoverConfig,
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
+import {
+  FibreChannelPort,
+  FibreChannelPortChoices,
+  FibreChannelPortUpdate,
+} from 'app/interfaces/fibre-channel.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -448,6 +453,16 @@ export interface ApiCallDirectory {
   'failover.sync_from_peer': { params: void; response: void };
   'failover.sync_to_peer': { params: [{ reboot?: boolean }]; response: void };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
+
+  // Fibre Channel
+  'fc.capable': { params: []; response: boolean };
+
+  // Fibre Channel Port
+  'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
+  'fcport.update': { params: [id: number, update: FibreChannelPortUpdate]; response: FibreChannelPort };
+  'fcport.delete': { params: [id: number]; response: true };
+  'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
+  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
@@ -844,6 +859,7 @@ export interface ApiCallDirectory {
     response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
+  'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };

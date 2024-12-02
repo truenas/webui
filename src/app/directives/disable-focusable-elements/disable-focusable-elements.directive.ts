@@ -1,5 +1,5 @@
 import {
-  Directive, Input, Renderer2, ElementRef, OnChanges,
+  Directive, Renderer2, ElementRef, OnChanges, input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take, timer } from 'rxjs';
@@ -11,7 +11,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   standalone: true,
 })
 export class DisableFocusableElementsDirective implements OnChanges {
-  @Input() disableFocusableElements: boolean;
+  readonly disableFocusableElements = input.required<boolean>();
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
@@ -26,7 +26,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
   private updateFocusableElements(): void {
     timer(0).pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      const tabIndex = this.disableFocusableElements ? -1 : 0;
+      const tabIndex = this.disableFocusableElements() ? -1 : 0;
       this.updateTabIndex(tabIndex);
     });
   }

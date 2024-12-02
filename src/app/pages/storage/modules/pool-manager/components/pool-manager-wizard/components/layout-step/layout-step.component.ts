@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -21,19 +21,19 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {
-  @Input() isStepActive: boolean;
-  @Input() type: VdevType;
-  @Input() description: string;
+  readonly isStepActive = input<boolean>();
+  readonly type = input.required<VdevType>();
+  readonly description = input<string>();
 
-  @Input() canChangeLayout = false;
-  @Input() limitLayouts: CreateVdevLayout[];
+  readonly canChangeLayout = input(false);
+  readonly limitLayouts = input<CreateVdevLayout[]>();
 
-  @Input() inventory: DetailsDisk[];
+  readonly inventory = input<DetailsDisk[]>();
 
   protected topologyCategory: PoolManagerTopologyCategory;
 
   get isVdevsLimitedToOne(): boolean {
-    return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
+    return this.type() === VdevType.Spare || this.type() === VdevType.Cache || this.type() === VdevType.Log;
   }
 
   constructor(
@@ -47,7 +47,7 @@ export class LayoutStepComponent implements OnInit {
 
   private connectToStore(): void {
     this.store.state$.pipe(untilDestroyed(this)).subscribe(({ topology }) => {
-      this.topologyCategory = topology[this.type];
+      this.topologyCategory = topology[this.type()];
       this.cdr.markForCheck();
     });
   }

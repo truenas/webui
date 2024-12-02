@@ -8,7 +8,11 @@
     ></ix-label>
   }
 
-  <div class="input-container" [class.disabled]="disabledState$ | async">
+  <div
+    ixRegisteredControl
+    class="input-container"
+    [class.disabled]="disabledState$ | async"
+  >
     <div #inputArea></div>
   </div>
 

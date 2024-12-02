@@ -56,7 +56,7 @@ describe('VirtualizationInstancesStore', () => {
     });
 
     it('instances - returns instances part of the state', () => {
-      expect(spectator.service.instances()).toBe(instances);
+      expect(spectator.service.instances()).toEqual(instances);
     });
   });
 });

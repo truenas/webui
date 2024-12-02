@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { PosixAcl } from 'app/interfaces/acl.interface';
@@ -18,7 +18,7 @@ import {
   imports: [PermissionsItemComponent, TranslateModule],
 })
 export class ViewPosixPermissionsComponent implements OnChanges {
-  @Input() acl: PosixAcl;
+  readonly acl = input.required<PosixAcl>();
 
   permissionItems: PermissionItem[] = [];
 
@@ -31,6 +31,6 @@ export class ViewPosixPermissionsComponent implements OnChanges {
   }
 
   private transformAcl(): void {
-    this.permissionItems = this.acl.acl.map((ace) => posixAceToPermissionItem(this.translate, ace));
+    this.permissionItems = this.acl().acl.map((ace) => posixAceToPermissionItem(this.translate, ace));
   }
 }

@@ -2,7 +2,7 @@
   <ix-breadcrumb class="breadcrumbs"></ix-breadcrumb>
   <div class="title-container">
     <div class="title-and-indicator">
-      <h1>{{ pageTitle ? (pageTitle | translate) : (currentTitle$ | async) | translate }}</h1>
+      <h1>{{ pageTitle() ? (pageTitle() | translate) : (currentTitle$ | async) | translate }}</h1>
       @if (hasNewIndicator$ | async) {
         <ix-new-page-badge></ix-new-page-badge>
       }
@@ -12,7 +12,7 @@
       <ng-content></ng-content>
     </div>
   </div>
-  @if (loading) {
+  @if (loading()) {
     <ix-fake-progress-bar [loading]="true"></ix-fake-progress-bar>
   }
 </div>

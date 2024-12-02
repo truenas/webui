@@ -1,8 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -10,6 +8,7 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -22,8 +21,12 @@ import {
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import {
+  ServiceExtraActionsComponent,
+} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
+import {
+  ServiceStateButtonComponent,
+} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -38,14 +41,14 @@ describe('IscsiCardComponent', () => {
       id: 6,
       name: 'grow',
       alias: 'kokok',
-      mode: 'ISCSI',
+      mode: IscsiTargetMode.Iscsi,
       auth_networks: [],
       groups: [
         {
           portal: 1,
           initiator: 4,
           auth: null,
-          authmethod: 'NONE',
+          authmethod: IscsiAuthMethod.None,
         },
       ],
     },
@@ -129,13 +132,5 @@ describe('IscsiCardComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-  });
-
-  it('checks user being redirected when pressed the Configure button', async () => {
-    jest.spyOn(spectator.inject(Router), 'navigateByUrl');
-    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
-    await configureButton.click();
-
-    expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalled();
   });
 });

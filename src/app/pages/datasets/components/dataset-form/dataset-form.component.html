@@ -14,7 +14,6 @@
       ></ix-name-and-options>
       @if (isAdvancedMode && isNew) {
         <ix-quotas-section
-          [parent]="parentDataset"
           (formValidityChange)="isQuotaValid = $event"
         ></ix-quotas-section>
       }

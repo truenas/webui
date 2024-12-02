@@ -16,12 +16,9 @@
       [required]="true"
     ></ix-input>
 
-    <ix-checkbox
-      formControlName="autostart"
-      [label]="'Autostart' | translate"
-    ></ix-checkbox>
-
-    <div class="image-field">
+<div class="container">
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset [title]="'Instance Configuration' | translate">
       <ix-input
         class="input"
         formControlName="visibleImageName"
@@ -30,6 +27,248 @@
         [required]="true"
       ></ix-input>
 
+      <ix-checkbox
+        formControlName="autostart"
+        [label]="'Autostart' | translate"
+      ></ix-checkbox>
+
+      <div class="image-field">
+        <ix-input
+          class="input"
+          [formControl]="visibleImageName"
+          [readonly]="true"
+          [label]="'Image' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <button
+          mat-button
+          ixTest="browse-images"
+          type="button"
+          (click)="onBrowseImages()"
+        >{{ 'Browse Catalog' | translate }}</button>
+      </div>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'CPU & Memory' | translate">
+      <ix-input
+        formControlName="cpu"
+        [label]="'CPU Configuration' | translate"
+        [hint]="containersHelptext.cpuHint"
+      ></ix-input>
+
+      <ix-input
+        formControlName="memory"
+        [label]="'Memory Size' | translate"
+        [format]="formatter.memorySizeFormatting"
+        [parse]="formatter.memorySizeParsing"
+        [hint]="containersHelptext.memoryHint"
+      ></ix-input>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Environment' | translate">
+      <ix-list
+        formArrayName="environment_variables"
+        [empty]="form.controls.environment_variables.controls.length === 0"
+        [label]="'Environment Variables' | translate"
+        (add)="addEnvironmentVariable()"
+      >
+        @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Environment Variable' | translate"
+            (delete)="removeEnvironmentVariable(i)"
+          >
+            <div class="environment-variable">
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-input
+                formControlName="value"
+                [label]="'Value' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Disks' | translate">
+      <ix-list
+        formArrayName="disks"
+        [empty]="form.controls.disks.controls.length === 0"
+        [label]="'Disks' | translate"
+        [formArray]="form.controls.disks"
+        (add)="addDisk()"
+      >
+        @for (disk of form.controls.disks.controls; track disk; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Disk' | translate"
+            (delete)="removeDisk(i)"
+          >
+            <ix-explorer
+              formControlName="source"
+              [label]="'Source' | translate"
+              [required]="true"
+              [nodeProvider]="directoryNodeProvider"
+            ></ix-explorer>
+
+            <ix-input
+              formControlName="destination"
+              [label]="'Destination' | translate"
+              [required]="true"
+            ></ix-input>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Network' | translate">
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'Proxies' | translate">
+      <ix-list
+        formArrayName="proxies"
+        [empty]="form.controls.proxies.controls.length === 0"
+        [label]="'Proxies' | translate"
+        [formArray]="form.controls.proxies"
+        (add)="addProxy()"
+      >
+        @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
+          <ix-list-item
+            [formGroupName]="i"
+            [label]="'Proxy' | translate"
+            (delete)="removeProxy(i)"
+          >
+            <div class="protocol-and-port">
+              <ix-select
+                class="protocol"
+                formControlName="source_proto"
+                [label]="'Host Protocol' | translate"
+                [required]="true"
+                [options]="proxyProtocols$"
+              ></ix-select>
+
+              <ix-input
+                class="port"
+                type="number"
+                formControlName="source_port"
+                [label]="'Host Port' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+
+            <div class="protocol-and-port">
+              <ix-select
+                class="protocol"
+                formControlName="dest_proto"
+                [label]="'Instance Protocol' | translate"
+                [required]="true"
+                [options]="proxyProtocols$"
+              ></ix-select>
+
+              <ix-input
+                class="port"
+                type="number"
+                formControlName="dest_port"
+                [label]="'Instance Port' | translate"
+                [required]="true"
+              ></ix-input>
+            </div>
+          </ix-list-item>
+        }
+      </ix-list>
+    </ix-fieldset>
+
+    <ix-fieldset [title]="'NIC' | translate">
+      @if (hasPendingInterfaceChanges()) {
+        <p class="warning">
+          {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
+        </p>
+      } @else {
+        <ix-button-group
+          formControlName="nic_type"
+          [options]="nicType$"
+          [inlineFields]="true"
+          [attr.aria-label]="'NIC Type' | translate"
+        ></ix-button-group>
+
+        @if (form.controls.nic_type.value === VirtualizationNicType.Bridged) {
+          @if ((bridgedNicDevices$ | async); as devices) {
+            @if (devices.length > 0) {
+              <div formGroupName="bridged_nics">
+                @for (device of devices; track device) {
+                  <ix-checkbox
+                    [formControlName]="device.value"
+                    [label]="device.label"
+                  ></ix-checkbox>
+                }
+              </div>
+            } @else {
+              <p>{{ 'No NICs Found' | translate }}</p>
+            }
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        }
+
+        @if (form.controls.nic_type.value === VirtualizationNicType.Macvlan) {
+          @if ((macVlanNicDevices$ | async); as devices) {
+            @if (devices.length > 0) {
+              <div formGroupName="mac_vlan_nics">
+                @for (device of devices; track device) {
+                  <ix-checkbox
+                    [formControlName]="device.value"
+                    [label]="device.label"
+                  ></ix-checkbox>
+                }
+              </div>
+            } @else {
+              <p>{{ 'No NICs Found' | translate }}</p>
+            }
+          } @else {
+            <ngx-skeleton-loader></ngx-skeleton-loader>
+          }
+        }
+      }
+    </ix-fieldset>
+
+    @if ((usbDevices$ | async); as usbDevices) {
+      @if (usbDevices.length > 0) {
+        <ix-fieldset [title]="'USB Devices' | translate">
+          <div formGroupName="usb_devices">
+            @for (device of usbDevices; track device) {
+              <ix-checkbox
+                [formControlName]="device.value"
+                [label]="device.label"
+              ></ix-checkbox>
+            }
+          </div>
+        </ix-fieldset>
+      }
+    }
+
+    @if ((gpuDevices$ | async); as gpuDevices) {
+      @if (gpuDevices.length > 0) {
+        <ix-fieldset [title]="'GPU Devices' | translate">
+          <div formGroupName="gpu_devices">
+            @for (device of gpuDevices; track device) {
+              <ix-checkbox
+                [formControlName]="device.value"
+                [label]="device.label"
+              ></ix-checkbox>
+            }
+          </div>
+        </ix-fieldset>
+      }
+    }
+
+    <div class="actions">
       <button
         mat-button
         ixTest="browse-images"

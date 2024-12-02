@@ -1,0 +1,61 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'Global Configuration' | translate"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="basename"
+          [label]="'Base Name' | translate"
+          [required]="true"
+          [tooltip]="tooltips.basename | translate"
+        ></ix-input>
+
+        <ix-chips
+          formControlName="isns_servers"
+          [label]="'ISNS Servers' | translate"
+          [tooltip]="tooltips.isns_servers | translate"
+        ></ix-chips>
+
+        <ix-input
+          formControlName="pool_avail_threshold"
+          type="number"
+          [label]="'Pool Available Space Threshold (%)' | translate"
+          [tooltip]="tooltips.pool_avail_threshold | translate"
+        ></ix-input>
+
+        <ix-input
+          type="number"
+          formControlName="listen_port"
+          [label]="'iSCSI listen port' | translate"
+          [required]="true"
+        ></ix-input>
+
+        @if (isHaSystem) {
+          <ix-checkbox
+            formControlName="alua"
+            [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
+            [tooltip]="tooltips.alua | translate"
+          ></ix-checkbox>
+        }
+      </ix-fieldset>
+
+      <ix-form-actions class="form-actions">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading()"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

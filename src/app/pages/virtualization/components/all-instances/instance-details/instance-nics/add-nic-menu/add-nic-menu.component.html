@@ -1,0 +1,40 @@
+@if (isLoadingDevices()) {
+  <ngx-skeleton-loader class="loader"></ngx-skeleton-loader>
+} @else if (hasNicsToAdd()) {
+  <button
+    mat-button
+    ixTest="add-nic"
+    [disabled]=""
+    [matMenuTriggerFor]="addNicMenu"
+  >
+    {{ 'Add' | translate }}
+  </button>
+
+  <mat-menu #addNicMenu="matMenu">
+    @if (availableBridgedNics().length) {
+      <h4 class="menu-header">{{ bridgedNicTypeLabel | translate }}</h4>
+      @for (nic of availableBridgedNics(); track nic) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-bridged-nic', nic]"
+          (click)="addBridgedNic(nic)"
+        >
+          {{ nic }}
+        </button>
+      }
+    }
+
+    @if (availableMacVlanNics().length) {
+      <h4 class="menu-header">{{ macVlanNicTypeLabel | translate }}</h4>
+      @for (nic of availableMacVlanNics(); track nic) {
+        <button
+          mat-menu-item
+          [ixTest]="['add-mac-vlan-nic', nic]"
+          (click)="addMacVlanNic(nic)"
+        >
+          {{ nic }}
+        </button>
+      }
+    }
+  </mat-menu>
+}

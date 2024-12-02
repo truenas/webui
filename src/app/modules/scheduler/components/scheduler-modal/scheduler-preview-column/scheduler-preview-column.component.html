@@ -12,8 +12,8 @@
       </button>
     </div>
   </h4>
-  <div class="crontab">{{ crontab }}</div>
-  <div class="crontab-explanation">{{ crontab | crontabExplanation }}</div>
+  <div class="crontab">{{ crontab() }}</div>
+  <div class="crontab-explanation">{{ crontab() | crontabExplanation }}</div>
 </section>
 
 <div class="calendar">
@@ -22,7 +22,7 @@
 
 <div class="schedule-list">
   <div class="timezone-message">
-    <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone }}
+    <strong>{{ 'System Time Zone:' | translate }}</strong> {{ timezone() }}
   </div>
 
   @if (cronPreview && !isPastMonth) {

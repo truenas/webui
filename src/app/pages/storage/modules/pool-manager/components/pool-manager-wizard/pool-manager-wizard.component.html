@@ -25,7 +25,6 @@
         <ix-general-wizard-step
           [isAddingVdevs]="!!existingPool"
           [pool]="existingPool"
-          [isStepActive]="activeStep === PoolCreationWizardStep.General"
         ></ix-general-wizard-step>
       </mat-step>
 
@@ -50,6 +49,7 @@
           </ng-template>
           <ix-enclosure-wizard-step
             [isStepActive]="activeStep === PoolCreationWizardStep.EnclosureOptions"
+            [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.EnclosureOptions)"
           ></ix-enclosure-wizard-step>
         </mat-step>
       }
@@ -218,7 +218,6 @@
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
           [isAddingVdevs]="!!existingPool"
-          [isStepActive]="activeStep === PoolCreationWizardStep.Review"
           (createPool)="submit()"
         ></ix-review-wizard-step>
       </mat-step>
