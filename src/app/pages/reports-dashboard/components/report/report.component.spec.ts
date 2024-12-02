@@ -5,7 +5,7 @@ import { format } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';

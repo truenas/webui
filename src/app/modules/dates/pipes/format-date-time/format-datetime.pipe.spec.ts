@@ -1,5 +1,5 @@
 import { createPipeFactory, SpectatorPipe } from '@ngneat/spectator/jest';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 
 describe('FormatDateTimePipe', () => {
   let spectator: SpectatorPipe<FormatDateTimePipe>;

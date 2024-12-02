@@ -76,6 +76,7 @@ export class FormatDateTimePipe implements PipeTransform {
       const localDate = date;
 
       // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
+      // TODO: Replace with formatDateTimeToDateFns in LocaleService
       if (this.dateFormat) {
         this.dateFormat = this.dateFormat
           .replace('YYYY', 'yyyy')

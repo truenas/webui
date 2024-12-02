@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -43,8 +43,8 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   ],
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
-  @Input() existing: Dataset;
-  @Input() parent: Dataset;
+  readonly existing = input<Dataset>();
+  readonly parent = input<Dataset>();
 
   readonly formValidityChange = output<boolean>();
 
@@ -85,8 +85,8 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (this.parent) {
-      this.form.controls.parent.setValue(this.parent.name);
+    if (this.parent()) {
+      this.form.controls.parent.setValue(this.parent().name);
       this.addNameValidators();
     }
 
@@ -107,29 +107,29 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
     const payload = this.form.value;
 
-    if (this.existing) {
+    if (this.existing()) {
       delete payload.share_type;
       return payload;
     }
 
     return {
       ...payload,
-      name: payload.name && this.form.controls.name.valid ? `${this.parent.name}/${payload.name}` : null,
+      name: payload.name && this.form.controls.name.valid ? `${this.parent().name}/${payload.name}` : null,
     };
   }
 
   private setFormValues(): void {
-    if (!this.existing) {
+    if (!this.existing()) {
       return;
     }
 
     this.form.patchValue({
-      name: this.existing.name,
+      name: this.existing().name,
     });
   }
 
   private setNameDisabledStatus(): void {
-    if (this.existing) {
+    if (this.existing()) {
       this.form.controls.name.disable();
     } else {
       this.form.controls.name.enable();
@@ -137,8 +137,8 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private addNameValidators(): void {
-    const isNameCaseSensitive = this.parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
-    const namesInUse = this.parent.children.map((child) => {
+    const isNameCaseSensitive = this.parent().casesensitivity.value === DatasetCaseSensitivity.Sensitive;
+    const namesInUse = this.parent().children.map((child) => {
       const childName = /[^/]*$/.exec(child.name)[0];
       if (isNameCaseSensitive) {
         return childName.toLowerCase();
@@ -148,7 +148,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.name.addValidators([
-      datasetNameTooLong(this.parent.name),
+      datasetNameTooLong(this.parent().name),
       forbiddenValues(namesInUse, isNameCaseSensitive),
     ]);
   }

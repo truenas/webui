@@ -6,7 +6,7 @@
     [required]="true"
     [multiple]="true"
     [tooltip]="helptext.source_datasets_tooltip"
-    [nodeProvider]="nodeProvider"
+    [nodeProvider]="nodeProvider()"
   ></ix-explorer>
   @if (!form.value.replicate) {
     <ix-checkbox

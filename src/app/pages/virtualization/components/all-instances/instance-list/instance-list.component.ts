@@ -83,7 +83,7 @@ export class InstanceListComponent {
     return {
       type: EmptyType.NoPageData,
       title: this.translate.instant('No instances'),
-      message: this.translate.instant('Instances you created will automatically appear here.'),
+      message: this.translate.instant('Instances you create will automatically appear here.'),
       large: true,
     };
   });
@@ -129,10 +129,6 @@ export class InstanceListComponent {
     if (this.isMobileView()) {
       this.toggleShowMobileDetails.emit(true);
     }
-  }
-
-  closeMobileDetails(): void {
-    this.toggleShowMobileDetails.emit(false);
   }
 
   resetSelection(): void {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -41,7 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class HardwareDiskEncryptionComponent implements OnChanges {
-  @Input() topologyDisk: TopologyDisk;
+  readonly topologyDisk = input.required<TopologyDisk>();
 
   hasGlobalEncryption$ = this.api.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
@@ -60,7 +60,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
 
   onManageSedPassword(): void {
     const dialog = this.matDialog.open(ManageDiskSedDialogComponent, {
-      data: this.topologyDisk.disk,
+      data: this.topologyDisk().disk,
     });
     dialog
       .afterClosed()
@@ -76,7 +76,7 @@ export class HardwareDiskEncryptionComponent implements OnChanges {
   }
 
   private loadDiskEncryption(): void {
-    this.hasDiskEncryption$ = this.api.call('disk.query', [[['devname', '=', this.topologyDisk.disk]], { extra: { passwords: true } }])
+    this.hasDiskEncryption$ = this.api.call('disk.query', [[['devname', '=', this.topologyDisk().disk]], { extra: { passwords: true } }])
       .pipe(
         map((disks) => disks[0].passwd !== ''),
         toLoadingState(),
