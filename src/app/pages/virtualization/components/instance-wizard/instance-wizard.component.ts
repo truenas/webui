@@ -40,8 +40,6 @@ import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFullPageFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
-import { IxFullPageFormComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -78,8 +76,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
-    IxFullPageFormComponent,
-    IxFullPageFormSectionComponent,
     IxButtonGroupComponent,
     IxExplorerComponent,
     NgxSkeletonLoaderModule,
@@ -111,19 +107,6 @@ export class InstanceWizardComponent implements OnInit {
     }))),
   );
 
-  protected searchMap = new Map<string, string>([
-    ['name', 'Name'],
-    ['autostart', 'Autostart'],
-    ['visibleImageName', 'Image'],
-    ['cpu', 'CPU Configuration'],
-    ['memory', 'Memory Size'],
-    ['environmentVariables', 'Environment Variables'],
-    ['disks', 'Disks'],
-    ['proxies', 'Proxies'],
-    ['usb_devices', 'USB Devices'],
-    ['gpu_devices', 'GPU Devices'],
-  ]);
-
   // TODO: MV supports only [Container, Physical] for now (based on the response)
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
@@ -138,7 +121,6 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     autostart: [false],
-    visibleImageName: ['', Validators.required],
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
@@ -201,7 +183,7 @@ export class InstanceWizardComponent implements OnInit {
         }
 
         this.form.controls.image.setValue(image.id);
-        this.form.controls.visibleImageName.setValue(image.label);
+        this.visibleImageName.setValue(image.label);
       });
   }
 
