@@ -1528,7 +1528,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "user-quotas"
     ],
     "anchor": "manage-user-quotas",
@@ -1552,7 +1552,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "group-quotas"
     ],
     "anchor": "manage-group-quotas",

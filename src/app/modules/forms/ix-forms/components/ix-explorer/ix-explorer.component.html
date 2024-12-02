@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -16,14 +16,14 @@
     ixRegisteredControl
     [value]="inputValue"
     [ixTest]="controlDirective.name"
-    [required]="required"
+    [required]="required()"
     [disabled]="isDisabled"
-    [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label, multiple: multiple ? ' Use commas to separate multiple values.' : '' }"
+    [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label: label(), multiple: multiple() ? ' Use commas to separate multiple values.' : '' }"
     (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   />
 </div>
-@if (canCreateDataset) {
+@if (canCreateDataset()) {
   <div class="create-dataset-container">
     <button
       *ixRequiresRoles="requiredRoles"
@@ -39,7 +39,7 @@
     </button>
   </div>
 }
-<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
+<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label()">
   <tree-root
     #tree
     [nodes]="nodes"
@@ -84,8 +84,8 @@
   </mat-error>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }
