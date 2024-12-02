@@ -14,6 +14,7 @@ import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-emp
 export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
   @Input('ix-table-empty') showEmptyRow: boolean;
   @Input() emptyConfig: EmptyConfig;
+
   componentRef: ComponentRef<IxTableEmptyRowComponent> = null;
   constructor(
     private viewContainerRef: ViewContainerRef,

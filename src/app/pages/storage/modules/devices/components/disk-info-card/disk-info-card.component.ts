@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -50,8 +50,8 @@ import { SlideInService } from 'app/services/slide-in.service';
   ],
 })
 export class DiskInfoCardComponent {
-  @Input() topologyDisk: TopologyDisk;
-  @Input() disk: Disk;
+  readonly topologyDisk = input<TopologyDisk>();
+  readonly disk = input<Disk>();
 
   readonly requiredRoles = [Role.FullAdmin];
 
@@ -63,16 +63,16 @@ export class DiskInfoCardComponent {
   ) {}
 
   get isHdd(): boolean {
-    return this.disk?.type === DiskType.Hdd;
+    return this.disk()?.type === DiskType.Hdd;
   }
 
   get isAvailable(): boolean {
-    return !!this.disk;
+    return !!this.disk();
   }
 
   onEdit(): void {
     const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
-    slideInRef.componentInstance.setFormDisk(this.disk);
+    slideInRef.componentInstance.setFormDisk(this.disk());
     slideInRef.slideInClosed$.pipe(
       filter((response) => Boolean(response)),
       untilDestroyed(this),
@@ -85,8 +85,8 @@ export class DiskInfoCardComponent {
       .open(ReplaceDiskDialogComponent, {
         data: {
           poolId: Number(poolId),
-          guid: this.topologyDisk.guid,
-          diskName: this.disk?.name || this.topologyDisk.guid,
+          guid: this.topologyDisk().guid,
+          diskName: this.disk()?.name || this.topologyDisk().guid,
         } as ReplaceDiskDialogData,
       })
       .afterClosed()

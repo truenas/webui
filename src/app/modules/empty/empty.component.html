@@ -1,7 +1,7 @@
 <div
-  [class]="'empty-page ' + conf.type"
-  [class.large]="conf?.large"
-  [class.compact]="conf?.compact"
+  [class]="'empty-page ' + conf().type"
+  [class.large]="conf()?.large"
+  [class.compact]="conf()?.compact"
 >
   @if (!isLoading) {
     <div class="icon-div">
@@ -15,21 +15,21 @@
   }
   @if (!isLoading) {
     <div>
-      <h3 class="empty-title">{{ conf.title | translate }}</h3>
-      @if (conf.message && !conf.compact) {
+      <h3 class="empty-title">{{ conf().title | translate }}</h3>
+      @if (conf().message && !conf().compact) {
         <p class="empty-message">
-          {{ conf.message | translate }}
+          {{ conf().message | translate }}
         </p>
       }
-      @if (conf.button && !conf.compact) {
+      @if (conf().button && !conf().compact) {
         <button
-          *ixRequiresRoles="requiredRoles"
+          *ixRequiresRoles="requiredRoles()"
           class="empty-action"
           mat-button
-          [ixTest]="[conf.button.label]"
+          [ixTest]="[conf().button.label]"
           (click)="doAction()"
         >
-          {{ conf.button.label | translate }}
+          {{ conf().button.label | translate }}
         </button>
       }
     </div>

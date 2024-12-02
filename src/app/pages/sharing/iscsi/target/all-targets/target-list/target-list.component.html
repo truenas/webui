@@ -1,5 +1,5 @@
 <mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="dataProvider().isLoading$ | async"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Targets' | translate }}</h3>
 
@@ -15,21 +15,22 @@
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
     >
       <thead
         ix-table-head
         [columns]="columns"
-        [dataProvider]="dataProvider"
+        [dataProvider]="dataProvider()"
       ></thead>
       <tbody
         ix-table-body
         [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="dataProvider.isLoading$ | async"
+        [dataProvider]="dataProvider()"
+        [isLoading]="dataProvider().isLoading$ | async"
+        (expanded)="expanded($event)"
       ></tbody>
     </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </mat-card-content>
 </mat-card>
