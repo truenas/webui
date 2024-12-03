@@ -5,7 +5,7 @@
         [prefixIcon]="iconMarker('search')"
         [formControl]="searchControl"
         [placeholder]="'Search Input Fields' | translate"
-        [autocompleteOptions]="searchOptions"
+        [autocompleteOptions]="searchOptions()"
       ></ix-input>
     </div>
     <ng-container #contentContainer></ng-container>
@@ -13,21 +13,19 @@
 
   <div class="search-container">
     <div class="search-card">
-      @if (searchMap()) {
-        <ix-input
-          [prefixIcon]="iconMarker('search')"
-          [formControl]="searchControl"
-          [placeholder]="'Search Input Fields' | translate"
-          [autocompleteOptions]="searchOptions()"
-        ></ix-input>
-      }
+      <ix-input
+        [prefixIcon]="iconMarker('search')"
+        [formControl]="searchControl"
+        [placeholder]="'Search Input Fields' | translate"
+        [autocompleteOptions]="searchOptions()"
+      ></ix-input>
       
       @for (section of sections(); track section) {
         <div class="section" (click)="onSectionClick(section.label)">
           {{ section.label }}
-          @if (!section.valid()) {
+          <!-- @if (!section.valid()) {
             <ix-icon name="warning"></ix-icon>
-          }
+          } -->
         </div>
       }
     </div>

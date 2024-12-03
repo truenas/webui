@@ -23,7 +23,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxListItemComponent {
   readonly canDelete = input(true);
   readonly label = input<string>();
-  formControlName = input<string>();
+  formGroupName = input<string | number>();
 
   readonly delete = output();
 
@@ -32,6 +32,6 @@ export class IxListItemComponent {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName() || '';
+    return this.formGroupName()?.toString() || '';
   }
 }

@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   contentChildren,
+  effect,
   OnInit,
   signal,
   ViewChild,
@@ -56,6 +57,13 @@ export class IxFormWithGlossaryComponent implements OnInit {
   @ViewChild('contentContainer', { read: ViewContainerRef, static: true })
   viewContainerRef!: ViewContainerRef;
 
+  controlOptionsEffect = effect(() => {
+    const options = this.formService.controlsOptions();
+    this.searchOptions.set(options);
+  }, {
+    allowSignalWrites: true,
+  });
+
   protected sections = contentChildren(IxFullPageFormSectionComponent);
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
@@ -69,7 +77,6 @@ export class IxFormWithGlossaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.handleSearchControl();
-    this.updateSearchOption('');
   }
 
   protected onSectionClick(id: string, label: string = null): void {
@@ -85,11 +92,6 @@ export class IxFormWithGlossaryComponent implements OnInit {
     timer(999)
       .pipe(untilDestroyed(this))
       .subscribe(() => nextElement.classList.remove('highlighted'));
-  }
-
-  private updateSearchOption(searchQuery: string): void {
-    const options: Option[] = this.formService.getControlsOptions(searchQuery);
-    this.searchOptions.set(options);
   }
 
   private handleSearchControl(): void {

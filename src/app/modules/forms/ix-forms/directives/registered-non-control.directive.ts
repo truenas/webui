@@ -1,8 +1,7 @@
 import {
-  AfterViewInit, Directive, ElementRef, Input,
+  Directive, ElementRef, Input,
   OnChanges,
 } from '@angular/core';
-import { NgControl } from '@angular/forms';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
@@ -13,43 +12,39 @@ export const ixControlLabelTag = 'ix-label';
  */
 @Directive({
   standalone: true,
-  selector: '[ixRegisteredControl]',
+  selector: '[ixRegisteredNonControl]',
 })
-export class RegisteredControlDirective implements AfterViewInit, OnChanges {
+export class RegisteredNonControlDirective implements OnChanges {
   @Input() label: string;
+  @Input() formArrayName: string;
+  @Input() formGroupName: string;
 
-  private controlReady = false;
   private labelReady = false;
+  private idReady = false;
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private formService: IxFormService,
-    private control: NgControl,
   ) { }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.label.currentValue) {
+    if (changes.formArrayName?.currentValue || changes.formGroupName?.currentValue) {
+      this.idReady = true;
+      this.tryRegisterControl();
+    }
+    if (changes.label?.currentValue) {
       this.labelReady = true;
       this.tryRegisterControl();
     }
   }
 
-  ngAfterViewInit(): void {
-    this.controlReady = true;
-    this.tryRegisterControl();
-  }
-
   private tryRegisterControl(): void {
-    if (!this.controlReady || !this.labelReady) {
+    if (!this.labelReady || !this.idReady) {
       return;
     }
-    const labelValue
-      = this.label || this.control.name?.toString() || 'Unnamed Control';
+    const labelValue = this.label || 'Unnamed Control';
 
     this.elementRef.nativeElement.setAttribute(ixControlLabelTag, labelValue);
-    this.formService.registerControl(this.control, this.elementRef);
-
-    this.controlReady = false;
-    this.labelReady = false;
+    this.formService.registerNonControlForSearch(this.formArrayName || this.formGroupName, this.elementRef);
   }
 }

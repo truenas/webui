@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -22,5 +22,4 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 export class IxFullPageFormSectionComponent {
   @Input() help: string;
   @Input() label: string;
-  valid = input.required<boolean>();
 }

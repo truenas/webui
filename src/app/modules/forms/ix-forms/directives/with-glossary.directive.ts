@@ -1,7 +1,6 @@
 import {
-  ComponentRef, Directive, Input, TemplateRef, ViewContainerRef, ViewRef, AfterContentInit,
+  ComponentRef, Directive, TemplateRef, ViewContainerRef, AfterContentInit,
 } from '@angular/core';
-import { FormGroupDirective } from '@angular/forms';
 import { IxFormWithGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-with-glossary/ix-form-with-glossary.component';
 
 @Directive({
@@ -9,21 +8,15 @@ import { IxFormWithGlossaryComponent } from 'app/modules/forms/ix-forms/componen
   standalone: true,
 })
 export class WithGlossaryDirective implements AfterContentInit {
-  @Input('withGlossary') formGroup!: FormGroupDirective;
   constructor(
-    private templateRef: TemplateRef<unknown>,
     private viewContainer: ViewContainerRef,
+    private templateRef: TemplateRef<unknown>,
   ) {}
 
   ngAfterContentInit(): void {
-    this.viewContainer.clear();
+    const glossaryRef: ComponentRef<IxFormWithGlossaryComponent>
+      = this.viewContainer.createComponent(IxFormWithGlossaryComponent);
 
-    const componentRef: ComponentRef<IxFormWithGlossaryComponent> = this.viewContainer.createComponent(
-      IxFormWithGlossaryComponent,
-    );
-
-    const embeddedView = this.viewContainer.createEmbeddedView(this.templateRef);
-    const contentContainer = componentRef.instance.viewContainerRef;
-    embeddedView.rootNodes.forEach((node: ViewRef) => contentContainer.insert(node));
+    glossaryRef.instance.viewContainerRef.createEmbeddedView(this.templateRef);
   }
 }
