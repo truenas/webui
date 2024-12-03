@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -9,6 +9,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -29,14 +30,15 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() acceptedFiles = '*.*';
-  @Input() multiple: boolean;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly acceptedFiles = input('*.*');
+  readonly multiple = input<boolean>();
+  readonly required = input<boolean>();
 
   value: FileList;
   isDisabled = false;

@@ -6,7 +6,7 @@
     <div>
       <div class="details-item">
         <span class="label">{{ 'Name' | translate }}:</span>
-        <span class="value">{{ name || unknownProp }}</span>
+        <span class="value">{{ name() || unknownProp }}</span>
       </div>
       @for (category of poolTopology | keyvalue; track category) {
         <div class="details-item">
@@ -20,7 +20,7 @@
       }
       <div class="details-item">
         <span class="label">{{ 'Total Capacity' | translate }}:</span>
-        <span class="value">{{ size | ixFileSize }}</span>
+        <span class="value">{{ size() | ixFileSize }}</span>
       </div>
     </div>
   </mat-card-content>

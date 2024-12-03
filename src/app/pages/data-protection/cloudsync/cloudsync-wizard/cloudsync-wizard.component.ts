@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge,
+  of,
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
@@ -45,6 +46,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
 })
 export class CloudSyncWizardComponent {
   @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
+  @ViewChild(forwardRef(() => CloudSyncProviderComponent)) cloudSyncProvider: CloudSyncProviderComponent;
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
@@ -61,7 +63,9 @@ export class CloudSyncWizardComponent {
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-  ) {}
+  ) {
+    this.chainedRef.requireConfirmationWhen(() => of(this.whatAndWhen.form.dirty || this.cloudSyncProvider.isDirty()));
+  }
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.api.call('cloudsync.create', [payload]);

@@ -57,6 +57,7 @@ describe('RsyncTaskFormComponent', () => {
   const chainedRef: ChainedRef<RsyncTask> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
   };
 
   let spectator: Spectator<RsyncTaskFormComponent>;

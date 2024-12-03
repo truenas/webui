@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -12,11 +12,12 @@
     #addressInput
     type=""
     matInput
-    [required]="required"
+    ixRegisteredControl
+    [required]="required()"
     [ixTest]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
-    [attr.aria-label]="label"
+    [attr.aria-label]="label()"
     (input)="onAddressInput(addressInput)"
     (blur)="onTouched()"
   />
@@ -35,10 +36,10 @@
   </mat-select>
 </div>
 
-@if (hint) {
+@if (hint()) {
   <p class="hint">
-    {{ hint | translate }}
+    {{ hint() | translate }}
   </p>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

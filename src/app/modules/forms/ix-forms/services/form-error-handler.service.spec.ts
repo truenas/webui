@@ -1,3 +1,4 @@
+import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { ApiErrorName } from 'app/enums/api.enum';
@@ -124,5 +125,20 @@ describe('FormErrorHandlerService', () => {
         backtrace: errorResponse.error.data.trace.formatted,
       });
     });
+
+    it('scrolls element with an error into view', fakeAsync(() => {
+      const elementMock = {
+        scrollIntoView: jest.fn(),
+        focus: jest.fn(),
+      } as unknown as HTMLElement;
+      jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
+
+      spectator.service.handleValidationErrors(fakeError, formGroup);
+
+      tick();
+
+      expect(elementMock.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
+      expect(elementMock.focus).toHaveBeenCalled();
+    }));
   });
 });

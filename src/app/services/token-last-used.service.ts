@@ -19,7 +19,7 @@ export class TokenLastUsedService {
   private tokenLastUsed$ = new BehaviorSubject<string>(this.window.localStorage.getItem('tokenLastUsed'));
 
   /**
-   * Check if token was used no more than 5 minutes ago (default )
+   * Check if token was used no more than 5 minutes ago (default)
   */
   get isTokenWithinTimeline$(): Observable<boolean> {
     return this.tokenLastUsed$.pipe(

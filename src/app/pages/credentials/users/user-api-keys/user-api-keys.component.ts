@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatAnchor, MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -27,6 +27,9 @@ import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provide
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import {
+  relativeDateColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -67,6 +70,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     AsyncPipe,
     PageHeaderComponent,
+    MatAnchor,
   ],
 })
 export class UserApiKeysComponent implements OnInit {
@@ -99,8 +103,8 @@ export class UserApiKeysComponent implements OnInit {
       title: this.translate.instant('Created Date'),
       propertyName: 'created_at',
     }),
-    dateColumn({
-      title: this.translate.instant('Expires Date'),
+    relativeDateColumn({
+      title: this.translate.instant('Expires'),
       propertyName: 'expires_at',
       getValue: (row) => row.expires_at?.$date || this.translate.instant('Never'),
     }),

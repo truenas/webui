@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
@@ -54,8 +56,8 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   ],
 })
 export class ZfsEncryptionCardComponent {
-  @Input() dataset: DatasetDetails;
-  @Input() parentDataset: DatasetDetails | undefined;
+  readonly dataset = input.required<DatasetDetails>();
+  readonly parentDataset = input<DatasetDetails | undefined>(undefined);
 
   constructor(
     private matDialog: MatDialog,
@@ -64,19 +66,19 @@ export class ZfsEncryptionCardComponent {
   ) { }
 
   get hasPassphrase(): boolean {
-    return isPasswordEncrypted(this.dataset);
+    return isPasswordEncrypted(this.dataset());
   }
 
   get isEncryptionRoot(): boolean {
-    return isEncryptionRoot(this.dataset);
+    return isEncryptionRoot(this.dataset());
   }
 
   get currentStateLabel(): string {
-    if (!this.dataset.encrypted) {
+    if (!this.dataset().encrypted) {
       return this.translate.instant('Unencrypted');
     }
 
-    if (this.dataset.locked) {
+    if (this.dataset().locked) {
       if (!this.isEncryptionRoot) {
         return this.translate.instant('Locked by ancestor');
       }
@@ -88,22 +90,22 @@ export class ZfsEncryptionCardComponent {
   }
 
   get canExportKey(): boolean {
-    return !this.hasPassphrase && this.dataset.key_loaded;
+    return !this.hasPassphrase && this.dataset().key_loaded;
   }
 
   get canEdit(): boolean {
-    return this.dataset.encrypted && !this.dataset.locked;
+    return this.dataset().encrypted && !this.dataset().locked;
   }
 
   get canUnlock(): boolean {
-    return this.isEncryptionRoot && this.dataset.locked && !this.parentDataset?.locked;
+    return this.isEncryptionRoot && this.dataset().locked && !this.parentDataset()?.locked;
   }
 
   onEditPressed(): void {
     const dialog = this.matDialog.open(EncryptionOptionsDialogComponent, {
       data: {
-        dataset: this.dataset,
-        parent: this.parentDataset,
+        dataset: this.dataset(),
+        parent: this.parentDataset(),
       } as EncryptionOptionsDialogData,
     });
     dialog
@@ -114,7 +116,7 @@ export class ZfsEncryptionCardComponent {
 
   onLock(): void {
     this.matDialog.open(LockDatasetDialogComponent, {
-      data: this.dataset,
+      data: this.dataset(),
     })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -123,18 +125,18 @@ export class ZfsEncryptionCardComponent {
 
   onExportKey(): void {
     this.matDialog.open(ExportDatasetKeyDialogComponent, {
-      data: this.dataset,
+      data: this.dataset(),
     });
   }
 
   onExportAllKeys(): void {
     this.matDialog.open(ExportAllKeysDialogComponent, {
-      data: this.dataset,
+      data: this.dataset(),
     });
   }
 
   get isRoot(): boolean {
-    return isRootDataset(this.dataset);
+    return isRootDataset(this.dataset());
   }
 
   protected readonly Role = Role;

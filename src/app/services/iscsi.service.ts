@@ -52,4 +52,8 @@ export class IscsiService {
   getGlobalSessions(): Observable<IscsiGlobalSession[]> {
     return this.api.call('iscsi.global.sessions');
   }
+
+  hasFibreChannel(): Observable<boolean> {
+    return this.api.call('fc.capable');
+  }
 }

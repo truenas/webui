@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -33,10 +34,10 @@ describe('UserApiKeysComponent', () => {
       local: true,
       revoked: false,
       created_at: {
-        $date: 1010101010101,
+        $date: new Date('2002-01-03T15:36:50Z').getTime(),
       },
       expires_at: {
-        $date: 1013001010101,
+        $date: new Date('2032-02-06T05:10:10Z').getTime(),
       },
     }, {
       id: 2,
@@ -45,7 +46,7 @@ describe('UserApiKeysComponent', () => {
       local: false,
       revoked: true,
       created_at: {
-        $date: 1011101010102,
+        $date: new Date('2002-01-15T05:23:30Z').getTime(),
       },
     },
   ] as ApiKey[];
@@ -94,11 +95,26 @@ describe('UserApiKeysComponent', () => {
     table = await loader.getHarness(IxTableHarness);
   });
 
+  it('renders a button to add new API key', async () => {
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
+  });
+
+  it('renders a button that opens API docs', async () => {
+    const docsButton = await loader.getHarness(MatButtonHarness.with({ text: 'API Docs' }));
+    const host = await docsButton.host();
+
+    expect(docsButton).toBeTruthy();
+    expect(await host.getAttribute('href')).toBe('/api/docs');
+  });
+
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires Date', ''],
-      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 15:36:50', '2002-02-06 05:10:10', ''],
-      ['second-api-key', 'root', 'No', 'Yes', '2002-01-15 05:23:30', 'Never', ''],
+      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires', ''],
+      ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', 'in 7 years', ''],
+      ['second-api-key', 'root', 'No', 'Yes', '2002-01-14 21:23:30', 'Never', ''],
     ];
 
     const cells = await table.getCellTexts();

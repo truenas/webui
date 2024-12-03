@@ -12,7 +12,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
-  private isOnErrorFocused = false;
+  private isFocusedOnError = false;
   private needToShowError = false;
 
   constructor(
@@ -67,7 +67,7 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string>,
     triggerAnchor: string,
   ): void {
-    this.isOnErrorFocused = false;
+    this.isFocusedOnError = false;
     this.needToShowError = false;
     const extra = (error as ApiError).extra as string[][];
     for (const extraItem of extra) {
@@ -138,10 +138,12 @@ export class FormErrorHandlerService {
       control.markAsTouched();
 
       const element = this.formService.getElementByControlName(field);
-      if (element && !this.isOnErrorFocused) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        element.focus();
-        this.isOnErrorFocused = true;
+      if (element && !this.isFocusedOnError) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          element.focus();
+          this.isFocusedOnError = true;
+        });
       }
     }
   }

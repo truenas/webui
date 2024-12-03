@@ -3,7 +3,7 @@
 </div>
 
 <cdk-accordion>
-  @for (aclItem of acl.acl; track aclItem; let i = $index) {
+  @for (aclItem of acl().acl; track aclItem; let i = $index) {
     <cdk-accordion-item
       #accordionItem="cdkAccordionItem"
       class="accordion-item"

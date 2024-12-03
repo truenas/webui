@@ -4,15 +4,17 @@ import {
   signal,
   WritableSignal,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
   filter, map, switchMap, take, tap,
@@ -31,6 +33,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -55,6 +59,10 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatCardHeader,
     MatCardTitle,
     MatButton,
+    MatIconButton,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
     TestDirective,
     RequiresRolesDirective,
     MatCardContent,
@@ -109,7 +117,9 @@ export class AppInfoCardComponent {
     const portalUrl = new URL(app.portals[name]);
 
     if (portalUrl.hostname === '0.0.0.0') {
-      portalUrl.hostname = this.window.location.hostname;
+      const hostname = this.window.location.hostname;
+      const isIpv6 = ipRegex.v6().test(hostname);
+      portalUrl.hostname = isIpv6 ? `[${hostname}]` : hostname;
     }
 
     this.redirect.openWindow(portalUrl.href);
@@ -157,22 +167,23 @@ export class AppInfoCardComponent {
     this.appService.checkIfAppIxVolumeExists(name).pipe(
       this.loader.withLoader(),
       switchMap((ixVolumeExists) => {
-        return this.dialogService.confirm({
-          title: helptextApps.apps.delete_dialog.title,
-          message: this.translate.instant('Delete {name}?', { name }),
-          secondaryCheckbox: ixVolumeExists,
-          secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-        });
+        return this.matDialog.open<
+          AppDeleteDialogComponent,
+          AppDeleteDialogInputData,
+          AppDeleteDialogOutputData
+        >(AppDeleteDialogComponent, {
+          data: { name, showRemoveVolumes: ixVolumeExists },
+        }).afterClosed();
       }),
-      filter(({ confirmed }) => confirmed),
+      filter(Boolean),
       untilDestroyed(this),
     )
-      .subscribe(({ secondaryCheckbox }) => this.executeDelete(name, secondaryCheckbox));
+      .subscribe(({ removeVolumes, removeImages }) => this.executeDelete(name, removeVolumes, removeImages));
   }
 
-  executeDelete(name: string, removeIxVolumes = false): void {
+  executeDelete(name: string, removeVolumes = false, removeImages = true): void {
     this.dialogService.jobDialog(
-      this.api.job('app.delete', [name, { remove_images: true, remove_ix_volumes: removeIxVolumes }]),
+      this.api.job('app.delete', [name, { remove_images: removeImages, remove_ix_volumes: removeVolumes }]),
       { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()
@@ -204,6 +215,26 @@ export class AppInfoCardComponent {
   private updateRollbackSetup(appName: string): void {
     this.api.call('app.rollback_versions', [appName]).pipe(
       tap((versions) => this.isRollbackPossible.set(versions.length > 0)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  openConvertDialog(): void {
+    const appName = this.app().name;
+    this.dialogService.confirm({
+      title: this.translate.instant('Convert to custom app'),
+      message: this.translate.instant(
+        'You are about to convert {appName} to a custom app. This will allow you to edit its yaml file directly.\nWarning. This operation cannot be undone.',
+        { appName },
+      ),
+      buttonText: this.translate.instant('Convert'),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.dialogService.jobDialog(
+        this.api.job('app.convert_to_custom', [appName]),
+        { title: this.translate.instant('Convert to custom app') },
+      ).afterClosed()),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }

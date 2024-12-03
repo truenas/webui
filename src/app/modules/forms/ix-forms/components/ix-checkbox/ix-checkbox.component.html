@@ -1,33 +1,34 @@
 <mat-checkbox
+  ixRegisteredControl
   color="primary"
   [checked]="value"
-  [required]="required"
+  [required]="required()"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
-  [attr.aria-label]="label"
+  [attr.aria-label]="label()"
   (change)="onCheckboxChanged($event)"
   (blur)="onTouch()"
 >
-  {{ label }}
-  @if (required) {
+  {{ label() }}
+  @if (required()) {
     <span class="required">*</span>
   }
 </mat-checkbox>
 
-@if (tooltip) {
+@if (tooltip()) {
   <ix-tooltip
     class="tooltip"
-    [header]="label"
-    [message]="tooltip"
+    [header]="label()"
+    [message]="tooltip()"
   ></ix-tooltip>
 }
 
-@if (warning) {
-  <ix-warning [message]="warning"></ix-warning>
+@if (warning()) {
+  <ix-warning [message]="warning()"></ix-warning>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }

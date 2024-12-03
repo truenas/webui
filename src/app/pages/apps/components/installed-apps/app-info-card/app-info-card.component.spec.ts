@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -18,6 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -93,7 +95,7 @@ describe('AppInfoCardComponent', () => {
         installedApps$: of([]),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
+        confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -104,6 +106,7 @@ describe('AppInfoCardComponent', () => {
       mockProvider(RedirectService),
       mockAuth(),
       mockApi([
+        mockJob('app.convert_to_custom'),
         mockJob('app.upgrade'),
         mockJob('app.delete'),
         mockCall('app.rollback_versions', ['1.2.1']),
@@ -157,19 +160,26 @@ describe('AppInfoCardComponent', () => {
     ]);
   });
 
-  it('shows header', () => {
+  it('shows header', async () => {
     setupTest(fakeApp);
     spectator.detectChanges();
     expect(spectator.query('mat-card-header h3')).toHaveText('Application Info');
     expect(spectator.query('mat-card-header button#edit-app')).toHaveText('Edit');
-    expect(spectator.query('mat-card-header button#update-app')).toHaveText('Update');
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
+    await menu.open();
+
+    const menuItems = await menu.getItems();
+    expect(menuItems).toHaveLength(2);
+    expect(await menuItems[0].getText()).toContain('Update');
+    expect(await menuItems[1].getText()).toContain('Convert to custom app');
   });
 
   it('opens upgrade app dialog when Update button is pressed', async () => {
     setupTest(fakeApp);
 
-    const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
-    await updateButton.click();
+    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
+    await menu.clickItem({ text: 'Update' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppUpgradeDialogComponent, {
       maxWidth: '750px',
@@ -180,6 +190,16 @@ describe('AppInfoCardComponent', () => {
         upgradeSummary,
       },
     });
+  });
+
+  it('converts app to custom when Convert button is pressed', async () => {
+    setupTest(fakeApp);
+
+    const menu = await loader.getHarness(MatMenuHarness.with({ selector: '[ixTest="app-info-menu"]' }));
+    await menu.clickItem({ text: 'Convert to custom app' });
+
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('app.convert_to_custom', ['test-user-app-name']);
   });
 
   it('navigates to app edit page when Edit button is pressed', async () => {
@@ -211,17 +231,18 @@ describe('AppInfoCardComponent', () => {
 
   it('opens delete app dialog when Delete button is pressed', async () => {
     setupTest(fakeApp);
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
+    } as MatDialogRef<unknown>);
 
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Delete',
-      message: 'Delete test-user-app-name?',
-      secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iXVolumes',
-    });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      AppDeleteDialogComponent,
+      { data: { name: 'test-user-app-name', showRemoveVolumes: true } },
+    );
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'app.delete',
       [fakeApp.name, { remove_images: true, remove_ix_volumes: true }],

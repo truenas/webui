@@ -6,6 +6,7 @@ export interface ApiError {
   extra: unknown;
   reason: string;
   trace: ApiErrorTrace;
+  message?: string | null;
 }
 
 export interface ApiErrorTrace {

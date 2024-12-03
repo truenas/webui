@@ -1,0 +1,49 @@
+<div class="bulk-actions-container">
+  <div class="bulk-selected">
+    <span>{{ checkedInstances().length }}</span>
+    <span>{{ 'Selected' | translate }}</span>
+  </div>
+
+  <div class="bulk-button-wrapper">
+    <label>{{ 'Bulk Actions' | translate }}</label>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="bulk-actions-menu"
+      [matMenuTriggerFor]="menu"
+    >
+      {{ 'Select action' | translate }}
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+    </button>
+  </div>
+
+  <mat-menu #menu="matMenu">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-menu-item
+      ixTest="start-selected"
+      [disabled]="isBulkStartDisabled()"
+      (click)="onBulkStart()"
+    >
+      <span>{{ 'Start All Selected' | translate }}</span>
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-menu-item
+      ixTest="stop-selected"
+      [disabled]="isBulkStopDisabled()"
+      (click)="onBulkStop()"
+    >
+      <span>{{ 'Stop All Selected' | translate }}</span>
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-menu-item
+      ixTest="restart-selected"
+      [disabled]="isBulkStopDisabled()"
+      (click)="onBulkRestart()"
+    >
+      <span>{{ 'Restart All Selected' | translate }}</span>
+    </button>
+  </mat-menu>
+</div>

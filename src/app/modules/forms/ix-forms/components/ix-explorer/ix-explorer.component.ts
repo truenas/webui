@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input,
+  Component, input,
   OnChanges,
   OnInit,
   ViewChild,
@@ -31,6 +30,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -55,18 +55,20 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     RequiresRolesDirective,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() multiple = false;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() root = mntPath;
-  @Input() nodeProvider: TreeNodeProvider;
-  @Input() canCreateDataset = false;
-  @Input() createDatasetProps: Omit<DatasetCreate, 'name'> = {};
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly multiple = input(false);
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly root = input(mntPath);
+  readonly nodeProvider = input<TreeNodeProvider>();
+  // TODO: Come up with a system of extendable controls.
+  readonly canCreateDataset = input(false);
+  readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
 
@@ -124,7 +126,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('multiple' in changes) {
-      this.treeOptions.useCheckbox = this.multiple;
+      this.treeOptions.useCheckbox = this.multiple();
     }
 
     if ('nodeProvider' in changes || 'root' in changes) {
@@ -158,7 +160,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
-    if (this.multiple) {
+    if (this.multiple()) {
       this.selectTreeNodes([
         ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
         event.node.id as string,
@@ -171,7 +173,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
-    if (this.multiple) {
+    if (this.multiple()) {
       this.selectTreeNodes(
         Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
       );
@@ -198,7 +200,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
       .filter(([, isSelected]) => isSelected)
       .map(([nodeId]) => nodeId);
 
-    if (!this.multiple) {
+    if (!this.multiple()) {
       newValue = newValue[0];
     }
 
@@ -213,7 +215,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   onInputChanged(inputValue: string): void {
     this.inputValue = inputValue;
-    this.value = this.multiple ? inputValue.split(',') : inputValue;
+    this.value = this.multiple() ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
     this.onChange(this.value);
   }
@@ -223,14 +225,14 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   parentDatasetName(path: string): string {
-    return (!path || path === this.root) ? '' : path.replace(`${this.root}/`, '');
+    return (!path || path === this.root()) ? '' : path.replace(`${this.root()}/`, '');
   }
 
   createDataset(): void {
     this.matDialog.open(CreateDatasetDialogComponent, {
       data: {
         parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
-        dataset: this.createDatasetProps,
+        dataset: this.createDatasetProps(),
       },
     }).afterClosed()
       .pipe(untilDestroyed(this))
@@ -243,7 +245,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         parentNode?.expand();
 
         this.setInitialNode();
-        this.writeValue(`${this.root}/${dataset.name}`);
+        this.writeValue(`${this.root()}/${dataset.name}`);
         this.onChange(this.value);
         this.tree.treeModel.update();
       });
@@ -259,8 +261,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   private setInitialNode(): void {
     this.nodes = [
       {
-        path: this.root,
-        name: this.root,
+        path: this.root(),
+        name: this.root(),
         hasChildren: true,
         type: ExplorerNodeType.Directory,
         isMountpoint: true,
@@ -285,11 +287,11 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.loadingError = null;
     this.cdr.markForCheck();
 
-    if (!this.nodeProvider) {
+    if (!this.nodeProvider()) {
       return of([]);
     }
 
-    return this.nodeProvider(node).pipe(
+    return this.nodeProvider()(node).pipe(
       catchError((error: ApiError | Error) => {
         this.loadingError = 'reason' in error ? error.reason : error.message;
         this.cdr.markForCheck();

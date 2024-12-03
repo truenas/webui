@@ -1,24 +1,25 @@
 <mat-slide-toggle
   color="primary"
+  ixRegisteredControl
   [checked]="value"
-  [required]="required"
+  [required]="required()"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
   (change)="onSlideToggleChanged($event)"
   (blur)="onTouch()"
 >
-  {{ label }}
-  @if (required) {
+  {{ label() }}
+  @if (required()) {
     <span class="required">*</span>
   }
 </mat-slide-toggle>
 
-@if (tooltip) {
+@if (tooltip()) {
   <ix-tooltip
     class="tooltip"
-    [header]="label"
-    [message]="tooltip"
+    [header]="label()"
+    [message]="tooltip()"
   ></ix-tooltip>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

@@ -156,10 +156,10 @@ describe('FeedbackDialogComponent', () => {
         expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         spectator.component.onIsLoadingChange(true);
-        expect(visibleForm.dialogRef.disableClose).toBe(true);
+        expect(visibleForm.dialogRef).toHaveProperty('disableClose', true);
 
         spectator.component.onIsLoadingChange(false);
-        expect(visibleForm.dialogRef.disableClose).toBe(false);
+        expect(visibleForm.dialogRef).toHaveProperty('disableClose', false);
       });
     });
   });

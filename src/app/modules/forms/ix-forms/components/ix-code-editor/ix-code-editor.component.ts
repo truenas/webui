@@ -1,6 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  input,
+  OnChanges,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
@@ -18,6 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 @UntilDestroy()
@@ -33,15 +42,16 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
     MatHint,
     AsyncPipe,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() required: boolean;
-  @Input() tooltip: string;
-  @Input() language: CodeEditorLanguage;
-  @Input() placeholder: string;
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly required = input<boolean>();
+  readonly tooltip = input<string>();
+  readonly language = input<CodeEditorLanguage>();
+  readonly placeholder = input<string>();
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -131,10 +141,10 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
       extensions: [
         basicSetup,
         updateListener,
-        languageFunctionsMap[this.language](),
+        languageFunctionsMap[this.language()](),
         oneDark,
         this.editableCompartment.of(EditorView.editable.of(true)),
-        placeholder(this.placeholder),
+        placeholder(this.placeholder()),
       ],
       parent: this.inputArea.nativeElement,
     };

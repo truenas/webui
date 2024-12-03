@@ -1,21 +1,25 @@
 <div class="full-width container has-tooltip">
-  @if (label || tooltip) {
+  @if (label() || tooltip()) {
     <ix-label
-      [label]="label"
-      [tooltip]="tooltip"
-      [required]="required"
+      [label]="label()"
+      [tooltip]="tooltip()"
+      [required]="required()"
       [ixTestOverride]="controlDirective.name"
     ></ix-label>
   }
 
-  <div class="input-container" [class.disabled]="disabledState$ | async">
+  <div
+    ixRegisteredControl
+    class="input-container"
+    [class.disabled]="disabledState$ | async"
+  >
     <div #inputArea></div>
   </div>
 
-  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-  @if (hint) {
-    <mat-hint>{{ hint }}</mat-hint>
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
   }
 </div>
 

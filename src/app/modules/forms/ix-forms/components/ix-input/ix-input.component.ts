@@ -1,12 +1,10 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
-  Input,
+  input,
   OnChanges,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -27,7 +25,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -55,25 +53,26 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
 })
-export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
-  @Input() label: string;
-  @Input() placeholder: string;
-  @Input() prefixIcon: MarkedIcon;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() readonly: boolean;
-  @Input() type: string;
-  @Input() autocomplete = 'off';
-  @Input() autocompleteOptions: Option[];
-  @Input() maxLength = 524288;
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
+  readonly label = input<string>();
+  readonly placeholder = input<string>();
+  readonly prefixIcon = input<MarkedIcon>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly readonly = input<boolean>();
+  readonly type = input<string>();
+  readonly autocomplete = input('off');
+  readonly autocompleteOptions = input<Option[]>();
+  readonly maxLength = input(524288);
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  @Input() format: (value: string | number) => string;
-  @Input() parse: (value: string | number) => string | number;
+  readonly format = input<(value: string | number) => string>();
+  readonly parse = input<(value: string | number) => string | number>();
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
 
@@ -93,8 +92,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private formService: IxFormService,
-    private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -106,17 +103,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   ngOnInit(): void {
-    if (this.autocompleteOptions) {
+    if (this.autocompleteOptions()) {
       this.handleAutocompleteOptionsOnInit();
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.formService.registerControl(this.controlDirective, this.elementRef);
-  }
-
-  ngOnDestroy(): void {
-    this.formService.unregisterControl(this.controlDirective);
   }
 
   get value(): string | number {
@@ -124,7 +113,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   set value(val: string | number) {
-    if (this.type === 'number') {
+    if (this.type() === 'number') {
       this._value = (val || val === 0) ? Number(val) : null;
       return;
     }
@@ -133,8 +122,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value && this.format) {
-      formatted = this.format(value);
+    if (value && this.format()) {
+      formatted = this.format()(value);
     }
     this.formatted = formatted;
     this.value = value;
@@ -145,8 +134,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     const value = ixInput.value;
     this.value = value;
     this.formatted = value;
-    if (value && this.parse) {
-      this.value = this.parse(value);
+    if (value && this.parse()) {
+      this.value = this.parse()(value);
     }
     this.onChange(this.value);
     this.filterOptions();
@@ -154,7 +143,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   invalidMessage(): string {
     return this.translate.instant('Value must be a {type}', {
-      type: this.type,
+      type: this.type(),
     });
   }
 
@@ -173,27 +162,27 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     return (
       !this.isDisabled
       && this.hasValue()
-      && this.type !== 'password'
-      && !this.readonly
+      && this.type() !== 'password'
+      && !this.readonly()
     );
   }
 
   getType(): string {
     // Mimicking a password field to prevent browsers from remembering passwords.
-    const isFakePassword = this.type === 'password' && (this.autocomplete === 'off' || this.showPassword);
-    return isFakePassword ? 'text' : this.type;
+    const isFakePassword = this.type() === 'password' && (this.autocomplete() === 'off' || this.showPassword);
+    return isFakePassword ? 'text' : this.type();
   }
 
   isPasswordField(): boolean {
-    return this.type === 'password' && !this.showPassword;
+    return this.type() === 'password' && !this.showPassword;
   }
 
   hasValue(): boolean {
     return this.invalid || this.value?.toString()?.length > 0;
   }
 
-  resetInput(input: HTMLInputElement): void {
-    input.value = '';
+  resetInput(inputElement: HTMLInputElement): void {
+    inputElement.value = '';
     this.invalid = false;
     this.value = '';
     this.formatted = '';
@@ -208,7 +197,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   focus(ixInput: HTMLInputElement): void {
     this.onTouch();
-    if (this.readonly) {
+    if (this.readonly()) {
       ixInput.select();
     }
     this.filterOptions('');
@@ -218,12 +207,12 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.onTouch();
 
     if (this.formatted) {
-      if (this.parse) {
-        this.value = this.parse(this.formatted);
+      if (this.parse()) {
+        this.value = this.parse()(this.formatted);
         this.formatted = this.value;
       }
-      if (this.format) {
-        this.formatted = this.format(this.value);
+      if (this.format()) {
+        this.formatted = this.format()(this.value);
       }
     }
 
@@ -232,7 +221,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       this.onChange(this.value);
     }
 
-    if (this.autocompleteOptions && !this.findExistingOption(this.value)) {
+    if (this.autocompleteOptions() && !this.findExistingOption(this.value)) {
       this.writeValue('');
       this.onChange('');
       this.formatted = '';
@@ -257,15 +246,15 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   filterOptions(customFilterValue?: string): void {
     const filterValue = (customFilterValue ?? this.value) || '';
-    if (this.autocompleteOptions) {
-      this.filteredOptions = this.autocompleteOptions.filter((option) => {
+    if (this.autocompleteOptions()) {
+      this.filteredOptions = this.autocompleteOptions().filter((option) => {
         return option.label.toString().toLowerCase().includes(filterValue.toString().toLowerCase());
       }).slice(0, 50);
     }
   }
 
   private findExistingOption(value: string | number): Option {
-    return this.autocompleteOptions?.find((option) => (option.label === value) || (option.value === value));
+    return this.autocompleteOptions()?.find((option) => (option.label === value) || (option.value === value));
   }
 
   private handleAutocompleteOptionsOnInit(): void {
@@ -277,7 +266,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     ).subscribe((value: string) => {
       const existingOption = this.findExistingOption(value);
 
-      if (this.autocompleteOptions && existingOption?.value) {
+      if (this.autocompleteOptions() && existingOption?.value) {
         this.value = existingOption.value;
         this.onChange(existingOption.value);
         this.cdr.markForCheck();

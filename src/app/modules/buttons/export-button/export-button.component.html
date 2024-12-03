@@ -10,6 +10,6 @@
     [disabled]="isLoading"
     (click)="onExport()"
   >
-    {{ 'Export As {fileType}' | translate:{ fileType: fileType.toUpperCase()} }}
+    {{ 'Export As {fileType}' | translate:{ fileType: fileType().toUpperCase()} }}
   </button>
 </div>

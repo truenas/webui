@@ -1528,7 +1528,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "user-quotas"
     ],
     "anchor": "manage-user-quotas",
@@ -1552,7 +1552,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "group-quotas"
     ],
     "anchor": "manage-group-quotas",
@@ -2538,26 +2538,6 @@
   {
     "hierarchy": [
       "Shares",
-      "Configure iSCSI"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing"
-    ],
-    "routerLink": [
-      "/sharing",
-      "iscsi",
-      "configuration"
-    ],
-    "anchor": "configure-iscsi",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
       "iSCSI Wizard"
     ],
     "synonyms": [
@@ -2602,6 +2582,63 @@
   {
     "hierarchy": [
       "Shares",
+      "iSCSI",
+      "Authorized Access"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "authorized-access"
+    ],
+    "routerLink": null,
+    "anchor": "shares-iscsi-authorized-access",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
+      "Extents"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "extents"
+    ],
+    "routerLink": null,
+    "anchor": "shares-iscsi-extents",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
+      "Fibre Channel Ports"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "fibre-channel-ports"
+    ],
+    "routerLink": null,
+    "anchor": "shares-iscsi-fibre-channel-ports",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
       "Initiators",
       "Add Initiator"
     ],
@@ -2623,18 +2660,40 @@
     "hierarchy": [
       "Shares",
       "iSCSI",
-      "Target Global Configuration"
+      "Initiators"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Initiator Group"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
-      "configuration"
+      "initiators"
     ],
     "routerLink": null,
-    "anchor": "target-global-configuration",
+    "anchor": "shares-iscsi-initiators",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
+      "Global Target Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "SHARING_ISCSI_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2653,45 +2712,7 @@
       "portals"
     ],
     "routerLink": null,
-    "anchor": "portals",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "iSCSI",
-      "Initiators Groups"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "iscsi",
-      "initiator"
-    ],
-    "routerLink": null,
-    "anchor": "initiators-groups",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "iSCSI",
-      "Authorized Access"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "iscsi",
-      "auth"
-    ],
-    "routerLink": null,
-    "anchor": "authorized-access",
+    "anchor": "shares-iscsi-portals",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2707,48 +2728,10 @@
     "anchorRouterLink": [
       "/sharing",
       "iscsi",
-      "target"
+      "targets"
     ],
     "routerLink": null,
-    "anchor": "targets",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "iSCSI",
-      "Extents"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "iscsi",
-      "extent"
-    ],
-    "routerLink": null,
-    "anchor": "extents",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "iSCSI",
-      "Associated Targets"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "iscsi",
-      "associatedtarget"
-    ],
-    "routerLink": null,
-    "anchor": "associated-targets",
+    "anchor": "shares-iscsi-targets",
     "triggerAnchor": null,
     "section": "ui"
   },

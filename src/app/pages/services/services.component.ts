@@ -11,6 +11,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
 } from 'rxjs/operators';
+import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -42,7 +43,6 @@ import {
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IscsiService } from 'app/services/iscsi.service';
 import { ServicesService } from 'app/services/services.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
@@ -55,7 +55,6 @@ import { waitForServices } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-services',
   templateUrl: './services.component.html',
-  providers: [IscsiService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -147,6 +146,7 @@ export class ServicesComponent implements OnInit {
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
+    private navigateAndInteract: NavigateAndInteractService,
   ) {}
 
   ngOnInit(): void {
@@ -154,7 +154,7 @@ export class ServicesComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({
       list: this.services,
       query,
@@ -212,7 +212,7 @@ export class ServicesComponent implements OnInit {
   private configureService(row: Service): void {
     switch (row.service) {
       case ServiceName.Iscsi:
-        this.router.navigate(['/sharing', 'iscsi']);
+        this.navigateAndInteract.navigateAndInteract(['/sharing', 'iscsi'], 'global-configuration');
         break;
       case ServiceName.Ftp:
         this.slideInService.open(ServiceFtpComponent, { wide: true });

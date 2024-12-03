@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
@@ -33,6 +34,7 @@ import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
+import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
 
@@ -59,9 +61,12 @@ import { SlideInService } from 'app/services/slide-in.service';
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    UiSearchDirective,
   ],
 })
 export class ExtentListComponent implements OnInit {
+  protected readonly searchableElements = extentListElements;
+
   readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
@@ -163,7 +168,7 @@ export class ExtentListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
