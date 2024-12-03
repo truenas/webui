@@ -12,7 +12,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -43,7 +42,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatTooltip,
     IxIconComponent,
     MatProgressBar,
-    LetDirective,
     JobItemComponent,
     MatDialogActions,
     MatButton,
