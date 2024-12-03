@@ -168,7 +168,6 @@ describe('CloudBackupFormComponent', () => {
           minute: '0',
           month: '*',
         },
-        snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
@@ -185,7 +184,6 @@ describe('CloudBackupFormComponent', () => {
         Folder: '/',
         Enabled: false,
         Bucket: 'bucket1',
-        'Take Snapshot': true,
         Exclude: ['/test'],
         'Transfer Setting': 'Fast Storage',
       });
@@ -213,7 +211,6 @@ describe('CloudBackupFormComponent', () => {
           minute: '0',
           month: '*',
         },
-        snapshot: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
@@ -248,7 +245,6 @@ describe('CloudBackupFormComponent', () => {
         'Pre-script': '',
         Schedule: 'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
-        'Take Snapshot': false,
         'Transfer Setting': 'Performance',
       });
     });
@@ -288,7 +284,6 @@ describe('CloudBackupFormComponent', () => {
           minute: '0',
           month: '*',
         },
-        snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
