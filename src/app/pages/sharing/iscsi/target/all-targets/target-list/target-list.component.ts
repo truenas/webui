@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit,
   output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -11,6 +11,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -62,6 +63,7 @@ export class TargetListComponent implements OnInit {
   readonly showMobileDetails = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input<AsyncDataProvider<IscsiTarget>>();
+  readonly targets = input<IscsiTarget[]>();
 
   protected readonly searchableElements = targetListElements;
 
@@ -82,6 +84,14 @@ export class TargetListComponent implements OnInit {
       title: this.translate.instant('Alias'),
       propertyName: 'alias',
     }),
+    textColumn({
+      title: this.translate.instant('Mode'),
+      propertyName: 'mode',
+      hidden: true,
+      getValue: (row) => (iscsiTargetModeNames.has(row.mode)
+        ? this.translate.instant(iscsiTargetModeNames.get(row.mode))
+        : row.mode || '-'),
+    }),
   ], {
     uniqueRowTag: (row) => 'iscsi-target-' + row.name,
     ariaLabels: (row) => [row.name, this.translate.instant('Target')],
@@ -92,7 +102,24 @@ export class TargetListComponent implements OnInit {
     private slideInService: SlideInService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    effect(() => {
+      if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
+        this.columns = this.columns.map((column) => {
+          if (column.propertyName === 'mode') {
+            return {
+              ...column,
+              hidden: false,
+            };
+          }
+
+          return column;
+        });
+        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.setDefaultSort();
@@ -133,11 +160,5 @@ export class TargetListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query;
     this.dataProvider().setFilter({ query, columnKeys: ['name'] });
-  }
-
-  columnsChange(columns: typeof this.columns): void {
-    this.columns = [...columns];
-    this.cdr.detectChanges();
-    this.cdr.markForCheck();
   }
 }
