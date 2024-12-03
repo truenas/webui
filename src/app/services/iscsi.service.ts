@@ -45,6 +45,10 @@ export class IscsiService {
     return this.api.call('iscsi.targetextent.query', []);
   }
 
+  deleteTargetExtent(id: number): Observable<boolean> {
+    return this.api.call('iscsi.targetextent.delete', [id]);
+  }
+
   getAuth(): Observable<IscsiAuthAccess[]> {
     return this.api.call('iscsi.auth.query', []);
   }
