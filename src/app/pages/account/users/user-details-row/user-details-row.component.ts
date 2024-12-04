@@ -2,20 +2,21 @@ import {
   Component, ChangeDetectionStrategy, input,
   output,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import {
-  DeleteUserDialogComponent,
-} from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { DeleteUserDialogComponent } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +28,8 @@ export class UserDetailsRowComponent {
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
+  loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+
   protected readonly Role = Role;
 
   constructor(
@@ -35,6 +38,7 @@ export class UserDetailsRowComponent {
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
