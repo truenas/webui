@@ -564,7 +564,12 @@ describe('SmbFormComponent', () => {
       api = spectator.inject(ApiService);
       jest.spyOn(api, 'call').mockImplementation((method) => {
         if (method === 'sharing.smb.share_precheck') {
-          return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
+          return throwError(() => ({
+            jsonrpc: '2.0',
+            error: {
+              data: { reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' },
+            },
+          }));
         }
         return null;
       });
@@ -599,7 +604,13 @@ describe('SmbFormComponent', () => {
           case 'sharing.smb.presets':
             return of({ ...presets });
           case 'sharing.smb.create':
-            return throwError({ reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' });
+            return throwError(() => ({
+              error: {
+                data: {
+                  reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
+                },
+              },
+            }));
           default:
             return of(null);
         }
@@ -631,7 +642,13 @@ describe('SmbFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
-        { reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' },
+        {
+          error: {
+            data: {
+              reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
+            },
+          },
+        },
         spectator.component.form,
         {},
         'smb-form-toggle-advanced-options',
