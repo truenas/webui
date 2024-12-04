@@ -83,12 +83,24 @@ export class FilesystemService {
               return;
             }
 
+            let fileType: ExplorerNodeType;
+            switch (file.type) {
+              case FileType.Directory:
+                fileType = ExplorerNodeType.Directory;
+                break;
+              case FileType.Symlink:
+                fileType = ExplorerNodeType.Symlink;
+                break;
+              default:
+                fileType = ExplorerNodeType.File;
+                break;
+            }
             children.push({
               path: file.path,
               name: file.name,
               isMountpoint: file.attributes.includes(FileAttribute.MountRoot),
               isLock: file.attributes.includes(FileAttribute.Immutable),
-              type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
+              type: fileType,
               hasChildren: file.type === FileType.Directory,
             });
           });
