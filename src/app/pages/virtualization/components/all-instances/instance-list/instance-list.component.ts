@@ -66,7 +66,7 @@ export class InstanceListComponent {
   }
 
   protected readonly filteredInstances = computed(() => {
-    return this.instances().filter((instance) => {
+    return (this.instances() || []).filter((instance) => {
       return instance?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
     });
   });
@@ -96,7 +96,7 @@ export class InstanceListComponent {
     private deviceStore: VirtualizationDevicesStore,
   ) {
     toObservable(this.instances).pipe(
-      filter((instances) => !!instances.length),
+      filter((instances) => !!instances?.length),
       switchMap(() => this.activatedRoute.params),
       untilDestroyed(this),
     ).subscribe((params) => {
