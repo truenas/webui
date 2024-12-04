@@ -28,6 +28,12 @@ describe('FilesystemService', () => {
             type: FileType.File,
             attributes: [FileAttribute.Immutable],
           },
+          {
+            path: '/mnt/parent/zvol',
+            name: 'zvol',
+            type: FileType.Symlink,
+            attributes: [FileAttribute.Immutable],
+          },
         ] as FileRecord[]),
       ]),
     ],
@@ -37,7 +43,7 @@ describe('FilesystemService', () => {
 
   describe('getFilesystemNodeProvider', () => {
     it('returns a TreeNodeProvider that calls filesystem.listdir to list files and directories', async () => {
-      const treeNodeProvider = spectator.service.getFilesystemNodeProvider();
+      const treeNodeProvider = spectator.service.getFilesystemNodeProvider({ datasetsAndZvols: true });
 
       const childNodes = await lastValueFrom(
         treeNodeProvider({
@@ -69,6 +75,14 @@ describe('FilesystemService', () => {
           name: 'file.txt',
           path: '/mnt/parent/file.txt',
           type: ExplorerNodeType.File,
+          isMountpoint: false,
+          isLock: true,
+        },
+        {
+          hasChildren: false,
+          name: 'zvol',
+          path: '/mnt/parent/zvol',
+          type: ExplorerNodeType.Symlink,
           isMountpoint: false,
           isLock: true,
         },
