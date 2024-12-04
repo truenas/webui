@@ -1,0 +1,22 @@
+mat-card-content {
+  p,
+  button {
+    margin: 0 0 6px;
+  }
+}
+
+.mapped-extent {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+:host .button-loader {
+  display: block;
+  flex: unset;
+  max-width: 80px;
+
+  ::ng-deep .loader {
+    margin-bottom: -6px;
+  }
+}

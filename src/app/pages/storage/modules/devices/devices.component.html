@@ -10,10 +10,8 @@
   </a>
 </ix-page-header>
 
-<div
-  *appLet="selectedNode$ | async as selectedNode"
-  class="container"
->
+@let selectedNode = selectedNode$ | async;
+<div class="container">
   <div class="table-container">
     <ix-fake-progress-bar
       class="loader-bar"

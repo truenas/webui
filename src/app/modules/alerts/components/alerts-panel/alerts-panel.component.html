@@ -55,57 +55,57 @@
       </h4>
     </div>
   }
-  <div *appLet="unreadAlerts$ | async as unreadAlerts">
-    @if (!unreadAlerts.length) {
-      <div class="no-alerts">
-        <ix-icon class="icon" name="info"></ix-icon>
-        <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
-      </div>
-    } @else {
-      <div class="alert-list unread-alerts">
-        @for (alert of unreadAlerts; track alert.id; let last = $last) {
-          <div
-            class="alert"
-            role="listitem"
-            [class.alert-last]="last"
-          >
-            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
-          </div>
-        }
-      </div>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        matRipple
-        class="button-row"
-        ixTest="dismiss-all-alerts"
-        (click)="onDismissAll()"
-      >
-        {{ 'Dismiss All Alerts' | translate }}
-      </button>
-    }
-  </div>
-  <div *appLet="dismissedAlerts$ | async as dismissedAlerts">
-    @if (dismissedAlerts.length) {
-      <div class="alert-list dismissed-alerts">
-        @for (alert of dismissedAlerts; track alert.id; let last = $last) {
-          <div
-            class="alert"
-            role="listitem"
-            [class.alert-last]="last"
-          >
-            <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
-          </div>
-        }
-      </div>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        class="button-row"
-        matRipple
-        ixTest="reopen-all-alerts"
-        (click)="onReopenAll()"
-      >
-        {{ 'Re-Open All Alerts' | translate }}
-      </button>
-    }
-  </div>
+
+  @let unreadAlerts = unreadAlerts$ | async;
+  @if (!unreadAlerts.length) {
+    <div class="no-alerts">
+      <ix-icon class="icon" name="info"></ix-icon>
+      <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
+    </div>
+  } @else {
+    <div class="alert-list unread-alerts">
+      @for (alert of unreadAlerts; track alert.id; let last = $last) {
+        <div
+          class="alert"
+          role="listitem"
+          [class.alert-last]="last"
+        >
+          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+        </div>
+      }
+    </div>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      matRipple
+      class="button-row"
+      ixTest="dismiss-all-alerts"
+      (click)="onDismissAll()"
+    >
+      {{ 'Dismiss All Alerts' | translate }}
+    </button>
+  }
+
+  @let dismissedAlerts = dismissedAlerts$ | async;
+  @if (dismissedAlerts.length) {
+    <div class="alert-list dismissed-alerts">
+      @for (alert of dismissedAlerts; track alert.id; let last = $last) {
+        <div
+          class="alert"
+          role="listitem"
+          [class.alert-last]="last"
+        >
+          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
+        </div>
+      }
+    </div>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      class="button-row"
+      matRipple
+      ixTest="reopen-all-alerts"
+      (click)="onReopenAll()"
+    >
+      {{ 'Re-Open All Alerts' | translate }}
+    </button>
+  }
 }
