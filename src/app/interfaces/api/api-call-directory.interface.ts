@@ -113,6 +113,7 @@ import {
   FibreChannelPort,
   FibreChannelPortChoices,
   FibreChannelPortUpdate,
+  FibreChannelStatus,
 } from 'app/interfaces/fibre-channel.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
@@ -462,6 +463,7 @@ export interface ApiCallDirectory {
   'fcport.delete': { params: [id: number]; response: true };
   'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
+  'fcport.status': { params: []; response: FibreChannelStatus[] };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };

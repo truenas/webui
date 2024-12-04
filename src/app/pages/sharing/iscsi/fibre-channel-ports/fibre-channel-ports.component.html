@@ -1,9 +1,33 @@
 <mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="true"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Fibre Channel Ports' | translate }}</h3>
+
+    <ix-search-input1
+      [value]="searchQuery()"
+      (search)="onSearch($event)"
+    ></ix-search-input1>
   </mat-toolbar-row>
   <mat-card-content>
 
+    <ix-table
+      [ixUiSearch]="searchableElements.elements.list"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+      >
+      </tbody>
+    </ix-table>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </mat-card-content>
 </mat-card>
