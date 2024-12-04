@@ -25,14 +25,11 @@
     color: var(--fg1);
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
-    min-height: 56px;
+    padding: 13px 0;
 
     h2 {
       align-items: center;
       display: flex;
-      margin-top: 20px;
-      min-height: 36px;
     }
   }
 
