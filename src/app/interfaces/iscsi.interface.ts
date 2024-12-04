@@ -84,3 +84,8 @@ export interface IscsiTargetExtent {
 }
 
 export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;
+
+export interface AssociatedTargetDialogData {
+  target: IscsiTarget;
+  extents: IscsiExtent[];
+}
