@@ -6,9 +6,9 @@
   #ixSearchInput
   matInput
   ixTest="search"
-  [maxLength]="maxLength"
+  [maxLength]="maxLength()"
   [value]="searchValue"
-  [disabled]="disabled"
+  [disabled]="disabled()"
   [placeholder]="'Search' | translate"
   (input)="onInput(ixSearchInput.value)"
 />

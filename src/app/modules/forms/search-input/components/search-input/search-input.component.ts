@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, input,
   Input,
   OnChanges, output,
   ViewChild,
@@ -23,10 +23,10 @@ import {
   imports: [AdvancedSearchComponent, BasicSearchComponent],
 })
 export class SearchInputComponent<T> implements OnChanges {
-  @Input() allowAdvanced = true;
-  @Input() properties: SearchProperty<T>[] = [];
+  readonly allowAdvanced = input(true);
+  readonly properties = input<SearchProperty<T>[]>([]);
   @Input() query: SearchQuery<T>;
-  @Input() advancedSearchPlaceholder?: string;
+  readonly advancedSearchPlaceholder = input<string>();
 
   readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();
@@ -79,7 +79,7 @@ export class SearchInputComponent<T> implements OnChanges {
     } else if (this.query.isBasicQuery) {
       this.isInAdvancedMode = false;
       this.basicQuery = this.query.query;
-    } else if (this.allowAdvanced) {
+    } else if (this.allowAdvanced()) {
       this.isInAdvancedMode = true;
       this.advancedQuery = (this.query as AdvancedSearchQuery<T>).filters;
     }

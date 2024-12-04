@@ -4,8 +4,7 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Injector,
-  Input,
+  Injector, input,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -30,7 +29,8 @@ import { SlideInService } from 'app/services/slide-in.service';
   imports: [CdkTrapFocus],
 })
 export class SlideInComponent implements OnInit, OnDestroy {
-  @Input() id: string;
+  readonly id = input<string>();
+
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
@@ -55,7 +55,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // ensure id attribute exists
-    if (!this.id) {
+    if (!this.id()) {
       return;
     }
 
