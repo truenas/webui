@@ -1,10 +1,11 @@
-import { SimpleChange } from '@angular/core';
-import { Overwrite } from 'utility-types';
+import { Signal, SimpleChange } from '@angular/core';
 
-export type IxSimpleChange<T> = Overwrite<SimpleChange, {
-  previousValue: T;
-  currentValue: T;
-}>;
+type UnwrapSignal<T> = T extends Signal<infer U> ? U : T;
+
+export type IxSimpleChange<T> = Omit<SimpleChange, 'previousValue' | 'currentValue'> & {
+  previousValue: UnwrapSignal<T>;
+  currentValue: UnwrapSignal<T>;
+};
 
 export type IxSimpleChanges<T> = {
   [K in keyof T]: IxSimpleChange<T[K]>;

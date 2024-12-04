@@ -14,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   filter, Observable, Subscription, switchMap, tap,
 } from 'rxjs';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
@@ -74,7 +73,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
     PowerMenuComponent,
     AsyncPipe,
     TranslateModule,
-    LetDirective,
     UiSearchDirective,
     TestDirective,
     TruecommandButtonComponent,

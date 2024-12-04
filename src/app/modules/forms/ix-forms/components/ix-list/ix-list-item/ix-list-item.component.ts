@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, Input, input, output,
+  Component, input, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,7 +22,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxListItemComponent {
   readonly canDelete = input(true);
-  @Input() label?: string;
+  readonly label = input<string>();
 
   readonly delete = output();
 

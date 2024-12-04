@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input,
+  Component, input,
   OnChanges,
   OnInit,
   output,
@@ -76,10 +75,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
-  @Input() parent: Dataset;
-  @Input() existing: Dataset;
-  @Input() datasetPreset: DatasetPreset;
-  @Input() advancedMode: boolean;
+  readonly parent = input<Dataset>();
+  readonly existing = input<Dataset>();
+  readonly datasetPreset = input<DatasetPreset>();
+  readonly advancedMode = input<boolean>();
 
   readonly advancedModeChange = output();
   readonly formValidityChange = output<boolean>();
@@ -246,34 +245,34 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(): void {
-    if (!this.existing) {
+    if (!this.existing()) {
       return;
     }
 
-    let specialSmallBlockSize = getFieldValue(this.existing.special_small_block_size, this.parent) as (number | 'INHERIT');
+    let specialSmallBlockSize = getFieldValue(this.existing().special_small_block_size, this.parent()) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
     this.form.patchValue({
-      comments: this.existing.comments?.source === ZfsPropertySource.Local ? this.existing.comments.value : '',
-      sync: getFieldValue(this.existing.sync, this.parent),
-      compression: getFieldValue(this.existing.compression, this.parent),
-      atime: getFieldValue(this.existing.atime, this.parent),
-      deduplication: getFieldValue(this.existing.deduplication, this.parent),
-      checksum: getFieldValue(this.existing.checksum, this.parent),
-      readonly: getFieldValue(this.existing.readonly, this.parent),
-      exec: getFieldValue(this.existing.exec, this.parent),
-      recordsize: getFieldValue(this.existing.recordsize, this.parent),
-      snapdir: this.existing.snapdir?.value,
-      snapdev: getFieldValue(this.existing.snapdev, this.parent),
-      copies: this.existing.copies
-        ? Number(this.existing.copies.value)
+      comments: this.existing().comments?.source === ZfsPropertySource.Local ? this.existing().comments.value : '',
+      sync: getFieldValue(this.existing().sync, this.parent()),
+      compression: getFieldValue(this.existing().compression, this.parent()),
+      atime: getFieldValue(this.existing().atime, this.parent()),
+      deduplication: getFieldValue(this.existing().deduplication, this.parent()),
+      checksum: getFieldValue(this.existing().checksum, this.parent()),
+      readonly: getFieldValue(this.existing().readonly, this.parent()),
+      exec: getFieldValue(this.existing().exec, this.parent()),
+      recordsize: getFieldValue(this.existing().recordsize, this.parent()),
+      snapdir: this.existing().snapdir?.value,
+      snapdev: getFieldValue(this.existing().snapdev, this.parent()),
+      copies: this.existing().copies
+        ? Number(this.existing().copies.value)
         : null,
-      acltype: getFieldValue(this.existing.acltype, this.parent) as DatasetAclType,
-      aclmode: getFieldValue(this.existing.aclmode, this.parent) as AclMode,
-      casesensitivity: this.existing.casesensitivity?.value,
-      special_small_block_size: this.existing.special_small_block_size
+      acltype: getFieldValue(this.existing().acltype, this.parent()) as DatasetAclType,
+      aclmode: getFieldValue(this.existing().aclmode, this.parent()) as AclMode,
+      casesensitivity: this.existing().casesensitivity?.value,
+      special_small_block_size: this.existing().special_small_block_size
         ? specialSmallBlockSize
         : null,
     });
@@ -289,11 +288,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const invalidInheritAclType = aclTypeControl.value === DatasetAclType.Inherit
       && aclModeControl.value !== AclMode.Inherit;
 
-    if (!!this.existing && (invalidPosixOrOffAclType || invalidInheritAclType) && !aclTypeControl.touched) {
+    if (!!this.existing() && (invalidPosixOrOffAclType || invalidInheritAclType) && !aclTypeControl.touched) {
       return;
     }
 
-    if (!this.parent) {
+    if (!this.parent()) {
       aclModeControl.disable({ emitEvent: false });
       aclTypeControl.disable({ emitEvent: false });
       return;
@@ -302,7 +301,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (aclTypeControl.value) {
       case DatasetAclType.Nfsv4:
-        if (!this.existing) {
+        if (!this.existing()) {
           aclModeControl.setValue(AclMode.Passthrough);
         }
         aclModeControl.enable();
@@ -320,7 +319,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setSelectOptions(): void {
-    if (!this.parent) {
+    if (!this.parent()) {
       this.syncOptions$ = this.defaultSyncOptions$;
       this.compressionOptions$ = this.defaultCompressionOptions$;
       this.atimeOptions$ = this.defaultAtimeOptions$;
@@ -336,46 +335,46 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.syncOptions$ = this.defaultSyncOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.sync.value),
+      this.datasetFormService.addInheritOption(this.parent().sync.value),
     );
     this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.compression.value),
+      this.datasetFormService.addInheritOption(this.parent().compression.value),
     );
     this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.atime.value),
+      this.datasetFormService.addInheritOption(this.parent().atime.value),
     );
     this.deduplicationOptions$ = this.defaultDeduplicationOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.deduplication.value),
+      this.datasetFormService.addInheritOption(this.parent().deduplication.value),
     );
     this.checksumOptions$ = this.defaultChecksumOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.checksum.value),
+      this.datasetFormService.addInheritOption(this.parent().checksum.value),
     );
     this.readonlyOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.readonly.value),
+      this.datasetFormService.addInheritOption(this.parent().readonly.value),
     );
     this.execOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.exec.value),
+      this.datasetFormService.addInheritOption(this.parent().exec.value),
     );
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.snapdev.value),
+      this.datasetFormService.addInheritOption(this.parent().snapdev.value),
     );
 
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
       this.datasetFormService.addInheritOption(
-        buildNormalizedFileSize(this.parent.recordsize.parsed),
+        buildNormalizedFileSize(this.parent().recordsize.parsed),
       ),
     );
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.special_small_block_size.value),
+      this.datasetFormService.addInheritOption(this.parent().special_small_block_size.value),
     );
   }
 
   private setUpDatasetPresetSelect(): void {
-    if (!this.datasetPreset || this.existing) {
+    if (!this.datasetPreset() || this.existing()) {
       return;
     }
 
-    if (this.datasetPreset === DatasetPreset.Smb) {
+    if (this.datasetPreset() === DatasetPreset.Smb) {
       this.form.patchValue({
         aclmode: AclMode.Restricted,
         casesensitivity: DatasetCaseSensitivity.Insensitive,
@@ -462,7 +461,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private disableCaseSensitivityOnEdit(): void {
-    if (!this.existing) {
+    if (!this.existing()) {
       return;
     }
 
@@ -470,11 +469,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpRecordsizeWarning(): void {
-    if (!this.parent) {
+    if (!this.parent()) {
       return;
     }
 
-    const root = this.parent.id.split('/')[0];
+    const root = this.parent().id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
       this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),

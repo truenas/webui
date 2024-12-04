@@ -55,7 +55,7 @@
             type="submit"
             color="primary"
             ixTest="delete"
-            [disabled]="form.invalid"
+            [disabled]="form.invalid || !!runningCount"
           >
             {{ 'Delete' | translate }}
           </button>

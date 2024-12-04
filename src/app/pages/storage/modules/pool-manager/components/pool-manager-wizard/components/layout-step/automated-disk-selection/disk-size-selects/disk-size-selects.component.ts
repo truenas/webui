@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, output,
+  ChangeDetectionStrategy, Component, input, OnChanges, output,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,10 +37,10 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class DiskSizeSelectsComponent implements OnChanges {
-  @Input({ required: true }) layout: CreateVdevLayout;
-  @Input({ required: true }) type: VdevType;
-  @Input({ required: true }) inventory: DetailsDisk[];
-  @Input() isStepActive = false;
+  readonly layout = input.required<CreateVdevLayout>();
+  readonly type = input.required<VdevType>();
+  readonly inventory = input.required<DetailsDisk[]>();
+  readonly isStepActive = input(false);
 
   readonly disksSelected = output<DetailsDisk[]>();
 
@@ -81,7 +81,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   private listenForResetEvents(): void {
     merge(
       this.store.startOver$,
-      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type)),
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -105,7 +105,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       const values = this.form.value;
 
-      this.store.setTopologyCategoryDiskSizes(this.type, {
+      this.store.setTopologyCategoryDiskSizes(this.type(), {
         diskSize: this.selectedDiskSize,
         diskType: this.selectedDiskType,
         treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,
@@ -114,7 +114,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   }
 
   private updateOptions(): void {
-    this.sizeDisksMap = getDiskTypeSizeMap(this.inventory);
+    this.sizeDisksMap = getDiskTypeSizeMap(this.inventory());
 
     const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd])
       .map((size): SelectOption<SizeAndType> => ({
@@ -136,7 +136,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
       setValueIfNotSame(this.form.controls.sizeAndType, [null, null]);
     }
 
-    if (nextOptions.length === 1 && this.isStepActive) {
+    if (nextOptions.length === 1 && this.isStepActive()) {
       setValueIfNotSame(this.form.controls.sizeAndType, nextOptions[0].value);
     }
   }
@@ -157,6 +157,6 @@ export class DiskSizeSelectsComponent implements OnChanges {
       return this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize];
     }
 
-    return this.inventory.filter((disk) => disk.size >= this.selectedDiskSize);
+    return this.inventory().filter((disk) => disk.size >= this.selectedDiskSize);
   }
 }
