@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, input,
   signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
@@ -36,15 +36,15 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   ],
 })
 export class ModalHeader2Component implements AfterViewInit {
-  @Input() title: string;
-  @Input() loading: boolean;
-  @Input() disableClose = false;
-  @Input() requiredRoles: Role[] = [];
+  readonly title = input<string>();
+  readonly loading = input<boolean>();
+  readonly disableClose = input(false);
+  readonly requiredRoles = input<Role[]>([]);
 
   protected componentsSize = signal(1);
 
   get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
+    return this.authService.hasRole(this.requiredRoles());
   }
 
   tooltip = this.translate.instant('Close the form');

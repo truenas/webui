@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -58,7 +58,7 @@ import {
   ],
 })
 export class EditNfsAceComponent implements OnChanges, OnInit {
-  @Input() ace: NfsAclItem;
+  readonly ace = input<NfsAclItem>();
 
   form = this.formBuilder.group({
     tag: [NfsAclTag.User as NfsAclTag],
@@ -200,30 +200,32 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     }
 
     const formValues = {
-      tag: this.ace.tag,
-      type: this.ace.type,
-      user: this.isUserTag ? this.ace.who : null,
-      group: this.isGroupTag ? this.ace.who : null,
+      tag: this.ace().tag,
+      type: this.ace().type,
+      user: this.isUserTag ? this.ace().who : null,
+      group: this.isGroupTag ? this.ace().who : null,
     } as EditNfsAceComponent['form']['value'];
 
-    if (areNfsPermissionsBasic(this.ace.perms)) {
+    const permissions = this.ace().perms;
+    if (areNfsPermissionsBasic(permissions)) {
       formValues.permissionType = NfsFormPermsType.Basic;
-      formValues.basicPermission = this.ace.perms.BASIC;
+      formValues.basicPermission = permissions.BASIC;
       formValues.advancedPermissions = [];
     } else {
       formValues.permissionType = NfsFormPermsType.Advanced;
-      formValues.advancedPermissions = Object.entries(this.ace.perms)
+      formValues.advancedPermissions = Object.entries(permissions)
         .filter(([, isOn]) => isOn)
         .map(([permission]) => permission as NfsAdvancedPermission);
     }
 
-    if (areNfsFlagsBasic(this.ace.flags)) {
+    const flags = this.ace().flags;
+    if (areNfsFlagsBasic(flags)) {
       formValues.flagsType = NfsFormFlagsType.Basic;
-      formValues.basicFlag = this.ace.flags.BASIC;
+      formValues.basicFlag = flags.BASIC;
       formValues.advancedFlags = [];
     } else {
       formValues.flagsType = NfsFormFlagsType.Advanced;
-      formValues.advancedFlags = Object.entries(this.ace.flags)
+      formValues.advancedFlags = Object.entries(flags)
         .filter(([, isOn]) => isOn)
         .map(([flag]) => flag as NfsAdvancedFlag);
     }

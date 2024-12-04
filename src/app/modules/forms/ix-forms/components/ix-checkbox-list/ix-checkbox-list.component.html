@@ -1,18 +1,18 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
   ></ix-label>
 }
 
 <div
   ixRegisteredControl
   class="checkbox-list"
-  [class.inline]="inlineFields"
-  [attr.aria-label]="label"
+  [class.inline]="inlineFields()"
+  [attr.aria-label]="label()"
 >
-  @for (option of options | async; track option) {
+  @for (option of options() | async; track option) {
     <mat-checkbox
       class="checkbox"
       color="primary"
@@ -29,4 +29,4 @@
   }
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,10 +47,10 @@ const maxDisksInDraidGroup = 255;
   ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
-  @Input() type: VdevType;
-  @Input() layout: CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3;
-  @Input() inventory: DetailsDisk[];
-  @Input() isStepActive: boolean;
+  readonly type = input<VdevType>();
+  readonly layout = input<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
+  readonly inventory = input<DetailsDisk[]>();
+  readonly isStepActive = input<boolean>();
 
   readonly defaultDataDevicesPerGroup = 8;
 
@@ -80,7 +80,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   ) {}
 
   get parityDevices(): number {
-    return parityDisksPerGroup[this.layout];
+    return parityDisksPerGroup[this.layout()];
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -106,7 +106,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   private listenForResetEvents(): void {
     merge(
       this.store.startOver$,
-      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type)),
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type())),
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -148,7 +148,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       const values = this.form.value;
 
-      this.store.setAutomaticTopologyCategory(this.type, {
+      this.store.setAutomaticTopologyCategory(this.type(), {
         width: values.children,
         draidDataDisks: values.dataDevicesPerGroup,
         draidSpareDisks: values.spares,
@@ -166,7 +166,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.dataDevicesPerGroup, nextOptions);
 
-    if (nextOptions.length === 1 && this.isStepActive) {
+    if (nextOptions.length === 1 && this.isStepActive()) {
       setValueIfNotSame(
         this.form.controls.dataDevicesPerGroup,
         Number(nextOptions[0].value),
@@ -205,18 +205,17 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     let nextOptions: Option[] = [];
     if ((groupSize + hotSpares) <= maxPossibleWidth && dataDevices) {
-      nextOptions = range(groupSize + hotSpares, maxPossibleWidth).map((item) => {
-        const disks = item + 1;
+      nextOptions = range(groupSize + hotSpares, maxPossibleWidth + 1).map((noOfChildren) => {
         return {
-          label: String(disks),
-          value: disks,
+          label: String(noOfChildren),
+          value: noOfChildren,
         };
       });
     }
 
     unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
-    if (this.isStepActive) {
+    if (this.isStepActive()) {
       setValueIfNotSame(
         this.form.controls.children,
         maxPossibleWidth,
@@ -241,7 +240,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
-    if (nextOptions.length === 1 && this.isStepActive) {
+    if (nextOptions.length === 1 && this.isStepActive()) {
       setValueIfNotSame(
         this.form.controls.vdevsNumber,
         Number(nextOptions[0].value),

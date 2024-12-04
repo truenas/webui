@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -38,8 +38,8 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
   ],
 })
 export class TransportSectionComponent implements OnChanges {
-  @Input() replication: ReplicationTask;
-  @Input() transport: TransportMode;
+  readonly replication = input<ReplicationTask>();
+  readonly transport = input<TransportMode>();
 
   form = this.formBuilder.group({
     ssh_credentials: [null as number | typeof newOption],
@@ -68,8 +68,8 @@ export class TransportSectionComponent implements OnChanges {
   ) { }
 
   ngOnChanges(): void {
-    if (this.replication) {
-      this.setFormValues(this.replication);
+    if (this.replication()) {
+      this.setFormValues(this.replication());
     }
 
     if (this.isLocal) {
@@ -80,15 +80,15 @@ export class TransportSectionComponent implements OnChanges {
   }
 
   get isLocal(): boolean {
-    return this.transport === TransportMode.Local;
+    return this.transport() === TransportMode.Local;
   }
 
   get isNetcat(): boolean {
-    return this.transport === TransportMode.Netcat;
+    return this.transport() === TransportMode.Netcat;
   }
 
   get isSsh(): boolean {
-    return this.transport === TransportMode.Ssh;
+    return this.transport() === TransportMode.Ssh;
   }
 
   setFormValues(replication: ReplicationTask): void {

@@ -90,28 +90,26 @@ jobs:
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
-      - name: Collect coverage from shards
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Collect coverage and test data from shards
         uses: actions/download-artifact@v4
         with:
           pattern: 'coverage-*'
-          path: coverage
-          merge-multiple: true
-      - name: Collect test data from shards
-        uses: actions/download-artifact@v4
-        with:
-          pattern: 'junit-*'
           path: coverage
           merge-multiple: true
       - name: Merge Code Coverage
         run: npx -y nyc merge coverage/ coverage/merged-coverage.json
       - name: Merge Test Data
         run: npx -y junit-report-merger coverage/merged-junit.xml "coverage/junit-*.xml"
+      - name: Remove shard data
+        run: rm -rf coverage/coverage-*.json coverage/junit-*.xml
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
-          file: coverage/merged-coverage.json
+          files: coverage/merged-coverage.json
           fail_ci_if_error: true
       - name: Upload extra test data to Codecov
         if: ${{ !cancelled() }}

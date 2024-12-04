@@ -23,8 +23,8 @@ export class HasAccessDirective {
 
     if (!hasAccess) {
       this.wrapperContainer = this.viewContainerRef.createComponent(MissingAccessWrapperComponent);
-      this.wrapperContainer.instance.template = this.templateRef;
-      this.wrapperContainer.instance.class = this.elementClass;
+      this.wrapperContainer.setInput('template', this.templateRef);
+      this.wrapperContainer.setInput('class', this.elementClass);
     } else {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
     }

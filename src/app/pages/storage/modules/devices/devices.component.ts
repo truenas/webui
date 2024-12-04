@@ -21,7 +21,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -67,7 +66,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     MatAnchor,
     TestDirective,
     RouterLink,
-    LetDirective,
     FakeProgressBarComponent,
     SearchInput1Component,
     RouterLinkActive,
