@@ -126,7 +126,7 @@ describe('InstalledAppsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    spectator.component.dataSource = [app];
+    spectator.component.installedAppsList().dataSource = [app];
     applicationsService = spectator.inject(ApplicationsService);
   });
 
@@ -134,7 +134,7 @@ describe('InstalledAppsComponent', () => {
     const rows = spectator.queryAll(AppRowComponent);
 
     expect(rows).toHaveLength(1);
-    expect(rows[0].app).toEqual(app);
+    expect(rows[0].app()).toEqual(app);
   });
 
   it('shows details', () => {
@@ -165,7 +165,7 @@ describe('InstalledAppsComponent', () => {
       afterClosed: () => of({ removeVolumes: true, removeImages: true }),
     } as MatDialogRef<unknown>);
 
-    spectator.component.selection.select(app.name);
+    spectator.component.installedAppsList().selection.select(app.name);
 
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Select action' }));
     await menu.open();
