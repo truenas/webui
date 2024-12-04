@@ -34,7 +34,7 @@ describe('DockerStore', () => {
       spectator.service.initialize();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.nvidia_status');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.status');
 
       expect(spectator.service.state()).toEqual({
         dockerConfig: {
