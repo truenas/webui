@@ -75,6 +75,14 @@ export class ErrorHandlerService implements ErrorHandler {
     return null;
   }
 
+  getFirstErrorMessage(error: unknown): string {
+    const parsedError = this.parseError(error);
+    if (Array.isArray(parsedError)) {
+      return parsedError[0].message;
+    }
+    return parsedError.message;
+  }
+
   private logToSentry(error: unknown): void {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }

@@ -47,6 +47,14 @@ export function isErrorResponse(something: unknown): something is ErrorResponse 
     && Boolean(something.error);
 }
 
+export function extractApiError(someError: unknown): ApiError | undefined {
+  if (isErrorResponse(someError)) {
+    return someError.error.data;
+  }
+
+  return undefined;
+}
+
 export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method' | 'params'>): RequestMessage {
   return {
     jsonrpc: '2.0',
