@@ -133,7 +133,7 @@ describe('FormErrorHandlerService', () => {
       } as unknown as HTMLElement;
       jest.spyOn(spectator.inject(IxFormService), 'getElementByControlName').mockReturnValue(elementMock);
 
-      spectator.service.handleValidationErrors(fakeError, formGroup);
+      spectator.service.handleValidationErrors(errorResponse, formGroup);
 
       tick();
 

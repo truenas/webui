@@ -109,9 +109,6 @@ export class TestProgressRowComponent implements OnInit {
         return EMPTY;
       }),
       takeWhile((result) => {
-        // TODO: Remove support for nosub
-        // const isNoSubMsg = result && result.msg === IncomingApiMessageType.NoSub;
-        const isNoSubMsg = false;
         const testProgress = this.test().progressPercentage;
         let isProgressing: boolean;
         if (result.fields.progress == null) {
@@ -123,13 +120,13 @@ export class TestProgressRowComponent implements OnInit {
         } else {
           isProgressing = false;
         }
-        if (isNoSubMsg || !isProgressing) {
+        if (!isProgressing) {
           this.test.set({
             ...this.test(),
             finished: true,
           });
         }
-        return !isNoSubMsg && isProgressing;
+        return isProgressing;
       }),
       map((apiEvent) => apiEvent.fields),
       tap((progressUpdate) => {

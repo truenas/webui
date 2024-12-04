@@ -5,6 +5,7 @@ import * as Sentry from '@sentry/angular';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
+import { apiErrorNames } from 'app/enums/api.enum';
 import {
   isApiError, isErrorResponse, isFailedJob,
 } from 'app/helpers/api.helper';
@@ -107,8 +108,12 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   private parseApiError(error: ApiError): ErrorReport {
+    const title = apiErrorNames.has(error.errname)
+      ? this.translate.instant(apiErrorNames.get(error.errname))
+      : error.trace?.class || this.translate.instant('Error');
+
     return {
-      title: error.trace?.class || this.translate.instant('Error'),
+      title,
       message: error.reason || error?.error?.toString(),
       backtrace: error.trace?.formatted || '',
     };

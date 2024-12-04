@@ -7,6 +7,15 @@ export enum ApiErrorName {
   Validation = 'EINVAL',
 }
 
+export const apiErrorNames = new Map<ApiErrorName, string>([
+  [ApiErrorName.NotAuthenticated, 'Not Authenticated'],
+  [ApiErrorName.NoAccess, 'Access Error'],
+  [ApiErrorName.NoMemory, 'No Memory'],
+  [ApiErrorName.AlreadyExists, 'Already Exists'],
+  [ApiErrorName.Again, 'Try Again'],
+  [ApiErrorName.Validation, 'Validation Error'],
+]);
+
 export enum JsonRpcErrorCode {
   InvalidRequest = -32600,
   MethodNotFound = -32601,

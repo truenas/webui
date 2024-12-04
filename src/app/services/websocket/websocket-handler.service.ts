@@ -6,15 +6,12 @@ import {
   BehaviorSubject,
   combineLatest,
   filter,
-  interval,
   map,
   mergeMap,
-  NEVER,
   Observable,
   of,
   Subject,
   Subscription,
-  switchMap,
   take,
   tap,
   timer,
@@ -40,7 +37,6 @@ export class WebSocketHandlerService {
   private readonly connectionEstablished$ = new BehaviorSubject(false);
   readonly isConnected$ = this.connectionEstablished$.asObservable();
 
-  private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription;
   private readonly maxConcurrentCalls = 20;
@@ -89,7 +85,6 @@ export class WebSocketHandlerService {
   private setupWebSocket(): void {
     this.connectWebSocket();
     this.setupScheduledCalls();
-    this.setupPing();
   }
 
   private setupScheduledCalls(): void {
@@ -181,27 +176,14 @@ export class WebSocketHandlerService {
       .subscribe();
   }
 
-  private setupPing(): void {
-    this.isConnected$.pipe(
-      switchMap((isConnected) => {
-        if (!isConnected) {
-          return NEVER;
-        }
-
-        return interval(this.pingTimeoutMillis);
-      }),
-    ).subscribe(() => {
-      this.wsConnection.send(makeRequestMessage({ method: 'core.ping' }));
-    });
-  }
-
   private onClose(event: CloseEvent): void {
     this.connectionEstablished$.next(false);
     this.isConnectionLive$.next(false);
     if (this.reconnectTimerSubscription) {
       return;
     }
-    // TODO:
+
+    // TODO: Extract code in some constant.
     if (event.code === 1008) {
       this.isAccessRestricted$ = true;
     } else {
