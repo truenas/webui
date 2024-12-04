@@ -9,25 +9,15 @@
       ixDetailsHeight
       [class.details-container-mobile]="showMobileDetails()"
     >
-      <div class="header">
-        <h3 class="title">
-          <div class="mobile-prefix">
-            <ix-mobile-back-button
-              (onClose)="toggleShowMobileDetails(false)"
-            ></ix-mobile-back-button>
-            {{ 'Details for' | translate }}
-          </div>
-
-          <span class="prefix">
-            {{ 'Details for' | translate }}
-          </span>
-
-          <span class="name">
-            <ng-content select="[detail-name]"></ng-content>
-          </span>
+      <div class="header-container">
+        @if(isMobileView()) {
+          <ix-mobile-back-button
+            (onClose)="toggleShowMobileDetails(false)"
+          ></ix-mobile-back-button>
+        }
+        <h3 class="header">
+          <ng-content select="[detail-header]"></ng-content>
         </h3>
-
-        <ng-content select="[detail-actions]"></ng-content>
       </div>
 
       <div>
