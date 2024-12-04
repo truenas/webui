@@ -36,16 +36,4 @@ export class WebSocketConnection {
     this.ws$?.complete();
     this.ws$ = undefined;
   }
-
-  event<R>(
-    subMsg: () => unknown,
-    unsubMsg: () => unknown,
-    messageFilter: (value: unknown) => boolean,
-  ): Observable<R> {
-    return this.ws$.multiplex(
-      subMsg,
-      unsubMsg,
-      messageFilter,
-    ) as Observable<R>;
-  }
 }

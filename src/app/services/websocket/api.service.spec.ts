@@ -1,51 +1,42 @@
-import { TestBed } from '@angular/core/testing';
-import { mockProvider } from '@ngneat/spectator/jest';
-import { TranslateService } from '@ngx-translate/core';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
 import {
-  BehaviorSubject, Observable,
-  Subject,
-  firstValueFrom,
+  BehaviorSubject,
+  firstValueFrom, of,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEvent, IncomingMessage, JsonRpcError } from 'app/interfaces/api-message.interface';
+import {
+  IncomingMessage,
+  JsonRpcError,
+} from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/services/websocket/api.service';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
-const mockWebsocketHandler = {
-  scheduleCall: jest.fn(),
-  buildSubscriber: jest.fn().mockReturnValue(new Subject<unknown>()),
-  responses$: new BehaviorSubject<IncomingMessage>(null),
-};
-
-const apiEventSubscription1$ = new BehaviorSubject(null);
-const apiEventSubscription2$ = new BehaviorSubject(null);
-
-const mockEventSubscriptions = new Map<string, Observable<ApiEvent>>([
-  ['event1', apiEventSubscription1$],
-  ['event2', apiEventSubscription2$],
-]);
-
 describe('ApiService', () => {
-  let service: ApiService;
+  let spectator: SpectatorService<ApiService>;
+  let wsHandler: WebSocketHandlerService;
+  const responses$ = new BehaviorSubject<IncomingMessage>(null);
+
+  const createService = createServiceFactory({
+    service: ApiService,
+    providers: [
+      mockProvider(WebSocketHandlerService, {
+        responses$,
+        scheduleCall: jest.fn(),
+      }),
+      mockProvider(SubscriptionManagerService, {
+        subscribe: jest.fn(() => of()),
+      }),
+    ],
+  });
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        ApiService,
-        mockProvider(TranslateService),
-        { provide: WebSocketHandlerService, useValue: mockWebsocketHandler },
-      ],
-    });
+    spectator = createService();
+    wsHandler = spectator.inject(WebSocketHandlerService);
 
-    service = TestBed.inject(ApiService);
-
-    jest.spyOn(service.clearSubscriptions$, 'next');
-
-    (service as unknown as {
-      eventSubscribers: Map<string, Observable<ApiEvent>>;
-    }).eventSubscribers = mockEventSubscriptions;
+    jest.spyOn(spectator.service.clearSubscriptions$, 'next');
 
     jest.clearAllMocks();
   });
@@ -55,17 +46,17 @@ describe('ApiService', () => {
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       const someResult = {};
-      mockWebsocketHandler.responses$.next({
+      responses$.next({
         jsonrpc: '2.0',
         id: uuid,
         result: someResult,
       });
 
-      service.call('cloudsync.providers').subscribe((result) => {
+      spectator.service.call('cloudsync.providers').subscribe((result) => {
         expect(result).toBe(someResult);
       });
 
-      expect(mockWebsocketHandler.scheduleCall).toHaveBeenCalled();
+      expect(wsHandler.scheduleCall).toHaveBeenCalled();
     });
 
     it('should handle WS call errors', () => {
@@ -76,13 +67,13 @@ describe('ApiService', () => {
       const someError = {
         message: 'Test Error',
       } as JsonRpcError;
-      mockWebsocketHandler.responses$.next({
+      responses$.next({
         id: uuid,
         jsonrpc: '2.0',
         error: someError,
       });
 
-      service.call('cloudsync.providers').subscribe(
+      spectator.service.call('cloudsync.providers').subscribe(
         {
           next: () => {},
           error: (error) => {
@@ -98,13 +89,13 @@ describe('ApiService', () => {
       const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebsocketHandler.responses$.next({
+      responses$.next({
         jsonrpc: '2.0',
         id: uuid,
         result: pools,
       });
 
-      expect(await firstValueFrom(service.callAndSubscribe('pool.query'))).toEqual([
+      expect(await firstValueFrom(spectator.service.callAndSubscribe('pool.query'))).toEqual([
         { name: 'pool1' }, { name: 'pool2' },
       ]);
     });
@@ -115,19 +106,19 @@ describe('ApiService', () => {
       const uuid = 'fakeUUID';
       const mockJobId = 1234;
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebsocketHandler.responses$.next({
+      responses$.next({
         jsonrpc: '2.0',
         id: uuid,
         result: mockJobId,
       });
 
-      service.startJob('boot.attach').subscribe((response) => {
+      spectator.service.startJob('boot.attach').subscribe((response) => {
         expect(response).toEqual(mockJobId);
       });
     });
 
     it('should handle a successful job', () => {
-      service.job('boot.attach').subscribe((result) => {
+      spectator.service.job('boot.attach').subscribe((result) => {
         expect(result.state).toEqual(JobState.Failed);
       });
     });
@@ -135,34 +126,25 @@ describe('ApiService', () => {
 
   describe('subscribe', () => {
     it('should successfully subscribe', () => {
-      const eventData = { data: 'test' };
-      (mockWebsocketHandler.buildSubscriber() as Subject<unknown>).next(eventData);
+      spectator.service.subscribe('alert.list').subscribe();
 
-      service.subscribe('alert.list').subscribe((data) => {
-        expect(data).toBe('test');
-      });
-
-      expect(mockWebsocketHandler.buildSubscriber).toHaveBeenCalled();
+      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('alert.list');
     });
   });
 
   describe('subscribeToLogs', () => {
     it('should successfully subscribe to logs', () => {
-      const logData = { data: 'log test' };
-      (mockWebsocketHandler.buildSubscriber() as Subject<unknown>).next(logData);
-
-      service.subscribeToLogs('logName').subscribe((data) => {
-        expect(data).toBe('log test');
-      });
+      spectator.service.subscribeToLogs('filesystem.file_tail_follow');
+      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('filesystem.file_tail_follow');
     });
   });
 
   describe('clearSubscriptions', () => {
     it('should clear all event subscriptions', () => {
-      service.clearSubscriptions();
+      spectator.service.clearSubscriptions();
 
-      expect(service.clearSubscriptions$.next).toHaveBeenCalled();
-      expect(mockEventSubscriptions.size).toBe(0);
+      // TODO: Poor test. `clearSubscriptions$` should be private and test should actually verify behavior.
+      expect(spectator.service.clearSubscriptions$.next).toHaveBeenCalled();
     });
   });
 });

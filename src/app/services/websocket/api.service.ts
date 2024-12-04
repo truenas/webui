@@ -2,38 +2,49 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, throwError,
+  filter,
+  map,
+  merge,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  throwError,
 } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
-  ApiCallMethod,
-  ApiCallParams,
-  ApiCallResponse,
-} from 'app/interfaces/api/api-call-directory.interface';
+  ApiCallAndSubscribeMethod,
+  ApiCallAndSubscribeResponse,
+} from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
+import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod, ApiJobParams, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import {
-  ApiJobMethod,
-  ApiJobParams,
-  ApiJobResponse,
-} from 'app/interfaces/api/api-job-directory.interface';
-import {
-  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingMessage, SuccessfulResponse, ErrorResponse,
+  ApiEvent,
+  ApiEventMethod,
+  ApiEventTyped,
+  ErrorResponse,
+  IncomingMessage,
+  SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
     protected wsHandler: WebSocketHandlerService,
+    protected subscriptionManager: SubscriptionManagerService,
     protected translate: TranslateService,
   ) {
     this.wsHandler.isConnected$?.subscribe((isConnected) => {
@@ -94,16 +105,7 @@ export class ApiService {
   }
 
   subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K | `${K}:${string}`): Observable<ApiEventTyped<K>> {
-    if (this.eventSubscribers.has(method as K)) {
-      return this.eventSubscribers.get(method as K);
-    }
-    const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscription = this.wsHandler.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
-      return () => {
-        subscription.unsubscribe();
-        this.eventSubscribers.delete(method as K);
-      };
-    }).pipe(
+    return this.subscriptionManager.subscribe(method).pipe(
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as IncomingMessage;
         if (isErrorResponse(erroredEvent)) {
@@ -112,12 +114,8 @@ export class ApiService {
         }
         return of(apiEvent);
       }),
-      share(),
       takeUntil(this.clearSubscriptions$),
     );
-
-    this.eventSubscribers.set(method as K, observable$);
-    return observable$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
@@ -126,7 +124,6 @@ export class ApiService {
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
-    this.eventSubscribers.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;

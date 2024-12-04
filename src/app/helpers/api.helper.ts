@@ -4,7 +4,7 @@ import {
   ErrorResponse,
   RequestMessage,
   IncomingMessage,
-  CollectionUpdateMessage,
+  CollectionUpdateMessage, SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 
@@ -34,6 +34,11 @@ export function isIncomingMessage(something: unknown): something is IncomingMess
 
 export function isCollectionUpdateMessage(something: unknown): something is CollectionUpdateMessage {
   return isIncomingMessage(something) && 'method' in something && something.method === 'collection_update';
+}
+
+export function isSuccessfulResponse(something: unknown): something is SuccessfulResponse {
+  return isIncomingMessage(something)
+    && 'result' in something;
 }
 
 export function isErrorResponse(something: unknown): something is ErrorResponse {

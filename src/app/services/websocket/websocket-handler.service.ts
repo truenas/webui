@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
@@ -21,12 +20,10 @@ import {
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { isCollectionUpdateMessage, makeRequestMessage } from 'app/helpers/api.helper';
+import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import {
-  ApiEventMethod, ApiEventTyped, RequestMessage, IncomingMessage, CollectionUpdateMessage,
-} from 'app/interfaces/api-message.interface';
+import { RequestMessage, IncomingMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
 
@@ -77,6 +74,8 @@ export class WebSocketHandlerService {
   private readonly pendingCalls = new Map<string, ApiCall>();
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
+
+  private subscriptionIds: Record<string, number> = {};
 
   constructor(
     private dialogService: DialogService,
@@ -231,21 +230,6 @@ export class WebSocketHandlerService {
     const message = makeRequestMessage(payload);
     this.queuedCalls.push(message as ApiCall);
     this.triggerNextCall$.next();
-  }
-
-  buildSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
-    const id = UUID.UUID();
-    return this.wsConnection.event(
-      () => makeRequestMessage({
-        id, method: 'core.subscribe', params: [name],
-      }),
-      () => makeRequestMessage({
-        id, method: 'core.unsubscribe', params: [name],
-      }),
-      (message: IncomingMessage) => isCollectionUpdateMessage(message) && message.params.collection === name,
-    ).pipe(
-      map((message: CollectionUpdateMessage) => message.params as R),
-    );
   }
 
   prepareShutdown(): void {
