@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   contentChildren,
-  effect,
   OnInit,
   signal,
   ViewChild,
@@ -19,6 +18,7 @@ import { timer } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  map,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Option } from 'app/interfaces/option.interface';
@@ -57,13 +57,6 @@ export class IxFormWithGlossaryComponent implements OnInit {
   @ViewChild('contentContainer', { read: ViewContainerRef, static: true })
   viewContainerRef!: ViewContainerRef;
 
-  controlOptionsEffect = effect(() => {
-    const options = this.formService.controlsOptions();
-    this.searchOptions.set(options);
-  }, {
-    allowSignalWrites: true,
-  });
-
   protected sections = contentChildren(IxFormSectionComponent);
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
@@ -73,7 +66,16 @@ export class IxFormWithGlossaryComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private formService: IxFormService,
-  ) {}
+  ) {
+    this.formService.controlNamesWithlabels$.pipe(
+      map((controlsWithLabels) => controlsWithLabels.map(
+        (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),
+      )),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (options) => this.searchOptions.set(options),
+    });
+  }
 
   ngOnInit(): void {
     this.handleSearchControl();

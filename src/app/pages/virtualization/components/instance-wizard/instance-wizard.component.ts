@@ -48,7 +48,6 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { RegisteredNonControlDirective } from 'app/modules/forms/ix-forms/directives/registered-non-control.directive';
 import { WithGlossaryDirective } from 'app/modules/forms/ix-forms/directives/with-glossary.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -84,7 +83,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxFormWithGlossaryComponent,
     IxFormSectionComponent,
     IxListItemComponent,
-    RegisteredNonControlDirective,
     IxSelectComponent,
     IxButtonGroupComponent,
     IxExplorerComponent,

@@ -1,6 +1,7 @@
 import {
-  AfterViewInit, Directive, ElementRef, Input,
+  AfterViewInit, Directive, ElementRef, inject, Input,
   OnChanges,
+  OnDestroy,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -15,41 +16,68 @@ export const ixControlLabelTag = 'ix-label';
   standalone: true,
   selector: '[ixRegisteredControl]',
 })
-export class RegisteredControlDirective implements AfterViewInit, OnChanges {
+export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnDestroy {
   @Input() label: string;
+  @Input() formControlName: string;
+  @Input() formArrayName: string;
+  @Input() formGroupName: string;
 
   private controlReady = false;
   private labelReady = false;
+  private controlRegistered = false;
+  private registeredName: string;
+  private control = inject(NgControl, { optional: true });
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private formService: IxFormService,
-    private control: NgControl,
   ) { }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (this.controlRegistered) {
+      return;
+    }
     if (changes.label.currentValue) {
       this.labelReady = true;
+      this.tryRegisterControl();
+    }
+    const isNameReady
+      = changes.formArrayName?.currentValue
+      || changes.formControlName?.currentValue
+      || changes.formGroupName?.currentValue;
+
+    if (isNameReady && !this.controlRegistered) {
+      this.controlReady = true;
       this.tryRegisterControl();
     }
   }
 
   ngAfterViewInit(): void {
-    this.controlReady = true;
-    this.tryRegisterControl();
+    if (this.control?.name && !this.controlRegistered) {
+      this.controlReady = true;
+      this.tryRegisterControl();
+    }
   }
 
   private tryRegisterControl(): void {
     if (!this.controlReady || !this.labelReady) {
       return;
     }
-    const labelValue
-      = this.label || this.control.name?.toString() || 'Unnamed Control';
+    this.controlRegistered = true;
+    const controlName
+      = this.control?.name?.toString()
+      || this.formControlName
+      || this.formArrayName
+      || this.formGroupName;
+
+    const labelValue = this.label || controlName || 'Unnamed Control';
 
     this.elementRef.nativeElement.setAttribute(ixControlLabelTag, labelValue);
-    this.formService.registerControl(this.control, this.elementRef);
+    this.registeredName = controlName;
+    this.formService.registerControl(controlName, this.elementRef);
+  }
 
-    this.controlReady = false;
-    this.labelReady = false;
+  ngOnDestroy(): void {
+    this.formService.unregisterControl(this.registeredName);
   }
 }

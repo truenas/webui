@@ -60,7 +60,7 @@
     <ix-form-section [label]="'Environment' | translate" [help]="'Environment' | translate">
       <ix-list
         formArrayName="environment_variables"
-        ixRegisteredNonControl
+        ixRegisteredControl
         [empty]="form.controls.environment_variables.controls.length === 0"
         [label]="'Environment Variables' | translate"
         (add)="addEnvironmentVariable()"
@@ -92,7 +92,7 @@
     <ix-form-section [label]="'Disks' | translate" [help]="'Disks' | translate">
       <ix-list
         formArrayName="disks"
-        ixRegisteredNonControl
+        ixRegisteredControl
         [empty]="form.controls.disks.controls.length === 0"
         [label]="'Disks' | translate"
         [formArray]="form.controls.disks"
@@ -127,7 +127,7 @@
     <ix-form-section [label]="'Proxies' | translate" [help]="'Proxies' | translate">
       <ix-list
         formArrayName="proxies"
-        ixRegisteredNonControl
+        ixRegisteredControl
         [empty]="form.controls.proxies.controls.length === 0"
         [label]="'Proxies' | translate"
         [formArray]="form.controls.proxies"
@@ -237,7 +237,7 @@
     @if ((usbDevices$ | async); as usbDevices) {
       @if (usbDevices.length > 0) {
         <ix-form-section [label]="'USB Devices' | translate" [help]="'USB Devices' | translate">
-          <div formGroupName="usb_devices" ixRegisteredNonControl [label]="'USB Devices' | translate">
+          <div formGroupName="usb_devices" ixRegisteredControl [label]="'USB Devices' | translate">
             @for (device of usbDevices; track device) {
               <ix-checkbox
                 [formControlName]="device.value.toString()"
