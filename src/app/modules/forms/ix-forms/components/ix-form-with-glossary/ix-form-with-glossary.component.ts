@@ -22,7 +22,7 @@ import {
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Option } from 'app/interfaces/option.interface';
-import { IxFullPageFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
+import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
@@ -64,7 +64,7 @@ export class IxFormWithGlossaryComponent implements OnInit {
     allowSignalWrites: true,
   });
 
-  protected sections = contentChildren(IxFullPageFormSectionComponent);
+  protected sections = contentChildren(IxFormSectionComponent);
   protected searchControl = this.formBuilder.control('');
   protected searchOptions = signal<Option[]>([]);
 

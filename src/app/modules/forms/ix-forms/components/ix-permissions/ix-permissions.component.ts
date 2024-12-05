@@ -33,7 +33,6 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   readonly tooltip = input<string>();
   readonly required = input(false);
   readonly hideOthersPermissions = input(false);
-  formControlName = input<string>();
 
   isDisabled = false;
 
@@ -67,7 +66,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName() || '';
+    return this.controlDirective.name?.toString() || this.label();
   }
 
   setPermissionsAndUpdateValue(value = '000'): void {

@@ -34,7 +34,6 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() warning: string;
   @Input() required: boolean;
-  @Input() formControlName: string;
 
   isDisabled = false;
   value: boolean;
@@ -47,7 +46,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   onChange: (value: boolean) => void = (): void => {};

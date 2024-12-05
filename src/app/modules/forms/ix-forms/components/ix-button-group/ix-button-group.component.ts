@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -41,8 +41,6 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
   @HostBinding('class.inlineFields')
   @Input() inlineFields = false;
 
-  formControlName = input<string>();
-
   isDisabled = false;
   value: string;
 
@@ -54,7 +52,7 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName() || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   onChange: (value: string) => void = (): void => {};

@@ -33,7 +33,6 @@ export class IxStarRatingComponent implements ControlValueAccessor {
   readonly tooltip = input('');
   readonly required = input(false);
   readonly maxRating = input(5);
-  readonly formControlName = input<string>();
 
   isDisabled = false;
   value: number;
@@ -53,7 +52,7 @@ export class IxStarRatingComponent implements ControlValueAccessor {
   onTouch: () => void = (): void => {};
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName() || '';
+    return this.controlDirective.name?.toString() || this.label();
   }
 
   writeValue(value: number): void {

@@ -40,8 +40,8 @@ import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxFormWithGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-with-glossary/ix-form-with-glossary.component';
-import { IxFullPageFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-full-page-form/ix-full-page-form-section/ix-full-page-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -82,7 +82,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     WithGlossaryDirective,
     RegisteredControlDirective,
     IxFormWithGlossaryComponent,
-    IxFullPageFormSectionComponent,
+    IxFormSectionComponent,
     IxListItemComponent,
     RegisteredNonControlDirective,
     IxSelectComponent,

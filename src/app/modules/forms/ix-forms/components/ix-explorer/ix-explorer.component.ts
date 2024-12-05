@@ -70,7 +70,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   @Input() nodeProvider: TreeNodeProvider;
   @Input() canCreateDataset = false;
   @Input() createDatasetProps: Omit<DatasetCreate, 'name'> = {};
-  @Input() formControlName: string;
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
 
@@ -94,7 +93,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   private readonly actionMapping: IActionMapping = {

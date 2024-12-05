@@ -31,7 +31,6 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
-  @Input() formControlName: string;
 
   isDisabled = false;
   value: boolean;
@@ -52,7 +51,7 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   registerOnChange(onChange: (value: boolean) => void): void {

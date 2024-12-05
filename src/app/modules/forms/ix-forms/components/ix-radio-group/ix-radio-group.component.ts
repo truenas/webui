@@ -43,7 +43,6 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   @Input() options: Observable<RadioOption[]>;
   @Input() inlineFields: boolean;
   @Input() inlineFieldFlex: string;
-  @Input() formControlName: string;
 
   isDisabled = false;
   value: string;
@@ -76,7 +75,7 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   registerOnChange(onChange: (value: string) => void): void {

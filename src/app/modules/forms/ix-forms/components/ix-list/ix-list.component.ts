@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxListComponent implements AfterViewInit {
   @Input() formArray: AbstractControl;
-  @Input() label: string;
+  @Input({ required: true }) label: string;
   @Input() tooltip: string;
   @Input() empty: boolean;
   @Input() required: boolean;
@@ -56,7 +56,7 @@ export class IxListComponent implements AfterViewInit {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formArrayName || '';
+    return this.label;
   }
 
   addItem(schema?: ChartSchemaNode[]): void {

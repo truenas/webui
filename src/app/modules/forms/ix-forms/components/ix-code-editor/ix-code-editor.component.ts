@@ -51,7 +51,6 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   @Input() tooltip: string;
   @Input() language: CodeEditorLanguage;
   @Input() placeholder: string;
-  @Input() formControlName: string;
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -79,7 +78,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

@@ -34,7 +34,6 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() hint: string;
   @Input() required: boolean;
-  @Input() formControlName: string | number;
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};
@@ -54,7 +53,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName?.toString() || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   onAddressInput(input: HTMLInputElement): void {

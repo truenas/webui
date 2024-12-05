@@ -36,7 +36,6 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   @Input() options: Observable<Option[]>;
   @Input() inlineFields: boolean;
   @Input() inlineFieldFlex: string;
-  @Input() formControlName: string;
 
   isDisabled = false;
   value: (string | number)[];
@@ -64,7 +63,7 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   onTouch: () => void = (): void => {};
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   writeValue(value: (string | number)[]): void {

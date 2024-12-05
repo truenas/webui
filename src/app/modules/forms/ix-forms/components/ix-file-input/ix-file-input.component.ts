@@ -39,7 +39,6 @@ export class IxFileInputComponent implements ControlValueAccessor {
   @Input() acceptedFiles = '*.*';
   @Input() multiple: boolean;
   @Input() required: boolean;
-  @Input() formControlName: string;
 
   value: FileList;
   isDisabled = false;
@@ -56,7 +55,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   onChanged(value: FileList): void {

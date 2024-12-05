@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
@@ -35,7 +35,6 @@ export class IxTextareaComponent implements ControlValueAccessor {
   @Input() required: boolean;
   @Input() rows = 4;
   @Input() readonly: boolean;
-  formControlName = input<string>();
 
   value = '';
   isDisabled = false;
@@ -51,7 +50,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName() || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   writeValue(value: string): void {

@@ -58,7 +58,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
   @Input() showSelectAll = false;
-  @Input() formControlName: string | number;
   @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
   protected value: IxSelectValue;
@@ -142,7 +141,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   @HostBinding('attr.id') get id(): string {
-    return this.formControlName?.toString() || '';
+    return this.controlDirective.name?.toString() || this.label;
   }
 
   onChange: (value: IxSelectValue) => void = (): void => {};
