@@ -25,6 +25,11 @@
     }
   }
 
+  .actions {
+    align-items: center;
+    display: flex;
+  }
+
   .info-container {
     display: flex;
     flex-direction: row;

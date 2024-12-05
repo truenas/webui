@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, input, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -62,8 +62,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class KerberosKeytabsListComponent implements OnInit {
-  @Input() paginator = true;
-  @Input() inCard = false;
+  readonly paginator = input(true);
+  readonly inCard = input(false);
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
   protected readonly searchableElements = kerberosKeytabsListElements;

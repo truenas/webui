@@ -2,7 +2,7 @@
   [title]="'Name and Options' | translate"
   [formGroup]="form"
 >
-  @if (parent && !existing) {
+  @if (parent() && !existing()) {
     <ix-textarea
       formControlName="parent"
       [rows]="3"
@@ -19,7 +19,7 @@
     [tooltip]="helptext.dataset_form_name_tooltip | translate"
   ></ix-textarea>
 
-  @if (!existing) {
+  @if (!existing()) {
     <ix-select
       formControlName="share_type"
       [label]="'Dataset Preset' | translate"
@@ -30,7 +30,7 @@
   }
 </ix-fieldset>
 
-@if (!existing) {
+@if (!existing()) {
   <ix-fieldset [formGroup]="datasetPresetForm">
     <div class="preset-container">
       @if (form.value.share_type) {

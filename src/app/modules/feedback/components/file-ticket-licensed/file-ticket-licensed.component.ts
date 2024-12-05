@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, Inject, Input, output,
+  Component, Inject, input, output,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
@@ -62,8 +62,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class FileTicketLicensedComponent {
-  @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
-  @Input() isLoading: boolean;
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
 
@@ -130,7 +130,7 @@ export class FileTicketLicensedComponent {
 
   onEulaPressed(): void {
     this.router.navigate(['system', 'support', 'eula']).then(() => {
-      this.dialogRef.close();
+      this.dialogRef().close();
     });
   }
 
@@ -148,7 +148,7 @@ export class FileTicketLicensedComponent {
 
   private onSuccess(ticketUrl: string): void {
     this.feedbackService.showTicketSuccessMsg(ticketUrl);
-    this.dialogRef.close();
+    this.dialogRef().close();
   }
 
   private getSystemFileSizeLimit(): void {

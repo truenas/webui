@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,8 +31,9 @@ export const ixManualValidateError = 'ixManualValidateError';
   ],
 })
 export class IxErrorsComponent implements OnChanges {
-  @Input() control: AbstractControl;
-  @Input() label: string;
+  readonly control = input.required<AbstractControl>();
+  readonly label = input<string>();
+
   readonly ixManualValidateError = ixManualValidateError;
 
   private statusChangeSubscription: Subscription;
@@ -42,8 +43,8 @@ export class IxErrorsComponent implements OnChanges {
     min: (min: number) => this.translate.instant('Minimum value is {min}', { min }),
     max: (max: number) => this.translate.instant('Maximum value is {max}', { max }),
     required: () => {
-      if (this.label) {
-        return this.translate.instant('{field} is required', { field: this.label });
+      if (this.label()) {
+        return this.translate.instant('{field} is required', { field: this.label() });
       }
 
       return this.translate.instant('Field is required');
@@ -51,16 +52,16 @@ export class IxErrorsComponent implements OnChanges {
     email: () => this.translate.instant('Value must be a valid email address'),
     cpu: () => this.translate.instant('Invalid CPU configuration.'),
     minlength: (minLength: number) => this.translate.instant(
-      this.label
+      this.label()
         ? 'The length of {field} should be at least {minLength}'
         : 'The length of the field should be at least {minLength}',
-      { field: this.label, minLength },
+      { field: this.label(), minLength },
     ),
     maxlength: (maxLength: number) => this.translate.instant(
-      this.label
+      this.label()
         ? 'The length of {field} should be no more than {maxLength}'
         : 'The length of the field should be no more than {maxLength}',
-      { field: this.label, maxLength },
+      { field: this.label(), maxLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),
     forbidden: (value: string) => this.translate.instant('The name "{value}" is already in use.', { value }),
@@ -79,18 +80,18 @@ export class IxErrorsComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('control' in changes && this.control) {
+    if ('control' in changes && this.control()) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      this.statusChangeSubscription = this.control.statusChanges.pipe(
+      this.statusChangeSubscription = this.control().statusChanges.pipe(
         filter((status) => status !== 'PENDING'),
         untilDestroyed(this),
       ).subscribe(() => {
-        const newErrors: (string | null)[] = Object.keys(this.control.errors || []).map((error) => {
+        const newErrors: (string | null)[] = Object.keys(this.control().errors || []).map((error) => {
           if (error === ixManualValidateError) {
             return null;
           }
-          const message = (this.control.errors?.[error] as SomeError)?.message as string;
+          const message = (this.control().errors?.[error] as SomeError)?.message as string;
           if (message) {
             return message;
           }
@@ -101,8 +102,8 @@ export class IxErrorsComponent implements OnChanges {
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         this.messages = newErrors.filter((message) => !!message) as string[];
 
-        if (this.control.errors) {
-          this.control.markAllAsTouched();
+        if (this.control().errors) {
+          this.control().markAllAsTouched();
         }
 
         this.cdr.markForCheck();
@@ -117,8 +118,7 @@ export class IxErrorsComponent implements OnChanges {
    * @returns A default error message for the error type
    */
   getDefaultError(error: DefaultValidationError): string {
-    // eslint-disable-next-line
-    const errors = this.control.errors as ValidationErrors;
+    const errors = this.control().errors || {};
     switch (error) {
       case DefaultValidationError.Min:
         return this.defaultErrMessages.min((errors.min as SomeError).min as number);
@@ -155,12 +155,13 @@ export class IxErrorsComponent implements OnChanges {
   }
 
   removeManualError(): void {
-    if (this.control.errors) {
-      delete this.control.errors[ixManualValidateError];
-      delete this.control.errors.manualValidateError;
-      delete this.control.errors.manualValidateErrorMsg;
+    const errors = this.control().errors;
+    if (errors) {
+      delete errors[ixManualValidateError];
+      delete errors.manualValidateError;
+      delete errors.manualValidateErrorMsg;
     }
-    this.control.updateValueAndValidity();
+    this.control().updateValueAndValidity();
     this.cdr.markForCheck();
   }
 

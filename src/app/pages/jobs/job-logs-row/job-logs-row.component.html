@@ -1,10 +1,10 @@
 <div class="list-item">
   <h4>{{ 'Arguments' | translate }}</h4>
-  @if (job?.arguments?.length > 0) {
+  @if (job()?.arguments?.length > 0) {
     <div class="logs">
-      <pre><code>{{ job.arguments | json }}</code></pre>
-      @if (job?.arguments?.length > 0) {
-        <ix-copy-button [text]="job.arguments | json"></ix-copy-button>
+      <pre><code>{{ job().arguments | json }}</code></pre>
+      @if (job()?.arguments?.length > 0) {
+        <ix-copy-button [text]="job().arguments | json"></ix-copy-button>
       }
     </div>
   } @else {
@@ -14,10 +14,10 @@
 
 <div class="list-item">
   <h4>{{ 'Log Path' | translate }}</h4>
-  @if (job.logs_path) {
+  @if (job().logs_path) {
     <div class="logs">
-      <pre><code>{{ job.logs_path }}</code></pre>
-      <ix-copy-button [text]="job.logs_path"></ix-copy-button>
+      <pre><code>{{ job().logs_path }}</code></pre>
+      <ix-copy-button [text]="job().logs_path"></ix-copy-button>
     </div>
   } @else {
     {{ 'N/A' | translate }}
@@ -26,10 +26,10 @@
 
 <div class="list-item">
   <h4>{{ 'Log Excerpt' | translate }}</h4>
-  @if (job.logs_excerpt) {
+  @if (job().logs_excerpt) {
     <div class="logs">
-      <pre><code>{{ job.logs_excerpt }}</code></pre>
-      <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>
+      <pre><code>{{ job().logs_excerpt }}</code></pre>
+      <ix-copy-button [text]="job().logs_excerpt"></ix-copy-button>
     </div>
   } @else {
     {{ 'No logs are available' | translate }}
@@ -38,13 +38,13 @@
 
 <div class="list-item">
   <h4>{{ 'Credentials' | translate }}</h4>
-  @if (job.credentials) {
+  @if (job().credentials) {
     <div class="logs">
       <div>
         {{
           'Created by: {creationSource} ({creationType})' | translate: {
-            creationSource: getCredentialsCreationSource(job.credentials),
-            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+            creationSource: getCredentialsCreationSource(job().credentials),
+            creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
           }
       }}
     </div>
@@ -56,10 +56,10 @@
 
 <div class="list-item">
   <h4>{{ 'Error' | translate }}</h4>
-  @if (job.error) {
+  @if (job().error) {
     <div class="logs">
-      <pre><code>{{ job.error }}</code></pre>
-      <ix-copy-button [text]="job.error"></ix-copy-button>
+      <pre><code>{{ job().error }}</code></pre>
+      <ix-copy-button [text]="job().error"></ix-copy-button>
     </div>
   } @else {
     {{ 'No errors' | translate }}

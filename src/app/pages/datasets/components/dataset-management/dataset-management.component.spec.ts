@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -28,7 +29,7 @@ describe('DatasetsManagementComponent', () => {
     component: DatasetsManagementComponent,
     imports: [
       SearchInput1Component,
-      EmptyComponent,
+      MockComponent(EmptyComponent),
       FakeProgressBarComponent,
     ],
     providers: [

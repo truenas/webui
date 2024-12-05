@@ -1,0 +1,18 @@
+.menu-header {
+  border-bottom: 1px solid var(--lines);
+  font-size: 12px;
+  margin-top: 12px;
+  padding-bottom: 6px;
+  padding-left: 15px;
+}
+
+:host .loader {
+  display: block;
+  flex: unset;
+  width: 80px;
+
+  ::ng-deep .loader {
+    margin-bottom: -6px;
+  }
+}
+

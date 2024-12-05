@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,9 +41,9 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class TargetSectionComponent implements OnInit, OnChanges {
-  @Input() replication: ReplicationTask;
-  @Input() allowsCustomRetentionPolicy = false;
-  @Input() nodeProvider: TreeNodeProvider;
+  readonly replication = input<ReplicationTask>();
+  readonly allowsCustomRetentionPolicy = input(false);
+  readonly nodeProvider = input<TreeNodeProvider>();
 
   form = this.formBuilder.group({
     target_dataset: [null as string, Validators.required],
@@ -93,11 +93,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.replication) {
+    if (this.replication()) {
       this.setFormValues();
     }
 
-    if (this.nodeProvider) {
+    if (this.nodeProvider()) {
       this.form.controls.target_dataset.enable();
     } else {
       this.form.controls.target_dataset.disable();
@@ -177,30 +177,30 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(): void {
-    const usesTruenasKeyDb = this.replication.encryption_key_location === truenasDbKeyLocation;
+    const usesTruenasKeyDb = this.replication().encryption_key_location === truenasDbKeyLocation;
 
     this.form.patchValue({
-      ...this.replication,
-      encryption_key_location_truenasdb: usesTruenasKeyDb || !this.replication.encryption,
-      encryption_key_location: usesTruenasKeyDb ? '' : (this.replication.encryption_key_location || ''),
+      ...this.replication(),
+      encryption_key_location_truenasdb: usesTruenasKeyDb || !this.replication().encryption,
+      encryption_key_location: usesTruenasKeyDb ? '' : (this.replication().encryption_key_location || ''),
     });
 
     if (this.isHex) {
       this.form.patchValue({
         encryption_key_passphrase: '',
-        encryption_key_hex: this.replication.encryption_key || '',
+        encryption_key_hex: this.replication().encryption_key || '',
         encryption_key_generate: false,
       });
     } else {
       this.form.patchValue({
-        encryption_key_passphrase: this.replication.encryption_key || '',
+        encryption_key_passphrase: this.replication().encryption_key || '',
         encryption_key_hex: '',
       });
     }
   }
 
   private setRetentionPolicyOptions(): void {
-    if (this.allowsCustomRetentionPolicy) {
+    if (this.allowsCustomRetentionPolicy()) {
       this.retentionPolicies$ = this.allRetentionPolicies$;
       return;
     }

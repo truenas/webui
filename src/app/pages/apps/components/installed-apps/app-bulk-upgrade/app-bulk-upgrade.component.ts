@@ -22,7 +22,6 @@ import {
   filter, map, Observable, of, pairwise, startWith,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { App, AppUpgradeParams } from 'app/interfaces/app.interface';
@@ -62,7 +61,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxSelectComponent,
     RequiresRolesDirective,
     TestDirective,
-    LetDirective,
     MatButton,
   ],
 })

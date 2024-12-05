@@ -9,7 +9,7 @@
       mat-button
       ixTest="manage-devices"
       [ixUiSearch]="searchableElements.elements.manageDevices"
-      (click)="router.navigate(['/storage', this.poolState.id, 'devices'])"
+      (click)="router.navigate(['/storage', this.poolState().id, 'devices'])"
     >
       {{ 'Manage Devices' | translate }}
     </button>

@@ -70,7 +70,7 @@ describe('EditNfsAceComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('shows current ace values from ace @Input()', async () => {
+  it('shows current ace values from ace input', async () => {
     const values = await form.getValues();
 
     expect(values).toEqual({

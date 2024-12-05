@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,7 +30,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class ScheduleSectionComponent implements OnChanges {
-  @Input() replication: ReplicationTask;
+  readonly replication = input<ReplicationTask>();
 
   form = this.formBuilder.group({
     auto: [true],
@@ -52,8 +52,8 @@ export class ScheduleSectionComponent implements OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (this.replication) {
-      this.setFormValues(this.replication);
+    if (this.replication()) {
+      this.setFormValues(this.replication());
     }
   }
 

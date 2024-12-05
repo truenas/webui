@@ -1,6 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
@@ -51,15 +51,15 @@ interface DiskState {
   ],
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
-  @Input() poolState: Pool;
-  @Input() disks: StorageDashboardDisk[] = [];
+  readonly poolState = input<Pool>();
+  readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = diskHealthCardElements;
 
   SmartTestResultPageType = SmartTestResultPageType;
 
   get disksNames(): string[] {
-    return getPoolDisks(this.poolState);
+    return getPoolDisks(this.poolState());
   }
 
   diskState: DiskState = {
@@ -80,9 +80,9 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (this.disks) {
-      this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTestsFailed, 0);
-      this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
+    if (this.disks()) {
+      this.diskState.smartTests = this.disks().reduce((total, disk) => total + disk.smartTestsFailed, 0);
+      this.diskState.alerts = this.disks().reduce((total, current) => total + current.alerts.length, 0);
       this.loadTemperatures();
     }
   }
@@ -119,7 +119,7 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
   private loadTemperatures(): void {
     let avgSum = 0;
     let avgCounter = 0;
-    this.disks.forEach((disk) => {
+    this.disks().forEach((disk) => {
       if (!disk.tempAggregates) {
         return;
       }

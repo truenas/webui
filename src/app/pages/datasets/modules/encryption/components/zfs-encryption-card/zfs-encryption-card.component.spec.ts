@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { InferInputSignals } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -63,7 +64,7 @@ describe('ZfsEncryptionCardComponent', () => {
     locked: true,
   } as DatasetDetails;
 
-  function setupTest(props: Partial<ZfsEncryptionCardComponent> = {}): void {
+  function setupTest(props: InferInputSignals<ZfsEncryptionCardComponent> = {}): void {
     spectator = createComponent({ props });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }

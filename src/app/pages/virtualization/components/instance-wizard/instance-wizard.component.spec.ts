@@ -16,6 +16,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   VirtualizationDeviceType,
+  VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
@@ -56,6 +57,10 @@ describe('InstanceWizardComponent', () => {
           cpu: 'Intel Xeon',
           memory: 2 * GiB,
         } as VirtualizationInstance]),
+        mockCall('interface.has_pending_changes', false),
+        mockCall('virt.device.nic_choices', {
+          nic1: 'nic1',
+        }),
         mockCall('virt.device.gpu_choices', {
           pci_0000_01_00_0: {
             bus: 1,
@@ -143,6 +148,9 @@ describe('InstanceWizardComponent', () => {
     const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
     await usbDeviceCheckbox.setValue(true);
 
+    const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
+    await nicDeviceCheckbox.setValue(true);
+
     const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
     await gpuDeviceCheckbox.setValue(true);
 
@@ -166,6 +174,7 @@ describe('InstanceWizardComponent', () => {
           dest_port: 2000,
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
+        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
         { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
         { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],

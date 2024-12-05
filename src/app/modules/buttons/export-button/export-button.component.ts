@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -41,16 +41,17 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
-  @Input() jobMethod: M;
-  @Input() searchQuery: SearchQuery<T>;
-  @Input() defaultFilters: QueryFilters<T>;
-  @Input() sorting: TableSort<T>;
-  @Input() filename = 'data';
-  @Input() fileType = 'csv';
-  @Input() fileMimeType = 'text/csv';
-  @Input() addReportNameArgument = false;
-  @Input() controllerType: ControllerType;
-  @Input() downloadMethod?: keyof ApiCallDirectory;
+  readonly jobMethod = input.required<M>();
+  readonly searchQuery = input<SearchQuery<T>>();
+  readonly defaultFilters = input<QueryFilters<T>>();
+  readonly sorting = input<TableSort<T>>();
+  readonly filename = input('data');
+  readonly fileType = input('csv');
+  readonly fileMimeType = input('text/csv');
+  readonly addReportNameArgument = input(false);
+  // TODO: Does not belong to generic export button component.
+  readonly controllerType = input<ControllerType>();
+  readonly downloadMethod = input<keyof ApiCallDirectory>();
 
   isLoading = false;
 
@@ -67,9 +68,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   onExport(): void {
     this.isLoading = true;
-    this.api.job(this.jobMethod, this.getExportParams(
-      this.getQueryFilters(this.searchQuery),
-      this.getQueryOptions(this.sorting),
+    this.api.job(this.jobMethod(), this.getExportParams(
+      this.getQueryFilters(this.searchQuery()),
+      this.getQueryOptions(this.sorting()),
     )).pipe(
       switchMap((job) => {
         this.cdr.markForCheck();
@@ -83,15 +84,15 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
         const url = job.result as string;
         const customArguments = {} as { report_name?: string };
-        const downloadMethod = this.downloadMethod || this.jobMethod;
+        const downloadMethod = this.downloadMethod() || this.jobMethod();
 
-        if (this.addReportNameArgument) {
+        if (this.addReportNameArgument()) {
           customArguments.report_name = url;
         }
 
         return this.api.call('core.download', [downloadMethod, [customArguments], url]);
       }),
-      switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
+      switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename()}.${this.fileType()}`, this.fileMimeType())),
       catchError((error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -113,15 +114,15 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       'query-filters': queryFilters,
       'query-options': queryOptions,
       export_format: ExportFormat.Csv,
-      ...(this.isHaLicensed() && this.controllerType && {
-        remote_controller: this.controllerType === ControllerType.Standby,
+      ...(this.isHaLicensed() && this.controllerType() && {
+        remote_controller: this.controllerType() === ControllerType.Standby,
       }),
     }] as ApiJobParams<M>;
   }
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
     if (searchQuery) {
-      return (searchQuery as AdvancedSearchQuery<T>)?.filters || this.defaultFilters;
+      return (searchQuery as AdvancedSearchQuery<T>)?.filters || this.defaultFilters();
     }
 
     return [];

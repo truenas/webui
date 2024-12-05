@@ -1,10 +1,10 @@
 <h1 #errorTitle mat-dialog-title id="err-title" class="err-title">
   <ix-icon class="error-warning-icon" name="error"></ix-icon>
-  {{ title | translate }}
+  {{ title() | translate }}
 </h1>
 <div #errorMdContent id="err-md-content">
-  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
-  @if (backtrace) {
+  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message()"></span></div>
+  @if (backtrace()) {
     <div
       class="more-info"
       (click)="toggleOpen()"
@@ -17,7 +17,7 @@
       <span>{{ 'More info...' | translate }}</span>
     </div>
   }
-  @if (backtrace) {
+  @if (backtrace()) {
     <div
       #errorBtPanel
       id="err-bt-panel"
@@ -25,12 +25,12 @@
       [class.open]="!isCloseMoreInfo"
     >
       <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
-        {{ 'Error' | translate }}: {{ backtrace }}
+        {{ 'Error' | translate }}: {{ backtrace() }}
       </div>
     </div>
   }
 </div>
-@if (logs) {
+@if (logs()) {
   <button
     mat-button
     class="mat-mdc-button mat-button mat-primary"

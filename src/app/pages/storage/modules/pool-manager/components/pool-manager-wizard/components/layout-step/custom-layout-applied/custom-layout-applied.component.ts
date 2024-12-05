@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -24,8 +24,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class CustomLayoutAppliedComponent {
-  @Input() type: VdevType;
-  @Input() vdevs: DetailsDisk[][];
+  readonly type = input.required<VdevType>();
+  readonly vdevs = input.required<DetailsDisk[][]>();
 
   readonly manualDiskSelectionMessage = helptextManager.manual_disk_selection_message;
 
@@ -33,13 +33,13 @@ export class CustomLayoutAppliedComponent {
     protected poolManagerStore: PoolManagerStore,
   ) {
     this.poolManagerStore.resetStep$.pipe(untilDestroyed(this)).subscribe((vdevType: VdevType) => {
-      if (vdevType === this.type) {
+      if (vdevType === this.type()) {
         this.resetLayout();
       }
     });
   }
 
   resetLayout(): void {
-    this.poolManagerStore.resetTopologyCategory(this.type);
+    this.poolManagerStore.resetTopologyCategory(this.type());
   }
 }

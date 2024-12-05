@@ -6,7 +6,6 @@ import { InstanceListComponent } from 'app/pages/virtualization/components/all-i
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 const instance = {
   id: '1',
@@ -31,12 +30,6 @@ describe('InstanceListComponent', () => {
       mockProvider(VirtualizationDevicesStore, {
         selectInstance: jest.fn(),
         selectedInstance: jest.fn(),
-      }),
-      mockProvider(VirtualizationViewStore, {
-        initialize: jest.fn(),
-        isMobileView: jest.fn(),
-        showMobileDetails: jest.fn(),
-        closeMobileDetails: jest.fn(),
       }),
     ],
   });

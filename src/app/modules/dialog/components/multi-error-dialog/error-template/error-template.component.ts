@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, input, ViewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle } from '@angular/material/dialog';
@@ -36,11 +36,12 @@ export class ErrorTemplateComponent {
   @ViewChild('errorBtPanel') errorBtPanel: ElementRef<HTMLElement>;
   @ViewChild('errorBtText') errorBtText: ElementRef<HTMLElement>;
 
-  @Input() title: string;
-  @Input() message: string;
-  @Input() backtrace: string;
+  readonly title = input<string>();
+  readonly message = input<string>();
+  readonly backtrace = input<string>();
+  readonly logs = input<Job>();
+
   isCloseMoreInfo = true;
-  @Input() logs: Job;
 
   constructor(
     private api: ApiService,
@@ -68,13 +69,13 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.api.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
+    this.api.call('core.job_download_logs', [this.logs().id, `${this.logs().id}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';
-        this.download.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+        this.download.streamDownloadFile(url, `${this.logs().id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
-            this.download.downloadBlob(file, `${this.logs.id}.log`);
+            this.download.downloadBlob(file, `${this.logs().id}.log`);
           },
           error: (error: HttpErrorResponse) => {
             this.dialogService.error(this.errorHandler.parseHttpError(error));

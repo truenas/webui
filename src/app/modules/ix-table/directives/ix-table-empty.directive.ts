@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ComponentRef, Directive, Input, OnChanges, ViewContainerRef,
+  AfterViewInit, ComponentRef, Directive, input, OnChanges, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -12,8 +12,9 @@ import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-emp
   standalone: true,
 })
 export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
-  @Input('ix-table-empty') showEmptyRow: boolean;
-  @Input() emptyConfig: EmptyConfig;
+  readonly showEmptyRow = input<boolean>(false, { alias: 'ix-table-empty' });
+  readonly emptyConfig = input<EmptyConfig>();
+
   componentRef: ComponentRef<IxTableEmptyRowComponent> = null;
   constructor(
     private viewContainerRef: ViewContainerRef,
@@ -28,7 +29,7 @@ export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
   }
 
   toggleEmptyComponent(): void {
-    if (this.showEmptyRow && this.emptyConfig?.type !== EmptyType.Loading) {
+    if (this.showEmptyRow() && this.emptyConfig()?.type !== EmptyType.Loading) {
       this.updateComponentConfig();
     } else {
       this.destroyRowComponent();
@@ -44,8 +45,8 @@ export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
     if (!this.componentRef) {
       this.componentRef = this.viewContainerRef.createComponent(IxTableEmptyRowComponent);
     }
-    if (this.emptyConfig) {
-      this.componentRef?.setInput('conf', this.emptyConfig);
+    if (this.emptyConfig()) {
+      this.componentRef?.setInput('conf', this.emptyConfig());
     }
     this.componentRef.changeDetectorRef.detectChanges();
   }

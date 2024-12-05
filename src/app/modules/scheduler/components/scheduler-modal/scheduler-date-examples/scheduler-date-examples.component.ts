@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { slice } from 'lodash-es';
-import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 import { LocaleService } from 'app/services/locale.service';
 

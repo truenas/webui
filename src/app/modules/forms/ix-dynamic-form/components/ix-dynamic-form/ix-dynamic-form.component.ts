@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -23,9 +23,9 @@ import { IxDynamicFormItemComponent } from './ix-dynamic-form-item/ix-dynamic-fo
 })
 
 export class IxDynamicFormComponent {
-  @Input() dynamicForm: UntypedFormGroup;
-  @Input() dynamicSection: DynamicFormSchema[];
-  @Input() isEditMode: boolean;
+  readonly dynamicForm = input.required<UntypedFormGroup>();
+  readonly dynamicSection = input.required<DynamicFormSchema[]>();
+  readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();

@@ -11,7 +11,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -48,7 +47,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     MatMenuItem,
     NavigateAndInteractDirective,
     MatProgressBar,
-    LetDirective,
     AlertComponent,
     MatRipple,
     TranslateModule,

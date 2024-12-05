@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.input-container {
+  background: var(--bg1);
+  border: solid 1.5px var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  position: relative;
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  input {
+    background: none;
+    border: 0;
+    color: var(--fg1);
+    width: 100%;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  ::ng-deep mat-datepicker-toggle svg {
+    width: 18px;
+  }
+}

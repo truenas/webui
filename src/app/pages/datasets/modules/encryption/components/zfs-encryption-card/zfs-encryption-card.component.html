@@ -17,7 +17,7 @@
         mat-button
         color="primary"
         ixTest="unlock"
-        [routerLink]="['/datasets', dataset.id, 'unlock']"
+        [routerLink]="['/datasets', dataset().id, 'unlock']"
       >
         {{ 'Unlock' | translate }}
       </a>
@@ -28,7 +28,7 @@
       <div class="label">{{ 'Current State' | translate }}:</div>
       <div class="value">{{ currentStateLabel }}</div>
     </div>
-    @if (dataset.encrypted) {
+    @if (dataset().encrypted) {
       <div class="details-item">
         <div class="label">{{ 'Encryption Root' | translate }}:</div>
         @if (isEncryptionRoot) {
@@ -36,11 +36,11 @@
             {{ 'Yes' | translate }}
           </div>
         } @else {
-          <div class="value">/{{ dataset.encryption_root }}</div>
+          <div class="value">/{{ dataset().encryption_root }}</div>
           <a
             class="action"
             ixTest="go-to-encryption-root"
-            [routerLink]="['/datasets', dataset.encryption_root]"
+            [routerLink]="['/datasets', dataset().encryption_root]"
           >
             {{ 'Go To Encryption Root' | translate }}
           </a>
@@ -54,11 +54,11 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Algorithm' | translate }}:</div>
-        <div class="value">{{ dataset.encryption_algorithm?.value }}</div>
+        <div class="value">{{ dataset().encryption_algorithm?.value }}</div>
       </div>
     }
   </mat-card-content>
-  @if (dataset.encrypted && isEncryptionRoot && !this.dataset.locked) {
+  @if (dataset().encrypted && isEncryptionRoot && !dataset().locked) {
     <mat-card-actions>
       <ng-container *ixRequiresRoles="[Role.FullAdmin]">
         @if (canExportKey && isRoot) {

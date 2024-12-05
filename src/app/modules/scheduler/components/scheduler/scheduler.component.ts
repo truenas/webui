@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, ReactiveFormsModule, FormsModule,
@@ -42,17 +42,17 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SchedulerComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required = false;
-  @Input() hideMinutes = false;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input(false);
+  readonly hideMinutes = input(false);
 
   protected readonly customValue = 'custom';
   /**
    * Optional extra time boundaries for every day, i.e. "15:30" - "23:30"
    */
-  @Input() startTime: string;
-  @Input() endTime: string;
+  readonly startTime = input<string>();
+  readonly endTime = input<string>();
 
   readonly defaultPresets = getDefaultCrontabPresets(this.translate);
 
@@ -97,9 +97,9 @@ export class SchedulerComponent implements ControlValueAccessor {
   onCustomOptionSelected(previousValue: string): void {
     this.matDialog.open(SchedulerModalComponent, {
       data: {
-        startTime: this.startTime,
-        endTime: this.endTime,
-        hideMinutes: this.hideMinutes,
+        startTime: this.startTime(),
+        endTime: this.endTime(),
+        hideMinutes: this.hideMinutes(),
         crontab: previousValue,
       } as SchedulerModalConfig,
     })

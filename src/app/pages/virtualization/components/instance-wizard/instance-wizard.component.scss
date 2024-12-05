@@ -39,3 +39,9 @@ ix-fieldset {
     width: 100px;
   }
 }
+
+ngx-skeleton-loader {
+  ::ng-deep span {
+    min-height: 25px;
+  }
+}

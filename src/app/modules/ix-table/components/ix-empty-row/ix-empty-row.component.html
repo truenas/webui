@@ -1,9 +1,9 @@
 <ng-template [cdkPortalOutlet]="templatePortal"></ng-template>
 <ng-template #templatePortalContent>
   <div
-    [class]="'empty-page ' + conf.type"
-    [class.large]="conf?.large"
-    [class.compact]="conf?.compact"
+    [class]="'empty-page ' + conf().type"
+    [class.large]="conf()?.large"
+    [class.compact]="conf()?.compact"
   >
     @if (isLoading()) {
       <mat-spinner [diameter]="40"></mat-spinner>
@@ -12,21 +12,21 @@
         <ix-icon [name]="getIcon()" [fullSize]="true"></ix-icon>
       </div>
       <div>
-        <h3 class="empty-title">{{ conf.title | translate }}</h3>
+        <h3 class="empty-title">{{ conf().title | translate }}</h3>
         <!-- Messages -->
-        @if (conf.message && !conf.compact) {
+        @if (conf().message && !conf().compact) {
           <p class="empty-message">
-            {{ conf.message | translate }}
+            {{ conf().message | translate }}
           </p>
         }
-        @if (conf.button && !conf.compact) {
+        @if (conf().button && !conf().compact) {
           <button
             class="empty-action"
             mat-button
-            [ixTest]="[conf.button.label]"
+            [ixTest]="[conf().button.label]"
             (click)="doAction()"
           >
-            {{ conf.button.label | translate }}
+            {{ conf().button.label | translate }}
           </button>
         }
       </div>

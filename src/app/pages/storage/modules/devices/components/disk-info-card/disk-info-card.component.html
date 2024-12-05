@@ -14,9 +14,9 @@
     <mat-card-content>
       <div class="details-item">
         <div class="label">{{ 'Disk Size' | translate }}:</div>
-        @if (disk?.size) {
+        @if (disk()?.size) {
           <div class="value">
-            {{ disk.size | ixFileSize }}
+            {{ disk().size | ixFileSize }}
           </div>
         } @else {
           <div class="value">{{ 'N/A' | translate }}</div>
@@ -25,29 +25,29 @@
       <div class="details-item">
         <div class="label">{{ 'Transfer Mode' | translate }}:</div>
         <div class="value">
-          {{ disk?.transfermode | orNotAvailable }}
+          {{ disk()?.transfermode | orNotAvailable }}
         </div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Serial' | translate }}:</div>
         <div class="value">
-          {{ disk.serial }}
-          <ix-copy-button [text]="disk.serial"></ix-copy-button>
+          {{ disk().serial }}
+          <ix-copy-button [text]="disk().serial"></ix-copy-button>
         </div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Model' | translate }}:</div>
         <div class="value">
-          {{ disk?.model | orNotAvailable }}
+          {{ disk()?.model | orNotAvailable }}
         </div>
       </div>
 
       @if (isHdd) {
         <div class="details-item">
           <div class="label">{{ 'Rotation Rate' | translate }}:</div>
-          @if (disk?.rotationrate) {
+          @if (disk()?.rotationrate) {
             <div class="value">
-              {{ '{n} RPM' | translate: { n: disk.rotationrate } }}
+              {{ '{n} RPM' | translate: { n: disk().rotationrate } }}
             </div>
           } @else {
             <div class="value">{{ 'N/A' | translate }}</div>
@@ -57,15 +57,15 @@
 
       <div class="details-item">
         <div class="label">{{ 'Type' | translate }}:</div>
-        <div class="value">{{ disk?.type | orNotAvailable }}</div>
+        <div class="value">{{ disk()?.type | orNotAvailable }}</div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'HDD Standby' | translate }}:</div>
-        <div class="value">{{ disk?.hddstandby | orNotAvailable }}</div>
+        <div class="value">{{ disk()?.hddstandby | orNotAvailable }}</div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Description' | translate }}:</div>
-        <div class="value">{{ disk.description || ('N/A' | translate) }}</div>
+        <div class="value">{{ disk().description || ('N/A' | translate) }}</div>
       </div>
     </mat-card-content>
   }

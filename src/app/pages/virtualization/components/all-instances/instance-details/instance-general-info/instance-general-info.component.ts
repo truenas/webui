@@ -1,10 +1,13 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatCard, MatCardActions, MatCardContent, MatCardHeader,
   MatCardTitle,
 } from '@angular/material/card';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -43,6 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     KeyValuePipe,
     TestDirective,
     MapValuePipe,
+    MatTooltip,
   ],
 })
 export class InstanceGeneralInfoComponent {
@@ -50,6 +54,10 @@ export class InstanceGeneralInfoComponent {
 
   protected readonly Role = Role;
   protected readonly virtualizationStatusLabels = virtualizationStatusLabels;
+
+  protected readonly environmentVariablesTooltip = computed(() => {
+    return Object.entries(this.instance().environment).map(([key, value]) => `${key} = ${value}`).join('\n');
+  });
 
   constructor(
     protected formatter: IxFormatterService,

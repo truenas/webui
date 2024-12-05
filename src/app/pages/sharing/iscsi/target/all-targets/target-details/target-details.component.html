@@ -1,0 +1,11 @@
+<div class="cards">
+  <div class="scroll-window">
+    @if (hasIscsiCards()) {
+      @if (target().auth_networks.length) {
+        <ix-authorized-networks-card [target]="target()"></ix-authorized-networks-card>
+      }
+    }
+
+    <ix-associated-extents-card [target]="target()"></ix-associated-extents-card>
+  </div>
+</div>

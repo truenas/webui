@@ -2,11 +2,13 @@
 @import 'mixins/layout';
 
 :host {
+  height: 100%;
+
   .item-search {
     background-color: var(--bg2);
     padding: 16px;
     position: sticky;
-    top: 0;
+    top: -17px;
     z-index: 2;
   }
 

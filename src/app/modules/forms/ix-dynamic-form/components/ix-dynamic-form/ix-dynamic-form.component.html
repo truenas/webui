@@ -1,4 +1,4 @@
-@for (section of dynamicSection; track section) {
+@for (section of dynamicSection(); track section) {
   @if (section.schema.length) {
     <ix-fieldset
       [title]="section.name | translate"
@@ -7,8 +7,8 @@
       @for (schema of section.schema; track schema) {
         <ix-dynamic-form-item
           [dynamicSchema]="schema"
-          [dynamicForm]="dynamicForm"
-          [isEditMode]="isEditMode"
+          [dynamicForm]="dynamicForm()"
+          [isEditMode]="isEditMode()"
           (addListItem)="addControlNext($event)"
           (deleteListItem)="removeControlNext($event)"
         ></ix-dynamic-form-item>

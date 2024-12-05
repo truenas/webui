@@ -1,5 +1,6 @@
 import {
-  Directive, Input, OnInit, HostListener,
+  Directive, OnInit, HostListener,
+  input,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,7 +16,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   standalone: true,
 })
 export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
-  @Input() formGroup: FormGroup;
+  readonly formGroup = input<FormGroup>();
 
   private formSubmitted = false;
 
@@ -36,7 +37,7 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   }
 
   closeWithConfirmation(response?: T): Observable<boolean> {
-    if (this.formGroup.pristine || (this.formSubmitted && !this.formGroup.invalid) || response) {
+    if (this.formGroup().pristine || (this.formSubmitted && !this.formGroup().invalid) || response) {
       this.emitClose(response);
       return of(true);
     }
@@ -52,8 +53,8 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   }
 
   private trackFormChanges(): void {
-    this.formGroup.valueChanges.pipe(
-      filter(() => !this.formGroup.pristine && this.formSubmitted),
+    this.formGroup().valueChanges.pipe(
+      filter(() => !this.formGroup().pristine && this.formSubmitted),
       tap(() => this.formSubmitted = false),
       untilDestroyed(this),
     ).subscribe();

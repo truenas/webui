@@ -1,6 +1,6 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -27,9 +27,9 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -69,7 +69,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ZfsHealthCardComponent implements OnChanges {
-  @Input() pool: Pool;
+  readonly pool = input.required<Pool>();
 
   protected readonly searchableElements = zfsHealthCardElements;
 
@@ -153,33 +153,33 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   get iconType(): PoolCardIconType {
-    if (!this.pool.healthy) {
+    if (!this.pool().healthy) {
       return PoolCardIconType.Error;
     }
-    if (this.pool.status === PoolStatus.Degraded) {
+    if (this.pool().status === PoolStatus.Degraded) {
       return PoolCardIconType.Warn;
     }
-    if (this.pool.status === PoolStatus.Faulted) {
+    if (this.pool().status === PoolStatus.Faulted) {
       return PoolCardIconType.Faulted;
     }
     return PoolCardIconType.Safe;
   }
 
   get iconTooltip(): string {
-    if (!this.pool.healthy) {
+    if (!this.pool().healthy) {
       return this.translate.instant('Pool is not healthy');
     }
-    if (this.pool.status === PoolStatus.Degraded) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool.status });
+    if (this.pool().status === PoolStatus.Degraded) {
+      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
     }
-    if (this.pool.status === PoolStatus.Faulted) {
-      return this.translate.instant('Pool status is {status}', { status: this.pool.status });
+    if (this.pool().status === PoolStatus.Faulted) {
+      return this.translate.instant('Pool status is {status}', { status: this.pool().status });
     }
     return this.translate.instant('Everything is fine');
   }
 
   ngOnChanges(): void {
-    this.scan = this.pool.scan;
+    this.scan = this.pool().scan;
 
     this.subscribeToScan();
     this.calculateTotalZfsErrors();
@@ -187,7 +187,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   onStartScrub(): void {
-    const message = this.translate.instant('Start scrub on pool <i>{poolName}</i>?', { poolName: this.pool.name });
+    const message = this.translate.instant('Start scrub on pool <i>{poolName}</i>?', { poolName: this.pool().name });
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
@@ -195,7 +195,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
+        switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -203,34 +203,34 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   onStopScrub(): void {
-    const message = this.translate.instant('Stop the scrub on {poolName}?', { poolName: this.pool.name });
+    const message = this.translate.instant('Stop the scrub on {poolName}?', { poolName: this.pool().name });
     this.dialogService.confirm({
       message,
       title: this.translate.instant('Scrub Pool'),
       buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
+      switchMap(() => this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Stop])),
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }
 
   onPauseScrub(): void {
-    this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+    this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Pause])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
   onResumeScrub(): void {
-    this.api.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+    this.api.startJob('pool.scrub', [this.pool().id, PoolScrubAction.Start])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
   onEditAutotrim(): void {
     this.matDialog
-      .open(AutotrimDialogComponent, { data: this.pool })
+      .open(AutotrimDialogComponent, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
@@ -243,7 +243,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     this.poolScanSubscription = this.api.subscribe('zfs.pool.scan')
       .pipe(
         map((apiEvent) => apiEvent.fields),
-        filter((scan) => scan.name === this.pool.name),
+        filter((scan) => scan.name === this.pool().name),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -254,17 +254,17 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   private loadScrubTaskStatus(): void {
-    this.hasScrubTask$ = this.api.call('pool.scrub.query', [[['pool_name', '=', this.pool.name]]]).pipe(
+    this.hasScrubTask$ = this.api.call('pool.scrub.query', [[['pool_name', '=', this.pool().name]]]).pipe(
       map((scrubTasks) => scrubTasks.length > 0),
       toLoadingState(),
     );
   }
 
   private calculateTotalZfsErrors(): void {
-    if (!this.pool.topology) {
+    if (!this.pool().topology) {
       return;
     }
-    this.totalZfsErrors = Object.values(this.pool.topology).reduce((totalErrors: number, vdevs: TopologyItem[]) => {
+    this.totalZfsErrors = Object.values(this.pool().topology).reduce((totalErrors: number, vdevs: TopologyItem[]) => {
       return totalErrors + vdevs.reduce((vdevCategoryErrors, vdev) => {
         return vdevCategoryErrors
           + (vdev.stats?.read_errors || 0)

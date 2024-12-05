@@ -3,17 +3,17 @@
   <div class="columns">
     <div class="column">
       <ix-disk-size-dropdowns
-        [inventory]="inventory"
-        [layout]="layout"
-        [type]="type"
-        [isStepActive]="isStepActive"
+        [inventory]="inventory()"
+        [layout]="layout()"
+        [type]="type()"
+        [isStepActive]="isStepActive()"
         (disksSelected)="onDisksSelected($event)"
       ></ix-disk-size-dropdowns>
 
       <ix-select
         class="select"
         formControlName="dataDevicesPerGroup"
-        [ixTestOverride]="['data-devices-per-group', type]"
+        [ixTestOverride]="['data-devices-per-group', type()]"
         [label]="'Data Devices' | translate"
         [options]="dataDevicesPerGroupOptions$"
         [required]="true"
@@ -22,7 +22,7 @@
       <ix-select
         class="select"
         formControlName="spares"
-        [ixTestOverride]="['spares', type]"
+        [ixTestOverride]="['spares', type()]"
         [label]="'Distributed Hot Spares' | translate"
         [options]="sparesOptions$"
         [required]="true"
@@ -32,7 +32,7 @@
     <div class="column">
       <ix-select
         formControlName="children"
-        [ixTestOverride]="['children', type]"
+        [ixTestOverride]="['children', type()]"
         [label]="'Children' | translate"
         [required]="true"
         [options]="widthOptions$"
@@ -44,7 +44,7 @@
 
       <ix-select
         formControlName="vdevsNumber"
-        [ixTestOverride]="['vdevs-number', type]"
+        [ixTestOverride]="['vdevs-number', type()]"
         [label]="'Number of VDEVs' | translate"
         [options]="vdevsNumberOptions$"
         [required]="true"

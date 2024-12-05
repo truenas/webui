@@ -8,23 +8,23 @@
         <div class="title">
           <ng-template
             ix-header-cell
-            [dataProvider]="dataProvider"
+            [dataProvider]="dataProvider()"
             [column]="column"
           ></ng-template>
           @if (column.headerTooltip) {
             <ix-tooltip
-                class="tooltip"
-                [message]="column.headerTooltip | translate"
-                (click)="$event.stopPropagation()">
+              class="tooltip"
+              [message]="column.headerTooltip | translate"
+              (click)="$event.stopPropagation()">
             </ix-tooltip>
           }
         </div>
         @if (!column.disableSorting) {
           <div>
-            @if (dataProvider.sorting.direction === SortDirection.Asc && dataProvider.sorting.active === idx) {
+            @if (dataProvider().sorting.direction === SortDirection.Asc && dataProvider().sorting.active === idx) {
               <ix-icon name="mdi-arrow-down" class="sort-icon"></ix-icon>
             }
-            @if (dataProvider.sorting.direction === SortDirection.Desc && dataProvider.sorting.active === idx) {
+            @if (dataProvider().sorting.direction === SortDirection.Desc && dataProvider().sorting.active === idx) {
               <ix-icon name="mdi-arrow-up" class="sort-icon"></ix-icon>
             }
           </div>

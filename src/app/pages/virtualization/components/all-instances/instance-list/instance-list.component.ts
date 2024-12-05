@@ -2,13 +2,15 @@ import { SelectionModel } from '@angular/cdk/collections';
 import {
   Component, ChangeDetectionStrategy,
   signal, computed, inject,
-  effect,
-  ChangeDetectorRef,
+  output,
+  input,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { filter, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -21,7 +23,6 @@ import { InstanceListBulkActionsComponent } from 'app/pages/virtualization/compo
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 @UntilDestroy()
 @Component({
@@ -43,6 +44,10 @@ import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtual
 })
 
 export class InstanceListComponent {
+  readonly isMobileView = input<boolean>();
+  readonly showMobileDetails = input<boolean>();
+  readonly toggleShowMobileDetails = output<boolean>();
+
   protected readonly searchQuery = signal<string>('');
   protected readonly window = inject<Window>(WINDOW);
   protected readonly selection = new SelectionModel<string>(true, []);
@@ -51,8 +56,6 @@ export class InstanceListComponent {
   protected readonly isLoading = this.store.isLoading;
 
   protected readonly selectedInstance = this.deviceStore.selectedInstance;
-  protected readonly showMobileDetails = this.viewStore.showMobileDetails;
-  protected readonly isMobileView = this.viewStore.isMobileView;
 
   get isAllSelected(): boolean {
     return this.selection.selected.length === this.filteredInstances().length;
@@ -63,7 +66,7 @@ export class InstanceListComponent {
   }
 
   protected readonly filteredInstances = computed(() => {
-    return this.instances().filter((instance) => {
+    return (this.instances() || []).filter((instance) => {
       return instance?.name?.toLocaleLowerCase().includes(this.searchQuery().toLocaleLowerCase());
     });
   });
@@ -80,34 +83,32 @@ export class InstanceListComponent {
     return {
       type: EmptyType.NoPageData,
       title: this.translate.instant('No instances'),
-      message: this.translate.instant('Instances you created will automatically appear here.'),
+      message: this.translate.instant('Instances you create will automatically appear here.'),
       large: true,
     };
   });
 
-  protected selectInstanceDetails = effect(() => {
-    if (this.isLoading() || !this.instances()?.length) {
-      return;
-    }
-
-    const instanceId = this.activatedRoute.snapshot.paramMap.get('id');
-    if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
-      this.deviceStore.selectInstance(instanceId);
-    } else {
-      const [firstInstance] = this.instances();
-      this.navigateToDetails(firstInstance);
-    }
-  }, { allowSignalWrites: true });
-
   constructor(
     private store: VirtualizationInstancesStore,
-    private viewStore: VirtualizationViewStore,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    toObservable(this.instances).pipe(
+      filter((instances) => !!instances?.length),
+      switchMap(() => this.activatedRoute.params),
+      untilDestroyed(this),
+    ).subscribe((params) => {
+      const instanceId = params.id as string;
+      if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
+        this.deviceStore.selectInstance(instanceId);
+      } else {
+        const [firstInstance] = this.instances();
+        this.navigateToDetails(firstInstance);
+      }
+    });
+  }
 
   onSearch(query: string): void {
     this.searchQuery.set(query);
@@ -126,17 +127,8 @@ export class InstanceListComponent {
     this.router.navigate(['/virtualization', 'view', instance.id]);
 
     if (this.isMobileView()) {
-      this.viewStore.setMobileDetails(true);
-
-      setTimeout(() => {
-        (this.window.document.getElementsByClassName('mobile-back-button')?.[0] as HTMLElement)?.focus();
-        this.cdr.markForCheck();
-      }, 0);
+      this.toggleShowMobileDetails.emit(true);
     }
-  }
-
-  closeMobileDetails(): void {
-    this.viewStore.closeMobileDetails();
   }
 
   resetSelection(): void {

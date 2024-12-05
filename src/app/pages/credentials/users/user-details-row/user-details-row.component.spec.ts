@@ -110,6 +110,13 @@ describe('UserDetailsRowComponent', () => {
     expect(deleteButton).toBeNull();
   });
 
+  it('does not show Delete button for logged in user', async () => {
+    spectator.setInput('user', { ...dummyUser, username: 'root' });
+
+    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    expect(deleteButton).toBeNull();
+  });
+
   it('should open DeleteUserDialog when Delete button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();

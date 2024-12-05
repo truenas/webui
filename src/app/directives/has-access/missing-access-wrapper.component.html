@@ -1,9 +1,9 @@
 <span
   matTooltipPosition="above"
-  [disableFocusableElements]="!!template"
-  [class]="['role-missing', class]"
+  [disableFocusableElements]="!!template()"
+  [class]="['role-missing', class()]"
   [matTooltip]="'Missing permissions for this action' | translate"
 >
-  <ng-container *ngTemplateOutlet="template"></ng-container>
+  <ng-container *ngTemplateOutlet="template()"></ng-container>
   <ix-icon name="mdi-lock" class="role-missing-icon"></ix-icon>
 </span>

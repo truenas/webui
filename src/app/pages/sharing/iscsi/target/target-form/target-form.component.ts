@@ -170,9 +170,9 @@ export class TargetFormComponent implements OnInit {
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (response) => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close(response);
       },
       error: (error: unknown) => {
         this.isLoading = false;

@@ -1,7 +1,7 @@
 import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild,
+  Component, ElementRef, HostListener, input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -45,7 +45,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
-  @Input() conf: TerminalConfiguration;
+  readonly conf = input.required<TerminalConfiguration>();
+
   @ViewChild('terminal', { static: true }) container: ElementRef<HTMLElement>;
 
   waitParentChanges = 300;
@@ -86,16 +87,16 @@ export class TerminalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.conf.preInit) {
-      this.conf.preInit().pipe(untilDestroyed(this)).subscribe(() => {
+    if (this.conf().preInit) {
+      this.conf().preInit().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
       });
     } else {
       this.initShell();
     }
 
-    if (this.conf.reconnectShell$) {
-      this.conf.reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
+    if (this.conf().reconnectShell$) {
+      this.conf().reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
         this.reconnect();
       });
     }
@@ -196,7 +197,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   initializeWebShell(): void {
-    this.shellService.connect(this.token, this.conf.connectionData);
+    this.shellService.connect(this.token, this.conf().connectionData);
 
     this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
@@ -212,7 +213,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    this.shellService.connect(this.token, this.conf.connectionData);
+    this.shellService.connect(this.token, this.conf().connectionData);
   }
 
   onFontSizeChanged(newSize: number): void {

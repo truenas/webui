@@ -1,7 +1,7 @@
+import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, OnInit, signal,
+  ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -10,11 +10,11 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, filter, forkJoin, of, switchMap,
+  async,
+  combineLatest, filter, forkJoin, switchMap,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { dockerNvidiaStatusLabels } from 'app/enums/docker-nvidia-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -62,15 +62,13 @@ import { ApiService } from 'app/services/websocket/api.service';
     TestDirective,
     TranslateModule,
     MapValuePipe,
+    AsyncPipe,
   ],
 })
 export class AppsSettingsComponent implements OnInit {
-  protected hasNvidiaCard = toSignal(this.dockerStore.hasNvidiaCard$);
-  protected nvidiaDriversInstalled = toSignal(this.dockerStore.nvidiaDriversInstalled$);
-  protected dockerNvidiaStatus = toSignal(this.dockerStore.dockerNvidiaStatus$);
+  protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
-  protected readonly dockerNvidiaStatusLabels = dockerNvidiaStatusLabels;
 
   protected form = this.fb.group({
     preferred_trains: [[] as string[], Validators.required],
@@ -85,8 +83,6 @@ export class AppsSettingsComponent implements OnInit {
   protected allTrains$ = this.api.call('catalog.trains').pipe(
     singleArrayToOptions(),
   );
-
-  protected showNvidiaCheckbox = computed(() => this.hasNvidiaCard() || this.nvidiaDriversInstalled());
 
   readonly tooltips = {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
@@ -121,14 +117,9 @@ export class AppsSettingsComponent implements OnInit {
           preferred_trains: catalogConfig.preferred_trains,
           enable_image_updates: dockerConfig.enable_image_updates,
           address_pools: dockerConfig.address_pools,
+          nvidia: dockerConfig.nvidia,
         });
       });
-
-    if (this.nvidiaDriversInstalled()) {
-      this.form.patchValue({
-        nvidia: this.nvidiaDriversInstalled(),
-      });
-    }
   }
 
   addAddressPool(): void {
@@ -153,13 +144,12 @@ export class AppsSettingsComponent implements OnInit {
       this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
+        nvidia: values.nvidia,
       }]),
     ])
       .pipe(
-        switchMap(() => (values.nvidia !== null ? this.dockerStore.setDockerNvidia(values.nvidia) : of(values.nvidia))),
         switchMap(() => forkJoin([
           this.dockerStore.reloadDockerConfig(),
-          this.dockerStore.reloadDockerNvidiaStatus(),
           this.appsStore.loadCatalog(),
         ])),
         untilDestroyed(this),
@@ -177,4 +167,5 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   protected readonly helptext = helptextApps;
+  protected readonly async = async;
 }

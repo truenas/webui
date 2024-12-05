@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -39,7 +39,7 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
-  @Input() ace: PosixAclItem;
+  readonly ace = input<PosixAclItem>();
 
   form = this.formBuilder.group({
     tag: [null as PosixAclTag],
@@ -141,11 +141,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     }
 
     const formValues = {
-      tag: this.ace.tag,
-      user: this.isUserTag ? this.ace.who : null,
-      group: this.isGroupTag ? this.ace.who : null,
-      default: this.ace.default,
-      permissions: Object.entries(this.ace.perms)
+      tag: this.ace().tag,
+      user: this.isUserTag ? this.ace().who : null,
+      group: this.isGroupTag ? this.ace().who : null,
+      default: this.ace().default,
+      permissions: Object.entries(this.ace().perms)
         .filter(([, isOn]: [string, boolean]) => isOn)
         .map(([permission]) => permission as PosixPermission),
     };

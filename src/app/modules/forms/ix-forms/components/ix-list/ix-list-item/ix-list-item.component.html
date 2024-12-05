@@ -5,7 +5,7 @@
       type="button"
       class="delete-btn"
       ixTest="remove-from-list"
-      [attr.aria-label]="'Remove {label} item' | translate: { label }"
+      [attr.aria-label]="'Remove {label} item' | translate: { label: label() }"
       (click)="deleteItem()"
     >
       <ix-icon name="clear"></ix-icon>

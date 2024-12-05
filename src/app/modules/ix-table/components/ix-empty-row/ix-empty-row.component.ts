@@ -1,6 +1,13 @@
 import { TemplatePortal, CdkPortalOutlet } from '@angular/cdk/portal';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild, ViewContainerRef,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  input,
+  TemplateRef,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -28,12 +35,12 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableEmptyRowComponent implements AfterViewInit {
-  @Input() conf: EmptyConfig = {
+  readonly conf = input<EmptyConfig>({
     title: this.translate.instant('No records'),
     message: this.translate.instant('There are no records to show.'),
     large: true,
     type: EmptyType.NoPageData,
-  };
+  });
 
   @ViewChild('templatePortalContent') templatePortalContent: TemplateRef<unknown>;
   templatePortal: TemplatePortal;
@@ -50,21 +57,22 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
   }
 
   doAction(): void {
-    if (this.conf.button.action) {
-      this.conf.button.action();
+    if (this.conf().button.action) {
+      this.conf().button.action();
     }
   }
 
   isLoading(): boolean {
-    return this.conf.type === EmptyType.Loading;
+    return this.conf().type === EmptyType.Loading;
   }
 
   getIcon(): MarkedIcon {
     let icon = iconMarker('ix-truenas-logo');
-    if (this.conf.icon) {
-      icon = this.conf.icon;
+    if (this.conf().icon) {
+      icon = this.conf().icon;
     } else {
-      switch (this.conf.type) {
+      const type = this.conf().type;
+      switch (type) {
         case EmptyType.Loading:
           icon = iconMarker('ix-truenas-logo');
           break;
@@ -81,7 +89,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
           icon = iconMarker('mdi-magnify-scan');
           break;
         default:
-          assertUnreachable(this.conf.type);
+          assertUnreachable(type);
       }
     }
     return icon;

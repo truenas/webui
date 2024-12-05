@@ -3,7 +3,7 @@
     <h3 mat-card-title>
       {{ 'Application Info' | translate }}
     </h3>
-    <div>
+    <div class="actions">
       <button
         id="edit-app"
         mat-button
@@ -13,17 +13,31 @@
         {{ 'Edit' | translate }}
       </button>
 
-      @if (app()?.upgrade_available) {
+      <button
+        mat-icon-button
+        ixTest="app-info-menu"
+        [matMenuTriggerFor]="appInfoMenu"
+      >
+        <ix-icon name="more_vert"></ix-icon>
+      </button>
+      <mat-menu #appInfoMenu="matMenu">
         <button
           *ixRequiresRoles="requiredRoles"
-          id="update-app"
-          mat-button
+          mat-menu-item
           [ixTest]="[app()?.name, 'update']"
+          [disabled]="!app().upgrade_available"
           (click)="updateButtonPressed()"
         >
           {{ 'Update' | translate }}
         </button>
-      }
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-menu-item
+          [ixTest]="[app()?.name, 'convert']"
+          [disabled]="app().custom_app"
+          (click)="openConvertDialog()"
+        >{{ 'Convert to custom app' | translate}}</button>
+      </mat-menu>
     </div>
   </mat-card-header>
   <mat-card-content>

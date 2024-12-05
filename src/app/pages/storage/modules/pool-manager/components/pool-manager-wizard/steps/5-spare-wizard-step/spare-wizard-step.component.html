@@ -4,12 +4,12 @@
   [inventory]="inventory$ | async"
   [canChangeLayout]="false"
   [limitLayouts]="allowedLayouts"
-  [isStepActive]="isStepActive"
+  [isStepActive]="isStepActive()"
 ></ix-layout-step>
 
-@if (stepWarning) {
+@if (stepWarning()) {
   <p class="error-warning">
-    {{ stepWarning }}
+    {{ stepWarning() }}
   </p>
 }
 

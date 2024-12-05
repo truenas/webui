@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -34,11 +34,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxFileInputComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() acceptedFiles = '*.*';
-  @Input() multiple: boolean;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly acceptedFiles = input('*.*');
+  readonly multiple = input<boolean>();
+  readonly required = input<boolean>();
 
   value: FileList;
   isDisabled = false;

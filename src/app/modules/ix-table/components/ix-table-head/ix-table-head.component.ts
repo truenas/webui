@@ -1,6 +1,6 @@
 import { NgClass, NgStyle } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
+  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,13 +30,13 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
-  @Input() columns: Column<T, ColumnComponent<T>>[];
-  @Input() dataProvider: DataProvider<T>;
+  readonly columns = input.required<Column<T, ColumnComponent<T>>[]>();
+  readonly dataProvider = input.required<DataProvider<T>>();
 
   readonly SortDirection = SortDirection;
 
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
-    return this.columns?.filter((column) => !column?.hidden);
+    return this.columns()?.filter((column) => !column?.hidden);
   }
 
   constructor(
@@ -44,7 +44,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.dataProvider().currentPage$.pipe(untilDestroyed(this)).subscribe(() => {
       this.cdr.detectChanges();
     });
   }
@@ -54,8 +54,8 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
       return;
     }
 
-    const currentDirection = this.dataProvider.sorting.direction;
-    const currentActive = this.dataProvider.sorting.active;
+    const currentDirection = this.dataProvider().sorting.direction;
+    const currentActive = this.dataProvider().sorting.active;
 
     let direction = currentDirection;
     let active = currentActive;
@@ -75,7 +75,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
     const sortBy = (this.displayedColumns[columnId].sortBy
       || this.displayedColumns[columnId].getValue) as (row: T) => string | number;
 
-    this.dataProvider.setSorting({
+    this.dataProvider().setSorting({
       propertyName: this.displayedColumns[columnId].propertyName,
       sortBy,
       direction,

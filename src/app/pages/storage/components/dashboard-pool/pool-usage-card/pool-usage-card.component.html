@@ -7,8 +7,8 @@
 
     <a
       mat-button
-      [ixTest]="[poolState.name, 'manage-datasets']"
-      [routerLink]="['/', 'datasets', poolState.name]"
+      [ixTest]="[poolState().name, 'manage-datasets']"
+      [routerLink]="['/', 'datasets', poolState().name]"
     >
       {{ 'Manage Datasets' | translate }}
     </a>
@@ -50,7 +50,7 @@
             <span class="used-caption">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.used.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ (rootDataset()?.used.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -58,7 +58,7 @@
             <span class="available-caption">
               <b>{{ 'Available' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.available.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ (rootDataset()?.available.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -70,7 +70,7 @@
       </div>
       <a
         class="link"
-        [ixTest]="[poolState.name, 'view-disk-space-reports']"
+        [ixTest]="[poolState().name, 'view-disk-space-reports']"
         [routerLink]="['/reportsdashboard', 'disk']"
         [queryParams]="{ disks }"
       >

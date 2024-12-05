@@ -1,5 +1,5 @@
 import {
-  Directive, ElementRef, HostBinding, Input, Optional,
+  Directive, ElementRef, HostBinding, input, Optional,
 } from '@angular/core';
 import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -22,7 +22,9 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   standalone: true,
 })
 export class TestDirective {
-  @Input('ixTest') description: number | string | (string | number)[];
+  readonly description = input.required<number | string | (string | number)[]>({
+    alias: 'ixTest',
+  });
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
@@ -30,7 +32,7 @@ export class TestDirective {
   ) {}
 
   get normalizedDescription(): string[] {
-    const description = this.overrideDirective?.overrideDescription ?? this.description;
+    const description = this.overrideDirective?.overrideDescription ?? this.description();
     let normalizedDescription = Array.isArray(description) ? description : [description];
 
     normalizedDescription = normalizedDescription
@@ -38,7 +40,10 @@ export class TestDirective {
       .map((part) => kebabCase(String(part)));
 
     if (this.overrideDirective?.keepLastPart) {
-      const normalizedInitialDescription = Array.isArray(this.description) ? this.description : [this.description];
+      const initialDescription = this.description();
+      const normalizedInitialDescription = Array.isArray(initialDescription)
+        ? initialDescription
+        : [initialDescription];
       normalizedDescription.push(normalizedInitialDescription[normalizedInitialDescription.length - 1]);
     }
 

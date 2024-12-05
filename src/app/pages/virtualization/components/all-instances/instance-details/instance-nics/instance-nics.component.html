@@ -1,0 +1,38 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'NIC' | translate }}
+    </h3>
+
+    @if (!hasPendingInterfaceChanges()) {
+      <ix-add-nic-menu></ix-add-nic-menu>
+    }
+  </mat-card-header>
+
+  <mat-card-content>
+    @if (hasPendingInterfaceChanges()) {
+      <p class="warning">
+        {{ 'NIC modifications are currently restricted due to pending network changes.' | translate }}
+      </p>
+    }
+
+    @if (isLoadingDevices()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (device of shownDevices(); track device.name) {
+        <div class="device">
+          <span>{{ getDeviceDescription(device) }}</span>
+
+          @if (!hasPendingInterfaceChanges()) {
+            <ix-device-actions-menu
+              [device]="device"
+              [showEdit]="false"
+            ></ix-device-actions-menu>
+          }
+        </div>
+      } @empty {
+         {{ 'No NICs added.' | translate }}
+      }
+    }
+  </mat-card-content>
+</mat-card>

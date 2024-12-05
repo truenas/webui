@@ -7,8 +7,8 @@
         mat-button
         type="button"
         class="manual-disk-selection"
-        [ixTest]="['manual', type]"
-        (click)="poolManagerStore.openManualSelectionDialog(type)"
+        [ixTest]="['manual', type()]"
+        (click)="poolManagerStore.openManualSelectionDialog(type())"
       >
         {{ 'Edit Manual Disk Selection' | translate }}
       </button>
@@ -18,7 +18,7 @@
     <h3>{{ 'Description' | translate }}</h3>
     <ul class="description-list">
       <li class="vdevs-length">
-        <strong>{{ 'VDEVs' | translate }}: </strong>{{ vdevs.length }}
+        <strong>{{ 'VDEVs' | translate }}: </strong>{{ vdevs().length }}
       </li>
       <li>
         <strong>{{ 'No warnings' | translate }}</strong>

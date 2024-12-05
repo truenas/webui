@@ -2,7 +2,7 @@
   {{ 'Access Control List' | translate }}
 </div>
 <div class="acl-list">
-  @if (!acl.acl.length) {
+  @if (!acl().acl.length) {
     <div class="empty-message">
       {{ 'The list is empty.' | translate }}
     </div>
@@ -10,8 +10,8 @@
     @for (ace of aces; track ace; let i = $index) {
       <div
         class="ace"
-        [class.ace-selected]="i === selectedAceIndex"
-        [class.fn-theme-red]="acesWithError.includes(i)"
+        [class.ace-selected]="i === selectedAceIndex()"
+        [class.fn-theme-red]="acesWithError().includes(i)"
         (click)="onAceSelected(i)"
       >
         @if (permissionItems[i]) {
@@ -20,7 +20,7 @@
             [item]="permissionItems[i]"
           ></ix-permissions-item>
         }
-        @if (acesWithError.includes(i)) {
+        @if (acesWithError().includes(i)) {
           <span
             class="warning"
             [matTooltip]="'Ace has errors.' | translate"

@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { LetDirective } from 'app/directives/app-let.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -34,7 +33,6 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
     IxIconComponent,
     AsyncPipe,
     TranslateModule,
-    LetDirective,
     UiSearchDirective,
     TestDirective,
   ],

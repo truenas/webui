@@ -2,9 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { KeyValuePipe } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTooltipHarness } from '@angular/material/tooltip/testing';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -20,7 +23,6 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -63,15 +65,15 @@ describe('InstanceGeneralInfoComponent', () => {
         open: jest.fn(),
       }),
       mockApi([
-        mockJob('virt.instance.delete'),
+        mockJob('virt.instance.delete', fakeSuccessfulJob()),
       ]),
-      mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-        jobDialog: jest.fn(() => of({
+        jobDialog: jest.fn(() => ({
           afterClosed: jest.fn(() => of({})),
         })),
       }),
+      mockProvider(Router),
     ],
   });
 
@@ -90,29 +92,44 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
-    expect(chartExtra).toHaveLength(6);
+    expect(chartExtra).toHaveLength(5);
     expect(chartExtra[0]).toHaveText('Status: Running');
     expect(chartExtra[1]).toHaveText('Autostart: Yes');
     expect(chartExtra[2]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[3]).toHaveText('CPU: 525');
     expect(chartExtra[4]).toHaveText('Memory: 125 MiB');
-    expect(chartExtra[5]).toHaveText('Environment:');
   });
 
-  it('renders environment variables', () => {
-    const envContainer = spectator.query('mat-card-content').querySelectorAll('ul li');
-    expect(envContainer).toHaveLength(2);
-    expect(envContainer[0]).toHaveText('SAMPLE_ENV: value2');
-    expect(envContainer[1]).toHaveText('TEST_ENV: value1');
+  it('renders correct values when CPU or Memory limit is not set', () => {
+    spectator.setInput('instance', {
+      ...instance,
+      cpu: null,
+      memory: null,
+    });
+
+    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+
+    expect(chartExtra[3]).toHaveText('CPU: All Host CPUs');
+    expect(chartExtra[4]).toHaveText('Memory: Available Host Memory');
   });
 
-  /** Weird bug */
-  it.skip('deletes instance when "Delete" button is pressed', async () => {
+  it('renders environment variables a text with tooltip', async () => {
+    const environmentVariables = spectator.query('.environment-variables');
+    expect(environmentVariables).toHaveText('2 Environment Variables');
+
+    const tooltip = await loader.getHarness(MatTooltipHarness.with({ selector: '.environment-variables' }));
+    await tooltip.show();
+    expect(await tooltip.getTooltipText()).toBe('TEST_ENV = value1\nSAMPLE_ENV = value2');
+  });
+
+  it('deletes instance when "Delete" button is pressed and redirects to list root', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('virt.instance.delete', ['demo']);
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/virtualization'], { state: { hideMobileDetails: true } });
   });
 
   it('opens edit instance form when Edit is pressed', async () => {

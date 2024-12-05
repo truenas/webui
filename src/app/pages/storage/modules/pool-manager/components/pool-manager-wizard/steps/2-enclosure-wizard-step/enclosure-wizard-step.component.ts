@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -44,8 +44,8 @@ export enum DispersalStrategy {
   ],
 })
 export class EnclosureWizardStepComponent implements OnInit, OnChanges {
-  @Input() isStepActive: boolean;
-  @Input() stepWarning: string | null;
+  readonly isStepActive = input<boolean>();
+  readonly stepWarning = input<string | null>();
 
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],

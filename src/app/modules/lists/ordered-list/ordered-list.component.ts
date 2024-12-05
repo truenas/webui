@@ -3,7 +3,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatList, MatListItem } from '@angular/material/list';
@@ -39,13 +39,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input(false);
 
-  @Input() options: Observable<Option[]>;
-  @Input() minHeight = '100px';
-  @Input() maxHeight = '300px';
+  readonly options = input.required<Observable<Option[]>>();
+  readonly minHeight = input('100px');
+  readonly maxHeight = input('300px');
 
   items: Option[];
 
@@ -99,7 +99,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
-    this.options.pipe(untilDestroyed(this)).subscribe((options) => {
+    this.options().pipe(untilDestroyed(this)).subscribe((options) => {
       this.items = options;
       this.orderOptions();
       this.cdr.markForCheck();

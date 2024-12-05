@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -48,9 +48,8 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   ],
 })
 export class GeneralWizardStepComponent implements OnInit, OnChanges {
-  @Input() isAddingVdevs = false;
-  @Input() pool: Pool;
-  @Input() isStepActive: boolean;
+  readonly isAddingVdevs = input(false);
+  readonly pool = input<Pool | undefined>(undefined);
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
@@ -80,10 +79,10 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnChanges(): void {
-    if (this.isAddingVdevs) {
+    if (this.isAddingVdevs()) {
       this.form.controls.encryption.disable();
       this.form.controls.encryptionStandard.disable();
-      this.form.controls.name.setValue(this.pool?.name || '');
+      this.form.controls.name.setValue(this.pool()?.name || '');
       this.form.controls.name.removeAsyncValidators(this.oldNameForbiddenValidator);
       this.form.controls.name.updateValueAndValidity();
     } else {

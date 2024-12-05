@@ -7,7 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  combineLatest, filter, switchMap, tap,
+} from 'rxjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -49,9 +51,11 @@ export class WidgetPoolComponent implements WidgetComponent {
 
   protected poolId = computed(() => this.settings()?.poolId || '');
 
-  protected pool = toSignal(toObservable(this.poolId).pipe(
-    filter(Boolean),
-    switchMap((poolId) => this.resources.getPoolById(poolId)),
+  protected poolName = computed(() => this.settings()?.name?.split(':')[1] || '');
+
+  protected pool = toSignal(combineLatest([toObservable(this.poolName), toObservable(this.poolId)]).pipe(
+    filter(([name, id]) => !!name || !!id),
+    switchMap(([name, id]) => (id ? this.resources.getPoolById(id) : this.resources.getPoolByName(name))),
     tap((pool) => {
       this.poolExists = !!pool;
       this.cdr.markForCheck();

@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input,
+  Component, input,
   OnChanges,
   OnInit, output,
   signal,
@@ -73,8 +72,9 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class InterfacesCardComponent implements OnInit, OnChanges {
+  readonly isHaEnabled = input(false);
+
   protected readonly searchableElements = interfacesCardElements.elements;
-  @Input() isHaEnabled = false;
 
   readonly interfacesUpdated = output();
 
@@ -118,7 +118,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         {
           iconName: iconMarker('mdi-delete'),
           requiredRoles: this.requiredRoles,
-          tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
+          tooltip: this.isHaEnabled() ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
           disabled: () => this.isHaEnabled$,
@@ -150,7 +150,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.isHaEnabled$.next(this.isHaEnabled);
+    this.isHaEnabled$.next(this.isHaEnabled());
   }
 
   ngOnInit(): void {

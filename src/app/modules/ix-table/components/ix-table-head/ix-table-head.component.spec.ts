@@ -57,7 +57,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('sets sorting when clicking on one heading', () => {
-    const dataProvider = spectator.component.dataProvider;
+    const dataProvider = spectator.component.dataProvider();
     expect(headers).toHaveLength(3);
     expect(dataProvider.sorting).toEqual({ active: null, direction: null, propertyName: null });
     headers[0].click();
@@ -69,7 +69,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('sets sorting when clicking on different headings', () => {
-    const dataProvider = spectator.component.dataProvider;
+    const dataProvider = spectator.component.dataProvider();
     expect(headers).toHaveLength(3);
 
     expect(dataProvider.sorting).toEqual({ active: null, direction: null, propertyName: null });
@@ -80,7 +80,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('sets sorting when clicking on an unsortable heading', () => {
-    const dataProvider = spectator.component.dataProvider;
+    const dataProvider = spectator.component.dataProvider();
     expect(headers).toHaveLength(3);
 
     expect(dataProvider.sorting).toEqual({ active: null, direction: null, propertyName: null });

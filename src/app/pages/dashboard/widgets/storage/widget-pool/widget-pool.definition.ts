@@ -9,6 +9,7 @@ import { WidgetPoolComponent } from 'app/pages/dashboard/widgets/storage/widget-
 
 export interface WidgetPoolSettings {
   poolId: string;
+  name?: string;
 }
 
 export const poolWidget = dashboardWidget<WidgetPoolSettings>({

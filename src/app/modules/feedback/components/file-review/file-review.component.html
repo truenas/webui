@@ -52,7 +52,7 @@
       type="submit"
       color="primary"
       ixTest="submit"
-      [disabled]="form.invalid || isLoading"
+      [disabled]="form.invalid || isLoading()"
       (click)="onSubmit()"
     >
       {{ 'Submit' | translate }}

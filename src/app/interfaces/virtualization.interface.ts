@@ -5,6 +5,7 @@ import {
   VirtualizationGlobalState,
   VirtualizationGpuType,
   VirtualizationNetworkType,
+  VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationRemote,
   VirtualizationStatus,
@@ -112,6 +113,8 @@ export interface VirtualizationNic {
   name: string;
   description: string;
   dev_type: VirtualizationDeviceType.Nic;
+  nic_type: VirtualizationNicType;
+  parent: string;
   readonly: boolean;
   network: string;
   product_id: string;

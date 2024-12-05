@@ -1,0 +1,15 @@
+:host {
+  &::ng-deep {
+    .details-container .header {
+      margin-top: 13px;
+    }
+  }
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  width: 100%;
+}

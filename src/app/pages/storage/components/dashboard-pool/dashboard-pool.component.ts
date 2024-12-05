@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
   OnChanges,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -59,10 +59,10 @@ import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.compon
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
-  @Input() pool: Pool;
-  @Input() rootDataset: Dataset;
-  @Input() isLoading: boolean;
-  @Input() disks: StorageDashboardDisk[];
+  readonly pool = input<Pool>();
+  readonly rootDataset = input<Dataset>();
+  readonly isLoading = input<boolean>();
+  readonly disks = input<StorageDashboardDisk[]>();
 
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = dashboardPoolElements;
@@ -80,7 +80,7 @@ export class DashboardPoolComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isLoading || !this.isLoading) {
+    if (changes.isLoading || !this.isLoading()) {
       setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
     }
   }
@@ -88,7 +88,7 @@ export class DashboardPoolComponent implements OnChanges {
   onExport(): void {
     this.matDialog
       .open(ExportDisconnectModalComponent, {
-        data: this.pool,
+        data: this.pool(),
       })
       .afterClosed()
       .pipe(untilDestroyed(this))
@@ -109,12 +109,12 @@ export class DashboardPoolComponent implements OnChanges {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.api.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
+          return this.api.job('pool.expand', [this.pool().id]).pipe(this.loader.withLoader());
         }),
         filter((job) => job.state === JobState.Success),
         tap(() => {
           this.snackbar.success(
-            this.translate.instant('Successfully expanded pool {name}.', { name: this.pool.name }),
+            this.translate.instant('Successfully expanded pool {name}.', { name: this.pool().name }),
           );
           this.store.loadDashboard();
         }),
@@ -127,15 +127,15 @@ export class DashboardPoolComponent implements OnChanges {
   onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
-      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool.name,
+      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool().name,
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.api.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
+        return this.api.call('pool.upgrade', [this.pool().id]).pipe(this.loader.withLoader());
       }),
       tap(() => {
         this.snackbar.success(
-          this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool.name }),
+          this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool().name }),
         );
         this.store.loadDashboard();
       }),

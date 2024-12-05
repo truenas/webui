@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, OnInit, OnDestroy,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, OnDestroy, input,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,11 +16,11 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -51,7 +51,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
-  @Input() snapshot: ZfsSnapshotUi;
+  readonly snapshot = input.required<ZfsSnapshotUi>();
 
   isLoading = true;
   snapshotInfo: ZfsSnapshotUi;
@@ -89,7 +89,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     this.api.call(
       'zfs.snapshot.query',
       [
-        [['id', '=', this.snapshot.name]], {
+        [['id', '=', this.snapshot().name]], {
           extra: {
             retention: true,
             holds: true,
@@ -98,7 +98,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       ],
     )
       .pipe(
-        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot.selected })),
+        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot().selected })),
         untilDestroyed(this),
       )
       .subscribe({

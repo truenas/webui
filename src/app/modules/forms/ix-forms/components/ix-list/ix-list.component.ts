@@ -2,8 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input, output,
+  Component, input, output,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,16 +27,17 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxListComponent implements AfterViewInit {
-  @Input() formArray: AbstractControl;
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() empty: boolean;
-  @Input() required: boolean;
-  @Input() canAdd = true;
-  @Input() default: unknown[];
+  readonly formArray = input<AbstractControl>();
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly empty = input<boolean>();
+  readonly required = input<boolean>();
+  readonly canAdd = input(true);
+  // TODO: See if this belongs to the consuming component.
+  readonly default = input<unknown[]>();
   // TODO: Does not belong to the scope of this component.
-  @Input() itemsSchema: ChartSchemaNode[];
-  @Input() isEditMode: boolean;
+  readonly itemsSchema = input<ChartSchemaNode[]>();
+  readonly isEditMode = input<boolean>();
 
   readonly add = output<ChartSchemaNode[]>();
 
@@ -48,7 +48,7 @@ export class IxListComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    if (!this.isEditMode && this.default?.length > 0) {
+    if (!this.isEditMode() && this.default()?.length > 0) {
       this.handleListDefaults();
     }
   }
@@ -63,9 +63,9 @@ export class IxListComponent implements AfterViewInit {
 
   private handleListDefaults(): void {
     setTimeout(() => {
-      this.default.forEach((defaultValue: never) => {
+      this.default().forEach((defaultValue: never) => {
         this.addItem(
-          this.itemsSchema.map((item: ChartSchemaNode) => {
+          this.itemsSchema().map((item: ChartSchemaNode) => {
             return {
               ...item,
               schema: {

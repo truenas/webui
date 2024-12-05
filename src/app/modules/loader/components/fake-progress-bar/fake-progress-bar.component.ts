@@ -4,8 +4,7 @@ import {
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input,
+  Component, input,
   OnChanges,
   OnDestroy,
 } from '@angular/core';
@@ -34,18 +33,18 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   imports: [MatProgressBar],
 })
 export class FakeProgressBarComponent implements OnChanges, OnDestroy {
-  @Input() loading: boolean;
+  readonly loading = input<boolean>();
 
   /**
    * Pretend time for the whole progress bar.
    * Will never reach it, getting slower and slower.
    */
-  @Input() duration = 1000;
+  readonly duration = input(1000);
 
   /**
    * Automatically fades out progress bar when loading becomes false.
    */
-  @Input() hideOnComplete = true;
+  readonly hideOnComplete = input(true);
 
   progress: number;
   isAnimating = false;
@@ -62,7 +61,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    if (this.loading) {
+    if (this.loading()) {
       this.start();
     } else {
       this.stop.next();
@@ -101,7 +100,7 @@ export class FakeProgressBarComponent implements OnChanges, OnDestroy {
     }
 
     const timeElapsed = this.redrawTime * sequence;
-    const scale = this.duration;
+    const scale = this.duration();
 
     return 100 * timeElapsed / (timeElapsed + scale);
   }

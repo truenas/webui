@@ -1,7 +1,7 @@
 import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, Input, OnInit,
+  Component, input, OnInit,
 } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
@@ -48,8 +48,8 @@ const maxPct = 80;
   ],
 })
 export class PoolUsageCardComponent implements OnInit {
-  @Input() poolState: Pool;
-  @Input() rootDataset: Dataset;
+  readonly poolState = input<Pool>();
+  readonly rootDataset = input<Dataset>();
 
   chartLowCapacityColor: string;
   chartFillColor: string;
@@ -73,15 +73,15 @@ export class PoolUsageCardComponent implements OnInit {
   }
 
   get disks(): string[] {
-    return getPoolDisks(this.poolState);
+    return getPoolDisks(this.poolState());
   }
 
   get capacity(): number {
-    return this.rootDataset.available.parsed + this.rootDataset.used.parsed;
+    return this.rootDataset().available.parsed + this.rootDataset().used.parsed;
   }
 
   get usedPercentage(): number {
-    return this.rootDataset.used.parsed / this.capacity * 100;
+    return this.rootDataset().used.parsed / this.capacity * 100;
   }
 
   get iconType(): PoolCardIconType {

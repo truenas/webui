@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Input, OnInit, output,
+  ChangeDetectorRef, Component, input, OnInit, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -51,8 +51,7 @@ import {
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
-  @Input() isStepActive: boolean;
-  @Input() isAddingVdevs: boolean;
+  readonly isAddingVdevs = input<boolean>();
 
   readonly createPool = output();
 

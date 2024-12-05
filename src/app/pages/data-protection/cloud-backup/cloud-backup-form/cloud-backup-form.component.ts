@@ -331,7 +331,9 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   private setFileNodeProvider(): void {
-    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({
+      datasetsAndZvols: true,
+    });
   }
 
   private setBucketNodeProvider(): void {

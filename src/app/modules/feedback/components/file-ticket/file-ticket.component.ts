@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, Input, output,
+  Component, input, output,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
@@ -47,9 +47,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class FileTicketComponent {
-  @Input() type: FeedbackType.Bug | FeedbackType.Suggestion;
-  @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
-  @Input() isLoading: boolean;
+  readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
 
@@ -73,7 +73,7 @@ export class FileTicketComponent {
   };
 
   private get ticketType(): TicketType {
-    return this.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion;
+    return this.type() === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion;
   }
 
   constructor(
@@ -100,7 +100,7 @@ export class FileTicketComponent {
 
   private onSuccess(ticketUrl: string): void {
     this.feedbackService.showTicketSuccessMsg(ticketUrl);
-    this.dialogRef.close();
+    this.dialogRef().close();
   }
 
   private getSystemFileSizeLimit(): void {

@@ -9,6 +9,7 @@ import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
   UpdateVirtualizationInstance,
@@ -141,4 +142,6 @@ export class InstanceEditFormComponent {
       return env;
     }, {});
   }
+
+  protected readonly containersHelptext = containersHelptext;
 }

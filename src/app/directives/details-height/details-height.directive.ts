@@ -1,5 +1,5 @@
 import {
-  Directive, ElementRef, HostListener, Inject, OnChanges, OnDestroy, OnInit,
+  Directive, ElementRef, HostListener, Inject, OnDestroy, OnInit, OnChanges,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -25,12 +25,13 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   private headerHeight = headerHeight;
   private footerHeight = footerHeight;
 
-  private readonly onScrollHandler = this.onScroll.bind(this);
-
   private parentPadding = 0;
   private heightBaseOffset = 0;
   private scrollBreakingPoint = 0;
-  private heightCssValue = `calc(100vh - ${this.heightBaseOffset}px)`;
+  private heightCssValue = '';
+
+  private resizeObserver: ResizeObserver | null = null;
+  private scrollAnimationFrame: number | null = null;
 
   constructor(
     @Inject(WINDOW) private window: Window,
@@ -40,66 +41,92 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   ngOnInit(): void {
+    this.setupResizeObserver();
     this.listenForConsoleFooterChanges();
-
-    this.element.nativeElement.style.height = this.heightCssValue;
-    this.window.addEventListener('scroll', this.onScrollHandler, true);
-    setTimeout(() => this.onScroll());
+    this.precalculateHeights();
+    this.applyHeight();
+    this.window.addEventListener('scroll', this.onScroll.bind(this), true);
+    setTimeout(() => this.onResize());
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('hasConsoleFooter' in changes) {
-      delete this.heightBaseOffset;
+      this.precalculateHeights();
+      this.applyHeight();
     }
   }
 
   ngOnDestroy(): void {
-    this.window.removeEventListener('scroll', this.onScrollHandler, true);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+    if (this.scrollAnimationFrame) {
+      cancelAnimationFrame(this.scrollAnimationFrame);
+    }
+    this.window.removeEventListener('scroll', this.onScroll.bind(this), true);
   }
 
   @HostListener('window:resize')
-  listenForScreenSizeChanges(): void {
-    this.heightBaseOffset = this.getBaseOffset();
-    this.scrollBreakingPoint = this.getScrollBreakingPoint();
+  onResize(): void {
+    this.precalculateHeights();
+    this.applyHeight();
   }
 
   onScroll(): void {
-    const parentElement = this.layoutService.getContentContainer();
+    if (this.scrollAnimationFrame) {
+      cancelAnimationFrame(this.scrollAnimationFrame);
+    }
 
+    this.scrollAnimationFrame = requestAnimationFrame(() => {
+      const parentElement = this.layoutService.getContentContainer();
+      if (!parentElement) {
+        return;
+      }
+
+      const scrollTop = parentElement.scrollTop;
+
+      if (scrollTop < this.scrollBreakingPoint) {
+        this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${scrollTop}px)`;
+      } else {
+        this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
+      }
+
+      this.element.nativeElement.style.height = this.heightCssValue;
+    });
+  }
+
+  private setupResizeObserver(): void {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.precalculateHeights();
+      this.applyHeight();
+    });
+
+    const parentElement = this.layoutService.getContentContainer();
+    if (parentElement) {
+      this.resizeObserver.observe(parentElement);
+    }
+  }
+
+  private precalculateHeights(): void {
+    const parentElement = this.layoutService.getContentContainer();
     if (!parentElement) {
       return;
     }
 
-    if (!this.parentPadding) {
-      this.parentPadding = parseFloat(
-        this.window
-          .getComputedStyle(parentElement, null)
-          .getPropertyValue('padding-bottom'),
-      );
-    }
+    this.parentPadding = parseFloat(
+      this.window.getComputedStyle(parentElement, null).getPropertyValue('padding-bottom'),
+    ) || 0;
 
-    if (!this.heightBaseOffset) {
-      this.heightBaseOffset = this.getBaseOffset();
-    }
+    this.heightBaseOffset = this.calculateBaseOffset();
+    this.scrollBreakingPoint = this.calculateScrollBreakingPoint();
+    this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px)`;
+  }
 
-    if (!this.scrollBreakingPoint) {
-      this.scrollBreakingPoint = this.getScrollBreakingPoint();
-    }
-
-    if (parentElement.scrollTop < this.scrollBreakingPoint) {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset + 18}px + ${parentElement.scrollTop}px)`;
-    } else {
-      this.heightCssValue = `calc(100vh - ${this.heightBaseOffset}px + ${this.scrollBreakingPoint}px)`;
-    }
-
+  private applyHeight(): void {
     this.element.nativeElement.style.height = this.heightCssValue;
   }
 
-  private getInitialTopPosition(element: HTMLElement): number {
-    return Math.floor(element.getBoundingClientRect().top);
-  }
-
-  private getBaseOffset(): number {
+  private calculateBaseOffset(): number {
     let result = this.getInitialTopPosition(this.element.nativeElement);
     result += this.parentPadding;
     if (this.hasConsoleFooter) {
@@ -108,11 +135,15 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     return Math.floor(result);
   }
 
-  private getScrollBreakingPoint(): number {
+  private calculateScrollBreakingPoint(): number {
     let result = this.getInitialTopPosition(this.element.nativeElement);
     result -= this.parentPadding;
     result -= this.headerHeight;
     return Math.max(Math.floor(result), 0);
+  }
+
+  private getInitialTopPosition(element: HTMLElement): number {
+    return Math.floor(element.getBoundingClientRect().top);
   }
 
   private listenForConsoleFooterChanges(): void {
@@ -120,6 +151,8 @@ export class DetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
       .pipe(waitForAdvancedConfig, untilDestroyed(this))
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
+        this.precalculateHeights();
+        this.applyHeight();
       });
   }
 }

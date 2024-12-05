@@ -2,8 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  Input,
+  Component, input,
   OnInit, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -40,8 +39,8 @@ import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils
   ],
 })
 export class DataWizardStepComponent implements OnInit {
-  @Input() isStepActive: boolean;
-  @Input() stepWarning: string | null;
+  readonly isStepActive = input.required<boolean>();
+  readonly stepWarning = input<string | null>();
 
   readonly goToLastStep = output();
 

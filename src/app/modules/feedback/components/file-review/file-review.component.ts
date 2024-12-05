@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -50,8 +50,8 @@ export const maxFileSizeBytes = 5 * MiB;
   ],
 })
 export class FileReviewComponent {
-  @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
-  @Input() isLoading: boolean;
+  readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
+  readonly isLoading = input<boolean>();
 
   readonly isLoadingChange = output<boolean>();
 
@@ -90,6 +90,6 @@ export class FileReviewComponent {
 
   private onSuccess(): void {
     this.feedbackService.showFeedbackSuccessMsg();
-    this.dialogRef.close();
+    this.dialogRef().close();
   }
 }

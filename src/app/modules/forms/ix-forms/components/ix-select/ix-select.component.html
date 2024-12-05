@@ -1,9 +1,9 @@
 <div class="full-width container has-tooltip">
-  @if (label || tooltip) {
+  @if (label() || tooltip()) {
     <ix-label
-      [label]="label"
-      [tooltip]="tooltip"
-      [required]="required"
+      [label]="label()"
+      [tooltip]="tooltip()"
+      [required]="required()"
       [ixTestOverride]="controlDirective.name"
     ></ix-label>
   }
@@ -11,12 +11,12 @@
   <div class="input-container" [class.disabled]="disabledState">
     <mat-select
       ixRegisteredControl
-      [required]="required"
-      [compareWith]="compareWith"
+      [required]="required()"
+      [compareWith]="compareWith()"
       [disabled]="disabledState"
-      [multiple]="multiple"
+      [multiple]="multiple()"
       [ixTest]="controlDirective.name"
-      [aria-label]="label"
+      [aria-label]="label()"
       [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
@@ -25,7 +25,7 @@
         {{ selectedLabel }}
       </mat-select-trigger>
 
-      @if (multiple && showSelectAll) {
+      @if (multiple() && showSelectAll()) {
         <div
           class="select-all-checkbox"
           [ixTest]="[controlDirective.name, 'select-all']"
@@ -48,9 +48,9 @@
             {{ 'No options' | translate }}
           </mat-option>
         }
-        @if (opts.length > 0 && !multiple && !required && !hideEmpty) {
+        @if (opts.length > 0 && !multiple() && !required() && !hideEmpty()) {
           <mat-option
-            [value]="emptyValue"
+            [value]="emptyValue()"
             [ixTest]="[controlDirective.name, 'select']"
           >
             --
@@ -66,7 +66,7 @@
             [matTooltip]="option.hoverTooltip | translate"
             [attr.aria-label]="option.label | translate"
           >
-            @if (multiple) {
+            @if (multiple()) {
               <ix-icon
                 [name]="ixOption.selected ? 'check_circle' : 'remove'"
               ></ix-icon>
@@ -101,9 +101,9 @@
     }
   </div>
 
-  <ix-errors [control]="controlDirective.control" [label]="label | translate"></ix-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label() | translate"></ix-errors>
 
-  @if (hint) {
-    <mat-hint>{{ hint }}</mat-hint>
+  @if (hint()) {
+    <mat-hint>{{ hint() }}</mat-hint>
   }
 </div>

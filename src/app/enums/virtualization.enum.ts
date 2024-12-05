@@ -13,11 +13,13 @@ export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
 export enum VirtualizationStatus {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
+  Unknown = 'UNKNOWN',
 }
 
 export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>([
   [VirtualizationStatus.Running, T('Running')],
   [VirtualizationStatus.Stopped, T('Stopped')],
+  [VirtualizationStatus.Unknown, T('Unknown')],
 ]);
 
 export enum VirtualizationRemote {
@@ -70,3 +72,13 @@ export enum VirtualizationGlobalState {
   Error = 'ERROR',
   Initialized = 'INITIALIZED',
 }
+
+export enum VirtualizationNicType {
+  Bridged = 'BRIDGED',
+  Macvlan = 'MACVLAN',
+}
+
+export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string>([
+  [VirtualizationNicType.Bridged, T('Bridged')],
+  [VirtualizationNicType.Macvlan, T('MAC VLAN')],
+]);

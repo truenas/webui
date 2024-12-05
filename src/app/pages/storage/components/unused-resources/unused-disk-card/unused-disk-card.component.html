@@ -1,15 +1,15 @@
 <mat-card class="card">
   <mat-card-header>
-    <h4 mat-card-title>{{ title | translate }}</h4>
+    <h4 mat-card-title>{{ title() | translate }}</h4>
   </mat-card-header>
 
   <mat-card-content>
-    <h1 class="value">{{ disks.length }}</h1>
+    <h1 class="value">{{ disks().length }}</h1>
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="add-to-pool"
-      [disabled]="!disks.length"
+      [disabled]="!disks().length"
       (click)="onAddToStorage()"
     >
       {{ 'Add To Pool' | translate }}

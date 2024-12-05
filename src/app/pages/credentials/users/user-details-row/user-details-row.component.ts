@@ -2,11 +2,13 @@ import {
   Component, ChangeDetectionStrategy, input,
   output,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ActionOption } from 'app/interfaces/option.interface';
@@ -19,6 +21,7 @@ import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -41,6 +44,8 @@ export class UserDetailsRowComponent {
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
+  loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+
   protected readonly Role = Role;
 
   constructor(
@@ -49,6 +54,7 @@ export class UserDetailsRowComponent {
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 

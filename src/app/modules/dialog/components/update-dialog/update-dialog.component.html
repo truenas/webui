@@ -6,7 +6,9 @@
     <span [innerHTML]="contentText.message | translate"></span>
   </p>
 </div>
-<div *appLet="selectRunningJobs$ | async as jobs" class="jobs">
+
+@let jobs = selectRunningJobs$ | async;
+<div class="jobs">
   @if (jobs.length) {
     <div>
       @for (job of jobs; track job) {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -30,7 +30,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   ],
 })
 export class GeneralSectionComponent implements OnChanges {
-  @Input() replication: ReplicationTask;
+  readonly replication = input<ReplicationTask>();
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
@@ -71,10 +71,10 @@ export class GeneralSectionComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.replication) {
+    if (this.replication()) {
       this.form.patchValue({
-        ...this.replication,
-        logging_level: this.replication.logging_level || LoggingLevel.Default,
+        ...this.replication(),
+        logging_level: this.replication().logging_level || LoggingLevel.Default,
       });
     }
   }

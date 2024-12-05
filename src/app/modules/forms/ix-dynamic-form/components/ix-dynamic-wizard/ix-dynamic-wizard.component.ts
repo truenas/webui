@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { UntypedFormGroup } from '@angular/forms';
 import { MatDivider } from '@angular/material/divider';
@@ -25,9 +25,9 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 })
 
 export class IxDynamicWizardComponent {
-  @Input() dynamicForm: UntypedFormGroup;
-  @Input() dynamicSection: DynamicWizardSchema[];
-  @Input() isEditMode: boolean;
+  readonly dynamicForm = input.required<UntypedFormGroup>();
+  readonly dynamicSection = input.required<DynamicWizardSchema[]>();
+  readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();

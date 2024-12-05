@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnChanges, OnInit,
+  Component, input, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -16,6 +16,7 @@ import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,19 +47,23 @@ export type IxSelectValue = SelectOptionValueType;
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() options: Observable<SelectOption[]>;
-  @Input() required: boolean;
-  @Input() tooltip: string;
-  @Input() multiple: boolean;
-  @Input() emptyValue: string = null;
-  @Input() hideEmpty = false;
-  @Input() showSelectAll = false;
-  @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
+  readonly label = input<string>();
+  readonly hint = input<string>();
+
+  @Input()
+  options: Observable<SelectOption[]>;
+
+  readonly required = input<boolean>();
+  readonly tooltip = input<string>();
+  readonly multiple = input<boolean>();
+  readonly emptyValue = input<string>(null);
+  readonly hideEmpty = input(false);
+  readonly showSelectAll = input(false);
+  readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);
 
   protected value: IxSelectValue;
   protected isDisabled = false;
@@ -77,11 +82,11 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       return '';
     }
 
-    if (this.multiple) {
+    if (this.multiple()) {
       return this.multipleLabels.join(',');
     }
 
-    const selectedOption = this.opts.find((opt) => this.compareWith(opt.value, this.value));
+    const selectedOption = this.opts.find((opt) => this.compareWith()(opt.value, this.value));
     return selectedOption ? selectedOption.label : '';
   }
 
@@ -132,7 +137,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnInit(): void {
-    if (this.multiple) {
+    if (this.multiple()) {
       this.controlDirective.control.valueChanges.pipe(debounceTime(0), untilDestroyed(this)).subscribe(() => {
         this.updateSelectAllState();
         this.cdr.markForCheck();
@@ -166,7 +171,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   selectAll(): void {
-    if (this.multiple) {
+    if (this.multiple()) {
       this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
       this.onChange(this.value);
     }

@@ -89,6 +89,7 @@ export interface ApiJobDirectory {
   'app.delete': { params: AppDeleteParams; response: boolean };
   'app.upgrade': { params: AppUpgradeParams; response: App };
   'app.rollback': { params: AppRollbackParams; response: App };
+  'app.convert_to_custom': { params: [appName: string]; response: App };
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };

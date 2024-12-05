@@ -4,8 +4,7 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Injector,
-  Input,
+  Injector, input,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -37,9 +36,10 @@ import {
   imports: [CdkTrapFocus],
 })
 export class SlideIn2Component implements OnInit, OnDestroy {
-  @Input() componentInfo: ChainedComponentSerialized;
-  @Input() index: number;
-  @Input() lastIndex: number;
+  readonly componentInfo = input<ChainedComponentSerialized>();
+  readonly index = input<number>();
+  readonly lastIndex = input<number>();
+
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
   private needConfirmation: () => Observable<boolean>;
 
@@ -48,7 +48,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   }
 
   get isTop(): boolean {
-    return this.index === this.lastIndex;
+    return this.index() === this.lastIndex();
   }
 
   isSlideInOpen = false;
@@ -70,15 +70,15 @@ export class SlideIn2Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // ensure id attribute exists
-    if (!this.componentInfo.id) {
+    if (!this.componentInfo().id) {
       return;
     }
 
     // move element to bottom of page (just before </body>) so it can be displayed above everything else
     document.body.appendChild(this.element);
-    if (this.componentInfo.component) {
-      this.openSlideIn(this.componentInfo.component, {
-        wide: this.componentInfo.wide, data: this.componentInfo.data,
+    if (this.componentInfo().component) {
+      this.openSlideIn(this.componentInfo().component, {
+        wide: this.componentInfo().wide, data: this.componentInfo().data,
       });
     }
     this.chainedSlideInService.isTopComponentWide$.pipe(
@@ -89,7 +89,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chainedSlideInService.popComponent(this.componentInfo.id);
+    this.chainedSlideInService.popComponent(this.componentInfo().id);
     this.element.remove();
   }
 
@@ -103,8 +103,8 @@ export class SlideIn2Component implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.componentInfo.close$.next({ response: false, error: null });
-        this.componentInfo.close$.complete();
+        this.componentInfo().close$.next({ response: false, error: null });
+        this.componentInfo().close$.complete();
         this.closeSlideIn();
       },
     });
@@ -123,7 +123,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
       timer(50).pipe(
         untilDestroyed(this),
       ).subscribe({
-        next: () => this.chainedSlideInService.popComponent(this.componentInfo.id),
+        next: () => this.chainedSlideInService.popComponent(this.componentInfo().id),
       });
     });
   }
@@ -168,8 +168,8 @@ export class SlideIn2Component implements OnInit, OnDestroy {
                 untilDestroyed(this),
               ).subscribe({
                 next: () => {
-                  this.componentInfo.close$.next(response);
-                  this.componentInfo.close$.complete();
+                  this.componentInfo().close$.next(response);
+                  this.componentInfo().close$.complete();
                   this.closeSlideIn();
                 },
               });
@@ -181,7 +181,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
               ).subscribe({
                 next: () => {
                   this.chainedSlideInService.swapComponent({
-                    swapComponentId: this.componentInfo.id,
+                    swapComponentId: this.componentInfo().id,
                     component,
                     wide,
                     data: incomingComponentData,

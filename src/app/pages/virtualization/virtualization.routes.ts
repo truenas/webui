@@ -6,7 +6,6 @@ import { InstanceWizardComponent } from 'app/pages/virtualization/components/ins
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { VirtualizationViewStore } from 'app/pages/virtualization/stores/virtualization-view.store';
 
 export const virtualizationRoutes: Routes = [{
   path: '',
@@ -14,7 +13,6 @@ export const virtualizationRoutes: Routes = [{
   providers: [
     VirtualizationConfigStore,
     VirtualizationInstancesStore,
-    VirtualizationViewStore,
     VirtualizationDevicesStore,
   ],
   children: [

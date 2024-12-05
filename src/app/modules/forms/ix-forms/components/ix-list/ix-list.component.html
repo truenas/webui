@@ -1,34 +1,34 @@
 <div class="container">
   <div class="label-container">
-    @if (label || tooltip) {
+    @if (label() || tooltip()) {
       <ix-label
-        [label]="label"
-        [tooltip]="tooltip"
-        [required]="required"
+        [label]="label()"
+        [tooltip]="tooltip()"
+        [required]="required()"
       ></ix-label>
     }
 
-    @if (canAdd) {
+    @if (canAdd()) {
       <button
         mat-button
         type="button"
         class="add-btn"
-        [ixTest]="['add-item', label]"
-        [attr.aria-label]="'Add {item}' | translate: { item: label }"
+        [ixTest]="['add-item', label()]"
+        [attr.aria-label]="'Add {item}' | translate: { item: label() }"
         (click)="addItem()"
       >
         {{ 'Add' | translate }}
       </button>
     }
   </div>
-  @if (formArray) {
-    <ix-errors [control]="formArray" [label]="label"></ix-errors>
+  @if (formArray()) {
+    <ix-errors [control]="formArray()" [label]="label()"></ix-errors>
   }
 
-  <div class="input-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
+  <div class="input-container" [class.disabled]="isDisabled" [attr.aria-label]="label()">
     <ng-content></ng-content>
 
-    @if (empty) {
+    @if (empty()) {
       <span class="empty">
         {{ 'No items have been added yet.' | translate }}
       </span>

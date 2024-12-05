@@ -8,7 +8,6 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
-import { DockerNvidiaStatus } from 'app/enums/docker-nvidia-status.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxListHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
@@ -27,6 +26,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
   let loader: HarnessLoader;
+  let hasNvidiaCard = false;
 
   const dockerConfig = {
     address_pools: [
@@ -44,6 +44,7 @@ describe('AppsSettingsComponent', () => {
     providers: [
       mockApi([
         mockCall('catalog.update'),
+        mockCall('docker.nvidia_present', () => hasNvidiaCard),
         mockCall('catalog.trains', ['stable', 'community', 'test']),
         mockCall('catalog.config', {
           label: 'TrueNAS',
@@ -62,23 +63,17 @@ describe('AppsSettingsComponent', () => {
       mockProvider(SlideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
+      mockProvider(DockerStore, {
+        dockerConfig$: of(dockerConfig),
+        reloadDockerConfig: jest.fn(() => of({})),
+      }),
     ],
   });
 
   describe('system has no nvidia card', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(DockerStore, {
-            nvidiaDriversInstalled$: of(false),
-            hasNvidiaCard$: of(false),
-            dockerConfig$: of(dockerConfig),
-            dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
-            reloadDockerConfig: jest.fn(() => of({})),
-            reloadDockerNvidiaStatus: jest.fn(() => of({})),
-          }),
-        ],
-      });
+      hasNvidiaCard = false;
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -118,97 +113,51 @@ describe('AppsSettingsComponent', () => {
     });
   });
 
-  describe('has docker no nvidia drivers', () => {
-    describe('hasNvidiaCard is true', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          providers: [
-            mockProvider(DockerStore, {
-              nvidiaDriversInstalled$: of(false),
-              hasNvidiaCard$: of(true),
-              dockerConfig$: of(dockerConfig),
-              dockerNvidiaStatus$: of(DockerNvidiaStatus.NotInstalled),
-              setDockerNvidia: jest.fn(() => of(null)),
-              reloadDockerConfig: jest.fn(() => of({})),
-              reloadDockerNvidiaStatus: jest.fn(() => of({})),
-            }),
-          ],
-        });
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      });
+  describe('has nvidia card', () => {
+    beforeEach(() => {
+      hasNvidiaCard = true;
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
 
-      it('shows Install NVIDIA Drivers checkbox when hasNvidiaCard is true', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+    it('shows Install NVIDIA Drivers checkbox when nvidia card is present', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const values = await form.getValues();
 
-        expect(values).toMatchObject({
-          'Install NVIDIA Drivers': false,
-          'Preferred Trains': ['test'],
-        });
-      });
-
-      it('saves catalog updates and nvidia settings', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        await form.fillForm({
-          'Preferred Trains': ['stable'],
-          'Install NVIDIA Drivers': true,
-        });
-
-        const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-        await saveButton.click();
-
-        expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
-          { preferred_trains: ['stable'] },
-        ]);
-
-        expect(spectator.inject(DockerStore).setDockerNvidia).toHaveBeenCalled();
-        expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
+      expect(values).toMatchObject({
+        'Install NVIDIA Drivers': false,
+        'Preferred Trains': ['test'],
       });
     });
 
-    describe('hasNvidiaCard is false and nvidiaDriversInstalled is true', () => {
-      beforeEach(() => {
-        spectator = createComponent({
-          providers: [
-            mockProvider(DockerStore, {
-              nvidiaDriversInstalled$: of(true),
-              hasNvidiaCard$: of(false),
-              dockerConfig$: of(dockerConfig),
-              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
-              reloadDockerConfig: jest.fn(() => of({})),
-              reloadDockerNvidiaStatus: jest.fn(() => of({})),
-            }),
-          ],
-        });
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    it('saves catalog updates and nvidia settings', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Preferred Trains': ['stable'],
+        'Install NVIDIA Drivers': true,
       });
 
-      it('shows Install NVIDIA Drivers checkbox when docker.nvidia_status is not Absent OR when it is checked (so the user can uncheck it)', async () => {
-        const form = await loader.getHarness(IxFormHarness);
-        const values = await form.getValues();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-        expect(values).toMatchObject({
-          'Install NVIDIA Drivers': true,
-          'Preferred Trains': ['test'],
-        });
-      });
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
+        nvidia: true,
+        enable_image_updates: false,
+        address_pools: [
+          {
+            base: '172.17.0.0/12',
+            size: 12,
+          },
+        ],
+      }]);
+
+      expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
     });
 
     describe('other docker settings', () => {
       beforeEach(() => {
-        spectator = createComponent({
-          providers: [
-            mockProvider(DockerStore, {
-              nvidiaDriversInstalled$: of(true),
-              hasNvidiaCard$: of(true),
-              dockerConfig$: of(dockerConfig),
-              dockerNvidiaStatus$: of(DockerNvidiaStatus.Installed),
-              reloadDockerConfig: jest.fn(() => of({})),
-              reloadDockerNvidiaStatus: jest.fn(() => of({})),
-              setDockerNvidia: jest.fn(() => of(null)),
-            }),
-          ],
-        });
+        hasNvidiaCard = false;
+        spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       });
 

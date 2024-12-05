@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
-  Input,
+  ElementRef, input,
   OnInit, output,
   ViewChild,
 } from '@angular/core';
@@ -49,9 +48,9 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
   ],
 })
 export class AdvancedSearchComponent<T> implements OnInit {
-  @Input() query: QueryFilters<T> = [];
-  @Input() properties: SearchProperty<T>[] = [];
-  @Input() placeholder: string;
+  readonly query = input<QueryFilters<T>>([]);
+  readonly properties = input<SearchProperty<T>[]>([]);
+  readonly placeholder = input('');
 
   readonly paramsChange = output<QueryFilters<T>>();
   readonly switchToBasic = output();
@@ -79,12 +78,12 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   ngOnInit(): void {
     this.initEditor();
-    this.advancedSearchAutocomplete.setProperties(this.properties);
+    this.advancedSearchAutocomplete.setProperties(this.properties());
     this.advancedSearchAutocomplete.setEditorView(this.editorView);
 
-    if (this.query) {
+    if (this.query()) {
       this.replaceEditorContents(
-        this.queryParser.formatFiltersToQuery(this.query, this.properties),
+        this.queryParser.formatFiltersToQuery(this.query(), this.properties()),
       );
     }
   }
@@ -141,7 +140,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
           customKeyMap,
           EditorView.lineWrapping,
           closeBrackets(),
-          placeholder(this.placeholder),
+          placeholder(this.placeholder()),
         ],
       }),
       parent: this.inputArea.nativeElement,
@@ -195,7 +194,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     });
     this.errorMessages = null;
 
-    const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
+    const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
     this.paramsChange.emit(filters);
   }
 

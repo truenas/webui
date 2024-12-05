@@ -1,0 +1,34 @@
+@if (label() || tooltip()) {
+  <ix-label
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
+    [ixTestOverride]="controlDirective.name"
+  ></ix-label>
+}
+
+<div class="input-container" ixRegisteredControl>
+  <mat-datepicker #datepicker></mat-datepicker>
+  <input
+    matInput
+    [value]="value()"
+    [placeholder]="placeholder()"
+    [matDatepicker]="datepicker"
+    [min]="min()"
+    [max]="max()"
+    [ixTest]="controlDirective.name"
+    [attr.aria-label]="label()"
+    [readonly]="readonly()"
+    [disabled]="isDisabled()"
+    (dateChange)="onDateChanged($event)"
+    (focus)="datepicker.open()"
+    (blur)="blurred()"
+  >
+  <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+</div>
+
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
+}

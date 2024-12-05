@@ -1,4 +1,4 @@
-@if (!inCard) {
+@if (!inCard()) {
   <ix-page-header>
     <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
     <button
@@ -15,7 +15,7 @@
 }
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosRealms">
-  @if (inCard) {
+  @if (inCard()) {
     <mat-toolbar-row class="table-header">
       <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberosrealms']">
         <h3>{{ 'Kerberos Realms' | translate }}</h3>
@@ -50,7 +50,7 @@
     >
     </tbody>
   </ix-table>
-  @if (paginator) {
+  @if (paginator()) {
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   }
 </div>

@@ -3,5 +3,9 @@ mat-card-content p {
 }
 
 .environment-variables {
-  margin-top: 0;
+  cursor: help;
+  text-decoration: underline;
+  text-decoration-color: var(--alt-fg1);
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
 }

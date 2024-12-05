@@ -64,11 +64,13 @@ describe('InspectVdevsDialogComponent', () => {
     expect(spectator.query('.vdevs-header')).toHaveText('Data VDEVs');
     const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
     expect(vdevs).toHaveLength(1);
-    expect(vdevs[0].vdev.disks).toMatchObject([
-      { devname: 'ada0' },
-      { devname: 'ada1' },
-      { devname: 'ada2' },
-    ]);
+    expect(vdevs[0].vdev).toMatchObject({
+      disks: [
+        { devname: 'ada0' },
+        { devname: 'ada1' },
+        { devname: 'ada2' },
+      ],
+    });
     expect(vdevs[0].layout).toEqual(CreateVdevLayout.Stripe);
   });
 
@@ -78,15 +80,19 @@ describe('InspectVdevsDialogComponent', () => {
     expect(spectator.query('.vdevs-header')).toHaveText('Log VDEVs');
     const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
     expect(vdevs).toHaveLength(2);
-    expect(vdevs[0].vdev.disks).toMatchObject([
-      { devname: 'ada3' },
-      { devname: 'ada4' },
-    ]);
+    expect(vdevs[0].vdev).toMatchObject({
+      disks: [
+        { devname: 'ada3' },
+        { devname: 'ada4' },
+      ],
+    });
     expect(vdevs[0].layout).toEqual(CreateVdevLayout.Mirror);
-    expect(vdevs[1].vdev.disks).toMatchObject([
-      { devname: 'ada5' },
-      { devname: 'ada6' },
-    ]);
+    expect(vdevs[1].vdev).toMatchObject({
+      disks: [
+        { devname: 'ada5' },
+        { devname: 'ada6' },
+      ],
+    });
   });
 
   it('closes the dialog when X icon is pressed', () => {

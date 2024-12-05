@@ -75,7 +75,7 @@
     <p>{{ getErrorMessage() }}</p>
   } @else {
     <p class="result-message">
-      {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots}}' | translate:
+      {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots} }' | translate:
       { n: jobSuccess.length} }}
     </p>
   }

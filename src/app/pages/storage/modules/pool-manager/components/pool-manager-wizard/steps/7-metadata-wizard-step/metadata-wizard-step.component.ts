@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
@@ -33,8 +33,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   ],
 })
 export class MetadataWizardStepComponent implements OnInit {
-  @Input() isStepActive: boolean;
-  @Input() stepWarning: string | null;
+  readonly isStepActive = input<boolean>();
+  readonly stepWarning = input<string | null>();
 
   readonly goToLastStep = output();
 

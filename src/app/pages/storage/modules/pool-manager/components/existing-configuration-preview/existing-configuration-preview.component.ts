@@ -1,6 +1,6 @@
 import { KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
 } from '@angular/core';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
@@ -54,10 +54,10 @@ const defaultCategory: PoolManagerTopologyCategory = {
   ],
 })
 export class ExistingConfigurationPreviewComponent implements OnChanges {
-  @Input() name: string;
-  @Input() topology: PoolTopology;
-  @Input() size: number;
-  @Input() disks: DetailsDisk[];
+  readonly name = input<string>();
+  readonly topology = input.required<PoolTopology>();
+  readonly size = input<number>();
+  readonly disks = input<DetailsDisk[]>();
 
   VdevType = VdevType;
 
@@ -76,7 +76,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
 
   ngOnChanges(simpleChanges: IxSimpleChanges<ExistingConfigurationPreviewComponent>): void {
     if (simpleChanges.topology.currentValue) {
-      this.poolTopology = this.parseTopology(this.topology);
+      this.poolTopology = this.parseTopology(this.topology());
       this.cdr.markForCheck();
     }
   }
@@ -92,7 +92,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
     };
 
     let vdevTypes = Object.entries(VdevType);
-    if (this.topology.data[0].type === TopologyItemType.Draid) {
+    if (this.topology().data[0].type === TopologyItemType.Draid) {
       vdevTypes = vdevTypes.filter(([, type]) => type !== VdevType.Spare);
     }
     for (const [, value] of vdevTypes) {
@@ -117,13 +117,13 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
         poolManagerTopology[value].width = vdev.children?.length || 1;
 
         if (firstVdevType === TopologyItemType.Stripe) {
-          const vdevDisk = this.disks.find((disk) => disk.devname === vdev.disk);
+          const vdevDisk = this.disks().find((disk) => disk.devname === vdev.disk);
           allCategoryVdevsDisks.push(cloneDeep(vdevDisk));
           poolManagerTopology[value].vdevs.push([cloneDeep(vdevDisk)]);
         } else {
           const vdevDisks = [];
           for (const vdevDisk of vdev.children) {
-            const fullDisk = this.disks.find((disk) => disk.devname === vdevDisk.disk);
+            const fullDisk = this.disks().find((disk) => disk.devname === vdevDisk.disk);
             allCategoryVdevsDisks.push(cloneDeep(fullDisk));
             vdevDisks.push(cloneDeep(fullDisk));
           }

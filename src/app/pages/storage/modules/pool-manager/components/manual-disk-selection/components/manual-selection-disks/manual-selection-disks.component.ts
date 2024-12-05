@@ -1,7 +1,7 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, input, OnInit,
 } from '@angular/core';
 import { RouterLinkActive } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -75,7 +75,7 @@ const noEnclosureId = 'no-enclosure';
   ],
 })
 export class ManualSelectionDisksComponent implements OnInit {
-  @Input() enclosures: Enclosure[] = [];
+  readonly enclosures = input.required<Enclosure[]>();
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
@@ -116,7 +116,7 @@ export class ManualSelectionDisksComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(([disks, filterValues]) => {
         const filteredDisks = this.filterDisks(disks, filterValues);
-        const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures);
+        const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures());
 
         // Don't show enclosure header if there is only one enclosure
         const nodes = disksInEnclosures.length === 1

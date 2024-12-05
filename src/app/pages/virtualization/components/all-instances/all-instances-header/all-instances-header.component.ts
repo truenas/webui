@@ -33,8 +33,6 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   ],
 })
 export class AllInstancesHeaderComponent {
-  protected readonly isLoading = this.configStore.isLoading;
-
   protected readonly state = this.configStore.virtualizationState;
 
   protected readonly needToSetupPool = computed(() => this.state() === VirtualizationGlobalState.NoPool);

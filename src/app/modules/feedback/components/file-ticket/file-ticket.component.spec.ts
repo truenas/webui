@@ -32,6 +32,7 @@ describe('FileTicketComponent', () => {
       ReactiveFormsModule,
     ],
     declarations: [
+      MockComponent(OauthButtonComponent),
       MockComponent(SimilarIssuesComponent),
     ],
     providers: [

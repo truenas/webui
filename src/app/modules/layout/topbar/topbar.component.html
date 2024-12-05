@@ -71,8 +71,8 @@
         <ix-jobs-indicator></ix-jobs-indicator>
 
         <!-- Alert toggle button -->
+        @let alertBadgeCount = alertBadgeCount$ | async;
         <button
-          *appLet="alertBadgeCount$ | async as alertBadgeCount"
           matBadgeSize="small"
           matBadgeColor="warn"
           mat-icon-button

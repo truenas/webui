@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
-import { IxDateComponent } from 'app/modules/pipes/ix-date/ix-date.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({

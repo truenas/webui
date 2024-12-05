@@ -72,11 +72,30 @@ describe('IxExplorerComponent', () => {
 
   beforeEach(() => {
     spectator = createHost(
-      '<ix-explorer [formControl]="formControl" [nodeProvider]="nodeProvider"></ix-explorer>',
+      `<ix-explorer
+        [formControl]="formControl"
+        [nodeProvider]="nodeProvider"
+        [label]="label"
+        [hint]="hint"
+        [required]="required"
+        [tooltip]="tooltip"
+        [root]="root"
+        [multiple]="multiple"
+        [canCreateDataset]="canCreateDataset"
+        [createDatasetProps]="createDatasetProps"
+      ></ix-explorer>`,
       {
         hostProps: {
           formControl,
           nodeProvider: fakeNodeProvider,
+          label: undefined,
+          hint: undefined,
+          required: false,
+          tooltip: undefined,
+          root: mntPath,
+          multiple: false,
+          canCreateDataset: false,
+          createDatasetProps: {},
         },
       },
     );
@@ -118,7 +137,7 @@ describe('IxExplorerComponent', () => {
 
   describe('rendering – other elements', () => {
     it('renders a hint when it is provided', () => {
-      spectator.component.hint = 'Please select a directory starting with an A';
+      spectator.setHostInput('hint', 'Please select a directory starting with an A');
       spectator.detectComponentChanges();
 
       expect(spectator.query('mat-hint'))
@@ -126,9 +145,9 @@ describe('IxExplorerComponent', () => {
     });
 
     it('renders a label and passes properties to it', () => {
-      spectator.component.label = 'Select dataset';
-      spectator.component.required = true;
-      spectator.component.tooltip = 'Enter the location of the system.';
+      spectator.setHostInput('label', 'Select dataset');
+      spectator.setHostInput('required', true);
+      spectator.setHostInput('tooltip', 'Enter the location of the system.');
       spectator.detectComponentChanges();
 
       const label = spectator.query(IxLabelComponent);
@@ -181,7 +200,7 @@ describe('IxExplorerComponent', () => {
 
   describe('form control - multiple=true', () => {
     beforeEach(() => {
-      spectator.component.multiple = true;
+      spectator.setHostInput('multiple', true);
       spectator.detectComponentChanges();
     });
 
@@ -243,7 +262,7 @@ describe('IxExplorerComponent', () => {
 
   describe('creating new dataset', () => {
     it('hides Create Dataset button when canCreateDataset is false', async () => {
-      spectator.component.canCreateDataset = false;
+      spectator.setHostInput('canCreateDataset', false);
       spectator.detectComponentChanges();
 
       const createDatasetButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Create Dataset' }));
@@ -251,7 +270,7 @@ describe('IxExplorerComponent', () => {
     });
 
     it('disables Create Dataset button when node is unselected', async () => {
-      spectator.component.canCreateDataset = true;
+      spectator.setHostInput('canCreateDataset', true);
       spectator.detectComponentChanges();
 
       formControl.setValue([]);
@@ -266,7 +285,7 @@ describe('IxExplorerComponent', () => {
     });
 
     it('disables Create Dataset button when node is not mountpoint', async () => {
-      spectator.component.canCreateDataset = true;
+      spectator.setHostInput('canCreateDataset', true);
       spectator.detectComponentChanges();
 
       formControl.setValue('/mnt/place');
@@ -281,8 +300,8 @@ describe('IxExplorerComponent', () => {
     });
 
     it('disables Create Dataset button when form control is disabled', async () => {
-      spectator.component.canCreateDataset = true;
-      spectator.component.createDatasetProps = {};
+      spectator.setHostInput('canCreateDataset', true);
+      spectator.setHostInput('createDatasetProps', {});
       spectator.detectComponentChanges();
 
       formControl.setValue('/mnt/place');
@@ -301,8 +320,8 @@ describe('IxExplorerComponent', () => {
 
     it('opens a creating dataset dialog when Create Dataset button is pressed', async () => {
       const createDatasetProps: Omit<DatasetCreate, 'name'> = { encryption: true };
-      spectator.component.canCreateDataset = true;
-      spectator.component.createDatasetProps = createDatasetProps;
+      spectator.setHostInput('canCreateDataset', true);
+      spectator.setHostInput('createDatasetProps', createDatasetProps);
       spectator.detectComponentChanges();
 
       formControl.setValue('/mnt/place');

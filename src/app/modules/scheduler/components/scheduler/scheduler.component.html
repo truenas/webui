@@ -1,17 +1,17 @@
 <div class="full-width container has-tooltip">
-  @if (label || tooltip) {
+  @if (label() || tooltip()) {
     <ix-label
-      [label]="label"
-      [tooltip]="tooltip"
-      [required]="required"
+      [label]="label()"
+      [tooltip]="tooltip()"
+      [required]="required()"
     ></ix-label>
   }
 
   <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
-      [required]="required"
+      [required]="required()"
       [disabled]="isDisabled"
-      [aria-label]="label"
+      [aria-label]="label()"
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
@@ -56,5 +56,5 @@
       </mat-option>
     </mat-select>
   </div>
-  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 </div>

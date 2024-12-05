@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -8,6 +8,7 @@ import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkService } from 'app/services/network.service';
@@ -27,13 +28,14 @@ import { NetworkService } from 'app/services/network.service';
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() hint: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly hint = input<string>();
+  readonly required = input<boolean>();
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};
@@ -52,8 +54,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  onAddressInput(input: HTMLInputElement): void {
-    this.address = input.value;
+  onAddressInput(inputElement: HTMLInputElement): void {
+    this.address = inputElement.value;
     this.onValueChanged();
     this.setNetmaskOptions();
   }

@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import {
   ManageUnusedDiskDialogComponent,
 } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
@@ -27,10 +26,6 @@ describe('UnusedDiskCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        pools: [
-          { id: 1, name: 'DEV' },
-          { id: 2, name: 'TEST' },
-        ] as Pool[],
         disks: [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 123456789 },
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
