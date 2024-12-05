@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, HostBinding, input, output,
+  Component, input, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,15 +22,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxListItemComponent {
   readonly canDelete = input(true);
-  readonly label = input.required<string>();
+  readonly label = input<string>();
 
   readonly delete = output();
 
   deleteItem(): void {
     this.delete.emit();
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.label();
   }
 }
