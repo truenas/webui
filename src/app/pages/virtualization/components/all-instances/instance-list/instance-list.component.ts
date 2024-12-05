@@ -45,7 +45,6 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
 
 export class InstanceListComponent {
   readonly isMobileView = input<boolean>();
-  readonly showMobileDetails = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
 
   protected readonly searchQuery = signal<string>('');
