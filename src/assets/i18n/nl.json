@@ -69,7 +69,7 @@
   "List of files and directories to exclude from backup.<br>  Separate entries by pressing <code>Enter</code>. See  <a href=\"https://restic.readthedocs.io/en/latest/040_backup.html#excluding-files\" target=\"_blank\">restic exclude patterns</a>  for more details about the <code>--exclude</code> option.": "",
   "MAC VLAN": "",
   "Max Concurrent Calls": "",
-  "Max concurrent calls limit reached.\n        There are more than 20 calls queued. \n        See queued calls in the browser's console logs": "",
+  "Max concurrent calls limit reached.\n        There are more than 20 calls queued.\n        See queued calls in the browser's console logs": "",
   "MiB": "",
   "My API Keys": "",
   "NIC Type": "",

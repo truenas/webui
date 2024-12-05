@@ -1,39 +1,58 @@
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiError } from 'app/interfaces/api-error.interface';
 
-export interface PongMessage {
+/**
+ * General documentation about message format: https://www.jsonrpc.org/specification
+ */
+interface BaseJsonRpc {
+  jsonrpc: '2.0';
+}
+
+export interface RequestMessage extends BaseJsonRpc {
+  id?: string;
+  method: ApiMethod;
+  params?: unknown[];
+}
+
+export interface SuccessfulResponse extends BaseJsonRpc {
   id: string;
-  msg: IncomingApiMessageType.Pong;
+  result: unknown;
 }
 
-export interface SubscriptionReadyMessage {
-  msg: IncomingApiMessageType.Ready;
-  subs: string[];
-}
-
-export interface ResultMessage<T = unknown> {
+export interface ErrorResponse extends BaseJsonRpc {
   id: string;
-  msg: IncomingApiMessageType.Result;
-  result?: T;
-  error?: ApiError;
+  error: JsonRpcError;
 }
 
-export interface ConnectedMessage {
-  msg: IncomingApiMessageType.Connected;
-  session: string;
+export interface CollectionUpdateMessage extends BaseJsonRpc {
+  method: 'collection_update';
+  params: ApiEvent;
 }
+
+export interface JsonRpcError {
+  code: JsonRpcErrorCode;
+  message: string;
+  data?: ApiError;
+}
+
+export type IncomingMessage =
+  | SuccessfulResponse
+  | ErrorResponse
+  | CollectionUpdateMessage;
+
+export type ApiMethod = ApiCallMethod | ApiJobMethod | ApiEventMethod;
 
 export interface ApiEvent<T = unknown> {
   collection: ApiCallMethod | ApiJobMethod | ApiEventMethod;
   fields: T;
   id: number | string;
-  msg: IncomingApiMessageType.Changed
-    | IncomingApiMessageType.Added
-    | IncomingApiMessageType.Removed
-    | IncomingApiMessageType.NoSub;
+  msg: CollectionChangeType.Changed
+    | CollectionChangeType.Added
+    | CollectionChangeType.Removed;
+  // TODO: | IncomingApiMessageType.NoSub
 }
 
 export type ApiEventMethod = keyof ApiEventDirectory;
@@ -43,10 +62,3 @@ export type ApiEventTyped<
   M extends ApiEventMethod = ApiEventMethod,
   T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
 > = ApiEvent<T>;
-
-export type IncomingApiMessage =
-  | PongMessage
-  | SubscriptionReadyMessage
-  | ResultMessage
-  | ConnectedMessage
-  | ApiEvent;

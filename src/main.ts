@@ -35,6 +35,7 @@ import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
@@ -112,12 +113,16 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: ApiService,
-      deps: [WebSocketHandlerService, TranslateService],
-      useFactory: (connection: WebSocketHandlerService, translate: TranslateService) => {
+      deps: [WebSocketHandlerService, SubscriptionManagerService, TranslateService],
+      useFactory: (
+        connection: WebSocketHandlerService,
+        subscriptionManager: SubscriptionManagerService,
+        translate: TranslateService,
+      ) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(connection, translate);
+          return new MockEnclosureApiService(connection, subscriptionManager, translate);
         }
-        return new ApiService(connection, translate);
+        return new ApiService(connection, subscriptionManager, translate);
       },
     },
     provideCharts(withDefaultRegisterables()),

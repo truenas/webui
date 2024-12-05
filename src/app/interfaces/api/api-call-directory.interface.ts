@@ -26,6 +26,7 @@ import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
 } from 'app/interfaces/alert.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import { ApiEventMethod } from 'app/interfaces/api-message.interface';
 import {
   App,
   AppQueryParams,
@@ -407,11 +408,14 @@ export interface ApiCallDirectory {
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Core
+  'core.ping': { params: void; response: 'pong' };
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
   'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
+  'core.subscribe': { params: [name: ApiEventMethod]; response: void };
+  'core.unsubscribe': { params: [id: string]; response: void };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
