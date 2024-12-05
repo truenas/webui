@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
   Input,
   OnInit,
   ViewChild,
@@ -94,10 +93,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   writeValue(value: string | number): void {

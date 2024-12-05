@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -72,10 +72,6 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   writeValue(value: string): void {
     this.value = value;
     this.cdr.markForCheck();
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   registerOnChange(onChange: (value: string) => void): void {

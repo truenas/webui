@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -101,10 +100,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if ('autocompleteOptions' in changes) {
       this.filterOptions();
     }
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   ngOnInit(): void {

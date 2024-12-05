@@ -51,10 +51,6 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
-  }
-
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
 

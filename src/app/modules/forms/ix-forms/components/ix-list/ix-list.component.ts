@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  HostBinding,
   Input, output,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
@@ -53,10 +52,6 @@ export class IxListComponent implements AfterViewInit {
     if (!this.isEditMode && this.default?.length > 0) {
       this.handleListDefaults();
     }
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.formArrayName;
   }
 
   addItem(schema?: ChartSchemaNode[]): void {

@@ -5,7 +5,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -75,10 +74,6 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

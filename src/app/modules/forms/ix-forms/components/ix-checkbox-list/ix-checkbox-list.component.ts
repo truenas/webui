@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -61,10 +61,6 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
 
   onChange: (value: (string | number)[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
-  }
 
   writeValue(value: (string | number)[]): void {
     this.value = value;

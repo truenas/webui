@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  HostBinding,
   Input,
   OnChanges,
   OnInit,
@@ -90,10 +89,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
       || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
       || this.isDisabled;
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   private readonly actionMapping: IActionMapping = {

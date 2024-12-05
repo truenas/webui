@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, HostBinding, Input, OnChanges, OnInit,
+  Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -138,10 +138,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
         this.cdr.markForCheck();
       });
     }
-  }
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
   }
 
   onChange: (value: IxSelectValue) => void = (): void => {};

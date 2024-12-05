@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, HostBinding, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
@@ -50,10 +50,6 @@ export class IxStarRatingComponent implements ControlValueAccessor {
 
   onChange: (value: number) => void = (): void => {};
   onTouch: () => void = (): void => {};
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label();
-  }
 
   writeValue(value: number): void {
     this.value = value > this.maxRating() ? this.maxRating() : value;

@@ -5,7 +5,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  HostBinding,
   Input,
   OnChanges,
   ViewChild,
@@ -108,10 +107,6 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   inputReset$ = new Subject<void>();
-
-  @HostBinding('attr.id') get id(): string {
-    return this.controlDirective.name?.toString() || this.label;
-  }
 
   onChange: (value: string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};
