@@ -59,7 +59,6 @@ import { SlideInService } from 'app/services/slide-in.service';
 })
 export class TargetListComponent implements OnInit {
   readonly isMobileView = input<boolean>();
-  readonly showMobileDetails = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input<AsyncDataProvider<IscsiTarget>>();
 

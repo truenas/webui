@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
 import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
@@ -14,6 +15,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AuthorizedNetworksCardComponent,
+    AssociatedExtentsCardComponent,
   ],
 })
 export class TargetDetailsComponent {

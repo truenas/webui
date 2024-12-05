@@ -10,16 +10,14 @@
 </div>
 
 <div class="item-search">
-  @if (!showMobileDetails()) {
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="isLoading()"
-    ></ix-fake-progress-bar>
-  }
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="isLoading()"
+  ></ix-fake-progress-bar>
 
   <ix-search-input1
     [maxLength]="100"
-    [disabled]="!instances().length"
+    [disabled]="!instances()?.length"
     [value]="searchQuery()"
     (search)="onSearch($event)"
   ></ix-search-input1>
@@ -28,7 +26,7 @@
 <div class="instances">
   <div class="instances-header-row">
     <div class="cell checkbox">
-      @if (instances().length) {
+      @if (instances()?.length) {
         <mat-checkbox
           color="primary"
           ixTest="select-all-app"
@@ -45,7 +43,7 @@
     <div class="cell actions">{{ 'Controls' | translate }}</div>
   </div>
 
-  @if (!filteredInstances()?.length) {
+  @if (instances() !== undefined && !filteredInstances().length) {
     <ix-empty [conf]="emptyConfig()"></ix-empty>
   }
 
