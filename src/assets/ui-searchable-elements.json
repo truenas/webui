@@ -2377,7 +2377,8 @@
       "SMB"
     ],
     "synonyms": [
-      "Samba"
+      "Samba",
+      "SMB Service"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -2396,7 +2397,9 @@
       "Services",
       "FTP"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "FTP Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2414,7 +2417,9 @@
       "Services",
       "iSCSI"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "iSCSI Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2432,7 +2437,9 @@
       "Services",
       "NFS"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "NFS Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2450,7 +2457,9 @@
       "Services",
       "SNMP"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "SNMP Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2468,7 +2477,9 @@
       "Services",
       "SSH"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "SSH Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2486,7 +2497,9 @@
       "Services",
       "UPS"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "UPS Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2505,6 +2518,7 @@
       "S.M.A.R.T."
     ],
     "synonyms": [
+      "Smart Service",
       "Smart"
     ],
     "requiredRoles": [],
