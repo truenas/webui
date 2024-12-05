@@ -57,7 +57,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   templateUrl: './pool-manager-wizard.component.html',
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

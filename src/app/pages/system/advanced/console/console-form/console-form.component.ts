@@ -33,7 +33,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-console-form',
   templateUrl: './console-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

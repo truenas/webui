@@ -12,7 +12,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-toggle',
   templateUrl: './ix-cell-toggle.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatSlideToggle,
     RequiresRolesDirective,

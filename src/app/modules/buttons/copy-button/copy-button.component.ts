@@ -13,7 +13,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-copy-button',
   templateUrl: './copy-button.component.html',
   styleUrls: ['./copy-button.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatIconButton,

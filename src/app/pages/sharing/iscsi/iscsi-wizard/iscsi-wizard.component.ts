@@ -66,7 +66,6 @@ import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wiz
   templateUrl: './iscsi-wizard.component.html',
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

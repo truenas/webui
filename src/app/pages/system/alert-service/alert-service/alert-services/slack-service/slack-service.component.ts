@@ -11,7 +11,6 @@ import {
   selector: 'ix-slack-service',
   templateUrl: './slack-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

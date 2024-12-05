@@ -36,7 +36,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-authorized-access-form',
   templateUrl: './authorized-access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

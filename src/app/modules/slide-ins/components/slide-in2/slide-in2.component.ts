@@ -32,7 +32,6 @@ import {
   templateUrl: './slide-in2.component.html',
   styleUrls: ['./slide-in2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CdkTrapFocus],
 })
 export class SlideIn2Component implements OnInit, OnDestroy {

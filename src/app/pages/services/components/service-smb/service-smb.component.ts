@@ -42,7 +42,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './service-smb.component.html',
   styleUrls: ['./service-smb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

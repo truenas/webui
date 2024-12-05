@@ -53,7 +53,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatToolbar,
     MatToolbarRow,

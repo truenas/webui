@@ -47,7 +47,6 @@ interface AllowedAddressRow {
   styleUrls: ['../../common-card.scss', './allowed-addresses-card.component.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

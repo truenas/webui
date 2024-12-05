@@ -28,7 +28,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-certificate-identifier-and-type',
   templateUrl: './certificate-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

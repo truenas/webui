@@ -12,7 +12,6 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   selector: 'ix-telegram-service',
   templateUrl: './telegram-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

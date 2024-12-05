@@ -5,7 +5,6 @@ import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-
   selector: 'ix-cell-template',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class IxCellTemplateComponent<T> extends ColumnComponent<T> {}
 

@@ -18,7 +18,6 @@ import {
   templateUrl: './widget-serial-active.component.html',
   styleUrls: ['./widget-serial-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

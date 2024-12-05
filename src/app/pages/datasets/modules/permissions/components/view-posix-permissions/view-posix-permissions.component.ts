@@ -14,7 +14,6 @@ import {
   templateUrl: 'view-posix-permissions.component.html',
   styleUrls: ['./view-posix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PermissionsItemComponent, TranslateModule],
 })
 export class ViewPosixPermissionsComponent implements OnChanges {

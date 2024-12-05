@@ -19,7 +19,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './app-resources-card.component.html',
   styleUrls: ['./app-resources-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     NgxSkeletonLoaderModule,

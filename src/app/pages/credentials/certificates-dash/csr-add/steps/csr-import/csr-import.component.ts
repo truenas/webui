@@ -21,7 +21,6 @@ import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/u
   selector: 'ix-csr-import',
   templateUrl: './csr-import.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxTextareaComponent,

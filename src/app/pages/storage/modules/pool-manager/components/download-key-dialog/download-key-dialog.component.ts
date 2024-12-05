@@ -31,7 +31,6 @@ export interface DownloadKeyDialogParams {
   templateUrl: './download-key-dialog.component.html',
   styleUrls: ['./download-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

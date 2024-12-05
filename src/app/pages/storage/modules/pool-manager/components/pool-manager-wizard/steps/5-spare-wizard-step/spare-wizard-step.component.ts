@@ -16,7 +16,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   selector: 'ix-spare-wizard-step',
   templateUrl: './spare-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,

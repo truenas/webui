@@ -23,7 +23,6 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   templateUrl: './modal-header2.component.html',
   styleUrls: ['./modal-header2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

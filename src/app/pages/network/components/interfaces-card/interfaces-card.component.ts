@@ -54,7 +54,6 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './interfaces-card.component.html',
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

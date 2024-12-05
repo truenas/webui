@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './app-loader.component.html',
   styleUrls: ['./app-loader.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatProgressSpinner,

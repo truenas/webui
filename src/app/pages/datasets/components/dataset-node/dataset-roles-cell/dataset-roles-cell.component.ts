@@ -13,7 +13,6 @@ import { doesDatasetHaveShares, ixAppsDataset } from 'app/pages/datasets/utils/d
   templateUrl: './dataset-roles-cell.component.html',
   styleUrls: ['./dataset-roles-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     TranslateModule,

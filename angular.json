@@ -29,6 +29,14 @@
             ],
             "assets": ["src/assets"],
             "stylePreprocessorOptions": {
+              "sass": {
+                "silenceDeprecations": [
+                  "mixed-decls",
+                  "color-functions",
+                  "global-builtin",
+                  "import"
+                ]
+              },
               "includePaths": [
                 "./src/assets/styles",
                 "./node_modules"

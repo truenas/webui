@@ -45,7 +45,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   selector: 'ix-ipmi-form',
   templateUrl: './ipmi-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

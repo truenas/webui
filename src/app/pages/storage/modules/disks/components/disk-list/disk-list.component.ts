@@ -57,7 +57,6 @@ interface DiskUi extends Disk {
   templateUrl: './disk-list.component.html',
   styleUrls: ['./disk-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

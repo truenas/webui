@@ -14,7 +14,6 @@ import { cpuModelWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-model
   templateUrl: './widget-cpu-model.component.html',
   styleUrls: ['./widget-cpu-model.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

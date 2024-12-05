@@ -11,7 +11,6 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
   templateUrl: './widget-datapoint.component.html',
   styleUrl: './widget-datapoint.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

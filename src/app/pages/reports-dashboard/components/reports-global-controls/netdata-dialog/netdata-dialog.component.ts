@@ -25,7 +25,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./netdata-dialog.component.scss'],
   templateUrl: './netdata-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatIconButton,

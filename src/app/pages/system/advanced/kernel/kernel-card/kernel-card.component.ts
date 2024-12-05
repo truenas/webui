@@ -29,7 +29,6 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   styleUrls: ['../../common-card.scss'],
   templateUrl: './kernel-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

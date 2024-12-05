@@ -22,7 +22,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-portal-wizard-step',
   templateUrl: './portal-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

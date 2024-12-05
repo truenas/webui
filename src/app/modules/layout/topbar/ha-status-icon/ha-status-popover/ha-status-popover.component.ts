@@ -10,7 +10,6 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './ha-status-popover.component.html',
   styleUrls: ['./ha-status-popover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     TranslateModule,

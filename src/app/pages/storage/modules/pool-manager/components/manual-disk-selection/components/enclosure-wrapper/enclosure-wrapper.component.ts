@@ -11,7 +11,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './enclosure-wrapper.component.html',
   styleUrls: ['./enclosure-wrapper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [IxIconComponent],
 })
 export class EnclosureWrapperComponent {

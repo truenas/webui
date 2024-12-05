@@ -6,7 +6,6 @@ import {
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -38,11 +37,9 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './global-target-configuration.component.html',
   styleUrls: ['./global-target-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,
-    MatProgressBar,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,

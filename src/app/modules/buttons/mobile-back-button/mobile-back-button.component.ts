@@ -8,7 +8,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButtonModule,
     IxIconComponent,
@@ -20,5 +19,5 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./mobile-back-button.component.scss'],
 })
 export class MobileBackButtonComponent {
-  readonly onClose = output();
+  readonly close = output();
 }

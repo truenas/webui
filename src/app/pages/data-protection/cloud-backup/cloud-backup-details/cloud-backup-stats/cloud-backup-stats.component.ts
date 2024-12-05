@@ -14,7 +14,6 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './cloud-backup-stats.component.html',
   styleUrl: './cloud-backup-stats.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

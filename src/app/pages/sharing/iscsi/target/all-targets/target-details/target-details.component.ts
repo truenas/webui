@@ -18,7 +18,6 @@ import { ApiService } from 'app/services/websocket/api.service';
 @Component({
   selector: 'ix-target-details',
   templateUrl: './target-details.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AuthorizedNetworksCardComponent,

@@ -36,7 +36,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: './jobs-panel.component.html',
   styleUrls: ['./jobs-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatTooltip,

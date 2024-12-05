@@ -27,7 +27,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './system-security-form.component.html',
   styleUrls: ['./system-security-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

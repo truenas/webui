@@ -42,7 +42,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './tunable-list.component.html',
   styleUrls: ['./tunable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

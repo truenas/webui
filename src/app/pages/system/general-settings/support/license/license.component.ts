@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-license',
   templateUrl: './license.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

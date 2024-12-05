@@ -25,7 +25,6 @@ const customReasonValue = 'CUSTOM_REASON_VALUE';
   templateUrl: './reboot-or-shutdown-dialog.component.html',
   styleUrls: ['./reboot-or-shutdown-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

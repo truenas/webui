@@ -16,7 +16,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   templateUrl: './custom-layout-applied.component.html',
   styleUrls: ['./custom-layout-applied.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TestDirective,

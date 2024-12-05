@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-table-pager.component.html',
   styleUrls: ['./ix-table-pager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatFormField,
     MatSelect,

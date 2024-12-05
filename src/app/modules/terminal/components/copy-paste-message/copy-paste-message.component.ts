@@ -11,7 +11,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-copy-paste-message',
   templateUrl: './copy-paste-message.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

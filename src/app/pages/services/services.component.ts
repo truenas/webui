@@ -56,7 +56,6 @@ import { waitForServices } from 'app/store/services/services.selectors';
   selector: 'ix-services',
   templateUrl: './services.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     MatCard,

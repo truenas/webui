@@ -25,7 +25,6 @@ const critical = 95;
   styleUrls: ['./quotas-section.component.scss'],
   templateUrl: './quotas-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     IxInputComponent,

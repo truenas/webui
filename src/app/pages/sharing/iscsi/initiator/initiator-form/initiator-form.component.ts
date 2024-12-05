@@ -37,7 +37,6 @@ interface InitiatorItem {
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

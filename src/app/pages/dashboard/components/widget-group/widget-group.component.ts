@@ -28,7 +28,6 @@ type OutletParams = {
   templateUrl: './widget-group.component.html',
   styleUrls: ['./widget-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgComponentOutlet, AsyncPipe],
 })
 export class WidgetGroupComponent {

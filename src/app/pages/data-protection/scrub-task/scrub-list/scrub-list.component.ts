@@ -50,7 +50,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './scrub-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     IxTableColumnsSelectorComponent,

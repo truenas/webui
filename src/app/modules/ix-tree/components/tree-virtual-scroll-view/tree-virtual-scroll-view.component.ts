@@ -49,7 +49,6 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     { provide: CdkTree, useExisting: this },
     { provide: Tree, useExisting: this },
   ],
-  standalone: true,
   imports: [
     CdkVirtualScrollViewport,
     CdkVirtualScrollableWindow,

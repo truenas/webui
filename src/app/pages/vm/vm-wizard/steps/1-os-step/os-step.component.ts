@@ -34,7 +34,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-os-step',
   templateUrl: './os-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

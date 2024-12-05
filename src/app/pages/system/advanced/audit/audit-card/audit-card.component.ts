@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['../../common-card.scss'],
   templateUrl: './audit-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

@@ -17,7 +17,6 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
   templateUrl: './dataset-node.component.html',
   styleUrls: ['./dataset-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DatasetIconComponent,
     MatTooltip,

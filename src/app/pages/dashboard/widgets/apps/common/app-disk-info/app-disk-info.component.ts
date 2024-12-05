@@ -18,7 +18,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './app-disk-info.component.html',
   styleUrls: ['./app-disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,

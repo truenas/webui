@@ -33,7 +33,6 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   templateUrl: './widget-group-form.component.html',
   styleUrls: ['./widget-group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     ReactiveFormsModule,

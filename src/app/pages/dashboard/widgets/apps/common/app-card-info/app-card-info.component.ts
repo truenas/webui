@@ -12,7 +12,6 @@ import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/ap
   templateUrl: './app-card-info.component.html',
   styleUrls: ['./app-card-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     AppStateCellComponent,

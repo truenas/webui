@@ -26,7 +26,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './group-details-row.component.html',
   styleUrls: ['./group-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxTableExpandableRowComponent,
     MatButton,

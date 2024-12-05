@@ -27,7 +27,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-all-targets',
   styleUrls: ['./all-targets.component.scss'],
   templateUrl: './all-targets.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

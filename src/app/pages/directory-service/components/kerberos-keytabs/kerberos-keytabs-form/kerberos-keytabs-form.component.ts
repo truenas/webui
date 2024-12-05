@@ -27,7 +27,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-kereberos-keytabs-form',
   templateUrl: './kerberos-keytabs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

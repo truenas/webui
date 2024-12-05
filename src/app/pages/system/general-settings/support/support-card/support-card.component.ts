@@ -53,7 +53,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './support-card.component.html',
   styleUrls: ['./support-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

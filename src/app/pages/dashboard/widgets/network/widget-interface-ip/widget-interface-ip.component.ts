@@ -21,7 +21,6 @@ import {
   templateUrl: './widget-interface-ip.component.html',
   styleUrls: ['./widget-interface-ip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

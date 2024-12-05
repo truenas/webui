@@ -34,7 +34,6 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   templateUrl: './app-detail-view.component.html',
   styleUrls: ['./app-detail-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     AppDetailsHeaderComponent,

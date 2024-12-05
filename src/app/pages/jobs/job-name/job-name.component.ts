@@ -23,7 +23,6 @@ import { AppState } from 'app/store';
   templateUrl: './job-name.component.html',
   styleUrls: ['./job-name.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatTooltip,

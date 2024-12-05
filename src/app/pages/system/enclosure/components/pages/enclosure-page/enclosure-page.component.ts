@@ -23,7 +23,6 @@ import { StatusViewComponent } from './status-view/status-view.component';
   templateUrl: './enclosure-page.component.html',
   styleUrls: ['./enclosure-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

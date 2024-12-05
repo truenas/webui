@@ -25,7 +25,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './widget-cpu-usage-recent.component.html',
   styleUrls: ['./widget-cpu-usage-recent.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     BaseChartDirective,

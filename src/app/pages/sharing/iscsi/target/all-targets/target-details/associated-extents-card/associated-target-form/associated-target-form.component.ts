@@ -31,7 +31,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./associated-target-form.component.scss'],
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogTitle,

@@ -11,7 +11,6 @@ import { LayoutService } from 'app/services/layout.service';
     }
     `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [PageHeaderComponent, AsyncPipe],
 })
 export class DefaultPageHeaderComponent {

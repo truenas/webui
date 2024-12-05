@@ -19,7 +19,6 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
   templateUrl: './restart.component.html',
   styleUrls: ['./restart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

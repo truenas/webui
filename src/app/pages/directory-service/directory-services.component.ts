@@ -47,7 +47,6 @@ interface DataCard {
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EmptyComponent,
     RequiresRolesDirective,

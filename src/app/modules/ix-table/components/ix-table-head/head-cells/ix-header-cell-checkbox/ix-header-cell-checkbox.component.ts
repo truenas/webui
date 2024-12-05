@@ -12,7 +12,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-header-cell-checkbox',
   templateUrl: './ix-header-cell-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCheckbox,
     TranslateModule,

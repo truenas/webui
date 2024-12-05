@@ -10,7 +10,6 @@ import { ActionOption } from 'app/interfaces/option.interface';
   templateUrl: './ix-table-expandable-row.component.html',
   styleUrls: ['./ix-table-expandable-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [MatDivider, TranslateModule],
 })
 export class IxTableExpandableRowComponent {

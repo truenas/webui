@@ -23,7 +23,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './acl-editor-save-controls.component.html',
   styleUrls: ['./acl-editor-save-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxCheckboxComponent,

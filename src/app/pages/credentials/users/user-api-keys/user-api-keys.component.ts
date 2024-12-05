@@ -55,7 +55,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './user-api-keys.component.html',
   styleUrls: ['./user-api-keys.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInputComponent,
     TestDirective,

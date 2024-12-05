@@ -34,7 +34,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './pools-dashboard.component.html',
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

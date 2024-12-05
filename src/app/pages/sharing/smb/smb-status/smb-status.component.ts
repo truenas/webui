@@ -17,7 +17,6 @@ import { SmbShareListComponent } from './components/smb-share-list/smb-share-lis
   templateUrl: './smb-status.component.html',
   styleUrls: ['./smb-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTabNav,
     MatTabLink,
