@@ -8,6 +8,8 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -134,5 +136,29 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       hideCheckbox: true,
     });
     expect(chainedRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
+  });
+
+  it('checks payload when use invalid s3 credentials', async () => {
+    const bucketSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
+    expect(await bucketSelect.getValue()).toBe('');
+
+    spectator.component.isCredentialInvalid$.next(true);
+    spectator.detectChanges();
+
+    const bucketInput = await loader.getHarness(IxInputHarness.with({ label: 'Bucket' }));
+    await bucketInput.setValue('selected');
+
+    expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
+      attributes: expect.objectContaining({
+        bucket: 'selected',
+      }),
+    }));
+
+    await bucketInput.setValue('test-bucket');
+    expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
+      attributes: expect.objectContaining({
+        bucket: 'test-bucket',
+      }),
+    }));
   });
 });
