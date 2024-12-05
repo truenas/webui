@@ -60,6 +60,9 @@ export class ErrorHandlerService implements ErrorHandler {
       }
       return this.parseRawJsonRpcError(actualError);
     }
+    if (isApiError(error)) {
+      return this.parseApiError(error);
+    }
     if (isFailedJob(error)) {
       return this.parseJobError(error);
     }
