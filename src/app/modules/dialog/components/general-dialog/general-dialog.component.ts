@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
-  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
+  MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
@@ -42,9 +44,8 @@ export interface GeneralDialogConfig {
   ],
 })
 export class GeneralDialogComponent {
-  @Input() conf: GeneralDialogConfig;
-
   constructor(
-    public dialogRef: MatDialogRef<GeneralDialogComponent>,
+    protected dialogRef: MatDialogRef<GeneralDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public conf: GeneralDialogConfig,
   ) { }
 }

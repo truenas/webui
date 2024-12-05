@@ -3,7 +3,16 @@ export interface FibreChannelPort {
   port: string;
   wwpn: string | null;
   wwpn_b: string | null;
-  target: unknown; // TODO: Probably IscsiTarget
+  target: FibreChannelTarget;
+}
+
+export interface FibreChannelTarget {
+  id: number;
+  iscsi_target_name: string;
+  iscsi_target_alias: string | null;
+  iscsi_target_mode: string;
+  iscsi_target_auth_networks: string[];
+  iscsi_target_rel_tgt_id: number;
 }
 
 export interface FibreChannelPortUpdate {

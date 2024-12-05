@@ -33,7 +33,7 @@ describe('IxTablePagerComponent', () => {
     spectator = createComponent({
       props: { dataProvider, pageSize: 2, pageSizeOptions: [2, 10] },
     });
-    spectator.component.dataProvider.setRows(testTableData);
+    spectator.component.dataProvider().setRows(testTableData);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.fixture.detectChanges();
   });
@@ -51,7 +51,7 @@ describe('IxTablePagerComponent', () => {
   });
 
   it('sets pagination when an option is selected', async () => {
-    const dataProvider = spectator.component.dataProvider;
+    const dataProvider = spectator.component.dataProvider();
     expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const select = await loader.getHarness(MatSelectHarness);
@@ -63,7 +63,7 @@ describe('IxTablePagerComponent', () => {
   });
 
   it('sets pagination when page number is changed', async () => {
-    const dataProvider = spectator.component.dataProvider;
+    const dataProvider = spectator.component.dataProvider();
     expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
