@@ -139,7 +139,7 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   get checkedApps(): App[] {
-    return this.checkedAppsNames.map((name) => this.dataSource.find((app) => app.name === name));
+    return this.checkedAppsNames.map((id) => this.dataSource.find((app) => app.id === id));
   }
 
   get activeCheckedApps(): App[] {
