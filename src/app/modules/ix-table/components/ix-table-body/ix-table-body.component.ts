@@ -32,7 +32,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-table-body.component.html',
   styleUrls: ['ix-table-body.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     UiSearchDirective,
     NgStyle,

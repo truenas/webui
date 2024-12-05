@@ -8,7 +8,6 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   selector: 'ix-pager-duty-service',
   templateUrl: './pager-duty-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

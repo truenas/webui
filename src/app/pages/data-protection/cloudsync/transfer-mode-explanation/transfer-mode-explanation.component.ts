@@ -10,7 +10,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './transfer-mode-explanation.component.html',
   styleUrls: ['./transfer-mode-explanation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [IxIconComponent],
 })
 export class TransferModeExplanationComponent {

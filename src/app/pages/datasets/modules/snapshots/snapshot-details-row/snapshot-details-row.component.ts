@@ -35,7 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './snapshot-details-row.component.html',
   styleUrls: ['./snapshot-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     TranslateModule,

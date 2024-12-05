@@ -34,7 +34,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-smart-test-result-list',
   templateUrl: './smart-test-result-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

@@ -37,7 +37,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './service-ups.component.html',
   styleUrls: ['./service-ups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

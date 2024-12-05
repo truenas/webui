@@ -72,7 +72,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-alert-service',
   templateUrl: './alert-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

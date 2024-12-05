@@ -14,7 +14,6 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
   templateUrl: './app-details-panel.component.html',
   styleUrls: ['./app-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AppInfoCardComponent,

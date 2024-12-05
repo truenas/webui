@@ -29,7 +29,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   selector: 'ix-gui-card',
   templateUrl: './gui-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

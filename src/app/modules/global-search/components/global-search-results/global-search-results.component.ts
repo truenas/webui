@@ -26,7 +26,6 @@ import { AuthService } from 'app/services/auth/auth.service';
   templateUrl: './global-search-results.component.html',
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     TestDirective,

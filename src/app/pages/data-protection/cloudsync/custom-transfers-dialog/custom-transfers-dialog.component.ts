@@ -15,7 +15,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './custom-transfers-dialog.component.html',
   styleUrls: ['./custom-transfers-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

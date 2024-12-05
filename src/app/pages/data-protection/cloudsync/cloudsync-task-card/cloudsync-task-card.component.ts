@@ -54,7 +54,6 @@ import { AppState } from 'app/store';
   templateUrl: './cloudsync-task-card.component.html',
   styleUrls: ['./cloudsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

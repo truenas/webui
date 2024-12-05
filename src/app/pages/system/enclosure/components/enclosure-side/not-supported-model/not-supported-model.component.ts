@@ -13,7 +13,6 @@ import {
   templateUrl: './not-supported-model.component.html',
   styleUrls: ['./not-supported-model.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TestDirective, TranslateModule],
 })
 export class NotSupportedModelComponent implements OnInit {

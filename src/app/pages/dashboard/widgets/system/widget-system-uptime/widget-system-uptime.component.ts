@@ -20,7 +20,6 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './widget-system-uptime.component.html',
   styleUrls: ['./widget-system-uptime.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

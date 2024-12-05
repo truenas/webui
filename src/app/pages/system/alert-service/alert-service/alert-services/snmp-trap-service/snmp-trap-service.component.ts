@@ -15,7 +15,6 @@ const disabledValue = 'disabled';
   selector: 'ix-snmp-trap-service',
   templateUrl: './snmp-trap-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

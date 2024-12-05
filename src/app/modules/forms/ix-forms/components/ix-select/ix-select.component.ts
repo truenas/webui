@@ -30,7 +30,6 @@ export type IxSelectValue = SelectOptionValueType;
   styleUrls: ['./ix-select.component.scss'],
   templateUrl: './ix-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatSelect,

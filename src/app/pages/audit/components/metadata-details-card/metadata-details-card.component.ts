@@ -9,7 +9,6 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
   selector: 'ix-metadata-details-card',
   templateUrl: './metadata-details-card.component.html',
   styleUrls: ['./metadata-details-card.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCardContent,

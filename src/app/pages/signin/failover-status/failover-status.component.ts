@@ -13,7 +13,6 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './failover-status.component.html',
   styleUrls: ['./failover-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     TranslateModule,

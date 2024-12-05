@@ -11,7 +11,6 @@ import { VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
   templateUrl: './vdev-group-node.component.html',
   styleUrls: ['./vdev-group-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule],
 })
 export class VDevGroupNodeComponent {

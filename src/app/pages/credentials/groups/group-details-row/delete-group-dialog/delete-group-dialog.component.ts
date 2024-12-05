@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './delete-group-dialog.component.html',
   styleUrls: ['./delete-group-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

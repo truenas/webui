@@ -14,7 +14,6 @@ import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app
   templateUrl: './app-notes-card.component.html',
   styleUrls: ['./app-notes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

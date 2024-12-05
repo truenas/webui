@@ -10,7 +10,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './full-screen-dialog.component.html',
   styleUrls: ['./full-screen-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TranslateModule,

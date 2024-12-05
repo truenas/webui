@@ -29,7 +29,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-smb-session-list',
   templateUrl: './smb-session-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

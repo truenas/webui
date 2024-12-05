@@ -64,7 +64,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   styleUrls: ['./other-options-section.component.scss'],
   templateUrl: './other-options-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     IxInputComponent,

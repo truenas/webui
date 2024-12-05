@@ -6,7 +6,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-table.component.html',
   styleUrls: ['./ix-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TestDirective,
   ],

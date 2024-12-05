@@ -20,7 +20,6 @@ import { PageTitleService } from 'app/services/page-title.service';
   templateUrl: './page-header.component.html',
   styleUrls: ['./page-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     BreadcrumbComponent,
     NewPageBadgeComponent,

@@ -20,7 +20,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './export-all-keys-dialog.component.html',
   styleUrls: ['./export-all-keys-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

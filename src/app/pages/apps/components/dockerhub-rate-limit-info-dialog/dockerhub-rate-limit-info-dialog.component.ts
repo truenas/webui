@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-dockerhub-rate-info-dialog',
   templateUrl: './dockerhub-rate-limit-info-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     MatDialogContent,

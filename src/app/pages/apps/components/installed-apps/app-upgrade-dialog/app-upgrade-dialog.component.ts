@@ -36,7 +36,6 @@ type Version = Omit<AppUpgradeSummary, 'upgrade_version' | 'image_update_availab
   styleUrls: ['./app-upgrade-dialog.component.scss'],
   templateUrl: './app-upgrade-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogContent,
     ImgFallbackModule,

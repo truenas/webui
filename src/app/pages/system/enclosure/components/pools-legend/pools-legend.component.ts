@@ -13,7 +13,6 @@ import { unassignedColor } from 'app/pages/system/enclosure/utils/unassigned-col
   templateUrl: './pools-legend.component.html',
   styleUrls: ['./pools-legend.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class PoolsLegendComponent {
   readonly enclosure = input.required<DashboardEnclosure>();

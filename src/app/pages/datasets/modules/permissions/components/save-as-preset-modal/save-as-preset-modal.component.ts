@@ -38,7 +38,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './save-as-preset-modal.component.html',
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

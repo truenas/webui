@@ -38,7 +38,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './ssh-connection-card.component.html',
   styleUrls: ['./ssh-connection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

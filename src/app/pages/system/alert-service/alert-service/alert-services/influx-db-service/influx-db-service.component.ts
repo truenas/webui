@@ -8,7 +8,6 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
   selector: 'ix-influx-db-service',
   templateUrl: './influx-db-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

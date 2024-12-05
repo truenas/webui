@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-textarea.component.html',
   styleUrls: ['./ix-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

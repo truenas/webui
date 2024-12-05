@@ -37,7 +37,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

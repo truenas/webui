@@ -51,7 +51,6 @@ import {
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatSidenavContainer,
     MatSidenav,

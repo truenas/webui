@@ -15,7 +15,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   templateUrl: './docker-status.component.html',
   styleUrls: ['./docker-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     AsyncPipe,
     MatTooltip,

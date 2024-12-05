@@ -18,7 +18,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   selector: 'ix-dedup-wizard-step',
   templateUrl: './dedup-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,

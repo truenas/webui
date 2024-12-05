@@ -15,7 +15,6 @@ import {
   selector: 'ix-backblaze-b2-provider-form',
   templateUrl: './backblaze-b2-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

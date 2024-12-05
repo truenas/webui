@@ -26,7 +26,6 @@ export interface StopVmDialogData {
   templateUrl: './stop-vm-dialog.component.html',
   styleUrls: ['./stop-vm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

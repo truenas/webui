@@ -13,7 +13,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './true-command-status.component.html',
   styleUrls: ['./true-command-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     AsyncPipe,

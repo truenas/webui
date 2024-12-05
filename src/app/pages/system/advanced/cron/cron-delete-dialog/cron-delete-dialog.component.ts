@@ -23,7 +23,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-cron-delete-dialog',
   templateUrl: './cron-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

@@ -31,7 +31,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['../../common-card.scss'],
   templateUrl: './storage-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

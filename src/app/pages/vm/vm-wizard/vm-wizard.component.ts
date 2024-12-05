@@ -53,7 +53,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-vm-wizard',
   templateUrl: './vm-wizard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

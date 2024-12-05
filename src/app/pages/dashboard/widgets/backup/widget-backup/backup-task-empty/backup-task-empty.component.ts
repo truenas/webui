@@ -17,7 +17,6 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   templateUrl: './backup-task-empty.component.html',
   styleUrl: './backup-task-empty.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     RequiresRolesDirective,

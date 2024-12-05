@@ -33,7 +33,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-global-two-factor-auth-form',
   templateUrl: './global-two-factor-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

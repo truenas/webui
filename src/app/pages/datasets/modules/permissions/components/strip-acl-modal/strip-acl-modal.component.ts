@@ -26,7 +26,6 @@ export interface StripAclModalData {
   templateUrl: './strip-acl-modal.component.html',
   styleUrls: ['./strip-acl-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

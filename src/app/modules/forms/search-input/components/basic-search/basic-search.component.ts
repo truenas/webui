@@ -13,7 +13,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './basic-search.component.html',
   styleUrls: ['./basic-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatInput,

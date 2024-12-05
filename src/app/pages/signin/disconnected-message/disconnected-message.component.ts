@@ -8,7 +8,6 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './disconnected-message.component.html',
   styleUrls: ['./disconnected-message.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule],
 })
 export class DisconnectedMessageComponent {

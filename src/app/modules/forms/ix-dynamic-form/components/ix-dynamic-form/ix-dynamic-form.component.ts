@@ -14,7 +14,6 @@ import { IxDynamicFormItemComponent } from './ix-dynamic-form-item/ix-dynamic-fo
   styleUrls: ['./ix-dynamic-form.component.scss'],
   templateUrl: './ix-dynamic-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     IxDynamicFormItemComponent,

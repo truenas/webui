@@ -17,7 +17,6 @@ import { NotSupportedModelComponent } from './not-supported-model/not-supported-
   templateUrl: './enclosure-side.component.html',
   styleUrl: './enclosure-side.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [EnclosureSvgComponent, NotSupportedModelComponent],
 })
 export class EnclosureSideComponent {

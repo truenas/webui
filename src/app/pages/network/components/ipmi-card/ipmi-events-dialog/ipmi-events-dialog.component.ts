@@ -27,7 +27,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './ipmi-events-dialog.component.html',
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,

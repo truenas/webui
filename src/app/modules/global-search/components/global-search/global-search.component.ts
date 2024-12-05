@@ -41,7 +41,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     CdkTrapFocus,
     IxIconComponent,

@@ -43,7 +43,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './dataset-trivial-permissions.component.html',
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

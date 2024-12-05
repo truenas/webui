@@ -19,7 +19,6 @@ import { UpdateActionsCardComponent } from './components/update-actions-card/upd
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TrainCardComponent,
     MatCard,

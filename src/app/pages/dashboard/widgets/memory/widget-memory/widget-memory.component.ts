@@ -28,7 +28,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './widget-memory.component.html',
   styleUrl: './widget-memory.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

@@ -32,7 +32,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./cpu-and-memory-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService],
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

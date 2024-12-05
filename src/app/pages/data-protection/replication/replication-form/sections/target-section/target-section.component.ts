@@ -29,7 +29,6 @@ import { ReplicationService } from 'app/services/replication.service';
   styleUrls: ['./target-section.component.scss'],
   templateUrl: './target-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

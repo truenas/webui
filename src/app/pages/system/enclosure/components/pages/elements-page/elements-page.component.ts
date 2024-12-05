@@ -22,7 +22,6 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   selector: 'ix-elements-page',
   templateUrl: './elements-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCardHeader,
     EnclosureHeaderComponent,

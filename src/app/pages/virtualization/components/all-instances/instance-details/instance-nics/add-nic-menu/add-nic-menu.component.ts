@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-add-nic-menu',
   templateUrl: './add-nic-menu.component.html',
   styleUrls: ['./add-nic-menu.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,
