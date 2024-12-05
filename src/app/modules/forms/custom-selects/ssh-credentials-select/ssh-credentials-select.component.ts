@@ -1,7 +1,7 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy,
-  Component, Input, forwardRef, inject,
+  Component, forwardRef, inject, input,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -29,9 +29,9 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
   imports: [IxSelectComponent],
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
 
   private keychainCredentialsService = inject(KeychainCredentialService);
 

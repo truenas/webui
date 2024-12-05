@@ -1,4 +1,4 @@
-@for (row of dataProvider.currentPage$ | async; track trackRowByIdentity(row)) {
+@for (row of dataProvider().currentPage$ | async; track trackRowByIdentity(row)) {
   <tr
     class="row"
     tabindex="0"
@@ -6,7 +6,7 @@
     [ixUiSearch]="{ anchor: getRowTag(row) }"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"
     [class.expanded]="isExpanded(row)"
-    [class.hidden]="isLoading"
+    [class.hidden]="isLoading()"
     (click)="onToggle(row)"
     (keydown.enter)="onToggle(row)"
   >
@@ -48,7 +48,7 @@
     <tr
       ixTest="details"
       class="details"
-      [class.hidden]="isLoading"
+      [class.hidden]="isLoading()"
     >
       <td [attr.colspan]="displayedColumns.length + 1">
         <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
@@ -57,7 +57,7 @@
   }
 }
 
-@if (isLoading) {
+@if (isLoading()) {
   <td [attr.colspan]="displayedColumns.length">
     <div class="spinner-container">
       <mat-spinner [diameter]="40"></mat-spinner>

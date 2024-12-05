@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -100,9 +100,10 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
-    const dialogRef = this.matDialog.open(GeneralDialogComponent, matConfig);
-    dialogRef.componentInstance.conf = conf;
+  generalDialog(conf: GeneralDialogConfig): Observable<boolean> {
+    const dialogRef = this.matDialog.open(GeneralDialogComponent, {
+      data: conf,
+    });
 
     return dialogRef.afterClosed();
   }

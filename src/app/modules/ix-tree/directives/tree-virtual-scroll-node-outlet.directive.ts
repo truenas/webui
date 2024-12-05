@@ -1,6 +1,6 @@
 import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
-  Directive, OnChanges, EmbeddedViewRef, Input, ViewContainerRef,
+  Directive, OnChanges, EmbeddedViewRef, ViewContainerRef, input,
 } from '@angular/core';
 import { IxSimpleChange, IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
@@ -11,7 +11,7 @@ import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual
 })
 export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
   private _viewRef: EmbeddedViewRef<unknown> | null = null;
-  @Input() data!: TreeVirtualNodeData<T>;
+  readonly data = input.required<TreeVirtualNodeData<T>>();
 
   constructor(private _viewContainerRef: ViewContainerRef) {}
 
@@ -24,15 +24,15 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
         viewContainerRef.remove(viewContainerRef.indexOf(this._viewRef));
       }
 
-      this._viewRef = this.data
-        ? viewContainerRef.createEmbeddedView(this.data.nodeDef.template, this.data.context)
+      this._viewRef = this.data()
+        ? viewContainerRef.createEmbeddedView(this.data().nodeDef.template, this.data().context)
         : null;
 
       if (CdkTreeNode.mostRecentTreeNode && this._viewRef) {
-        CdkTreeNode.mostRecentTreeNode.data = this.data.data;
+        CdkTreeNode.mostRecentTreeNode.data = this.data().data;
       }
-    } else if (this._viewRef && this.data.context) {
-      this.updateExistingContext(this.data.context);
+    } else if (this._viewRef && this.data().context) {
+      this.updateExistingContext(this.data().context);
     }
   }
 
@@ -59,7 +59,7 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
   private updateExistingContext(ctx: CdkTreeNodeOutletContext<T>): void {
     for (const propName of Object.keys(ctx)) {
       // eslint-disable-next-line @stylistic/ts/max-len
-      (this._viewRef.context as Record<string, unknown>)[propName] = (this.data.context as unknown as Record<string, unknown>)[propName];
+      (this._viewRef.context as Record<string, unknown>)[propName] = (this.data().context as unknown as Record<string, unknown>)[propName];
     }
   }
 }
