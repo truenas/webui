@@ -188,7 +188,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.api.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(initialState.wasAdminSet);
       }),
@@ -207,7 +207,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(undefined);
       }),

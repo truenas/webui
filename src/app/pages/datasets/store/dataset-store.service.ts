@@ -71,7 +71,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
                 datasets,
               });
             }),
-            catchError((error: ApiError) => {
+            catchError((error: unknown) => {
               this.patchState({
                 isLoading: false,
                 error,

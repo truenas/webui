@@ -174,7 +174,7 @@ export class ManualUpdateFormComponent implements OnInit {
             this.showRunningUpdate(jobs[0].id);
           }
         },
-        error: (err) => {
+        error: (err: unknown) => {
           console.error(err);
         },
       });

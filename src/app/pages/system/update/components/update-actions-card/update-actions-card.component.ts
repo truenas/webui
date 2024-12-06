@@ -128,7 +128,7 @@ export class UpdateActionsCardComponent implements OnInit {
           }
           this.cdr.markForCheck();
         },
-        error: (err) => {
+        error: (err: unknown) => {
           console.error(err);
         },
       });

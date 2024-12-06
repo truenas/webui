@@ -123,7 +123,7 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },

@@ -92,7 +92,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error: ApiError) => {
+              catchError((error: unknown) => {
                 this.patchState({
                   isLoading: false,
                   error,

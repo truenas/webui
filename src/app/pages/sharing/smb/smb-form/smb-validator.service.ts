@@ -40,7 +40,7 @@ export class SmbValidationService {
 
           return this.api.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
             switchMap((response) => this.handleError(response)),
-            catchError((error: { reason: string }) => this.handleError(error)),
+            catchError((error: unknown) => this.handleError(error)),
           );
         }),
       );
@@ -53,7 +53,7 @@ export class SmbValidationService {
     }
 
     const apiError = extractApiError(error);
-    const errorText = this.extractError(apiError.reason || '');
+    const errorText = this.extractError(apiError?.reason || '');
 
     if (errorText === this.noSmbUsersError) {
       this.showNoSmbUsersWarning();

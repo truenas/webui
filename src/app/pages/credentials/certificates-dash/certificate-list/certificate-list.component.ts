@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, OnInit, output,
 } from '@angular/core';
@@ -15,11 +14,8 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
-import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -235,21 +231,15 @@ export class CertificateListComponent implements OnInit {
           const mimetype = 'application/x-x509-user-cert';
           this.download
             .streamDownloadFile(url, fileName, mimetype)
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (file) => {
-                this.download.downloadBlob(file, fileName);
-              },
-              error: (error: HttpErrorResponse) => {
-                this.dialogService.error({
-                  title: helptextSystemCertificates.list.download_error_dialog.title,
-                  message: helptextSystemCertificates.list.download_error_dialog.cert_message,
-                  backtrace: `${error.status} - ${error.statusText}`,
-                });
-              },
+            .pipe(
+              this.errorHandler.catchError(),
+              untilDestroyed(this),
+            )
+            .subscribe((file) => {
+              this.download.downloadBlob(file, fileName);
             });
         },
-        error: (err: ApiError | Job) => {
+        error: (err: unknown) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
@@ -263,17 +253,8 @@ export class CertificateListComponent implements OnInit {
           this.download
             .streamDownloadFile(url, keyName, mimetype)
             .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (file) => {
-                this.download.downloadBlob(file, keyName);
-              },
-              error: (error: HttpErrorResponse) => {
-                this.dialogService.error({
-                  title: helptextSystemCertificates.list.download_error_dialog.title,
-                  message: helptextSystemCertificates.list.download_error_dialog.key_message,
-                  backtrace: `${error.status} - ${error.statusText}`,
-                });
-              },
+            .subscribe((file) => {
+              this.download.downloadBlob(file, keyName);
             });
         },
         error: (err: unknown) => {

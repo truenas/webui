@@ -100,7 +100,7 @@ export class ReportingExporterListComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe({
           complete: () => this.appLoader.close(),
-          error: (error) => this.errorCaught(error),
+          error: (error: unknown) => this.errorCaught(error),
         });
       },
     }),
@@ -230,7 +230,7 @@ export class ReportingExporterListComponent implements OnInit {
         }
       },
       complete: () => this.appLoader.close(),
-      error: (error) => this.errorCaught(error),
+      error: (error: unknown) => this.errorCaught(error),
     });
   }
 

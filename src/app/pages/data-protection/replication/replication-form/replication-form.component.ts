@@ -203,7 +203,7 @@ export class ReplicationFormComponent implements OnInit {
             this.cdr.markForCheck();
             this.chainedRef.close({ response, error: null });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isLoading = false;
             this.cdr.markForCheck();
             this.dialog.error(this.errorHandler.parseError(error));
