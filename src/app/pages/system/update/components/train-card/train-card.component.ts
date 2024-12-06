@@ -17,9 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextSystemUpdate } from 'app/helptext/system/update';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -27,6 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -68,13 +67,13 @@ export class TrainCardComponent implements OnInit {
 
   constructor(
     private sysGenService: SystemGeneralService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private fb: FormBuilder,
     private authService: AuthService,
     protected trainService: TrainService,
     protected updateService: UpdateService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
@@ -131,11 +130,8 @@ export class TrainCardComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error: ApiError) => {
-        this.dialogService.warn(
-          error.trace.class,
-          this.translate.instant('TrueNAS was unable to reach update servers.'),
-        );
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
 
