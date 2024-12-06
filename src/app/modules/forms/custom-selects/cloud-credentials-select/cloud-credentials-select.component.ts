@@ -5,7 +5,7 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -48,7 +48,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  getValueFromChainedResponse(result: ChainedComponentResponse<CloudCredential>): IxSelectValue {
+  getValueFromChainedResponse(result: ChainedComponentResponse<CloudSyncCredential>): IxSelectValue {
     return result.response.id;
   }
 
