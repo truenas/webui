@@ -5,6 +5,7 @@
   <ix-iscsi-target-list
     master
     [dataProvider]="dataProvider"
+    [targets]="targets()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-iscsi-target-list>
