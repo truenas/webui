@@ -39,10 +39,10 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       map((options) => {
         if (this.filterByProviders()) {
-          options = options.filter((option) => this.filterByProviders().includes(option.provider));
+          options = options.filter((option) => this.filterByProviders().includes(option.provider.type));
         }
         return options.map((option) => {
-          return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider)})`, value: option.id };
+          return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider.type)})`, value: option.id };
         });
       }),
     );

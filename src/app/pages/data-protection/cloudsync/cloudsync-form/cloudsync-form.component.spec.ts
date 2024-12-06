@@ -104,16 +104,16 @@ describe('CloudSyncFormComponent', () => {
           {
             id: 1,
             name: 'test1',
-            provider: CloudSyncProviderName.Http,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Http,
               url: 'http',
             },
           },
           {
             id: 2,
             name: 'test2',
-            provider: CloudSyncProviderName.Mega,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Mega,
               user: 'login',
               pass: 'password',
             },
