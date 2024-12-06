@@ -6,15 +6,15 @@
     master
     [dataProvider]="dataProvider"
     [isMobileView]="masterDetailView.isMobileView()"
-    [showMobileDetails]="masterDetailView.showMobileDetails()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-iscsi-target-list>
 
-  <ng-container detail-name>
-    {{ dataProvider.expandedRow?.name }}
-  </ng-container>
+  <div detail-header class="detail-header">
+    <span>
+      {{ 'Details for' | translate }}
+      {{ dataProvider.expandedRow?.name }}
+    </span>
 
-  <ng-container detail-actions>
     @if (dataProvider.expandedRow; as target) {
       <div class="detail-actions">
         <button
@@ -35,7 +35,7 @@
         </button>
       </div>
     }
-  </ng-container>
+  </div>
 
   <ng-container detail>
     @if (dataProvider.expandedRow) {

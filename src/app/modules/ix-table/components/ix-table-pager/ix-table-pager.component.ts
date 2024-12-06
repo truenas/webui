@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -29,9 +29,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
-  @Input() dataProvider!: DataProvider<T>;
+  readonly dataProvider = input.required<DataProvider<T>>();
   @Input() pageSize = 50;
-  @Input() pageSizeOptions = [10, 20, 50, 100];
+  readonly pageSizeOptions = input([10, 20, 50, 100]);
   @Input() currentPage = 1;
 
   totalItems = 0;
@@ -54,14 +54,14 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider.setPagination({
+    this.dataProvider().setPagination({
       pageNumber: this.currentPage,
       pageSize: this.pageSize,
     });
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider.totalRows;
+    this.totalItems = this.dataProvider().totalRows;
     if (this.currentPage > this.totalPages && this.currentPage !== 1) {
       this.goToPage(1);
     }
@@ -71,7 +71,7 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   goToPage(pageNumber: number): void {
     if (pageNumber >= 1 && pageNumber <= this.totalPages) {
       this.currentPage = pageNumber;
-      this.dataProvider.setPagination({
+      this.dataProvider().setPagination({
         pageNumber,
         pageSize: this.pageSize,
       });

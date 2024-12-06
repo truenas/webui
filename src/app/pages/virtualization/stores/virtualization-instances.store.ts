@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -42,9 +42,9 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
             startWith(null),
             map((event) => {
               switch (event?.msg) {
-                case IncomingApiMessageType.Added:
+                case CollectionChangeType.Added:
                   return [...instances, event.fields];
-                case IncomingApiMessageType.Changed:
+                case CollectionChangeType.Changed:
                   // TODO: Keep it until API improvements
                   if (event.fields && Object.keys(event.fields).length === 1 && 'status' in event.fields) {
                     return instances.map((instance) => {
@@ -55,7 +55,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
                     });
                   }
                   return instances.map((item) => (item.id === event.id ? { ...item, ...event?.fields } : item));
-                case IncomingApiMessageType.Removed:
+                case CollectionChangeType.Removed:
                   return instances.filter((item) => item.id !== event.id);
                 default:
                   break;

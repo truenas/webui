@@ -1,3 +1,3 @@
-export enum ResponseErrorType {
+export enum JobExceptionType {
   Validation = 'VALIDATION',
 }

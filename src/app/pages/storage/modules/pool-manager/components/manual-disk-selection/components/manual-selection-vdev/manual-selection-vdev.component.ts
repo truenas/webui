@@ -1,6 +1,6 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -54,11 +54,12 @@ export class ManualSelectionVdevComponent implements OnChanges {
   readonly layout = input<CreateVdevLayout>();
   readonly editable = input(false);
 
-  @Input() set enclosures(enclosures: Enclosure[]) {
-    this.enclosureById = keyBy(enclosures, 'id');
-  }
+  readonly enclosures = input<Enclosure[]>();
 
-  protected enclosureById: Record<string, Enclosure> = {};
+  readonly enclosureById = computed(() => {
+    return keyBy(this.enclosures(), 'id') as Record<string, Enclosure>;
+  });
+
   protected sizeEstimation = 0;
 
   protected vdevErrorMessage = '';

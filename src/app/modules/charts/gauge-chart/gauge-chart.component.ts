@@ -1,5 +1,4 @@
 import {
-  Input,
   Component,
   HostBinding, ChangeDetectionStrategy, input, computed,
 } from '@angular/core';
@@ -46,8 +45,11 @@ export class GaugeChartComponent {
     },
   });
 
-  @Input() @HostBinding('style.height.px') height = defaultHeight;
-  @Input() @HostBinding('style.width.px') width = defaultWidth;
+  readonly height = input(defaultHeight);
+  readonly width = input(defaultWidth);
+
+  @HostBinding('style.height.px') get heightStyle(): number { return this.height(); }
+  @HostBinding('style.width.px') get widthStyle(): number { return this.width(); }
 
   chartOptions: ChartOptions<'doughnut'> = {
     responsive: true,

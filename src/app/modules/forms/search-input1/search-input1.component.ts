@@ -2,11 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener, Input,
+  HostListener,
   ViewChild,
   OnInit,
   OnChanges,
   HostBinding, output,
+  input,
 } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -34,15 +35,19 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SearchInput1Component implements OnInit, OnChanges {
-  @HostBinding('class.disabled')
-  @Input() disabled = false;
+  readonly disabled = input(false);
 
-  @Input() value = '';
-  @Input() maxLength = 524288;
+  readonly value = input('');
+  readonly maxLength = input(524288);
 
   readonly search = output<string>();
 
   @ViewChild('ixSearchInput') input: ElementRef<HTMLInputElement>;
+
+  @HostBinding('class.disabled')
+  get disabledClass(): boolean {
+    return this.disabled();
+  }
 
   @HostListener('click')
   onHostClicked(): void {
@@ -63,7 +68,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.searchValue = this.value;
+    this.searchValue = this.value();
     this.handleSearchValueChanges();
   }
 

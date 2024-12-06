@@ -10,12 +10,10 @@
 </div>
 
 <div class="item-search">
-  @if (!showMobileDetails()) {
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="isLoading()"
-    ></ix-fake-progress-bar>
-  }
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="isLoading()"
+  ></ix-fake-progress-bar>
 
   <ix-search-input1
     [maxLength]="100"

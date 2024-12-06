@@ -44,7 +44,6 @@ export interface ApiEventDirectory {
   'user.query': { response: User };
   'virt.instance.query': { response: VirtualizationInstance };
   'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
-  'virt.instance.agent_running': { response: unknown }; // TODO: Fix type
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };

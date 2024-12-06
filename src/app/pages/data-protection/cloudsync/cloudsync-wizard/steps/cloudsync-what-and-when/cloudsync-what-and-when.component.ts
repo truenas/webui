@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
+  BehaviorSubject,
   EMPTY,
   Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
@@ -118,6 +119,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     bwlimit: [[] as string[]],
   });
 
+  isCredentialInvalid$ = new BehaviorSubject(false);
   credentials: CloudSyncCredential[] = [];
   providers: CloudSyncProvider[] = [];
   bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
@@ -273,6 +275,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else if (name === 'bucket_input') {
+          attributes['bucket'] = formValue[name];
         } else {
           attributes[name] = formValue[name];
         }
@@ -438,6 +442,16 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       }
     });
 
+    this.isCredentialInvalid$.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value) {
+        this.form.controls.bucket_input.enable();
+        this.form.controls.bucket.disable();
+      } else {
+        this.form.controls.bucket_input.disable();
+        this.form.controls.bucket.enable();
+      }
+    });
+
     this.form.controls.bucket.valueChanges.pipe(
       filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
@@ -479,13 +493,11 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             });
           }
           this.bucketOptions$ = of(bucketOptions);
-          this.form.controls.bucket.enable();
-          this.form.controls.bucket_input.disable();
+          this.isCredentialInvalid$.next(false);
           this.cdr.markForCheck();
         },
         error: (error: ApiError) => {
-          this.form.controls.bucket.disable();
-          this.form.controls.bucket_input.enable();
+          this.isCredentialInvalid$.next(true);
           this.dialog.closeAllDialogs();
           this.dialog.confirm({
             title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,

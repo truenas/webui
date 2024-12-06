@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
+  Component, computed,
   ElementRef,
-  Input,
+  input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -29,6 +29,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -53,20 +54,21 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() required: boolean;
-  @Input() tooltip: string;
-  @Input() allowCustomValue = false;
-  @Input() set provider(comboboxProvider: IxComboboxProvider) {
-    this.comboboxProviderHandler = new IxComboboxProviderManager(comboboxProvider);
-    this.cdr.markForCheck();
-  }
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly required = input<boolean>();
+  readonly tooltip = input<string>();
+  readonly allowCustomValue = input(false);
 
-  private comboboxProviderHandler: IxComboboxProviderManager;
+  readonly provider = input.required<IxComboboxProvider>();
+
+  private comboboxProviderHandler = computed(() => {
+    return new IxComboboxProviderManager(this.provider());
+  });
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
@@ -126,7 +128,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   inputBlurred(): void {
     this.onTouch();
 
-    if (!this.allowCustomValue && !this.selectedOption) {
+    if (!this.allowCustomValue() && !this.selectedOption) {
       this.resetInput();
     }
   }
@@ -135,7 +137,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.loading = true;
     this.cdr.markForCheck();
 
-    this.comboboxProviderHandler?.fetch(filterValue).pipe(
+    this.comboboxProviderHandler()?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
         return EMPTY;
@@ -191,7 +193,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
           this.loading = true;
           this.cdr.markForCheck();
-          this.comboboxProviderHandler?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+          this.comboboxProviderHandler()?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();
@@ -225,7 +227,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
 
-    if (this.allowCustomValue && !this.options.some((option: Option) => option.value === changedValue)) {
+    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
       this.onChange(changedValue);
     }
   }
