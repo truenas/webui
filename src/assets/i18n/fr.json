@@ -2631,7 +2631,6 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "Hôte FTP auquel se connecter. Exemple: <i>ftp.exemple.com</i> .",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "Numéro de port FTP. Laissez le champ vide pour utiliser le port par défaut <i>21</i>.",
   "Failed": "Échec",
-  "Failed Authentication: {credentials}": "Échec de l'authentification : {credentials}",
   "Failed Disks:": "Disques défaillants :",
   "Failed Jobs": "Jobs en échec",
   "Failed S.M.A.R.T. Tests": "Échec tests S.M.A.R.T.",
