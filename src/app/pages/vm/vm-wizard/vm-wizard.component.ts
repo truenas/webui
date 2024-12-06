@@ -17,7 +17,6 @@ import { GiB, MiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -318,11 +317,13 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error: ApiError) => {
+        catchError((error: unknown) => {
+          const parsedErrors = this.errorHandler.parseError(error);
+          const firstReport = Array.isArray(parsedErrors) ? parsedErrors[0] : parsedErrors;
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
-            message: error.reason,
-            backtrace: error.trace?.formatted,
+            message: firstReport.message,
+            backtrace: firstReport.backtrace,
           });
           return of(null);
         }),

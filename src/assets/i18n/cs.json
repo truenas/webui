@@ -2127,7 +2127,7 @@
   "Mattermost username.": "",
   "Max Concurrent Calls": "",
   "Max Poll": "",
-  "Max concurrent calls limit reached.\n        There are more than 20 calls queued. \n        See queued calls in the browser's console logs": "",
+  "Max concurrent calls limit reached.\n        There are more than 20 calls queued.\n        See queued calls in the browser's console logs": "",
   "Max dataset nesting in ZFS is limited to 50. We are already at that limit in the parent dataset path. It is not possible to create anymore nested datasets under this path.": "",
   "Maximize Dispersal": "",
   "Maximize Enclosure Dispersal": "",

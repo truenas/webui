@@ -5,7 +5,7 @@ import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
@@ -44,12 +44,12 @@ export class JobEffects {
     ofType(jobsLoaded),
     switchMap(() => {
       return this.api.subscribe('core.get_jobs').pipe(
-        filter((event) => event.msg !== IncomingApiMessageType.Removed),
+        filter((event) => event.msg !== CollectionChangeType.Removed),
         switchMap((event) => {
           switch (event.msg) {
-            case IncomingApiMessageType.Added:
+            case CollectionChangeType.Added:
               return of(jobAdded({ job: event.fields }));
-            case IncomingApiMessageType.Changed:
+            case CollectionChangeType.Changed:
               return of(jobChanged({ job: event.fields }));
             default:
               return EMPTY;
@@ -63,7 +63,7 @@ export class JobEffects {
     ofType(jobsLoaded),
     switchMap(() => {
       return this.api.subscribe('core.get_jobs').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        filter((event) => event.msg === CollectionChangeType.Removed),
         map((event) => jobRemoved({ id: event.id as number })),
       );
     }),
