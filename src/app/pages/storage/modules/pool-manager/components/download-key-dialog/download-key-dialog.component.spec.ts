@@ -99,7 +99,7 @@ describe('DownloadKeyDialogComponent', () => {
       await downloadButton.click();
 
       expect(spectator.inject(AppLoaderService).close).toHaveBeenCalled();
-      expect(spectator.inject(DialogService).error).toHaveBeenCalledWith('Parsed HTTP error');
+      expect(spectator.inject(ErrorHandlerService).parseError).toHaveBeenCalled();
 
       const doneButton = await loader.getHarness(MatButtonHarness.with({ text: 'Done' }));
       expect(await doneButton.isDisabled()).toBe(false);

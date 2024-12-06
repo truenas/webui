@@ -185,7 +185,7 @@ export class PrivilegeListComponent implements OnInit {
         next: () => {
           this.getPrivileges();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

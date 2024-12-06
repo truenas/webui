@@ -89,7 +89,7 @@ export class UploadIsoDialogComponent {
             );
           }
         }),
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.loader.close();
           this.dialogService.error(this.errorHandler.parseError(error));
           return of(error);

@@ -28,7 +28,7 @@ import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { extractApiError } from 'app/helpers/api.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
@@ -487,19 +487,20 @@ export class ReportComponent implements OnInit, OnChanges {
         this.data = formatData(cloneDeep(event));
         this.cdr.markForCheck();
       },
-      error: (err: ApiError) => {
+      error: (err: unknown) => {
         this.handleError(err);
         this.cdr.markForCheck();
       },
     });
   }
 
-  handleError(err: ApiError): void {
-    if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
+  handleError(err: unknown): void {
+    const apiError = extractApiError(err);
+    if (apiError?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report().errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
-        message: err.reason,
+        message: apiError.reason,
       };
     }
   }

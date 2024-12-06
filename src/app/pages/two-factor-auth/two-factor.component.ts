@@ -21,7 +21,6 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
@@ -130,7 +129,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.toggleLoading(false)),
-      catchError((error: ApiError) => this.handleError(error)),
+      catchError((error: unknown) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
   }

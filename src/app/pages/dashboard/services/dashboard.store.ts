@@ -82,7 +82,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
           groups: this.getDashboardGroups(dashState || getDefaultWidgets(isHaLicensed)),
         });
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
       }),

@@ -32,7 +32,7 @@ export class UserEffects {
       }
       return this.api.call('user.query', params).pipe(
         map((users) => usersLoaded({ users })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(usersNotLoaded({

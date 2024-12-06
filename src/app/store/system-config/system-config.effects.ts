@@ -24,7 +24,7 @@ export class SystemConfigEffects {
           this.window.localStorage.setItem('language', generalConfig.language);
           return systemConfigLoaded({ generalConfig, advancedConfig });
         }),
-        catchError((error) => {
+        catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);
           return EMPTY;

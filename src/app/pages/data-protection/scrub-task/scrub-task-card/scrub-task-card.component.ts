@@ -141,7 +141,7 @@ export class ScrubTaskCardComponent implements OnInit {
       next: () => {
         this.getScrubTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

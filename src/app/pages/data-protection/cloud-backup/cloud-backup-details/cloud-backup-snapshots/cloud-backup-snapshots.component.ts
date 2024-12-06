@@ -154,7 +154,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         filter(Boolean),
         switchMap(() => this.api.job('cloud_backup.delete_snapshot', [this.backup().id, row.id])),
         tapOnce(() => this.loader.open()),
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.dialog.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),

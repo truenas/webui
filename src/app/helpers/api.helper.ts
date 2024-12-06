@@ -47,6 +47,9 @@ export function isErrorResponse(something: unknown): something is ErrorResponse 
     && Boolean(something.error);
 }
 
+/**
+ * Extract api error if it's available. Otherwise returns undefined.
+ */
 export function extractApiError(someError: unknown): ApiError | undefined {
   if (isErrorResponse(someError)) {
     return someError.error.data;

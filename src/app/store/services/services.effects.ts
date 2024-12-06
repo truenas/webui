@@ -30,7 +30,7 @@ export class ServicesEffects {
       return this.api.call('service.query', [[], { order_by: ['service'] }]).pipe(
         map((services) => services.filter((service) => !hiddenServices.includes(service.service))),
         map((services) => servicesLoaded({ services })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);
           return EMPTY;

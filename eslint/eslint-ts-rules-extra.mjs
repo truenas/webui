@@ -7,7 +7,7 @@ import airbnbVariables from "eslint-config-airbnb-base/rules/variables";
  */
 export const extraRules = {
   // RxJS
-  "rxjs/no-unsafe-takeuntil": ["error", {
+  "@smarttools/rxjs/no-unsafe-takeuntil": ["error", {
     "alias": ["untilDestroyed"]
   }],
   "rxjs-angular/prefer-takeuntil": ["error", {
@@ -16,14 +16,14 @@ export const extraRules = {
     "checkDecorators": ["Component"],
     "checkDestroy": false
   }],
-  "rxjs/finnish": ["error", {
+  "@smarttools/rxjs/finnish": ["error", {
     "parameters": true,
     "properties": false, // TODO: Should be true, hard to implement now.
     "variables": true,
     "functions": false,
     "methods": false,
   }],
-  "rxjs/prefer-observer": ["error"],
+  "@smarttools/rxjs/prefer-observer": ["error"],
 
   // Angular
   "@angular-eslint/use-lifecycle-interface": ["error"],

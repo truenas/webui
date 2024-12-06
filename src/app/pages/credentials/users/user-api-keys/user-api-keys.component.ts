@@ -204,7 +204,7 @@ export class UserApiKeysComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => this.dataProvider.load(),
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         this.loader.close();
       },

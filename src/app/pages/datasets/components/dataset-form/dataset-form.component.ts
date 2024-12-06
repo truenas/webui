@@ -172,7 +172,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.dialog.error(this.errorHandler.parseError(error));
@@ -200,7 +200,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.dialog.error(this.errorHandler.parseError(error));
@@ -259,7 +259,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
           );
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.dialog.error(this.errorHandler.parseError(error));
@@ -306,7 +306,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
       switchMap(() => of(dataset)),
-      catchError((error) => this.rollBack(dataset, error)),
+      catchError((error: unknown) => this.rollBack(dataset, error)),
     );
   }
 
@@ -319,7 +319,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       path: `${mntPath}/${dataset.id}`,
     }]).pipe(
       switchMap(() => of(dataset)),
-      catchError((error) => this.rollBack(dataset, error)),
+      catchError((error: unknown) => this.rollBack(dataset, error)),
     );
   }
 

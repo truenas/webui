@@ -29,7 +29,7 @@ export class JobEffects {
         map(([notCompletedJobs, recentlyCompletedJobs]) => {
           return jobsLoaded({ jobs: [...notCompletedJobs, ...recentlyCompletedJobs] });
         }),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(jobsNotLoaded({

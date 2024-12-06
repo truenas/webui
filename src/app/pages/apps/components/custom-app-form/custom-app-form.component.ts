@@ -139,7 +139,7 @@ export class CustomAppFormComponent implements OnInit {
           this.router.navigate(['/apps', 'installed', this.data.metadata.train, this.data.name]);
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
       },

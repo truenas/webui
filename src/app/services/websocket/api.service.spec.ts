@@ -76,7 +76,7 @@ describe('ApiService', () => {
       spectator.service.call('cloudsync.providers').subscribe(
         {
           next: () => {},
-          error: (error) => {
+          error: (error: unknown) => {
             expect(error).toBe(someError);
           },
         },

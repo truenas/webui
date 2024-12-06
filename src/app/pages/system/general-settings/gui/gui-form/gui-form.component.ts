@@ -15,7 +15,6 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -30,6 +29,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -100,7 +100,8 @@ export class GuiFormComponent {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -154,7 +155,7 @@ export class GuiFormComponent {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.formGroup);
+        this.formErrorHandler.handleValidationErrors(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });
@@ -220,13 +221,9 @@ export class GuiFormComponent {
             this.wsManager.reconnect();
             this.replaceHrefWhenWsConnected(href);
           },
-          error: (error: ApiError) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialog.error({
-              title: helptext.dialog_error_title,
-              message: error.reason,
-              backtrace: error.trace?.formatted,
-            });
+            this.errorHandler.showErrorModal(error);
           },
         });
       });

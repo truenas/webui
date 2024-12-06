@@ -92,7 +92,7 @@ export class CreateDatasetDialogComponent implements OnInit {
           this.isLoading$.next(false);
           this.dialogRef.close(dataset);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading$.next(false);
           this.dialog.error(this.errorHandler.parseError(error));
         },
@@ -116,7 +116,7 @@ export class CreateDatasetDialogComponent implements OnInit {
         this.cdr.markForCheck();
         this.addNameValidators();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
         this.dialog.error(this.errorHandler.parseError(error));
         this.dialogRef.close(false);

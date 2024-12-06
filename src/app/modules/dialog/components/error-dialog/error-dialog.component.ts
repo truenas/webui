@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, ElementRef, ViewChild,
 } from '@angular/core';
@@ -71,15 +70,15 @@ export class ErrorDialogComponent {
               this.dialogRef.close();
             }
           },
-          error: (err: HttpErrorResponse) => {
+          error: (err: unknown) => {
             if (this.dialogRef) {
               this.dialogRef.close();
             }
-            this.dialogService.error(this.errorHandler.parseHttpError(err));
+            this.dialogService.error(this.errorHandler.parseError(err));
           },
         });
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

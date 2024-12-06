@@ -11,7 +11,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -119,11 +118,9 @@ export class ContainerLogsComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error: ApiError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
-        if (error.reason) {
-          this.dialogService.error(this.errorHandler.parseError(error));
-        }
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });

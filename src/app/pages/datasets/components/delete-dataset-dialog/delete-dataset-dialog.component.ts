@@ -92,7 +92,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
     this.deleteDataset().pipe(
       catchError((error: unknown) => {
         const apiError = extractApiError(error);
-        if (apiError.reason?.includes('Device busy')) {
+        if (apiError?.reason?.includes('Device busy')) {
           return this.askToForceDelete();
         }
 
