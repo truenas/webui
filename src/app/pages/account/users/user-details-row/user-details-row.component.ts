@@ -12,11 +12,11 @@ import { Role } from 'app/enums/role.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { AuthService } from 'app/services/auth/auth.service';
-import { UrlOptionsService } from 'app/services/url-options.service';
-import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { DeleteUserDialogComponent } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
+import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
