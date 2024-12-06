@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -19,6 +19,9 @@ export class CopyrightLineComponent {
   readonly withIxLogo = input(false);
   readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly targetHref = computed(() => {
+    return this.isEnterprise() ? 'https://truenas.com/production' : 'https://truenas.com/testdrive';
+  });
 
   constructor(private store$: Store<AppState>) { }
 }

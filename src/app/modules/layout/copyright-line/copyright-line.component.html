@@ -2,12 +2,11 @@
 @if (!withIxLogo()) {
   -
 }
-@let href = isEnterprise() ? 'https://truenas.com/production' : 'https://truenas.com/testdrive';
 <a
   target="_blank"
   title="iXsystems, Inc."
   ixTest="copyright"
-  [href]="href"
+  [href]="targetHref()"
 >
   @if (withIxLogo()) {
     <img class="ix-logo" src="assets/images/ix_logo_full.png" alt="iXsystems, Inc.">
