@@ -3150,6 +3150,7 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "Host FTP para conectarse. Ejemplo: <i>ftp.example.com</i>.",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "Número de puerto FTP. Déjelo en blanco para usar el puerto predeterminado <i>21</i>.",
   "Failed": "Fallido",
+  "Failed Authentication: {credentials}": "Autenticación fallida: {credentials}",
   "Failed S.M.A.R.T. Tests": "Pruebas S.M.A.R.T. fallidas",
   "Failed sending test alert!": "¡Error al enviar alerta de prueba!",
   "Failed to load datasets": "No se pudieron cargar los conjuntos de datos",

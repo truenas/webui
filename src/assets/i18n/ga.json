@@ -2117,6 +2117,7 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "Óstach FTP chun nascadh leis. Sampla: <i>ftp.example.com</i> .",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "Uimhir Phoirt FTP. Fág bán chun an port réamhshocraithe a úsáid <i>21</i> .",
   "Failed": "Theip",
+  "Failed Authentication: {credentials}": "Theip ar Fhíordheimhniú: {dintiúir}",
   "Failed Disks:": "Dioscaí Theip:",
   "Failed Jobs": "Poist Theip",
   "Failed S.M.A.R.T. Tests": "Theip ar S.M.A.R.T. Tástálacha",

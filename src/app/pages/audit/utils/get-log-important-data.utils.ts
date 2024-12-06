@@ -35,7 +35,7 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
         : credentialType;
 
       if (log.event_data?.error) {
-        return translate.instant('Failed Authentication: {credentials}', {
+        return translate.instant(T('Failed Authentication: {credentials}'), {
           credentials: credentialType ? credentialTypeLabel : credentialType,
         });
       }

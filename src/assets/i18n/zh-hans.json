@@ -2063,6 +2063,7 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "要连接的 FTP 主机。例如：<i>ftp.example.com</i>。",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "FTP 端口号。保留空白以使用默认端口 <i>21</i>。",
   "Failed": "失败",
+  "Failed Authentication: {credentials}": "身份验证失败：{credentials}",
   "Failed Disks:": "故障磁盘：",
   "Failed Jobs": "失败的任务",
   "Failed S.M.A.R.T. Tests": "失败的 S.M.A.R.T. 测试",

@@ -1979,6 +1979,7 @@
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "FTP-host om verbinding mee te maken. Voorbeeld: <i>ftp.example.com</i>.",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "FTP-poortnummer. Leeg laten om de standaardpoort <i>21</i> te gebruiken.",
   "Failed": "Mislukt",
+  "Failed Authentication: {credentials}": "Mislukte authenticatie: {credentials}",
   "Failed Disks:": "Defecte schijven:",
   "Failed Jobs": "Mislukte jobs",
   "Failed S.M.A.R.T. Tests": "Mislukte aantal S.M.A.R.T.-testen",

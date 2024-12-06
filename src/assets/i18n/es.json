@@ -1675,6 +1675,7 @@
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "",
   "FTP Service": "",
   "Failed": "",
+  "Failed Authentication: {credentials}": "",
   "Failed Disks:": "",
   "Failed Jobs": "",
   "Failed sending test alert!": "",
