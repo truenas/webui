@@ -1,15 +1,21 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, signal, OnInit,
+  computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, shareReplay, switchMap } from 'rxjs/operators';
+import {
+  filter, switchMap, tap,
+} from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { Role } from 'app/enums/role.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -23,8 +29,10 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel-ports/fibre-channel-ports.elements';
 import { FibreChannelPortsFormComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports-form/fibre-channel-ports-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
@@ -42,77 +50,78 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   imports: [
     AsyncPipe,
     FakeProgressBarComponent,
-    MatCard,
-    MatToolbarRow,
-    TranslateModule,
-    MatCardContent,
-    UiSearchDirective,
-    IxTableComponent,
     IxTableBodyComponent,
+    IxTableComponent,
+    IxTableEmptyDirective,
     IxTableHeadComponent,
     IxTablePagerComponent,
-    IxTableEmptyDirective,
+    MatButton,
+    MatCard,
+    MatCardContent,
+    MatToolbarRow,
+    RequiresRolesDirective,
     SearchInput1Component,
+    TestDirective,
+    TranslateModule,
+    UiSearchDirective,
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {
   protected readonly searchableElements = fibreChannelPortsElements;
+  protected requiredRoles: Role[] = [Role.FullAdmin];
   protected searchQuery = signal<string>('');
   protected dataProvider: AsyncDataProvider<FibreChannelPort>;
   protected isHa = toSignal(this.store$.select(selectIsHaLicensed));
+  protected status = toSignal(this.api.call('fcport.status'));
 
-  protected status = toSignal(this.api.call('fcport.status').pipe(shareReplay({
-    refCount: false,
-    bufferSize: 1,
-  })));
-
-  protected columns = createTable<FibreChannelPort>([
-    textColumn({
-      title: this.translate.instant('Port'),
-      propertyName: 'port',
-      getValue: (row) => {
-        return row.port;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('Target'),
-      propertyName: 'target',
-      getValue: (row) => {
-        return row.target.iscsi_target_name;
-      },
-    }),
-    textColumn({
-      title: this.translate.instant('WWPN'),
-      propertyName: 'wwpn',
-    }),
-    textColumn({
-      title: this.translate.instant('WWPN (B)'),
-      propertyName: 'wwpn_b',
-      hidden: !this.isHa(),
-    }),
-    textColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => {
-        const status = this.status()?.find((item) => item.port === row.port);
-        return `A:${status?.A?.port_state} B:${status?.B?.port_state}`;
-      },
-    }),
-    actionsColumn({
-      actions: [
-        {
-          iconName: iconMarker('edit'),
-          tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.doEdit(row),
-        }, {
-          iconName: iconMarker('mdi-delete'),
-          tooltip: this.translate.instant('Delete'),
-          onClick: (row) => this.doDelete(row),
+  protected columns = computed(() => {
+    return createTable<FibreChannelPort>([
+      textColumn({
+        title: this.translate.instant('Port'),
+        propertyName: 'port',
+        getValue: (row) => row.port,
+        sortBy: (row) => row.port,
+      }),
+      textColumn({
+        title: this.translate.instant('Target'),
+        propertyName: 'target',
+        getValue: (row) => {
+          return row.target.iscsi_target_name;
         },
-      ],
-    }),
-  ], {
-    uniqueRowTag: (row: FibreChannelPort) => 'fibre-channel-port-' + row.port,
-    ariaLabels: (row) => [row.port, this.translate.instant('Fibre Channel Port')],
+      }),
+      textColumn({
+        title: this.translate.instant('WWPN'),
+        propertyName: 'wwpn',
+      }),
+      textColumn({
+        title: this.translate.instant('WWPN (B)'),
+        propertyName: 'wwpn_b',
+        hidden: !this.isHa(),
+      }),
+      textColumn({
+        title: this.translate.instant('State'),
+        getValue: (row) => {
+          const status = this.status()?.find((item) => item.port === row.port);
+          return `A:${status?.A?.port_state} B:${status?.B?.port_state}`;
+        },
+      }),
+      actionsColumn({
+        actions: [
+          {
+            iconName: iconMarker('edit'),
+            tooltip: this.translate.instant('Edit'),
+            onClick: (row) => this.doEdit(row),
+          }, {
+            iconName: iconMarker('mdi-delete'),
+            tooltip: this.translate.instant('Delete'),
+            onClick: (row) => this.doDelete(row),
+          },
+        ],
+      }),
+    ], {
+      uniqueRowTag: (row: FibreChannelPort) => 'fibre-channel-port-' + row.port,
+      ariaLabels: (row) => [row.port, this.translate.instant('Fibre Channel Port')],
+    });
   });
 
   constructor(
@@ -126,15 +135,24 @@ export class FibreChannelPortsComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.api.call('fcport.query'));
+    this.setDefaultSort();
     this.dataProvider.load();
   }
 
-  onAdd(): void {
-    this.slideIn.open(FibreChannelPortsFormComponent);
+  doAdd(): void {
+    this.slideIn.open(FibreChannelPortsFormComponent).slideInClosed$.pipe(
+      filter(Boolean),
+      tap(() => this.dataProvider.load()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   doEdit(port: FibreChannelPort): void {
-    this.slideIn.open(FibreChannelPortsFormComponent, { data: port });
+    this.slideIn.open(FibreChannelPortsFormComponent, { data: port }).slideInClosed$.pipe(
+      filter(Boolean),
+      tap(() => this.dataProvider.load()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   doDelete(port: FibreChannelPort): void {
@@ -154,5 +172,13 @@ export class FibreChannelPortsComponent implements OnInit {
 
   onSearch(query: string): void {
     this.searchQuery.set(query);
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 0,
+      direction: SortDirection.Asc,
+      propertyName: 'port',
+    });
   }
 }

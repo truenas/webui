@@ -10,11 +10,13 @@
         <ix-input 
           formControlName="port"
           [label]="'Port' | translate"
+          [required]="true"
         ></ix-input>
         <ix-select 
           formControlName="target_id"
           [label]="'Target' | translate"
           [options]="targetOptions$"
+          [required]="true"
         ></ix-select>
       </ix-fieldset>
       <ix-form-actions>
@@ -24,10 +26,8 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
-        >
-          {{ 'Save' | translate }}
-        </button>
+          [disabled]="form.invalid || isLoading()"
+        >{{ 'Save' | translate }}</button>
       </ix-form-actions>
     </form>
   </mat-card-content>
