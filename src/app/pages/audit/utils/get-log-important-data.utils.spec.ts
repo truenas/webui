@@ -164,6 +164,16 @@ const middlewareEntries = {
       },
     },
   } as AuditEntry,
+  failedAuthentication: {
+    service: AuditService.Middleware,
+    event: AuditEvent.Authentication,
+    event_data: {
+      error: 'Some error',
+      credentials: {
+        credentials: CredentialType.LoginPassword,
+      },
+    },
+  } as AuditEntry,
   methodCall: {
     service: AuditService.Middleware,
     event: AuditEvent.MethodCall,
@@ -271,6 +281,10 @@ describe('get important data from log', () => {
   describe('Middleware audit entries', () => {
     it('returns value for Authentication type', () => {
       expect(getLogImportantData(middlewareEntries.authentication, translate)).toBe('Credentials: Password Login');
+    });
+
+    it('returns value for failed authentication', () => {
+      expect(getLogImportantData(middlewareEntries.failedAuthentication, translate)).toBe('Failed Authentication: Password Login');
     });
 
     it('returns value for MethodCall type', () => {
