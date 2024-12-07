@@ -284,7 +284,7 @@ describe('get important data from log', () => {
     });
 
     it('returns value for failed authentication', () => {
-      expect(getLogImportantData(middlewareEntries.authentication, translate)).toBe('Credentials: Password Login');
+      expect(getLogImportantData(middlewareEntries.failedAuthentication, translate)).toBe('Failed Authentication: Password Login');
     });
 
     it('returns value for MethodCall type', () => {
