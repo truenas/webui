@@ -76,11 +76,11 @@ export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnD
     }
 
     const name = this.control?.name?.toString()
-      || this.formControlName
-      || this.formArrayName
-      || this.formGroupName;
+      || this.formControlName?.toString()
+      || this.formArrayName?.toString()
+      || this.formGroupName?.toString();
 
-    this.registeredName = `${prefix}.${name}`;
+    this.registeredName = prefix !== '' ? `${prefix}.${name}` : name;
 
     const labelValue = this.label || this.registeredName || 'Unnamed Control';
 
@@ -93,7 +93,7 @@ export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnD
 
   ngOnDestroy(): void {
     this.formService.unregisterControl(this.registeredName);
-    if (this.parentFormSection && this.control) {
+    if (this.parentFormSection) {
       this.formService.unregisterSectionControl(this.parentFormSection, this.registeredName);
     }
   }

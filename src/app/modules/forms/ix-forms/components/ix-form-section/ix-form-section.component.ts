@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, HostBinding, Input,
+  ChangeDetectionStrategy, Component, ElementRef, HostBinding, Input,
 } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -27,4 +27,6 @@ export class IxFormSectionComponent {
   get id(): string {
     return this.label;
   }
+
+  constructor(public elementRef: ElementRef<HTMLElement>) {}
 }

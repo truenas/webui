@@ -12,12 +12,13 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription, timer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
   map,
 } from 'rxjs/operators';
+import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { SectionWithControls } from 'app/interfaces/form-sections.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -73,6 +74,7 @@ export class IxFormGlossaryComponent implements OnInit {
     private formBuilder: FormBuilder,
     private formService: IxFormService,
     private cdr: ChangeDetectorRef,
+    private navigateAndInteractService: NavigateAndInteractService,
   ) {
     this.handleControlsUpdates();
     this.handleSectionUpdates();
@@ -159,19 +161,8 @@ export class IxFormGlossaryComponent implements OnInit {
     this.handleSearchControl();
   }
 
-  protected onSectionClick(id: string, label: string = null): void {
-    const nextElement = this.formService.getElementByControlName(id)
-      || this.formService.getElementByLabel(label);
-    if (!nextElement) {
-      return;
-    }
-
-    nextElement?.scrollIntoView({ block: 'center' });
-    nextElement.classList.add('highlighted');
-
-    timer(999)
-      .pipe(untilDestroyed(this))
-      .subscribe(() => nextElement.classList.remove('highlighted'));
+  protected onSectionClick(section: IxFormSectionComponent): void {
+    this.navigateAndInteractService.handleHashScrollIntoView(section.elementRef.nativeElement);
   }
 
   private handleSearchControl(): void {
@@ -184,8 +175,17 @@ export class IxFormGlossaryComponent implements OnInit {
         || this.searchOptions().find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
 
       if (option) {
-        this.onSectionClick(option.value.toString(), option.label);
+        this.onControlClick(option.value.toString(), option.label);
       }
     });
+  }
+
+  private onControlClick(id: string, label: string): void {
+    const element = this.formService.getElementByControlName(id) || this.formService.getElementByLabel(label);
+    if (!element) {
+      return;
+    }
+
+    this.navigateAndInteractService.handleHashScrollIntoView(element);
   }
 }

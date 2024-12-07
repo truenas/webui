@@ -8,7 +8,7 @@
     ></ix-input>
     
     @for (section of sections(); track section) {
-      <div class="section" (click)="onSectionClick(section.label)">
+      <div class="section" (click)="onSectionClick(section)">
         {{ section.label }}
         @if (!isSectionValid(section)) {
           <ix-icon name="warning"></ix-icon>

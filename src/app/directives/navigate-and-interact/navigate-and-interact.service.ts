@@ -22,7 +22,7 @@ export class NavigateAndInteractService {
     });
   }
 
-  private handleHashScrollIntoView(htmlElement: HTMLElement): void {
+  handleHashScrollIntoView(htmlElement: HTMLElement): void {
     const highlightedClass = 'highlighted-element';
     htmlElement.scrollIntoView({ block: 'center' });
     htmlElement.classList.add(highlightedClass);

@@ -11,12 +11,12 @@ describe('RegisteredControlDirective', () => {
     directive: RegisteredControlDirective,
     providers: [
       mockProvider(IxFormService),
-      mockProvider(NgControl),
+      mockProvider(NgControl, {}),
     ],
   });
 
   beforeEach(() => {
-    spectator = createDirective('<div ixRegisteredControl></div>');
+    spectator = createDirective('<div ixRegisteredControl [label]="\'Test\'" [formGroupName]=\'test\'></div>');
   });
 
   it('registers control and element ref of the element with form service', () => {
