@@ -1,5 +1,3 @@
-/* eslint-disable sonarjs/no-dead-store, sonarjs/sonar-no-unused-vars, unused-imports/no-unused-vars */
-
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -147,7 +145,6 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   protected isSectionValid(section: IxFormSectionComponent): boolean {
-    const valid = this.sectionsValidity.get(section);
     return this.sectionsValidity.get(section);
   }
 
