@@ -74,6 +74,11 @@ export class IxFormGlossaryComponent implements OnInit {
     private formService: IxFormService,
     private cdr: ChangeDetectorRef,
   ) {
+    this.handleControlsUpdates();
+    this.handleSectionUpdates();
+  }
+
+  private handleControlsUpdates(): void {
     this.formService.controlNamesWithlabels$.pipe(
       map((controlsWithLabels) => controlsWithLabels.map(
         (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),
@@ -82,6 +87,9 @@ export class IxFormGlossaryComponent implements OnInit {
     ).subscribe({
       next: (options) => this.searchOptions.set(options),
     });
+  }
+
+  private handleSectionUpdates(): void {
     this.formService.controlSections$.pipe(
       untilDestroyed(this),
     ).subscribe({
