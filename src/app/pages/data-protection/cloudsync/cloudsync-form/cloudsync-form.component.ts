@@ -243,7 +243,7 @@ export class CloudSyncFormComponent implements OnInit {
       tap((credentials) => {
         this.credentialsList = credentials;
         for (const credential of credentials) {
-          if (credential.provider === CloudSyncProviderName.GoogleDrive) {
+          if (credential.provider.type === CloudSyncProviderName.GoogleDrive) {
             this.googleDriveProviderIds.push(credential.id);
           }
         }
@@ -420,7 +420,7 @@ export class CloudSyncFormComponent implements OnInit {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          if (targetCredentials.provider === CloudSyncProviderName.Storj) {
+          if (targetCredentials.provider.type === CloudSyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
               value: newOption,
@@ -505,11 +505,11 @@ export class CloudSyncFormComponent implements OnInit {
     if (credentials) {
       this.enableRemoteExplorer();
       const targetCredentials = find(this.credentialsList, { id: credentials });
-      const targetProvider = find(this.providersList, { name: targetCredentials?.provider });
+      const targetProvider = find(this.providersList, { name: targetCredentials?.provider.type });
       if (targetProvider?.buckets) {
         this.isLoading = true;
-        if (targetCredentials.provider === CloudSyncProviderName.MicrosoftAzure
-          || targetCredentials.provider === CloudSyncProviderName.Hubic
+        if (targetCredentials.provider.type === CloudSyncProviderName.MicrosoftAzure
+          || targetCredentials.provider.type === CloudSyncProviderName.Hubic
         ) {
           this.bucketPlaceholder = this.translate.instant('Container');
           this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
@@ -536,7 +536,7 @@ export class CloudSyncFormComponent implements OnInit {
         this.form.controls.bucket_policy_only.disable();
       }
 
-      const schemaFound = find(this.providersList, { name: targetCredentials?.provider });
+      const schemaFound = find(this.providersList, { name: targetCredentials?.provider.type });
       const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
       const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];

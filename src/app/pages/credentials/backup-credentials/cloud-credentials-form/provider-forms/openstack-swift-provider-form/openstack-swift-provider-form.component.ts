@@ -5,7 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -97,7 +97,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
     return this.form.value.auth_version === 3;
   }
 
-  override getSubmitAttributes(): CloudCredential['attributes'] {
+  override getSubmitAttributes(): SomeProviderAttributes {
     const values = super.getSubmitAttributes();
 
     if (!this.isVersion3) {

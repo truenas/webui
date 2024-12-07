@@ -115,10 +115,7 @@ export class CloudSyncProviderComponent implements OnInit {
   onVerify(): void {
     this.loading.emit(true);
 
-    const payload = {
-      provider: this.existingCredential.provider,
-      attributes: { ...this.existingCredential.attributes },
-    };
+    const payload = this.existingCredential.provider;
     this.api.call('cloudsync.credentials.verify', [payload]).pipe(
       untilDestroyed(this),
     ).subscribe({

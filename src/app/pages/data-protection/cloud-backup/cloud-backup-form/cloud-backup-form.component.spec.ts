@@ -35,8 +35,8 @@ describe('CloudBackupFormComponent', () => {
   const storjCreds = {
     id: 2,
     name: 'Storj iX',
-    provider: CloudSyncProviderName.Storj,
-    attributes: {
+    provider: {
+      type: CloudSyncProviderName.Storj,
       client_id: 'test-client-id',
       client_secret: 'test-client-secret',
       token: 'test-token',

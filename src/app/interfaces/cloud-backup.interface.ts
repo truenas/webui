@@ -1,8 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
@@ -19,7 +19,7 @@ export interface CloudBackup {
   args: string;
   enabled: boolean;
   password: string;
-  credentials: CloudCredential;
+  credentials: CloudSyncCredential;
   job: Job | null;
   locked: boolean;
   keep_last?: number;

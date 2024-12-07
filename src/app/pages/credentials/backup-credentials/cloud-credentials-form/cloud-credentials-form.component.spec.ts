@@ -86,8 +86,8 @@ describe('CloudCredentialsFormComponent', () => {
   const fakeCloudSyncCredential = {
     id: 233,
     name: 'My backup server',
-    provider: CloudSyncProviderName.AmazonS3,
-    attributes: {
+    provider: {
+      type: CloudSyncProviderName.AmazonS3,
       hostname: 'backup.com',
     },
   } as CloudSyncCredential;
@@ -179,10 +179,8 @@ describe('CloudCredentialsFormComponent', () => {
         await verifyButton.click();
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
-          provider: 'S3',
-          attributes: {
-            s3attribute: 's3 value',
-          },
+          type: CloudSyncProviderName.AmazonS3,
+          s3attribute: 's3 value',
         }]);
       });
 
@@ -248,8 +246,8 @@ describe('CloudCredentialsFormComponent', () => {
 
         expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
           name: 'New sync',
-          provider: CloudSyncProviderName.AmazonS3,
-          attributes: {
+          provider: {
+            type: CloudSyncProviderName.AmazonS3,
             s3attribute: 's3 value',
           },
         }]);
@@ -313,6 +311,7 @@ describe('CloudCredentialsFormComponent', () => {
       const providerForm = spectator.query(S3ProviderFormComponent);
       expect(providerForm).toBeTruthy();
       expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
+        type: CloudSyncProviderName.AmazonS3,
         hostname: 'backup.com',
       });
     });
@@ -331,8 +330,8 @@ describe('CloudCredentialsFormComponent', () => {
         233,
         {
           name: 'My updated server',
-          provider: CloudSyncProviderName.AmazonS3,
-          attributes: {
+          provider: {
+            type: CloudSyncProviderName.AmazonS3,
             s3attribute: 's3 value',
           },
         },

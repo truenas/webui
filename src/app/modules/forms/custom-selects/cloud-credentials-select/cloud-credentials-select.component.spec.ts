@@ -44,9 +44,9 @@ describe('CloudCredentialsSelectComponent', () => {
 
   const mockCloudCredentialService = {
     getCloudSyncCredentials: jest.fn(() => of([
-      { id: '1', name: 'AWS S3', provider: CloudSyncProviderName.AmazonS3 },
-      { id: '2', name: 'Dropbox', provider: CloudSyncProviderName.Dropbox },
-      { id: '2', name: 'Drive', provider: CloudSyncProviderName.GoogleDrive },
+      { id: '1', name: 'AWS S3', provider: { type: CloudSyncProviderName.AmazonS3 } },
+      { id: '2', name: 'Dropbox', provider: { type: CloudSyncProviderName.Dropbox } },
+      { id: '2', name: 'Drive', provider: { type: CloudSyncProviderName.GoogleDrive } },
     ])),
   };
 
