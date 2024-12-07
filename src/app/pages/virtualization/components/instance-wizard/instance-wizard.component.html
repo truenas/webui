@@ -5,7 +5,7 @@
 </ix-page-header>
 
 <div class="container">
-  <form *withGlossary class="form" [formGroup]="form" (submit)="onSubmit()">
+  <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section [label]="'Instance Configuration' | translate" [help]="'Instance Configuration' | translate">
       <ix-input
         ixRegisteredControl
@@ -74,12 +74,14 @@
             <div class="environment-variable">
               <ix-input
                 formControlName="name"
+                ixRegisteredControl
                 [label]="'Name' | translate"
                 [required]="true"
               ></ix-input>
 
               <ix-input
                 formControlName="value"
+                ixRegisteredControl
                 [label]="'Value' | translate"
                 [required]="true"
               ></ix-input>
@@ -100,12 +102,14 @@
       >
         @for (disk of form.controls.disks.controls; track disk; let i = $index) {
           <ix-list-item
+            ixRegisteredControl
             [formGroupName]="i"
             [label]="'Disk' | translate"
             (delete)="removeDisk(i)"
           >
             <ix-explorer
               formControlName="source"
+              ixRegisteredControl
               [label]="'Source' | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider"
@@ -113,6 +117,7 @@
 
             <ix-input
               formControlName="destination"
+              ixRegisteredControl
               [label]="'Destination' | translate"
               [required]="true"
             ></ix-input>
@@ -142,6 +147,7 @@
             <div class="protocol-and-port">
               <ix-select
                 class="protocol"
+                ixRegisteredControl
                 formControlName="source_proto"
                 [label]="'Host Protocol' | translate"
                 [required]="true"
@@ -150,6 +156,7 @@
 
               <ix-input
                 class="port"
+                ixRegisteredControl
                 type="number"
                 formControlName="source_port"
                 [label]="'Host Port' | translate"
@@ -160,6 +167,7 @@
             <div class="protocol-and-port">
               <ix-select
                 class="protocol"
+                ixRegisteredControl
                 formControlName="dest_proto"
                 [label]="'Instance Protocol' | translate"
                 [required]="true"
@@ -169,6 +177,7 @@
               <ix-input
                 class="port"
                 type="number"
+                ixRegisteredControl
                 formControlName="dest_port"
                 [label]="'Instance Port' | translate"
                 [required]="true"
@@ -197,9 +206,10 @@
         @if (form.controls.nic_type.value === VirtualizationNicType.Bridged) {
           @if ((bridgedNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
-              <div formGroupName="bridged_nics">
+              <div formGroupName="bridged_nics" ixRegisteredControl>
                 @for (device of devices; track device) {
                   <ix-checkbox
+                    ixRegisteredControl
                     [formControlName]="device.value.toString()"
                     [label]="device.label"
                   ></ix-checkbox>
@@ -216,9 +226,10 @@
         @if (form.controls.nic_type.value === VirtualizationNicType.Macvlan) {
           @if ((macVlanNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
-              <div formGroupName="mac_vlan_nics">
+              <div formGroupName="mac_vlan_nics" ixRegisteredControl>
                 @for (device of devices; track device) {
                   <ix-checkbox
+                    ixRegisteredControl
                     [formControlName]="device.value.toString()"
                     [label]="device.label"
                   ></ix-checkbox>
@@ -240,6 +251,7 @@
           <div formGroupName="usb_devices" ixRegisteredControl [label]="'USB Devices' | translate">
             @for (device of usbDevices; track device) {
               <ix-checkbox
+                ixRegisteredControl
                 [formControlName]="device.value.toString()"
                 [label]="device.label"
               ></ix-checkbox>
@@ -252,9 +264,10 @@
     @if ((gpuDevices$ | async); as gpuDevices) {
       @if (gpuDevices.length > 0) {
         <ix-form-section [label]="'GPU Devices' | translate" [help]="'GPU Devices' | translate">
-          <div formGroupName="gpu_devices">
+          <div formGroupName="gpu_devices" ixRegisteredControl>
             @for (device of gpuDevices; track device) {
               <ix-checkbox
+                ixRegisteredControl
                 [formControlName]="device.value.toString()"
                 [label]="device.label"
               ></ix-checkbox>
@@ -276,4 +289,5 @@
       </button>
     </div>
   </form>
+  <ix-form-glossary class="glossary"></ix-form-glossary>
 </div>

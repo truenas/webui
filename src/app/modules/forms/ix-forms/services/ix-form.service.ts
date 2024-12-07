@@ -1,14 +1,18 @@
 import { ElementRef, Injectable } from '@angular/core';
+import { NgControl } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
-import { ControlNameWithLabel } from 'app/interfaces/control-name-with-label.interface';
+import { ControlNameWithLabel, SectionWithControls } from 'app/interfaces/form-sections.interface';
+import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 
 @Injectable({ providedIn: 'root' })
 export class IxFormService {
   private controls = new Map<string, HTMLElement>();
+  private sections = new Map<IxFormSectionComponent, Map<string, NgControl | null>>();
   controlNamesWithlabels$ = new BehaviorSubject<ControlNameWithLabel[]>([]);
+  controlSections$ = new BehaviorSubject<SectionWithControls[]>([]);
 
-  getControlsNames(): (string | number | null)[] {
+  getControlNames(): (string | number | null)[] {
     return [...this.controls.keys()];
   }
 
@@ -39,13 +43,51 @@ export class IxFormService {
     return undefined;
   }
 
-  registerControl(name: string, elementRef: ElementRef<HTMLElement>): void {
+  registerControl(
+    name: string,
+    elementRef: ElementRef<HTMLElement>,
+  ): void {
     this.controls.set(name, elementRef.nativeElement);
     this.controlNamesWithlabels$.next(this.getControlsLabels());
+  }
+
+  registerSectionControl(
+    name: string,
+    control: NgControl | null,
+    formSection: IxFormSectionComponent,
+  ): void {
+    let controls = this.sections.get(formSection);
+    if (!controls?.size) {
+      controls = new Map();
+    }
+    controls.set(name, control);
+    this.sections.set(formSection, controls);
+    this.updateSections();
   }
 
   unregisterControl(name: string): void {
     this.controls.delete(name);
     this.controlNamesWithlabels$.next(this.getControlsLabels());
+  }
+
+  unregisterSectionControl(section: IxFormSectionComponent, control: string): void {
+    const namedControls = this.sections.get(section) || new Map<string, NgControl>();
+    namedControls.delete(control);
+
+    if (namedControls.size) {
+      this.sections.set(section, namedControls);
+    } else {
+      this.sections.delete(section);
+    }
+
+    this.updateSections();
+  }
+
+  private updateSections(): void {
+    const controlSections: SectionWithControls[] = [];
+    for (const [section, controls] of this.sections.entries()) {
+      controlSections.push({ section, controls });
+    }
+    this.controlSections$.next(controlSections);
   }
 }

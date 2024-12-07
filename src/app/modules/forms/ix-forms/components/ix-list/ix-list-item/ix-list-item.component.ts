@@ -21,6 +21,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxListItemComponent {
+  formGroupName = input.required<string | number>();
   readonly canDelete = input(true);
   readonly label = input<string>();
 

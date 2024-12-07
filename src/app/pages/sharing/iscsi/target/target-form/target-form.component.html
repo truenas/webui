@@ -30,6 +30,7 @@
             >
               @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
                 <ix-list-item
+                  [formGroupName]="i"
                   [label]="helptext.auth_network.placeholder | translate"
                   (delete)="deleteNetwork(i)"
                 >

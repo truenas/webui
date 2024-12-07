@@ -1,10 +1,14 @@
 import {
-  AfterViewInit, Directive, ElementRef, inject, Input,
+  AfterViewInit, Directive, ElementRef, Host, inject, Input,
   OnChanges,
   OnDestroy,
+  Optional,
+  SkipSelf,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
 export const ixControlLabelTag = 'ix-label';
@@ -18,9 +22,9 @@ export const ixControlLabelTag = 'ix-label';
 })
 export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnDestroy {
   @Input() label: string;
-  @Input() formControlName: string;
-  @Input() formArrayName: string;
-  @Input() formGroupName: string;
+  @Input() formControlName: string | number;
+  @Input() formArrayName: string | number;
+  @Input() formGroupName: string | number;
 
   private controlReady = false;
   private labelReady = false;
@@ -31,6 +35,8 @@ export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnD
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private formService: IxFormService,
+    @Optional() @Host() @SkipSelf() private parentFormSection: IxFormSectionComponent,
+    @Optional() @Host() @SkipSelf() private listItem: IxListItemComponent,
   ) { }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -64,20 +70,31 @@ export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnD
       return;
     }
     this.controlRegistered = true;
-    const controlName
-      = this.control?.name?.toString()
+    let prefix = '';
+    if (this.listItem) {
+      prefix = this.listItem.formGroupName().toString();
+    }
+
+    const name = this.control?.name?.toString()
       || this.formControlName
       || this.formArrayName
       || this.formGroupName;
 
-    const labelValue = this.label || controlName || 'Unnamed Control';
+    this.registeredName = `${prefix}.${name}`;
+
+    const labelValue = this.label || this.registeredName || 'Unnamed Control';
 
     this.elementRef.nativeElement.setAttribute(ixControlLabelTag, labelValue);
-    this.registeredName = controlName;
-    this.formService.registerControl(controlName, this.elementRef);
+    this.formService.registerControl(this.registeredName, this.elementRef);
+    if (this.parentFormSection) {
+      this.formService.registerSectionControl(this.registeredName, this.control, this.parentFormSection);
+    }
   }
 
   ngOnDestroy(): void {
     this.formService.unregisterControl(this.registeredName);
+    if (this.parentFormSection && this.control) {
+      this.formService.unregisterSectionControl(this.parentFormSection, this.registeredName);
+    }
   }
 }

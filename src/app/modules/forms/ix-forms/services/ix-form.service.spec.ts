@@ -46,7 +46,7 @@ describe('IxFormService', () => {
 
   describe('getControlsNames', () => {
     it('returns a list of control names', () => {
-      expect(spectator.service.getControlsNames()).toEqual([
+      expect(spectator.service.getControlNames()).toEqual([
         'test_control_1',
         'test_control_2',
       ]);
@@ -55,7 +55,7 @@ describe('IxFormService', () => {
 
   describe('getControls', () => {
     it('returns a list of controls', () => {
-      expect(spectator.service.getControlsNames()).toEqual([
+      expect(spectator.service.getControlNames()).toEqual([
         'test_control_1',
         'test_control_2',
       ]);
@@ -64,7 +64,7 @@ describe('IxFormService', () => {
 
   describe('getControlByName', () => {
     it('returns control by name', () => {
-      expect(spectator.service.getControlsNames()).toEqual(['test_control_2']);
+      expect(spectator.service.getControlNames()).toEqual(['test_control_2']);
     });
   });
 

@@ -40,15 +40,14 @@ import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
-import { IxFormWithGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-with-glossary/ix-form-with-glossary.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { WithGlossaryDirective } from 'app/modules/forms/ix-forms/directives/with-glossary.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -78,9 +77,8 @@ import { ApiService } from 'app/services/websocket/api.service';
     ReadOnlyComponent,
     AsyncPipe,
     IxListComponent,
-    WithGlossaryDirective,
     RegisteredControlDirective,
-    IxFormWithGlossaryComponent,
+    IxFormGlossaryComponent,
     IxFormSectionComponent,
     IxListItemComponent,
     IxSelectComponent,

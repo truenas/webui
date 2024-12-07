@@ -17,6 +17,7 @@
         @for (network of form.controls.addresses.controls; track network; let i = $index) {
           <ix-list-item
             [label]="'Allowed IP Addresses' | translate"
+            [formGroupName]="i"
             (delete)="removeAddress(i)"
           >
             <ix-input

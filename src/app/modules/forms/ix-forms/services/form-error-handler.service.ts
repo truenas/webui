@@ -69,7 +69,7 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       const control = this.getFormField(formGroup, field, fieldsMap);
-      const controlsNames = this.formService.getControlsNames();
+      const controlsNames = this.formService.getControlNames();
 
       if (triggerAnchor && control && !controlsNames.includes(field)) {
         const triggerAnchorRef: HTMLElement = this.document.getElementById(triggerAnchor);
@@ -106,7 +106,7 @@ export class FormErrorHandlerService {
     errorMessage: string;
     error: ApiError | Job;
   }): void {
-    const controlsNames = this.formService.getControlsNames();
+    const controlsNames = this.formService.getControlNames();
 
     if (!control || !controlsNames.includes(field)) {
       console.error(`Could not find control ${field}.`);

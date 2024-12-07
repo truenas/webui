@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, HostBinding, Input,
 } from '@angular/core';
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -21,5 +21,10 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 })
 export class IxFormSectionComponent {
   @Input() help: string;
-  @Input() label: string;
+  @Input({ required: true }) label: string;
+
+  @HostBinding('attr.id')
+  get id(): string {
+    return this.label;
+  }
 }
