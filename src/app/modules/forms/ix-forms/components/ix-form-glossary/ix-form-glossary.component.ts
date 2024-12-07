@@ -19,6 +19,7 @@ import {
   map,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { SectionWithControls } from 'app/interfaces/form-sections.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -85,41 +86,39 @@ export class IxFormGlossaryComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (sectionsWithControls) => {
-        for (const { section, controls } of sectionsWithControls) {
-          this.resetSubscriptionsAndValidities(section);
-
-          this.initializeSectionValidity(
-            section,
-            Array.from(controls).map(([, control]) => control),
-          );
-
-          const sectionControlSubscriptions = this.sectionControlsSubscriptions.get(section) || {};
-          for (const [name, control] of controls) {
-            this.setControlValidity(section, name, control ? control.valid : true);
-
-            sectionControlSubscriptions[name] = control?.statusChanges.pipe(
-              untilDestroyed(this),
-            ).subscribe({
-              next: () => {
-                this.setControlValidity(section, name, control.valid);
-              },
-            });
-          }
-          this.sectionControlsSubscriptions.set(section, sectionControlSubscriptions);
-        }
+        this.updateControlsStatusUpdates(sectionsWithControls);
         this.sections.set(sectionsWithControls.map(({ section }) => section));
       },
     });
   }
 
-  private initializeSectionValidity(section: IxFormSectionComponent, controls: NgControl[]): void {
-    const isAtLeastOneControlInvalid = controls.some((control) => {
-      if (!control) {
-        return false;
+  private updateControlsStatusUpdates(sectionsWithControls: SectionWithControls[]): void {
+    for (const { section, controls } of sectionsWithControls) {
+      this.resetSubscriptionsAndValidities(section);
+
+      this.initializeSectionValidity(
+        section,
+        Array.from(controls).map(([, control]) => control),
+      );
+
+      const sectionControlSubscriptions = this.sectionControlsSubscriptions.get(section) || {};
+      for (const [name, control] of controls) {
+        this.setControlValidity(section, name, control ? control.valid : true);
+
+        sectionControlSubscriptions[name] = control?.statusChanges.pipe(
+          untilDestroyed(this),
+        ).subscribe({
+          next: () => {
+            this.setControlValidity(section, name, control.valid);
+          },
+        });
       }
-      return !control.valid;
-    });
-    const isSectionValid = !isAtLeastOneControlInvalid;
+      this.sectionControlsSubscriptions.set(section, sectionControlSubscriptions);
+    }
+  }
+
+  private initializeSectionValidity(section: IxFormSectionComponent, controls: NgControl[]): void {
+    const isSectionValid = controls.every((control) => (control ? control.valid : true));
     this.sectionsValidity.set(section, isSectionValid);
   }
 
