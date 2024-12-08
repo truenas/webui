@@ -9,9 +9,9 @@ import { DOCUMENT } from '@angular/common';
 import {
   Directive,
   Inject, Injector,
-  Input,
   OnInit, output,
   ViewContainerRef,
+  input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
@@ -31,7 +31,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   standalone: true,
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
-  @Input() ixDropGridModel: T[];
+  readonly ixDropGridModel = input<T[]>(undefined);
 
   readonly ixDropGridModelChange = output<T[]>();
 
@@ -65,11 +65,12 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     const drag = event.item;
     const drop = event.container;
 
-    if (drop === this.placeholder.itemInstance) {
+    const itemInstance = this.placeholder.itemInstance();
+    if (drop === itemInstance) {
       return;
     }
 
-    const phElement = this.placeholder.itemInstance.element.nativeElement;
+    const phElement = itemInstance.element.nativeElement;
     const sourceElement = drag.dropContainer.element.nativeElement;
     const dropElement = drop.element.nativeElement;
 
@@ -106,7 +107,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     );
 
     this.document.defaultView.requestAnimationFrame(() => {
-      this.placeholder.itemInstance._dropListRef.enter(
+      this.placeholder.itemInstance()._dropListRef.enter(
         drag._dragRef,
         drag.element.nativeElement.offsetLeft,
         drag.element.nativeElement.offsetTop,
@@ -119,7 +120,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
       return;
     }
 
-    const phElement = this.placeholder.itemInstance.element.nativeElement;
+    const phElement = this.placeholder.itemInstance().element.nativeElement;
     const parent = phElement.parentElement;
 
     phElement.style.display = 'none';
@@ -135,7 +136,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     this.source = null;
 
     if (this.sourceIndex !== this.targetIndex) {
-      const newModel = [...this.ixDropGridModel];
+      const newModel = [...this.ixDropGridModel()];
 
       moveItemInArray(newModel, this.sourceIndex, this.targetIndex);
 

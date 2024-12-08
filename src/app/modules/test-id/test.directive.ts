@@ -32,14 +32,14 @@ export class TestDirective {
   ) {}
 
   get normalizedDescription(): string[] {
-    const description = this.overrideDirective?.overrideDescription ?? this.description();
+    const description = this.overrideDirective?.overrideDescription() ?? this.description();
     let normalizedDescription = Array.isArray(description) ? description : [description];
 
     normalizedDescription = normalizedDescription
       .filter((part) => part)
       .map((part) => kebabCase(String(part)));
 
-    if (this.overrideDirective?.keepLastPart) {
+    if (this.overrideDirective?.keepLastPart()) {
       const initialDescription = this.description();
       const normalizedInitialDescription = Array.isArray(initialDescription)
         ? initialDescription

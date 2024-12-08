@@ -6,7 +6,7 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
@@ -50,8 +50,8 @@ import { ReportsService } from './reports.service';
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
-  @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
-  @ViewChild('container', { static: true }) container: ElementRef;
+  readonly viewport = viewChild(CdkVirtualScrollViewport);
+  readonly container = viewChild<ElementRef>('container');
 
   readonly searchableElements = reportingElements;
 

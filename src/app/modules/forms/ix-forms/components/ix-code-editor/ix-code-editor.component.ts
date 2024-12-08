@@ -8,7 +8,7 @@ import {
   input,
   OnChanges,
   OnInit,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
@@ -64,7 +64,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected isDisabled$ = new BehaviorSubject<boolean>(false);
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
-  @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
+  readonly inputArea = viewChild<ElementRef<HTMLElement>>('inputArea');
   editorView: EditorView;
 
   protected value$ = new BehaviorSubject<string>('');
@@ -151,7 +151,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
         this.editableCompartment.of(EditorView.editable.of(true)),
         placeholder(this.placeholder()),
       ],
-      parent: this.inputArea.nativeElement,
+      parent: this.inputArea().nativeElement,
     };
     this.editorView = new EditorView(config);
   }

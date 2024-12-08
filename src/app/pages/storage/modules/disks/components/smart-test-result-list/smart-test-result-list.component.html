@@ -1,4 +1,4 @@
-<ix-page-header [pageTitle]="'S.M.A.R.T. Test Results of {pk}' | translate: { pk }">
+<ix-page-header [pageTitle]="'S.M.A.R.T. Test Results of {pk}' | translate: { pk: pk() }">
   <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 </ix-page-header>

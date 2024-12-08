@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, Component, ElementRef, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -35,11 +35,11 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ErrorDialogComponent {
-  @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef;
-  @ViewChild('errorTitle') errorTitle: ElementRef;
-  @ViewChild('errorMdContent') errorMdContent: ElementRef;
-  @ViewChild('errorBtPanel') errorBtPanel: ElementRef;
-  @ViewChild('errorBtText') errorBtText: ElementRef;
+  readonly errorMessageWrapper = viewChild<ElementRef>('errorMessageWrapper');
+  readonly errorTitle = viewChild<ElementRef>('errorTitle');
+  readonly errorMdContent = viewChild<ElementRef>('errorMdContent');
+  readonly errorBtPanel = viewChild<ElementRef>('errorBtPanel');
+  readonly errorBtText = viewChild<ElementRef>('errorBtText');
 
   title: string;
   message: string;

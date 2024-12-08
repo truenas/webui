@@ -6,7 +6,7 @@ import {
   forwardRef,
   input,
   OnInit, signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { FormControl, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
@@ -99,7 +99,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
 
   protected disksProvider = new SimpleAsyncComboboxProvider(this.shownOptions$);
 
-  @ViewChild(IxComboboxComponent) private combobox: IxComboboxComponent;
+  readonly combobox = viewChild(IxComboboxComponent);
 
   constructor(
     private dialogService: DialogService,
@@ -124,10 +124,11 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   }
 
   private setupExportedPoolWarning(): void {
-    if (!this.combobox) {
+    const combobox = this.combobox();
+    if (!combobox) {
       return;
     }
-    this.combobox.controlDirective.control.valueChanges.pipe(
+    combobox.controlDirective.control.valueChanges.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       untilDestroyed(this),

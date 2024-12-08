@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -77,9 +77,9 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  @ViewChild(IdmapListComponent) idmapListComponent: IdmapListComponent;
-  @ViewChild(KerberosKeytabsListComponent) kerberosKeytabsListComponent: KerberosKeytabsListComponent;
-  @ViewChild(KerberosRealmsListComponent) kerberosRealmsListComponent: KerberosRealmsListComponent;
+  readonly idmapListComponent = viewChild(IdmapListComponent);
+  readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
+  readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
@@ -208,14 +208,17 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    if (this.idmapListComponent) {
-      this.idmapListComponent.getIdmaps();
+    const idmapListComponent = this.idmapListComponent();
+    if (idmapListComponent) {
+      idmapListComponent.getIdmaps();
     }
-    if (this.kerberosKeytabsListComponent) {
-      this.kerberosKeytabsListComponent.getKerberosKeytabs();
+    const kerberosKeytabsListComponent = this.kerberosKeytabsListComponent();
+    if (kerberosKeytabsListComponent) {
+      kerberosKeytabsListComponent.getKerberosKeytabs();
     }
-    if (this.kerberosRealmsListComponent) {
-      this.kerberosRealmsListComponent.getKerberosRealms();
+    const kerberosRealmsListComponent = this.kerberosRealmsListComponent();
+    if (kerberosRealmsListComponent) {
+      kerberosRealmsListComponent.getKerberosRealms();
     }
   }
 

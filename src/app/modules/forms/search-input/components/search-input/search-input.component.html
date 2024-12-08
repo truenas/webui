@@ -2,8 +2,8 @@
   <ix-advanced-search
     #advancedSearch
     [query]="advancedQuery"
-    [properties]="properties"
-    [placeholder]="advancedSearchPlaceholder"
+    [properties]="properties()"
+    [placeholder]="advancedSearchPlaceholder()"
     (paramsChange)="advancedSearchUpdated($event)"
     (switchToBasic)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"
@@ -11,7 +11,7 @@
 } @else {
   <ix-basic-search
     [query]="basicQuery"
-    [allowAdvanced]="allowAdvanced"
+    [allowAdvanced]="allowAdvanced()"
     (queryChange)="basicSearchUpdated($event)"
     (switchToAdvanced)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"

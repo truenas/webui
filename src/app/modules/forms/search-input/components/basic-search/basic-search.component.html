@@ -13,7 +13,7 @@
   (keydown.enter)="runSearch.emit()"
 />
 
-@if (allowAdvanced) {
+@if (allowAdvanced()) {
   <a
     class="switch-link"
     ixTest="switch-to-advanced"

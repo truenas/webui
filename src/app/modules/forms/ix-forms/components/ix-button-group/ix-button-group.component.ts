@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
+  input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -34,9 +35,9 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() options: Observable<Option[]>;
-  @Input() vertical = false;
+  readonly required = input(false);
+  readonly options = input<Observable<Option[]> | undefined>(undefined);
+  readonly vertical = input(false);
   @HostBinding('class.inlineFields')
   @Input() inlineFields = false;
 

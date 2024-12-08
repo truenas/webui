@@ -1,6 +1,6 @@
 <div
   cdkTrapFocus
-  [class]="['ix-' + id, 'ix-slide-in-form']"
+  [class]="['ix-' + id(), 'ix-slide-in-form']"
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
   [cdkTrapFocusAutoCapture]="true"
@@ -11,7 +11,7 @@
 </div>
 
 <div
-  [class]="['ix-slide-in-background', 'ix-' + id + '-background']"
+  [class]="['ix-slide-in-background', 'ix-' + id() + '-background']"
   [class.open]="isSlideInOpen"
   (click)="onBackdropClicked()"
 ></div>

@@ -1,6 +1,7 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
-  Component, Input, forwardRef, inject, ChangeDetectionStrategy,
+  Component, forwardRef, inject, ChangeDetectionStrategy,
+  input,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
@@ -27,18 +28,18 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   imports: [IxSelectComponent],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() filterByProviders: CloudSyncProviderName[];
+  readonly label = input<string>(undefined);
+  readonly tooltip = input<string>(undefined);
+  readonly required = input<boolean>(undefined);
+  readonly filterByProviders = input<CloudSyncProviderName[]>(undefined);
 
   private cloudCredentialService = inject(CloudCredentialService);
 
   fetchOptions(): Observable<Option[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       map((options) => {
-        if (this.filterByProviders) {
-          options = options.filter((option) => this.filterByProviders.includes(option.provider));
+        if (this.filterByProviders()) {
+          options = options.filter((option) => this.filterByProviders().includes(option.provider));
         }
         return options.map((option) => {
           return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider)})`, value: option.id };
@@ -56,6 +57,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   }
 
   override getFormInputData(): { providers: CloudSyncProviderName[] } {
-    return this.filterByProviders?.length ? { providers: this.filterByProviders } : undefined;
+    const filterByProviders = this.filterByProviders();
+    return filterByProviders?.length ? { providers: filterByProviders } : undefined;
   }
 }

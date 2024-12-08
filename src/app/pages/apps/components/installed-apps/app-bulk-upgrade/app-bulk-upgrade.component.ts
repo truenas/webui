@@ -5,7 +5,7 @@ import {
   Inject,
   signal,
   TrackByFunction,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -64,7 +64,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class AppBulkUpgradeComponent {
-  @ViewChild(MatAccordion) accordion: MatAccordion;
+  readonly accordion = viewChild(MatAccordion);
   expandedItems = signal<string[]>([]);
 
   form = this.formBuilder.group<Record<string, string>>({});

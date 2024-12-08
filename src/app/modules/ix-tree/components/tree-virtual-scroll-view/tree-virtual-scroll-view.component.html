@@ -1,9 +1,9 @@
 <cdk-virtual-scroll-viewport
   #scrollViewport
   scrollWindow
-  [itemSize]="ixItemSize"
-  [minBufferPx]="ixMinBufferPx"
-  [maxBufferPx]="ixMaxBufferPx"
+  [itemSize]="ixItemSize()"
+  [minBufferPx]="ixMinBufferPx()"
+  [maxBufferPx]="ixMaxBufferPx()"
 >
   <ng-container *cdkVirtualFor="let item of nodes$ | async; let i = index; trackBy: innerTrackBy">
     <div (resized)="resized($event)">
