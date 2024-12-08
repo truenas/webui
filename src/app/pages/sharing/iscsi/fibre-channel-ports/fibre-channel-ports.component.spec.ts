@@ -10,6 +10,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { FibreChannelPortsFormComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports-form/fibre-channel-ports-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -79,7 +80,15 @@ describe('FibreChannelPortsComponent', () => {
         mockCall('fcport.delete'),
         mockCall('fcport.status', mockFcStatus as FibreChannelStatus[]),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(SlideInService, {
+        open: jest.fn(() => {
+          return { slideInClosed$: of(true) };
+        }),
+        onClose$: of(),
+      }),
+      mockProvider(SlideInRef, {
+        slideInClosed$: of(true),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
