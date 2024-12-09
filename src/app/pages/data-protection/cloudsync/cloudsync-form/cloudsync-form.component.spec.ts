@@ -23,6 +23,7 @@ import {
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncFormComponent', () => {
@@ -96,6 +97,9 @@ describe('CloudSyncFormComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
+      }),
+      mockProvider(FirstTimeWarningService, {
+        showFirstTimeConfirmationIfNeeded: jest.fn(() => of(true)),
       }),
       mockApi([
         mockCall('cloudsync.create', existingTask),
