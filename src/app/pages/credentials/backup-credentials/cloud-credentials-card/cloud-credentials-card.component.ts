@@ -73,7 +73,10 @@ export class CloudCredentialsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Provider'),
       propertyName: 'provider',
-      getValue: (row) => this.providers.get(row.provider) || row.provider,
+      getValue: (row) => {
+        const provider = row.provider.type;
+        return this.providers.get(provider) || provider;
+      },
     }),
     actionsColumn({
       actions: [

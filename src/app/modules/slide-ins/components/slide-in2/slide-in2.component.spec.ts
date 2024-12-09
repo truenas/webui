@@ -14,6 +14,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
@@ -52,9 +53,12 @@ describe('IxSlideIn2Component', () => {
     credentials: {
       id: 2,
       name: 'test2',
-      provider: 'MEGA',
-      attributes: { user: 'login', pass: 'password' } as Record<string, string>,
-    },
+      provider: {
+        type: CloudSyncProviderName.Mega,
+        user: 'login',
+        pass: 'password',
+      },
+    } as CloudSyncCredential,
     schedule: {
       minute: '0',
       hour: '0',
@@ -97,16 +101,16 @@ describe('IxSlideIn2Component', () => {
           {
             id: 1,
             name: 'test1',
-            provider: CloudSyncProviderName.Http,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Http,
               url: 'http',
             },
           },
           {
             id: 2,
             name: 'test2',
-            provider: CloudSyncProviderName.Mega,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Mega,
               user: 'login',
               pass: 'password',
             },

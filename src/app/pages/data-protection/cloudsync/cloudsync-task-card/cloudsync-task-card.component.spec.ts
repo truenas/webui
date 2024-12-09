@@ -58,8 +58,8 @@ describe('CloudSyncTaskCardComponent', () => {
       credentials: {
         id: 1,
         name: 'Google Drive',
-        provider: CloudSyncProviderName.GoogleDrive,
-        attributes: {
+        provider: {
+          type: CloudSyncProviderName.GoogleDrive,
           client_id: '',
           client_secret: '',
           token: '',

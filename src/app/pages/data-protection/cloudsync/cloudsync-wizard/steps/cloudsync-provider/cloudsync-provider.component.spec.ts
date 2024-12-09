@@ -115,12 +115,10 @@ describe('CloudSyncProviderComponent', () => {
     expect(loading.emit).toHaveBeenNthCalledWith(2, false);
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
-      provider: 'GOOGLE_PHOTOS',
-      attributes: {
-        client_id: 'test-client-id',
-        client_secret: 'test-client-secret',
-        token: 'test-token',
-      },
+      type: 'GOOGLE_PHOTOS',
+      client_id: 'test-client-id',
+      client_secret: 'test-client-secret',
+      token: 'test-token',
     }]);
   });
 });

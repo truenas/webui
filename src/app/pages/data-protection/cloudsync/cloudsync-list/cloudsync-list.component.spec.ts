@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -71,8 +72,9 @@ describe('CloudSyncListComponent', () => {
       credentials: {
         id: 1,
         name: 'Google Drive',
-        provider: 'GOOGLE_DRIVE',
-        attributes: {},
+        provider: {
+          type: CloudSyncProviderName.GoogleDrive,
+        },
       },
       schedule: {
         minute: '0',

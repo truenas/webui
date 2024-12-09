@@ -2,13 +2,13 @@ import { FormGroup } from '@angular/forms';
 import { isNull, omitBy } from 'lodash-es';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
-export abstract class BaseProviderFormComponent<T = CloudCredential['attributes']> {
+export abstract class BaseProviderFormComponent<T = SomeProviderAttributes> {
   provider: CloudSyncProvider;
   abstract readonly form: FormGroup;
-  protected formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
+  protected formPatcher$ = new BehaviorSubject<SomeProviderAttributes>({});
 
   readonly helptext = helptext;
 
@@ -27,7 +27,7 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
     return nonNullAttributes as T;
   }
 
-  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
+  getFormSetter$ = (): BehaviorSubject<SomeProviderAttributes> => {
     return this.formPatcher$;
   };
 }
