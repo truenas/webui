@@ -181,7 +181,7 @@ export class SmartTaskListComponent implements OnInit {
       next: () => {
         this.getSmartTasks();
       },
-      error: (error) => this.errorHandler.showErrorModal(error),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

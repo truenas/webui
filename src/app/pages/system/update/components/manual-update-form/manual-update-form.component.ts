@@ -21,6 +21,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJob } from 'app/helpers/api.helper';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
@@ -174,7 +175,7 @@ export class ManualUpdateFormComponent implements OnInit {
             this.showRunningUpdate(jobs[0].id);
           }
         },
-        error: (err) => {
+        error: (err: unknown) => {
           console.error(err);
         },
       });
@@ -245,7 +246,7 @@ export class ManualUpdateFormComponent implements OnInit {
       )
       .subscribe({
         next: () => this.handleUpdateSuccess(),
-        error: (job: Job) => this.handleUpdateFailure(job),
+        error: (error: unknown) => this.handleUpdateFailure(error),
       });
   }
 
@@ -285,10 +286,11 @@ export class ManualUpdateFormComponent implements OnInit {
     }
   }
 
-  handleUpdateFailure = (failure: Job): void => {
+  handleUpdateFailure = (failure: unknown): void => {
     this.isFormLoading$.next(false);
     this.cdr.markForCheck();
-    if (failure.error.includes(updateAgainCode)) {
+
+    if (isFailedJob(failure) && failure.error.includes(updateAgainCode)) {
       this.dialogService.confirm({
         title: helptext.continueDialogTitle,
         message: failure.error.replace(updateAgainCode, ''),
@@ -315,7 +317,7 @@ export class ManualUpdateFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => this.handleUpdateSuccess(),
-        error: (job: Job) => this.handleUpdateFailure(job),
+        error: (error: unknown) => this.handleUpdateFailure(error),
       });
   }
 }

@@ -10,8 +10,8 @@ import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
@@ -161,10 +161,11 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error: ApiError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
-        if (error.reason?.includes('[ETIMEDOUT]')) {
+        const apiError = extractApiError(error);
+        if (apiError?.reason?.includes('[ETIMEDOUT]')) {
           this.dialogService.error({
             title: helptextVmwareSnapshot.connect_err_dialog.title,
             message: helptextVmwareSnapshot.connect_err_dialog.msg,

@@ -101,7 +101,7 @@ export class InstanceEditFormComponent {
           this.snackbar.success(this.translate.instant('Instance updated'));
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });

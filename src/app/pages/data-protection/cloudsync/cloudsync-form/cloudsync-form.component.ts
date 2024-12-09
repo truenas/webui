@@ -25,11 +25,11 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -61,6 +61,7 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -221,7 +222,8 @@ export class CloudSyncFormComponent implements OnInit {
     private api: ApiService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected matDialog: MatDialog,
@@ -413,21 +415,27 @@ export class CloudSyncFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();
           this.dialogService.closeAllDialogs();
+          this.cdr.markForCheck();
+          const apiError = extractApiError(error);
+          if (!apiError) {
+            this.errorHandler.handleError(error);
+            return;
+          }
+
           this.dialogService.confirm({
-            title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
-            message: error.reason,
+            title: apiError.extra ? (apiError.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${apiError.error}`,
+            message: apiError.reason,
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
             this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
           });
-          this.cdr.markForCheck();
         },
       });
   }
@@ -733,7 +741,7 @@ export class CloudSyncFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -760,7 +768,7 @@ export class CloudSyncFormComponent implements OnInit {
       catchError((error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         return EMPTY;
       }),
       untilDestroyed(this),

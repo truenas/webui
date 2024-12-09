@@ -94,7 +94,7 @@ export class FileTicketComponent {
       untilDestroyed(this),
     ).subscribe({
       next: (createdTicket) => this.onSuccess(createdTicket.url),
-      error: (error) => this.formErrorHandler.handleValidationErrors(error, this.form),
+      error: (error: unknown) => this.formErrorHandler.handleValidationErrors(error, this.form),
     });
   }
 

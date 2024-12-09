@@ -97,7 +97,7 @@ export class InstanceDiskFormComponent implements OnInit {
           });
           this.isLoading.set(false);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleValidationErrors(error, this.form);
           this.isLoading.set(false);
         },

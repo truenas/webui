@@ -101,7 +101,7 @@ export class GroupMembersComponent implements OnInit {
         this.isLoading.set(false);
         this.router.navigate(['/', 'credentials', 'groups']);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading.set(false);
         this.dialog.error(this.errorHandler.parseError(error));
       },

@@ -187,7 +187,7 @@ export class IscsiCardComponent implements OnInit {
       next: () => {
         this.dataProvider.load();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

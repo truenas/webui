@@ -89,7 +89,7 @@ describe('ServicesEffects', () => {
       actions$.next(adminUiInitialized());
 
       spectator.service.loadServices$.subscribe({
-        error: (err) => {
+        error: (err: unknown) => {
           expect(err).toEqual(error);
         },
       });

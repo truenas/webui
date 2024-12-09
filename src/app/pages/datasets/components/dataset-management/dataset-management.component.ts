@@ -40,6 +40,7 @@ import {
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -119,12 +120,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   emptyConf = computed<EmptyConfig>(() => {
     const error = this.error();
 
-    if (error?.reason) {
+    const apiError = extractApiError(error);
+    if (apiError?.reason) {
       return {
         type: EmptyType.Errors,
         large: true,
         title: this.translate.instant('Failed to load datasets'),
-        message: this.translate.instant(error.reason || error?.error?.toString()),
+        message: this.translate.instant(apiError.reason || apiError?.error?.toString()),
         button: {
           label: this.translate.instant('Retry'),
           action: () => this.datasetStore.loadDatasets(),
