@@ -15,12 +15,12 @@ import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 @UntilDestroy()
@@ -58,7 +58,7 @@ export class IsolatedGpusCardComponent implements OnInit {
   };
 
   constructor(
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
     private chainedSlideIns: ChainedSlideInService,
@@ -74,7 +74,7 @@ export class IsolatedGpusCardComponent implements OnInit {
   }
 
   onConfigurePressed(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(IsolatedGpusFormComponent)),
       filter((response) => !!response.response),
       tap(() => this.loadIsolatedGpus()),

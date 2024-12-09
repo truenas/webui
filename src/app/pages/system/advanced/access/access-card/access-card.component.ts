@@ -39,9 +39,9 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -143,7 +143,7 @@ export class AccessCardComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private api: ApiService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
   ) {}
@@ -161,7 +161,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   onConfigure(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIn.open(AccessFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
