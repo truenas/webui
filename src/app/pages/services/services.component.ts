@@ -199,7 +199,7 @@ export class ServicesComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         take(1),
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(serviceChanged({ service }));
           return of(EMPTY);

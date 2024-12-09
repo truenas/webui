@@ -49,7 +49,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
               isLoading: false,
             });
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.patchState({ isLoading: false, devices: [] });
             this.errorHandler.showErrorModal(error);
             return EMPTY;

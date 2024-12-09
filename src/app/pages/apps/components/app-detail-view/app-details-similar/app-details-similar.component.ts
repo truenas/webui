@@ -51,7 +51,7 @@ export class AppDetailsSimilarComponent implements OnChanges {
         this.isLoading.set(false);
         this.similarApps.set(apps.slice(0, this.maxSimilarApps));
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading.set(false);
         console.error(error);
         this.loadingError.set(error);

@@ -131,7 +131,7 @@ export class AppBulkUpgradeComponent {
           });
           this.loadingMap.set(name, false);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           console.error(error);
           this.loadingMap.set(name, false);
         },

@@ -56,7 +56,7 @@ export class IdentifyLightComponent {
       slot: slot.drive_bay_number,
     }])
       .pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store.changeLightStatus({
             status: oldStatus,

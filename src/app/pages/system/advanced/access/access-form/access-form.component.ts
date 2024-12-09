@@ -137,7 +137,7 @@ export class AccessFormComponent implements OnInit {
                 this.showSuccessNotificationAndClose();
                 this.cdr.markForCheck();
               },
-              error: (error) => {
+              error: (error: unknown) => {
                 this.isLoading = false;
                 this.dialogService.error(this.errorHandler.parseError(error));
                 this.cdr.markForCheck();
