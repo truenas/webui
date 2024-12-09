@@ -32,13 +32,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -119,7 +119,7 @@ export class InitShutdownCardComponent implements OnInit {
     private api: ApiService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
     private chainedSlideIns: ChainedSlideInService,
   ) {}
@@ -166,7 +166,7 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   private openForm(row?: InitShutdownScript): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(InitShutdownFormComponent, false, row)),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),

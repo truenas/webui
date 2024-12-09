@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
@@ -15,6 +14,7 @@ import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('ReplicationSettingsCardComponent', () => {
   let spectator: Spectator<ReplicationSettingsCardComponent>;
@@ -28,7 +28,7 @@ describe('ReplicationSettingsCardComponent', () => {
           max_parallel_replication_tasks: 5,
         }),
       ]),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(ChainedSlideInService, {
@@ -56,7 +56,7 @@ describe('ReplicationSettingsCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
       spectator.inject(ChainedSlideInService).open,
     ).toHaveBeenCalledWith(

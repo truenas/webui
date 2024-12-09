@@ -17,12 +17,12 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { replicationSettingsCardElements } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.elements';
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -66,11 +66,11 @@ export class ReplicationSettingsCardComponent {
   constructor(
     private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(
         ReplicationSettingsFormComponent,
         false,

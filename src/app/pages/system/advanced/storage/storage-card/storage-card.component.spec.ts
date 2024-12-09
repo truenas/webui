@@ -7,12 +7,12 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('StorageCardComponent', () => {
   let spectator: Spectator<StorageCardComponent>;
@@ -26,7 +26,7 @@ describe('StorageCardComponent', () => {
           pool: 'tank',
         } as SystemDatasetConfig),
       ]),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(ChainedSlideInService, {
@@ -53,7 +53,7 @@ describe('StorageCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
       spectator.inject(ChainedSlideInService).open,
     ).toHaveBeenCalledWith(

@@ -108,8 +108,10 @@ export const helptextCloudSync = {
  are available in the \
  <a href="https://rclone.org/crypt/#file-formats" target="_blank">rclone crypt File formats documentation</a>.'),
 
-  filename_encryption_placeholder: T('Filename Encryption'),
-  filename_encryption_tooltip: T('Encrypt (<i>PUSH</i>) or decrypt \
+  filename_encryption_placeholder: T('Filename Encryption (not recommended)'),
+  filename_encryption_tooltip: T('<i>This option is experimental in rclone and we recommend you do not use it. \
+ It may not work correctly with long filenames.</i><br><br> \
+ Encrypt (<i>PUSH</i>) or decrypt \
  (<i>PULL</i>) file names with the rclone \
  <a href="https://rclone.org/crypt/#file-name-encryption-modes" target="_blank">"Standard" file name encryption mode</a>. \
  The original directory structure is preserved. A filename with the same \

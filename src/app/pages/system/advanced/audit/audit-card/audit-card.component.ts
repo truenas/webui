@@ -14,10 +14,10 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy(this)
@@ -59,11 +59,11 @@ export class AuditCardComponent {
     private chainedSlideIns: ChainedSlideInService,
     private api: ApiService,
     private translate: TranslateService,
-    private advancedSettingsService: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(AuditFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
