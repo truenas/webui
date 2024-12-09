@@ -137,7 +137,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.isLoadingSchemas = false;

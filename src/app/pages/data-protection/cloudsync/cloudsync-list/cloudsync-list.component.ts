@@ -200,7 +200,7 @@ export class CloudSyncListComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getCloudSyncTasks();
         this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
@@ -246,7 +246,7 @@ export class CloudSyncListComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getCloudSyncTasks();
         this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
@@ -309,7 +309,7 @@ export class CloudSyncListComponent implements OnInit {
         );
         this.getCloudSyncTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

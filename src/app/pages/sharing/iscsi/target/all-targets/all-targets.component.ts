@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
   OnInit,
+  signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,6 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class AllTargetsComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
+  targets = signal<IscsiTarget[]>(null);
 
   readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
@@ -61,6 +63,8 @@ export class AllTargetsComponent implements OnInit {
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
       tap((targets) => {
+        this.targets.set(targets);
+
         const firstTarget = targets[targets.length - 1];
         if (!this.dataProvider.expandedRow && firstTarget) {
           this.dataProvider.expandedRow = firstTarget;

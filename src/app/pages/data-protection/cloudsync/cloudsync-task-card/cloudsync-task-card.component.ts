@@ -197,7 +197,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       next: () => {
         this.getCloudSyncTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

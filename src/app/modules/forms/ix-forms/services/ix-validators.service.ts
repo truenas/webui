@@ -3,7 +3,7 @@ import {
   AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import isCidr from 'is-cidr';
+import * as isCidr from 'is-cidr';
 
 @Injectable({
   providedIn: 'root',

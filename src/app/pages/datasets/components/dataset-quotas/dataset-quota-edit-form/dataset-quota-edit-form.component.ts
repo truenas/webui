@@ -16,9 +16,7 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -163,7 +161,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         });
         this.cdr.markForCheck();
       }),
-      catchError((error: ApiError | Job) => {
+      catchError((error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();

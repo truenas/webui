@@ -78,7 +78,7 @@ export class IpmiEventsDialogComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -107,7 +107,7 @@ export class IpmiEventsDialogComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.cdr.markForCheck();
