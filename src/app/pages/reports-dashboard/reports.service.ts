@@ -67,6 +67,8 @@ export class ReportsService {
           reportingData.data = this.truncateData(reportingData.data as number[][]);
         }
 
+        reportingData.data = this.removeDstGaps(reportingData.data as number[][]);
+
         return reportingData;
       }),
       map((reportingData) => optimizeLegend(reportingData)),
@@ -92,6 +94,22 @@ export class ReportsService {
       }
       index--;
     } while (!finished && data.length > 0);
+
+    return data;
+  }
+
+  removeDstGaps(data: number[][]): number[][] {
+    const hourGap = 3600; // one hour
+
+    data.forEach((_, idx) => {
+      if (idx < data.length - 1) {
+        const delta = data[idx + 1][0] - data[idx][0];
+        if (hourGap < delta) {
+          const gap = Math.floor(delta / hourGap) * hourGap;
+          data[idx + 1][0] = data[idx + 1][0] - gap;
+        }
+      }
+    });
 
     return data;
   }
