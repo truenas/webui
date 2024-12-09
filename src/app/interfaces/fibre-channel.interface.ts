@@ -24,3 +24,19 @@ export type FibreChannelPortChoices = Record<string, {
   wwpn: string;
   wwpn_b: string;
 }>;
+
+export interface FibreChannelStatusNode {
+  port_type: string;
+  port_state: string;
+  speed: string;
+  physical: boolean;
+  wwpn?: string;
+  wwpn_b?: string;
+  sessions: unknown[];
+}
+
+export interface FibreChannelStatus {
+  port: string;
+  A: FibreChannelStatusNode;
+  B: FibreChannelStatusNode;
+}

@@ -2632,6 +2632,25 @@
   {
     "hierarchy": [
       "Shares",
+      "iSCSI",
+      "Fibre Channel Ports"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "fibre-channel-ports"
+    ],
+    "routerLink": null,
+    "anchor": "shares-iscsi-fibre-channel-ports",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
       "Initiators",
       "Add Initiator"
     ],
