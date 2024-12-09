@@ -30,7 +30,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import {
   ChartFormValue,
@@ -202,7 +201,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           });
           this.afterAppLoaded();
         },
-        error: (error: ApiError) => this.afterAppLoadError(error),
+        error: (error: unknown) => this.afterAppLoadError(error),
       });
   }
 
@@ -334,7 +333,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           this.setAppForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: ApiError) => this.afterAppLoadError(error),
+        error: (error: unknown) => this.afterAppLoadError(error),
       });
   }
 

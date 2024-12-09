@@ -69,7 +69,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
               isLoading: false,
             });
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.patchState({ isLoading: false, instances: [] });
             this.errorHandler.showErrorModal(error);
             return undefined;

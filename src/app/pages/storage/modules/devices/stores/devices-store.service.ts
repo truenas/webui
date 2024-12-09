@@ -5,7 +5,6 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
@@ -16,7 +15,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export interface DevicesState {
   isLoading: boolean;
   poolId: number | null;
-  error: ApiError | null;
+  error: unknown;
   nodes: DeviceNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
@@ -92,7 +91,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error: ApiError) => {
+              catchError((error: unknown) => {
                 this.patchState({
                   isLoading: false,
                   error,
