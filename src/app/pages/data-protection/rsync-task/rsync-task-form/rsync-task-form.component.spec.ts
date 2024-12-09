@@ -160,6 +160,7 @@ describe('RsyncTaskFormComponent', () => {
         recursive: false,
         remotehost: 'pentagon.gov',
         remotemodule: 'module',
+        ssh_credentials: null,
         schedule: {
           dom: '*', dow: '*', hour: '2', minute: '0', month: '*',
         },
@@ -229,6 +230,7 @@ describe('RsyncTaskFormComponent', () => {
           ...existingTask,
           path: '/mnt/new',
           direction: Direction.Push,
+          ssh_credentials: null,
           times: false,
           compress: false,
           delayupdates: true,
