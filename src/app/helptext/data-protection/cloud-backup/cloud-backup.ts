@@ -39,6 +39,9 @@ export const helptextCloudBackup = {
   snapshot_placeholder: T('Take Snapshot'),
   snapshot_tooltip: T('Set to take a snapshot of the dataset before a <i>PUSH</i>.'),
 
+  absolute_paths_placeholder: T('Use Absolute Paths'),
+  absolute_paths_tooltip: T('Determines whether restic backup will contain absolute or relative paths'),
+
   transfers_placeholder: T('Transfers'),
   transfers_tooltip: T('Number of simultaneous file transfers. Enter a\
  number based on the available bandwidth and destination system\
