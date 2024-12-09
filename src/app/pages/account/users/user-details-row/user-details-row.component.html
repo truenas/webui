@@ -9,7 +9,7 @@
   </button>
 
   <ng-container *ixRequiresRoles="[Role.AccountWrite]">
-    @if (!user().immutable) {
+    @if (!user().immutable && loggedInUser().pw_name !== user().username) {
       <button
         mat-button
         [ixTest]="['delete', user().username]"
