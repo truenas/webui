@@ -34,7 +34,7 @@ export class SnapshotEffects {
         },
       ]).pipe(
         map((snapshots) => snapshotsLoaded({ snapshots })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(snapshotsNotLoaded({

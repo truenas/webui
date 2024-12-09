@@ -39,7 +39,7 @@ export class PoolWizardNameValidationService {
                 invalidPoolName: true,
               });
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             const errorReports = this.errorHandler.parseError(error) as ErrorReport;
             return of({
               customValidator: {

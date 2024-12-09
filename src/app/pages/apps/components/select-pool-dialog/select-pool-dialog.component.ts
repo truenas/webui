@@ -105,7 +105,7 @@ export class SelectPoolDialogComponent implements OnInit {
             this.showNoPoolsWarning();
           }
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.dialogRef.close(false);
         },

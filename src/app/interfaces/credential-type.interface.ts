@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum CredentialType {
+  TwoFactor = 'LOGIN_TWOFACTOR',
   UnixSocket = 'UNIX_SOCKET',
   RootTcpSocket = 'ROOT_TCP_SOCKET',
   LoginPassword = 'LOGIN_PASSWORD',
@@ -18,6 +19,7 @@ export interface Credentials {
 }
 
 export const credentialTypeLabels = new Map<CredentialType, string>([
+  [CredentialType.TwoFactor, T('Two-Factor Authentication')],
   [CredentialType.UnixSocket, T('Unix Socket')],
   [CredentialType.RootTcpSocket, T('Root TCP Socket')],
   [CredentialType.LoginPassword, T('Password Login')],

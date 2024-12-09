@@ -106,7 +106,7 @@ export class ResilverConfigComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.dialogService.error(this.errorHandler.parseError(error));

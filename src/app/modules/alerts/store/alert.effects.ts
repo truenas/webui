@@ -37,7 +37,7 @@ export class AlertEffects {
     switchMap(() => {
       return this.api.call('alert.list').pipe(
         map((alerts) => alertsLoaded({ alerts })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(alertsNotLoaded({
@@ -81,7 +81,7 @@ export class AlertEffects {
     ofType(dismissAlertPressed),
     mergeMap(({ id }) => {
       return this.api.call('alert.dismiss', [id]).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
           return of(EMPTY);
@@ -94,7 +94,7 @@ export class AlertEffects {
     ofType(reopenAlertPressed),
     mergeMap(({ id }) => {
       return this.api.call('alert.restore', [id]).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
           return of(EMPTY);
@@ -109,7 +109,7 @@ export class AlertEffects {
     mergeMap(([, [unreadAlerts]]) => {
       const requests = unreadAlerts.map((alert) => this.api.call('alert.dismiss', [alert.id]));
       return forkJoin(requests).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertsDismissedChanged({ dismissed: false }));
           return of(EMPTY);
@@ -125,7 +125,7 @@ export class AlertEffects {
     mergeMap(([, [dismissedAlerts]]) => {
       const requests = dismissedAlerts.map((alert) => this.api.call('alert.restore', [alert.id]));
       return forkJoin(requests).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertsDismissedChanged({ dismissed: true }));
           return of(EMPTY);

@@ -93,7 +93,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         return this.api.call('core.download', [downloadMethod, [customArguments], url]);
       }),
       switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename()}.${this.fileType()}`, this.fileMimeType())),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.dialogService.error(this.errorHandler.parseError(error));

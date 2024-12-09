@@ -274,9 +274,9 @@ export class SshConnectionFormComponent implements OnInit {
     }
 
     return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
-      catchError((error) => {
+      catchError((error: unknown) => {
         const apiError = extractApiError(error);
-        if (apiError.errname?.includes(sslCertificationError) || apiError.reason?.includes(sslCertificationError)) {
+        if (apiError?.errname?.includes(sslCertificationError) || apiError?.reason?.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
