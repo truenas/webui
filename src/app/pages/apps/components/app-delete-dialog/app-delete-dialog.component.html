@@ -6,15 +6,22 @@
     {{ 'Delete {name}?' | translate: { name: data.name } }}
   </p>
 
-  @if(data.showRemoveVolumes) {
+  @if (data.showRemoveVolumes) {
     <ix-checkbox
-      formControlName="remove_volumes"
+      formControlName="removeVolumes"
       [label]="'Remove iXVolumes' | translate"
     ></ix-checkbox>
+
+    @if (data.showRemoveVolumes && form.value.removeVolumes) {
+      <ix-checkbox
+        formControlName="forceRemoveVolumes"
+        [label]="'Force-remove iXVolumes' | translate"
+      ></ix-checkbox>
+    }
   }
 
   <ix-checkbox
-    formControlName="remove_images"
+    formControlName="removeImages"
     [label]="'Remove Images' | translate"
   ></ix-checkbox>
 

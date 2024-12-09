@@ -53,6 +53,25 @@ describe('AppDeleteDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       removeImages: true,
       removeVolumes: true,
+      forceRemoveVolumes: false,
+    });
+  });
+
+  it('shows force remove volumes checkbox when Remove iXVolumes is selected', async () => {
+    expect(await form.getLabels()).not.toContain('Force-remove iXVolumes');
+
+    await form.fillForm({
+      'Remove iXVolumes': true,
+      'Force-remove iXVolumes': true,
+    });
+
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
+    await deleteButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      removeImages: true,
+      removeVolumes: true,
+      forceRemoveVolumes: true,
     });
   });
 });

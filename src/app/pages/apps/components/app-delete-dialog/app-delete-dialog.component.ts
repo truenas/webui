@@ -33,8 +33,9 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
 })
 export class AppDeleteDialogComponent {
   form = this.formBuilder.group({
-    remove_volumes: [false],
-    remove_images: [true],
+    removeVolumes: [false],
+    removeImages: [true],
+    forceRemoveVolumes: [false],
   });
 
   constructor(
@@ -44,9 +45,6 @@ export class AppDeleteDialogComponent {
   ) { }
 
   onSubmit(): void {
-    this.dialogRef.close({
-      removeVolumes: this.form.value.remove_volumes,
-      removeImages: this.form.value.remove_images,
-    });
+    this.dialogRef.close(this.form.getRawValue());
   }
 }

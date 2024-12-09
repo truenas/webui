@@ -1370,6 +1370,7 @@
   "Force the VM to stop if it has not already  stopped within the specified shutdown timeout. Without this option selected, the VM will  receive the shutdown signal, but may or may not complete the shutdown process.": "",
   "Force unmount": "",
   "Force using  <a href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html\"  target=\"_blank\">Signature Version 2</a> to sign API requests.  Set this only  if your AWS provider does not support default version 4 signatures.": "",
+  "Force-remove iXVolumes": "",
   "Forces the addition of the <b>NTP</b> server, even if it is currently unreachable.": "",
   "Forcing the other TrueNAS controller to  become active requires a failover. This will temporarily interrupt  system services. After confirmation, <b>SAVE AND FAILOVER</b> must  be clicked on the previous screen.": "",
   "Forums": "",
