@@ -23,7 +23,9 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const instance = {
@@ -61,8 +63,16 @@ describe('InstanceGeneralInfoComponent', () => {
     providers: [
       IxFormatterService,
       mockAuth(),
-      mockProvider(SlideInService, {
-        open: jest.fn(),
+      mockProvider(ChainedSlideInService, {
+        open: jest.fn(() => of({
+          response: { id: 'updated_instance' },
+        })),
+      }),
+      mockProvider(VirtualizationDevicesStore, {
+        selectedInstance: jest.fn(),
+      }),
+      mockProvider(VirtualizationInstancesStore, {
+        instanceUpdated: jest.fn(),
       }),
       mockApi([
         mockJob('virt.instance.delete', fakeSuccessfulJob()),
@@ -136,8 +146,11 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(InstanceEditFormComponent, {
-      data: instance,
-    });
+    expect(spectator.inject(ChainedSlideInService).open)
+      .toHaveBeenCalledWith(InstanceEditFormComponent, false, instance);
+    expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
+      .toHaveBeenCalledWith({ id: 'updated_instance' });
+    expect(spectator.inject(VirtualizationDevicesStore).selectInstance)
+      .toHaveBeenCalledWith('updated_instance');
   });
 });

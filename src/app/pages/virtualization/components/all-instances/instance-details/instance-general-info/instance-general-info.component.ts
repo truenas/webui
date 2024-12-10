@@ -11,7 +11,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
@@ -22,8 +22,10 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
+import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
+import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
+import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -66,11 +68,18 @@ export class InstanceGeneralInfoComponent {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
-    private slideInService: SlideInService,
+    private slideIn: ChainedSlideInService,
+    private instancesStore: VirtualizationInstancesStore,
+    private deviceStore: VirtualizationDevicesStore,
   ) {}
 
   editInstance(): void {
-    this.slideInService.open(InstanceEditFormComponent, { data: this.instance() });
+    this.slideIn.open(InstanceEditFormComponent, false, this.instance())
+      .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
+      .subscribe((instance: VirtualizationInstance) => {
+        this.instancesStore.instanceUpdated(instance);
+        this.deviceStore.selectInstance(instance.id);
+      });
   }
 
   deleteInstance(): void {

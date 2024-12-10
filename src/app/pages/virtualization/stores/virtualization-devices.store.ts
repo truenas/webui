@@ -66,7 +66,7 @@ export class VirtualizationDevicesStore extends ComponentStore<VirtualizationIns
       return;
     }
     const oldSelectedInstance = this.selectedInstance();
-    if (!selectedInstance || selectedInstance?.id === oldSelectedInstance?.id) {
+    if (!selectedInstance || selectedInstance === oldSelectedInstance) {
       return;
     }
 
