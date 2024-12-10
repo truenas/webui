@@ -16,13 +16,13 @@ export class NavigateAndInteractService {
       setTimeout(() => {
         const htmlElement = this.window.document.getElementById(hash);
         if (htmlElement) {
-          this.handleHashScrollIntoView(htmlElement);
+          this.scrollIntoView(htmlElement);
         }
       }, 150);
     });
   }
 
-  handleHashScrollIntoView(htmlElement: HTMLElement): void {
+  scrollIntoView(htmlElement: HTMLElement): void {
     const highlightedClass = 'highlighted-element';
     htmlElement.scrollIntoView({ block: 'center' });
     htmlElement.classList.add(highlightedClass);

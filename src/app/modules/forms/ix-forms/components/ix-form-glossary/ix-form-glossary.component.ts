@@ -162,7 +162,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   protected onSectionClick(section: IxFormSectionComponent): void {
-    this.navigateAndInteractService.handleHashScrollIntoView(section.elementRef.nativeElement);
+    this.navigateAndInteractService.scrollIntoView(section.elementRef.nativeElement);
   }
 
   private handleSearchControl(): void {
@@ -186,6 +186,6 @@ export class IxFormGlossaryComponent implements OnInit {
       return;
     }
 
-    this.navigateAndInteractService.handleHashScrollIntoView(element);
+    this.navigateAndInteractService.scrollIntoView(element);
   }
 }
