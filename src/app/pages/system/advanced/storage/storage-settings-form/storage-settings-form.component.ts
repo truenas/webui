@@ -41,6 +41,7 @@ export interface StorageSettings {
   selector: 'ix-storage-settings-form',
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

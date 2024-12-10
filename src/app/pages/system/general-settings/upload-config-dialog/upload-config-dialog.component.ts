@@ -22,6 +22,7 @@ import { UploadService } from 'app/services/upload.service';
   templateUrl: './upload-config-dialog.component.html',
   styleUrls: ['./upload-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

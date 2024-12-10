@@ -55,6 +55,7 @@ import { waitForAdvancedConfig, waitForGeneralConfig } from 'app/store/system-co
   styleUrls: ['../../common-card.scss'],
   templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

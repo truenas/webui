@@ -28,6 +28,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   selector: 'ix-manage-configuration-menu',
   templateUrl: './manage-configuration-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,

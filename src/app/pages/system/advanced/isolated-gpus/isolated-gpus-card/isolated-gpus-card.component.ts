@@ -29,6 +29,7 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   styleUrls: ['../../common-card.scss'],
   templateUrl: './isolated-gpus-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

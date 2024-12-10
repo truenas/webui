@@ -48,6 +48,7 @@ export interface ContainerImageUi extends ContainerImage {
   styleUrls: ['./docker-images-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FileSizePipe],
+  standalone: true,
   imports: [
     TranslateModule,
     PageHeaderComponent,

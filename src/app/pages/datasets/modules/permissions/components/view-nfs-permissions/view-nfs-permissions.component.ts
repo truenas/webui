@@ -30,6 +30,7 @@ interface PermissionDetails {
   templateUrl: 'view-nfs-permissions.component.html',
   styleUrls: ['./view-nfs-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CdkAccordion,
     CdkAccordionItem,

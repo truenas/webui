@@ -26,6 +26,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-service-state-column',
   templateUrl: './service-state-column.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatSlideToggle,

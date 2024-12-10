@@ -17,6 +17,7 @@ import {
   templateUrl: './chained-slide-in.component.html',
   styleUrls: ['./chained-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [SlideIn2Component, AsyncPipe],
 })
 export class ChainedSlideInComponent implements OnInit, OnDestroy {

@@ -16,6 +16,7 @@ import { MiniSlotStatusComponent } from './mini-slot-status/mini-slot-status.com
   templateUrl: './mini-enclosure.component.html',
   styleUrl: './mini-enclosure.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     EnclosureSideComponent,
     MiniSlotStatusComponent,

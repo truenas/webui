@@ -24,6 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-empty-row.component.html',
   styleUrls: ['./ix-empty-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CdkPortalOutlet,
     MatProgressSpinner,

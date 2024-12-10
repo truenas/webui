@@ -20,6 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './job-item.component.html',
   styleUrls: ['./job-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatTooltip,
     MatProgressBar,

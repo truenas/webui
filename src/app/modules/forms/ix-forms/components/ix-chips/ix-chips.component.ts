@@ -38,6 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-chips.component.html',
   styleUrls: ['./ix-chips.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatChipGrid,

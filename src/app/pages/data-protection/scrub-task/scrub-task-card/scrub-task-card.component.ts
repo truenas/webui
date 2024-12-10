@@ -40,6 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './scrub-task-card.component.html',
   styleUrls: ['./scrub-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

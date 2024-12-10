@@ -11,6 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './new-page-badge.component.html',
   styleUrls: ['./new-page-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IfNightlyDirective,
     MatButton,

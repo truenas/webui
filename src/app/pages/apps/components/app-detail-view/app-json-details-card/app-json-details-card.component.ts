@@ -13,6 +13,7 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
   templateUrl: './app-json-details-card.component.html',
   styleUrls: ['./app-json-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     TranslateModule,

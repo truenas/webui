@@ -24,6 +24,7 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   templateUrl: './manual-selection-disk-filters.component.html',
   styleUrls: ['./manual-selection-disk-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

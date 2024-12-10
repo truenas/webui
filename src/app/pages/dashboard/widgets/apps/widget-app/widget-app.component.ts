@@ -23,6 +23,7 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   templateUrl: './widget-app.component.html',
   styleUrls: ['./widget-app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     WithLoadingStateDirective,

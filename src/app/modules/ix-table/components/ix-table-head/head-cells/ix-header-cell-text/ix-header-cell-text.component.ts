@@ -6,6 +6,7 @@ import { ColumnComponent } from 'app/modules/ix-table/interfaces/column-componen
   selector: 'ix-header-cell-text',
   templateUrl: './ix-header-cell-text.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule],
 })
 export class IxHeaderCellTextComponent<T> extends ColumnComponent<T> {}

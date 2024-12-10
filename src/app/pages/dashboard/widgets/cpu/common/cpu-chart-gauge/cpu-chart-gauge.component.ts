@@ -12,6 +12,7 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   selector: 'ix-cpu-chart-gauge',
   templateUrl: './cpu-chart-gauge.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [NgxSkeletonLoaderModule, ViewChartGaugeComponent],
 })
 export class CpuChartGaugeComponent {

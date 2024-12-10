@@ -40,6 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

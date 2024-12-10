@@ -29,6 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-certificate-import',
   templateUrl: './certificate-import.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxTextareaComponent,

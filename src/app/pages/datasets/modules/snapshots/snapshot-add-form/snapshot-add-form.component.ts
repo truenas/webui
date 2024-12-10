@@ -46,6 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,

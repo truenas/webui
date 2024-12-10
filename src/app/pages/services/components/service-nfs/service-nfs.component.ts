@@ -48,6 +48,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './service-nfs.component.html',
   styleUrls: ['./service-nfs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,
@@ -63,6 +64,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
     TestDirective,
     TooltipComponent,
     TranslateModule,
+
   ],
 })
 export class ServiceNfsComponent implements OnInit {

@@ -41,6 +41,7 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   templateUrl: './failover-settings.component.html',
   styleUrls: ['./failover-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

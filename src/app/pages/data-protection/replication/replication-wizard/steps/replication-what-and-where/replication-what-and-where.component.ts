@@ -54,6 +54,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./replication-what-and-where.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, DatePipe, KeychainCredentialService],
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

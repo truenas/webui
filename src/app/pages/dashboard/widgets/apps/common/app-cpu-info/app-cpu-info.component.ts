@@ -8,6 +8,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
   selector: 'ix-app-cpu-info',
   templateUrl: './app-cpu-info.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [WithLoadingStateDirective, TranslateModule],
 })
 export class AppCpuInfoComponent {

@@ -43,6 +43,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './app-bulk-upgrade.component.html',
   styleUrls: ['./app-bulk-upgrade.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

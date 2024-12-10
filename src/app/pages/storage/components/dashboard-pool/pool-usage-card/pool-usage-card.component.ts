@@ -30,6 +30,7 @@ const maxPct = 80;
   templateUrl: './pool-usage-card.component.html',
   styleUrls: ['./pool-usage-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

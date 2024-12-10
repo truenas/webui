@@ -24,6 +24,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './custom-app-button.component.html',
   styleUrls: ['./custom-app-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatTooltip,
     MatButton,

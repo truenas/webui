@@ -19,6 +19,7 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
     './widget-app-memory.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     WithLoadingStateDirective,

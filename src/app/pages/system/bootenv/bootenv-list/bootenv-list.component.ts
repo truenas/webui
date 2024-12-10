@@ -63,6 +63,7 @@ interface BootEnvironmentUi extends BootEnvironment {
   providers: [
     { provide: MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS, useValue: { disableToggleValue: true } },
   ],
+  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

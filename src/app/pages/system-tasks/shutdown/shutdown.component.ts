@@ -17,6 +17,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

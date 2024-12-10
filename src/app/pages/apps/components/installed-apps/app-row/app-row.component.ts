@@ -25,6 +25,7 @@ import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps
   templateUrl: './app-row.component.html',
   styleUrls: ['./app-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCheckbox,
     TestDirective,

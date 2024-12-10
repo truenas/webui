@@ -26,6 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './search-input1.component.html',
   styleUrls: ['./search-input1.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     TranslateModule,

@@ -28,6 +28,7 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   templateUrl: './pool-warnings.component.html',
   styleUrls: ['./pool-warnings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     WarningComponent,

@@ -18,6 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

@@ -13,6 +13,7 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
   templateUrl: './backup-task-tile.component.html',
   styleUrls: ['./backup-task-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     TranslateModule,

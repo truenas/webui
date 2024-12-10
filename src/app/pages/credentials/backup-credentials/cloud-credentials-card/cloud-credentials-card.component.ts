@@ -40,6 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./cloud-credentials-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

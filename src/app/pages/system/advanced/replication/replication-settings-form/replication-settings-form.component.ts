@@ -26,6 +26,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-replication-settings-form',
   templateUrl: 'replication-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

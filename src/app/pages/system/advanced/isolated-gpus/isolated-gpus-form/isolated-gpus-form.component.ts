@@ -29,6 +29,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   selector: 'ix-isolated-gpus-form',
   templateUrl: './isolated-gpus-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

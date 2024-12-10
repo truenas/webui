@@ -30,6 +30,7 @@ export interface SetEnclosureLabelDialogData {
   templateUrl: './set-enclosure-label-dialog.component.html',
   styleUrls: ['./set-enclosure-label-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

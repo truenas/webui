@@ -56,6 +56,7 @@ import { selectService } from 'app/store/services/services.selectors';
   selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

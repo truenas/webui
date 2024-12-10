@@ -44,6 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-init-shutdown-list',
   templateUrl: './init-shutdown-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

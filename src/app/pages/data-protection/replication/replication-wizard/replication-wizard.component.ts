@@ -55,6 +55,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./replication-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

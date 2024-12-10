@@ -8,6 +8,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButtonModule,
     IxIconComponent,

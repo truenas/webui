@@ -19,6 +19,7 @@ import { poolLastScanErrorsWidget } from 'app/pages/dashboard/widgets/storage/wi
   templateUrl: './widget-pool-last-scan-errors.component.html',
   styleUrls: ['./widget-pool-last-scan-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

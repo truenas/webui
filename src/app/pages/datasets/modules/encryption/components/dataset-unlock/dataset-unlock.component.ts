@@ -48,6 +48,7 @@ interface DatasetFormGroup {
   templateUrl: './dataset-unlock.component.html',
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

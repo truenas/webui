@@ -16,6 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './unused-disk-card.component.html',
   styleUrls: ['./unused-disk-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

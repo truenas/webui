@@ -30,6 +30,7 @@ export enum DispersalStrategy {
   templateUrl: './enclosure-wizard-step.component.html',
   styleUrls: ['./enclosure-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxRadioGroupComponent,

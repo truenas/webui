@@ -14,6 +14,7 @@ import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-
   templateUrl: './widget-cpu-temperature-bar.component.html',
   styleUrls: ['./widget-cpu-temperature-bar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [CpuCoreBarComponent, TranslateModule],
 })
 export class WidgetCpuTemperatureBarComponent implements WidgetComponent {

@@ -12,6 +12,7 @@ import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button
   selector: 'ix-event-data-details-card',
   templateUrl: './event-data-details-card.component.html',
   styleUrls: ['./event-data-details-card.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CopyButtonComponent,

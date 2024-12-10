@@ -39,6 +39,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 @Component({
   selector: 'ix-unused-disk-select',
   templateUrl: './unused-disk-select.component.html',
+  standalone: true,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

@@ -26,6 +26,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './manage-disk-sed-dialog.component.html',
   styleUrls: ['./manage-disk-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

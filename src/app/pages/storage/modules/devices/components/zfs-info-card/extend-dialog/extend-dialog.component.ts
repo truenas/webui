@@ -31,6 +31,7 @@ export interface ExtendDialogParams {
   templateUrl: './extend-dialog.component.html',
   styleUrls: ['./extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

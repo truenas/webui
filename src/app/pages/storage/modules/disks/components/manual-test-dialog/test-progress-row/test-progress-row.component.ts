@@ -24,6 +24,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './test-progress-row.component.html',
   styleUrl: './test-progress-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     MatProgressBar,

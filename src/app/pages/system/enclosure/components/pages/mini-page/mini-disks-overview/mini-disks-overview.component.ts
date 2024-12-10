@@ -11,6 +11,7 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
   templateUrl: './mini-disks-overview.component.html',
   styleUrl: './mini-disks-overview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule],
 })
 export class MiniDisksOverviewComponent {

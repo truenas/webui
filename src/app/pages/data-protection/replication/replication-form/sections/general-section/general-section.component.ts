@@ -19,6 +19,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
   selector: 'ix-replication-general-section',
   templateUrl: './general-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

@@ -59,6 +59,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './rsync-task-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CrontabExplanationPipe],
+  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

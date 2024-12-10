@@ -18,6 +18,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   templateUrl: './ix-table-head.component.html',
   styleUrls: ['ix-table-head.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     NgClass,
     NgStyle,

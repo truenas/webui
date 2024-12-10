@@ -19,6 +19,7 @@ import { poolStatusWidget } from 'app/pages/dashboard/widgets/storage/widget-poo
   templateUrl: './widget-pool-status.component.html',
   styleUrls: ['./widget-pool-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

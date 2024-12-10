@@ -23,6 +23,7 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
   templateUrl: './truecommand-status-modal.component.html',
   styleUrls: ['./truecommand-status-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDivider,

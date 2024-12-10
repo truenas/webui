@@ -18,6 +18,7 @@ import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info
   templateUrl: './about-dialog.component.html',
   styleUrls: ['./about-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     MatDialogContent,

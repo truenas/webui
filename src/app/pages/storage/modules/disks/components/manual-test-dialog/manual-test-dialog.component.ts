@@ -31,6 +31,7 @@ export interface ManualTestDialogParams {
   templateUrl: './manual-test-dialog.component.html',
   styleUrls: ['./manual-test-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

@@ -18,6 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './app-section-expand-collapse.component.html',
   styleUrls: ['./app-section-expand-collapse.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     MatButton,

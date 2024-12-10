@@ -30,6 +30,7 @@ export interface GeneralDialogConfig {
   templateUrl: './general-dialog.component.html',
   styleUrls: ['./general-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

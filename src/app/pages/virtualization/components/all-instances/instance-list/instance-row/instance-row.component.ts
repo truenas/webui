@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './instance-row.component.html',
   styleUrls: ['./instance-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     TestDirective,

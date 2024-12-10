@@ -32,6 +32,7 @@ import { ReportsService } from './reports.service';
   styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     ReportsGlobalControlsComponent,

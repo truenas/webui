@@ -34,6 +34,7 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
   templateUrl: './advanced-settings.component.html',
   styleUrls: ['./advanced-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     SaveDebugButtonComponent,

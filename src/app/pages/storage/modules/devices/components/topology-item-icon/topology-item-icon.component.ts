@@ -12,6 +12,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './topology-item-icon.component.html',
   styleUrls: ['./topology-item-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [IxIconComponent],
 })
 export class TopologyItemIconComponent {

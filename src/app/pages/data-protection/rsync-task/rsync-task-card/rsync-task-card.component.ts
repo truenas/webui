@@ -50,6 +50,7 @@ import { AppState } from 'app/store';
   templateUrl: './rsync-task-card.component.html',
   styleUrls: ['./rsync-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

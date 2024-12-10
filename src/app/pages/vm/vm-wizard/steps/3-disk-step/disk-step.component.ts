@@ -31,6 +31,7 @@ export enum NewOrExistingDisk {
   selector: 'ix-disk-step',
   templateUrl: './disk-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxRadioGroupComponent,

@@ -33,6 +33,7 @@ const defaultEncryptionStandard = 'AES-256-GCM';
   templateUrl: './general-wizard-step.component.html',
   styleUrls: ['./general-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

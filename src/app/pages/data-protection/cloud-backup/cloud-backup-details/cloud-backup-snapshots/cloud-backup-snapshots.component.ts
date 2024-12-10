@@ -43,6 +43,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './cloud-backup-snapshots.component.html',
   styleUrls: ['./cloud-backup-snapshots.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

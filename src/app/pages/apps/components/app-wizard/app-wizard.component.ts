@@ -77,6 +77,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './app-wizard.component.html',
   styleUrls: ['./app-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     ReadOnlyComponent,

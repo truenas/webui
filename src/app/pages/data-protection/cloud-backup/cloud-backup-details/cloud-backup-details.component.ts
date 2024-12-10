@@ -14,6 +14,7 @@ import { CloudBackupStatsComponent } from './cloud-backup-stats/cloud-backup-sta
   templateUrl: './cloud-backup-details.component.html',
   styleUrl: './cloud-backup-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CloudBackupScheduleComponent,
     CloudBackupStatsComponent,

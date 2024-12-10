@@ -18,6 +18,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
   templateUrl: './app-card.component.html',
   styleUrls: ['./app-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     MatTooltip,

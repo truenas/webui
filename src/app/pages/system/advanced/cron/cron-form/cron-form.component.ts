@@ -34,6 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-cron-form',
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

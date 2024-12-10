@@ -17,6 +17,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-permissions.component.html',
   styleUrls: ['./ix-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatCheckbox,

@@ -41,6 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-iscsi-portal-list',
   templateUrl: './portal-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -12,6 +12,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
   selector: 'ix-app-memory-info',
   templateUrl: './app-memory-info.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [WithLoadingStateDirective, TranslateModule],
 })
 export class AppMemoryInfoComponent {

@@ -12,6 +12,7 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
   templateUrl: './cloud-backup-excluded-paths.component.html',
   styleUrl: './cloud-backup-excluded-paths.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

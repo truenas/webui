@@ -21,6 +21,7 @@ import {
   templateUrl: './unlock-summary-dialog.component.html',
   styleUrls: ['./unlock-summary-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

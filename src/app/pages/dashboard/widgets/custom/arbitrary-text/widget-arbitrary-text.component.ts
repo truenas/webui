@@ -14,6 +14,7 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
   templateUrl: './widget-arbitrary-text.component.html',
   styleUrls: ['./widget-arbitrary-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [WidgetDatapointComponent, TranslateModule],
 })
 export class WidgetArbitraryTextComponent implements WidgetComponent {

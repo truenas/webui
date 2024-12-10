@@ -27,6 +27,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './hardware-disk-encryption.component.html',
   styleUrls: ['./hardware-disk-encryption.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

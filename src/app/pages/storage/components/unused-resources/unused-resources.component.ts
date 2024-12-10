@@ -20,6 +20,7 @@ import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.com
   templateUrl: './unused-resources.component.html',
   styleUrls: ['./unused-resources.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [UnusedDiskCardComponent, TranslateModule],
 })
 export class UnusedResourcesComponent implements OnInit {

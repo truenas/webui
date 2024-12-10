@@ -37,6 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './smart-info-card.component.html',
   styleUrls: ['./smart-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

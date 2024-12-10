@@ -24,6 +24,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './iscsi.component.html',
   styleUrls: ['./iscsi.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     RequiresRolesDirective,

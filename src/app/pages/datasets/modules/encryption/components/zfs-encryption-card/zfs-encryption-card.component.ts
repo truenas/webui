@@ -39,6 +39,7 @@ import { isEncryptionRoot, isPasswordEncrypted, isRootDataset } from 'app/pages/
   templateUrl: './zfs-encryption-card.component.html',
   styleUrls: ['./zfs-encryption-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

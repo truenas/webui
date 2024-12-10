@@ -8,6 +8,7 @@ import { shellElements } from 'app/pages/shell/shell.elements';
   selector: 'ix-shell',
   templateUrl: './shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [UiSearchDirective, TerminalComponent],
 })
 export class ShellComponent implements TerminalConfiguration {

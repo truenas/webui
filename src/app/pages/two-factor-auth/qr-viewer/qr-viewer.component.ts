@@ -13,6 +13,7 @@ import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/
   templateUrl: './qr-viewer.component.html',
   styleUrls: ['./qr-viewer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     WarningComponent,
     QrCodeModule,

@@ -14,6 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './multi-error-dialog.component.html',
   styleUrls: ['./multi-error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

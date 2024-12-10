@@ -17,6 +17,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './app-state-cell.component.html',
   styleUrls: ['./app-state-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule, MapValuePipe, MatTooltipModule, IxIconComponent],
 })
 export class AppStateCellComponent {

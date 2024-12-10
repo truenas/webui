@@ -15,6 +15,7 @@ import {
   selector: 'ix-log-details-panel',
   templateUrl: './log-details-panel.component.html',
   styleUrls: ['./log-details-panel.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     EventDataDetailsCardComponent,

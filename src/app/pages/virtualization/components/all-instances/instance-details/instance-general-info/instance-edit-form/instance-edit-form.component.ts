@@ -34,6 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-edit-form',
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     IxInputComponent,

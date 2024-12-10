@@ -59,6 +59,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./vm-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FileSizePipe],
+  standalone: true,
   imports: [
     PageHeaderComponent,
     WithLoadingStateDirective,

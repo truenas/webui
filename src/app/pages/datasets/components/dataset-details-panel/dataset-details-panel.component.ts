@@ -36,6 +36,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './dataset-details-panel.component.html',
   styleUrls: ['./dataset-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TestDirective,
     AsyncPipe,

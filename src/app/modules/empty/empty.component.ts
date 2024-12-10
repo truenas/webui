@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './empty.component.html',
   styleUrls: ['./empty.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButtonModule,
     TranslateModule,

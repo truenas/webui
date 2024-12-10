@@ -29,6 +29,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
       ]),
     ]),
   ],
+  standalone: true,
   imports: [MatProgressBar],
 })
 export class FakeProgressBarComponent implements OnChanges, OnDestroy {

@@ -39,6 +39,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-smart-task-form',
   templateUrl: './smart-task-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

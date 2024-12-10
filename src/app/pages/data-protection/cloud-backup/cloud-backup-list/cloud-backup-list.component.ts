@@ -56,6 +56,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './cloud-backup-list.component.html',
   styleUrl: './cloud-backup-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

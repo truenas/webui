@@ -17,6 +17,7 @@ import {
   selector: 'ix-google-photos-provider-form',
   templateUrl: './google-photos-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

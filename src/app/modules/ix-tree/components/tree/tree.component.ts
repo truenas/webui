@@ -19,6 +19,7 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 // eslint-disable-next-line @angular-eslint/use-component-selector
 @Component({
   template: '',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 // eslint-disable-next-line @angular-eslint/component-class-suffix

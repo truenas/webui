@@ -20,6 +20,7 @@ import {
   selector: 'ix-token-provider-form',
   templateUrl: './token-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     OauthProviderComponent,
     IxFieldsetComponent,

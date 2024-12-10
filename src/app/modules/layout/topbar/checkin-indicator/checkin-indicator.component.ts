@@ -24,6 +24,7 @@ import {
   selector: 'ix-checkin-indicator',
   templateUrl: './checkin-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

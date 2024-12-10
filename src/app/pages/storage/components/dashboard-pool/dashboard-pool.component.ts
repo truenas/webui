@@ -42,6 +42,7 @@ import { ZfsHealthCardComponent } from './zfs-health-card/zfs-health-card.compon
   templateUrl: './dashboard-pool.component.html',
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,

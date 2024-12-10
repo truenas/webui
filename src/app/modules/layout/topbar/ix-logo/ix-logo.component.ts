@@ -13,6 +13,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './ix-logo.component.html',
   styleUrls: ['./ix-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     AsyncPipe,

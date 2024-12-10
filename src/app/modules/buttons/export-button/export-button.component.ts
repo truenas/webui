@@ -31,6 +31,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   selector: 'ix-export-button',
   templateUrl: './export-button.component.html',
   styleUrls: ['./export-button.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatProgressBar,

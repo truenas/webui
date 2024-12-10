@@ -16,6 +16,7 @@ import { hostnameActiveWidget } from 'app/pages/dashboard/widgets/system/widget-
   templateUrl: './widget-hostname-active.component.html',
   styleUrls: ['./widget-hostname-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

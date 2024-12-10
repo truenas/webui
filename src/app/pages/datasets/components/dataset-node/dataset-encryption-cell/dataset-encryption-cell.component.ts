@@ -11,6 +11,7 @@ import { isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
   templateUrl: './dataset-encryption-cell.component.html',
   styleUrls: ['./dataset-encryption-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     IxIconComponent,

@@ -13,6 +13,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './pool-card-icon.component.html',
   styleUrls: ['./pool-card-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     MatTooltip,

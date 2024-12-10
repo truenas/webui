@@ -13,6 +13,7 @@ import { CertificateSigningRequestsListComponent } from './csr-list/csr-list.com
   templateUrl: './certificates-dash.component.html',
   styleUrls: ['./certificates-dash.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     UiSearchDirective,
     CertificateListComponent,

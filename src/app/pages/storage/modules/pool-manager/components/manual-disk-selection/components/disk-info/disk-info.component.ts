@@ -9,6 +9,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
   templateUrl: './disk-info.component.html',
   styleUrls: ['./disk-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule],
 })
 export class DiskInfoComponent {

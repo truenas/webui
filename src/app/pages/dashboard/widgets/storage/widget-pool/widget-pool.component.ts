@@ -27,6 +27,7 @@ import { PoolUsageGaugeComponent } from './common/pool-usage-gauge/pool-usage-ga
   templateUrl: './widget-pool.component.html',
   styleUrls: ['./widget-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

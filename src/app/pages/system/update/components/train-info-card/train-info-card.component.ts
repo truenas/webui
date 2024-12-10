@@ -16,6 +16,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   styleUrls: ['train-info-card.component.scss'],
   templateUrl: './train-info-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     IxIconComponent,

@@ -9,6 +9,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatSlider,
     MatSliderThumb,

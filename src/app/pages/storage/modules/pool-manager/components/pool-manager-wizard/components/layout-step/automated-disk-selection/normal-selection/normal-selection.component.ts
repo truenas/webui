@@ -30,6 +30,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   templateUrl: './normal-selection.component.html',
   styleUrls: ['./normal-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     DiskSizeSelectsComponent,

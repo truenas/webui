@@ -14,6 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-cell-actions.component.html',
   styleUrls: ['./ix-cell-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatTooltip,
     RequiresRolesDirective,

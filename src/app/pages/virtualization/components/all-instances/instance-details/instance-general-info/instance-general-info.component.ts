@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-instance-general-info',
   templateUrl: './instance-general-info.component.html',
   styleUrls: ['./instance-general-info.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

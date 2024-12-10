@@ -13,6 +13,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './instance-metrics-linechart.component.html',
   styleUrls: ['./instance-metrics-linechart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     BaseChartDirective,

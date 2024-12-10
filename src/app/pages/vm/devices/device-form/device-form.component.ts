@@ -52,6 +52,7 @@ const specifyCustom = T('Specify custom');
   templateUrl: './device-form.component.html',
   styleUrls: ['./device-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

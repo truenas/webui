@@ -23,6 +23,7 @@ import {
   templateUrl: './widget-interface-ip-settings.component.html',
   styleUrl: './widget-interface-ip-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

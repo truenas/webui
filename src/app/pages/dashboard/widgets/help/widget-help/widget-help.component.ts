@@ -18,6 +18,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   templateUrl: './widget-help.component.html',
   styleUrl: './widget-help.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

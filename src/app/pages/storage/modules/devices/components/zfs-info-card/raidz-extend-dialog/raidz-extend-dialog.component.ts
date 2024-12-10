@@ -34,6 +34,7 @@ export interface RaidzExtendDialogParams {
   templateUrl: './raidz-extend-dialog.component.html',
   styleUrls: ['./raidz-extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

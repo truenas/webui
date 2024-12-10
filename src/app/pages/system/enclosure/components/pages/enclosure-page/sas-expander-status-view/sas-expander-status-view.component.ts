@@ -10,6 +10,7 @@ import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
   templateUrl: './sas-expander-status-view.component.html',
   styleUrl: './sas-expander-status-view.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule],
 })
 export class SasExpanderStatusViewComponent {

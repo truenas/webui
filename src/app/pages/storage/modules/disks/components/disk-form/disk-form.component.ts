@@ -35,6 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: 'disk-form.component.html',
   styleUrls: ['disk-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -7,6 +7,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './insecure-connection.component.html',
   styleUrls: ['./insecure-connection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [IxIconComponent, TranslateModule],
 })
 export class InsecureConnectionComponent {

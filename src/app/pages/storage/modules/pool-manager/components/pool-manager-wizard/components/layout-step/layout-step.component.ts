@@ -17,6 +17,7 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   templateUrl: './layout-step.component.html',
   styleUrls: ['./layout-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
 export class LayoutStepComponent implements OnInit {

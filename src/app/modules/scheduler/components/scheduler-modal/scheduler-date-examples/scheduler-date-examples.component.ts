@@ -13,6 +13,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './scheduler-date-examples.component.html',
   styleUrls: ['./scheduler-date-examples.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxDateComponent,
     TranslateModule,

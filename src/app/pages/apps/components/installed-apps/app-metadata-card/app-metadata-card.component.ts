@@ -13,6 +13,7 @@ import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app
   templateUrl: './app-metadata-card.component.html',
   styleUrls: ['./app-metadata-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

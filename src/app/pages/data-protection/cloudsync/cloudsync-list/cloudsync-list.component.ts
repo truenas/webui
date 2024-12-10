@@ -58,6 +58,7 @@ import { AppState } from 'app/store';
   templateUrl: './cloudsync-list.component.html',
   styleUrls: ['./cloudsync-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

@@ -12,6 +12,7 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   selector: 'ix-container-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TerminalComponent,
   ],

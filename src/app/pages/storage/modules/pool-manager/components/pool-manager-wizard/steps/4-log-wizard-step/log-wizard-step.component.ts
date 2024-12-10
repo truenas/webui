@@ -20,6 +20,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   selector: 'ix-log-wizard-step',
   templateUrl: './log-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     LayoutStepComponent,
     FormActionsComponent,

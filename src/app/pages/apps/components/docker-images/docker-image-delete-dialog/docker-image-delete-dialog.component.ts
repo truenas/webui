@@ -27,6 +27,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './docker-image-delete-dialog.component.html',
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     BulkListItemComponent,

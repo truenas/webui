@@ -16,6 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './service-state-button.component.html',
   styleUrls: ['./service-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     TestDirective,

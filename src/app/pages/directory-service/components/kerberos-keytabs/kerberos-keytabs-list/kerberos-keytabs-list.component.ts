@@ -41,6 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './kerberos-keytabs-list.component.html',
   styleUrls: ['./kerberos-keytabs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,

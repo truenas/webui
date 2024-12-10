@@ -34,6 +34,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   templateUrl: './cloudsync-wizard.component.html',
   styleUrls: ['./cloudsync-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,

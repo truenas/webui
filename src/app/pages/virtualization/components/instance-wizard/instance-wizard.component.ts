@@ -61,6 +61,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-instance-wizard',
+  standalone: true,
   imports: [
     PageHeaderComponent,
     IxInputComponent,

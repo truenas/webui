@@ -16,6 +16,7 @@ import {
   templateUrl: 'view-trivial-permissions.component.html',
   styleUrls: ['./view-trivial-permissions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [PermissionsItemComponent, TranslateModule],
 })
 export class ViewTrivialPermissionsComponent {

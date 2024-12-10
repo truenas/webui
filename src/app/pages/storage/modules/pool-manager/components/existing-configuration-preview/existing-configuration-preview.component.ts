@@ -39,6 +39,7 @@ const defaultCategory: PoolManagerTopologyCategory = {
   templateUrl: './existing-configuration-preview.component.html',
   styleUrls: ['./existing-configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

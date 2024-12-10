@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './warning.component.html',
   styleUrls: ['./warning.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [NgClass, TranslateModule],
 })
 export class WarningComponent {

@@ -34,6 +34,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./terminal.component.scss'],
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ToolbarSliderComponent,
     MatButton,

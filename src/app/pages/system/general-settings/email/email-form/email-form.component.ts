@@ -47,6 +47,7 @@ enum SendMethod {
   templateUrl: './email-form.component.html',
   styleUrls: ['./email-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

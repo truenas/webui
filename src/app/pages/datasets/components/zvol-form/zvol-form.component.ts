@@ -80,6 +80,7 @@ interface ZvolFormData {
   templateUrl: './zvol-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

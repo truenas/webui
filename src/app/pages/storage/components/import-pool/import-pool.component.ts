@@ -38,6 +38,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

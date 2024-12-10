@@ -29,6 +29,7 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
   templateUrl: './add-vdevs.component.html',
   styleUrls: ['./add-vdevs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PoolManagerWizardComponent,
     ExistingConfigurationPreviewComponent,

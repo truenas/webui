@@ -16,6 +16,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './console-panel-dialog.component.html',
   styleUrls: ['./console-panel-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogActions,

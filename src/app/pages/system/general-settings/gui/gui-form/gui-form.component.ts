@@ -45,6 +45,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   selector: 'ix-gui-form',
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -22,6 +22,7 @@ export interface SetProductionStatusDialogResult {
   templateUrl: './set-production-status-dialog.component.html',
   styleUrls: ['./set-production-status-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

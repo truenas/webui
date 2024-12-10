@@ -60,6 +60,7 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   templateUrl: './cloudsync-what-and-when.component.html',
   styleUrls: ['./cloudsync-what-and-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

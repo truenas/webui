@@ -13,6 +13,7 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
   templateUrl: './disks-overview.component.html',
   styleUrls: ['./disks-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     TestDirective,

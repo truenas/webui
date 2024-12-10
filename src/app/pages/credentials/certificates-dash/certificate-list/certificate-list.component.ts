@@ -56,6 +56,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './certificate-list.component.html',
   styleUrls: ['./certificate-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

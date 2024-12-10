@@ -33,6 +33,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './disk-info-card.component.html',
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

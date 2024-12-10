@@ -12,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './widget-group-controls.component.html',
   styleUrls: ['./widget-group-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

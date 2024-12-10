@@ -25,6 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
       ]),
     ]),
   ],
+  standalone: true,
   imports: [
     NgxPopperjsModule,
     NgTemplateOutlet,

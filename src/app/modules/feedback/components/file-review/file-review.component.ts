@@ -33,6 +33,7 @@ export const maxFileSizeBytes = 5 * MiB;
   styleUrls: ['file-review.component.scss'],
   templateUrl: './file-review.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogContent,
     ReactiveFormsModule,

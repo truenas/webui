@@ -53,6 +53,7 @@ const noEnclosureId = 'no-enclosure';
   templateUrl: './manual-selection-disks.component.html',
   styleUrls: ['./manual-selection-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ManualSelectionDiskFiltersComponent,
     DndDropzoneDirective,
