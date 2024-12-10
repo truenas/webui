@@ -61,5 +61,5 @@ export class MiniPageComponent {
     }
 
     this.router.navigate(['/system', 'viewenclosure', enclosure.id]);
-  }, { allowSignalWrites: true });
+  });
 }

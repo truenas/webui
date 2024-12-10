@@ -94,6 +94,6 @@ export class AppNetworkInfoComponent {
           return [...cachedStats, [incomingTraffic, outgoingTraffic]].slice(-60);
         });
       }
-    }, { allowSignalWrites: true });
+    });
   }
 }
