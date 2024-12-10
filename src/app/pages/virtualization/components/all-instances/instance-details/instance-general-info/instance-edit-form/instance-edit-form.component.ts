@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, signal,
+  ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import {
   FormArray,
@@ -24,9 +24,8 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -36,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-instance-edit-form',
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    ModalHeader2Component,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -55,8 +54,8 @@ export class InstanceEditFormComponent {
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
 
-  title = this.translate.instant('Edit Instance: {name}', { name: this.instance.name });
-  editingInstanceId = this.instance.id;
+  title: string;
+  editingInstance: VirtualizationInstance;
 
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
@@ -73,23 +72,24 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    private slideInRef: SlideInRef<InstanceEditFormComponent>,
-    @Inject(SLIDE_IN_DATA) private instance: VirtualizationInstance,
+    private slideInRef: ChainedRef<VirtualizationInstance>,
   ) {
+    this.editingInstance = this.slideInRef.getData();
+    this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
-      cpu: instance.cpu,
-      autostart: instance.autostart,
-      memory: instance.memory,
+      cpu: this.editingInstance.cpu,
+      autostart: this.editingInstance.autostart,
+      memory: this.editingInstance.memory,
     });
 
-    Object.keys(instance.environment || {}).forEach((key) => {
-      this.addEnvironmentVariable(key, instance.environment[key]);
+    Object.keys(this.editingInstance.environment || {}).forEach((key) => {
+      this.addEnvironmentVariable(key, this.editingInstance.environment[key]);
     });
   }
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
-    const job$ = this.api.job('virt.instance.update', [this.editingInstanceId, payload]);
+    const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant('Updating Instance'),
@@ -97,9 +97,9 @@ export class InstanceEditFormComponent {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.snackbar.success(this.translate.instant('Instance updated'));
-          this.slideInRef.close(true);
+          this.slideInRef.close({ error: false, response: response.result });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

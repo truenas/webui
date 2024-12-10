@@ -78,4 +78,9 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
       }),
     );
   });
+
+  instanceUpdated(updated: VirtualizationInstance): void {
+    const instances = this.instances().map((instance) => (updated.id === instance.id ? updated : instance));
+    this.patchState({ instances });
+  }
 }
