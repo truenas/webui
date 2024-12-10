@@ -12,7 +12,6 @@ import { switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -116,7 +115,7 @@ export class FibreChannelPortsFormComponent implements OnInit {
         this.isLoading.set(false);
         this.slideInRef.close(response);
       },
-      error: (error: ApiError) => {
+      error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
       },
