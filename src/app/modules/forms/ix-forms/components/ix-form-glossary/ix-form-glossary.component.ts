@@ -81,7 +81,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   private handleControlsUpdates(): void {
-    this.formService.controlNamesWithlabels$.pipe(
+    this.formService.controlNamesWithlabels.pipe(
       map((controlsWithLabels) => controlsWithLabels.map(
         (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),
       )),

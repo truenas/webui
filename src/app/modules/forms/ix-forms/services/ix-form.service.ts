@@ -9,7 +9,7 @@ import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registe
 export class IxFormService {
   private controls = new Map<string, HTMLElement>();
   private sections = new Map<IxFormSectionComponent, Map<string, NgControl | null>>();
-  controlNamesWithlabels$ = new BehaviorSubject<ControlNameWithLabel[]>([]);
+  controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
   controlSections$ = new BehaviorSubject<SectionWithControls[]>([]);
 
   getControlNames(): (string | number | null)[] {
@@ -48,7 +48,7 @@ export class IxFormService {
     elementRef: ElementRef<HTMLElement>,
   ): void {
     this.controls.set(name, elementRef.nativeElement);
-    this.controlNamesWithlabels$.next(this.getControlsLabels());
+    this.controlNamesWithlabels.next(this.getControlsLabels());
   }
 
   registerSectionControl(
@@ -67,7 +67,7 @@ export class IxFormService {
 
   unregisterControl(name: string): void {
     this.controls.delete(name);
-    this.controlNamesWithlabels$.next(this.getControlsLabels());
+    this.controlNamesWithlabels.next(this.getControlsLabels());
   }
 
   unregisterSectionControl(section: IxFormSectionComponent, control: string): void {
