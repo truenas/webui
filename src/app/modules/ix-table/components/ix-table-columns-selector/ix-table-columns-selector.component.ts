@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, model, OnChanges, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
-  @Input() columns: Column<T, ColumnComponent<T>>[];
+  readonly columns = model<Column<T, ColumnComponent<T>>[]>();
 
   readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
 
@@ -38,11 +38,11 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 
   get isOnlyOneColumnSelected(): boolean {
-    return this.columns.filter((column) => !column.hidden && !!column.title).length === 1;
+    return this.columns().filter((column) => !column.hidden && !!column.title).length === 1;
   }
 
   get isAllSelected(): boolean {
-    return !this.columns.filter((column) => column.hidden && !!column.title).length;
+    return !this.columns().filter((column) => column.hidden && !!column.title).length;
   }
 
   constructor(private cdr: ChangeDetectorRef) {
@@ -58,13 +58,13 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
 
   toggleAll(): void {
     if (this.isAllSelected) {
-      this.hiddenColumns.deselect(...this.columns);
-      this.toggle(this.columns[0]);
+      this.hiddenColumns.deselect(...this.columns());
+      this.toggle(this.columns()[0]);
     } else {
-      this.hiddenColumns.select(...this.columns);
+      this.hiddenColumns.select(...this.columns());
     }
 
-    this.columns.forEach((_cell, index) => this.toggle(this.columns[index]));
+    this.columns().forEach((_cell, index) => this.toggle(this.columns()[index]));
 
     this.emitColumnsChange();
   }
@@ -87,12 +87,12 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   private setInitialState(): void {
-    this.columns = cloneDeep(this.defaultColumns);
-    this.hiddenColumns.select(...this.columns);
+    this.columns.set(cloneDeep(this.defaultColumns));
+    this.hiddenColumns.select(...this.columns());
 
     this.defaultColumns.forEach((column, index) => {
       if (!column.hidden) {
-        this.toggle(this.columns[index]);
+        this.toggle(this.columns()[index]);
       }
     });
 
@@ -105,10 +105,10 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((values) => {
         if (values.removed.length) {
-          this.columns.find((column) => column.title === values.removed[0].title).hidden = false;
+          this.columns().find((column) => column.title === values.removed[0].title).hidden = false;
         }
         if (values.added.length) {
-          this.columns.find((column) => column.title === values.added[0].title).hidden = true;
+          this.columns().find((column) => column.title === values.added[0].title).hidden = true;
         }
         this.emitColumnsChange();
         this.cdr.markForCheck();
@@ -116,6 +116,6 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   private emitColumnsChange(): void {
-    this.columnsChange.emit([...this.columns]);
+    this.columnsChange.emit([...this.columns()]);
   }
 }

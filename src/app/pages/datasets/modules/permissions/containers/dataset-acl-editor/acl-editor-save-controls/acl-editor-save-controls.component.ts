@@ -63,7 +63,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   }
 
   // TODO: Move here and in other places to global store.
-  protected hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.get_state').pipe(
+  protected readonly hasValidateAclCheckbox = toSignal(this.api.call('directoryservices.get_state').pipe(
     map((state) => {
       return state.activedirectory !== DirectoryServiceState.Disabled
         || state.ldap !== DirectoryServiceState.Disabled;
