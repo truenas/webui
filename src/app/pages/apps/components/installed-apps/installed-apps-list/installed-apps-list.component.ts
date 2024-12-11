@@ -390,7 +390,7 @@ export class InstalledAppsListComponent implements OnInit {
           }).afterClosed();
         }),
         filter(Boolean),
-        switchMap(({ removeVolumes, removeImages }) => this.executeBulkDeletion(removeVolumes, removeImages)),
+        switchMap((options) => this.executeBulkDeletion(options)),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -420,13 +420,14 @@ export class InstalledAppsListComponent implements OnInit {
     });
   }
 
-  private executeBulkDeletion(
-    removeVolumes = false,
-    removeImages = true,
-  ): Observable<Job<CoreBulkResponse[]>> {
+  private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
     const bulkDeletePayload = this.checkedAppsNames.map((name) => [
       name,
-      { remove_images: removeImages, remove_ix_volumes: removeVolumes },
+      {
+        remove_images: options.removeImages,
+        remove_ix_volumes: options.removeVolumes,
+        force_remove_ix_volumes: options.forceRemoveVolumes,
+      },
     ]);
 
     return this.dialogService.jobDialog(
