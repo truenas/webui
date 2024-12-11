@@ -26,7 +26,7 @@ describe('CaIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('webui.crypto.certificateauthority_profiles', {
           CA: caProfile,

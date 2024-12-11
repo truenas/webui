@@ -1,9 +1,10 @@
 import {
   AfterViewInit, ChangeDetectorRef,
   ComponentRef,
-  Directive, input,
+  Directive,
   OnChanges,
   ViewContainerRef,
+  input,
 } from '@angular/core';
 import { IxCellTextComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interfaces/column-component.class';

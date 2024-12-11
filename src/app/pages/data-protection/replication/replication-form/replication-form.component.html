@@ -13,12 +13,12 @@
 
         <ix-replication-transport-section
           [replication]="existingReplication"
-          [transport]="generalSection?.form.value.transport"
+          [transport]="generalSection()?.form.value.transport"
         ></ix-replication-transport-section>
 
         <ix-replication-source-section
           [replication]="existingReplication"
-          [direction]="generalSection?.form.value.direction"
+          [direction]="generalSection()?.form.value.direction"
           [nodeProvider]="sourceNodeProvider"
         ></ix-replication-source-section>
 

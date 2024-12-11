@@ -1,15 +1,11 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxInputComponent } from './ix-input.component';
 
 describe('IxInputComponent', () => {
@@ -22,13 +18,6 @@ describe('IxInputComponent', () => {
     component: IxInputComponent,
     imports: [
       ReactiveFormsModule,
-      MatAutocompleteModule,
-    ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
-      MockComponent(IxIconComponent),
     ],
   });
 
@@ -77,9 +66,9 @@ describe('IxInputComponent', () => {
 
         const label = spectator.query(IxLabelComponent);
         expect(label).toExist();
-        expect(label.label).toBe('New Password');
-        expect(label.required).toBe(true);
-        expect(label.tooltip).toBe('Minimum length is 8 characters.');
+        expect(label.label()).toBe('New Password');
+        expect(label.required()).toBe(true);
+        expect(label.tooltip()).toBe('Minimum length is 8 characters.');
       });
 
       it('renders a hint when it is provided', () => {
@@ -210,12 +199,12 @@ describe('IxInputComponent', () => {
         spectator.setHostInput('type', 'password');
 
         expect(spectator.query('input')).toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent).name).toBe('visibility_off');
+        expect(spectator.query(IxIconComponent).name()).toBe('visibility_off');
 
         spectator.click('.toggle_pw');
 
         expect(spectator.query('input')).not.toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent).name).toBe('visibility');
+        expect(spectator.query(IxIconComponent).name()).toBe('visibility');
       });
     });
 

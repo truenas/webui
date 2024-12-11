@@ -1,5 +1,4 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import {
   runWidgetGroupTestSuite,
@@ -18,12 +17,10 @@ describe('WidgetEditorGroupComponent - additions', () => {
   let spectator: Spectator<WidgetEditorGroupComponent>;
   const createComponent = createComponentFactory({
     component: WidgetEditorGroupComponent,
-    declarations: [
-      MockComponents(
-        WidgetHostnameActiveComponent,
-        WidgetInterfaceIpComponent,
-        WidgetErrorComponent,
-      ),
+    imports: [
+      WidgetHostnameActiveComponent,
+      WidgetInterfaceIpComponent,
+      WidgetErrorComponent,
     ],
   });
 

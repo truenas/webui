@@ -1,5 +1,4 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -12,9 +11,6 @@ describe('WidgetCpuModelComponent', () => {
   let spectator: Spectator<WidgetCpuModelComponent>;
   const createComponent = createComponentFactory({
     component: WidgetCpuModelComponent,
-    declarations: [
-      MockComponent(WidgetDatapointComponent),
-    ],
   });
 
   it('renders CPU Model for the remote system', () => {
@@ -33,9 +29,9 @@ describe('WidgetCpuModelComponent', () => {
       ],
     });
 
-    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    const widget = spectator.query(WidgetDatapointComponent);
     expect(widget).toBeTruthy();
-    expect(widget.text).toBe('AMD EPYC 7313P 16-Core Processor');
+    expect(widget.text()).toBe('AMD EPYC 7313P 16-Core Processor');
   });
 
   it('shows an error when CPU Model cannot be determined', () => {

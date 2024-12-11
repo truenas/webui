@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
@@ -23,7 +24,9 @@ describe('TwoFactorComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
-    declarations: [
+    imports: [
+      QrCodeComponent,
+      QrCodeDirective,
       MockComponent(WarningComponent),
       MockComponent(QrViewerComponent),
       MockComponent(CopyButtonComponent),

@@ -1,6 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { Ng2FittextDirective } from 'ng2-fittext';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -13,8 +14,9 @@ describe('WidgetPoolUsageGaugeComponent', () => {
   let spectator: Spectator<WidgetPoolUsageGaugeComponent>;
   const createComponent = createComponentFactory({
     component: WidgetPoolUsageGaugeComponent,
-    imports: [NgxSkeletonLoaderComponent],
-    declarations: [
+    imports: [
+      Ng2FittextDirective,
+      NgxSkeletonLoaderComponent,
       MockComponent(PoolUsageGaugeComponent),
       MockComponent(WidgetDatapointComponent),
     ],

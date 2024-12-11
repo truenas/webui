@@ -78,7 +78,7 @@ describe('ViewChartAreaComponent', () => {
 
     // Make sure expected values are present after input is set
     expect(spectator.component.data()).toEqual({ datasets: [], labels: [] });
-    expect(spectator.component.canvas.nativeElement).toBeTruthy();
+    expect(spectator.component.canvas().nativeElement).toBeTruthy();
     expect(spectator.component.chart).toBeTruthy();
     expect(spectator.component.chart.data).toMatchObject(data);
   });

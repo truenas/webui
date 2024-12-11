@@ -2,11 +2,8 @@ import {
   FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
-import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxDynamicWizardComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-wizard/ix-dynamic-wizard.component';
-import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 
 const dynamicForm = new FormGroup({});
 const dynamicSection = [
@@ -22,10 +19,6 @@ describe('IxDynamicWizardComponent', () => {
     component: IxDynamicWizardComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
-      MockComponent(IxDynamicFormItemComponent),
-      MockComponent(IxFieldsetComponent),
     ],
   });
 

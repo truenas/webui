@@ -26,7 +26,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('webui.crypto.certificate_profiles', {
           'HTTPS ECC Certificate': httpsProfile,

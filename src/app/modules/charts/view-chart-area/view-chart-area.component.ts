@@ -2,9 +2,9 @@ import {
   Component, OnDestroy, ChangeDetectionStrategy,
   computed,
   effect,
-  ViewChild,
   ElementRef,
   input,
+  viewChild,
 } from '@angular/core';
 import {
   Chart, ChartOptions,
@@ -27,7 +27,7 @@ Chart.register(...registerables);
 export class ViewChartAreaComponent implements OnDestroy {
   // TODO: Replace when ng-mocks get viewChild support
   // See https://github.com/help-me-mom/ng-mocks/issues/8634
-  @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
+  canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   data = input.required<ChartData<'line'>>();
   options = input<ChartOptions<'line'>>();
   height = input<number>(192);
@@ -61,7 +61,7 @@ export class ViewChartAreaComponent implements OnDestroy {
       this.data().datasets = this.data().datasets.slice(0, this.maxSources);
     }
 
-    this.chart = new Chart(this.canvas.nativeElement, this.config());
+    this.chart = new Chart(this.canvas().nativeElement, this.config());
   }
 
   ngOnDestroy(): void {

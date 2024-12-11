@@ -2,7 +2,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
@@ -100,15 +100,6 @@ describe('CloudCredentialsFormComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudCredentialsFormComponent,
-    imports: [
-      ReactiveFormsModule,
-      CloudSyncProviderDescriptionComponent,
-      StorjProviderFormComponent,
-    ],
-    declarations: [
-      TokenProviderFormComponent,
-      S3ProviderFormComponent,
-    ],
     providers: [
       mockProvider(SnackbarService),
       mockProvider(DialogService),

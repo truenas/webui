@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
@@ -31,10 +32,9 @@ describe('InstanceNicsComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceNicsComponent,
     imports: [
-      MockComponents(
-        DeviceActionsMenuComponent,
-        AddNicMenuComponent,
-      ),
+      NgxSkeletonLoaderComponent,
+      MockComponent(AddNicMenuComponent),
+      MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
       mockProvider(VirtualizationDevicesStore, {

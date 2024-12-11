@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -41,7 +42,8 @@ describe('EnclosurePageComponent', () => {
   const enclosures = signal([{ id: '123' } as DashboardEnclosure]);
   const createComponent = createComponentFactory({
     component: EnclosurePageComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         SasExpanderStatusViewComponent,
         PoolsViewComponent,

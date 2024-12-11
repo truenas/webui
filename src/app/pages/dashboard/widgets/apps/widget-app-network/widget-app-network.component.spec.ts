@@ -1,4 +1,5 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
@@ -38,12 +39,11 @@ describe('WidgetAppNetworkComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetAppNetworkComponent,
     imports: [
+      LazyLoadImageDirective,
       MapValuePipe,
       NetworkSpeedPipe,
       FileSizePipe,
       NgxSkeletonLoaderModule,
-    ],
-    declarations: [
       MockComponents(
         AppNetworkInfoComponent,
         AppCardLogoComponent,

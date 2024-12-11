@@ -3,7 +3,7 @@ import {
   Component,
   ElementRef,
   HostListener,
-  ViewChild,
+  viewChild,
   OnInit,
   OnChanges,
   HostBinding, output,
@@ -42,7 +42,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
 
   readonly search = output<string>();
 
-  @ViewChild('ixSearchInput') input: ElementRef<HTMLInputElement>;
+  readonly input = viewChild<ElementRef<HTMLInputElement>>('ixSearchInput');
 
   @HostBinding('class.disabled')
   get disabledClass(): boolean {
@@ -51,7 +51,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
 
   @HostListener('click')
   onHostClicked(): void {
-    this.input.nativeElement.focus();
+    this.input().nativeElement.focus();
   }
 
   searchValue = '';

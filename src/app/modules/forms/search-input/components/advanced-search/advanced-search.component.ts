@@ -5,7 +5,7 @@ import {
   Component,
   ElementRef, input,
   OnInit, output,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
@@ -56,7 +56,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   readonly switchToBasic = output();
   readonly runSearch = output();
 
-  @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
+  readonly inputArea = viewChild<ElementRef<HTMLElement>>('inputArea');
 
   protected hasQueryErrors = false;
   protected queryInputValue: string;
@@ -143,7 +143,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
           placeholder(this.placeholder()),
         ],
       }),
-      parent: this.inputArea.nativeElement,
+      parent: this.inputArea().nativeElement,
     });
 
     this.focusInput();

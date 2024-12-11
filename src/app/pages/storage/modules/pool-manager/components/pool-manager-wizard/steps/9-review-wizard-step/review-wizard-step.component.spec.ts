@@ -72,7 +72,7 @@ describe('ReviewWizardStepComponent', () => {
       TopologyCategoryDescriptionPipe,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

@@ -29,7 +29,6 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -61,7 +60,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     RequiresRolesDirective,
     TestDirective,
     TranslateModule,
-    MapValuePipe,
     AsyncPipe,
   ],
 })

@@ -48,7 +48,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    AsyncPipe,
     FakeProgressBarComponent,
     IxTableBodyComponent,
     IxTableComponent,
@@ -64,6 +63,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TestDirective,
     TranslateModule,
     UiSearchDirective,
+    AsyncPipe,
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {

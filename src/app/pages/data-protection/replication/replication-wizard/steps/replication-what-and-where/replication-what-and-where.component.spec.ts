@@ -47,7 +47,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockAuth(),
       mockApi([
         mockCall('replication.query', [

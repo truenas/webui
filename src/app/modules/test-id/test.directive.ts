@@ -32,7 +32,7 @@ export class TestDirective {
   ) {}
 
   get normalizedDescription(): string[] {
-    const description = this.overrideDirective?.overrideDescription ?? this.description();
+    const description = this.overrideDirective?.overrideDescription() ?? this.description();
     let normalizedDescription = Array.isArray(description) ? description : [description];
 
     normalizedDescription = normalizedDescription

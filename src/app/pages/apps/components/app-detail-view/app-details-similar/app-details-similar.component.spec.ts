@@ -1,4 +1,5 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -24,7 +25,8 @@ describe('AppDetailsSimilarComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppDetailsSimilarComponent,
-    declarations: [
+    imports: [
+      LazyLoadImageDirective,
       MockComponent(AppCardComponent),
     ],
     providers: [

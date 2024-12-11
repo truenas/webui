@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { AllInstancesHeaderComponent } from 'app/pages/virtualization/components/all-instances/all-instances-header/all-instances-header.component';
@@ -30,7 +31,8 @@ describe('AllInstancesComponent', () => {
   let spectator: Spectator<AllInstancesComponent>;
   const createComponent = createComponentFactory({
     component: AllInstancesComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         MockMasterDetailViewComponent,
         AllInstancesHeaderComponent,

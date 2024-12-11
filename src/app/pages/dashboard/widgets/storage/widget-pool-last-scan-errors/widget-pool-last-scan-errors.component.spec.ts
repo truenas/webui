@@ -1,7 +1,5 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -13,10 +11,9 @@ describe('WidgetPoolLastScanErrorsComponent', () => {
   let spectator: Spectator<WidgetPoolLastScanErrorsComponent>;
   const createComponent = createComponentFactory({
     component: WidgetPoolLastScanErrorsComponent,
-    imports: [NgxSkeletonLoaderComponent],
-    declarations: [
-      MockComponent(LastScanErrorsComponent),
-      MockComponent(WidgetDatapointComponent),
+    imports: [
+      LastScanErrorsComponent,
+      WidgetDatapointComponent,
     ],
   });
 
@@ -70,8 +67,8 @@ describe('WidgetPoolLastScanErrorsComponent', () => {
 
     it('should render "Pool does not exist" message', () => {
       const component = spectator.query(WidgetDatapointComponent);
-      expect(component.label).toBe('Last Scan Errors');
-      expect(component.text).toBe('Pool does not exist');
+      expect(component.label()).toBe('Last Scan Errors');
+      expect(component.text()).toBe('Pool does not exist');
     });
   });
 });

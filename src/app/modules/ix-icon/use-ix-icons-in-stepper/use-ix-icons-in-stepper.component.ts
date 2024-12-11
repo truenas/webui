@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   TemplateRef,
-  ViewChildren,
+  viewChildren,
 } from '@angular/core';
 import { MatStepper, MatStepperIcon, MatStepperIconContext } from '@angular/material/stepper';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -23,7 +23,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UseIxIconsInStepperComponent implements AfterViewInit {
-  @ViewChildren(MatStepperIcon) stepperIcons: MatStepperIcon[];
+  readonly stepperIcons = viewChildren(MatStepperIcon);
 
   constructor(
     private stepper: MatStepper,
@@ -34,11 +34,12 @@ export class UseIxIconsInStepperComponent implements AfterViewInit {
   }
 
   getIconOverrides(): Record<string, TemplateRef<MatStepperIconContext>> {
-    if (!this.stepperIcons) {
+    const stepperIcons = this.stepperIcons();
+    if (!stepperIcons) {
       return {};
     }
 
-    return this.stepperIcons.reduce((overrides, icon) => {
+    return stepperIcons.reduce((overrides, icon) => {
       overrides[icon.name] = icon.templateRef;
       return overrides;
     }, {} as Record<string, TemplateRef<MatStepperIconContext>>);

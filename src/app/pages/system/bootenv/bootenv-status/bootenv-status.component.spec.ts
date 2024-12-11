@@ -83,6 +83,7 @@ describe('BootStatusListComponent', () => {
   });
 
   beforeEach(() => {
+    jest.spyOn(console, 'warn').mockImplementation();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(MockApiService);

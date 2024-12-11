@@ -1,19 +1,13 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
-  FormGroup, FormControl, ReactiveFormsModule, FormsModule,
+  FormGroup, FormControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { TooltipComponent } from '@angular/material/tooltip';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TranslateModule } from '@ngx-translate/core';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 
@@ -53,15 +47,7 @@ describe('CloudCredentialsSelectComponent', () => {
   const createHost = createHostFactory({
     component: CloudCredentialsSelectComponent,
     imports: [
-      TranslateModule.forRoot(),
       ReactiveFormsModule,
-      FormsModule,
-    ],
-    declarations: [
-      IxSelectComponent,
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
     ],
     providers: [
       mockProvider(CloudCredentialService, mockCloudCredentialService),

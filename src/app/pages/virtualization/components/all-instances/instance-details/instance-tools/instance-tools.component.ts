@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { MatAnchor, MatButton } from '@angular/material/button';
+import { MatAnchor } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
@@ -25,7 +25,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatCard,
     MatCardContent,
     TranslateModule,
-    MatButton,
     MatAnchor,
     TestDirective,
     IxIconComponent,

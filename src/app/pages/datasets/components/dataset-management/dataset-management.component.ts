@@ -12,12 +12,12 @@ import {
   OnInit,
   AfterViewInit,
   OnDestroy,
-  ViewChild,
   ElementRef,
   Inject,
   TrackByFunction,
   HostBinding,
   computed,
+  viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatIconButton } from '@angular/material/button';
@@ -99,8 +99,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
-  @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
+  readonly ixTreeHeader = viewChild<ElementRef<HTMLElement>>('ixTreeHeader');
+  readonly ixTree = viewChild<ElementRef<HTMLElement>>('ixTree');
 
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = datasetManagementElements;
@@ -244,7 +244,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   }
 
   treeHeaderScrolled(): void {
-    this.scrollSubject.next(this.ixTreeHeader.nativeElement.scrollLeft);
+    this.scrollSubject.next(this.ixTreeHeader().nativeElement.scrollLeft);
   }
 
   datasetTreeScrolled(scrollLeft: number): void {
@@ -368,8 +368,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         .subscribe({
           next: (scrollLeft: number) => {
             this.window.dispatchEvent(new Event('resize'));
-            this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
-            this.ixTree.nativeElement.scrollLeft = scrollLeft;
+            this.ixTreeHeader().nativeElement.scrollLeft = scrollLeft;
+            this.ixTree().nativeElement.scrollLeft = scrollLeft;
           },
         }),
     );

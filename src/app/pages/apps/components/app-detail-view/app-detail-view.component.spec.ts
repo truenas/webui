@@ -3,15 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppAvailableInfoCardComponent,
@@ -56,13 +56,11 @@ describe('AppDetailViewComponent', () => {
   const createComponent = createRoutingFactory({
     component: AppDetailViewComponent,
     imports: [
-      NgxSkeletonLoaderModule,
-      MockComponents(PageHeaderComponent),
-      OrNotAvailablePipe,
-    ],
-    declarations: [
+      LazyLoadImageDirective,
+      NgxSkeletonLoaderComponent,
       AppDetailsHeaderComponent,
       MockComponents(
+        PageHeaderComponent,
         AppResourcesCardComponent,
         AppAvailableInfoCardComponent,
         AppCardLogoComponent,
