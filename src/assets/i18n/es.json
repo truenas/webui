@@ -4226,6 +4226,7 @@
   "Upsmon will wait up to this many seconds in master mode for the slaves to disconnect during a shutdown situation.": "",
   "Usages": "",
   "Use --fast-list": "",
+  "Use Absolute Paths": "",
   "Use Apple-style Character Encoding": "",
   "Use Custom ACME Server Directory URI": "",
   "Use DHCP. Unset to manually configure a static IPv4 connection.": "",
