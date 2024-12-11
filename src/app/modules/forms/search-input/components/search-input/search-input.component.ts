@@ -27,7 +27,7 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly allowAdvanced = input(true);
   readonly properties = input<SearchProperty<T>[]>([]);
   @Input() query: SearchQuery<T>;
-  readonly advancedSearchPlaceholder = input<string>(undefined);
+  readonly advancedSearchPlaceholder = input<string>();
 
   readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();

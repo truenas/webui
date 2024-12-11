@@ -38,7 +38,7 @@ export class TranslationsLoadedGuard {
     return waitForTranslations$.pipe(
       timeout(this.maxLanguageLoadingTime),
       map(() => true),
-      catchError((error) => {
+      catchError((error: unknown) => {
         console.error('Error loading translations: ', error);
         return of(true);
       }),

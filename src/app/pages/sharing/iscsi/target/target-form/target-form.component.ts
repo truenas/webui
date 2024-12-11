@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -11,8 +12,9 @@ import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
+import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -22,6 +24,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -55,6 +58,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    IxRadioGroupComponent,
   ],
 })
 export class TargetFormComponent implements OnInit {
@@ -71,6 +75,8 @@ export class TargetFormComponent implements OnInit {
       ? this.translate.instant('Add ISCSI Target')
       : this.translate.instant('Edit ISCSI Target');
   }
+
+  hasFibreChannel = toSignal(this.iscsiService.hasFibreChannel());
 
   readonly helptext = helptextSharingIscsi;
   readonly portals$ = this.iscsiService.listPortals().pipe(
@@ -109,6 +115,8 @@ export class TargetFormComponent implements OnInit {
       return opts;
     }),
   );
+
+  readonly modeOptions$ = of(mapToOptions(iscsiTargetModeNames, this.translate));
 
   readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,

@@ -30,7 +30,8 @@ export class VmwareStatusCellComponent {
 
   get tooltip(): string {
     if (this.state().state === VmwareSnapshotStatus.Error) {
-      return this.state().error ? this.translate.instant(this.state().error) : this.translate.instant('Error');
+      const error = this.state().error;
+      return error ? this.translate.instant(error) : this.translate.instant('Error');
     }
     return this.state().state === VmwareSnapshotStatus.Pending
       ? this.translate.instant('Pending')

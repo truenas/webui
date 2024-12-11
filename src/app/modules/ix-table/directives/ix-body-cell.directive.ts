@@ -14,8 +14,8 @@ import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interf
   standalone: true,
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
-  readonly row = input<T>(undefined);
-  readonly column = input<Column<T, ColumnComponent<T>>>(undefined);
+  readonly row = input<T>();
+  readonly column = input<Column<T, ColumnComponent<T>>>();
 
   private componentRef: ComponentRef<ColumnComponent<T>>;
 
@@ -36,13 +36,12 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
   }
 
   createComponent(): void {
-    const column = this.column();
-    if (!column.type) {
-      column.type = IxCellTextComponent;
+    if (!this.column().type) {
+      this.column().type = IxCellTextComponent;
     }
     this.viewContainer.clear();
     this.componentRef = this.viewContainer.createComponent(
-      column.type,
+      this.column().type,
     );
 
     this.setComponentProps();

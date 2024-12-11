@@ -16,7 +16,7 @@ export class WebSocketConnection {
     private webSocket: typeof rxjsWebSocket,
   ) { }
 
-  connect(config: WebSocketSubjectConfig<unknown>): void {
+  connect(config: WebSocketSubjectConfig<unknown>): Observable<unknown> {
     if (this.ws$) {
       this.ws$.complete();
     }
@@ -25,6 +25,7 @@ export class WebSocketConnection {
     this.ws$ = this.webSocket(config);
 
     this.wsAsObservable$ = this.ws$.asObservable();
+    return this.stream$;
   }
 
   send(payload: unknown): void {
@@ -34,17 +35,5 @@ export class WebSocketConnection {
   close(): void {
     this.ws$?.complete();
     this.ws$ = undefined;
-  }
-
-  event<R>(
-    subMsg: () => unknown,
-    unsubMsg: () => unknown,
-    messageFilter: (value: unknown) => boolean,
-  ): Observable<R> {
-    return this.ws$.multiplex(
-      subMsg,
-      unsubMsg,
-      messageFilter,
-    ) as Observable<R>;
   }
 }

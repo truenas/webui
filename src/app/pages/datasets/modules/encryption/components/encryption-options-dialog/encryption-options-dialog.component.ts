@@ -17,7 +17,6 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Role } from 'app/enums/role.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -164,7 +163,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
@@ -195,7 +194,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessMessage();
           this.dialogRef.close(true);
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });

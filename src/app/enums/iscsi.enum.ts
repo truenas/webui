@@ -39,3 +39,9 @@ export const iscsiExtentUseforMap = new Map([
   [IscsiExtentUsefor.Legacyos, T('Legacy OS: Extent block size 512b, TPC enabled, no Xen compat mode, SSD speed')],
   [IscsiExtentUsefor.Modernos, T('Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed')],
 ]);
+
+export const iscsiTargetModeNames = new Map<IscsiTargetMode, string>([
+  [IscsiTargetMode.Iscsi, T('iSCSI')],
+  [IscsiTargetMode.Fc, T('Fibre Channel')],
+  [IscsiTargetMode.Both, T('Both')],
+]);

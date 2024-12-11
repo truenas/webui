@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -44,7 +43,7 @@ export class ShowLogsDialogComponent {
   downloadLogs(): void {
     this.api.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(
       switchMap((url) => this.download.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
-      catchError((error: HttpErrorResponse | Job) => {
+      catchError((error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),

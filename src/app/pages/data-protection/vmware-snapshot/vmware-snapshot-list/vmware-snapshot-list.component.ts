@@ -148,7 +148,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       next: () => {
         this.getSnapshotsData();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

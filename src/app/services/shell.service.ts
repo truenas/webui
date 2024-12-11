@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
 import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { ShellMessageType } from 'app/enums/api.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -71,24 +71,22 @@ export class ShellService {
   }
 
   private onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
-    let data: { id?: string; msg: IncomingApiMessageType };
-
-    try {
-      data = JSON.parse(msg.data as string) as { id?: string; msg: IncomingApiMessageType };
-    } catch (error: unknown) {
-      // TODO: Figure out why we need this.
-      data = { msg: IncomingApiMessageType.Discard } as { id?: string; msg: IncomingApiMessageType };
+    if (typeof msg.data === 'string') {
+      try {
+        const data = JSON.parse(msg.data) as { id?: string; msg: ShellMessageType };
+        if (data.msg === ShellMessageType.Connected) {
+          this.shellConnected.emit({
+            connected: true,
+            id: data.id,
+          });
+          return;
+        }
+      } catch (error: unknown) {
+        console.error('Failed to parse shell message', error);
+      }
     }
 
-    if (data.msg === IncomingApiMessageType.Connected) {
-      this.shellConnected.emit({
-        connected: true,
-        id: data.id,
-      });
-      return;
-    }
-
-    if (!this.isConnected || data.msg === IncomingApiMessageType.Pong) {
+    if (!this.isConnected) {
       return;
     }
 

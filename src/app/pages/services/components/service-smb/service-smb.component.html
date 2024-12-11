@@ -58,12 +58,11 @@
             [required]="true"
           ></ix-select>
 
-          <ix-select
-            formControlName="loglevel"
-            [label]="'Log Level' | translate"
-            [tooltip]="tooltips.loglevel | translate"
-            [options]="logLevelOptions$"
-          ></ix-select>
+          <ix-checkbox
+            formControlName="debug"
+            [label]="'Use Debug' | translate"
+            [tooltip]="tooltips.debug | translate"
+          ></ix-checkbox>
 
           <ix-checkbox
             formControlName="syslog"

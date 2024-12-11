@@ -43,7 +43,7 @@ export class ImageValidatorService {
       take(screenshots.length),
       concatMap((file: File): Observable<ValidatedFile> => {
         return this.validateImage(file, sizeLimitBytes).pipe(
-          catchError((error: ValidatedFile) => of(error)),
+          catchError((error: unknown) => of(error as ValidatedFile)),
         );
       }),
       toArray(),

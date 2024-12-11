@@ -2,9 +2,8 @@ import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/sp
 import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { IncomingApiMessage } from 'app/interfaces/api-message.interface';
+import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -76,7 +75,7 @@ describe('TokenLastUsedService', () => {
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
       const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
-      const responses$ = new Subject<IncomingApiMessage>();
+      const responses$ = new Subject<IncomingMessage>();
 
       jest.spyOn(WebSocketHandlerService.prototype, 'responses$', 'get').mockReturnValue(responses$);
 
@@ -85,7 +84,7 @@ describe('TokenLastUsedService', () => {
       user$.next({} as LoggedInUser);
       expect(updateTokenLastUsedSpy).toHaveBeenCalled();
 
-      responses$.next({ msg: IncomingApiMessageType.Result, id: 'id' });
+      responses$.next({ jsonrpc: '2.0', id: 'id', result: '' });
       expect(updateTokenLastUsedSpy).toHaveBeenCalled();
     });
   });

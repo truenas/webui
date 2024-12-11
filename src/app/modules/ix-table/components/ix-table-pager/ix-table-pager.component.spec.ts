@@ -51,25 +51,25 @@ describe('IxTablePagerComponent', () => {
   });
 
   it('sets pagination when an option is selected', async () => {
-    const dataProvider = spectator.component.dataProvider;
-    expect(dataProvider().pagination).toEqual({ pageNumber: 1, pageSize: 2 });
+    const dataProvider = spectator.component.dataProvider();
+    expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
     await select.clickOptions({ text: '10' });
 
-    expect(dataProvider().pagination).toEqual({ pageNumber: 1, pageSize: 10 });
+    expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 10 });
     expect(spectator.query('.pages').textContent.trim()).toBe('1 – 4  of 4');
   });
 
   it('sets pagination when page number is changed', async () => {
-    const dataProvider = spectator.component.dataProvider;
-    expect(dataProvider().pagination).toEqual({ pageNumber: 1, pageSize: 2 });
+    const dataProvider = spectator.component.dataProvider();
+    expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 2 });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
     await buttons[3].click();
 
-    expect(dataProvider().pagination).toEqual({ pageNumber: 2, pageSize: 2 });
+    expect(dataProvider.pagination).toEqual({ pageNumber: 2, pageSize: 2 });
     expect(spectator.query('.pages').textContent.trim()).toBe('3 – 4  of 4');
   });
 

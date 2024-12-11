@@ -30,7 +30,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   imports: [CdkTrapFocus],
 })
 export class SlideInComponent implements OnInit, OnDestroy {
-  readonly id = input<string>(undefined);
+  readonly id = input<string>();
   readonly slideInBody = viewChild('body', { read: ViewContainerRef });
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {

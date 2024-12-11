@@ -158,7 +158,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
         canMinimize: true,
       },
     ).afterClosed().pipe(
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return EMPTY;
       }),

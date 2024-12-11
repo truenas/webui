@@ -18,9 +18,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
@@ -28,6 +26,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -105,14 +104,13 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
 
-  private oldDatasetMode: string;
-
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private storageService: StorageService,
     private translate: TranslateService,
     private dialog: DialogService,
@@ -163,8 +161,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Permissions saved.'));
           this.router.navigate(['/datasets', this.datasetId]);
         },
-        error: (error: ApiError | Job) => {
-          this.dialog.error(this.errorHandler.parseError(error));
+        error: (error: unknown) => {
+          this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });
   }

@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
-  input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -50,8 +49,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class SmartTestResultListComponent implements OnInit {
-  readonly type = input<SmartTestResultPageType>(undefined);
-  readonly pk = input<string>(undefined);
+  readonly type = input<SmartTestResultPageType>();
+  readonly pk = input<string>();
+
   disks: Disk[] = [];
   smartTestResults: SmartTestResultsRow[];
   filterString = '';

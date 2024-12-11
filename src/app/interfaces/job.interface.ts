@@ -1,5 +1,5 @@
 import { JobState } from 'app/enums/job-state.enum';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Credentials } from 'app/interfaces/credential-type.interface';
@@ -12,7 +12,7 @@ export interface Job<R = unknown, A = unknown[]> {
   error: string;
   extra?: Record<string, unknown>;
   exc_info: {
-    type?: ResponseErrorType | null;
+    type?: JobExceptionType | null;
     extra: string | number | boolean | unknown[] | Record<string, unknown>;
     repr?: string;
   };

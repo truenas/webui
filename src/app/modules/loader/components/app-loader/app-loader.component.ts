@@ -1,5 +1,5 @@
 import {
-  Component, Input, ChangeDetectionStrategy,
+  Component, ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { MatDialogContent } from '@angular/material/dialog';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -18,5 +18,9 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
 })
 export class AppLoaderComponent {
-  @Input() title: string;
+  protected title = signal<string>('');
+
+  setTitle(title: string): void {
+    this.title.set(title);
+  }
 }

@@ -13,5 +13,5 @@ import {
 })
 export class TestOverrideDirective {
   readonly overrideDescription = input<number | string | (string | number)[]>(undefined, { alias: 'ixTestOverride' });
-  readonly keepLastPart = input<boolean | undefined>(undefined);
+  readonly keepLastPart = input<boolean>();
 }

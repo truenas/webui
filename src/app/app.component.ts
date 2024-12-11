@@ -9,6 +9,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 import { LayoutService } from 'app/services/layout.service';
+import { PingService } from 'app/services/websocket/ping.service';
 
 @UntilDestroy()
 @Component({
@@ -26,6 +27,7 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private detectBrowser: DetectBrowserService,
     private layoutService: LayoutService,
+    private pingService: PingService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
@@ -52,6 +54,7 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    this.pingService.setupPing();
   }
 
   ngOnInit(): void {

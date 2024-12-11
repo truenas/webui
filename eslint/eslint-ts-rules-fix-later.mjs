@@ -8,8 +8,7 @@ export const fixLaterRules = {
   "@typescript-eslint/no-dynamic-delete": ["off"],
   "@typescript-eslint/class-literal-property-style": ["off"],
   "no-prototype-builtins": ["off"],
-  "rxjs/no-implicit-any-catch": ["off"],
-  "rxjs/no-nested-subscribe": ["off"],
+  "@smarttools/rxjs/no-nested-subscribe": ["off"],
 
   "sonarjs/prefer-nullish-coalescing": ["off"],
   "sonarjs/deprecation": ["off"],

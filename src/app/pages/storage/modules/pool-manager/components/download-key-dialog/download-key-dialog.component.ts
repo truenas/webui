@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, Inject,
   signal,
@@ -69,8 +68,8 @@ export class DownloadKeyDialogComponent {
             this.download.downloadBlob(file, this.filename);
             this.wasDownloaded.set(true);
           }),
-          catchError((error: HttpErrorResponse) => {
-            this.dialog.error(this.errorHandler.parseHttpError(error));
+          catchError((error: unknown) => {
+            this.dialog.error(this.errorHandler.parseError(error));
             this.wasDownloaded.set(true);
             return EMPTY;
           }),
@@ -78,7 +77,7 @@ export class DownloadKeyDialogComponent {
       }),
       untilDestroyed(this),
     ).subscribe({
-      error: (error) => {
+      error: (error: unknown) => {
         this.loader.close();
         this.dialog.error(this.errorHandler.parseError(error));
       },

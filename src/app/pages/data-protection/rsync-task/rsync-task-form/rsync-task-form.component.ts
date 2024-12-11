@@ -191,8 +191,8 @@ export class RsyncTaskFormComponent implements OnInit {
       delete values.remoteport;
       delete values.remotepath;
       delete values.validate_rpath;
-      delete values.ssh_credentials;
       delete values.ssh_keyscan;
+      values.ssh_credentials = null;
     } else {
       delete values.remotemodule;
       if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {

@@ -137,7 +137,7 @@ export class CertificateAcmeAddComponent {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();

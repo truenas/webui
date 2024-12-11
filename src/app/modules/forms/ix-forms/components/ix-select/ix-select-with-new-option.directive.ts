@@ -1,8 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
-  AfterViewInit, Directive, OnInit, inject,
-  viewChild,
-  input,
+  AfterViewInit, Directive, OnInit, viewChild, inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +17,6 @@ export const addNewIxSelectValue = 'ADD_NEW';
 @UntilDestroy()
 @Directive()
 export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
-  readonly disabled = input<boolean>(undefined);
   formComponentIsWide = false;
 
   readonly ixSelect = viewChild(IxSelectComponent);

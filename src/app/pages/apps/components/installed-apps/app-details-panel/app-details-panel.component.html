@@ -1,34 +1,19 @@
-<div class="header">
-  <h2 class="title">
-    <div class="mobile-prefix">
-      <ix-mobile-back-button
-        (close)="onCloseMobileDetails()"
-      ></ix-mobile-back-button>
-      {{ 'Details' | translate }}
-    </div>
-
-    <span class="prefix">{{ 'Details' | translate }}</span>
-  </h2>
-</div>
-
-@if (app()) {
-  <div class="cards">
-    <div class="scroll-window">
-      <ix-app-info-card
-        [app]="app()"
-        (startApp)="startApp.emit()"
-        (stopApp)="stopApp.emit()"
-      ></ix-app-info-card>
-      <ix-app-containers-card [app]="app()"></ix-app-containers-card>
-      @if (app()?.notes) {
-        <ix-app-notes-card [app]="app()"></ix-app-notes-card>
-      }
-      @if (app()?.metadata) {
-        <ix-app-metadata-card
-          [appMetadata]="app().metadata"
-          [maxHeight]="180"
-        ></ix-app-metadata-card>
-      }
-    </div>
+<div class="cards">
+  <div class="scroll-window">
+    <ix-app-info-card
+      [app]="app()"
+      (startApp)="startApp.emit()"
+      (stopApp)="stopApp.emit()"
+    ></ix-app-info-card>
+    <ix-app-containers-card [app]="app()"></ix-app-containers-card>
+    @if (app()?.notes) {
+      <ix-app-notes-card [app]="app()"></ix-app-notes-card>
+    }
+    @if (app()?.metadata) {
+      <ix-app-metadata-card
+        [appMetadata]="app().metadata"
+        [maxHeight]="180"
+      ></ix-app-metadata-card>
+    }
   </div>
-}
+</div>

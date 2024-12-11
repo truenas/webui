@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -277,7 +276,7 @@ export class ReplicationListComponent implements OnInit {
       next: () => {
         this.getReplicationTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
@@ -305,12 +304,12 @@ export class ReplicationListComponent implements OnInit {
             next: (file) => {
               this.download.downloadBlob(file, fileName);
             },
-            error: (err: HttpErrorResponse) => {
-              this.dialogService.error(this.errorHandler.parseHttpError(err));
+            error: (err: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(err));
             },
           });
         },
-        error: (err) => {
+        error: (err: unknown) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

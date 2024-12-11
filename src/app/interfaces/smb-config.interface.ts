@@ -1,4 +1,3 @@
-import { LogLevel } from 'app/enums/log-level.enum';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 
 export interface SmbConfig {
@@ -13,10 +12,8 @@ export interface SmbConfig {
   guest: string;
   id: number;
   localmaster: boolean;
-  loglevel: LogLevel;
   netbiosalias: string[];
   netbiosname: string;
-  netbiosname_local: string;
   next_rid: number;
   ntlmv1_auth: boolean;
   syslog: boolean;
@@ -27,4 +24,4 @@ export interface SmbConfig {
 
 export type SmbConfigUpdate = {
   multichannel?: boolean;
-} & Omit<SmbConfig, 'cifs_SID' | 'id' | 'netbiosname_local' | 'next_rid'>;
+} & Omit<SmbConfig, 'cifs_SID' | 'id' | 'next_rid'>;

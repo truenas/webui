@@ -23,7 +23,7 @@
         <div class="vdev-container">
           @for (enclosureDisks of enclosuresDisks | keyvalue; track enclosureDisks) {
             <ix-enclosure-wrapper
-              [enclosure]="enclosureById[enclosureDisks.key]"
+              [enclosure]="enclosureById()[enclosureDisks.key]"
             >
               <div class="disk-icons">
                 @for (disk of enclosureDisks.value; track disk) {

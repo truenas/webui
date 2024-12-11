@@ -161,7 +161,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       next: () => {
         this.getSnapshotTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

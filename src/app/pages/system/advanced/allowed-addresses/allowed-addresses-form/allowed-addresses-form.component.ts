@@ -8,14 +8,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  EMPTY, Observable, of, switchMap, tap,
+  Observable, of, switchMap, tap,
 } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -112,14 +111,7 @@ export class AllowedAddressesFormComponent implements OnInit {
           return of(true);
         }
         return this.api.call('system.general.ui_restart').pipe(
-          catchError((error: ApiError) => {
-            this.dialogService.error({
-              title: helptextSystemGeneral.dialog_error_title,
-              message: error.reason,
-              backtrace: error.trace?.formatted,
-            });
-            return EMPTY;
-          }),
+          this.errorHandler.catchError(),
           map(() => true),
         );
       }),

@@ -2,10 +2,7 @@ import eslint from "@eslint/js";
 import tsEslint from "typescript-eslint";
 import angular from "angular-eslint";
 import stylistic from "@stylistic/eslint-plugin";
-import {fixupConfigRules, fixupPluginRules} from "@eslint/compat";
-import { FlatCompat }  from "@eslint/eslintrc";
-import {dirname} from "node:path";
-import {fileURLToPath} from "node:url";
+import { fixupPluginRules } from "@eslint/compat";
 import rxjsAngular from "eslint-plugin-rxjs-angular";
 import angularFileNaming from "eslint-plugin-angular-file-naming";
 import importPlugin from "eslint-plugin-import";
@@ -17,11 +14,7 @@ import { eslintSpec } from "./eslint/eslint-spec.mjs";
 import { fixLaterRules } from "./eslint/eslint-ts-rules-fix-later.mjs";
 import { ruleOverrides } from "./eslint/eslint-ts-rules-overrides.mjs";
 import { extraRules } from "./eslint/eslint-ts-rules-extra.mjs";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import rxjs from "@smarttools/eslint-plugin-rxjs";
 
 export default tsEslint.config(
   {
@@ -48,6 +41,7 @@ export default tsEslint.config(
     },
     plugins: {
       unicorn,
+      rxjs,
       "rxjs-angular": fixupPluginRules(rxjsAngular),
       "angular-file-naming": fixupPluginRules(angularFileNaming),
       "unused-imports": unusedImports,
@@ -68,7 +62,7 @@ export default tsEslint.config(
       }),
       importPlugin.flatConfigs.recommended,
       sonarjs.configs.recommended,
-      ...fixupConfigRules(compat.extends('plugin:rxjs/recommended')),
+      rxjs.configs.recommended,
     ],
     rules: {
       ...ruleOverrides,

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
@@ -68,6 +68,14 @@ export class SigninStore extends ComponentStore<SigninState> {
   private failoverStatusSubscription: Subscription;
   private disabledReasonsSubscription: Subscription;
 
+  private handleLoginResult = (loginResult: LoginResult): void => {
+    if (loginResult !== LoginResult.Success) {
+      this.authService.clearAuthToken();
+    } else {
+      this.handleSuccessfulLogin();
+    }
+  };
+
   constructor(
     private api: ApiService,
     private translate: TranslateService,
@@ -81,6 +89,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private authService: AuthService,
     private updateService: UpdateService,
     private actions$: Actions,
+    private activatedRoute: ActivatedRoute,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -97,7 +106,14 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.updateService.hardRefreshIfNeeded(),
     ])),
     tap(() => this.setLoadingState(false)),
-    switchMap(() => this.handleLoginWithToken()),
+    switchMap(() => {
+      const queryToken = this.activatedRoute.snapshot.queryParamMap.get('token');
+      if (queryToken) {
+        return this.handleLoginWithQueryToken(queryToken);
+      }
+
+      return this.handleLoginWithToken();
+    }),
   ));
 
   handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
@@ -188,7 +204,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.api.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(initialState.wasAdminSet);
       }),
@@ -207,7 +223,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(undefined);
       }),
@@ -239,8 +255,23 @@ export class SigninStore extends ComponentStore<SigninState> {
       .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }
 
+  private handleLoginWithQueryToken(token: string): Observable<LoginResult> {
+    this.authService.setQueryToken(token);
+
+    return this.authService.loginWithToken().pipe(
+      tap(this.handleLoginResult.bind(this)),
+      tapResponse(
+        () => {},
+        (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      ),
+    );
+  }
+
   private handleLoginWithToken(): Observable<LoginResult> {
-    return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(take(1)).pipe(
+    return this.tokenLastUsedService.isTokenWithinTimeline$.pipe(
+      take(1),
       filter((isTokenWithinTimeline) => {
         if (!isTokenWithinTimeline) {
           this.authService.clearAuthToken();
@@ -249,13 +280,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         return isTokenWithinTimeline;
       }),
       switchMap(() => this.authService.loginWithToken()),
-      tap((loginResult) => {
-        if (loginResult !== LoginResult.Success) {
-          this.authService.clearAuthToken();
-        } else {
-          this.handleSuccessfulLogin();
-        }
-      }),
+      tap(this.handleLoginResult.bind(this)),
       tapResponse(
         () => {},
         (error: unknown) => {

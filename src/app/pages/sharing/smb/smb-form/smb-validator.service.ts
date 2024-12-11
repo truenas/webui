@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
+import { extractApiError } from 'app/helpers/api.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -39,19 +40,20 @@ export class SmbValidationService {
 
           return this.api.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
             switchMap((response) => this.handleError(response)),
-            catchError((error: { reason: string }) => this.handleError(error)),
+            catchError((error: unknown) => this.handleError(error)),
           );
         }),
       );
     };
   };
 
-  private handleError(error: { reason: string }): Observable<ValidationErrors | null> {
+  private handleError(error: unknown): Observable<ValidationErrors | null> {
     if (error === null) {
       return of(null);
     }
 
-    const errorText = this.extractError(error.reason);
+    const apiError = extractApiError(error);
+    const errorText = this.extractError(apiError?.reason || '');
 
     if (errorText === this.noSmbUsersError) {
       this.showNoSmbUsersWarning();

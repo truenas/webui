@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, Component, ElementRef, input, viewChild,
 } from '@angular/core';
@@ -77,8 +76,8 @@ export class ErrorTemplateComponent {
           next: (file) => {
             this.download.downloadBlob(file, `${this.logs().id}.log`);
           },
-          error: (error: HttpErrorResponse) => {
-            this.dialogService.error(this.errorHandler.parseHttpError(error));
+          error: (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
       });

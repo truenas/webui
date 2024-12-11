@@ -14,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -116,7 +115,7 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
         this.isJobCompleted = true;
         this.cdr.markForCheck();
       },
-      error: (error: ApiError | Job) => {
+      error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });

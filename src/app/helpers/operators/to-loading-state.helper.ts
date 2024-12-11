@@ -2,12 +2,11 @@ import { of, OperatorFunction, pipe } from 'rxjs';
 import {
   catchError, map, startWith,
 } from 'rxjs/operators';
-import { ApiError } from 'app/interfaces/api-error.interface';
 
 export interface LoadingState<T> {
   isLoading: boolean;
   value?: T;
-  error?: ApiError | Error;
+  error?: unknown;
 }
 
 /**
@@ -25,7 +24,7 @@ export interface LoadingState<T> {
 export function toLoadingState<T>(): OperatorFunction<T, LoadingState<T>> {
   return pipe(
     map((value) => ({ isLoading: false, value })),
-    catchError((error: ApiError | Error) => of({ isLoading: false, error })),
+    catchError((error: unknown) => of({ isLoading: false, error })),
     startWith({ isLoading: true }),
   );
 }

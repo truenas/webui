@@ -1,10 +1,10 @@
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -66,6 +66,7 @@ describe('SigninStore', () => {
           },
         },
       },
+      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: { get: jest.fn(() => null) } } }),
     ],
   });
 
@@ -82,6 +83,7 @@ describe('SigninStore', () => {
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
     jest.spyOn(authService, 'clearAuthToken').mockReturnValue(null);
+    jest.spyOn(authService, 'setQueryToken').mockReturnValue(undefined);
   });
 
   describe('selectors', () => {
@@ -187,13 +189,23 @@ describe('SigninStore', () => {
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
 
-    it('should not call "loginWithToken" if token is not within timeline and clear auth token', () => {
+    it('should not call "loginWithToken" if token is not within timeline and clear auth token and queryToken is null', () => {
       isTokenWithinTimeline$.next(false);
       spectator.service.init();
 
       expect(authService.clearAuthToken).toHaveBeenCalled();
       expect(authService.loginWithToken).not.toHaveBeenCalled();
       expect(spectator.inject(Router).navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('should call "loginWithToken" if queryToken is not null', () => {
+      isTokenWithinTimeline$.next(false);
+      const token = 'token';
+      const activatedRoute = spectator.inject(ActivatedRoute);
+      jest.spyOn(activatedRoute.snapshot.queryParamMap, 'get').mockImplementationOnce(() => token);
+      spectator.service.init();
+      expect(authService.setQueryToken).toHaveBeenCalledWith(token);
+      expect(authService.loginWithToken).toHaveBeenCalled();
     });
   });
 

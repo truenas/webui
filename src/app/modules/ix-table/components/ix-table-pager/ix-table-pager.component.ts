@@ -1,6 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
-  input,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';

@@ -10,7 +10,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { LogLevel } from 'app/enums/log-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -81,7 +80,7 @@ export class ServiceSmbComponent implements OnInit {
     enable_smb1: [false, []],
     ntlmv1_auth: [false, []],
     unixcharset: ['', []],
-    loglevel: [LogLevel.None, []],
+    debug: [false, []],
     syslog: [false, []],
     localmaster: [false, []],
     guest: ['nobody', []],
@@ -104,7 +103,7 @@ export class ServiceSmbComponent implements OnInit {
     enable_smb1: helptextServiceSmb.cifs_srv_enable_smb1_tooltip,
     ntlmv1_auth: helptextServiceSmb.cifs_srv_ntlmv1_auth_tooltip,
     unixcharset: helptextServiceSmb.cifs_srv_unixcharset_tooltip,
-    loglevel: helptextServiceSmb.cifs_srv_loglevel_tooltip,
+    debug: helptextServiceSmb.cifs_srv_debug_tooltip,
     syslog: helptextServiceSmb.cifs_srv_syslog_tooltip,
     localmaster: helptextServiceSmb.cifs_srv_localmaster_tooltip,
     guest: helptextServiceSmb.cifs_srv_guest_tooltip,
@@ -115,14 +114,6 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: helptextServiceSmb.cifs_srv_aapl_extensions_tooltip,
     multichannel: helptextServiceSmb.cifs_srv_multichannel_tooltip,
   };
-
-  readonly logLevelOptions$ = of([
-    { label: this.translate.instant('None'), value: LogLevel.None },
-    { label: this.translate.instant('Minimum'), value: LogLevel.Minimum },
-    { label: this.translate.instant('Normal'), value: LogLevel.Normal },
-    { label: this.translate.instant('Full'), value: LogLevel.Full },
-    { label: this.translate.instant('Debug'), value: LogLevel.Debug },
-  ]);
 
   readonly unixCharsetOptions$ = this.api.call('smb.unixcharset_choices').pipe(choicesToOptions());
   readonly guestAccountOptions$ = this.api.call('user.query').pipe(

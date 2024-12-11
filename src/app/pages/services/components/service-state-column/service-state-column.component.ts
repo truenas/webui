@@ -102,7 +102,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
       untilDestroyed(this),
     ).subscribe({
       next: () => this.snackbar.success(this.translate.instant('Service stopped')),
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         toggle.checked = true;
       },
@@ -115,7 +115,7 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
       untilDestroyed(this),
     ).subscribe({
       next: () => this.snackbar.success(this.translate.instant('Service started')),
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.showErrorModal(error);
         toggle.checked = false;
       },

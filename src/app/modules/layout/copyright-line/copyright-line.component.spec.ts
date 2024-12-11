@@ -37,6 +37,7 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText('TrueNAS ® © 2024');
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/testdrive');
   });
 
   it('shows copyright line with enterprise product type and year of build', () => {
@@ -46,5 +47,6 @@ describe('CopyrightLineComponent', () => {
 
     expect(spectator.fixture.nativeElement).toHaveText('TrueNAS ENTERPRISE ® © 2024');
     expect(spectator.fixture.nativeElement).toHaveText('iXsystems, Inc');
+    expect(spectator.query('a')).toHaveAttribute('href', 'https://truenas.com/production');
   });
 });

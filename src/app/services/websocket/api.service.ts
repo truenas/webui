@@ -2,32 +2,49 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  filter, map, merge, Observable, of, share, startWith, Subject, Subscriber, switchMap, take, takeUntil, throwError,
+  filter,
+  map,
+  merge,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  take,
+  takeUntil,
+  throwError,
 } from 'rxjs';
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
+import { isErrorResponse } from 'app/helpers/api.helper';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
+import {
+  ApiCallAndSubscribeMethod,
+  ApiCallAndSubscribeResponse,
+} from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod, ApiJobParams, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import {
-  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingApiMessage, ResultMessage,
+  ApiEvent,
+  ApiEventMethod,
+  ApiEventTyped,
+  ErrorResponse,
+  IncomingMessage,
+  SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   readonly clearSubscriptions$ = new Subject<void>();
 
   constructor(
     protected wsHandler: WebSocketHandlerService,
+    protected subscriptionManager: SubscriptionManagerService,
     protected translate: TranslateService,
   ) {
     this.wsHandler.isConnected$?.subscribe((isConnected) => {
@@ -60,7 +77,8 @@ export class ApiService {
   }
 
   /**
-   * Use `job` when you care about job progress or result.
+   * Use this method when you want to start a job, but don't care about the progress or result.
+   * Use `job` otherwise.
    */
   startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
     return this.callMethod(method, params);
@@ -87,30 +105,17 @@ export class ApiService {
   }
 
   subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K | `${K}:${string}`): Observable<ApiEventTyped<K>> {
-    if (this.eventSubscribers.has(method as K)) {
-      return this.eventSubscribers.get(method as K);
-    }
-    const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscription = this.wsHandler.buildSubscriber<K, ApiEventTyped<K>>(method as K).subscribe(trigger);
-      return () => {
-        subscription.unsubscribe();
-        this.eventSubscribers.delete(method as K);
-      };
-    }).pipe(
+    return this.subscriptionManager.subscribe(method).pipe(
       switchMap((apiEvent) => {
-        const erroredEvent = apiEvent as unknown as ResultMessage;
-        if (erroredEvent?.error) {
+        const erroredEvent = apiEvent as unknown as IncomingMessage;
+        if (isErrorResponse(erroredEvent)) {
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
         }
         return of(apiEvent);
       }),
-      share(),
       takeUntil(this.clearSubscriptions$),
     );
-
-    this.eventSubscribers.set(method as K, observable$);
-    return observable$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
@@ -119,36 +124,35 @@ export class ApiService {
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
-    this.eventSubscribers.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
-  private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
+  private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown[]): Observable<unknown> {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
         this.wsHandler.scheduleCall({
-          id: uuid, msg: IncomingApiMessageType.Method, method, params,
+          id: uuid, method, params,
         });
         return this.wsHandler.responses$.pipe(
-          filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+          filter((message) => 'id' in message && message.id === uuid),
         );
       }),
-      switchMap((data: IncomingApiMessage) => {
-        if ('error' in data && data.error) {
-          this.printError(data.error, { method, params });
-          const error = this.enhanceError(data.error, { method });
+      switchMap((message: SuccessfulResponse | ErrorResponse) => {
+        if (isErrorResponse(message)) {
+          this.printError(message, { method, params });
+          const error = this.enhanceError(message, { method });
           return throwError(() => error);
         }
 
         performance.mark(`${method} - ${uuid} - end`);
         performance.measure(method, `${method} - ${uuid} - start`, `${method} - ${uuid} - end`);
-        return of(data);
+        return of(message);
       }),
 
-      map((data: ResultMessage) => data.result),
+      map((message) => message.result),
       take(1),
     );
   }
@@ -161,28 +165,34 @@ export class ApiService {
     );
   }
 
-  private printError(error: ApiError, context: { method: string; params: unknown }): void {
-    if (error.errname === ApiErrorName.NoAccess) {
-      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}. Original message: ${error.message}`);
+  private printError(response: ErrorResponse, context: { method: string; params: unknown }): void {
+    if (response.error.data?.errname === ApiErrorName.NoAccess) {
+      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}. Original message: ${response.error.message}`);
       return;
     }
 
     // Do not log validation errors.
-    if (error.type === ResponseErrorType.Validation) {
+    if (response.error.data?.errname === ApiErrorName.Validation) {
       return;
     }
 
-    console.error('Error: ', error);
+    console.error('Error: ', response.error);
   }
 
   // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
-  private enhanceError(error: ApiError, context: { method: string }): ApiError {
-    if (error.errname === ApiErrorName.NoAccess) {
+  private enhanceError(response: ErrorResponse, context: { method: string }): ErrorResponse {
+    if (response.error.data?.errname === ApiErrorName.NoAccess) {
       return {
-        ...error,
-        reason: error.message || this.translate.instant('Access denied to {method}', { method: context.method }),
+        ...response,
+        error: {
+          ...response.error,
+          data: {
+            ...response.error.data,
+            reason: response.error.message || this.translate.instant('Access denied to {method}', { method: context.method }),
+          },
+        },
       };
     }
-    return error;
+    return response;
   }
 }

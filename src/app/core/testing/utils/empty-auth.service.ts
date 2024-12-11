@@ -15,4 +15,5 @@ export class EmptyAuthService {
   logout = getMissingInjectionErrorFactory(AuthService.name);
   refreshUser = getMissingInjectionErrorFactory(AuthService.name);
   loginWithToken = getMissingInjectionErrorFactory(AuthService.name);
+  setQueryToken = getMissingInjectionErrorFactory(AuthService.name);
 }

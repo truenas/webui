@@ -5,12 +5,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
 } from 'rxjs';
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { VmState } from 'app/enums/vm.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   VirtualizationDetails,
   VirtualMachine,
@@ -123,7 +123,7 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
@@ -142,9 +142,10 @@ export class VmService {
           this.checkMemory();
           this.refreshVmList$.next();
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
+          const apiError = extractApiError(error);
           if (method === this.wsMethods.start
-            && error.errname === ApiErrorName.NoMemory) {
+            && apiError?.errname === ApiErrorName.NoMemory) {
             this.onMemoryError(vm);
             return;
           }

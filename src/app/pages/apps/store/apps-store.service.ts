@@ -95,7 +95,7 @@ export class AppsStore extends ComponentStore<AppsState> {
           };
         });
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.handleError(error);
         return EMPTY;
       }),
@@ -104,7 +104,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadLatestApps(): Observable<unknown> {
     return this.appsService.getLatestApps().pipe(
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.handleError(error);
         return of([]);
       }),
@@ -121,7 +121,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadAvailableApps(): Observable<unknown> {
     return this.appsService.getAvailableApps().pipe(
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.handleError(error);
         return of([]);
       }),
@@ -141,7 +141,7 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadCategories(): Observable<unknown> {
     return this.appsService.getAllAppsCategories().pipe(
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.handleError(error);
         return of([]);
       }),

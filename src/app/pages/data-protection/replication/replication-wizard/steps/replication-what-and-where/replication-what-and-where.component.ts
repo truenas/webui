@@ -19,7 +19,6 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
@@ -43,6 +42,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -173,6 +173,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private dialogService: DialogService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -439,9 +440,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
           this.cdr.markForCheck();
         },
-        error: (error: ApiError) => {
+        error: (error: unknown) => {
           this.snapshotsText = '';
-          this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
+          const errorMessage = this.errorHandler.getFirstErrorMessage(error);
+          if (errorMessage) {
+            this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: errorMessage } });
+          }
           this.cdr.markForCheck();
         },
       });

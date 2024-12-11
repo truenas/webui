@@ -107,7 +107,7 @@ export class CloudSyncWizardComponent {
 
         this.cdr.markForCheck();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.isLoading$.next(false);
         this.dialogService.error(this.errorHandler.parseError(err));
       },

@@ -160,7 +160,7 @@ export class SmartTaskCardComponent implements OnInit {
       next: () => {
         this.getSmartTasks();
       },
-      error: (error) => this.errorHandler.showErrorModal(error),
+      error: (error: unknown) => this.errorHandler.showErrorModal(error),
     });
   }
 

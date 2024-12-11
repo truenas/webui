@@ -1,0 +1,123 @@
+
+<div class="table-header">
+  <h2>{{ 'Applications' | translate }}</h2>
+
+  @if (hasCheckedApps) {
+    <ix-installed-apps-list-bulk-actions
+      [checkedApps]="checkedApps"
+      (bulkStart)="onBulkStart()"
+      (bulkStop)="onBulkStop()"
+      (bulkUpgrade)="onBulkUpgrade()"
+      (bulkDelete)="onBulkDelete()"
+    ></ix-installed-apps-list-bulk-actions>
+  }
+</div>
+
+<div class="item-search">
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="isLoading()"
+  ></ix-fake-progress-bar>
+
+  <ix-search-input1
+    [maxLength]="100"
+    [disabled]="!dataSource.length"
+    [value]="filterString"
+    (search)="onSearch($event)"
+  ></ix-search-input1>
+</div>
+
+<div
+  class="sticky-header"
+  matSort
+  matSortActive="application"
+  matSortDirection="asc"
+  matSortDisableClear
+  (matSortChange)="sortChanged($event)"
+>
+  <div class="app-header-row">
+    <div>
+      <span class="name-header">
+        @if (dataSource.length) {
+          <mat-checkbox
+            color="primary"
+            ixTest="select-all-app"
+            [checked]="allAppsChecked"
+            [indeterminate]="!allAppsChecked && !!selection.selected.length"
+            (change)="toggleAppsChecked($event.checked)"
+          ></mat-checkbox>
+        }
+      </span>
+    </div>
+    <div
+      [matColumnDef]="sortableField.Application"
+      [mat-sort-header]="sortableField.Application"
+    >
+      {{ 'Application' | translate }}
+    </div>
+    <div
+      [matColumnDef]="sortableField.State"
+      [mat-sort-header]="sortableField.State"
+    >
+      {{ 'Status' | translate }}
+    </div>
+    <div>{{ 'CPU' | translate }}</div>
+    <div>{{ 'RAM' | translate }}</div>
+    <div>{{ 'Block I/O' | translate }}</div>
+    <div>{{ 'Network' | translate }}</div>
+    <div
+      class="app-update-header"
+      [matColumnDef]="sortableField.Updates"
+      [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+      [disabled]="!hasUpdates"
+    >
+      <span>{{ 'Updates' | translate }}</span>
+      @if (hasUpdates) {
+        <ix-icon
+          class="has-updates-icon"
+          name="mdi-alert-circle"
+          matTooltipPosition="above"
+          [matTooltip]="'Updates available' | translate"
+        ></ix-icon>
+      }
+    </div>
+    <div>{{ 'Controls' | translate }}</div>
+  </div>
+</div>
+
+<div
+  matSort
+  matSortDisableClear
+  matSortActive="application"
+  matSortDirection="asc"
+  class="app-wrapper"
+  (matSortChange)="sortChanged($event)"
+>
+  <div class="app-inner">
+    <div class="apps-rows">
+      @for (app of filteredApps; track app.name) {
+        <ix-app-row
+          tabindex="0"
+          [app]="app"
+          [stats]="getAppStats(app.name) | async"
+          [class.selected]="selectedApp.id === app.id"
+          [selected]="selection.isSelected(app.id)"
+          [job]="appJobs.get(app.name)"
+          (startApp)="start(app.name)"
+          (stopApp)="stop(app.name)"
+          (restartApp)="restart(app.name)"
+          (clickStatus)="openStatusDialog(app.name)"
+          (selectionChange)="selection.toggle(app.id)"
+          (click)="viewDetails(app)"
+          (keydown.enter)="viewDetails(app)"
+        ></ix-app-row>
+      }
+
+      @if ((dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading())) {
+        <div class="no-apps">
+          <ix-empty [conf]="entityEmptyConf"></ix-empty>
+        </div>
+      }
+    </div>
+  </div>
+</div>

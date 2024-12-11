@@ -1,7 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
-  Component, forwardRef, inject, ChangeDetectionStrategy,
-  input,
+  Component, forwardRef, inject, ChangeDetectionStrategy, input,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
@@ -29,10 +28,10 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   imports: [IxSelectComponent],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
-  readonly label = input<string>(undefined);
-  readonly tooltip = input<string>(undefined);
-  readonly required = input<boolean>(undefined);
-  readonly filterByProviders = input<CloudSyncProviderName[]>(undefined);
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly filterByProviders = input<CloudSyncProviderName[]>();
 
   private cloudCredentialService = inject(CloudCredentialService);
 
@@ -58,7 +57,6 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   }
 
   override getFormInputData(): { providers: CloudSyncProviderName[] } {
-    const filterByProviders = this.filterByProviders();
-    return filterByProviders?.length ? { providers: filterByProviders } : undefined;
+    return this.filterByProviders()?.length ? { providers: this.filterByProviders() } : undefined;
   }
 }

@@ -14,7 +14,6 @@ import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -203,7 +202,7 @@ export class ReplicationFormComponent implements OnInit {
             this.cdr.markForCheck();
             this.chainedRef.close({ response, error: null });
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isLoading = false;
             this.cdr.markForCheck();
             this.dialog.error(this.errorHandler.parseError(error));
@@ -294,11 +293,12 @@ export class ReplicationFormComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: ApiError) => {
+      error: (error: unknown) => {
         this.isEligibleSnapshotsMessageRed = true;
         this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
-        if ('reason' in error) {
-          this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
+        const firstError = this.errorHandler.getFirstErrorMessage(error);
+        if (firstError) {
+          this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${firstError}`;
         }
 
         this.isLoading = false;

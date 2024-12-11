@@ -1,32 +1,30 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject,
   combineLatest,
   filter,
-  interval,
   map,
   mergeMap,
-  NEVER,
   Observable,
   of,
   Subject,
   Subscription,
-  switchMap,
   take,
   tap,
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEventMethod, ApiEventTyped, IncomingApiMessage } from 'app/interfaces/api-message.interface';
+import { RequestMessage, IncomingMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
+
+type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 
 @UntilDestroy()
 @Injectable({
@@ -34,12 +32,11 @@ import { WebSocketConnection } from 'app/services/websocket/websocket-connection
 })
 export class WebSocketHandlerService {
   private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
-  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
+  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
 
-  private readonly connectMsgReceived$ = new BehaviorSubject(false);
-  readonly isConnected$ = this.connectMsgReceived$.asObservable();
+  private readonly connectionEstablished$ = new BehaviorSubject(false);
+  readonly isConnected$ = this.connectionEstablished$.asObservable();
 
-  private readonly pingTimeoutMillis = 20 * 1000;
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription;
   private readonly maxConcurrentCalls = 20;
@@ -63,16 +60,18 @@ export class WebSocketHandlerService {
     return this.isConnectionLive$.pipe(map((isLive) => !isLive));
   }
 
-  get responses$(): Observable<IncomingApiMessage> {
-    return this.wsConnection.stream$ as Observable<IncomingApiMessage>;
+  get responses$(): Observable<IncomingMessage> {
+    return this.wsConnection.stream$ as Observable<IncomingMessage>;
   }
 
   private readonly triggerNextCall$ = new Subject<void>();
   private activeCalls = 0;
-  private readonly queuedCalls: { id: string; [key: string]: unknown }[] = [];
-  private readonly pendingCalls = new Map<string, { id: string; [key: string]: unknown }>();
+  private readonly queuedCalls: ApiCall[] = [];
+  private readonly pendingCalls = new Map<string, ApiCall>();
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
+
+  private subscriptionIds: Record<string, number> = {};
 
   constructor(
     private dialogService: DialogService,
@@ -85,9 +84,7 @@ export class WebSocketHandlerService {
 
   private setupWebSocket(): void {
     this.connectWebSocket();
-    this.setupSubscriptionUpdates();
     this.setupScheduledCalls();
-    this.setupPing();
   }
 
   private setupScheduledCalls(): void {
@@ -108,13 +105,13 @@ export class WebSocketHandlerService {
     ).subscribe();
   }
 
-  private processCall(call: { id: string; [key: string]: unknown }): Observable<unknown> {
+  private processCall(call: ApiCall): Observable<unknown> {
     this.activeCalls++;
     this.pendingCalls.set(call.id, call);
     this.wsConnection.send(call);
 
     return this.responses$.pipe(
-      filter((data: IncomingApiMessage) => data.msg === IncomingApiMessageType.Result && data.id === call.id),
+      filter((message) => 'id' in message && message.id === call.id),
       take(1),
       tap(() => {
         this.activeCalls--;
@@ -150,7 +147,7 @@ export class WebSocketHandlerService {
       this.showingConcurrentCallsError = true;
       this.dialogService.error({
         message: this.translate.instant(`Max concurrent calls limit reached.
-        There are more than 20 calls queued. 
+        There are more than 20 calls queued.
         See queued calls in the browser's console logs`),
         title: this.translate.instant('Max Concurrent Calls'),
       }).pipe(untilDestroyed(this)).subscribe({
@@ -162,59 +159,31 @@ export class WebSocketHandlerService {
   }
 
   private connectWebSocket(): void {
-    this.wsConnection.close();
+    if (!this.wsConnection.closed) {
+      this.wsConnection.close();
+    }
     performance.mark('WS Init');
-    this.wsConnection.connect({
-      url: this.connectionUrl,
-      openObserver: {
-        next: this.onOpen.bind(this),
-      },
-      closeObserver: {
-        next: this.onClose.bind(this),
-      },
-    });
-  }
-
-  private setupSubscriptionUpdates(): void {
-    this.wsConnection.stream$.pipe(
-      tap((response: IncomingApiMessage) => {
-        if (response.msg === IncomingApiMessageType.Connected) {
-          performance.mark('WS Connected');
-          performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
-          this.connectMsgReceived$.next(true);
-        }
-      }),
-    ).subscribe();
-  }
-
-  private setupPing(): void {
-    this.isConnected$.pipe(
-      switchMap((isConnected) => {
-        if (!isConnected) {
-          return NEVER;
-        }
-
-        return interval(this.pingTimeoutMillis);
-      }),
-    ).subscribe(() => {
-      this.wsConnection.send({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
-    });
-  }
-
-  private sendConnectMessage(): void {
-    this.wsConnection.send({
-      msg: OutgoingApiMessageType.Connect,
-      version: '1',
-      support: ['1'],
-    });
+    this.wsConnection
+      .connect({
+        url: this.connectionUrl,
+        openObserver: {
+          next: this.onOpen.bind(this),
+        },
+        closeObserver: {
+          next: this.onClose.bind(this),
+        },
+      })
+      .subscribe();
   }
 
   private onClose(event: CloseEvent): void {
-    this.connectMsgReceived$.next(false);
+    this.connectionEstablished$.next(false);
     this.isConnectionLive$.next(false);
     if (this.reconnectTimerSubscription) {
       return;
     }
+
+    // TODO: Extract code in some constant.
     if (event.code === 1008) {
       this.isAccessRestricted$ = true;
     } else {
@@ -233,21 +202,16 @@ export class WebSocketHandlerService {
       return;
     }
     this.shutDownInProgress = false;
-    this.sendConnectMessage();
+    this.connectionEstablished$.next(true);
+
+    performance.mark('WS Connected');
+    performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');
   }
 
-  scheduleCall(payload: { id: string; [key: string]: unknown }): void {
-    this.queuedCalls.push(payload);
+  scheduleCall(payload: ApiCall): void {
+    const message = makeRequestMessage(payload);
+    this.queuedCalls.push(message as ApiCall);
     this.triggerNextCall$.next();
-  }
-
-  buildSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
-    const id = UUID.UUID();
-    return this.wsConnection.event(
-      () => ({ id, name, msg: OutgoingApiMessageType.Sub }),
-      () => ({ id, msg: OutgoingApiMessageType.UnSub }),
-      (message: R) => (message.collection === name && message.msg !== IncomingApiMessageType.NoSub),
-    );
   }
 
   prepareShutdown(): void {

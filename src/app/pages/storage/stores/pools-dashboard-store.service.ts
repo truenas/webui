@@ -8,7 +8,6 @@ import {
 import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -167,7 +166,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
     return this.api.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: ApiError) => {
+      catchError((error: unknown) => {
         console.error('Error loading temperature: ', error);
         return of({});
       }),

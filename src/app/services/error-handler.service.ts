@@ -5,9 +5,13 @@ import * as Sentry from '@sentry/angular';
 import {
   catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
-import { isApiError } from 'app/helpers/api.helper';
+import { apiErrorNames } from 'app/enums/api.enum';
+import {
+  isApiError, isErrorResponse, isFailedJob,
+} from 'app/helpers/api.helper';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
+import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -49,10 +53,17 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
-    if (this.isWebSocketError(error)) {
-      return this.parseWsError(error);
+    if (isErrorResponse(error)) {
+      const actualError = error.error;
+      if (isApiError(actualError.data)) {
+        return this.parseApiError(actualError.data);
+      }
+      return this.parseRawJsonRpcError(actualError);
     }
-    if (this.isJobError(error)) {
+    if (isApiError(error)) {
+      return this.parseApiError(error);
+    }
+    if (isFailedJob(error)) {
       return this.parseJobError(error);
     }
     if (this.isHttpError(error)) {
@@ -68,23 +79,19 @@ export class ErrorHandlerService implements ErrorHandler {
     return null;
   }
 
-  logToSentry(error: unknown): void {
+  getFirstErrorMessage(error: unknown): string {
+    const parsedError = this.parseError(error);
+    if (Array.isArray(parsedError)) {
+      return parsedError[0].message;
+    }
+    return parsedError.message;
+  }
+
+  private logToSentry(error: unknown): void {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
-  isWebSocketError(error: unknown): error is ApiError {
-    return isApiError(error);
-  }
-
-  isJobError(obj: unknown): obj is Job {
-    return typeof obj === 'object'
-      && ('state' in obj
-        && 'error' in obj
-        && 'exception' in obj
-        && 'exc_info' in obj);
-  }
-
-  isHttpError(obj: unknown): obj is HttpErrorResponse {
+  private isHttpError(obj: unknown): obj is HttpErrorResponse {
     return obj instanceof HttpErrorResponse;
   }
 
@@ -103,9 +110,13 @@ export class ErrorHandlerService implements ErrorHandler {
     this.dialog.error(this.parseError(error));
   }
 
-  private parseWsError(error: ApiError): ErrorReport {
+  private parseApiError(error: ApiError): ErrorReport {
+    const title = apiErrorNames.has(error.errname)
+      ? this.translate.instant(apiErrorNames.get(error.errname))
+      : error.trace?.class || this.translate.instant('Error');
+
     return {
-      title: error.type || error.trace?.class || this.translate.instant('Error'),
+      title,
       message: error.reason || error?.error?.toString(),
       backtrace: error.trace?.formatted || '',
     };
@@ -162,9 +173,9 @@ export class ErrorHandlerService implements ErrorHandler {
     extractedError: string | ApiError | Job,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (this.isWebSocketError(extractedError)) {
-      parsedError = this.parseWsError(extractedError);
-    } else if (this.isJobError(extractedError)) {
+    if (isApiError(extractedError)) {
+      parsedError = this.parseApiError(extractedError);
+    } else if (isFailedJob(extractedError)) {
       parsedError = this.parseJobError(extractedError);
     } else if (typeof extractedError === 'string') {
       parsedError = {
@@ -195,6 +206,13 @@ export class ErrorHandlerService implements ErrorHandler {
       }
     });
     return errors;
+  }
+
+  private parseRawJsonRpcError(error: JsonRpcError): ErrorReport {
+    return {
+      title: this.translate?.instant('Error') || 'Error',
+      message: error.message,
+    };
   }
 
   parseHttpError(error: HttpErrorResponse): ErrorReport | ErrorReport[] {

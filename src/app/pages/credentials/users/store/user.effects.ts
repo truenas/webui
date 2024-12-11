@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -32,7 +32,7 @@ export class UserEffects {
       }
       return this.api.call('user.query', params).pipe(
         map((users) => usersLoaded({ users })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(usersNotLoaded({
@@ -49,7 +49,7 @@ export class UserEffects {
     ofType(usersLoaded),
     switchMap(() => {
       return this.api.subscribe('user.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        filter((event) => event.msg === CollectionChangeType.Removed),
         map((event) => userRemoved({ id: event.id as number })),
       );
     }),

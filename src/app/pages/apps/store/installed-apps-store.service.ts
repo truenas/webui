@@ -5,7 +5,7 @@ import {
   EMPTY, Observable, Subscription, catchError,
   combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
@@ -119,11 +119,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
 
   private handleApiEvent(apiEvent: ApiEvent<App>): void {
     switch (apiEvent.msg) {
-      case IncomingApiMessageType.Removed:
+      case CollectionChangeType.Removed:
         this.handleRemovedEvent(apiEvent);
         break;
-      case IncomingApiMessageType.Added:
-      case IncomingApiMessageType.Changed:
+      case CollectionChangeType.Added:
+      case CollectionChangeType.Changed:
         this.handleAddedOrUpdatedEvent(apiEvent);
         break;
       default:
@@ -165,7 +165,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     }
 
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
-      if (apiEvent.msg === IncomingApiMessageType.Added) {
+      if (apiEvent.msg === CollectionChangeType.Added) {
         return { ...state, installedApps: [...state.installedApps, app] };
       }
 

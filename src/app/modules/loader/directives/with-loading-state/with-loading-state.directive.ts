@@ -55,7 +55,7 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
         break;
       case Boolean(state.error): {
         const errorComponent = this.viewContainerRef.createComponent(WithLoadingStateErrorComponent);
-        errorComponent.instance.error = state.error;
+        errorComponent.setInput('error', state.error);
         this.viewContainerRef.insert(errorComponent.hostView);
         break;
       }

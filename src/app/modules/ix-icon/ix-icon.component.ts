@@ -4,7 +4,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef, HostBinding,
-  Inject, Input, input,
+  Inject, input,
   OnChanges,
   OnInit,
   Optional,
@@ -42,9 +42,12 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   /**
    * Do not apply ordinary 24px size to the icon.
    */
-  @Input()
+  readonly fullSize = input(false);
+
   @HostBinding('class.full-size')
-  fullSize = false;
+  get fullSizeClass(): boolean {
+    return this.fullSize();
+  }
 
   readonly name = input<string>();
 

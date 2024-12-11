@@ -38,7 +38,7 @@ export class AppLoaderService {
       width: '200px',
       height: '200px',
     });
-    this.dialogRef.componentInstance.title = title;
+    this.dialogRef.componentInstance.setTitle(title);
     return this.dialogRef.afterClosed();
   }
 
@@ -55,7 +55,7 @@ export class AppLoaderService {
       return;
     }
 
-    this.dialogRef.componentInstance.title = title;
+    this.dialogRef.componentInstance.setTitle(title);
   }
 
   private tryToRestoreFocusToThePreviousDialog(): void {

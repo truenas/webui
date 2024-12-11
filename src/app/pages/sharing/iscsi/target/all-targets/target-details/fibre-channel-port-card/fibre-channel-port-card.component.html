@@ -1,0 +1,12 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Fibre Channel Port' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <p>{{ 'Name' | translate }}: {{ port().id }}</p>
+    <p>{{ 'Controller A WWPN' | translate }}: {{ port().wwpn }}</p>
+    <p>{{ 'Controller B WWPN' | translate }}: {{ port().wwpn_b }}</p>
+  </mat-card-content>
+</mat-card>

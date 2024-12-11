@@ -1,7 +1,9 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
+import { isApiError, isErrorResponse, isFailedJob } from 'app/helpers/api.helper';
 import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,14 +34,18 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string> = {},
     triggerAnchor: string = undefined,
   ): void {
-    if (this.errorHandler.isWebSocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
-      this.handleValidationError(error, formGroup, fieldsMap, triggerAnchor);
+    const isValidationError = isErrorResponse(error)
+      && isApiError(error.error.data)
+      && error.error.data.errname === ApiErrorName.Validation
+      && error.error.data.extra;
+    if (isValidationError) {
+      this.handleValidationError(error.error.data, formGroup, fieldsMap, triggerAnchor);
       return;
     }
 
     if (
-      this.errorHandler.isJobError(error)
-      && error.exc_info.type === ResponseErrorType.Validation
+      isFailedJob(error)
+      && error.exc_info.type === JobExceptionType.Validation
       && error.exc_info.extra
     ) {
       this.handleValidationError(

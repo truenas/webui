@@ -1,7 +1,6 @@
 import { CdkTreeNode, CdkTreeNodeOutletContext } from '@angular/cdk/tree';
 import {
-  Directive, OnChanges, EmbeddedViewRef, ViewContainerRef,
-  input,
+  Directive, OnChanges, EmbeddedViewRef, ViewContainerRef, input,
 } from '@angular/core';
 import { IxSimpleChange, IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { TreeVirtualNodeData } from 'app/modules/ix-tree/interfaces/tree-virtual-node-data.interface';
@@ -18,7 +17,6 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     const recreateView = this.shouldRecreateView(changes);
-    const dataValue = this.data();
     if (recreateView) {
       const viewContainerRef = this._viewContainerRef;
 
@@ -26,16 +24,15 @@ export class TreeVirtualScrollNodeOutletDirective<T> implements OnChanges {
         viewContainerRef.remove(viewContainerRef.indexOf(this._viewRef));
       }
 
-      const data = this.data();
-      this._viewRef = data
-        ? viewContainerRef.createEmbeddedView(data.nodeDef.template, data.context)
+      this._viewRef = this.data()
+        ? viewContainerRef.createEmbeddedView(this.data().nodeDef.template, this.data().context)
         : null;
 
       if (CdkTreeNode.mostRecentTreeNode && this._viewRef) {
         CdkTreeNode.mostRecentTreeNode.data = this.data().data;
       }
-    } else if (this._viewRef && dataValue.context) {
-      this.updateExistingContext(dataValue.context);
+    } else if (this._viewRef && this.data().context) {
+      this.updateExistingContext(this.data().context);
     }
   }
 

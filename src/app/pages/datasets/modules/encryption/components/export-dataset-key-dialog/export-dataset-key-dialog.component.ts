@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
@@ -10,9 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -71,7 +68,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close();
         },
-        error: (error: ApiError | HttpErrorResponse) => {
+        error: (error: unknown) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
@@ -90,7 +87,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
           this.key = job.result;
           this.cdr.markForCheck();
         },
-        error: (error: Job | ApiError) => {
+        error: (error: unknown) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

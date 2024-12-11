@@ -6,7 +6,7 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
@@ -34,7 +34,7 @@ export class SnapshotEffects {
         },
       ]).pipe(
         map((snapshots) => snapshotsLoaded({ snapshots })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(snapshotsNotLoaded({
@@ -49,12 +49,12 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.api.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => event.msg !== IncomingApiMessageType.Removed),
+        filter((event) => event.msg !== CollectionChangeType.Removed),
         switchMap((event) => {
           switch (event.msg) {
-            case IncomingApiMessageType.Added:
+            case CollectionChangeType.Added:
               return of(snapshotAdded({ snapshot: event.fields }));
-            case IncomingApiMessageType.Changed:
+            case CollectionChangeType.Changed:
               return of(snapshotChanged({ snapshot: event.fields }));
             default:
               return EMPTY;
@@ -68,7 +68,7 @@ export class SnapshotEffects {
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.api.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        filter((event) => event.msg === CollectionChangeType.Removed),
         map((event) => snapshotRemoved({ id: event.id.toString() })),
       );
     }),

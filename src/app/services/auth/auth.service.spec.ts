@@ -14,7 +14,8 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
-import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
+import { WINDOW } from 'app/helpers/window.helper';
+import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -192,6 +193,29 @@ describe('AuthService', () => {
     it('returns true for any role when user has FULL_ADMIN role', async () => {
       await setUserRoles([Role.FullAdmin]);
       expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(true);
+    });
+  });
+
+  describe('setQueryToken', () => {
+    it('does not set the token if the token is null or the protocol is not secure', async () => {
+      spectator.service.setQueryToken(null);
+      let result = await firstValueFrom(spectator.service.loginWithToken());
+      expect(result).toEqual(LoginResult.NoToken);
+
+      const window = spectator.inject<Window>(WINDOW);
+      Object.defineProperty(window, 'location', { value: { protocol: 'http:' } });
+      spectator.service.setQueryToken('token');
+      result = await firstValueFrom(spectator.service.loginWithToken());
+      expect(result).toEqual(LoginResult.NoToken);
+
+      const token = 'token';
+      window.location.protocol = 'https:';
+      spectator.service.setQueryToken(token);
+      await firstValueFrom(spectator.service.loginWithToken());
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: LoginExMechanism.TokenPlain, token }],
+      );
     });
   });
 });

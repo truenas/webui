@@ -18,7 +18,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -34,6 +33,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -118,6 +118,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private datasetStore: DatasetTreeStore,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}
 
@@ -274,22 +275,17 @@ export class ExportDisconnectModalComponent implements OnInit {
       this.api.call('pool.processes', [this.pool.id]),
       this.api.call('systemdataset.config'),
     ])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: ([attachments, processes, systemConfig]) => {
-          this.attachments = attachments;
-          this.processes = processes;
-          this.systemConfig = systemConfig;
-          this.prepareForm();
-          this.cdr.markForCheck();
-        },
-        error: (error: ApiError) => {
-          this.dialogService.error({
-            title: helptextVolumes.exportError,
-            message: error.reason,
-            backtrace: error.trace?.formatted,
-          });
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(([attachments, processes, systemConfig]) => {
+        this.attachments = attachments;
+        this.processes = processes;
+        this.systemConfig = systemConfig;
+        this.prepareForm();
+        this.cdr.markForCheck();
       });
   }
 

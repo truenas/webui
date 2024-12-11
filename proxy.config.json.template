@@ -10,14 +10,14 @@
         "target": "http://_REMOTE_",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/_upload" : "http://_REMOTE_:6000/_upload"},
+        "pathRewrite": {"^/_upload" : "http://_REMOTE_/_upload"},
         "loglevel": "debug"
     },
     "/_download": {
         "target": "http://_REMOTE_",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/_download" : "http://_REMOTE_:6000/_download"},
+        "pathRewrite": {"^/_download" : "http://_REMOTE_/_download"},
         "loglevel": "debug"
     }
 }

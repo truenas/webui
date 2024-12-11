@@ -24,8 +24,7 @@ export const helptextServiceSmb = {
 
   cifs_srv_unixcharset_tooltip: T('Default is UTF-8 which supports all characters in\
  all languages.'),
-  cifs_srv_loglevel_tooltip: T('Record SMB service messages up to the specified log level. \
- By default, error and warning level messages are logged.'),
+  cifs_srv_debug_tooltip: T('Use this option to log more detailed information about SMB.'),
   cifs_srv_syslog_tooltip: T('Set to log authentication failures in <i>/var/log/messages</i>\
  instead of the default of <i>/var/log/samba4/log.smbd</i>.'),
   cifs_srv_localmaster_tooltip: T('Set to determine if the system participates in\
