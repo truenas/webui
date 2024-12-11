@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -25,9 +26,8 @@ describe('CategoryViewComponent', () => {
   const createComponent = createRoutingFactory({
     component: CategoryViewComponent,
     imports: [
+      LazyLoadImageDirective,
       MockComponent(PageHeaderComponent),
-    ],
-    declarations: [
       MockComponent(AppCardComponent),
       MockComponent(CustomAppButtonComponent),
     ],

@@ -3,6 +3,7 @@ import {
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxDynamicFormComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
@@ -22,8 +23,9 @@ describe('IxDynamicFormComponent', () => {
     component: IxDynamicFormComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
+      NgxPopperjsContentComponent,
+      NgxPopperjsLooseDirective,
+      NgxPopperjsDirective,
       MockComponent(IxDynamicFormItemComponent),
       MockComponent(IxFieldsetComponent),
     ],

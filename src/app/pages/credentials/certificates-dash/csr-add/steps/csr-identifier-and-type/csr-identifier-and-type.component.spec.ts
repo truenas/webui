@@ -26,7 +26,7 @@ describe('CsrIdentifierAndTypeComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,

@@ -2,6 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -26,7 +27,8 @@ describe('WidgetSystemImageComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetSystemImageComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponent(ProductImageComponent),
     ],
     providers: [

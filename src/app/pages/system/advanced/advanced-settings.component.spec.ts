@@ -1,8 +1,8 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent, MockComponents } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -35,11 +35,11 @@ describe('AdvancedSettingsComponent', () => {
   const createComponent = createComponentFactory({
     component: AdvancedSettingsComponent,
     imports: [
-      MockComponent(PageHeaderComponent),
-      SearchInput1Component,
-    ],
-    declarations: [
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective,
       MockComponents(
+        PageHeaderComponent,
         ConsoleCardComponent,
         SyslogCardComponent,
         KernelCardComponent,

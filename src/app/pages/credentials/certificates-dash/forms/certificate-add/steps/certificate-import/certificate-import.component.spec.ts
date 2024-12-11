@@ -26,7 +26,7 @@ describe('CertificateImportComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('certificate.query', [
           {

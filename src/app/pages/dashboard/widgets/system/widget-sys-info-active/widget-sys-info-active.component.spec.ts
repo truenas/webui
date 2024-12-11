@@ -1,26 +1,19 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatListModule } from '@angular/material/list';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject } from 'rxjs';
-import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
-import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
-import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.component';
 import { LocaleService } from 'app/services/locale.service';
 import { selectIsHaLicensed, selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
@@ -64,16 +57,6 @@ describe('WidgetSysInfoActiveComponent', () => {
 
   const createComponent = createComponentFactory({
     component: WidgetSysInfoActiveComponent,
-    imports: [
-      MatListModule,
-      UptimePipe,
-      CopyButtonComponent,
-    ],
-    declarations: [
-      MockComponent(ProductImageComponent),
-      MockComponent(NgxSkeletonLoaderComponent),
-      FakeFormatDateTimePipe,
-    ],
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {

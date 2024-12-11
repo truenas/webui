@@ -5,6 +5,7 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import {
   Spectator, mockProvider, createComponentFactory,
 } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -42,6 +43,7 @@ describe('Finding app', () => {
   const createComponent = createComponentFactory({
     component: AvailableAppsComponent,
     imports: [
+      LazyLoadImageDirective,
       ReactiveFormsModule,
       MockComponent(PageHeaderComponent),
       OrNotAvailablePipe,

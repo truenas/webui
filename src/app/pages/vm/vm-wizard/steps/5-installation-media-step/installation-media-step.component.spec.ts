@@ -23,7 +23,7 @@ describe('InstallationMediaStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of('/mnt/iso/new-windows.iso')),

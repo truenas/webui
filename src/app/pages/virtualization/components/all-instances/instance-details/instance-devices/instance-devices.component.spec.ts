@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/virtualization.interface';
 import {
@@ -32,6 +33,7 @@ describe('InstanceDevicesComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceDevicesComponent,
     imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         DeviceActionsMenuComponent,
         AddDeviceMenuComponent,

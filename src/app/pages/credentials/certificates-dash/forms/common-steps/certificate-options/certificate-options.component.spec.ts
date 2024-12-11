@@ -25,7 +25,7 @@ describe('CertificateOptionsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('certificate.ec_curve_choices', {
           BrainpoolP512R1: 'BrainpoolP512R1',

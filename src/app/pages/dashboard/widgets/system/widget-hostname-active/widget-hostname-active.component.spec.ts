@@ -1,5 +1,4 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -12,9 +11,6 @@ describe('WidgetHostnameActiveComponent', () => {
   let spectator: Spectator<WidgetHostnameActiveComponent>;
   const createComponent = createComponentFactory({
     component: WidgetHostnameActiveComponent,
-    declarations: [
-      MockComponent(WidgetDatapointComponent),
-    ],
   });
 
   it('renders hostname for the active system', () => {
@@ -35,9 +31,9 @@ describe('WidgetHostnameActiveComponent', () => {
       ],
     });
 
-    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    const widget = spectator.query(WidgetDatapointComponent);
     expect(widget).toBeTruthy();
-    expect(widget.text).toBe('truenas.com');
+    expect(widget.text()).toBe('truenas.com');
   });
 
   it('shows an error when hostname cannot be determined', () => {

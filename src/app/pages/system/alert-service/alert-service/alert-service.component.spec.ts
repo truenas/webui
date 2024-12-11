@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
@@ -92,13 +92,6 @@ describe('AlertServiceComponent', () => {
   } as AlertService;
   const createComponent = createComponentFactory({
     component: AlertServiceComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
-    declarations: [
-      AwsSnsServiceComponent,
-      OpsGenieServiceComponent,
-    ],
     providers: [
       MockProvider(SlideInRef, {
         close: jest.fn(),

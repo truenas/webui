@@ -37,7 +37,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(ChainedRef, chainedRef),
       mockAuth(),
       mockApi([

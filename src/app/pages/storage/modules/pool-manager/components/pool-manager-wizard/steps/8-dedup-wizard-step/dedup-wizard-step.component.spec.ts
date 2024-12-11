@@ -36,7 +36,7 @@ describe('DedupWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(PoolManagerStore, {
         topology$: of({
           [VdevType.Data]: { layout: CreateVdevLayout.Raidz1 },
