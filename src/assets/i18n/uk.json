@@ -2084,6 +2084,7 @@
   "disk writes": "",
   "expires in {n, plural, one {# day} other {# days} }": "",
   "iSCSI Authorized Networks": "",
+  "iSCSI Connections": "",
   "iSCSI Extent": "",
   "iSCSI Initiator": "",
   "iSCSI Service": "",

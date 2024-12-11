@@ -1,0 +1,14 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'iSCSI Connections' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    @for (session of sessions(); track session.initiator_addr) {
+      <div class="connection">
+        {{ session.initiator_addr }}
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

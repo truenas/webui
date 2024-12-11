@@ -3859,6 +3859,7 @@
   "expires in {n, plural, one {# day} other {# days} }": "",
   "iSCSI": "",
   "iSCSI Authorized Networks": "",
+  "iSCSI Connections": "",
   "iSCSI Service": "",
   "mountd(8) bind port": "",
   "pCloud": "",
