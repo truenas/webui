@@ -216,9 +216,16 @@ export class CloudBackupFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error) => {
+          console.error(error);
           this.isLoading = false;
           this.bucketOptions$ = of([this.newBucketOption]);
+          this.bucketOptions$ = of([
+            {
+              label: 'something',
+              value: 'whatever',
+              disabled: false,
+            }]);
           this.cdr.markForCheck();
         },
       });
