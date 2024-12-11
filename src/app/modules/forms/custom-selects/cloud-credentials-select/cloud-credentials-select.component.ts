@@ -5,7 +5,7 @@ import {
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
 import { CloudSyncProviderName, cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
@@ -39,16 +39,16 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       map((options) => {
         if (this.filterByProviders()) {
-          options = options.filter((option) => this.filterByProviders().includes(option.provider));
+          options = options.filter((option) => this.filterByProviders().includes(option.provider.type));
         }
         return options.map((option) => {
-          return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider)})`, value: option.id };
+          return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider.type)})`, value: option.id };
         });
       }),
     );
   }
 
-  getValueFromChainedResponse(result: ChainedComponentResponse<CloudCredential>): IxSelectValue {
+  getValueFromChainedResponse(result: ChainedComponentResponse<CloudSyncCredential>): IxSelectValue {
     return result.response.id;
   }
 

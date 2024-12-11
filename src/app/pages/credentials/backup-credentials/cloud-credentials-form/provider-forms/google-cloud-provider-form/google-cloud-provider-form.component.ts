@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { from, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
+import { SomeProviderAttributes } from 'app/interfaces/cloudsync-credential.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
@@ -63,7 +63,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
     });
   }
 
-  override getSubmitAttributes(): CloudCredential['attributes'] {
+  override getSubmitAttributes(): SomeProviderAttributes {
     return {
       service_account_credentials: this.form.value.service_account_credentials,
     };

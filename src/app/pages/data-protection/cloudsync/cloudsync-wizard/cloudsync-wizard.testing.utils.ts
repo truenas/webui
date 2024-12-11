@@ -24,8 +24,8 @@ export const googlePhotosProvider = {
 export const googlePhotosCreds = {
   id: 1,
   name: 'Google Photos',
-  provider: CloudSyncProviderName.GooglePhotos,
-  attributes: {
+  provider: {
+    type: CloudSyncProviderName.GooglePhotos,
     client_id: 'test-client-id',
     client_secret: 'test-client-secret',
     token: 'test-token',
