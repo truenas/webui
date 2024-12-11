@@ -1,30 +1,40 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import {
-  AuthorizedNetworksCardComponent,
-} from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
+import { ConnectionsCardComponent } from './connections-card.component';
 
-describe('AuthorizedNetworksCardComponent', () => {
-  let spectator: Spectator<AuthorizedNetworksCardComponent>;
+describe('ConnectionsCardComponent', () => {
+  let spectator: Spectator<ConnectionsCardComponent>;
+
   const createComponent = createComponentFactory({
-    component: AuthorizedNetworksCardComponent,
+    component: ConnectionsCardComponent,
+    providers: [
+      mockApi([
+        mockCall('iscsi.global.sessions', [
+          { initiator: 'iqn.1991-05.com.microsoft:initiator1', initiator_addr: '192.168.1.100' },
+          { initiator: 'iqn.1991-05.com.microsoft:initiator2', initiator_addr: '192.168.1.101' },
+        ] as IscsiGlobalSession[]),
+      ]),
+    ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
         target: {
-          auth_networks: ['192.168.1.10/24', '10.0.0.1/24'],
+          name: 'Target1',
         } as IscsiTarget,
       },
     });
   });
 
-  it('shows a list of networks authorized for the target', () => {
-    const networks = spectator.queryAll('.network');
+  it('displays session information when available', () => {
+    spectator.detectChanges();
 
-    expect(networks).toHaveLength(2);
-    expect(networks[0]).toHaveText('192.168.1.10/24');
-    expect(networks[1]).toHaveText('10.0.0.1/24');
+    const connections = spectator.queryAll('.connection');
+    expect(connections).toHaveLength(2);
+    expect(connections[0]).toHaveText('iqn.1991-05.com.microsoft:initiator1 | 192.168.1.100');
+    expect(connections[1]).toHaveText('iqn.1991-05.com.microsoft:initiator2 | 192.168.1.101');
   });
 });
