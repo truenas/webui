@@ -1,15 +1,9 @@
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DataProtectionTaskState } from 'app/interfaces/data-protection-task-state.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-
-export interface CloudCredential {
-  id: number;
-  name: string;
-  provider: string;
-  attributes: Record<string, string | number | boolean>;
-}
 
 export interface BwLimit {
   time: string;
@@ -25,7 +19,7 @@ export interface CloudSyncTask {
   args: string;
   attributes: Record<string, string | number | boolean>;
   bwlimit: BwLimit[];
-  credentials: CloudCredential;
+  credentials: CloudSyncCredential;
   description: string;
   direction: Direction;
   enabled: boolean;

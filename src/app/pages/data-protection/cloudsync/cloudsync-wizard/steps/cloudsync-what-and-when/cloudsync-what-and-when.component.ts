@@ -318,7 +318,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       tap((credentials) => {
         this.credentials = credentials;
         for (const credential of credentials) {
-          if (credential.provider === CloudSyncProviderName.GoogleDrive) {
+          if (credential.provider.type === CloudSyncProviderName.GoogleDrive) {
             this.googleDriveProviderIds.push(credential.id);
           }
         }
@@ -394,13 +394,13 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       if (credential) {
         this.enableRemoteExplorer();
         const targetCredentials = find(this.credentials, { id: credential });
-        const targetProvider = find(this.providers, { name: targetCredentials?.provider });
+        const targetProvider = find(this.providers, { name: targetCredentials?.provider?.type });
         if (targetProvider?.buckets) {
           if (
             [
               CloudSyncProviderName.MicrosoftAzure,
               CloudSyncProviderName.Hubic,
-            ].includes(targetCredentials.provider)
+            ].includes(targetCredentials.provider.type)
           ) {
             this.bucketPlaceholder = this.translate.instant('Container');
             this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
@@ -427,7 +427,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           this.form.controls.bucket_policy_only.disable();
         }
 
-        const schemaFound = find(this.providers, { name: targetCredentials?.provider });
+        const schemaFound = find(this.providers, { name: targetCredentials?.provider?.type });
         const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
         const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
@@ -487,7 +487,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          if (credential.provider === CloudSyncProviderName.Storj) {
+          if (credential.provider.type === CloudSyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
               value: newOption,
