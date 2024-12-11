@@ -4,7 +4,7 @@ import {
   input,
   OnChanges,
   OnInit,
-  viewChild,
+  ViewChild,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatCalendar, MatCalendarCellClassFunction } from '@angular/material/datepicker';
@@ -54,19 +54,18 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   cronPreview: CronSchedulePreview;
 
-  readonly calendar = viewChild<MatCalendar<Date>>('calendar');
+  @ViewChild('calendar', { static: true }) calendar: MatCalendar<Date>;
 
   get startDate(): Date {
-    const calendar = this.calendar();
-    if (!calendar.activeDate || differenceInCalendarMonths(calendar.activeDate, new Date()) < 1) {
+    if (!this.calendar.activeDate || differenceInCalendarMonths(this.calendar.activeDate, new Date()) < 1) {
       return utcToZonedTime(new Date(), this.timezone());
     }
 
-    return startOfMonth(calendar.activeDate);
+    return startOfMonth(this.calendar.activeDate);
   }
 
   get isPastMonth(): boolean {
-    return isBefore(this.calendar().activeDate, startOfMonth(new Date()));
+    return isBefore(this.calendar.activeDate, startOfMonth(new Date()));
   }
 
   ngOnChanges(): void {
@@ -75,7 +74,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
-    this.calendar().stateChanges
+    this.calendar.stateChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.onCalendarUpdated());
   }
@@ -114,11 +113,10 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
   }
 
   private refreshCalendar(): void {
-    const calendar = this.calendar();
-    if (!calendar.monthView) {
+    if (!this.calendar.monthView) {
       return;
     }
 
-    calendar.updateTodaysDate();
+    this.calendar.updateTodaysDate();
   }
 }

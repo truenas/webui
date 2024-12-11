@@ -120,7 +120,7 @@ describe('AuditComponent', () => {
   it('loads and shows a table with audit entries', async () => {
     expect(api.call).toHaveBeenCalledWith(
       'audit.query',
-      [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] } }],
+      [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] }, remote_controller: false }],
     );
 
     await spectator.fixture.whenStable();

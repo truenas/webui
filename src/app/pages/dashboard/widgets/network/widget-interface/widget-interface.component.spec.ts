@@ -91,6 +91,7 @@ describe('WidgetInterfaceComponent', () => {
   });
 
   describe('Full Size', () => {
+    global.Date.now = jest.fn(() => (new Date('2024-07-23')).getTime()); // 1721689140000
     beforeEach(() => {
       spectator = createComponent({
         props: {
@@ -123,8 +124,7 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     }));
 
-    it('shows a chart with network traffic', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
       const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
@@ -162,7 +162,7 @@ describe('WidgetInterfaceComponent', () => {
           },
         ],
       });
-    }));
+    });
 
     it('checks first entry selection when settings are null', () => {
       spectator.setInput('settings', null);
@@ -177,6 +177,7 @@ describe('WidgetInterfaceComponent', () => {
 
   describe('Half Size', () => {
     beforeEach(() => {
+      global.Date.now = jest.fn(() => (new Date('2024-07-23')).getTime()); // 1721689140000
       spectator = createComponent({
         props: {
           size: SlotSize.Half,
@@ -207,8 +208,7 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
     }));
 
-    it('shows a chart with network traffic', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
       const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
@@ -246,7 +246,7 @@ describe('WidgetInterfaceComponent', () => {
           },
         ],
       });
-    }));
+    });
   });
 
   describe('Quarter Size', () => {
