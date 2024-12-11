@@ -9,6 +9,8 @@
       <div class="network">
         {{ network }}
       </div>
+    } @empty {
+      <p>{{ 'No networks are authorized.' | translate }}</p>
     }
   </mat-card-content>
 </mat-card>
