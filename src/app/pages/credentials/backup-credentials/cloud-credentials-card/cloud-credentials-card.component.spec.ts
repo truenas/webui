@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -30,8 +31,8 @@ describe('CloudCredentialsCardComponent', () => {
     {
       id: 1,
       name: 'GDrive',
-      provider: 'GOOGLE_DRIVE',
-      attributes: {
+      provider: {
+        type: CloudSyncProviderName.GoogleDrive,
         client_id: 'client_id',
         client_secret: 'client_secret',
         token: '{"access_token":"<token>","expiry":"2023-08-10T01:59:50.96113807-07:00"}',
@@ -41,8 +42,8 @@ describe('CloudCredentialsCardComponent', () => {
     {
       id: 2,
       name: 'BB2',
-      provider: 'B2',
-      attributes: {
+      provider: {
+        type: CloudSyncProviderName.BackblazeB2,
         account: '<account>',
         key: '<key>',
       },
@@ -50,10 +51,10 @@ describe('CloudCredentialsCardComponent', () => {
   ] as CloudSyncCredential[];
 
   const providers = [{
-    name: 'GOOGLE_DRIVE',
+    name: CloudSyncProviderName.GoogleDrive,
     title: 'Google Drive',
   }, {
-    name: 'B2',
+    name: CloudSyncProviderName.BackblazeB2,
     title: 'Backblaze B2',
   }] as CloudSyncProvider[];
 
