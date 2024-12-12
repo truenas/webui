@@ -21,7 +21,6 @@ describe('GlobalSearchTriggerComponent', () => {
     imports: [
       MockComponent(KeyboardShortcutComponent),
       MockComponent(GlobalSearchComponent),
-      MatInput,
     ],
     providers: [
       mockProvider(UiSearchProvider, {
@@ -43,7 +42,7 @@ describe('GlobalSearchTriggerComponent', () => {
   });
 
   it('renders and input prompting for search', () => {
-    const input = spectator.query('input');
+    const input = spectator.query(MatInput);
     expect(input).toExist();
     expect(input).toHaveAttribute('placeholder', 'Search UI');
   });
