@@ -8,9 +8,9 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport, syslogLevelLabels } from 'app/enums/syslog.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -90,11 +90,11 @@ export class SyslogCardComponent {
   constructor(
     private store$: Store<AppState>,
     private chainedSlideIns: IxChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(SyslogFormComponent, false, this.syslogConfig)),
       filter((response) => !!response.response),
       untilDestroyed(this),

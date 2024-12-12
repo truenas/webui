@@ -18,12 +18,12 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -88,7 +88,7 @@ export class InitShutdownCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
     private chainedSlideIns: IxChainedSlideInService,
   ) {}
@@ -135,7 +135,7 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   private openForm(row?: InitShutdownScript): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(InitShutdownFormComponent, false, row)),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),

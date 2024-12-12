@@ -6,9 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('AuditCardComponent', () => {
@@ -21,7 +21,7 @@ describe('AuditCardComponent', () => {
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of(true)),
       }),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockWebSocket([

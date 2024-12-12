@@ -6,9 +6,9 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -37,11 +37,11 @@ export class AuditCardComponent {
     private chainedSlideIns: IxChainedSlideInService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private advancedSettingsService: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(AuditFormComponent)),
       filter((response) => !!response.response),
       tap(() => {

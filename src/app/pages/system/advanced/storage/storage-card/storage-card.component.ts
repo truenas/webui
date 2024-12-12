@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import {
   Subject, map, switchMap,
 } from 'rxjs';
@@ -9,14 +8,13 @@ import {
 } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -45,13 +43,12 @@ export class StorageCardComponent {
 
   constructor(
     private chainedSlideIns: IxChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
-    private store$: Store<AppState>,
     private ws: WebSocketService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(StorageSettingsFormComponent, false, this.storageSettings)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

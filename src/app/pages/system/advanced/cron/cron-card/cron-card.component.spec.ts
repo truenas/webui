@@ -13,10 +13,10 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -83,7 +83,7 @@ describe('CronCardComponent', () => {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockAuth(),

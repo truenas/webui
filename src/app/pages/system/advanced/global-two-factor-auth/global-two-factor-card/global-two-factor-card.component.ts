@@ -9,9 +9,9 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -39,12 +39,12 @@ export class GlobalTwoFactorAuthCardComponent {
 
   constructor(
     private ws: WebSocketService,
-    private advancedSettings: AdvancedSettingsService,
     private chainedSlideIns: IxChainedSlideInService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) { }
 
   onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(
         GlobalTwoFactorAuthFormComponent,
         false,

@@ -14,10 +14,10 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { sysctlCardElements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -77,7 +77,7 @@ export class SysctlCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialog: DialogService,
     private snackbar: SnackbarService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
     private chainedSlideIns: IxChainedSlideInService,
   ) {}
@@ -123,7 +123,7 @@ export class SysctlCardComponent implements OnInit {
   }
 
   private openForm(row?: Tunable): void {
-    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
+    from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
       switchMap(() => this.chainedSlideIns.open(TunableFormComponent, false, row)),
       filter((response) => !!response.response),
       untilDestroyed(this),
