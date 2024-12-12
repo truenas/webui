@@ -3,6 +3,7 @@ import {
   Component, ChangeDetectionStrategy, input,
   computed,
   effect,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
@@ -47,14 +48,18 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
 
-  appName = computed(() => this.settings().appName);
-  app = computed(() => this.resources.getApp(this.appName()));
-  job = computed(() => this.resources.getAppStatusUpdates(this.appName()));
-  stats$: Observable<LoadingState<AppStats>>;
+  protected appName = computed(() => this.settings().appName);
+  protected app = computed(() => this.resources.getApp(this.appName()));
+  protected job = computed(() => this.resources.getAppStatusUpdates(this.appName()));
+  protected stats$: Observable<LoadingState<AppStats>>;
 
   effect = effect(() => {
     this.stats$ = this.resources.getAppStats(this.appName());
+    this.cdr.markForCheck();
   });
 
-  constructor(private resources: WidgetResourcesService) {}
+  constructor(
+    private resources: WidgetResourcesService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 }
