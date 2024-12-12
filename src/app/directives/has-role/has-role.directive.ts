@@ -1,6 +1,6 @@
 import {
   ChangeDetectorRef,
-  Directive, Input, TemplateRef, ViewContainerRef,
+  Directive, effect, input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { distinctUntilChanged } from 'rxjs';
@@ -13,8 +13,12 @@ import { AuthService } from 'app/services/auth/auth.service';
   standalone: true,
 })
 export class HasRoleDirective {
-  @Input() set ixHasRole(roles: Role[]) {
-    this.authService.hasRole(roles).pipe(
+  readonly roles = input.required<Role[]>({
+    alias: 'ixHasRole',
+  });
+
+  private readonly updateView = effect(() => {
+    this.authService.hasRole(this.roles()).pipe(
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((hasRole) => {
@@ -24,8 +28,9 @@ export class HasRoleDirective {
       }
 
       this.cdr.markForCheck();
+      this.cdr.detectChanges();
     });
-  }
+  });
 
   constructor(
     private templateRef: TemplateRef<unknown>,

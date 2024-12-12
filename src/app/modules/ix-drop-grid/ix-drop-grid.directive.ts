@@ -31,6 +31,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
   standalone: true,
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input() ixDropGridModel: T[];
 
   readonly ixDropGridModelChange = output<T[]>();

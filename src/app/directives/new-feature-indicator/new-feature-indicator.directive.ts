@@ -1,10 +1,11 @@
 import {
-  ComponentRef, Directive, Input, TemplateRef, ViewContainerRef,
+  ComponentRef, Directive, input, OnChanges, OnInit, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { NewFeatureIndicatorWrapperComponent } from 'app/directives/new-feature-indicator/new-feature-indicator-wrapper.component';
 import { NewFeatureIndicator } from 'app/directives/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator/new-feature-indicator.service';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 /**
  * Usage: adding an indicator with a hint about a new feature.
@@ -21,15 +22,13 @@ import { NewFeatureIndicatorService } from 'app/directives/new-feature-indicator
   selector: '[ixNewFeatureIndicator]',
   standalone: true,
 })
-export class NewFeatureIndicatorDirective {
+export class NewFeatureIndicatorDirective implements OnInit, OnChanges {
   private wrapperContainer: ComponentRef<NewFeatureIndicatorWrapperComponent>;
   private indicator: NewFeatureIndicator;
 
-  @Input()
-  set ixNewFeatureIndicator(indicator: NewFeatureIndicator) {
-    this.indicator = indicator;
-    this.updateIndicator();
-  }
+  readonly newFeatureIndicator = input.required<NewFeatureIndicator>({
+    alias: 'ixNewFeatureIndicator',
+  });
 
   constructor(
     private indicatorService: NewFeatureIndicatorService,
@@ -41,6 +40,18 @@ export class NewFeatureIndicatorDirective {
         this.updateIndicator();
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.indicator = this.newFeatureIndicator();
+    this.updateIndicator();
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if ('newFeatureIndicator' in changes) {
+      this.indicator = this.newFeatureIndicator();
+      this.updateIndicator();
+    }
   }
 
   updateIndicator(): void {

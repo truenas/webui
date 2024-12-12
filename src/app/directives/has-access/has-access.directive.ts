@@ -13,6 +13,7 @@ export class HasAccessDirective {
   private wrapperContainer: ComponentRef<MissingAccessWrapperComponent>;
   private previousAccess: boolean = null;
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input()
   set ixHasAccess(hasAccess: boolean) {
     if (this.previousAccess === hasAccess) {
@@ -32,6 +33,7 @@ export class HasAccessDirective {
 
   protected cssClassList: string[] = [];
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('class')
   @HostBinding('class')
   get elementClass(): string {

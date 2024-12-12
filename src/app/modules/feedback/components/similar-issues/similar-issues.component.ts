@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { sortBy, uniqBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
 } from 'rxjs';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -27,10 +28,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     AsyncPipe,
   ],
 })
-export class SimilarIssuesComponent {
-  @Input() set query(value: string) {
-    this.query$.next(value);
-  }
+export class SimilarIssuesComponent implements OnChanges {
+  readonly query = input<string>();
 
   protected similarIssues$ = new BehaviorSubject<SimilarIssue[]>([]);
   protected isLoading$ = new BehaviorSubject<boolean>(false);
@@ -42,6 +41,12 @@ export class SimilarIssuesComponent {
     private feedbackService: FeedbackService,
   ) {
     this.listenForQueryChanges();
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if ('query' in changes) {
+      this.query$.next(this.query());
+    }
   }
 
   private listenForQueryChanges(): void {

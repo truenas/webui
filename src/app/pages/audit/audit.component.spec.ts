@@ -134,10 +134,10 @@ describe('AuditComponent', () => {
 
   it('searches by event, username and service when basic search is used', () => {
     const search = spectator.query(SearchInputComponent);
-    search.query = {
+    search.query.set({
       isBasicQuery: true,
       query: 'search',
-    };
+    });
 
     search.runSearch.emit();
 
@@ -167,13 +167,13 @@ describe('AuditComponent', () => {
 
   it('applies filters to API query when advanced search is used', () => {
     const search = spectator.query<SearchInputComponent<AuditEntry>>(SearchInputComponent);
-    search.query = {
+    search.query.set({
       isBasicQuery: false,
       filters: [
         ['event', '=', 'Authentication'],
         ['username', '~', 'bob'],
       ],
-    };
+    });
     search.runSearch.emit();
 
     expect(api.call).toHaveBeenLastCalledWith(

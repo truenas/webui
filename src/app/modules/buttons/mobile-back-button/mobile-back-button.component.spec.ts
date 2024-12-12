@@ -19,13 +19,13 @@ describe('MobileBackButtonComponent', () => {
   });
 
   it('should emit onClose when the button is clicked', () => {
-    const onCloseSpy = jest.spyOn(spectator.component.onClose, 'emit');
+    const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
     spectator.click('#mobile-back-button');
     expect(onCloseSpy).toHaveBeenCalled();
   });
 
   it('should emit onClose when the Enter key is pressed', () => {
-    const onCloseSpy = jest.spyOn(spectator.component.onClose, 'emit');
+    const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
     spectator.dispatchKeyboardEvent('#mobile-back-button', 'keydown', 'Enter');
     expect(onCloseSpy).toHaveBeenCalled();
   });

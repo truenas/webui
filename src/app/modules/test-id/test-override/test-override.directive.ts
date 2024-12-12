@@ -13,6 +13,7 @@ import {
   standalone: true,
 })
 export class TestOverrideDirective {
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('ixTestOverride') overrideDescription: number | string | (string | number)[];
   readonly keepLastPart = input<boolean>();
 }

@@ -6,8 +6,6 @@ import { UiSearchDirectivesService } from './ui-search-directives.service';
 
 describe('UiSearchDirectivesService', () => {
   let spectator: SpectatorService<UiSearchDirectivesService>;
-  let renderer: Renderer2;
-  let elementRef: ElementRef<HTMLElement>;
 
   const createService = createServiceFactory({
     service: UiSearchDirectivesService,
@@ -20,27 +18,28 @@ describe('UiSearchDirectivesService', () => {
   describe('basic operations', () => {
     beforeEach(() => {
       spectator = createService();
-      renderer = spectator.inject(Renderer2);
-      elementRef = spectator.inject(ElementRef);
     });
 
     it('should check register and unregister', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
-      directive.config = { anchor: 'anchor' };
+      const fakeDirective = {
+        config: () => ({ anchor: 'anchor' }),
+      } as UiSearchDirective;
 
-      spectator.service.register(directive);
+      spectator.service.register(fakeDirective);
       expect(spectator.service.size()).toBe(1);
 
-      spectator.service.unregister(directive);
+      spectator.service.unregister(fakeDirective);
       expect(spectator.service.size()).toBe(0);
     });
 
     it('should check get method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
-      directive.config = { anchor: 'anchor' };
+      const fakeDirective = {
+        config: () => ({ anchor: 'anchor' }),
+        id: 'anchor',
+      } as UiSearchDirective;
 
-      spectator.service.register(directive);
-      expect(spectator.service.get({ anchor: 'anchor' })).toEqual(directive);
+      spectator.service.register(fakeDirective);
+      expect(spectator.service.get({ anchor: 'anchor' })).toEqual(fakeDirective);
     });
 
     it('should check setPendingUiHighlightElement method', () => {
@@ -50,12 +49,13 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check directiveAdded$ BehaviorSubject', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
-      directive.config = { anchor: 'anchor' };
+      const fakeDirective = {
+        config: () => ({ anchor: 'anchor' }),
+      } as UiSearchDirective;
 
-      spectator.service.register(directive);
+      spectator.service.register(fakeDirective);
       spectator.service.directiveAdded$.subscribe((value) => {
-        expect(value).toEqual(directive);
+        expect(value).toEqual(fakeDirective);
       });
     });
 
@@ -66,10 +66,11 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check size method', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
-      directive.config = { anchor: 'anchor' };
+      const fakeDirective = {
+        config: () => ({ anchor: 'anchor' }),
+      } as UiSearchDirective;
 
-      spectator.service.register(directive);
+      spectator.service.register(fakeDirective);
       expect(spectator.service.size()).toBe(1);
     });
 

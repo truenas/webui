@@ -1,5 +1,4 @@
 import airbnbBestPractices from "eslint-config-airbnb-base/rules/best-practices";
-import airbnbStyle from "eslint-config-airbnb-base/rules/style";
 import airbnbVariables from "eslint-config-airbnb-base/rules/variables";
 
 /**
@@ -40,6 +39,10 @@ export const extraRules = {
   }],
   "@angular-eslint/prefer-standalone": "error",
   "@angular-eslint/prefer-on-push-component-change-detection": "error",
+  "@angular-eslint/prefer-signals": ["error", {
+    preferQuerySignals: false,
+    preferReadonlySignalProperties: false,
+  }],
 
   // Angular file naming
   "angular-file-naming/component-filename-suffix": "error",

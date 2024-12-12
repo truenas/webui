@@ -1,7 +1,7 @@
 import { DataSource } from '@angular/cdk/collections';
 import { CdkTreeNode } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, Component, HostBinding, Input,
+  ChangeDetectionStrategy, Component, HostBinding, input,
 } from '@angular/core';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 
@@ -16,5 +16,6 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 })
 export class TreeNodeComponent<T, K = T> extends CdkTreeNode<T, K> {
   @HostBinding('class.ix-tree-node') get getClass(): boolean { return true; }
-  @Input() treeNodeDefDataSource: DataSource<T> | TreeDataSource<T, K>;
+
+  readonly treeNodeDefDataSource = input<DataSource<T> | TreeDataSource<T, K>>();
 }

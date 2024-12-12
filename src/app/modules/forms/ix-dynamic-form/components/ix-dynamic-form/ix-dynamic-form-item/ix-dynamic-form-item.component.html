@@ -1,43 +1,44 @@
-@if (dynamicSchema) {
+@let schema = dynamicSchema();
+@if (schema) {
   <div
     [formGroup]="dynamicForm()"
-    [class.indent]="dynamicSchema?.indent"
+    [class.indent]="schema?.indent"
   >
     @if (!(isHidden$ | async)) {
-      @switch (dynamicSchema.type) {
+      @switch (schema.type) {
         @case (DynamicFormSchemaType.Cron) {
           <ix-scheduler
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
           ></ix-scheduler>
         }
 
         @case (DynamicFormSchemaType.Dict) {
-          @if (dynamicSchema.title) {
+          @if (schema.title) {
             <div class="label">
               <div class="label-wrapper">
-                {{ dynamicSchema.title }}
+                {{ schema.title }}
               </div>
 
-              @if (dynamicSchema.tooltip) {
+              @if (schema.tooltip) {
                 <div class="label-tooltip">
                   <ix-tooltip
                     class="tooltip"
-                    [header]="dynamicSchema.title"
-                    [message]="dynamicSchema.tooltip"
+                    [header]="schema.title"
+                    [message]="schema.tooltip"
                   ></ix-tooltip>
                 </div>
               }
             </div>
           }
 
-          @for (attr of dynamicSchema.attrs; track attr) {
+          @for (attr of schema.attrs; track attr) {
             <ix-dynamic-form-item
               [id]="attr.controlName"
               [dynamicSchema]="attr"
-              [dynamicForm]="dynamicForm().controls[dynamicSchema.controlName] | cast"
+              [dynamicForm]="dynamicForm().controls[schema.controlName] | cast"
               [isEditMode]="isEditMode()"
               (addListItem)="addControlNext($event)"
               (deleteListItem)="removeControlNext($event)"
@@ -47,24 +48,24 @@
 
         @case (DynamicFormSchemaType.Text) {
           <ix-code-editor
-            [language]="dynamicSchema.language"
-            [label]="dynamicSchema.title | translate"
-            [formControlName]="dynamicSchema.controlName"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [placeholder]="dynamicSchema.placeholder | translate"
-            [required]="dynamicSchema.required"
+            [language]="schema.language"
+            [label]="schema.title | translate"
+            [formControlName]="schema.controlName"
+            [tooltip]="schema.tooltip | translate"
+            [placeholder]="schema.placeholder | translate"
+            [required]="schema.required"
           ></ix-code-editor>
         }
 
         @case (DynamicFormSchemaType.List) {
           <ix-list
-            [label]="dynamicSchema.title | translate"
+            [label]="schema.title | translate"
             [empty]="getFormArray.controls.length === 0"
-            [formArrayName]="dynamicSchema.controlName"
-            [default]="dynamicSchema.default"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [itemsSchema]="dynamicSchema.itemsSchema"
-            [required]="dynamicSchema.required"
+            [formArrayName]="schema.controlName"
+            [default]="schema.default"
+            [tooltip]="schema.tooltip | translate"
+            [itemsSchema]="schema.itemsSchema"
+            [required]="schema.required"
             [isEditMode]="isEditMode()"
             [canAdd]="!isAllListControlsDisabled"
             [formArray]="getFormArray"
@@ -72,11 +73,11 @@
           >
             @for (element of getFormArray.controls; track element; let i = $index) {
               <ix-list-item
-                [label]="dynamicSchema.title | translate"
+                [label]="schema.title | translate"
                 [canDelete]="!isAllListControlsDisabled"
                 (delete)="removeControl(i)"
               >
-                @for (item of dynamicSchema.items; track item) {
+                @for (item of schema.items; track item) {
                   <ix-dynamic-form-item
                     [dynamicSchema]="item"
                     [dynamicForm]="element | cast"
@@ -87,78 +88,78 @@
                 }
               </ix-list-item>
             }
-            <ix-errors [control]="dynamicForm()" [label]="dynamicSchema.title | translate"></ix-errors>
+            <ix-errors [control]="dynamicForm()" [label]="schema.title | translate"></ix-errors>
           </ix-list>
         }
 
         @case (DynamicFormSchemaType.Input) {
           <ix-input
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [placeholder]="dynamicSchema.placeholder | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
-            [type]="dynamicSchema.inputType"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [placeholder]="schema.placeholder | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
+            [type]="schema.inputType"
           ></ix-input>
         }
 
         @case (DynamicFormSchemaType.Uri) {
           <ix-input
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [placeholder]="dynamicSchema.placeholder | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
-            [type]="dynamicSchema.inputType"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [placeholder]="schema.placeholder | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
+            [type]="schema.inputType"
           ></ix-input>
         }
 
         @case (DynamicFormSchemaType.Select) {
           <ix-select
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [options]="dynamicSchema.options"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
-            [hideEmpty]="dynamicSchema.hideEmpty"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [options]="schema.options"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
+            [hideEmpty]="schema.hideEmpty"
           ></ix-select>
         }
 
         @case (DynamicFormSchemaType.Enum) {
           <ix-combobox
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [provider]="getEnumTypeProvider(dynamicSchema.options)"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [provider]="getEnumTypeProvider(schema.options)"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
           ></ix-combobox>
         }
 
         @case (DynamicFormSchemaType.Explorer) {
           <ix-explorer
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
-            [nodeProvider]="dynamicSchema.nodeProvider"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
+            [nodeProvider]="schema.nodeProvider"
           ></ix-explorer>
         }
 
         @case (DynamicFormSchemaType.Checkbox) {
           <ix-checkbox
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
           ></ix-checkbox>
         }
 
         @case (DynamicFormSchemaType.Ipaddr) {
           <ix-ip-input-with-netmask
-            [formControlName]="dynamicSchema.controlName"
-            [label]="dynamicSchema.title | translate"
-            [tooltip]="dynamicSchema.tooltip | translate"
-            [required]="dynamicSchema.required"
+            [formControlName]="schema.controlName"
+            [label]="schema.title | translate"
+            [tooltip]="schema.tooltip | translate"
+            [required]="schema.required"
           ></ix-ip-input-with-netmask>
         }
       }

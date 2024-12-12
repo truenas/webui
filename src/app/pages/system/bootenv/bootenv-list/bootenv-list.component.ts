@@ -86,7 +86,7 @@ export class BootEnvironmentListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = bootListElements;
   protected dataProvider: AsyncDataProvider<BootEnvironmentUi>;
-  protected filterString = signal('');
+  protected readonly filterString = signal('');
   private bootenvs: BootEnvironmentUi[] = [];
 
   columns = createTable<BootEnvironmentUi>([
