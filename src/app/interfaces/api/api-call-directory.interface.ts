@@ -697,7 +697,6 @@ export interface ApiCallDirectory {
   'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
-  'reporting.netdataweb_generate_password': { params: []; response: string };
 
   // Rsynctask
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };

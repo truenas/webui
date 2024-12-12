@@ -6,11 +6,6 @@ export const reportingGlobalControlsElements = {
   hierarchy: [T('Reporting')],
   anchorRouterLink: ['/reportsdashboard'],
   elements: {
-    netdata: {
-      hierarchy: [T('Netdata')],
-      synonyms: [T('View Netdata')],
-      anchor: 'netdata',
-    },
     selectReporting: {
       hierarchy: [T('Select Reporting')],
       anchor: 'select-reporting',

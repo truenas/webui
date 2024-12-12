@@ -2316,24 +2316,6 @@
   },
   {
     "hierarchy": [
-      "Reporting",
-      "Netdata"
-    ],
-    "synonyms": [
-      "View Netdata"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [],
-    "anchorRouterLink": [
-      "/reportsdashboard"
-    ],
-    "routerLink": null,
-    "anchor": "netdata",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Reporting"
     ],
     "synonyms": [
