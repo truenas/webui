@@ -3,17 +3,17 @@
     formControlName="name"
     [label]="'Name' | translate"
     [required]="true"
-    [readonly]="isAddingVdevs"
+    [readonly]="isAddingVdevs()"
   ></ix-input>
 
-  @if (!isAddingVdevs) {
+  @if (!isAddingVdevs()) {
     <ix-checkbox
       formControlName="encryption"
       [label]="'Encryption' | translate"
     ></ix-checkbox>
   }
 
-  @if (form.controls.encryption.value && !isAddingVdevs) {
+  @if (form.controls.encryption.value && !isAddingVdevs()) {
     <ix-select
       formControlName="encryptionStandard"
       [label]="'Encryption Standard' | translate"

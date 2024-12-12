@@ -11,12 +11,12 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
-  instances: VirtualizationInstance[];
+  instances: VirtualizationInstance[] | undefined;
 }
 
 const initialState: VirtualizationInstancesState = {
   isLoading: true,
-  instances: [],
+  instances: undefined,
 };
 
 @UntilDestroy()
@@ -24,7 +24,7 @@ const initialState: VirtualizationInstancesState = {
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly instances = computed(() => this.stateAsSignal().instances);
+  readonly instances = computed(() => this.stateAsSignal().instances?.filter(Boolean));
 
   constructor(
     private api: ApiService,

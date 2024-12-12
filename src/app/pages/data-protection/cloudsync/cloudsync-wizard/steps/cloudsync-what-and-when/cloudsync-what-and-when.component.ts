@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import {
   Validators, FormBuilder, FormControl, ReactiveFormsModule,
@@ -78,7 +78,7 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   ],
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
-  @Input() credentialId: number;
+  readonly credentialId = input.required<number>();
 
   readonly save = output();
 

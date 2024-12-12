@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, input, OnDestroy, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -25,11 +25,12 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   ],
 })
 export class OauthButtonComponent implements OnDestroy {
-  @Input() oauthType: OauthButtonType;
-  @Input() isLoggedIn = false;
-  @Input() disabled = false;
-  @Input() oauthUrl: string;
-  @Input() testId: string;
+  readonly oauthType = input<OauthButtonType>();
+  readonly isLoggedIn = input(false);
+  readonly disabled = input(false);
+  readonly oauthUrl = input<string>();
+  // TODO: Figure out in another way.
+  readonly testId = input<string>();
 
   readonly loggedIn = output<unknown>();
 
@@ -39,21 +40,21 @@ export class OauthButtonComponent implements OnDestroy {
   };
 
   get buttonText(): string {
-    switch (this.oauthType) {
+    switch (this.oauthType()) {
       case OauthButtonType.Jira:
-        if (this.isLoggedIn) {
+        if (this.isLoggedIn()) {
           return this.translate.instant('Logged In To Jira');
         }
         return this.translate.instant('Login To Jira To Submit');
 
       case OauthButtonType.Provider:
-        if (this.isLoggedIn) {
+        if (this.isLoggedIn()) {
           return this.translate.instant('Logged In To Provider');
         }
         return this.translate.instant('Log In To Provider');
 
       case OauthButtonType.Gmail:
-        if (this.isLoggedIn) {
+        if (this.isLoggedIn()) {
           return this.translate.instant('Logged In To Gmail');
         }
         return this.translate.instant('Log In To Gmail');
@@ -75,7 +76,7 @@ export class OauthButtonComponent implements OnDestroy {
   }
 
   onOauthClicked(): void {
-    switch (this.oauthType) {
+    switch (this.oauthType()) {
       case OauthButtonType.Jira:
         this.onLoginWithJira();
         break;
@@ -144,7 +145,7 @@ export class OauthButtonComponent implements OnDestroy {
   ): void {
     this.window.removeEventListener('message', authFn, false);
     this.window.open(
-      this.oauthUrl + encodeURIComponent(this.window.location.toString()),
+      this.oauthUrl() + encodeURIComponent(this.window.location.toString()),
       '_blank',
       'width=640,height=480',
     );

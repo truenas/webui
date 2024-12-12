@@ -12,7 +12,7 @@ describe('MobileBackButtonComponent', () => {
   });
 
   it('should render a button with the correct classes and attributes', () => {
-    const button = spectator.query('.mobile-back-button');
+    const button = spectator.query('#mobile-back-button');
     expect(button).toBeTruthy();
     expect(button).toHaveAttribute('tabindex', '0');
     expect(button).toHaveAttribute('aria-label', 'Back');
@@ -20,13 +20,13 @@ describe('MobileBackButtonComponent', () => {
 
   it('should emit onClose when the button is clicked', () => {
     const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
-    spectator.click('.mobile-back-button');
+    spectator.click('#mobile-back-button');
     expect(onCloseSpy).toHaveBeenCalled();
   });
 
   it('should emit onClose when the Enter key is pressed', () => {
     const onCloseSpy = jest.spyOn(spectator.component.close, 'emit');
-    spectator.dispatchKeyboardEvent('.mobile-back-button', 'keydown', 'Enter');
+    spectator.dispatchKeyboardEvent('#mobile-back-button', 'keydown', 'Enter');
     expect(onCloseSpy).toHaveBeenCalled();
   });
 });

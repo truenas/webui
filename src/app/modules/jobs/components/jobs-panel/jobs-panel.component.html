@@ -36,25 +36,24 @@
       ></mat-progress-bar>
     </div>
   } @else {
-    <div *appLet="availableJobs$ | async as jobs">
-      @if (jobs.length) {
-        <div class="jobs-list">
-          @for (job of jobs; track job.id) {
-            <ix-job-item
-              [job]="job"
-              [clickable]="true"
-              (aborted)="onAbort(job)"
-              (opened)="openJobDialog(job)"
-            ></ix-job-item>
-          }
-        </div>
-      } @else {
-        <div class="no-jobs">
-          <ix-icon name="info"></ix-icon>
-          <h4 class="message">{{ 'No jobs running.' | translate }}</h4>
-        </div>
-      }
-    </div>
+    @let jobs = availableJobs$ | async;
+    @if (jobs.length) {
+      <div class="jobs-list">
+        @for (job of jobs; track job.id) {
+          <ix-job-item
+            [job]="job"
+            [clickable]="true"
+            (aborted)="onAbort(job)"
+            (opened)="openJobDialog(job)"
+          ></ix-job-item>
+        }
+      </div>
+    } @else {
+      <div class="no-jobs">
+        <ix-icon name="info"></ix-icon>
+        <h4 class="message">{{ 'No jobs running.' | translate }}</h4>
+      </div>
+    }
   }
 
   @if (error$ | async; as error) {

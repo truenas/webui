@@ -3,7 +3,9 @@ import {
   enableProdMode, ErrorHandler, importProvidersFrom, inject,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
+import {
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import { MatIconRegistry } from '@angular/material/icon';
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
@@ -50,7 +52,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       BrowserModule,
-      MatNativeDateModule,
       TranslateModule.forRoot({
         defaultLanguage: 'en',
         loader: {
@@ -93,6 +94,7 @@ bootstrapApplication(AppComponent, {
       serializer: CustomRouterStateSerializer,
     }),
     provideNgxWebstorage(withLocalStorage()),
+    provideNativeDateAdapter(),
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
       useValue: {

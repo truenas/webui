@@ -55,7 +55,7 @@
   <mat-card-content class="card-content">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
-      <div class="value">{{ pool.status | mapValue: poolStatusLabels | translate }}</div>
+      <div class="value">{{ pool().status | mapValue: poolStatusLabels | translate }}</div>
     </div>
 
     <div class="details-item">
@@ -76,7 +76,7 @@
     <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
       <div class="label">{{ 'Auto TRIM' | translate }}:</div>
       <div class="value">
-        {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
+        {{ pool().autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
       </div>
       <a *ixRequiresRoles="requiredRoles" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
         {{ 'Edit Auto TRIM' | translate }}

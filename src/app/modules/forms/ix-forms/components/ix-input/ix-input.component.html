@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -10,11 +10,11 @@
 <div
   class="input-container"
   [class.disabled]="isDisabled"
-  [class.readonly]="readonly"
+  [class.readonly]="readonly()"
 >
-  @if (prefixIcon) {
+  @if (prefixIcon()) {
     <span class="prefix-icon">
-      <ix-icon [name]="prefixIcon"></ix-icon>
+      <ix-icon [name]="prefixIcon()"></ix-icon>
     </span>
   }
   <input
@@ -22,20 +22,20 @@
     #trigger="matAutocompleteTrigger"
     matInput
     ixRegisteredControl
-    [class.prefix-padding]="prefixIcon"
+    [class.prefix-padding]="prefixIcon()"
     [class.password-field]="isPasswordField()"
     [class.has-reset-input-icon]="shouldShowResetInput()"
-    [required]="required"
-    [readonly]="readonly"
+    [required]="required()"
+    [readonly]="readonly()"
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
-    [autocomplete]="autocomplete"
-    [maxLength]="maxLength"
+    [autocomplete]="autocomplete()"
+    [maxLength]="maxLength()"
     [matAutocomplete]="auto"
-    [placeholder]="placeholder"
+    [placeholder]="placeholder()"
     [ixTest]="controlDirective.name"
-    [attr.aria-label]="label"
+    [attr.aria-label]="label()"
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
     (blur)="blurred()"
@@ -47,7 +47,7 @@
     </span>
   }
 
-  @if (type === 'password') {
+  @if (type() === 'password') {
     <button
       mat-icon-button
       type="button"
@@ -94,8 +94,8 @@
   </div>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }

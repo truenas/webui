@@ -1888,6 +1888,16 @@
     "@codemirror/view" "^6.27.0"
     "@lezer/common" "^1.1.0"
 
+"@codemirror/commands@~6.7.1":
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/@codemirror/commands/-/commands-6.7.1.tgz#04561e95bc0779eaa49efd63e916c4efb3bbf6d6"
+  integrity sha512-llTrboQYw5H4THfhN4U3qCnSZ1SOJ60ohhz+SzU0ADGtwlc533DtklQP0vSFaQuCPDn3BPpOd1GbbnUtwNjsrw==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.4.0"
+    "@codemirror/view" "^6.27.0"
+    "@lezer/common" "^1.1.0"
+
 "@codemirror/lang-json@~6.0.1":
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@codemirror/lang-json/-/lang-json-6.0.1.tgz#0a0be701a5619c4b0f8991f9b5e95fe33f462330"
@@ -5471,6 +5481,22 @@
   dependencies:
     "@typescript-eslint/types" "8.9.0"
     eslint-visitor-keys "^3.4.3"
+
+"@uiw/codemirror-theme-material@~4.23.6":
+  version "4.23.6"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-material/-/codemirror-theme-material-4.23.6.tgz#959de0b8fe574cdbbe04ce08b6623637ad9db74d"
+  integrity sha512-QmFXWseYRPXPJZXG7bNxCIfGhIUQr7OmaBC41uBKttFMNWo09R+xjo7vtkdNeJwGBXySC7ZC4k0FS13jjrPTZw==
+  dependencies:
+    "@uiw/codemirror-themes" "4.23.6"
+
+"@uiw/codemirror-themes@4.23.6":
+  version "4.23.6"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.23.6.tgz#47a101733a9c4aa382696178bc4b7bc0ecf0e5fa"
+  integrity sha512-0dpuLQW+V6zrKvfvor/eo71V3tpr2L2Hsu8QZAdtSzksjWABxTOzH3ShaBRxCEsrz6sU9sa9o7ShwBMMDz59bQ==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
 
 "@vendure/ngx-translate-extract@~9.2.1":
   version "9.2.1"

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, HostBinding, Input,
+  Component, HostBinding, input,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -26,19 +26,19 @@ export interface VmwareState {
   imports: [MatTooltip, TranslateModule],
 })
 export class VmwareStatusCellComponent {
-  @Input() state: VmwareState;
+  readonly state = input.required<VmwareState>();
 
   get tooltip(): string {
-    if (this.state.state === VmwareSnapshotStatus.Error) {
-      return this.state.error ? this.translate.instant(this.state.error) : this.translate.instant('Error');
+    if (this.state().state === VmwareSnapshotStatus.Error) {
+      return this.state().error ? this.translate.instant(this.state().error) : this.translate.instant('Error');
     }
-    return this.state.state === VmwareSnapshotStatus.Pending
+    return this.state().state === VmwareSnapshotStatus.Pending
       ? this.translate.instant('Pending')
       : this.translate.instant('Success');
   }
 
   @HostBinding('class') get hostClasses(): string[] {
-    return ['status', this.state?.state.toLowerCase()];
+    return ['status', this.state()?.state.toLowerCase()];
   }
 
   constructor(private translate: TranslateService) { }

@@ -3,7 +3,6 @@ import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.e
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
-import { DockerNvidiaStatusResponse } from 'app/enums/docker-nvidia-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -11,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationGpuType, VirtualizationNicType, VirtualizationType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -596,7 +595,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.nvidia_status': { params: void; response: DockerNvidiaStatusResponse };
+  'docker.nvidia_present': { params: void; response: boolean };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };
@@ -859,6 +858,7 @@ export interface ApiCallDirectory {
     response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };
+  'virt.device.nic_choices': { params: [nicType: VirtualizationNicType]; response: Record<string, string> };
 
   'virt.global.bridge_choices': { params: []; response: Choices };
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };

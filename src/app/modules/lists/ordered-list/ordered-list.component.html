@@ -1,19 +1,19 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
   ></ix-label>
 }
 
 <div
   class="container-items"
   cdkDropList
-  [style.minHeight]="minHeight"
-  [style.maxHeight]="maxHeight"
+  [style.minHeight]="minHeight()"
+  [style.maxHeight]="maxHeight()"
   (cdkDropListDropped)="drop($event)"
   >
-  <mat-list [attr.aria-label]="label">
+  <mat-list [attr.aria-label]="label()">
     @for (item of items; track item) {
       <mat-list-item cdkDrag>
         <mat-slide-toggle
@@ -35,4 +35,4 @@
   </mat-list>
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

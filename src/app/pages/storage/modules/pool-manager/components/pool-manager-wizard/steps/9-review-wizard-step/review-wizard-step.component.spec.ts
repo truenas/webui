@@ -94,11 +94,7 @@ describe('ReviewWizardStepComponent', () => {
 
   describe('buttons', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        props: {
-          isStepActive: true,
-        },
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -126,11 +122,7 @@ describe('ReviewWizardStepComponent', () => {
 
   describe('summary', () => {
     beforeEach(() => {
-      spectator = createComponent({
-        props: {
-          isStepActive: true,
-        },
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -196,9 +188,6 @@ describe('ReviewWizardStepComponent', () => {
   describe('validation', () => {
     beforeEach(() => {
       spectator = createComponent({
-        props: {
-          isStepActive: true,
-        },
         providers: [
           mockProvider(PoolManagerStore, {
             state$,

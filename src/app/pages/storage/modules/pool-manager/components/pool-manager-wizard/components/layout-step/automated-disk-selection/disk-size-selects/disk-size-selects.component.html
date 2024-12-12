@@ -1,7 +1,7 @@
 <ng-container [formGroup]="form">
   <ix-select
     formControlName="sizeAndType"
-    [ixTestOverride]="['size-and-type', type]"
+    [ixTestOverride]="['size-and-type', type()]"
     [label]="'Disk Size' | translate"
     [options]="diskSizeAndTypeOptions$"
     [required]="true"
@@ -10,7 +10,7 @@
 
   <ix-checkbox
     formControlName="treatDiskSizeAsMinimum"
-    [ixTestOverride]="['treat-disk-size-as-minimum', type]"
+    [ixTestOverride]="['treat-disk-size-as-minimum', type()]"
     [label]="'Treat Disk Size as Minimum' | translate"
     [tooltip]="'If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.' | translate"
   ></ix-checkbox>

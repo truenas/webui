@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, Input, OnChanges, OnInit,
+  Component, input, OnChanges, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -64,8 +64,8 @@ export type EmptyDiskObject = Record<
   ],
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
-  @Input() poolState: Pool;
-  @Input() disks: StorageDashboardDisk[];
+  readonly poolState = input<Pool>();
+  readonly disks = input<StorageDashboardDisk[]>();
 
   protected readonly searchableElements = topologyCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');
@@ -82,20 +82,20 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   topologyWarningsState: TopologyState = { ...this.topologyState };
 
   get iconType(): PoolCardIconType {
-    if (this.isStatusError(this.poolState)) {
+    if (this.isStatusError(this.poolState())) {
       return PoolCardIconType.Error;
     }
-    if (this.isStatusWarning(this.poolState) || !this.poolState.healthy) {
+    if (this.isStatusWarning(this.poolState()) || !this.poolState().healthy) {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
   }
 
   get iconTooltip(): string {
-    if (this.isStatusError(this.poolState) || this.isStatusWarning(this.poolState)) {
-      return this.translate.instant('Pool contains {status} Data VDEVs', { status: this.poolState.status });
+    if (this.isStatusError(this.poolState()) || this.isStatusWarning(this.poolState())) {
+      return this.translate.instant('Pool contains {status} Data VDEVs', { status: this.poolState().status });
     }
-    if (!this.poolState.healthy) {
+    if (!this.poolState().healthy) {
       return this.translate.instant('Pool is not healthy');
     }
     return this.translate.instant('Everything is fine');
@@ -112,11 +112,11 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    this.parseTopology(this.poolState.topology);
+    this.parseTopology(this.poolState().topology);
   }
 
   ngOnInit(): void {
-    this.parseTopology(this.poolState.topology);
+    this.parseTopology(this.poolState().topology);
   }
 
   parseTopology(topology: PoolTopology): void {
@@ -164,8 +164,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
     const type = vdevs[0]?.type;
     const size = vdevs[0]?.children.length
-      ? this.disks?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
-      : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
+      ? this.disks()?.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
+      : this.disks()?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
     outputString = `${vdevs.length} x `;
     if (vdevWidth) {
@@ -188,7 +188,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
   private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType): string {
     let outputString = '';
-    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
+    const disks: Disk[] = this.disks().map((disk: StorageDashboardDisk) => {
       return this.dashboardDiskToDisk(disk);
     });
     const warnings = this.storageService.validateVdevs(category, vdevs, disks);
@@ -219,7 +219,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   }
 
   protected get isPoolOffline(): boolean {
-    return this.poolState?.status === PoolStatus.Offline;
+    return this.poolState()?.status === PoolStatus.Offline;
   }
 
   // TODO: Unclear why this conversion is needed.
