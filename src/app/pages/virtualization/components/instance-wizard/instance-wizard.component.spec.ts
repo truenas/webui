@@ -148,6 +148,9 @@ describe('InstanceWizardComponent', () => {
     const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
     await usbDeviceCheckbox.setValue(true);
 
+    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+    await useDefaultNetworkCheckbox.setValue(false);
+
     const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
     await nicDeviceCheckbox.setValue(true);
 

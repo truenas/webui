@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
-import { NewPageBadgeComponent } from 'app/modules/page-header/is-new-indicator/new-page-badge.component';
+import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/header-badge.component';
 import { LayoutService } from 'app/services/layout.service';
 import { PageTitleService } from 'app/services/page-title.service';
 
@@ -23,7 +23,7 @@ import { PageTitleService } from 'app/services/page-title.service';
   standalone: true,
   imports: [
     BreadcrumbComponent,
-    NewPageBadgeComponent,
+    HeaderBadgeComponent,
     FakeProgressBarComponent,
     TranslateModule,
     AsyncPipe,
@@ -31,6 +31,7 @@ import { PageTitleService } from 'app/services/page-title.service';
 })
 export class PageHeaderComponent implements OnInit, OnDestroy {
   readonly pageTitle = input<string>();
+  readonly customBadgeTitle = input<string>();
   readonly loading = input(false);
 
   /**
