@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
   InstanceDetailsComponent,
@@ -23,6 +24,7 @@ describe('InstanceDetailsComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceDetailsComponent,
     imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         InstanceGeneralInfoComponent,
         InstanceDevicesComponent,

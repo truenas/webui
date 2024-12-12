@@ -1,11 +1,8 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
-import { TooltipComponent } from '@angular/material/tooltip';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxButtonGroupComponent } from './ix-button-group.component';
 
@@ -17,12 +14,6 @@ describe('IxButtonGroupComponent', () => {
     component: IxButtonGroupComponent,
     imports: [
       ReactiveFormsModule,
-      MatButtonToggleModule,
-    ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
     ],
   });
 
@@ -56,9 +47,9 @@ describe('IxButtonGroupComponent', () => {
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
-      expect(label.label).toBe('I would like to');
-      expect(label.required).toBe(true);
-      expect(label.tooltip).toBe('Value is required.');
+      expect(label.label()).toBe('I would like to');
+      expect(label.required()).toBe(true);
+      expect(label.tooltip()).toBe('Value is required.');
     });
 
     it('renders a hint when it is provided', () => {

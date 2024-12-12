@@ -1,7 +1,6 @@
 import { CdkStepper } from '@angular/cdk/stepper';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -17,11 +16,8 @@ describe('GpuStepComponent', () => {
 
   const createComponent = createComponentFactory({
     component: GpuStepComponent,
-    imports: [
-      ReactiveFormsModule,
-    ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
           { label: 'GeForce GTX 1080 [0000:03:00.0]', value: '0000:03:00.0' },

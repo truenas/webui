@@ -23,7 +23,7 @@ describe('DiskStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('pool.filesystem_choices', [
           'poolio',

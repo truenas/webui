@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
@@ -23,7 +23,7 @@ describe('ReplicationWhenComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockAuth(),
       mockApi(),
     ],
