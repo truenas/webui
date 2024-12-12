@@ -1,3 +1,4 @@
+import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -67,7 +68,7 @@ describe('WidgetAppComponent', () => {
       mockProvider(WidgetResourcesService, {
         serverTime$: of(new Date()),
         getApp: () => of(app),
-        getAppStats: () => of(),
+        getAppStats: () => of({}),
         getAppStatusUpdates: () => of(),
       }),
       mockProvider(RedirectService, {
@@ -99,7 +100,8 @@ describe('WidgetAppComponent', () => {
     });
   });
 
-  it('checks components', () => {
+  it('checks components', fakeAsync(() => {
+    spectator.detectChanges();
     expect(spectator.query(AppControlsComponent)).toBeTruthy();
     expect(spectator.query(AppCardLogoComponent)).toBeTruthy();
     expect(spectator.query(AppCardInfoComponent)).toBeTruthy();
@@ -107,5 +109,5 @@ describe('WidgetAppComponent', () => {
     expect(spectator.query(AppMemoryInfoComponent)).toBeTruthy();
     expect(spectator.query(AppNetworkInfoComponent)).toBeTruthy();
     expect(spectator.query(AppDiskInfoComponent)).toBeTruthy();
-  });
+  }));
 });
