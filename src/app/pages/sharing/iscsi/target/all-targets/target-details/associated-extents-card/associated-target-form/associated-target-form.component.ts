@@ -1,39 +1,41 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  signal,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import {
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
-import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
+import { AssociatedTargetDialogData, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { IscsiService } from 'app/services/iscsi.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-associated-target-form',
+  styleUrls: ['./associated-target-form.component.scss'],
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
-    MatCard,
-    MatCardContent,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDialogClose,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxSelectComponent,
@@ -43,21 +45,11 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    MatDialogActions,
   ],
 })
-export class AssociatedTargetFormComponent implements OnInit {
-  get isNew(): boolean {
-    return !this.editingTarget;
-  }
-
-  get title(): string {
-    return this.isNew
-      ? this.translate.instant('Add Associated Target')
-      : this.translate.instant('Edit Associated Target');
-  }
-
+export class AssociatedTargetFormComponent {
   form = this.formBuilder.group({
-    target: [null as number, Validators.required],
     lunid: [null as number, [
       Validators.min(0),
       Validators.max(1023),
@@ -65,13 +57,11 @@ export class AssociatedTargetFormComponent implements OnInit {
     extent: [null as number, Validators.required],
   });
 
-  isLoading = false;
+  isLoading = signal<boolean>(false);
 
-  targets$ = this.iscsiService.getTargets().pipe(idNameArrayToOptions());
-  extents$ = this.iscsiService.getExtents().pipe(idNameArrayToOptions());
+  extents$ = of(this.data.extents).pipe(idNameArrayToOptions());
 
   readonly tooltips = {
-    target: helptextSharingIscsi.associated_target_tooltip_target,
     lunid: helptextSharingIscsi.associated_target_tooltip_lunid,
     extent: helptextSharingIscsi.associated_target_tooltip_extent,
   };
@@ -83,47 +73,33 @@ export class AssociatedTargetFormComponent implements OnInit {
   ];
 
   constructor(
-    private translate: TranslateService,
     private formBuilder: FormBuilder,
     private api: ApiService,
-    private iscsiService: IscsiService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: SlideInRef<AssociatedTargetFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTargetExtent,
+    private loader: AppLoaderService,
+    @Inject(MAT_DIALOG_DATA) public data: AssociatedTargetDialogData,
+    public dialogRef: MatDialogRef<AssociatedTargetFormComponent>,
   ) {}
 
-  ngOnInit(): void {
-    if (this.editingTarget) {
-      this.setTargetForEdit();
-    }
-  }
-
-  setTargetForEdit(): void {
-    this.form.patchValue(this.editingTarget);
-  }
-
   onSubmit(): void {
-    const values = this.form.value as IscsiTargetExtentUpdate;
+    const values = {
+      ...this.form.value,
+      target: this.data.target.id,
+    } as IscsiTargetExtentUpdate;
 
-    this.isLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.targetextent.create', [values]);
-    } else {
-      request$ = this.api.call('iscsi.targetextent.update', [
-        this.editingTarget.id,
-        values,
-      ]);
-    }
+    this.isLoading.set(true);
 
-    request$.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.slideInRef.close(true);
+    this.api.call('iscsi.targetextent.create', [values]).pipe(
+      this.loader.withLoader(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (response) => {
+        this.isLoading.set(false);
+        this.dialogRef.close(response);
       },
       error: (error: unknown) => {
-        this.isLoading = false;
+        this.isLoading.set(false);
         this.errorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },

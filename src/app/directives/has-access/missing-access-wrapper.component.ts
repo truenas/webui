@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, TemplateRef,
+  ChangeDetectionStrategy, Component, input, TemplateRef,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,6 +22,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   ],
 })
 export class MissingAccessWrapperComponent {
-  @Input() template: TemplateRef<HTMLElement>;
-  @Input() class: string;
+  readonly template = input<TemplateRef<HTMLElement>>();
+  readonly class = input<string>();
 }

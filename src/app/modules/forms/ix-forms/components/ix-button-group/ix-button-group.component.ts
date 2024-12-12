@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -32,20 +32,25 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestOverrideDirective,
     RegisteredControlDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() options: Observable<Option[]>;
-  @Input() vertical = false;
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly options = input<Observable<Option[]>>();
+  readonly vertical = input(false);
+  readonly inlineFields = input(false);
+
   @HostBinding('class.inlineFields')
-  @Input() inlineFields = false;
+  get inlineFieldsClass(): boolean {
+    return this.inlineFields();
+  }
 
   isDisabled = false;
   value: string;

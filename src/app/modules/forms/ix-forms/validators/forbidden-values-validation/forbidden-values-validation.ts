@@ -22,7 +22,7 @@ export function forbiddenAsyncValues(
 ): AsyncValidatorFn {
   const request$ = arrayOfValues$.pipe(
     shareReplay({ refCount: false, bufferSize: 1 }),
-    catchError((error) => {
+    catchError((error: unknown) => {
       console.error(error);
       return of(null);
     }),

@@ -227,7 +227,7 @@ export class InstanceWizardComponent {
           this.snackbar.success(this.translate.instant('Instance created'));
           this.router.navigate(['/virtualization', 'view', result?.id]);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
         },
       });

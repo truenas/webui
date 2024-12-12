@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -32,10 +32,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxSlideToggleComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
 
   isDisabled = false;
   value: boolean;

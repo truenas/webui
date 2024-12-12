@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -29,19 +29,19 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     RegisteredControlDirective,
     TranslateModule,
     TestDirective,
+    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() options: Observable<Option[]>;
-  @Input() inlineFields: boolean;
-  @Input() inlineFieldFlex: string;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly options = input<Observable<Option[]>>();
+  readonly inlineFields = input<boolean>();
+  readonly inlineFieldFlex = input<string>();
 
   isDisabled = false;
   value: (string | number)[];
@@ -54,12 +54,12 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
   }
 
   get fieldFlex(): string {
-    if (!this.inlineFields) {
+    if (!this.inlineFields()) {
       return '100%';
     }
 
-    if (this.inlineFields && this.inlineFieldFlex) {
-      return this.inlineFieldFlex;
+    if (this.inlineFields() && this.inlineFieldFlex()) {
+      return this.inlineFieldFlex();
     }
 
     return '50%';

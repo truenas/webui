@@ -1,6 +1,6 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
 import ipRegex from 'ip-regex';
-import isCidr from 'is-cidr';
+import * as isCidr from 'is-cidr';
 import { indexOf } from 'lodash-es';
 
 // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)

@@ -5,7 +5,7 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -23,9 +23,9 @@ export interface Temperature {
 export class DiskTemperatureService {
   private disksChanged$ = this.api.subscribe('disk.query').pipe(
     filter((event) => [
-      IncomingApiMessageType.Added,
-      IncomingApiMessageType.Changed,
-      IncomingApiMessageType.Removed,
+      CollectionChangeType.Added,
+      CollectionChangeType.Changed,
+      CollectionChangeType.Removed,
     ].includes(event.msg)),
   );
 

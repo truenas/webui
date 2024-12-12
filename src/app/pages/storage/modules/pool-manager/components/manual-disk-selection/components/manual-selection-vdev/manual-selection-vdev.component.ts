@@ -1,6 +1,6 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -50,15 +50,16 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class ManualSelectionVdevComponent implements OnChanges {
-  @Input() vdev: ManualSelectionVdev;
-  @Input() layout: CreateVdevLayout;
-  @Input() editable = false;
+  readonly vdev = input<ManualSelectionVdev>();
+  readonly layout = input<CreateVdevLayout>();
+  readonly editable = input(false);
 
-  @Input() set enclosures(enclosures: Enclosure[]) {
-    this.enclosureById = keyBy(enclosures, 'id');
-  }
+  readonly enclosures = input<Enclosure[]>();
 
-  protected enclosureById: Record<string, Enclosure> = {};
+  readonly enclosureById = computed(() => {
+    return keyBy(this.enclosures(), 'id') as Record<string, Enclosure>;
+  });
+
   protected sizeEstimation = 0;
 
   protected vdevErrorMessage = '';
@@ -84,13 +85,13 @@ export class ManualSelectionVdevComponent implements OnChanges {
   ngOnChanges(): void {
     this.validateVdev();
     this.groupDisksByEnclosure();
-    this.estimateSize(this.vdev);
+    this.estimateSize(this.vdev());
   }
 
   getMovableDisk(disk: ManualSelectionDisk): ManualSelectionDisk {
     return {
       ...disk,
-      vdevUuid: this.vdev.uuid,
+      vdevUuid: this.vdev().uuid,
     };
   }
 
@@ -107,18 +108,18 @@ export class ManualSelectionVdevComponent implements OnChanges {
   }
 
   deleteVdev(): void {
-    this.store$.removeVdev(this.vdev);
+    this.store$.removeVdev(this.vdev());
   }
 
   onDrop(event: DndDropEvent): void {
     const disk = event.data as ManualSelectionDisk;
-    if (!disk.vdevUuid && disk.vdevUuid === this.vdev.uuid) {
+    if (!disk.vdevUuid && disk.vdevUuid === this.vdev().uuid) {
       return;
     }
     if (disk.vdevUuid) {
       this.store$.removeDiskFromVdev(disk);
     }
-    this.store$.addDiskToVdev({ disk, vdev: this.vdev });
+    this.store$.addDiskToVdev({ disk, vdev: this.vdev() });
     this.dragToggleStore$.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }
@@ -126,18 +127,18 @@ export class ManualSelectionVdevComponent implements OnChanges {
   private estimateSize(vdev: ManualSelectionVdev): void {
     this.sizeEstimation = vdevCapacity({
       vdev: vdev.disks,
-      layout: this.layout,
+      layout: this.layout(),
     });
   }
 
   private groupDisksByEnclosure(): void {
     this.enclosuresDisks = new Map();
     this.nonEnclosureDisks = [];
-    if (!this.vdev?.disks) {
+    if (!this.vdev()?.disks) {
       return;
     }
 
-    for (const disk of this.vdev.disks) {
+    for (const disk of this.vdev().disks) {
       if (disk.enclosure?.id) {
         let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.id);
         if (!enclosureDisks) {
@@ -152,20 +153,20 @@ export class ManualSelectionVdevComponent implements OnChanges {
 
   private validateVdev(): void {
     let vdevErrorMsg: string = null;
-    if (this.vdev.disks?.length < this.minDisks[this.layout]) {
+    if (this.vdev().disks?.length < this.minDisks[this.layout()]) {
       const typeKey = Object.entries(CreateVdevLayout).filter(
-        ([, value]) => value === this.layout,
+        ([, value]) => value === this.layout(),
       ).map(([key]) => key)[0];
       vdevErrorMsg = this.translate.instant(
         'Atleast {min} disk(s) are required for {vdevType} vdevs',
-        { min: this.minDisks[this.layout], vdevType: typeKey },
+        { min: this.minDisks[this.layout()], vdevType: typeKey },
       );
     }
     this.vdevErrorMessage = vdevErrorMsg;
 
     this.mixesDisksOfDifferentSizes = false;
-    const firstDisk = this.vdev.disks[0];
-    for (const disk of this.vdev.disks) {
+    const firstDisk = this.vdev().disks[0];
+    for (const disk of this.vdev().disks) {
       const threshold = 10 * MiB;
       if (disk.size < firstDisk.size + threshold && disk.size > firstDisk.size - threshold) {
         continue;

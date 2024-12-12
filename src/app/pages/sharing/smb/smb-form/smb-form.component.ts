@@ -29,8 +29,8 @@ import { DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -518,8 +518,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
           this.slideInRef.close(true);
         }
       },
-      error: (error: ApiError) => {
-        if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
+      error: (error: unknown) => {
+        const apiError = extractApiError(error);
+        if (apiError?.reason?.includes('[ENOENT]') || apiError?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }
         this.isLoading = false;

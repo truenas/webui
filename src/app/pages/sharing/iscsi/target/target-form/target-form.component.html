@@ -21,6 +21,14 @@
               [placeholder]="helptext.target_form_placeholder_alias | translate"
             ></ix-input>
 
+            @if (hasFibreChannel()) {
+              <ix-radio-group
+                formControlName="mode"
+                [label]="'Mode' | translate"
+                [options]="modeOptions$"
+              ></ix-radio-group>
+            }
+
             <ix-list
               formArrayName="auth_networks"
               [empty]="form.controls.auth_networks.length === 0"

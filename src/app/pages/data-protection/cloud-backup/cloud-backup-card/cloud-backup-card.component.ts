@@ -219,7 +219,7 @@ export class CloudBackupCardComponent implements OnInit {
       next: () => {
         this.getCloudBackups();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

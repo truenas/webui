@@ -30,6 +30,7 @@ import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-crede
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -72,7 +73,10 @@ export class CloudCredentialsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Provider'),
       propertyName: 'provider',
-      getValue: (row) => this.providers.get(row.provider) || row.provider,
+      getValue: (row) => {
+        const provider = row.provider.type;
+        return this.providers.get(provider) || provider;
+      },
     }),
     actionsColumn({
       actions: [
@@ -101,6 +105,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     private chainedSlideinService: ChainedSlideInService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -165,6 +170,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       .pipe(
         filter(Boolean),
         switchMap(() => this.api.call('cloudsync.credentials.delete', [credential.id])),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe(() => {

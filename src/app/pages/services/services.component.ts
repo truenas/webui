@@ -42,6 +42,9 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { servicesElements } from 'app/pages/services/services.elements';
+import {
+  GlobalTargetConfigurationComponent,
+} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
 import { SlideInService } from 'app/services/slide-in.service';
@@ -199,7 +202,7 @@ export class ServicesComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         take(1),
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(serviceChanged({ service }));
           return of(EMPTY);
@@ -212,7 +215,7 @@ export class ServicesComponent implements OnInit {
   private configureService(row: Service): void {
     switch (row.service) {
       case ServiceName.Iscsi:
-        this.navigateAndInteract.navigateAndInteract(['/sharing', 'iscsi'], 'global-configuration');
+        this.slideInService.open(GlobalTargetConfigurationComponent);
         break;
       case ServiceName.Ftp:
         this.slideInService.open(ServiceFtpComponent, { wide: true });

@@ -1,5 +1,4 @@
-import { ApiErrorName } from 'app/enums/api-error-name.enum';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiErrorName } from 'app/enums/api.enum';
 
 export interface ApiError {
   errname: ApiErrorName;
@@ -7,7 +6,6 @@ export interface ApiError {
   extra: unknown;
   reason: string;
   trace: ApiErrorTrace;
-  type: ResponseErrorType | null;
   message?: string | null;
 }
 

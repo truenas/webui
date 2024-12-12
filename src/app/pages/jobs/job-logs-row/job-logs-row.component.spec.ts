@@ -1,6 +1,6 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { JobState } from 'app/enums/job-state.enum';
-import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
@@ -13,7 +13,7 @@ const fakeJob: Job = {
   error: '[EFAULT] Transferred:   \t          0 / 0 Byte, -, 0 Byte/s, ETA',
   exc_info: {
     extra: null,
-    type: 'CallError' as ResponseErrorType,
+    type: 'CallError' as JobExceptionType,
   },
   exception: 'Traceback (most recent call last):\n  File "/usr/lib/python3/dist-packages/middlewared/job.py", line 423',
   id: 446,

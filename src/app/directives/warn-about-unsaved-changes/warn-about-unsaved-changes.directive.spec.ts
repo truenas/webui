@@ -38,7 +38,7 @@ describe('WarnAboutUnsavedChangesDirective', () => {
   });
 
   it('should emit close event if there are no unsaved changes', () => {
-    spectator.component.formGroup.markAsPristine();
+    spectator.component.formGroup().markAsPristine();
 
     spectator.detectChanges();
 

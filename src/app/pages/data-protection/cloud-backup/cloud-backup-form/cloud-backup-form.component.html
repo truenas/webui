@@ -13,6 +13,7 @@
             [tooltip]="helptext.source_path_tooltip | translate"
             [required]="true"
             [multiple]="false"
+            [root]="'/'"
             [nodeProvider]="fileNodeProvider"
           ></ix-explorer>
         </ix-fieldset>
@@ -116,6 +117,11 @@
             formControlName="snapshot"
             [label]="helptext.snapshot_placeholder | translate"
             [tooltip]="helptext.snapshot_tooltip | translate"
+          ></ix-checkbox>
+          <ix-checkbox
+            formControlName="absolute_paths"
+            [label]="helptext.absolute_paths_placeholder | translate"
+            [tooltip]="helptext.absolute_paths_tooltip | translate"
           ></ix-checkbox>
           <ix-textarea
             formControlName="pre_script"

@@ -8,7 +8,7 @@ import {
 import {
   catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
@@ -37,7 +37,7 @@ export class AlertEffects {
     switchMap(() => {
       return this.api.call('alert.list').pipe(
         map((alerts) => alertsLoaded({ alerts })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           // TODO: See if it would make sense to parse middleware error.
           return of(alertsNotLoaded({
@@ -57,14 +57,14 @@ export class AlertEffects {
             switchMap((isAlertsPanelOpen) => {
               switch (true) {
                 case [
-                  IncomingApiMessageType.Added, IncomingApiMessageType.Changed,
+                  CollectionChangeType.Added, CollectionChangeType.Changed,
                 ].includes(event.msg) && isAlertsPanelOpen:
                   return of(alertReceivedWhenPanelIsOpen());
-                case event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen:
+                case event.msg === CollectionChangeType.Added && !isAlertsPanelOpen:
                   return of(alertAdded({ alert: event.fields }));
-                case event.msg === IncomingApiMessageType.Changed && !isAlertsPanelOpen:
+                case event.msg === CollectionChangeType.Changed && !isAlertsPanelOpen:
                   return of(alertChanged({ alert: event.fields }));
-                case event.msg === IncomingApiMessageType.Removed:
+                case event.msg === CollectionChangeType.Removed:
                   return of(alertRemoved({ id: event.id.toString() }));
                 default:
                   return EMPTY;
@@ -81,7 +81,7 @@ export class AlertEffects {
     ofType(dismissAlertPressed),
     mergeMap(({ id }) => {
       return this.api.call('alert.dismiss', [id]).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertChanged({ alert: { id, dismissed: false } as Alert }));
           return of(EMPTY);
@@ -94,7 +94,7 @@ export class AlertEffects {
     ofType(reopenAlertPressed),
     mergeMap(({ id }) => {
       return this.api.call('alert.restore', [id]).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertChanged({ alert: { id, dismissed: true } as Alert }));
           return of(EMPTY);
@@ -109,7 +109,7 @@ export class AlertEffects {
     mergeMap(([, [unreadAlerts]]) => {
       const requests = unreadAlerts.map((alert) => this.api.call('alert.dismiss', [alert.id]));
       return forkJoin(requests).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertsDismissedChanged({ dismissed: false }));
           return of(EMPTY);
@@ -125,7 +125,7 @@ export class AlertEffects {
     mergeMap(([, [dismissedAlerts]]) => {
       const requests = dismissedAlerts.map((alert) => this.api.call('alert.restore', [alert.id]));
       return forkJoin(requests).pipe(
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.errorHandler.showErrorModal(error);
           this.store$.dispatch(alertsDismissedChanged({ dismissed: true }));
           return of(EMPTY);

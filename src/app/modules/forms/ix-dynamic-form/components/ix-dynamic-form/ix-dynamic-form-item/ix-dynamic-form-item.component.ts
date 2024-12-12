@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit, output,
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -56,9 +56,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit {
-  @Input() dynamicForm: UntypedFormGroup;
+  readonly dynamicForm = input<UntypedFormGroup>();
   @Input() dynamicSchema: DynamicFormSchemaNode;
-  @Input() isEditMode: boolean;
+  readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();
@@ -79,7 +79,7 @@ export class IxDynamicFormItemComponent implements OnInit {
     const dependsOn = this.dynamicSchema?.dependsOn;
 
     dependsOn?.forEach((depend) => {
-      this.dynamicForm?.valueChanges.pipe(
+      this.dynamicForm()?.valueChanges.pipe(
         map((changes: Record<string, unknown>) => {
           return changes[depend];
         }),
@@ -94,20 +94,20 @@ export class IxDynamicFormItemComponent implements OnInit {
       this.dynamicSchema?.editable !== undefined
       && !this.dynamicSchema?.editable
     ) {
-      this.dynamicForm?.get(this.dynamicSchema.controlName)?.disable();
+      this.dynamicForm()?.get(this.dynamicSchema.controlName)?.disable();
     }
 
     if (this.dynamicSchema?.hidden) {
-      (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
+      (this.dynamicForm().controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
   }
 
   get getFormArray(): UntypedFormArray {
-    return this.dynamicForm.controls[this.dynamicSchema.controlName] as UntypedFormArray;
+    return this.dynamicForm().controls[this.dynamicSchema.controlName] as UntypedFormArray;
   }
 
   get isHidden$(): Subject<boolean> {
-    return (this.dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$;
+    return (this.dynamicForm().controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$;
   }
 
   addControl(schema?: ChartSchemaNode[]): void {

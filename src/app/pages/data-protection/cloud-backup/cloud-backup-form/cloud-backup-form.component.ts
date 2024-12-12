@@ -103,6 +103,7 @@ export class CloudBackupFormComponent implements OnInit {
     post_script: [''],
     description: ['', [Validators.required]],
     snapshot: [false],
+    absolute_paths: [false],
     transfer_setting: [CloudsyncTransferSetting.Default],
     args: [''],
     enabled: [true],
@@ -152,49 +153,15 @@ export class CloudBackupFormComponent implements OnInit {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
 
-    this.form.controls.credentials.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((credentialId) => {
-        if (credentialId !== this.editingTask?.credentials?.id) {
-          this.form.controls.bucket.patchValue('');
-        }
-
-        this.form.controls.bucket_input.disable();
-
-        if (credentialId) {
-          this.form.controls.folder.enable();
-          this.form.controls.bucket.enable();
-          this.loadBucketOptions(credentialId);
-        } else {
-          this.form.controls.folder.disable();
-          this.form.controls.bucket.disable();
-        }
-      });
-
-    this.form.controls.bucket.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((value) => {
-        if (value === newOption) {
-          this.form.controls.bucket_input.patchValue('');
-          this.form.controls.bucket_input.enable();
-        } else {
-          this.form.controls.bucket_input.disable();
-        }
-        this.setBucketNodeProvider();
-      });
-
-    this.form.controls.bucket_input.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.setBucketNodeProvider();
-      });
+    this.listenForCredentialsChanges();
+    this.listenForBucketChanges();
+    this.listenForBucketInputChanges();
 
     if (this.editingTask) {
       this.setTaskForEdit();
+      this.form.controls.absolute_paths.disable();
+    } else {
+      this.listenForTakeSnapshotChanges();
     }
   }
 
@@ -216,9 +183,16 @@ export class CloudBackupFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: () => {
+        error: (error: unknown) => {
+          console.error(error);
           this.isLoading = false;
           this.bucketOptions$ = of([this.newBucketOption]);
+          this.bucketOptions$ = of([
+            {
+              label: 'something',
+              value: 'whatever',
+              disabled: false,
+            }]);
           this.cdr.markForCheck();
         },
       });
@@ -307,6 +281,66 @@ export class CloudBackupFormComponent implements OnInit {
     });
   }
 
+  private listenForCredentialsChanges(): void {
+    this.form.controls.credentials.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId) => {
+        if (credentialId !== this.editingTask?.credentials?.id) {
+          this.form.controls.bucket.patchValue('');
+        }
+
+        this.form.controls.bucket_input.disable();
+
+        if (credentialId) {
+          this.form.controls.folder.enable();
+          this.form.controls.bucket.enable();
+          this.loadBucketOptions(credentialId);
+        } else {
+          this.form.controls.folder.disable();
+          this.form.controls.bucket.disable();
+        }
+      });
+  }
+
+  private listenForBucketChanges(): void {
+    this.form.controls.bucket.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        if (value === newOption) {
+          this.form.controls.bucket_input.patchValue('');
+          this.form.controls.bucket_input.enable();
+        } else {
+          this.form.controls.bucket_input.disable();
+        }
+        this.setBucketNodeProvider();
+      });
+  }
+
+  private listenForBucketInputChanges(): void {
+    this.form.controls.bucket_input.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.setBucketNodeProvider();
+      });
+  }
+
+  private listenForTakeSnapshotChanges(): void {
+    this.form.controls.snapshot.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((takeSnapshot) => {
+        if (takeSnapshot) {
+          this.form.controls.absolute_paths.setValue(false);
+          this.form.controls.absolute_paths.disable();
+        } else {
+          this.form.controls.absolute_paths.enable();
+        }
+      });
+  }
+
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
@@ -331,7 +365,9 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   private setFileNodeProvider(): void {
-    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({
+      datasetsAndZvols: true,
+    });
   }
 
   private setBucketNodeProvider(): void {

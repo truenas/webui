@@ -12,7 +12,7 @@
           </mat-card-title>
           <!-- Controls/Tools -->
           <div class="line-chart-tools-wrapper">
-            @if (localControls && !report?.errorConf) {
+            @if (localControls() && !report()?.errorConf) {
               <div class="line-chart-tools">
                 <div class="steps-group" aria-label="Steps">
                   <button
@@ -73,7 +73,7 @@
           </mat-toolbar-row>
         }
 
-      @if (isReady && !report?.errorConf) {
+      @if (isReady && !report()?.errorConf) {
         <mat-card-content class="card-content">
           <div class="chart-wrapper-outer">
             <div class="chart-wrapper">
@@ -83,8 +83,8 @@
                 [data]="data"
                 [stacked]="isStacked"
                 [timezone]="timezone"
-                [report]="report"
-                [labelY]="report.vertical_label || ''"
+                [report]="report()"
+                [labelY]="report().vertical_label || ''"
                 (zoomChange)="onZoomChange($event)"
               ></ix-linechart>
             </div>
@@ -110,7 +110,7 @@
           </div>
 
           <section #legendElement class="legend">
-            @if (report && data?.legend) {
+            @if (report() && data?.legend) {
               <div class="legend-timestamp">
                 @if (data && legendData?.xHTML && shouldShowLegendValue) {
                   <h4>
@@ -125,9 +125,9 @@
               </div>
             }
 
-            @if (report && data?.legend) {
+            @if (report() && data?.legend) {
               <div class="legend-group-wrapper">
-                <table class="legend-table" [ixTest]="['reports-table', report.title]">
+                <table class="legend-table" [ixTest]="['reports-table', report().title]">
                   <!-- Table Header-->
                   <tr class="legend-group header" ixTest="table-header">
                     <th class="legend-label">
@@ -184,9 +184,9 @@
         </mat-card-content>
       }
 
-      @if (isReady && report?.errorConf) {
+      @if (isReady && report()?.errorConf) {
         <mat-card-content>
-          <ix-empty [conf]="report.errorConf"></ix-empty>
+          <ix-empty [conf]="report().errorConf"></ix-empty>
         </mat-card-content>
       }
     </mat-card>

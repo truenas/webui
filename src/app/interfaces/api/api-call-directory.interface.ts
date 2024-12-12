@@ -3,7 +3,6 @@ import { CloudsyncTransferSetting } from 'app/enums/cloudsync-transfer-setting.e
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { DockerConfig, DockerStatusData } from 'app/enums/docker-config.interface';
-import { DockerNvidiaStatusResponse } from 'app/enums/docker-nvidia-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -27,6 +26,7 @@ import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
 } from 'app/interfaces/alert.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
+import { ApiEventMethod } from 'app/interfaces/api-message.interface';
 import {
   App,
   AppQueryParams,
@@ -114,6 +114,7 @@ import {
   FibreChannelPort,
   FibreChannelPortChoices,
   FibreChannelPortUpdate,
+  FibreChannelStatus,
 } from 'app/interfaces/fibre-channel.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
@@ -408,11 +409,14 @@ export interface ApiCallDirectory {
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Core
+  'core.ping': { params: void; response: 'pong' };
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
   'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
+  'core.subscribe': { params: [name: ApiEventMethod]; response: void };
+  'core.unsubscribe': { params: [id: string]; response: void };
 
   // Cronjob
   'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
@@ -463,6 +467,7 @@ export interface ApiCallDirectory {
   'fcport.delete': { params: [id: number]; response: true };
   'fcport.port_choices': { params: [include_used?: boolean]; response: FibreChannelPortChoices };
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
+  'fcport.status': { params: []; response: FibreChannelStatus[] };
 
   // Filesystem
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
@@ -596,7 +601,7 @@ export interface ApiCallDirectory {
   // Docker
   'docker.config': { params: void; response: DockerConfig };
   'docker.status': { params: void; response: DockerStatusData };
-  'docker.nvidia_status': { params: void; response: DockerNvidiaStatusResponse };
+  'docker.nvidia_present': { params: void; response: boolean };
 
   // LDAP
   'ldap.config': { params: void; response: LdapConfig };

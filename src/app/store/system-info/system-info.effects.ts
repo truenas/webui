@@ -19,7 +19,7 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.api.call('system.info').pipe(
         map((systemInfo) => systemInfoLoaded({ systemInfo })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           // TODO: Basically a fatal error. Handle it.
           console.error(error);
           return EMPTY;
@@ -33,7 +33,7 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.api.call('truenas.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           // TODO: Show error message to user?
           console.error(error);
           return of(ixHardwareLoaded({ isIxHardware: false }));
@@ -47,7 +47,7 @@ export class SystemInfoEffects {
     mergeMap(() => {
       return this.api.call('system.product_type').pipe(
         map((productType) => productTypeLoaded({ productType })),
-        catchError((error) => {
+        catchError((error: unknown) => {
           console.error(error);
           return of(productTypeLoaded({ productType: null }));
         }),

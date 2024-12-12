@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -11,11 +11,11 @@
   [value]="value"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
-  [vertical]="vertical"
-  [attr.aria-label]="label"
+  [vertical]="vertical()"
+  [attr.aria-label]="label()"
   (change)="onValueChanged($event)"
 >
-  @for (option of options | async; track option.label) {
+  @for (option of options() | async; track option.label) {
     <mat-button-toggle
       [name]="option.value.toString()"
       [disabled]="isDisabled"
@@ -26,7 +26,7 @@
   }
 </mat-button-toggle-group>
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }

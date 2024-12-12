@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, OnChanges, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -55,7 +55,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
-  @Input() dataset: DatasetDetails;
+  readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetCapacityManagementElements;
@@ -67,27 +67,27 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   groupQuotas: number;
 
   get isFilesystem(): boolean {
-    return this.dataset.type === DatasetType.Filesystem;
+    return this.dataset().type === DatasetType.Filesystem;
   }
 
   get isZvol(): boolean {
-    return this.dataset.type === DatasetType.Volume;
+    return this.dataset().type === DatasetType.Volume;
   }
 
   get checkQuotas(): boolean {
-    return !this.dataset.locked && this.isFilesystem && !this.dataset.readonly;
+    return !this.dataset().locked && this.isFilesystem && !this.dataset().readonly;
   }
 
   get hasQuota(): boolean {
-    return Boolean(this.dataset?.quota?.parsed);
+    return Boolean(this.dataset()?.quota?.parsed);
   }
 
   get hasRefQuota(): boolean {
-    return Boolean(this.dataset?.refquota?.parsed);
+    return Boolean(this.dataset()?.refquota?.parsed);
   }
 
   get hasInheritedQuotas(): boolean {
-    return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset?.id;
+    return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
   }
 
   constructor(
@@ -121,8 +121,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       }),
       switchMap(() => forkJoin([
-        this.api.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.User, []]),
-        this.api.call('pool.dataset.get_quota', [this.dataset.id, DatasetQuotaType.Group, []]),
+        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.User, []]),
+        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.Group, []]),
       ])),
       untilDestroyed(this),
     ).subscribe({
@@ -161,7 +161,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
 
   editDataset(): void {
     this.slideInService
-      .open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset })
+      .open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() })
       .slideInClosed$
       .pipe(untilDestroyed(this))
       .subscribe(() => {

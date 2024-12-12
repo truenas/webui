@@ -51,12 +51,11 @@
           }
         </ix-list>
 
-        @if (showNvidiaCheckbox()) {
+        @if (hasNvidiaCard$ | async) {
           <ix-checkbox
             formControlName="nvidia"
             [label]="'Install NVIDIA Drivers' | translate"
-            [tooltip]="tooltips.install_nvidia_driver| translate"
-            [hint]="'Current status: {status}' | translate: { status: dockerNvidiaStatus() | mapValue: dockerNvidiaStatusLabels }"
+            [tooltip]="tooltips.install_nvidia_driver | translate"
           ></ix-checkbox>
         }
 

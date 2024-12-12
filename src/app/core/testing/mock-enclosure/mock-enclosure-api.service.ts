@@ -8,6 +8,7 @@ import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enc
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/services/websocket/api.service';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 @Injectable({
@@ -19,9 +20,10 @@ export class MockEnclosureApiService extends ApiService {
 
   constructor(
     wsManager: WebSocketHandlerService,
+    subscriptionManager: SubscriptionManagerService,
     translate: TranslateService,
   ) {
-    super(wsManager, translate);
+    super(wsManager, subscriptionManager, translate);
 
     console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
   }

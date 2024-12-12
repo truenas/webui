@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -37,19 +37,19 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
+    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxRadioGroupComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() options: Observable<RadioOption[]>;
-  @Input() inlineFields: boolean;
-  @Input() inlineFieldFlex: string;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly options = input<Observable<RadioOption[]>>();
+  readonly inlineFields = input<boolean>();
+  readonly inlineFieldFlex = input<string>();
 
   isDisabled = false;
   value: string;
@@ -62,12 +62,12 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
   }
 
   get fieldFlex(): string {
-    if (!this.inlineFields) {
+    if (!this.inlineFields()) {
       return '100%';
     }
 
-    if (this.inlineFields && this.inlineFieldFlex) {
-      return this.inlineFieldFlex;
+    if (this.inlineFields() && this.inlineFieldFlex()) {
+      return this.inlineFieldFlex();
     }
 
     return '50%';

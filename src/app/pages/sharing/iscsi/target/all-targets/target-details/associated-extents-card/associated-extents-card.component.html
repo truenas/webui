@@ -1,0 +1,57 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Extents' | translate }}
+    </h3>
+
+    @if (isLoadingExtents()) {
+      <ngx-skeleton-loader class="button-loader"></ngx-skeleton-loader>
+    } @else {
+      <div
+        class="actions"
+        [matTooltip]="unassociatedExtents()?.length > 0 ? null : ('No unassociated extents available.' | translate)"
+      >
+        <button
+          *ixRequiresRoles="requiredRoles"
+          color="default"
+          mat-button
+          [disabled]="!unassociatedExtents()?.length"
+          [ixTest]="[target()?.name, 'associate-target']"
+          (click)="associateTarget()"
+        >
+          {{ 'Associate' | translate }}
+        </button>
+      </div>
+    }
+  </mat-card-header>
+  <mat-card-content>
+    @if (isLoadingExtents()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @for (extent of mappedTargetExtents(); track extent.extent) {
+        <div class="mapped-extent">
+          <p>
+            {{ 'LUN ID' | translate }}: {{ extent.lunid }} |
+            {{ extent.name }} |
+            {{ extent.path }}
+          </p>
+
+          <button
+            mat-icon-button
+            [ixTest]="'remove-extent-association' + extent.extent"
+            [title]="'Remove extent association' | translate"
+            [attr.aria-label]="'Remove extent association' | translate"
+            [matTooltip]="'Remove extent association' | translate"
+            (click)="removeExtentAssociation(extent)"
+          >
+            <ix-icon name="link_off"></ix-icon>
+          </button>
+        </div>
+      } @empty {
+        <div>
+          <p>{{ 'No extents associated.' | translate }}</p>
+        </div>
+      }
+    }
+  </mat-card-content>
+</mat-card>

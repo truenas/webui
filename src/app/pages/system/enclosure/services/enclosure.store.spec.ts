@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
@@ -85,7 +85,7 @@ describe('EnclosureStore', () => {
       spectator.service.listenForDiskUpdates().subscribe();
 
       spectator.inject(MockApiService).emitSubscribeEvent({
-        msg: IncomingApiMessageType.Changed,
+        msg: CollectionChangeType.Changed,
         collection: 'disk.query',
       });
 

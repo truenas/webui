@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  width: 350px;
+
+  &::ng-deep {
+    fieldset {
+      padding: 0;
+    }
+  }
+
+  .form-actions {
+    padding: 0;
+  }
+}

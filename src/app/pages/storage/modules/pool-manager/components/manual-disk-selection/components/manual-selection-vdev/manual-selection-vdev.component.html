@@ -8,8 +8,8 @@
     >
       <div class="outer-container">
         <div class="type-container">
-          <h3>{{ layout }}</h3>
-          @if (minDisks[layout] <= vdev.disks?.length) {
+          <h3>{{ layout() }}</h3>
+          @if (minDisks[layout()] <= vdev().disks?.length) {
             <p>
               {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
             </p>
@@ -23,16 +23,16 @@
         <div class="vdev-container">
           @for (enclosureDisks of enclosuresDisks | keyvalue; track enclosureDisks) {
             <ix-enclosure-wrapper
-              [enclosure]="enclosureById[enclosureDisks.key]"
+              [enclosure]="enclosureById()[enclosureDisks.key]"
             >
               <div class="disk-icons">
                 @for (disk of enclosureDisks.value; track disk) {
                   <ix-disk-icon
                     class="disk-icon"
-                    [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable }"
+                    [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
                     [dndDraggable]="getMovableDisk(disk)"
                     [dndEffectAllowed]="'move'"
-                    [dndDisableIf]="!editable"
+                    [dndDisableIf]="!editable()"
                     [name]="disk.name"
                     [type]="disk.type"
                     [size]="disk.size"
@@ -48,10 +48,10 @@
             @for (disk of nonEnclosureDisks; track disk) {
               <ix-disk-icon
                 class="disk-icon"
-                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable }"
+                [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
                 [dndDraggable]="getMovableDisk(disk)"
                 [dndEffectAllowed]="'move'"
-                [dndDisableIf]="!editable"
+                [dndDisableIf]="!editable()"
                 [name]="disk.name"
                 [type]="disk.type"
                 [size]="disk.size"
@@ -62,7 +62,7 @@
             }
           </div>
         </div>
-        @if (editable) {
+        @if (editable()) {
           <div
             class="delete-container"
             (click)="deleteVdev()"
@@ -71,7 +71,7 @@
           </div>
         }
       </div>
-      @if (editable) {
+      @if (editable()) {
         <ix-label
           class="drag-hint"
           [label]="'Drag & drop disks to add or remove them' | translate"

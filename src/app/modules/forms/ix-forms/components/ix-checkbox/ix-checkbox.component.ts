@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -36,11 +36,11 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxCheckboxComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() warning: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly warning = input<string>();
+  readonly required = input<boolean>();
 
   isDisabled = false;
   value: boolean;

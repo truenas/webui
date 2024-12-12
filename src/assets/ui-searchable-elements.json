@@ -311,27 +311,6 @@
   },
   {
     "hierarchy": [
-      "Applications",
-      "Installed"
-    ],
-    "synonyms": [
-      "Apps"
-    ],
-    "requiredRoles": [],
-    "visibleTokens": [
-      "APPS"
-    ],
-    "anchorRouterLink": [
-      "/apps",
-      "installed"
-    ],
-    "routerLink": null,
-    "anchor": "applications-installed",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "System",
       "Audit"
     ],
@@ -1528,7 +1507,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "user-quotas"
     ],
     "anchor": "manage-user-quotas",
@@ -1552,7 +1531,7 @@
     "routerLink": [
       "/",
       "datasets",
-      "dataset.id",
+      "dataset().id",
       "group-quotas"
     ],
     "anchor": "manage-group-quotas",
@@ -2377,7 +2356,8 @@
       "SMB"
     ],
     "synonyms": [
-      "Samba"
+      "Samba",
+      "SMB Service"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -2396,7 +2376,9 @@
       "Services",
       "FTP"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "FTP Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2414,7 +2396,9 @@
       "Services",
       "iSCSI"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "iSCSI Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2432,7 +2416,9 @@
       "Services",
       "NFS"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "NFS Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2450,7 +2436,9 @@
       "Services",
       "SNMP"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "SNMP Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2468,7 +2456,9 @@
       "Services",
       "SSH"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "SSH Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2486,7 +2476,9 @@
       "Services",
       "UPS"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "UPS Service"
+    ],
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -2505,6 +2497,7 @@
       "S.M.A.R.T."
     ],
     "synonyms": [
+      "Smart Service",
       "Smart"
     ],
     "requiredRoles": [],
@@ -2614,6 +2607,25 @@
     ],
     "routerLink": null,
     "anchor": "shares-iscsi-extents",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "iSCSI",
+      "Fibre Channel Ports"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "iscsi",
+      "fibre-channel-ports"
+    ],
+    "routerLink": null,
+    "anchor": "shares-iscsi-fibre-channel-ports",
     "triggerAnchor": null,
     "section": "ui"
   },

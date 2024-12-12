@@ -41,7 +41,7 @@ describe('IscsiCardComponent', () => {
       id: 6,
       name: 'grow',
       alias: 'kokok',
-      mode: IscsiTargetMode.Iscsi,
+      mode: IscsiTargetMode.Both,
       auth_networks: [],
       groups: [
         {
@@ -109,8 +109,8 @@ describe('IscsiCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Target Name', 'Target Alias', ''],
-      ['grow', 'kokok', ''],
+      ['Target Name', 'Target Alias', 'Mode', ''],
+      ['grow', 'kokok', 'Both', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -118,7 +118,7 @@ describe('IscsiCardComponent', () => {
   });
 
   it('shows form to edit an existing iSCSI Share when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
     expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
@@ -128,7 +128,7 @@ describe('IscsiCardComponent', () => {
   });
 
   it('shows confirmation to delete iSCSI Share when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 2);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 3);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();

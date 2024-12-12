@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
@@ -30,19 +30,20 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatHint,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() placeholder: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  @Input() required: boolean;
-  @Input() rows = 4;
-  @Input() readonly: boolean;
+  readonly label = input<string>();
+  readonly placeholder = input<string>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly rows = input(4);
+  readonly readonly = input<boolean>();
 
   value = '';
   isDisabled = false;

@@ -17,9 +17,9 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -274,8 +274,9 @@ export class SshConnectionFormComponent implements OnInit {
     }
 
     return this.api.call('keychaincredential.setup_ssh_connection', [params]).pipe(
-      catchError((error: ApiError) => {
-        if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
+      catchError((error: unknown) => {
+        const apiError = extractApiError(error);
+        if (apiError?.errname?.includes(sslCertificationError) || apiError?.reason?.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({

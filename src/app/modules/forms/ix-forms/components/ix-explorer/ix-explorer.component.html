@@ -1,8 +1,8 @@
-@if (label || tooltip) {
+@if (label() || tooltip()) {
   <ix-label
-    [label]="label"
-    [tooltip]="tooltip"
-    [required]="required"
+    [label]="label()"
+    [tooltip]="tooltip()"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -15,14 +15,14 @@
     autocomplete="off"
     [value]="inputValue"
     [ixTest]="controlDirective.name"
-    [required]="required"
+    [required]="required()"
     [disabled]="isDisabled"
-    [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label, multiple: multiple ? ' Use commas to separate multiple values.' : '' }"
+    [attr.aria-label]="'Enter path for {label}.{multiple}' | translate: { label: label(), multiple: multiple() ? ' Use commas to separate multiple values.' : '' }"
     (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   />
 </div>
-@if (canCreateDataset) {
+@if (canCreateDataset()) {
   <div class="create-dataset-container">
     <button
       *ixRequiresRoles="requiredRoles"
@@ -38,7 +38,7 @@
     </button>
   </div>
 }
-<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
+<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label()">
   <tree-root
     #tree
     [nodes]="nodes"
@@ -59,6 +59,8 @@
         >
           @if (node.data.type === ExplorerNodeType.File) {
             <ix-icon name="insert_drive_file"></ix-icon>
+          } @else if (node.data.type === ExplorerNodeType.Symlink) {
+            <ix-icon [name]="'mdi-database'"></ix-icon>
           } @else {
             @if (node.data.isLock) {
               <ix-icon name="mdi-folder-lock"></ix-icon>
@@ -83,8 +85,8 @@
   </mat-error>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
 
-@if (hint) {
-  <mat-hint>{{ hint }}</mat-hint>
+@if (hint()) {
+  <mat-hint>{{ hint() }}</mat-hint>
 }

@@ -1,6 +1,6 @@
 @if (dynamicSchema) {
   <div
-    [formGroup]="dynamicForm"
+    [formGroup]="dynamicForm()"
     [class.indent]="dynamicSchema?.indent"
   >
     @if (!(isHidden$ | async)) {
@@ -37,8 +37,8 @@
             <ix-dynamic-form-item
               [id]="attr.controlName"
               [dynamicSchema]="attr"
-              [dynamicForm]="dynamicForm.controls[dynamicSchema.controlName] | cast"
-              [isEditMode]="isEditMode"
+              [dynamicForm]="dynamicForm().controls[dynamicSchema.controlName] | cast"
+              [isEditMode]="isEditMode()"
               (addListItem)="addControlNext($event)"
               (deleteListItem)="removeControlNext($event)"
             ></ix-dynamic-form-item>
@@ -65,7 +65,7 @@
             [tooltip]="dynamicSchema.tooltip | translate"
             [itemsSchema]="dynamicSchema.itemsSchema"
             [required]="dynamicSchema.required"
-            [isEditMode]="isEditMode"
+            [isEditMode]="isEditMode()"
             [canAdd]="!isAllListControlsDisabled"
             [formArray]="getFormArray"
             (add)="addControl($event)"
@@ -81,14 +81,14 @@
                   <ix-dynamic-form-item
                     [dynamicSchema]="item"
                     [dynamicForm]="element | cast"
-                    [isEditMode]="isEditMode"
+                    [isEditMode]="isEditMode()"
                     (addListItem)="addControlNext($event)"
                     (deleteListItem)="removeControlNext($event)"
                   ></ix-dynamic-form-item>
                 }
               </ix-list-item>
             }
-            <ix-errors [control]="dynamicForm" [label]="dynamicSchema.title | translate"></ix-errors>
+            <ix-errors [control]="dynamicForm()" [label]="dynamicSchema.title | translate"></ix-errors>
           </ix-list>
         }
 

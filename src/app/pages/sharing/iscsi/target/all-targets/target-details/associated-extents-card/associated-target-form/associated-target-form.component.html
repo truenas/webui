@@ -1,0 +1,47 @@
+<h1 matDialogTitle>
+  {{ 'Associate' | translate }}
+  {{ data.target?.name }}
+</h1>
+
+<mat-dialog-content>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <ix-fieldset>
+      <ix-input
+        formControlName="lunid"
+        type="number"
+        [label]="'LUN ID' | translate"
+        [tooltip]="tooltips.lunid | translate"
+      ></ix-input>
+
+      <ix-select
+        formControlName="extent"
+        [label]="'Extent' | translate"
+        [tooltip]="tooltips.extent | translate"
+        [options]="extents$"
+        [required]="true"
+      ></ix-select>
+    </ix-fieldset>
+
+    <ix-form-actions mat-dialog-actions class="form-actions">
+      <button
+        mat-button
+        type="button"
+        ixTest="cancel-associate-target"
+        [matDialogClose]="false"
+      >
+        {{ 'Cancel' | translate }}
+      </button>
+
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="primary"
+        ixTest="associate-target"
+        [disabled]="form.invalid || isLoading()"
+        (click)="onSubmit()"
+      >
+        {{ 'Associate' | translate }}
+      </button>
+    </ix-form-actions>
+  </form>
+</mat-dialog-content>

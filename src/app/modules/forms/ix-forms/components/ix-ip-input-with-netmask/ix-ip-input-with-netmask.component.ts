@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -30,16 +30,17 @@ import { NetworkService } from 'app/services/network.service';
     RegisteredControlDirective,
     TestDirective,
     TestOverrideDirective,
+    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
   ],
 })
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() tooltip: string;
-  @Input() hint: string;
-  @Input() required: boolean;
+  readonly label = input<string>();
+  readonly tooltip = input<string>();
+  readonly hint = input<string>();
+  readonly required = input<boolean>();
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};
@@ -58,8 +59,8 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  onAddressInput(input: HTMLInputElement): void {
-    this.address = input.value;
+  onAddressInput(inputElement: HTMLInputElement): void {
+    this.address = inputElement.value;
     this.onValueChanged();
     this.setNetmaskOptions();
   }

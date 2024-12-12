@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
   OnChanges,
 } from '@angular/core';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
@@ -59,7 +59,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
-  @Input() backup: CloudBackup;
+  readonly backup = input.required<CloudBackup>();
 
   readonly requiredRoles = [Role.CloudBackupWrite];
 
@@ -111,7 +111,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       return;
     }
 
-    const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
+    const cloudBackupSnapshots$ = this.api.call('cloud_backup.list_snapshots', [this.backup().id]).pipe(
       map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
       untilDestroyed(this),
     );
@@ -127,7 +127,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     const slideInRef = this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
       data: {
         snapshot: row,
-        backup: this.backup,
+        backup: this.backup(),
       },
     });
 
@@ -152,9 +152,9 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.job('cloud_backup.delete_snapshot', [this.backup.id, row.id])),
+        switchMap(() => this.api.job('cloud_backup.delete_snapshot', [this.backup().id, row.id])),
         tapOnce(() => this.loader.open()),
-        catchError((error) => {
+        catchError((error: unknown) => {
           this.dialog.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
