@@ -47,37 +47,4 @@ describe('FirstTimeWarningService', () => {
       });
     });
   });
-
-  describe('showFirstTimeConfirmationIfNeeded', () => {
-    it('shows the confirmation dialog for the first time and adds it to the shownConfirmations set', () => {
-      const mockDialogService = spectator.inject(DialogService);
-
-      const options = {
-        title: 'Test Confirmation Title',
-        message: 'Test Confirmation Message',
-      };
-
-      spectator.service.showFirstTimeConfirmationIfNeeded(options).subscribe((result) => {
-        expect(result).toBe(true);
-        expect(mockDialogService.confirm).toHaveBeenCalledWith(options);
-        expect(spectator.service.shownConfirmations.has(`${options.title}::${options.message}`)).toBe(true);
-      });
-    });
-
-    it('does not show the confirmation dialog if it has already been shown', () => {
-      const mockDialogService = spectator.inject(DialogService);
-
-      const options = {
-        title: 'Test Confirmation Title',
-        message: 'Test Confirmation Message',
-      };
-
-      spectator.service.shownConfirmations.add(`${options.title}::${options.message}`);
-
-      spectator.service.showFirstTimeConfirmationIfNeeded(options).subscribe((result) => {
-        expect(result).toBe(true);
-        expect(mockDialogService.confirm).not.toHaveBeenCalled();
-      });
-    });
-  });
 });

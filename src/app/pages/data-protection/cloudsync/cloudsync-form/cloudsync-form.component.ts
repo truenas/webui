@@ -63,7 +63,6 @@ import { TransferModeExplanationComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const customOptionValue = -1;
@@ -230,7 +229,6 @@ export class CloudSyncFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
     private chainedRef: ChainedRef<CloudSyncTaskUi>,
-    private firstTimeWarning: FirstTimeWarningService,
   ) {
     this.chainedRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -247,7 +245,7 @@ export class CloudSyncFormComponent implements OnInit {
       tap((credentials) => {
         this.credentialsList = credentials;
         for (const credential of credentials) {
-          if (credential.provider === CloudSyncProviderName.GoogleDrive) {
+          if (credential.provider.type === CloudSyncProviderName.GoogleDrive) {
             this.googleDriveProviderIds.push(credential.id);
           }
         }
@@ -265,7 +263,6 @@ export class CloudSyncFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.getInitialData();
-    this.listenToFilenameEncryption();
   }
 
   setupForm(): void {
@@ -402,7 +399,7 @@ export class CloudSyncFormComponent implements OnInit {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          if (targetCredentials.provider === CloudSyncProviderName.Storj) {
+          if (targetCredentials.provider.type === CloudSyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
               value: newOption,
@@ -493,11 +490,11 @@ export class CloudSyncFormComponent implements OnInit {
     if (credentials) {
       this.enableRemoteExplorer();
       const targetCredentials = find(this.credentialsList, { id: credentials });
-      const targetProvider = find(this.providersList, { name: targetCredentials?.provider });
+      const targetProvider = find(this.providersList, { name: targetCredentials?.provider.type });
       if (targetProvider?.buckets) {
         this.isLoading = true;
-        if (targetCredentials.provider === CloudSyncProviderName.MicrosoftAzure
-          || targetCredentials.provider === CloudSyncProviderName.Hubic
+        if (targetCredentials.provider.type === CloudSyncProviderName.MicrosoftAzure
+          || targetCredentials.provider.type === CloudSyncProviderName.Hubic
         ) {
           this.bucketPlaceholder = this.translate.instant('Container');
           this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
@@ -524,7 +521,7 @@ export class CloudSyncFormComponent implements OnInit {
         this.form.controls.bucket_policy_only.disable();
       }
 
-      const schemaFound = find(this.providersList, { name: targetCredentials?.provider });
+      const schemaFound = find(this.providersList, { name: targetCredentials?.provider.type });
       const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
       const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
@@ -783,13 +780,15 @@ export class CloudSyncFormComponent implements OnInit {
       if (this.editingTask) {
         this.setTaskForEdit();
       }
+
+      this.listenToFilenameEncryption();
     });
   }
 
   private listenToFilenameEncryption(): void {
     this.form.controls.filename_encryption.valueChanges.pipe(
       filter(Boolean),
-      switchMap(() => this.firstTimeWarning.showFirstTimeConfirmationIfNeeded({
+      switchMap(() => this.dialogService.confirm({
         title: this.translate.instant('Warning'),
         message: this.translate.instant(
           'This option is experimental in rclone and we recommend you do not use it. Are you sure you want to continue?',

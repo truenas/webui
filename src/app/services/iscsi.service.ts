@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  combineLatest, filter, map, Observable,
+  combineLatest, map, Observable,
 } from 'rxjs';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -70,8 +70,7 @@ export class IscsiService {
     return combineLatest([
       this.store$.pipe(
         waitForSystemInfo,
-        filter((systemInfo) => !!systemInfo.license),
-        map((systemInfo) => systemInfo.license.features.includes(LicenseFeature.FibreChannel)),
+        map((systemInfo) => systemInfo.license?.features?.includes(LicenseFeature.FibreChannel)),
       ),
       this.api.call('fc.capable'),
     ]).pipe(

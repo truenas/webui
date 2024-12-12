@@ -5,7 +5,7 @@ import {
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogClose, MatDialogContent, MatDialogRef,
+  MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef,
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -45,6 +45,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    MatDialogActions,
   ],
 })
 export class AssociatedTargetFormComponent {

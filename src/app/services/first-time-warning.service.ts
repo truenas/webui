@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @Injectable({
@@ -32,26 +31,6 @@ export class FirstTimeWarningService {
     ).pipe(
       tap(() => this.shownWarnings.add(warningKey)),
       map(() => true),
-    );
-  }
-
-  showFirstTimeConfirmationIfNeeded(options: ConfirmOptions): Observable<boolean> {
-    const { title, message } = options;
-    const confirmationKey = `${title}::${message}`;
-
-    if (this.shownConfirmations.has(confirmationKey)) {
-      return of(true);
-    }
-
-    return this.dialogService.confirm({
-      title,
-      message,
-    }).pipe(
-      tap((confirmed) => {
-        if (confirmed) {
-          this.shownConfirmations.add(confirmationKey);
-        }
-      }),
     );
   }
 }
