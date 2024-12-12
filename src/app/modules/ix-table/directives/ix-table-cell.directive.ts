@@ -1,4 +1,6 @@
-import { Directive, Input, TemplateRef } from '@angular/core';
+import {
+  Directive, Input, TemplateRef, input,
+} from '@angular/core';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
 
 @Directive({
@@ -6,7 +8,7 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
   standalone: true,
 })
 export class IxTableCellDirective<T> {
-  @Input() dataProvider: DataProvider<T>;
+  readonly dataProvider = input<DataProvider<T> | undefined>(undefined);
   @Input() columnIndex: number;
 
   constructor(public templateRef: TemplateRef<{ $implicit: T }>) {}

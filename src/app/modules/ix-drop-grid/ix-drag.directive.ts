@@ -5,16 +5,15 @@ import {
 import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectorRef,
-  ContentChildren,
   Directive,
   ElementRef,
   Inject,
   NgZone,
   Optional,
-  QueryList,
   Self,
   SkipSelf,
   ViewContainerRef,
+  contentChildren,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
@@ -35,7 +34,7 @@ import {
   standalone: true,
 })
 export class IxDragDirective extends CdkDrag {
-  @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
+  readonly _ixHandles = contentChildren(ixDragHandleDirectiveToken, { descendants: true });
 
   // eslint-disable-next-line sonarjs/sonar-max-params
   constructor(

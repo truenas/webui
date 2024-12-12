@@ -3,10 +3,11 @@ import {
   Component,
   ElementRef,
   HostListener, Input,
-  ViewChild,
   OnInit,
   OnChanges,
   HostBinding, output,
+  viewChild,
+  input,
 } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,16 +37,16 @@ export class SearchInput1Component implements OnInit, OnChanges {
   @HostBinding('class.disabled')
   @Input() disabled = false;
 
-  @Input() value = '';
-  @Input() maxLength = 524288;
+  readonly value = input('');
+  readonly maxLength = input(524288);
 
   readonly search = output<string>();
 
-  @ViewChild('ixSearchInput') input: ElementRef<HTMLInputElement>;
+  readonly input = viewChild<ElementRef<HTMLInputElement>>('ixSearchInput');
 
   @HostListener('click')
   onHostClicked(): void {
-    this.input.nativeElement.focus();
+    this.input().nativeElement.focus();
   }
 
   searchValue = '';
@@ -62,7 +63,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.searchValue = this.value;
+    this.searchValue = this.value();
     this.handleSearchValueChanges();
   }
 

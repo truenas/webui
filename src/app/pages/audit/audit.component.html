@@ -26,7 +26,7 @@
         [properties]="searchProperties"
         [advancedSearchPlaceholder]="advancedSearchPlaceholder"
         [query]="searchQuery"
-        (runSearch)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
+        (runSearch)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
       ></ix-search-input2>
       <div class="search-button-wrapper">
         <button
@@ -34,7 +34,7 @@
           type="button"
           color="primary"
           ixTest="search"
-          (click)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
+          (click)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
         >
           {{ 'Search' | translate }}
         </button>

@@ -3,7 +3,8 @@ import {
   Component,
   Input,
   OnChanges, output,
-  ViewChild,
+  viewChild,
+  input,
 } from '@angular/core';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
@@ -22,15 +23,15 @@ import {
   imports: [AdvancedSearchComponent, BasicSearchComponent],
 })
 export class SearchInputComponent<T> implements OnChanges {
-  @Input() allowAdvanced = true;
-  @Input() properties: SearchProperty<T>[] = [];
+  readonly allowAdvanced = input(true);
+  readonly properties = input<SearchProperty<T>[]>([]);
   @Input() query: SearchQuery<T>;
-  @Input() advancedSearchPlaceholder?: string;
+  readonly advancedSearchPlaceholder = input<string>(undefined);
 
   readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();
 
-  @ViewChild('advancedSearch', { static: false }) advancedSearch: AdvancedSearchComponent<T>;
+  readonly advancedSearch = viewChild<AdvancedSearchComponent<T>>('advancedSearch');
 
   ngOnChanges(): void {
     this.selectModeFromQuery();
@@ -78,7 +79,7 @@ export class SearchInputComponent<T> implements OnChanges {
     } else if (this.query.isBasicQuery) {
       this.isInAdvancedMode = false;
       this.basicQuery = this.query.query;
-    } else if (this.allowAdvanced) {
+    } else if (this.allowAdvanced()) {
       this.isInAdvancedMode = true;
       this.advancedQuery = (this.query as AdvancedSearchQuery<T>).filters;
     }

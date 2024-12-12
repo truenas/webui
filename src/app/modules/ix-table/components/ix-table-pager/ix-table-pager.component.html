@@ -9,7 +9,7 @@
         [aria-label]="'Items per page' | translate"
         (selectionChange)="onPageSizeChange($event)"
       >
-        @for (option of pageSizeOptions; track option) {
+        @for (option of pageSizeOptions(); track option) {
           <mat-option [value]="option" [ixTest]="['pageSizeOption', option]">
             {{ option }}
           </mat-option>

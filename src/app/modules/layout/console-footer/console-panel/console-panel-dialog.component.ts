@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit,
+  viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
@@ -26,7 +27,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ConsolePanelDialogComponent implements OnInit {
-  @ViewChild('messageContainer', { static: true }) messageContainer: ElementRef<HTMLElement>;
+  readonly messageContainer = viewChild<ElementRef<HTMLElement>>('messageContainer');
 
   lines$ = this.messagesStore.lines$;
 
@@ -36,7 +37,7 @@ export class ConsolePanelDialogComponent implements OnInit {
 
   get isScrolledToBottom(): boolean {
     const delta = 3;
-    const nativeElement = this.messageContainer.nativeElement;
+    const nativeElement = this.messageContainer().nativeElement;
     return nativeElement.scrollHeight - nativeElement.scrollTop - nativeElement.clientHeight <= delta;
   }
 
@@ -56,7 +57,7 @@ export class ConsolePanelDialogComponent implements OnInit {
   }
 
   private scrollToBottom(): void {
-    const nativeElement = this.messageContainer.nativeElement;
+    const nativeElement = this.messageContainer().nativeElement;
     setTimeout(() => {
       nativeElement.scroll({ top: nativeElement.scrollHeight });
     });

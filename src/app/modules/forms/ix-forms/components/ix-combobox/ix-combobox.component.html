@@ -3,7 +3,7 @@
     <ix-label
       [label]="label"
       [tooltip]="tooltip"
-      [required]="required"
+      [required]="required()"
       [ixTestOverride]="controlDirective.name"
     ></ix-label>
   }
@@ -14,7 +14,7 @@
       matInput
       ixRegisteredControl
       [value]="selectedOption?.label || textContent"
-      [placeholder]="allowCustomValue ? ('Search or enter value' | translate) : ('Search' | translate)"
+      [placeholder]="allowCustomValue() ? ('Search or enter value' | translate) : ('Search' | translate)"
       [disabled]="isDisabled"
       [attr.aria-label]="label"
       [matAutocomplete]="auto"

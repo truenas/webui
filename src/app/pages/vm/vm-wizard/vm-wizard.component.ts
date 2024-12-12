@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -78,37 +78,37 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
-  @ViewChild(OsStepComponent, { static: true }) osStep: OsStepComponent;
-  @ViewChild(CpuAndMemoryStepComponent, { static: true }) cpuAndMemoryStep: CpuAndMemoryStepComponent;
-  @ViewChild(DiskStepComponent, { static: true }) diskStep: DiskStepComponent;
-  @ViewChild(NetworkInterfaceStepComponent, { static: true }) networkInterfaceStep: NetworkInterfaceStepComponent;
-  @ViewChild(InstallationMediaStepComponent, { static: true }) installationMediaStep: InstallationMediaStepComponent;
-  @ViewChild(GpuStepComponent, { static: true }) gpuStep: GpuStepComponent;
+  readonly osStep = viewChild(OsStepComponent);
+  readonly cpuAndMemoryStep = viewChild(CpuAndMemoryStepComponent);
+  readonly diskStep = viewChild(DiskStepComponent);
+  readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
+  readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
+  readonly gpuStep = viewChild(GpuStepComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
   get osForm(): OsStepComponent['form']['value'] {
-    return this.osStep.form.value;
+    return this.osStep().form.value;
   }
 
   get cpuAndMemoryForm(): CpuAndMemoryStepComponent['form']['value'] {
-    return this.cpuAndMemoryStep.form.value;
+    return this.cpuAndMemoryStep().form.value;
   }
 
   get diskForm(): DiskStepComponent['form']['value'] {
-    return this.diskStep.form.value;
+    return this.diskStep().form.value;
   }
 
   get nicForm(): NetworkInterfaceStepComponent['form']['value'] {
-    return this.networkInterfaceStep.form.value;
+    return this.networkInterfaceStep().form.value;
   }
 
   get mediaForm(): InstallationMediaStepComponent['form']['value'] {
-    return this.installationMediaStep.form.value;
+    return this.installationMediaStep().form.value;
   }
 
   get gpuForm(): GpuStepComponent['form']['value'] {
-    return this.gpuStep.form.value;
+    return this.gpuStep().form.value;
   }
 
   isLoading = false;
@@ -132,12 +132,12 @@ export class VmWizardComponent implements OnInit {
 
   updateSummary(): void {
     const steps = [
-      this.osStep,
-      this.cpuAndMemoryStep,
-      this.diskStep,
-      this.networkInterfaceStep,
-      this.installationMediaStep,
-      this.gpuStep,
+      this.osStep(),
+      this.cpuAndMemoryStep(),
+      this.diskStep(),
+      this.networkInterfaceStep(),
+      this.installationMediaStep(),
+      this.gpuStep(),
     ];
 
     this.summary = steps.map((step) => step.getSummary());
@@ -167,27 +167,27 @@ export class VmWizardComponent implements OnInit {
   }
 
   private setDefaultsFromOs(): void {
-    this.osStep.form.controls.os.valueChanges
+    this.osStep().form.controls.os.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((os) => {
         if (os === VmOs.Windows) {
-          this.cpuAndMemoryStep.form.patchValue({
+          this.cpuAndMemoryStep().form.patchValue({
             vcpus: 2,
             cores: 1,
             threads: 1,
             memory: 4 * GiB,
           });
-          this.diskStep.form.patchValue({
+          this.diskStep().form.patchValue({
             volsize: 40 * GiB,
           });
         } else {
-          this.cpuAndMemoryStep.form.patchValue({
+          this.cpuAndMemoryStep().form.patchValue({
             vcpus: 1,
             cores: 1,
             threads: 1,
             memory: 512 * MiB,
           });
-          this.diskStep.form.patchValue({
+          this.diskStep().form.patchValue({
             volsize: 10 * GiB,
           });
         }

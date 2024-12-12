@@ -2,7 +2,7 @@
   <ix-label
     [label]="label"
     [tooltip]="tooltip"
-    [required]="required"
+    [required]="required()"
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 }
@@ -12,11 +12,11 @@
   [value]="value"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
-  [vertical]="vertical"
+  [vertical]="vertical()"
   [attr.aria-label]="label"
   (change)="onValueChanged($event)"
 >
-  @for (option of options | async; track option.label) {
+  @for (option of options() | async; track option.label) {
     <mat-button-toggle
       [name]="option.value.toString()"
       [disabled]="isDisabled"

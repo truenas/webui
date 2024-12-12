@@ -1,6 +1,7 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit,
+  viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,7 +48,7 @@ interface ContainerLogEvent {
   ],
 })
 export class ContainerLogsComponent implements OnInit {
-  @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
+  readonly logContainer = viewChild<ElementRef<HTMLElement>>('logContainer');
 
   fontSize = 14;
   appName: string;
@@ -130,7 +131,7 @@ export class ContainerLogsComponent implements OnInit {
 
   scrollToBottom(): void {
     try {
-      this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
+      this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
     } catch (_: unknown) {
       // Ignore error
     }

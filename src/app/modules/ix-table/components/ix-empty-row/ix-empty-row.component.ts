@@ -6,8 +6,8 @@ import {
   Component,
   input,
   TemplateRef,
-  ViewChild,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -41,7 +41,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
     type: EmptyType.NoPageData,
   });
 
-  @ViewChild('templatePortalContent') templatePortalContent: TemplateRef<unknown>;
+  readonly templatePortalContent = viewChild<TemplateRef<unknown>>('templatePortalContent');
   templatePortal: TemplatePortal;
 
   constructor(
@@ -51,7 +51,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.templatePortal = new TemplatePortal(this.templatePortalContent, this.viewContainerRef);
+    this.templatePortal = new TemplatePortal(this.templatePortalContent(), this.viewContainerRef);
     this.cdr.detectChanges();
   }
 

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
@@ -69,8 +69,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ReplicationWizardComponent {
-  @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
-  @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
+  readonly whatAndWhere = viewChild(ReplicationWhatAndWhereComponent);
+  readonly when = viewChild(ReplicationWhenComponent);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
@@ -97,7 +97,7 @@ export class ReplicationWizardComponent {
     private authService: AuthService,
   ) {
     this.chainedSlideInRef.requireConfirmationWhen(() => {
-      return of(this.whatAndWhere.form.dirty || this.when.form.dirty);
+      return of(this.whatAndWhere().form.dirty || this.when().form.dirty);
     });
   }
 
@@ -105,7 +105,7 @@ export class ReplicationWizardComponent {
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
   ] {
-    return [this.whatAndWhere, this.when];
+    return [this.whatAndWhere(), this.when()];
   }
 
   rollBack(): void {

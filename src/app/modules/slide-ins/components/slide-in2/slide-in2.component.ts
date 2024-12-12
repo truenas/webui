@@ -9,8 +9,8 @@ import {
   OnInit,
   Renderer2,
   Type,
-  ViewChild,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -39,7 +39,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   readonly index = input<number>();
   readonly lastIndex = input<number>();
 
-  @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
+  readonly slideInBody = viewChild('chainedBody', { read: ViewContainerRef });
   private needConfirmation: () => Observable<boolean>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
@@ -116,7 +116,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     this.timeOutOfClear = timer(255).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
       // 255ms matches transition duration
-      this.slideInBody.clear();
+      this.slideInBody().clear();
       this.wasBodyCleared = false;
       this.cdr.markForCheck();
       timer(50).pipe(
@@ -145,7 +145,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     if (this.wasBodyCleared) {
       this.timeOutOfClear.unsubscribe();
     }
-    this.slideInBody.clear();
+    this.slideInBody().clear();
     this.wasBodyCleared = false;
     // clear body and close all slides
 
@@ -199,7 +199,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
         },
       ],
     });
-    this.slideInBody.createComponent<T>(componentType, { injector });
+    this.slideInBody().createComponent<T>(componentType, { injector });
   }
 
   private canCloseSlideIn(): Observable<boolean> {

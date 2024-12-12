@@ -4,7 +4,8 @@ import {
   ElementRef,
   Input,
   OnInit,
-  ViewChild,
+  viewChild,
+  input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -57,9 +58,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;
   @Input() hint: string;
-  @Input() required: boolean;
+  readonly required = input<boolean>(undefined);
   @Input() tooltip: string;
-  @Input() allowCustomValue = false;
+  readonly allowCustomValue = input(false);
   @Input() set provider(comboboxProvider: IxComboboxProvider) {
     this.comboboxProviderHandler = new IxComboboxProviderManager(comboboxProvider);
     this.cdr.markForCheck();
@@ -67,9 +68,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   private comboboxProviderHandler: IxComboboxProviderManager;
 
-  @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
-  @ViewChild('auto') autoCompleteRef: MatAutocomplete;
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+  readonly inputElementRef = viewChild<ElementRef<HTMLInputElement>>('ixInput');
+  readonly autoCompleteRef = viewChild<MatAutocomplete>('auto');
+  readonly autocompleteTrigger = viewChild(MatAutocompleteTrigger);
 
   options: Option[] = [];
   getDisplayWith = this.displayWith.bind(this);
@@ -125,7 +126,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   inputBlurred(): void {
     this.onTouch();
 
-    if (!this.allowCustomValue && !this.selectedOption) {
+    if (!this.allowCustomValue() && !this.selectedOption) {
       this.resetInput();
     }
   }
@@ -162,26 +163,28 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   onOpenDropdown(): void {
     setTimeout(() => {
+      const autoCompleteRef = this.autoCompleteRef();
+      const autocompleteTrigger = this.autocompleteTrigger();
       if (
-        !this.autoCompleteRef
-        || !this.autocompleteTrigger
-        || !this.autoCompleteRef.panel
+        !autoCompleteRef
+        || !autocompleteTrigger
+        || !autoCompleteRef.panel
       ) {
         return;
       }
 
-      fromEvent((this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement, 'scroll')
+      fromEvent((autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement, 'scroll')
         .pipe(
           debounceTime(300),
-          map(() => (this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
-          takeUntil(this.autocompleteTrigger.panelClosingActions),
+          map(() => (this.autoCompleteRef().panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
+          takeUntil(autocompleteTrigger.panelClosingActions),
           untilDestroyed(this),
         ).subscribe(() => {
           const {
             scrollTop,
             scrollHeight,
             clientHeight: elementHeight,
-          } = this.autoCompleteRef.panel.nativeElement as HTMLElement;
+          } = this.autoCompleteRef().panel.nativeElement as HTMLElement;
 
           const atBottom = scrollHeight === scrollTop + elementHeight;
           if (!atBottom) {
@@ -224,15 +227,16 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.textContent = changedValue;
     this.filterChanged$.next(changedValue);
 
-    if (this.allowCustomValue && !this.options.some((option: Option) => option.value === changedValue)) {
+    if (this.allowCustomValue() && !this.options.some((option: Option) => option.value === changedValue)) {
       this.onChange(changedValue);
     }
   }
 
   resetInput(): void {
     this.filterChanged$.next('');
-    if (this.inputElementRef?.nativeElement) {
-      this.inputElementRef.nativeElement.value = '';
+    const inputElementRef = this.inputElementRef();
+    if (inputElementRef?.nativeElement) {
+      inputElementRef.nativeElement.value = '';
     }
     this.selectedOption = null;
     this.value = null;
@@ -264,7 +268,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   hasValue(): boolean {
-    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
+    const inputElementRef = this.inputElementRef();
+    return inputElementRef?.nativeElement?.value && inputElementRef.nativeElement.value.length > 0;
   }
 
   isValueFromOptions(value: string): boolean {
