@@ -81,6 +81,6 @@ export class AppDiskInfoComponent {
           return [...cachedStats, [diskStats.read, diskStats.write]].slice(-60);
         });
       }
-    }, { allowSignalWrites: true });
+    });
   }
 }
