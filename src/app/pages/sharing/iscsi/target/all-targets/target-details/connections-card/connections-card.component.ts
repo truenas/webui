@@ -9,10 +9,12 @@ import {
 } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import uniqBy from 'lodash-es/uniqBy';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, take } from 'rxjs';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -29,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     NgxSkeletonLoaderModule,
     TranslateModule,
     MatCardContent,
+    CardExpandCollapseComponent,
   ],
 })
 export class ConnectionsCardComponent {
@@ -55,7 +58,9 @@ export class ConnectionsCardComponent {
         untilDestroyed(this),
       )
       .subscribe((sessions) => {
-        this.sessions.set(sessions);
+        // Remove duplicates using lodash's uniqBy
+        const uniqueSessions = uniqBy(sessions, (session) => `${session.initiator}_${session.initiator_addr}`);
+        this.sessions.set(uniqueSessions);
       });
   }
 }

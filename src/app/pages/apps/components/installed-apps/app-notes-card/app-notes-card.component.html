@@ -3,10 +3,10 @@
     <h3 mat-card-title>{{ 'Notes' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <ix-app-section-expand-collapse class="notes">
+    <ix-card-expand-collapse class="notes">
       <div class="notes-list">
         <markdown [data]="app().notes"></markdown>
       </div>
-    </ix-app-section-expand-collapse>
+    </ix-card-expand-collapse>
   </mat-card-content>
 </mat-card>
