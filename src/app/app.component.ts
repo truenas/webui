@@ -52,15 +52,6 @@ export class AppComponent implements OnInit {
         }
       }
     });
-
-    this.router.errorHandler = (err: Error) => {
-      const chunkFailedMessage = /Loading chunk \d+ failed/;
-
-      if (chunkFailedMessage.test(err.message)) {
-        this.window.location.reload();
-      }
-      console.error(err);
-    };
   }
 
   ngOnInit(): void {

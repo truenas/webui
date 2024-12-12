@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
@@ -14,7 +13,6 @@ import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    AsyncPipe,
     FakeProgressBarComponent,
     MatCard,
     MatToolbarRow,
