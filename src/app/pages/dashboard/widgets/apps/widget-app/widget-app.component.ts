@@ -2,9 +2,13 @@ import { AsyncPipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
+  effect,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -46,7 +50,11 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   appName = computed(() => this.settings().appName);
   app = computed(() => this.resources.getApp(this.appName()));
   job = computed(() => this.resources.getAppStatusUpdates(this.appName()));
-  stats = computed(() => this.resources.getAppStats(this.appName()));
+  stats$: Observable<LoadingState<AppStats>>;
+
+  effect = effect(() => {
+    this.stats$ = this.resources.getAppStats(this.appName());
+  });
 
   constructor(private resources: WidgetResourcesService) {}
 }
