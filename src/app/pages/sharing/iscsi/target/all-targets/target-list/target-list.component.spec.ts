@@ -5,6 +5,7 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -20,10 +21,11 @@ import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
 
-const targets: IscsiTarget[] = [{
+const targets = [{
   id: 1,
   name: 'test-iscsi-target',
   alias: 'test-iscsi-target-alias',
+  mode: IscsiTargetMode.Fc,
 } as IscsiTarget];
 
 describe('TargetListComponent', () => {
@@ -82,6 +84,18 @@ describe('TargetListComponent', () => {
     const expectedRows = [
       ['Name', 'Alias'],
       ['test-iscsi-target', 'test-iscsi-target-alias'],
+    ];
+
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
+  });
+
+  it('should show extra Mode column', async () => {
+    spectator.setInput('targets', targets);
+
+    const expectedRows = [
+      ['Name', 'Alias', 'Mode'],
+      ['test-iscsi-target', 'test-iscsi-target-alias', 'Fibre Channel'],
     ];
 
     const cells = await table.getCellTexts();

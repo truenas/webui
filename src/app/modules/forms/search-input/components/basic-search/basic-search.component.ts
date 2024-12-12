@@ -1,8 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component, ElementRef, Input, output,
-  viewChild,
-  input,
+  ChangeDetectionStrategy, Component, ElementRef, input, Input, output, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';

@@ -22,7 +22,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -34,6 +33,7 @@ import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directive
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -120,6 +120,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -292,8 +293,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     return this.nodeProvider()(node).pipe(
-      catchError((error: ApiError | Error) => {
-        this.loadingError = 'reason' in error ? error.reason : error.message;
+      catchError((error: unknown) => {
+        this.loadingError = this.errorHandler.getFirstErrorMessage(error);
         this.cdr.markForCheck();
         return of([]);
       }),

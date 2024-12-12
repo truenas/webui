@@ -5,7 +5,7 @@ import {
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { extractApiError } from 'app/helpers/api.helper';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -107,8 +107,9 @@ export class FilesystemService {
 
           return children;
         }),
-        catchError((error: ApiError) => {
-          if (error.reason === '[ENOENT] Directory /dev/zvol does not exist') {
+        catchError((error: unknown) => {
+          const apiError = extractApiError(error);
+          if (apiError?.reason === '[ENOENT] Directory /dev/zvol does not exist') {
             return of([]);
           }
           return throwError(() => (error));

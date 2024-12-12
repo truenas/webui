@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
+  BehaviorSubject,
   EMPTY,
   Observable, catchError, combineLatest, filter, map, merge, of, tap,
 } from 'rxjs';
@@ -22,10 +23,10 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { extractApiError } from 'app/helpers/api.helper';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { ApiError } from 'app/interfaces/api-error.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -49,6 +50,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -118,6 +120,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     bwlimit: [[] as string[]],
   });
 
+  isCredentialInvalid$ = new BehaviorSubject(false);
   credentials: CloudSyncCredential[] = [];
   providers: CloudSyncProvider[] = [];
   bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
@@ -163,6 +166,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private filesystemService: FilesystemService,
     private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private cloudCredentialService: CloudCredentialService,
     private matDialog: MatDialog,
     private router: Router,
@@ -273,6 +277,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else if (name === 'bucket_input') {
+          attributes['bucket'] = formValue[name];
         } else {
           attributes[name] = formValue[name];
         }
@@ -438,6 +444,16 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       }
     });
 
+    this.isCredentialInvalid$.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value) {
+        this.form.controls.bucket_input.enable();
+        this.form.controls.bucket.disable();
+      } else {
+        this.form.controls.bucket_input.disable();
+        this.form.controls.bucket.enable();
+      }
+    });
+
     this.form.controls.bucket.valueChanges.pipe(
       filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
@@ -479,17 +495,21 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
             });
           }
           this.bucketOptions$ = of(bucketOptions);
-          this.form.controls.bucket.enable();
-          this.form.controls.bucket_input.disable();
+          this.isCredentialInvalid$.next(false);
           this.cdr.markForCheck();
         },
-        error: (error: ApiError) => {
-          this.form.controls.bucket.disable();
-          this.form.controls.bucket_input.enable();
+        error: (error: unknown) => {
+          this.isCredentialInvalid$.next(true);
           this.dialog.closeAllDialogs();
+          const apiError = extractApiError(error);
+          if (!apiError) {
+            this.errorHandler.handleError(error);
+            return;
+          }
+
           this.dialog.confirm({
-            title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
-            message: error.reason,
+            title: apiError.extra ? (apiError.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${apiError.error}`,
+            message: apiError.reason,
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

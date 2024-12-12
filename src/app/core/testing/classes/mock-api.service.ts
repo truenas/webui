@@ -17,9 +17,10 @@ import {
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiService } from 'app/services/websocket/api.service';
+import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 /**
@@ -41,14 +42,15 @@ const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
  */
 @Injectable()
 export class MockApiService extends ApiService {
-  private subscribeStream$ = new Subject<ApiEvent>();
+  private subscribeStream$ = new Subject<ApiEventTyped>();
   private jobIdCounter = 1;
 
   constructor(
-    protected override wsHandler: WebSocketHandlerService,
-    protected override translate: TranslateService,
+    wsHandler: WebSocketHandlerService,
+    subscriptionManager: SubscriptionManagerService,
+    translate: TranslateService,
   ) {
-    super(wsHandler, translate);
+    super(wsHandler, subscriptionManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();
@@ -127,7 +129,7 @@ export class MockApiService extends ApiService {
     this.jobIdCounter += 1;
   }
 
-  emitSubscribeEvent(event: ApiEvent): void {
+  emitSubscribeEvent(event: ApiEventTyped): void {
     this.subscribeStream$.next(event);
   }
 }

@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, OnInit,
+  signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -9,9 +10,10 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -76,6 +78,8 @@ export class IscsiCardComponent implements OnInit {
     Role.SharingWrite,
   ];
 
+  targets = signal<IscsiTarget[]>(null);
+
   protected readonly searchableElements = iscsiCardElements;
 
   dataProvider: AsyncDataProvider<IscsiTarget>;
@@ -88,6 +92,14 @@ export class IscsiCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Target Alias'),
       propertyName: 'alias',
+    }),
+    textColumn({
+      title: this.translate.instant('Mode'),
+      propertyName: 'mode',
+      hidden: true,
+      getValue: (row) => (iscsiTargetModeNames.has(row.mode)
+        ? this.translate.instant(iscsiTargetModeNames.get(row.mode))
+        : row.mode || '-'),
     }),
     actionsColumn({
       actions: [
@@ -117,10 +129,33 @@ export class IscsiCardComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private store$: Store<ServicesState>,
-  ) {}
+    private cdr: ChangeDetectorRef,
+  ) {
+    effect(() => {
+      if (this.targets()?.some((target) => target.mode !== IscsiTargetMode.Iscsi)) {
+        this.columns = this.columns.map((column) => {
+          if (column.propertyName === 'mode') {
+            return {
+              ...column,
+              hidden: false,
+            };
+          }
+
+          return column;
+        });
+        this.cdr.detectChanges();
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
   ngOnInit(): void {
-    const iscsiShares$ = this.api.call('iscsi.target.query').pipe(untilDestroyed(this));
+    const iscsiShares$ = this.api.call('iscsi.target.query').pipe(
+      tap((targets) => {
+        this.targets.set(targets);
+      }),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
     this.setDefaultSort();
     this.dataProvider.load();
@@ -152,7 +187,7 @@ export class IscsiCardComponent implements OnInit {
       next: () => {
         this.dataProvider.load();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

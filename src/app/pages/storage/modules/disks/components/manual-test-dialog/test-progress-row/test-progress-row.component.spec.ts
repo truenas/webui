@@ -3,7 +3,7 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
@@ -105,7 +105,7 @@ describe('IxTestProgressRowComponent', () => {
     it('shows progress change', () => {
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.emitSubscribeEvent({
-        msg: IncomingApiMessageType.Added,
+        msg: CollectionChangeType.Added,
         collection: 'smart.test.progerss:sdd',
         fields: {
           progress: 15,
@@ -121,7 +121,7 @@ describe('IxTestProgressRowComponent', () => {
     it('shows success icon when test is done', () => {
       const websocketMock = spectator.inject(MockApiService);
       websocketMock.emitSubscribeEvent({
-        msg: IncomingApiMessageType.Added,
+        msg: CollectionChangeType.Added,
         collection: 'smart.test.progerss:sdd',
         fields: {
           progress: 15,
@@ -129,7 +129,7 @@ describe('IxTestProgressRowComponent', () => {
       });
       spectator.detectChanges();
       websocketMock.emitSubscribeEvent({
-        msg: IncomingApiMessageType.Added,
+        msg: CollectionChangeType.Added,
         collection: 'smart.test.progerss:sdd',
         fields: {
           progress: null,

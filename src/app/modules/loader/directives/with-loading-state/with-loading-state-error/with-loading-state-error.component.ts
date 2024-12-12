@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { isApiError } from 'app/helpers/api.helper';
@@ -13,10 +13,10 @@ import { ApiError } from 'app/interfaces/api-error.interface';
   imports: [TranslateModule],
 })
 export class WithLoadingStateErrorComponent {
-  @Input() error: Error | ApiError;
+  readonly error = input<Error | ApiError>();
 
   get errorMessage(): string {
-    const error = this.error;
+    const error = this.error();
     if (isApiError(error)) {
       return error?.reason || error.error.toString();
     }

@@ -6,10 +6,9 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
-  TemplateRef, output,
   contentChildren,
   contentChild,
-  input,
+  TemplateRef, output, input,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -48,8 +47,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
-  readonly columns = input<Column<T, ColumnComponent<T>>[]>(undefined);
-  readonly dataProvider = input<DataProvider<T>>(undefined);
+  readonly columns = input<Column<T, ColumnComponent<T>>[]>();
+  readonly dataProvider = input<DataProvider<T>>();
   readonly isLoading = input(false);
   readonly detailsRowIdentifier = input<keyof T>('id' as keyof T);
 
@@ -95,15 +94,13 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   onToggle(row: T): void {
-    const dataProvider = this.dataProvider();
-    dataProvider.expandedRow = this.isExpanded(row) ? null : row;
-    this.expanded.emit(dataProvider.expandedRow);
+    this.dataProvider().expandedRow = this.isExpanded(row) ? null : row;
+    this.expanded.emit(this.dataProvider().expandedRow);
   }
 
   isExpanded(row: T): boolean {
-    const detailsRowIdentifier = this.detailsRowIdentifier();
-    return detailsRowIdentifier
-      && (this.dataProvider()?.expandedRow?.[detailsRowIdentifier] === row?.[detailsRowIdentifier]);
+    return this.detailsRowIdentifier()
+      && (this.dataProvider()?.expandedRow?.[this.detailsRowIdentifier()] === row?.[this.detailsRowIdentifier()]);
   }
 
   protected trackRowByIdentity(item: T): string {

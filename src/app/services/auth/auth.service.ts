@@ -131,6 +131,14 @@ export class AuthService {
     );
   }
 
+  setQueryToken(token: string | null): void {
+    if (!token || this.window.location.protocol !== 'https:') {
+      return;
+    }
+
+    this.token = token;
+  }
+
   loginWithToken(): Observable<LoginResult> {
     if (!this.token) {
       return of(LoginResult.NoToken);

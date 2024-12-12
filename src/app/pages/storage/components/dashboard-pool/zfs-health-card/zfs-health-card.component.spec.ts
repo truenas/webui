@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -162,7 +162,7 @@ describe('ZfsHealthCardComponent', () => {
       websocketSubscription$.next({
         id: 2,
         collection: 'zfs.pool.scan',
-        msg: IncomingApiMessageType.Changed,
+        msg: CollectionChangeType.Changed,
         fields: {
           name: 'tank',
           scan: activeScrub,
@@ -225,7 +225,7 @@ describe('ZfsHealthCardComponent', () => {
       websocketSubscription$.next({
         id: 2,
         collection: 'zfs.pool.scan',
-        msg: IncomingApiMessageType.Changed,
+        msg: CollectionChangeType.Changed,
         fields: {
           name: 'tank',
           scan: activeScrub,
@@ -243,7 +243,7 @@ describe('ZfsHealthCardComponent', () => {
       websocketSubscription$.next({
         id: 2,
         collection: 'zfs.pool.scan',
-        msg: IncomingApiMessageType.Changed,
+        msg: CollectionChangeType.Changed,
         fields: {
           name: 'tank',
           scan: {

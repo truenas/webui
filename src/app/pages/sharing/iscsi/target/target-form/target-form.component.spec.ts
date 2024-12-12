@@ -3,14 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
@@ -22,6 +25,7 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
@@ -56,6 +60,19 @@ describe('TargetFormComponent', () => {
       IxIpInputWithNetmaskComponent,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              version: 'TrueNAS-SCALE-22.12',
+              license: {
+                features: [LicenseFeature.FibreChannel],
+              },
+            } as SystemInfo,
+          },
+        ],
+      }),
       mockProvider(SlideInService),
       mockProvider(DialogService),
       mockProvider(SlideInRef),
@@ -64,6 +81,7 @@ describe('TargetFormComponent', () => {
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
         mockCall('iscsi.target.validate_name', null),
+        mockCall('fc.capable', true),
         mockCall('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
@@ -183,6 +201,7 @@ describe('TargetFormComponent', () => {
       await form.fillForm({
         'Target Name': 'name_new',
         'Target Alias': 'alias_new',
+        Mode: 'Fibre Channel',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -195,7 +214,7 @@ describe('TargetFormComponent', () => {
           {
             name: 'name_new',
             alias: 'alias_new',
-            mode: 'ISCSI',
+            mode: IscsiTargetMode.Fc,
             groups: [
               {
                 portal: 1,
@@ -226,9 +245,12 @@ describe('TargetFormComponent', () => {
       spectator.component.initiators$.subscribe((options) => initiator = options);
       spectator.component.auths$.subscribe((options) => auth = options);
 
-      expect(api.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(1, 'fc.capable');
+      expect(api.call).toHaveBeenNthCalledWith(2, 'iscsi.portal.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(3, 'iscsi.initiator.query', []);
+      expect(api.call).toHaveBeenNthCalledWith(4, 'iscsi.auth.query', []);
+
+      expect(spectator.component.hasFibreChannel()).toBe(true);
 
       expect(portal).toEqual([
         { label: '1 (comment_1)', value: 1 },

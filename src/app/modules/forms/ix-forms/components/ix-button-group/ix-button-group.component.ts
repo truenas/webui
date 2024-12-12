@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input,
-  input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleGroup, MatButtonToggle } from '@angular/material/button-toggle';
@@ -11,6 +10,7 @@ import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -28,19 +28,24 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatHint,
     AsyncPipe,
     TranslateModule,
-    TestOverrideDirective,
     TestDirective,
+    TestOverrideDirective,
+    RegisteredControlDirective,
   ],
 })
 export class IxButtonGroupComponent implements ControlValueAccessor {
-  @Input() label: string;
-  @Input() hint: string;
-  @Input() tooltip: string;
-  readonly required = input(false);
-  readonly options = input<Observable<Option[]> | undefined>(undefined);
+  readonly label = input<string>();
+  readonly hint = input<string>();
+  readonly tooltip = input<string>();
+  readonly required = input<boolean>();
+  readonly options = input<Observable<Option[]>>();
   readonly vertical = input(false);
+  readonly inlineFields = input(false);
+
   @HostBinding('class.inlineFields')
-  @Input() inlineFields = false;
+  get inlineFieldsClass(): boolean {
+    return this.inlineFields();
+  }
 
   isDisabled = false;
   value: string;

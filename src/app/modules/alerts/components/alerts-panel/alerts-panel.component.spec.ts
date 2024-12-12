@@ -7,7 +7,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -158,7 +158,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
-      msg: IncomingApiMessageType.Added,
+      msg: CollectionChangeType.Added,
       collection: 'alert.list',
       fields: {
         id: 'new',
@@ -177,7 +177,7 @@ describe('AlertsPanelComponent', () => {
 
     const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitSubscribeEvent({
-      msg: IncomingApiMessageType.Changed,
+      msg: CollectionChangeType.Changed,
       collection: 'alert.list',
       fields: {
         id: '1',

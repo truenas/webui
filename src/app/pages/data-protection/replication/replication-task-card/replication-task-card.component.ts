@@ -1,5 +1,4 @@
 import { AsyncPipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
@@ -191,7 +190,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       next: () => {
         this.getReplicationTasks();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
@@ -267,12 +266,12 @@ export class ReplicationTaskCardComponent implements OnInit {
           next: (file) => {
             this.download.downloadBlob(file, `${row.name}_encryption_keys.json`);
           },
-          error: (err: HttpErrorResponse) => {
-            this.dialogService.error(this.errorHandler.parseHttpError(err));
+          error: (err: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(err));
           },
         });
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

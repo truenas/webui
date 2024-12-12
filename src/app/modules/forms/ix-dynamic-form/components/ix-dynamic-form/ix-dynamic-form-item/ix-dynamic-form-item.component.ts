@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, output,
-  input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit, output,
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -57,9 +56,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit {
-  readonly dynamicForm = input<UntypedFormGroup>(undefined);
+  readonly dynamicForm = input<UntypedFormGroup>();
   @Input() dynamicSchema: DynamicFormSchemaNode;
-  readonly isEditMode = input<boolean>(undefined);
+  readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();
@@ -91,16 +90,15 @@ export class IxDynamicFormItemComponent implements OnInit {
         this.changeDetectorRef.markForCheck();
       });
     });
-    const dynamicForm = this.dynamicForm();
     if (
       this.dynamicSchema?.editable !== undefined
       && !this.dynamicSchema?.editable
     ) {
-      dynamicForm?.get(this.dynamicSchema.controlName)?.disable();
+      this.dynamicForm()?.get(this.dynamicSchema.controlName)?.disable();
     }
 
     if (this.dynamicSchema?.hidden) {
-      (dynamicForm.controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
+      (this.dynamicForm().controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
   }
 
