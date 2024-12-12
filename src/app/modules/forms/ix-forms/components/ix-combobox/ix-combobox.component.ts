@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatOption } from '@angular/material/core';
@@ -29,6 +30,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -50,9 +52,14 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatOption,
     IxErrorsComponent,
     MatHint,
+    ReactiveFormsModule,
     TranslateModule,
+    RegisteredControlDirective,
     TestOverrideDirective,
     TestDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {

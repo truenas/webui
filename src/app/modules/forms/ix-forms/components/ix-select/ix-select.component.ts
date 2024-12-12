@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -16,6 +18,7 @@ import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,6 +39,7 @@ export type IxSelectValue = SelectOptionValueType;
     FormsModule,
     MatSelectTrigger,
     IxIconComponent,
+    ReactiveFormsModule,
     MatOption,
     MatTooltip,
     TooltipComponent,
@@ -43,9 +47,13 @@ export type IxSelectValue = SelectOptionValueType;
     IxErrorsComponent,
     MatHint,
     AsyncPipe,
+    RegisteredControlDirective,
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
@@ -103,7 +111,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     return this.isLoading || !this.options;
   }
 
-  constructor(public controlDirective: NgControl, private cdr: ChangeDetectorRef) {
+  constructor(
+    public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.controlDirective.valueAccessor = this;
   }
 

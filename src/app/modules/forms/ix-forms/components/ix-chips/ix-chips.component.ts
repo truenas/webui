@@ -9,7 +9,7 @@ import {
   OnChanges,
   ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import {
   MatChipGrid, MatChipRow, MatChipRemove, MatChipInput,
@@ -27,6 +27,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -45,6 +46,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxIconComponent,
     MatChipRemove,
     MatAutocompleteTrigger,
+    ReactiveFormsModule,
     MatChipInput,
     MatAutocomplete,
     MatOption,
@@ -52,7 +54,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatHint,
     AsyncPipe,
     TestDirective,
+    RegisteredControlDirective,
     TestOverrideDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {

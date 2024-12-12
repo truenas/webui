@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal, OnInit,
+  ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -38,6 +38,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
@@ -72,6 +73,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     IxCheckboxComponent,
     MatButton,
+    IxCheckboxListComponent,
     TestDirective,
     IxFieldsetComponent,
     ReadOnlyComponent,
@@ -90,7 +92,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./instance-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstanceWizardComponent implements OnInit {
+export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly VirtualizationNicType = VirtualizationNicType;
@@ -108,7 +110,7 @@ export class InstanceWizardComponent implements OnInit {
   usbDevices$ = this.api.call('virt.device.usb_choices').pipe(
     map((choices) => Object.values(choices).map((choice) => ({
       label: `${choice.product} (${choice.product_id})`,
-      value: choice.product_id,
+      value: choice.product_id.toString(),
     }))),
   );
 
@@ -129,10 +131,10 @@ export class InstanceWizardComponent implements OnInit {
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
-    usb_devices: this.formBuilder.record<boolean>({}),
-    gpu_devices: this.formBuilder.record<boolean>({}),
-    bridged_nics: this.formBuilder.record<boolean>({}),
-    mac_vlan_nics: this.formBuilder.record<boolean>({}),
+    usb_devices: [[] as string[]],
+    gpu_devices: [[] as string[]],
+    bridged_nics: [[] as string[]],
+    mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
       source_port: FormControl<number>;
@@ -164,13 +166,6 @@ export class InstanceWizardComponent implements OnInit {
     private authService: AuthService,
     private filesystem: FilesystemService,
   ) {}
-
-  ngOnInit(): void {
-    this.setupDeviceControls(this.usbDevices$, 'usb_devices');
-    this.setupDeviceControls(this.gpuDevices$, 'gpu_devices');
-    this.setupDeviceControls(this.bridgedNicDevices$, 'bridged_nics');
-    this.setupDeviceControls(this.macVlanNicDevices$, 'mac_vlan_nics');
-  }
 
   protected onBrowseImages(): void {
     this.matDialog
@@ -293,35 +288,39 @@ export class InstanceWizardComponent implements OnInit {
       destination: proxy.destination,
     }));
 
-    const usbDevices = Object.entries(this.form.controls.usb_devices.value || {})
-      .filter(([_, isSelected]) => isSelected)
-      .map(([productId]) => ({
+    const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
+    for (const productId of this.form.controls.usb_devices.value) {
+      usbDevices.push({
         dev_type: VirtualizationDeviceType.Usb,
         product_id: productId,
-      }));
+      });
+    }
 
-    const gpuDevices = Object.entries(this.form.controls.gpu_devices.value || {})
-      .filter(([_, isSelected]) => isSelected)
-      .map(([pci]) => ({
+    const gpuDevices: { pci: string; dev_type: VirtualizationDeviceType }[] = [];
+    for (const pci of this.form.controls.gpu_devices.value) {
+      gpuDevices.push({
         pci,
         dev_type: VirtualizationDeviceType.Gpu,
-      }));
+      });
+    }
 
-    const macVlanNics = Object.entries(this.form.controls.mac_vlan_nics.value)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([parent]) => ({
+    const macVlanNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
+    for (const parent of this.form.controls.mac_vlan_nics.value) {
+      macVlanNics.push({
         parent,
         dev_type: VirtualizationDeviceType.Nic,
         nic_type: VirtualizationNicType.Macvlan,
-      }));
+      });
+    }
 
-    const bridgedNics = Object.entries(this.form.controls.bridged_nics.value)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([parent]) => ({
+    const bridgedNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
+    for (const parent of this.form.controls.bridged_nics.value) {
+      bridgedNics.push({
         parent,
         dev_type: VirtualizationDeviceType.Nic,
         nic_type: VirtualizationNicType.Bridged,
-      }));
+      });
+    }
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Proxy,
@@ -339,15 +338,6 @@ export class InstanceWizardComponent implements OnInit {
       ...usbDevices,
       ...gpuDevices,
     ] as VirtualizationDevice[];
-  }
-
-  private setupDeviceControls(devices$: Observable<Option[]>, controlName: keyof typeof this.form.controls): void {
-    devices$.pipe(untilDestroyed(this)).subscribe((devices) => {
-      const deviceGroup = this.form.controls[controlName] as FormGroup;
-      devices.forEach((device) => {
-        deviceGroup.addControl(device.value as string, this.formBuilder.control(false));
-      });
-    });
   }
 
   protected readonly containersHelptext = containersHelptext;

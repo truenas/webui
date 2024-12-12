@@ -98,3 +98,13 @@ export class RegisteredControlDirective implements AfterViewInit, OnChanges, OnD
     }
   }
 }
+
+export const registeredDirectiveConfig = {
+  directive: RegisteredControlDirective,
+  inputs: [
+    'label',
+    'formControlName',
+    'formArrayName',
+    'formGroupName',
+  ],
+};

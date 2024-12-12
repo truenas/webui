@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -25,6 +26,10 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxErrorsComponent,
     TranslateModule,
     TestDirective,
+    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxListComponent implements AfterViewInit {
