@@ -41,5 +41,5 @@ import {
 })
 export class InstanceDetailsComponent {
   instance = input.required<VirtualizationInstance>();
-  onCloseMobileDetails = output();
+  closeMobileDetails = output();
 }
