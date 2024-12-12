@@ -20,10 +20,10 @@ import { SedUser } from 'app/enums/sed-user.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { sedCardElements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.elements';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -84,11 +84,11 @@ export class SelfEncryptingDriveCardComponent {
     private store$: Store<AppState>,
     private api: ApiService,
     private chainedSlideIns: ChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigure(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(SelfEncryptingDriveFormComponent, false, this.sedConfig)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

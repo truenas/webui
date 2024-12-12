@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('KernelCardComponent', () => {
@@ -22,7 +22,7 @@ describe('KernelCardComponent', () => {
       mockProvider(ChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       provideMockStore({
@@ -56,7 +56,7 @@ describe('KernelCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
       KernelFormComponent,
       false,

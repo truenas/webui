@@ -100,6 +100,7 @@ describe('CloudSyncFormComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
+        confirm: jest.fn(() => of(true)),
       }),
       mockApi([
         mockCall('cloudsync.create', existingTask),
