@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './app-available-info-card.component.html',
   styleUrls: ['./app-available-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     OrNotAvailablePipe,

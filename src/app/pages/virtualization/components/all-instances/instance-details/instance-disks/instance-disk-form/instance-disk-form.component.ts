@@ -30,7 +30,6 @@ interface FormOptions {
 @Component({
   selector: 'ix-instance-disk-form',
   templateUrl: './instance-disk-form.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IxExplorerComponent,

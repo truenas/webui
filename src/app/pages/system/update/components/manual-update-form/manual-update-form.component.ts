@@ -52,7 +52,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   templateUrl: './manual-update-form.component.html',
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

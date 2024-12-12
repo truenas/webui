@@ -26,7 +26,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './roles-card.component.html',
   styleUrls: ['./roles-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

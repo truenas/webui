@@ -25,7 +25,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './pull-image-form.component.html',
   styleUrls: ['./pull-image-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     TranslateModule,

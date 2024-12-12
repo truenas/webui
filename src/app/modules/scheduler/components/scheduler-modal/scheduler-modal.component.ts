@@ -37,7 +37,6 @@ import { SchedulerPreviewColumnComponent } from './scheduler-preview-column/sche
   templateUrl: './scheduler-modal.component.html',
   styleUrls: ['./scheduler-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

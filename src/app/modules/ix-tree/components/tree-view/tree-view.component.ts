@@ -17,7 +17,6 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
     { provide: CdkTree, useExisting: TreeViewComponent },
     { provide: Tree, useExisting: TreeViewComponent },
   ],
-  standalone: true,
   imports: [TreeNodeOutletDirective],
 })
 export class TreeViewComponent<T> extends Tree<T> {

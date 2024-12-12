@@ -31,7 +31,6 @@ export type VirtualizationImageWithId = VirtualizationImage & {
 @UntilDestroy()
 @Component({
   selector: 'ix-select-image-dialog',
-  standalone: true,
   imports: [
     MatTableModule,
     IxFieldsetComponent,

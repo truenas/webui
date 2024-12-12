@@ -22,7 +22,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './add-spn-dialog.component.html',
   styleUrls: ['./add-spn-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

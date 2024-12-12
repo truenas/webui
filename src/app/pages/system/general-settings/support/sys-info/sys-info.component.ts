@@ -9,7 +9,6 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
   selector: 'ix-sys-info',
   templateUrl: './sys-info.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule],
 })
 export class SysInfoComponent {

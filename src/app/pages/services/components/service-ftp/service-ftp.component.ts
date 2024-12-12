@@ -42,7 +42,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './service-ftp.component.html',
   styleUrls: ['./service-ftp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

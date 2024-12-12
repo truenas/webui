@@ -21,7 +21,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-file-input.component.html',
   styleUrls: ['./ix-file-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatTooltip,

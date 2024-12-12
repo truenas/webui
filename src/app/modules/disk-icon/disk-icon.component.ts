@@ -8,7 +8,6 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
   selector: 'ix-disk-icon',
   templateUrl: './disk-icon.component.svg',
   styleUrls: ['./disk-icon.component.scss'],
-  standalone: true,
   imports: [
     FileSizePipe,
   ],

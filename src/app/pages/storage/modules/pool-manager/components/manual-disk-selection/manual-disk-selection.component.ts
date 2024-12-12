@@ -44,7 +44,6 @@ export interface ManualDiskSelectionParams {
   templateUrl: './manual-disk-selection.component.html',
   styleUrls: ['./manual-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

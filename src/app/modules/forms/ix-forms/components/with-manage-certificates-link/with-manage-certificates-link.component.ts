@@ -12,7 +12,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './with-manage-certificates-link.component.html',
   styleUrls: ['./with-manage-certificates-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RouterLink,
     TranslateModule,

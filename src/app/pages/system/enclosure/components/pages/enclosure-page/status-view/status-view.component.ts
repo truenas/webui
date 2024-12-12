@@ -14,7 +14,6 @@ import { StatusesLegendComponent } from './statuses-legend/statuses-legend.compo
   templateUrl: './status-view.component.html',
   styleUrl: '../_enclosure-view.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EnclosureSideComponent,
     EnclosureSideSwitchComponent,

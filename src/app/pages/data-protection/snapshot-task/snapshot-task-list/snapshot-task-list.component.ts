@@ -49,7 +49,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './snapshot-task-list.component.html',
   providers: [TaskService, StorageService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

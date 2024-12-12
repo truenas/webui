@@ -56,7 +56,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './certificate-authority-add.component.html',
   styleUrls: ['./certificate-authority-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -19,7 +19,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './identify-light.component.html',
   styleUrls: ['./identify-light.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatButton,

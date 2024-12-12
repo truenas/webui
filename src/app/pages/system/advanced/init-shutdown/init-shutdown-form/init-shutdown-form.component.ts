@@ -35,7 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

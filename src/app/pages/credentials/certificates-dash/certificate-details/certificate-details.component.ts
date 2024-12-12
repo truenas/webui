@@ -11,7 +11,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
   templateUrl: './certificate-details.component.html',
   styleUrls: ['./certificate-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule],
 })
 export class CertificateDetailsComponent {

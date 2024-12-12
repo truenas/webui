@@ -21,7 +21,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-power-menu',
   templateUrl: './power-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

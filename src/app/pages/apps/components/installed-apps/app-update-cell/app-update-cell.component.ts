@@ -15,7 +15,6 @@ import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/ap
   templateUrl: './app-update-cell.component.html',
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TranslateModule, MatTooltipModule, IxIconComponent, AppVersionPipe],
 })
 export class AppUpdateCellComponent {

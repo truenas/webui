@@ -8,7 +8,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   selector: 'ix-blank-layout',
   templateUrl: './blank-layout.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [RouterOutlet],
 })
 export class BlankLayoutComponent implements OnInit {

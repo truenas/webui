@@ -31,7 +31,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './group-members.component.html',
   styleUrls: ['./group-members.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DualListBoxComponent,
     MatCard,

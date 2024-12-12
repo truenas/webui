@@ -39,7 +39,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

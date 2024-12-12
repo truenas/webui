@@ -30,7 +30,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   selector: 'ix-localization-card',
   templateUrl: './localization-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

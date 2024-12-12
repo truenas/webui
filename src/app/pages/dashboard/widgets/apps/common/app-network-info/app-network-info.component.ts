@@ -19,7 +19,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './app-network-info.component.html',
   styleUrls: ['./app-network-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     WithLoadingStateDirective,
     NgxSkeletonLoaderModule,

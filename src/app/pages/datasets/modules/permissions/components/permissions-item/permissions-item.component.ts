@@ -12,7 +12,6 @@ import {
   templateUrl: 'permissions-item.component.html',
   styleUrls: ['./permissions-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [IxIconComponent],
 })
 export class PermissionsItemComponent {

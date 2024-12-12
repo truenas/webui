@@ -23,7 +23,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-instance-metrics',
   templateUrl: './instance-metrics.component.html',
   styleUrls: ['./instance-metrics.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

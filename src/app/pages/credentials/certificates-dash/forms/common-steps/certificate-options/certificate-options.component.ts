@@ -30,7 +30,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-certificate-options',
   templateUrl: './certificate-options.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

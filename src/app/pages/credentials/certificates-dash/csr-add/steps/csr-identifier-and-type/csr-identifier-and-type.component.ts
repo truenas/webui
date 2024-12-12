@@ -29,7 +29,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-csr-identifier-and-type',
   templateUrl: './csr-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

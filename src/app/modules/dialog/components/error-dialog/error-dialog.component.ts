@@ -23,7 +23,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

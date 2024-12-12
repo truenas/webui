@@ -11,7 +11,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './snackbar.component.html',
   styleUrls: ['./snackbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatButton,

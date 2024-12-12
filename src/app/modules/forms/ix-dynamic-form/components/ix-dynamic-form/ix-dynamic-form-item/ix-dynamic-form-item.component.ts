@@ -35,7 +35,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-dynamic-form-item.component.scss'],
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     SchedulerComponent,

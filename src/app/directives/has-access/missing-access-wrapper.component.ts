@@ -12,7 +12,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './missing-access-wrapper.component.html',
   styleUrls: ['./missing-access-wrapper.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DisableFocusableElementsDirective,
     MatTooltip,

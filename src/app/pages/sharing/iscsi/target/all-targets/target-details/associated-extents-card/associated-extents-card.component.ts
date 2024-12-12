@@ -30,7 +30,6 @@ import { IscsiService } from 'app/services/iscsi.service';
   selector: 'ix-associated-extents-card',
   styleUrls: ['./associated-extents-card.component.scss'],
   templateUrl: './associated-extents-card.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

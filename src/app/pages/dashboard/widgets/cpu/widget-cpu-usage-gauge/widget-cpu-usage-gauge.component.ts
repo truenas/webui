@@ -14,7 +14,6 @@ import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-
   templateUrl: './widget-cpu-usage-gauge.component.html',
   styleUrls: ['./widget-cpu-usage-gauge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CpuChartGaugeComponent, TranslateModule],
 })
 export class WidgetCpuUsageGaugeComponent implements WidgetComponent {

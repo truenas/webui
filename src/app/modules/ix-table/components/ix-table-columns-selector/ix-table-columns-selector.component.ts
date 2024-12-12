@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-table-columns-selector.component.html',
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     MatMenuTrigger,

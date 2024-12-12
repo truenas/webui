@@ -41,7 +41,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-jbof-list',
   templateUrl: './jbof-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     PageHeaderComponent,
     SearchInput1Component,

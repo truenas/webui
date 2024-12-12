@@ -35,7 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './portal-form.component.html',
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

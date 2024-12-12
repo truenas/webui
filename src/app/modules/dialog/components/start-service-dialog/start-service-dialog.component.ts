@@ -33,7 +33,6 @@ export interface StartServiceDialogResult {
   selector: 'ix-start-service-dialog',
   templateUrl: './start-service-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

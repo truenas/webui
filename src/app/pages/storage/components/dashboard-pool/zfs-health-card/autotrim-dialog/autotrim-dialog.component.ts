@@ -27,7 +27,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './autotrim-dialog.component.html',
   styleUrls: ['./autotrim-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

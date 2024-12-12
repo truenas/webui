@@ -26,7 +26,6 @@ import { FocusService } from 'app/services/focus.service';
   templateUrl: './global-search-trigger.component.html',
   styleUrls: ['./global-search-trigger.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxIconComponent,
     MatInput,

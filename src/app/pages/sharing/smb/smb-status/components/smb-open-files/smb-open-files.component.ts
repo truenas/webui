@@ -23,7 +23,6 @@ import { createTable } from 'app/modules/ix-table/utils';
   templateUrl: './smb-open-files.component.html',
   styleUrls: ['./smb-open-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

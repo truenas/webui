@@ -23,7 +23,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './data-protection-card.component.html',
   styleUrls: ['./data-protection-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,
@@ -34,7 +33,6 @@ import { SlideInService } from 'app/services/slide-in.service';
     TranslateModule,
     MatCardContent,
     RouterLink,
-
   ],
 })
 export class DataProtectionCardComponent {

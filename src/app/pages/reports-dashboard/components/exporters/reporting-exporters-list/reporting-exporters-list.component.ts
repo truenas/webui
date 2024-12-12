@@ -45,7 +45,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './reporting-exporters-list.component.html',
   styleUrls: ['./reporting-exporters-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -29,7 +29,6 @@ import {
   templateUrl: './inspect-vdevs-dialog.component.html',
   styleUrls: ['./inspect-vdevs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

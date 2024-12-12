@@ -11,7 +11,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   templateUrl: './ix-table-details-row.component.html',
   styleUrls: ['./ix-table-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxTableBodyCellDirective,
     MatDivider,

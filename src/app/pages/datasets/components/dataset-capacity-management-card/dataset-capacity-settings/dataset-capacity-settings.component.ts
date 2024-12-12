@@ -33,7 +33,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './dataset-capacity-settings.component.html',
   styleUrls: ['./dataset-capacity-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,

@@ -51,7 +51,6 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   templateUrl: './group-list.component.html',
   styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     MatSlideToggle,

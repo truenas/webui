@@ -32,7 +32,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './snapshot-batch-delete-dialog.component.html',
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

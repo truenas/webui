@@ -12,7 +12,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
   templateUrl: './ip-addresses-cell.component.html',
   styleUrls: ['./ip-addresses-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
 })
 export class IpAddressesCellComponent<T> extends ColumnComponent<T> {
   protected addresses: string[] = [];

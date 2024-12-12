@@ -16,7 +16,6 @@ import {
   templateUrl: './redirect-dialog.component.html',
   styleUrls: ['./redirect-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

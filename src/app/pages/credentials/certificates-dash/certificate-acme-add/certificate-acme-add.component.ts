@@ -36,7 +36,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './certificate-acme-add.component.html',
   styleUrls: ['./certificate-acme-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

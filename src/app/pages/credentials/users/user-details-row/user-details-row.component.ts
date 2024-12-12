@@ -30,7 +30,6 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   selector: 'ix-user-details-row',
   templateUrl: './user-details-row.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxTableExpandableRowComponent,
     MatButton,

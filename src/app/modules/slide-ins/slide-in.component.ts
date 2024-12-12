@@ -26,7 +26,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './slide-in.component.html',
   styleUrls: ['./slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [CdkTrapFocus],
 })
 export class SlideInComponent implements OnInit, OnDestroy {

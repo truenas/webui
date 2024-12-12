@@ -8,7 +8,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-yesno',
   templateUrl: './ix-cell-yes-no.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TranslateModule,
     YesNoPipe,

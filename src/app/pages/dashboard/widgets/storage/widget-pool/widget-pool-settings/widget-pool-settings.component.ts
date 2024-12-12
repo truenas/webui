@@ -20,7 +20,6 @@ import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-p
   templateUrl: './widget-pool-settings.component.html',
   styleUrl: './widget-pool-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

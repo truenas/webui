@@ -9,7 +9,6 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   templateUrl: './ix-label.component.html',
   styleUrls: ['./ix-label.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [TooltipComponent],
 })
 export class IxLabelComponent {

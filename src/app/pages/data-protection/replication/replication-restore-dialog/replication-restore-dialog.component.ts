@@ -27,7 +27,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './replication-restore-dialog.component.html',
   styleUrls: ['./replication-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

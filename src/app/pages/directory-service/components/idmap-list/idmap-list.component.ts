@@ -49,7 +49,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './idmap-list.component.html',
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     SearchInput1Component,
     RequiresRolesDirective,

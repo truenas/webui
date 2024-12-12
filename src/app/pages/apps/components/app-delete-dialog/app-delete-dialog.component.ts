@@ -19,7 +19,6 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
   templateUrl: './app-delete-dialog.component.html',
   styleUrls: ['./app-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     MatDialogTitle,

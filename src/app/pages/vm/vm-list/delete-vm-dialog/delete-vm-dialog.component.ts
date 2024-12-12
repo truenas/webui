@@ -28,7 +28,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './delete-vm-dialog.component.html',
   styleUrls: ['./delete-vm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

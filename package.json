@@ -46,20 +46,20 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/core": "^19.0.2",
-    "@angular/animations": "^19.0.0",
-    "@angular/build": "^19.0.2",
-    "@angular/cdk": "^19.0.0",
-    "@angular/cli": "^19.0.2",
-    "@angular/common": "^19.0.0",
-    "@angular/compiler": "^19.0.0",
-    "@angular/compiler-cli": "^19.0.0",
-    "@angular/core": "^19.0.0",
-    "@angular/forms": "^19.0.0",
-    "@angular/material": "^19.0.0",
-    "@angular/platform-browser": "^19.0.0",
-    "@angular/platform-browser-dynamic": "^19.0.0",
-    "@angular/router": "^19.0.0",
+    "@angular-devkit/core": "^19.0.3",
+    "@angular/animations": "^19.0.3",
+    "@angular/build": "^19.0.3",
+    "@angular/cdk": "^19.0.2",
+    "@angular/cli": "^19.0.3",
+    "@angular/common": "^19.0.3",
+    "@angular/compiler": "^19.0.3",
+    "@angular/compiler-cli": "^19.0.3",
+    "@angular/core": "^19.0.3",
+    "@angular/forms": "^19.0.3",
+    "@angular/material": "^19.0.2",
+    "@angular/platform-browser": "^19.0.3",
+    "@angular/platform-browser-dynamic": "^19.0.3",
+    "@angular/router": "^19.0.3",
     "@biesbjerg/ngx-translate-extract-marker": "~1.0.0",
     "@bugsplat/angular-tree-component": "~18.0.0",
     "@codemirror/autocomplete": "~6.18.1",
@@ -120,7 +120,7 @@
     "@xterm/addon-fit": "~0.10.0",
     "@xterm/xterm": "~5.5.0",
     "angular-dual-listbox": "~7.0.0",
-    "angular-eslint": "~18.4.2",
+    "angular-eslint": "~19.0.0",
     "angular-resize-event": "^3.2.0",
     "angular2-uuid": "~1.1.1",
     "chart.js": "~4.4.4",
@@ -211,5 +211,8 @@
       "eslint --cache --fix"
     ],
     "*.scss": "stylelint --fix"
+  },
+  "devDependencies": {
+    "@angular/build": "^19.0.3"
   }
 }

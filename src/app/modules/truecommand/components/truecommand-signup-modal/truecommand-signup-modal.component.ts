@@ -18,7 +18,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './truecommand-signup-modal.component.html',
   styleUrls: ['./truecommand-signup-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

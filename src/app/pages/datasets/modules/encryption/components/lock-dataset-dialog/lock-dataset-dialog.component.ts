@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './lock-dataset-dialog.component.html',
   styleUrls: ['./lock-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

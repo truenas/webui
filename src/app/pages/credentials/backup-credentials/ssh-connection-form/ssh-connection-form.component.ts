@@ -55,7 +55,6 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   templateUrl: './ssh-connection-form.component.html',
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

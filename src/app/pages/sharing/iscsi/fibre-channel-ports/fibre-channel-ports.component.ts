@@ -11,7 +11,6 @@ import { fibreChannelPortsElements } from 'app/pages/sharing/iscsi/fibre-channel
   templateUrl: './fibre-channel-ports.component.html',
   styleUrl: './fibre-channel-ports.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     MatCard,

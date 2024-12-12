@@ -28,7 +28,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-ca-identifier-and-type',
   templateUrl: './ca-identifier-and-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

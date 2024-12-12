@@ -27,7 +27,6 @@ import { VmService } from 'app/services/vm.service';
   templateUrl: './vm-details-row.component.html',
   styleUrls: ['./vm-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,

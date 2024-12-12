@@ -36,7 +36,6 @@ import {
   styleUrl: './widget-storage.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe, PercentPipe],
-  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

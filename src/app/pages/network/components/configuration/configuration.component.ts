@@ -41,7 +41,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -16,7 +16,6 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
   templateUrl: './data-protection-dashboard.component.html',
   styleUrls: ['./data-protection-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     UiSearchDirective,
     CloudBackupCardComponent,

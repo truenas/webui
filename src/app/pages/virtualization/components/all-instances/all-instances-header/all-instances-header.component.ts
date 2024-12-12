@@ -21,7 +21,6 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   selector: 'ix-all-instances-header',
   templateUrl: './all-instances-header.component.html',
   styleUrls: ['./all-instances-header.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

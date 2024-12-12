@@ -24,7 +24,6 @@ import {
   templateUrl: './configuration-preview.component.html',
   styleUrls: ['./configuration-preview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

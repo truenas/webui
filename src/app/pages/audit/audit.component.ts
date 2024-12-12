@@ -76,7 +76,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   selector: 'ix-audit',
   templateUrl: './audit.component.html',
   styleUrls: ['./audit.component.scss'],
-  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButtonToggleGroup,

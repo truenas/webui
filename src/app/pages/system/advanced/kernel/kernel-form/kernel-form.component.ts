@@ -28,7 +28,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   selector: 'ix-kernel-form',
   templateUrl: 'kernel-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

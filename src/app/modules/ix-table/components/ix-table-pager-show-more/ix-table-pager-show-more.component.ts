@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-table-pager-show-more.component.html',
   styleUrls: ['./ix-table-pager-show-more.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TranslateModule,

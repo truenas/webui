@@ -47,7 +47,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './reporting-exporters-form.component.html',
   styleUrls: ['./reporting-exporters-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -17,7 +17,6 @@ import { DiskTemperatureService } from 'app/services/disk-temperature.service';
   templateUrl: './mini-drive-temperatures.component.html',
   styleUrl: './mini-drive-temperatures.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     NgxSkeletonLoaderModule,
     TooltipComponent,

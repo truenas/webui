@@ -17,7 +17,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-icon-group.component.html',
   styleUrls: ['./ix-icon-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxLabelComponent,
     MatIconButton,

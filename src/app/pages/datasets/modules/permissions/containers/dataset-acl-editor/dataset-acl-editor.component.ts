@@ -48,7 +48,6 @@ import { AclEditorSaveControlsComponent } from './acl-editor-save-controls/acl-e
   templateUrl: 'dataset-acl-editor.component.html',
   styleUrls: ['./dataset-acl-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatProgressSpinner,

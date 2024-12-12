@@ -75,7 +75,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     EmptyComponent,
     FakeProgressBarComponent,

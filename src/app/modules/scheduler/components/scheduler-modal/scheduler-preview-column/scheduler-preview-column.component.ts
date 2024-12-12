@@ -28,7 +28,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './scheduler-preview-column.component.html',
   styleUrls: ['./scheduler-preview-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

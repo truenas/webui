@@ -20,7 +20,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   templateUrl: './interface-status-icon.component.html',
   styleUrls: ['./interface-status-icon.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatTooltipModule,
     IxIconComponent,

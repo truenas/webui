@@ -32,7 +32,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './smb-lock-list.component.html',
   styleUrls: ['./smb-lock-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

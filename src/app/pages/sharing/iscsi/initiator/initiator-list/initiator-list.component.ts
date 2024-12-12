@@ -40,7 +40,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-iscsi-initiator-list',
   templateUrl: './initiator-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

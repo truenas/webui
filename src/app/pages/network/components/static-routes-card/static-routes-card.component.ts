@@ -40,7 +40,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './static-routes-card.component.html',
   styleUrls: ['./static-routes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

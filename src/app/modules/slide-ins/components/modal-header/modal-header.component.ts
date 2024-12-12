@@ -15,7 +15,6 @@ import { AuthService } from 'app/services/auth/auth.service';
   templateUrl: './modal-header.component.html',
   styleUrls: ['./modal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReadOnlyComponent,
     IxIconComponent,

@@ -49,7 +49,6 @@ const customIdmapName = 'custom';
   selector: 'ix-idmap-form',
   templateUrl: './idmap-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

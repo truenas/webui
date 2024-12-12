@@ -19,7 +19,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   selector: 'ix-certificate-subject',
   templateUrl: './certificate-subject.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

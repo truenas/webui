@@ -23,7 +23,6 @@ import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virt
   selector: 'ix-instance-devices',
   templateUrl: './instance-devices.component.html',
   styleUrls: ['./instance-devices.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

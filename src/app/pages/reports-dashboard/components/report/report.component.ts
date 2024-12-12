@@ -58,7 +58,6 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

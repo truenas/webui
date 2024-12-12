@@ -21,7 +21,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './resilver-progress.component.html',
   styleUrls: ['./resilver-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

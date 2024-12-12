@@ -51,7 +51,6 @@ export interface CloudCredentialFormInput {
   selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

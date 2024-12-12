@@ -21,7 +21,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./installation-media-step.component.scss'],
   templateUrl: './installation-media-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxExplorerComponent,

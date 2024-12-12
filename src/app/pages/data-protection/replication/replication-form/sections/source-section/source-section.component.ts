@@ -35,7 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   providers: [
     PropertiesOverrideValidatorService,
   ],
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

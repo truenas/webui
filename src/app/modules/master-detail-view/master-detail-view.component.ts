@@ -22,7 +22,6 @@ import { FocusService } from 'app/services/focus.service';
   templateUrl: './master-detail-view.component.html',
   styleUrls: ['./master-detail-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     DetailsHeightDirective,
     MobileBackButtonComponent,

@@ -57,7 +57,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./replication-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService],
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

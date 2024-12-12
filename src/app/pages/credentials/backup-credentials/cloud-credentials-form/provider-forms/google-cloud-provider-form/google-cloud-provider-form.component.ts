@@ -19,7 +19,6 @@ import {
   selector: 'ix-google-cloud-provider-form',
   templateUrl: './google-cloud-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

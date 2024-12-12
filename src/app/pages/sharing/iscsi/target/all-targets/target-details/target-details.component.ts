@@ -11,7 +11,6 @@ import {
 @Component({
   selector: 'ix-target-details',
   templateUrl: './target-details.component.html',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     AuthorizedNetworksCardComponent,

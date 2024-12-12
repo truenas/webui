@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-add-device-menu',
   templateUrl: './add-device-menu.component.html',
   styleUrls: ['./add-device-menu.component.scss'],
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatButton,

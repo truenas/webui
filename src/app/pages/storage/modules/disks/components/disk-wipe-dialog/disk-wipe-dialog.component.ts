@@ -26,7 +26,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './disk-wipe-dialog.component.html',
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     WarningComponent,

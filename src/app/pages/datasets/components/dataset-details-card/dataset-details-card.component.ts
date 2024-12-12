@@ -35,7 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './dataset-details-card.component.html',
   styleUrls: ['./dataset-details-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

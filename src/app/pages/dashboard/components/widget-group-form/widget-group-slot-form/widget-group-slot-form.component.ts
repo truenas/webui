@@ -46,7 +46,6 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   templateUrl: './widget-group-slot-form.component.html',
   styleUrl: './widget-group-slot-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

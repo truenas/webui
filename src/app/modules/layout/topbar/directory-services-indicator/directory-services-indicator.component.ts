@@ -23,7 +23,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-directory-services-indicator',
   templateUrl: './directory-services-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

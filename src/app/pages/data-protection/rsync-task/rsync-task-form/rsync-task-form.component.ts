@@ -46,7 +46,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './rsync-task-form.component.html',
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

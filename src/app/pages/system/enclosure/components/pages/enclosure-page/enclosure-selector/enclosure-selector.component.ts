@@ -12,7 +12,6 @@ import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tin
   templateUrl: './enclosure-selector.component.html',
   styleUrl: './enclosure-selector.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     TestDirective,
     RouterLink,

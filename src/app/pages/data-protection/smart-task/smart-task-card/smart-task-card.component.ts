@@ -44,7 +44,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './smart-task-card.component.html',
   styleUrls: ['./smart-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

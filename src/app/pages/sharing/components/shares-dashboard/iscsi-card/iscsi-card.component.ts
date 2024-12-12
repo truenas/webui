@@ -47,7 +47,6 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './iscsi-card.component.html',
   styleUrls: ['./iscsi-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

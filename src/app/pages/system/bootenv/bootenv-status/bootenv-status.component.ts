@@ -56,7 +56,6 @@ export interface BootPoolActionEvent {
   templateUrl: './bootenv-status.component.html',
   styleUrls: ['./bootenv-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     FakeProgressBarComponent,
     UiSearchDirective,

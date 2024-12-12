@@ -29,7 +29,6 @@ import { SlideInService } from 'app/services/slide-in.service';
   templateUrl: './app-settings-button.component.html',
   styleUrls: ['./app-settings-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatButton,
     TestDirective,

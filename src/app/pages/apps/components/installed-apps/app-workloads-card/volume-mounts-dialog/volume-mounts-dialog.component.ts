@@ -14,7 +14,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./volume-mounts-dialog.component.scss'],
   templateUrl: './volume-mounts-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

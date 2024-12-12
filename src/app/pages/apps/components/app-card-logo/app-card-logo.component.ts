@@ -19,7 +19,6 @@ import { LayoutService } from 'app/services/layout.service';
   templateUrl: './app-card-logo.component.html',
   styleUrls: ['./app-card-logo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [LazyLoadImageModule],
   providers: [{ provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks }],
 })

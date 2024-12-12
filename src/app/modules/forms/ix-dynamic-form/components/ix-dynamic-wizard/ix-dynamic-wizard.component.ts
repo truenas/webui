@@ -15,7 +15,6 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
   styleUrls: ['./ix-dynamic-wizard.component.scss'],
   templateUrl: './ix-dynamic-wizard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [
     IxFieldsetComponent,
     MatDivider,
