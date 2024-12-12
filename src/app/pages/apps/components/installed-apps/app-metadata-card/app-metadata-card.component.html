@@ -6,7 +6,7 @@
   </mat-card-header>
   <mat-card-content>
     @if (appMetadata()?.host_mounts?.length) {
-      <ix-app-section-expand-collapse id="hostMounts" [maxHeight]="maxHeight()">
+      <ix-card-expand-collapse id="hostMounts" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
         <div class="details-list">
           @for (item of appMetadata().host_mounts; track item) {
@@ -16,11 +16,11 @@
             </div>
           }
         </div>
-      </ix-app-section-expand-collapse>
+      </ix-card-expand-collapse>
     }
 
     @if (appMetadata()?.capabilities?.length) {
-      <ix-app-section-expand-collapse id="capabilities" [maxHeight]="maxHeight()">
+      <ix-card-expand-collapse id="capabilities" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
         <div class="details-list">
           @for (item of appMetadata().capabilities; track item) {
@@ -30,11 +30,11 @@
             </div>
           }
         </div>
-      </ix-app-section-expand-collapse>
+      </ix-card-expand-collapse>
     }
 
     @if (appMetadata()?.run_as_context?.length) {
-      <ix-app-section-expand-collapse id="runAsContext" [maxHeight]="maxHeight()">
+      <ix-card-expand-collapse id="runAsContext" [maxHeight]="maxHeight()">
         <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
         <div class="details-list">
           @for (item of appMetadata().run_as_context; track item) {
@@ -62,7 +62,7 @@
             </div>
           }
         </div>
-      </ix-app-section-expand-collapse>
+      </ix-card-expand-collapse>
     }
   </mat-card-content>
 </mat-card>

@@ -2,7 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MarkdownModule } from 'ngx-markdown';
 import { App, ChartFormValue } from 'app/interfaces/app.interface';
-import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component';
+import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 import { AppNotesCardComponent } from './app-notes-card.component';
 
 describe('AppNotesCardComponent', () => {
@@ -48,7 +48,7 @@ describe('AppNotesCardComponent', () => {
     component: AppNotesCardComponent,
     imports: [
       MarkdownModule.forRoot(),
-      AppSectionExpandCollapseComponent,
+      CardExpandCollapseComponent,
     ],
   });
 

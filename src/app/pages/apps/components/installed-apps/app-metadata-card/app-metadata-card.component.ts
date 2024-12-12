@@ -6,7 +6,7 @@ import {
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppMetadata } from 'app/interfaces/app.interface';
-import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component';
+import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
 @Component({
   selector: 'ix-app-metadata-card',
@@ -20,7 +20,7 @@ import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app
     MatCardHeader,
     MatCardTitle,
     TranslateModule,
-    AppSectionExpandCollapseComponent,
+    CardExpandCollapseComponent,
   ],
 })
 export class AppMetadataCardComponent {
