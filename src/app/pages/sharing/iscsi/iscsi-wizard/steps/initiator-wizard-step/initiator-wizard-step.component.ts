@@ -11,6 +11,7 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
   selector: 'ix-initiator-wizard-step',
   templateUrl: './initiator-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxChipsComponent,

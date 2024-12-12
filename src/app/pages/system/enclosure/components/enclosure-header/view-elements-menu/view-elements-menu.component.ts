@@ -19,6 +19,7 @@ export interface ViewOption {
   selector: 'ix-view-elements-menu',
   templateUrl: './view-elements-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     TestDirective,

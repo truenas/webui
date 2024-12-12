@@ -50,6 +50,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     RequiresRolesDirective,

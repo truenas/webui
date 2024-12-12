@@ -10,6 +10,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-text',
   templateUrl: './ix-cell-text.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatTooltip,
     TranslateModule,

@@ -36,6 +36,7 @@ import { SlideInService } from 'app/services/slide-in.service';
   selector: 'ix-iscsi-target-list',
   templateUrl: './target-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -23,6 +23,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-create-storj-bucket-dialog',
   templateUrl: './create-storj-bucket-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

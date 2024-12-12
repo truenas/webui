@@ -31,6 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './replication-when.component.html',
   styleUrls: ['./replication-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxRadioGroupComponent,

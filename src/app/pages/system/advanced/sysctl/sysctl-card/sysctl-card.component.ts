@@ -41,6 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './sysctl-card.component.html',
   styleUrls: ['./sysctl-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

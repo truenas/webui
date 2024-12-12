@@ -29,6 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-service-extra-actions',
   templateUrl: './service-extra-actions.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

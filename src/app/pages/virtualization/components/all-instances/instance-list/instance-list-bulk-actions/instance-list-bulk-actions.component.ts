@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './instance-list-bulk-actions.component.html',
   styleUrls: ['./instance-list-bulk-actions.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     IxIconComponent,

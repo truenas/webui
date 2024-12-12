@@ -9,6 +9,7 @@ import { IscsiTarget } from 'app/interfaces/iscsi.interface';
   selector: 'ix-authorized-networks-card',
   styleUrls: ['./authorized-networks-card.component.scss'],
   templateUrl: './authorized-networks-card.component.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

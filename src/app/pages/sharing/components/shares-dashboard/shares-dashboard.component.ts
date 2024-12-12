@@ -12,6 +12,7 @@ import { SmbCardComponent } from './smb-card/smb-card.component';
   templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     UiSearchDirective,
     SmbCardComponent,

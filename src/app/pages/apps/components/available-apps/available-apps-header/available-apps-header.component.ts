@@ -39,6 +39,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './available-apps-header.component.html',
   styleUrls: ['./available-apps-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

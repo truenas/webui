@@ -38,6 +38,7 @@ interface Conversion {
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly chartId = input<string>();

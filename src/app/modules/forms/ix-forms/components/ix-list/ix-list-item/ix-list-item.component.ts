@@ -12,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-list-item.component.html',
   styleUrls: ['./ix-list-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     IxIconComponent,

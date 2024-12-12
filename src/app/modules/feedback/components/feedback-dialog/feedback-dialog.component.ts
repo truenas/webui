@@ -33,6 +33,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   templateUrl: './feedback-dialog.component.html',
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     FakeProgressBarComponent,
     MatDialogTitle,

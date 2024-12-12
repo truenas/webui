@@ -21,6 +21,7 @@ const gapRotation = 45 * 5;
   selector: 'ix-gauge-chart',
   templateUrl: './gauge-chart.component.html',
   styleUrls: ['./gauge-chart.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     BaseChartDirective,

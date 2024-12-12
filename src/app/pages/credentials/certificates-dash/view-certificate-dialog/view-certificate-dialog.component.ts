@@ -16,6 +16,7 @@ import { DownloadService } from 'app/services/download.service';
   templateUrl: './view-certificate-dialog.component.html',
   styleUrls: ['./view-certificate-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     TestDirective,

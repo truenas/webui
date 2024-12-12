@@ -23,6 +23,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-static-route-delete-dialog',
   templateUrl: './static-route-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

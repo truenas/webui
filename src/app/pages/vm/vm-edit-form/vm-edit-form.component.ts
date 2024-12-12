@@ -46,6 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './vm-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService],
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

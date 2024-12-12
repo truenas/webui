@@ -26,6 +26,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-save-debug-button',
   templateUrl: './save-debug-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     TestDirective,

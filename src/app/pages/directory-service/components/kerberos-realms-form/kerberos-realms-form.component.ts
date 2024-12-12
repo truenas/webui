@@ -27,6 +27,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-kerberos-realms-form',
   templateUrl: './kerberos-realms-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

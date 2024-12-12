@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './alert-settings2.component.html',
   styleUrls: ['./alert-settings2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButton,

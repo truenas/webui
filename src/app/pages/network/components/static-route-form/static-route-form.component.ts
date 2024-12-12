@@ -29,6 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-static-route-form',
   templateUrl: './static-route-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -31,6 +31,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   templateUrl: './manual-selection-vdev.component.html',
   styleUrls: ['./manual-selection-vdev.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

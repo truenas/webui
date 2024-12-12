@@ -5,6 +5,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'ix-app-router-outlet',
   template: '<router-outlet></router-outlet>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RouterOutlet,
   ],

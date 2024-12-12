@@ -11,6 +11,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-tooltip',
   styleUrls: ['./tooltip.component.scss'],
   templateUrl: './tooltip.component.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgxPopperjsModule,

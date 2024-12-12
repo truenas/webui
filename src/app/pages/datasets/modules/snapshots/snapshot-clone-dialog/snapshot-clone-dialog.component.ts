@@ -23,6 +23,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './snapshot-clone-dialog.component.html',
   styleUrls: ['./snapshot-clone-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

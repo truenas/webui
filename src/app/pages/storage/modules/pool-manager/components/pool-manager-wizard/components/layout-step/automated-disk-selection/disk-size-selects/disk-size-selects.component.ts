@@ -27,6 +27,7 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   selector: 'ix-disk-size-dropdowns',
   templateUrl: './disk-size-selects.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

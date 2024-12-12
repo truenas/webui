@@ -45,6 +45,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './nfs-list.component.html',
   styleUrls: ['./nfs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     FakeProgressBarComponent,

@@ -13,6 +13,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './mini-drive-details.component.html',
   styleUrl: './mini-drive-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconAnchor,
     TestDirective,

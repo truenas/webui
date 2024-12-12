@@ -50,6 +50,7 @@ interface BackupRow {
     './widget-backup.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

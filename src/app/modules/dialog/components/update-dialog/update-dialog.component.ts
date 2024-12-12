@@ -14,6 +14,7 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
   templateUrl: './update-dialog.component.html',
   styleUrls: ['./update-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogContent,
     MatDialogTitle,

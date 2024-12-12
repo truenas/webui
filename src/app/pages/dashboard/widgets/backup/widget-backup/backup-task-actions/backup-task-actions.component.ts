@@ -13,6 +13,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './backup-task-actions.component.html',
   styleUrl: './backup-task-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RequiresRolesDirective,
     TestDirective,

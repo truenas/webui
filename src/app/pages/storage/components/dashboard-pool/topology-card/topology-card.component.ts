@@ -48,6 +48,7 @@ export type EmptyDiskObject = Record<
   templateUrl: './topology-card.component.html',
   styleUrls: ['./topology-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

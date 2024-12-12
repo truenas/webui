@@ -51,6 +51,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   templateUrl: './cloud-backup-form.component.html',
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

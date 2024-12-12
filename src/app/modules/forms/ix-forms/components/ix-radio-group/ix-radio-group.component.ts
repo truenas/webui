@@ -23,6 +23,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-radio-group.component.scss'],
   templateUrl: './ix-radio-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatRadioGroup,

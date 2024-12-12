@@ -18,6 +18,7 @@ import {
   selector: 'ix-openstack-swift-provider-form',
   templateUrl: './openstack-swift-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

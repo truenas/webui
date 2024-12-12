@@ -50,6 +50,7 @@ enum EncryptionType {
   templateUrl: './encryption-options-dialog.component.html',
   styleUrls: ['./encryption-options-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

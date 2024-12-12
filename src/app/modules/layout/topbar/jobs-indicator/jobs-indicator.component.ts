@@ -25,6 +25,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   selector: 'ix-jobs-indicator',
   templateUrl: './jobs-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     MatBadge,

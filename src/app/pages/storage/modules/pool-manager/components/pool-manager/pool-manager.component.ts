@@ -21,6 +21,7 @@ import {
   templateUrl: './pool-manager.component.html',
   styleUrls: ['./pool-manager.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PoolManagerWizardComponent,
     ConfigurationPreviewComponent,

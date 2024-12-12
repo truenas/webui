@@ -18,6 +18,7 @@ import { NetworkService } from 'app/services/network.service';
   templateUrl: './ix-ip-input-with-netmask.component.html',
   styleUrls: ['./ix-ip-input-with-netmask.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

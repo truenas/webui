@@ -35,6 +35,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatFormField,
     MatInput,

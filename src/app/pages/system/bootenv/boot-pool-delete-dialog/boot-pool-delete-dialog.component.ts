@@ -27,6 +27,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './boot-pool-delete-dialog.component.html',
   styleUrls: ['./boot-pool-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

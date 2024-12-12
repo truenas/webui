@@ -28,6 +28,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   templateUrl: './category-view.component.html',
   styleUrls: ['./category-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     CustomAppButtonComponent,

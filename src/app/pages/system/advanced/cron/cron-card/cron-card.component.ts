@@ -49,6 +49,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './cron-card.component.html',
   styleUrls: ['./cron-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

@@ -25,6 +25,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-device-actions-menu',
   templateUrl: './device-actions-menu.component.html',
   styleUrls: ['./device-actions-menu.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,

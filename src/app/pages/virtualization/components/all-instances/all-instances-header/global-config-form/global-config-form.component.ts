@@ -27,6 +27,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 @Component({
   selector: 'ix-global-config-form',
   templateUrl: './global-config-form.component.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,

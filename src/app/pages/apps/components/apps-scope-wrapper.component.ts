@@ -18,6 +18,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
     AppsStore,
     AppsStatsService,
   ],
+  standalone: true,
   imports: [
     RouterOutlet,
   ],

@@ -43,6 +43,7 @@ interface DnsAuthenticatorList {
   selector: 'ix-acmedns-form',
   templateUrl: './acmedns-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

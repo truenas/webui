@@ -43,6 +43,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './alert-service-list.component.html',
   styleUrls: ['./alert-service-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

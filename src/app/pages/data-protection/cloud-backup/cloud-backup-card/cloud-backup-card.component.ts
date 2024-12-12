@@ -52,6 +52,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './cloud-backup-card.component.html',
   styleUrl: './cloud-backup-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

@@ -37,6 +37,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-input.component.html',
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     IxIconComponent,

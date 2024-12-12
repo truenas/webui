@@ -37,6 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './acme-dns-authenticator-list.component.html',
   styleUrls: ['./acme-dns-authenticator-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

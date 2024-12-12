@@ -24,6 +24,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   providers: [
     EnclosureStore,
   ],
+  standalone: true,
   imports: [
     PageHeaderComponent,
     MatAnchor,

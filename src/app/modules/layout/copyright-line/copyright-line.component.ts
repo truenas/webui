@@ -12,6 +12,7 @@ import { selectCopyrightText } from 'app/store/system-info/system-info.selectors
   templateUrl: './copyright-line.component.html',
   styleUrls: ['./copyright-line.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TestDirective],
 })
 export class CopyrightLineComponent {

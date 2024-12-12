@@ -39,6 +39,7 @@ interface RowState {
   templateUrl: './ix-cell-state-button.component.html',
   styleUrls: ['./ix-cell-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     NgClass,

@@ -28,6 +28,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-ntp-server-form',
   templateUrl: './ntp-server-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

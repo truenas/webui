@@ -35,6 +35,7 @@ interface FormOptions {
   selector: 'ix-instance-proxy-form',
   templateUrl: './instance-proxy-form.component.html',
   styleUrls: ['./instance-proxy-form.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,

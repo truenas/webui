@@ -49,6 +49,7 @@ export interface JobProgressDialogConfig<Result> {
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,

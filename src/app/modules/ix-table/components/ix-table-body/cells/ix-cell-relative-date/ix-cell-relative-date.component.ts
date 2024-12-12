@@ -14,6 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [MatTooltip, TestDirective],
   providers: [FormatDateTimePipe],
 })

@@ -34,6 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './alert-config-form.component.html',
   styleUrls: ['./alert-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatProgressBar,

@@ -12,6 +12,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './info-dialog.component.html',
   styleUrls: ['./info-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

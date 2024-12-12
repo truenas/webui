@@ -38,6 +38,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   templateUrl: './ix-code-editor.component.html',
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     IxErrorsComponent,

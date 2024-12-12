@@ -14,6 +14,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
  */
 @Component({
   selector: 'ix-use-ix-icons-in-stepper',
+  standalone: true,
   templateUrl: './use-ix-icons-in-stepper.component.html',
   imports: [
     IxIconComponent,

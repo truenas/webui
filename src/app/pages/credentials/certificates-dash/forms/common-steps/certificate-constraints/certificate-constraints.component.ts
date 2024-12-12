@@ -42,6 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-certificate-constraints',
   templateUrl: './certificate-constraints.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxCheckboxComponent,

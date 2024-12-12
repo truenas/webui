@@ -30,6 +30,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   templateUrl: './signin-form.component.html',
   styleUrls: ['./signin-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     FormsModule,
     ReactiveFormsModule,

@@ -37,6 +37,7 @@ const maxDisksInDraidGroup = 255;
   templateUrl: './draid-selection.component.html',
   styleUrls: ['./draid-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     DiskSizeSelectsComponent,

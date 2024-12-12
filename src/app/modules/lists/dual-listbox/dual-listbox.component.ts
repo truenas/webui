@@ -13,6 +13,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-dual-listbox',
   templateUrl: './dual-listbox.component.html',
   styleUrls: ['./dual-listbox.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgClass,

@@ -7,6 +7,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-schedule',
   templateUrl: './ix-cell-schedule.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [ScheduleToCrontabPipe, TestDirective],
 })
 export class IxCellScheduleComponent<T> extends ColumnComponent<T> {}

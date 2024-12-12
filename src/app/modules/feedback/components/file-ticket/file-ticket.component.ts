@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./file-ticket.component.scss'],
   templateUrl: './file-ticket.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogContent,
     ReactiveFormsModule,

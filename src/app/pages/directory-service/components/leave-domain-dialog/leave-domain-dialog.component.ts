@@ -24,6 +24,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './leave-domain-dialog.component.html',
   styleUrls: ['./leave-domain-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

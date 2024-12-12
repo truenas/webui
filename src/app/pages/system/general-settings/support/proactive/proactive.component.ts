@@ -35,6 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './proactive.component.html',
   styleUrls: ['./proactive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

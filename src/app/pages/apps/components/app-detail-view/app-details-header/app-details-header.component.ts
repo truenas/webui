@@ -32,6 +32,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './app-details-header.component.html',
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     AppCardLogoComponent,

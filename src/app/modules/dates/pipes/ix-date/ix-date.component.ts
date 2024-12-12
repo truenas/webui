@@ -10,6 +10,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'ix-date',
   templateUrl: './ix-date.component.html',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatTooltip,

@@ -61,6 +61,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './replication-task-card.component.html',
   styleUrls: ['./replication-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

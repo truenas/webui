@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-checkbox-list.component.html',
   styleUrls: ['./ix-checkbox-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatCheckbox,

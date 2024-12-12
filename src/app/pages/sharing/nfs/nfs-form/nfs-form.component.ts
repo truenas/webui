@@ -52,6 +52,7 @@ import { ServicesState } from 'app/store/services/services.reducer';
   templateUrl: './nfs-form.component.html',
   styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

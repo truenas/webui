@@ -38,6 +38,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./truecommand-button.component.scss'],
   templateUrl: './truecommand-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     TestDirective,

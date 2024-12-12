@@ -17,6 +17,7 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   templateUrl: './oauth-button.component.html',
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatButton,
     TestDirective,

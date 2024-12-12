@@ -37,6 +37,7 @@ export interface SedConfig {
   templateUrl: './self-encrypting-drive-form.component.html',
   styleUrls: ['./self-encrypting-drive-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

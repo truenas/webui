@@ -37,6 +37,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   templateUrl: './global-target-configuration.component.html',
   styleUrls: ['./global-target-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

@@ -28,6 +28,7 @@ import { UploadService } from 'app/services/upload.service';
   templateUrl: './upload-iso-dialog.component.html',
   styleUrls: ['./upload-iso-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

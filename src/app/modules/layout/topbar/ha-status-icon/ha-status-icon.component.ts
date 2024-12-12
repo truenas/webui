@@ -24,6 +24,7 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   selector: 'ix-ha-status-icon',
   templateUrl: './ha-status-icon.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

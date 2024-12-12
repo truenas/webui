@@ -48,6 +48,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './csr-add.component.html',
   styleUrls: ['./csr-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

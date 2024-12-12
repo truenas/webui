@@ -12,6 +12,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './disk-details.component.html',
   styleUrls: ['./disk-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     MapValuePipe,

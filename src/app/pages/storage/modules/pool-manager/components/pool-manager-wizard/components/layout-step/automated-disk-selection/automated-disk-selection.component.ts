@@ -26,6 +26,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   templateUrl: './automated-disk-selection.component.html',
   styleUrls: ['./automated-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxSelectComponent,
     TestOverrideDirective,

@@ -35,6 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-scrub-task-form',
   templateUrl: './scrub-task-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

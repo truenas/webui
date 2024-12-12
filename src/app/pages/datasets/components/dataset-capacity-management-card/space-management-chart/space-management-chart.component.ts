@@ -20,6 +20,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './space-management-chart.component.html',
   styleUrls: ['./space-management-chart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TranslateModule,
     BaseChartDirective,

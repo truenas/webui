@@ -24,6 +24,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-network-interface-step',
   templateUrl: './network-interface-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

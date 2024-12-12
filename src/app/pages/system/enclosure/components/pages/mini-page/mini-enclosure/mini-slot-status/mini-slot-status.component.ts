@@ -10,6 +10,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './mini-slot-status.component.html',
   styleUrl: './mini-slot-status.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     TranslateModule,

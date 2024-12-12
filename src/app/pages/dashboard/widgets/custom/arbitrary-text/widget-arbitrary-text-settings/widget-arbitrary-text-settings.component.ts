@@ -17,6 +17,7 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
   templateUrl: './widget-arbitrary-text-settings.component.html',
   styleUrl: './widget-arbitrary-text-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxInputComponent,

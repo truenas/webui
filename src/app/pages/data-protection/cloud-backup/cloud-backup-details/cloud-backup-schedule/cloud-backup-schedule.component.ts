@@ -14,6 +14,7 @@ import { TaskService } from 'app/services/task.service';
   templateUrl: './cloud-backup-schedule.component.html',
   styleUrl: './cloud-backup-schedule.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardHeader,

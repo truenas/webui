@@ -16,6 +16,7 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   templateUrl: './disk-details-overview.component.html',
   styleUrls: ['./disk-details-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatMiniFabButton,
     TestDirective,

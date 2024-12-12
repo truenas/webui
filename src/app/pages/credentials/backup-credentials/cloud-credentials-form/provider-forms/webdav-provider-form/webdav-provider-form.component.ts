@@ -18,6 +18,7 @@ import {
   selector: 'ix-webdav-provider-form',
   templateUrl: './webdav-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

@@ -50,6 +50,7 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list.elements';
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     MatButtonToggleGroup,

@@ -12,6 +12,7 @@ import { SshKeypairCardComponent } from './ssh-keypair-card/ssh-keypair-card.com
   templateUrl: './backup-credentials.component.html',
   styleUrls: ['./backup-credentials.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     UiSearchDirective,
     CloudCredentialsCardComponent,

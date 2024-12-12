@@ -31,6 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './boot-pool-replace-dialog.component.html',
   styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

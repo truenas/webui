@@ -20,6 +20,7 @@ import {
   selector: 'ix-pcloud-provider-form',
   templateUrl: './pcloud-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     OauthProviderComponent,
     IxFieldsetComponent,

@@ -18,6 +18,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './eula.component.html',
   styleUrls: ['./eula.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

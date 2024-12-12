@@ -36,6 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './delete-dataset-dialog.component.html',
   styleUrls: ['./delete-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     TranslateModule,

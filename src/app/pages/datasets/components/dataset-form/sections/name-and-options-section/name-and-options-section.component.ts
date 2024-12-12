@@ -31,6 +31,7 @@ import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validat
   templateUrl: './name-and-options-section.component.html',
   styleUrls: ['./name-and-options-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

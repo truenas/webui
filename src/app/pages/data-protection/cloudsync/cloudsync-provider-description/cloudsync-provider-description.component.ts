@@ -11,6 +11,7 @@ import { cloudsyncProviderDescriptionMap } from 'app/pages/data-protection/cloud
   templateUrl: './cloudsync-provider-description.component.html',
   styleUrls: ['./cloudsync-provider-description.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [ImgFallbackModule],
 })
 export class CloudSyncProviderDescriptionComponent {

@@ -6,6 +6,7 @@ import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-
   selector: 'ix-alert-settings',
   templateUrl: './alert-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [AlertServiceListComponent, AlertConfigFormComponent],
 })
 export class AlertSettingsComponent {}

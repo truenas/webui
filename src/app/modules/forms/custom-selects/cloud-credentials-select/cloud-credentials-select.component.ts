@@ -25,6 +25,7 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
     },
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [IxSelectComponent],
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {

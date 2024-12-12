@@ -25,6 +25,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-system-security-card',
   templateUrl: './system-security-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

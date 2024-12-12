@@ -18,6 +18,7 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   selector: 'ix-gpu-step',
   templateUrl: './gpu-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxCheckboxComponent,

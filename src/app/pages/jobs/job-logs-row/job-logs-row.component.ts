@@ -16,6 +16,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   templateUrl: './job-logs-row.component.html',
   styleUrls: ['./job-logs-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CopyButtonComponent,
     TranslateModule,

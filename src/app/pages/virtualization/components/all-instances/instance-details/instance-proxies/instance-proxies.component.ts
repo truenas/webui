@@ -24,6 +24,7 @@ import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
   selector: 'ix-instance-proxies',
   templateUrl: './instance-proxies.component.html',
   styleUrls: ['./instance-proxies.component.scss'],
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatCard,

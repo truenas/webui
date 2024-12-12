@@ -18,6 +18,7 @@ import { SupportCardComponent } from './support/support-card/support-card.compon
   templateUrl: './general-settings.component.html',
   styleUrls: ['./general-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     ManageConfigurationMenuComponent,

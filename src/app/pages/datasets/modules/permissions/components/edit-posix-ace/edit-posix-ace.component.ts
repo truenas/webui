@@ -27,6 +27,7 @@ import { UserService } from 'app/services/user.service';
   templateUrl: './edit-posix-ace.component.html',
   styleUrls: ['./edit-posix-ace.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

@@ -10,6 +10,7 @@ import { Pool } from 'app/interfaces/pool.interface';
   templateUrl: './pool-status.component.html',
   styleUrls: ['../pool-stats.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [NgxSkeletonLoaderModule, TranslateModule],
 })
 export class PoolStatusComponent {

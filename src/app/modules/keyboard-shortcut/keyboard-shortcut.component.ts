@@ -11,6 +11,7 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   selector: 'ix-keyboard-shortcut',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./keyboard-shortcut.component.scss'],
+  standalone: true,
   template: '{{ shortcutString() }}',
 })
 export class KeyboardShortcutComponent {

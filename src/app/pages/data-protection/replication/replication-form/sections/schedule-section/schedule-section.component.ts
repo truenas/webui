@@ -19,6 +19,7 @@ import { TaskService } from 'app/services/task.service';
   selector: 'ix-replication-schedule-section',
   templateUrl: './schedule-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

@@ -42,6 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './api-key-form.component.html',
   styleUrls: ['./api-key-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     FormActionsComponent,
     IxCheckboxComponent,

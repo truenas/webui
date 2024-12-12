@@ -20,6 +20,7 @@ import {
   templateUrl: './search-input.component.html',
   styleUrls: ['./search-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [AdvancedSearchComponent, BasicSearchComponent],
 })
 export class SearchInputComponent<T> implements OnChanges {

@@ -9,6 +9,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   selector: 'ix-cell-date',
   templateUrl: './ix-cell-date.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxDateComponent,
     TranslateModule,

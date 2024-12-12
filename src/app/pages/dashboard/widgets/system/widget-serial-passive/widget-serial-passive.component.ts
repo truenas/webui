@@ -18,6 +18,7 @@ import {
   templateUrl: './widget-serial-passive.component.html',
   styleUrls: ['./widget-serial-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

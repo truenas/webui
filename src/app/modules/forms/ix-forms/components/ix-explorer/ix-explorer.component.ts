@@ -41,6 +41,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-explorer.component.html',
   styleUrls: ['./ix-explorer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatInput,

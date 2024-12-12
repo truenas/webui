@@ -26,6 +26,7 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
   selector: 'ix-replication-transport-section',
   templateUrl: './transport-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxFieldsetComponent,
     ReactiveFormsModule,

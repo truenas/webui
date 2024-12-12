@@ -21,6 +21,7 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   templateUrl: './reboot-required-dialog.component.html',
   styleUrls: ['./reboot-required-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     CdkScrollable,
     TranslateModule,

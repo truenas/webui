@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   styleUrls: ['./similar-issues.component.scss'],
   templateUrl: './similar-issues.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TestDirective,
     IxIconComponent,

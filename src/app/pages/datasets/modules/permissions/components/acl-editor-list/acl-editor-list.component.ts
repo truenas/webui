@@ -21,6 +21,7 @@ import {
   templateUrl: 'acl-editor-list.component.html',
   styleUrls: ['./acl-editor-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PermissionsItemComponent,
     MatTooltip,

@@ -16,6 +16,7 @@ import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-ve
   templateUrl: './widget-os-version.component.html',
   styleUrls: ['./widget-os-version.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     WithLoadingStateDirective,
     WidgetDatapointComponent,

@@ -30,6 +30,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   templateUrl: './select-pool-dialog.component.html',
   styleUrls: ['./select-pool-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     MatDialogTitle,

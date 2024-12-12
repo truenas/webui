@@ -41,6 +41,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   selector: 'ix-privilege-form',
   templateUrl: './privilege-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

@@ -42,6 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     MatProgressBar,

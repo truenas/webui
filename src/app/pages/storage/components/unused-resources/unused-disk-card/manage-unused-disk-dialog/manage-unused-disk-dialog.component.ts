@@ -32,6 +32,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   templateUrl: './manage-unused-disk-dialog.component.html',
   styleUrls: ['./manage-unused-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

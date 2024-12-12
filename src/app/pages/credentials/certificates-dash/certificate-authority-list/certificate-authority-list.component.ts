@@ -63,6 +63,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './certificate-authority-list.component.html',
   styleUrls: ['./certificate-authority-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

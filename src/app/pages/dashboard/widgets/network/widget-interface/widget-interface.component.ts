@@ -44,6 +44,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './widget-interface.component.html',
   styleUrls: ['./widget-interface.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatCardContent,

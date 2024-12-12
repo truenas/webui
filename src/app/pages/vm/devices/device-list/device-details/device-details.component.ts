@@ -14,6 +14,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     IxIconComponent,

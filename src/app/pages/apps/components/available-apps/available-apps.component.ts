@@ -31,6 +31,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   templateUrl: './available-apps.component.html',
   styleUrls: ['./available-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     PageHeaderComponent,
     CustomAppButtonComponent,

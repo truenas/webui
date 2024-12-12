@@ -20,6 +20,7 @@ import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/com
   templateUrl: './topology-item-node.component.html',
   styleUrls: ['./topology-item-node.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TopologyItemIconComponent, NgClass],
 })
 export class TopologyItemNodeComponent {

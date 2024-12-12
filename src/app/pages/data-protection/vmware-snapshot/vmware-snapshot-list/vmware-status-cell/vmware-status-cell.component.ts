@@ -22,6 +22,7 @@ export interface VmwareState {
   templateUrl: './vmware-status-cell.component.html',
   styleUrls: ['./vmware-status-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [MatTooltip, TranslateModule],
 })
 export class VmwareStatusCellComponent {

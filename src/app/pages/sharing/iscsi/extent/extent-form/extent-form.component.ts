@@ -42,6 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './extent-form.component.html',
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

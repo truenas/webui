@@ -29,6 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-smb-share-list',
   templateUrl: './smb-share-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

@@ -10,6 +10,7 @@ import { TerminalComponent } from 'app/modules/terminal/components/terminal/term
   selector: 'ix-vm-serial-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TerminalComponent],
 })
 export class VmSerialShellComponent implements TerminalConfiguration {

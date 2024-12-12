@@ -19,6 +19,7 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
   styleUrls: ['./widget-editor-group.component.scss'],
   templateUrl: './widget-editor-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     TestDirective,
     WidgetErrorComponent,

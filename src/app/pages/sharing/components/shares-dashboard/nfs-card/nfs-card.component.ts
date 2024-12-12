@@ -44,6 +44,7 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './nfs-card.component.html',
   styleUrls: ['./nfs-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

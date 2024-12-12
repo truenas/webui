@@ -22,6 +22,7 @@ export const ixManualValidateError = 'ixManualValidateError';
   templateUrl: './ix-errors.component.html',
   styleUrls: ['./ix-errors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatError,
     IxIconComponent,

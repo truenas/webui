@@ -34,6 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './cloudsync-provider.component.html',
   styleUrls: ['./cloudsync-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxFieldsetComponent,

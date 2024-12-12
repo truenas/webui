@@ -19,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-button-group.component.html',
   styleUrls: ['./ix-button-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxLabelComponent,
     MatButtonToggleGroup,

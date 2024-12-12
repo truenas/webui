@@ -18,6 +18,7 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RouterLink,
     TestDirective,

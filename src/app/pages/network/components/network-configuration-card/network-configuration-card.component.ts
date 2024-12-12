@@ -34,6 +34,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './network-configuration-card.component.html',
   styleUrls: ['./network-configuration-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

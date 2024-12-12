@@ -38,6 +38,7 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
   selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeader2Component,
     MatCard,

@@ -20,6 +20,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   styleUrls: ['./resilvering-indicator.component.scss'],
   templateUrl: './resilvering-indicator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatIconButton,
     MatTooltip,

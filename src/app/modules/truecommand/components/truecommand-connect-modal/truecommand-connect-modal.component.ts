@@ -33,6 +33,7 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
   styleUrls: ['./truecommand-connect-modal.component.scss'],
   templateUrl: './truecommand-connect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

@@ -22,6 +22,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './directory-services-monitor.component.html',
   styleUrls: ['./directory-services-monitor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogContent,
     MatIconButton,

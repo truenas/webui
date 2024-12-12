@@ -47,6 +47,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './zfs-health-card.component.html',
   styleUrls: ['./zfs-health-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

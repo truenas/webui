@@ -34,6 +34,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   templateUrl: './reports-global-controls.component.html',
   styleUrls: ['./reports-global-controls.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ReactiveFormsModule,
     IxSelectComponent,

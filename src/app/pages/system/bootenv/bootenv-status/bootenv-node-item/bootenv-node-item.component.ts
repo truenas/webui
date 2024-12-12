@@ -23,6 +23,7 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
   templateUrl: './bootenv-node-item.component.html',
   styleUrls: ['./bootenv-node-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     IxIconComponent,
     MatTooltip,

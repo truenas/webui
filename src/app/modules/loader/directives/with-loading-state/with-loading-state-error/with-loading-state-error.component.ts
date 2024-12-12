@@ -9,6 +9,7 @@ import { ApiError } from 'app/interfaces/api-error.interface';
   selector: 'ix-with-loading-state-error',
   templateUrl: './with-loading-state-error.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [TranslateModule],
 })
 export class WithLoadingStateErrorComponent {

@@ -42,6 +42,7 @@ export interface SyslogConfig {
   styleUrls: ['../../common-card.scss'],
   templateUrl: './syslog-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     UiSearchDirective,

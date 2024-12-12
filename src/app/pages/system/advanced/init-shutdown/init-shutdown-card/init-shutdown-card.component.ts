@@ -47,6 +47,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   templateUrl: './init-shutdown-card.component.html',
   styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatCard,
     MatToolbarRow,

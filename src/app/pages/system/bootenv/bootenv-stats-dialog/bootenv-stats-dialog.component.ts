@@ -32,6 +32,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   templateUrl: './bootenv-stats-dialog.component.html',
   styleUrls: ['./bootenv-stats-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,

@@ -9,6 +9,7 @@ import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
   templateUrl: './mini-drive-stats.component.html',
   styleUrl: './mini-drive-stats.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     DiskIconComponent,
     TranslateModule,

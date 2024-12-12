@@ -48,6 +48,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-cloud-backup-restore-from-snapshot-form',
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     ModalHeaderComponent,
     MatCard,

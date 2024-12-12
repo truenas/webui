@@ -21,6 +21,7 @@ type OnChangeFn = (value: Date) => void;
 type OnTouchedFn = () => void;
 
 @Component({
+  standalone: true,
   selector: 'ix-datepicker',
   templateUrl: './ix-date-picker.component.html',
   styleUrls: ['./ix-date-picker.component.scss'],

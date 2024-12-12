@@ -20,6 +20,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   templateUrl: './enclosure-header.component.html',
   styleUrls: ['./enclosure-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
   imports: [
     RequiresRolesDirective,
     MatButton,
