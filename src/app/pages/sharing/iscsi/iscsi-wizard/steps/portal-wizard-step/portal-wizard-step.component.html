@@ -19,8 +19,9 @@
       @for (network of form().controls.listen.controls; track network; let i = $index) {
         <ix-list-item
           [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
+          [formGroupName]="i"
           (delete)="removeAddress(i)"
-          >
+        >
           <ix-select
             [formControlName]="i"
             [label]="helptextSharingIscsi.portal_form_placeholder_ip  | translate"

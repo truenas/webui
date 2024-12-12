@@ -72,6 +72,7 @@
           >
             @for (element of getFormArray.controls; track element; let i = $index) {
               <ix-list-item
+                [formGroupName]="i"
                 [label]="dynamicSchema.title | translate"
                 [canDelete]="!isAllListControlsDisabled"
                 (delete)="removeControl(i)"
