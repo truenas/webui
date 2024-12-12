@@ -42,6 +42,7 @@ import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import {
   AppDetailsHeaderComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
@@ -131,6 +132,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     PullImageFormComponent,
     DockerHubRateInfoDialogComponent,
     VolumeMountsDialogComponent,
+    AppDeleteDialogComponent,
   ],
   imports: [
     CommonModule,

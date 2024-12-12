@@ -298,6 +298,7 @@ export type AppDeleteParams = [
   {
     remove_images?: boolean;
     remove_ix_volumes?: boolean;
+    force_remove_ix_volumes?: boolean;
   },
 ];
 
