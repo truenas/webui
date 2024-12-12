@@ -129,18 +129,18 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.checkedApps.every(
-      (app) => [CatalogAppState.Running, CatalogAppState.Deploying].includes(app.state),
+      (app) => [CatalogAppState.Running, CatalogAppState.Deploying].includes(app?.state),
     );
   }
 
   get isBulkStopDisabled(): boolean {
     return this.checkedApps.every(
-      (app) => [CatalogAppState.Stopped, CatalogAppState.Crashed].includes(app.state),
+      (app) => [CatalogAppState.Stopped, CatalogAppState.Crashed].includes(app?.state),
     );
   }
 
   get isBulkUpgradeDisabled(): boolean {
-    return !this.checkedApps.some((app) => app.upgrade_available);
+    return !this.checkedApps.some((app) => app?.upgrade_available);
   }
 
   get activeCheckedApps(): App[] {

@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +21,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
@@ -36,6 +38,7 @@ import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
   let loader: HarnessLoader;
+  let applicationsService: ApplicationsService;
 
   const app = {
     id: 'ix-test-app',
@@ -77,7 +80,6 @@ describe('InstalledAppsComponent', () => {
         availableApps$: of([]),
       }),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: true })),
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
@@ -124,6 +126,7 @@ describe('InstalledAppsComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.component.dataSource = [app];
+    applicationsService = spectator.inject(ApplicationsService);
   });
 
   it('shows a list of installed apps', () => {
@@ -151,22 +154,25 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('removes selected applications', async () => {
-    spectator.component.selection.select(app.name);
+    jest.spyOn(applicationsService, 'checkIfAppIxVolumeExists').mockReturnValue(of(true));
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
+    } as MatDialogRef<unknown>);
+
+    spectator.component.selection.select(app.id);
 
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Select action' }));
     await menu.open();
     await menu.clickItem({ text: 'Delete All Selected' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Delete',
-      message: 'Delete test-app?',
-      secondaryCheckbox: true,
-      secondaryCheckboxText: 'Remove iXVolumes',
-    });
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      AppDeleteDialogComponent,
+      { data: { name: app.id, showRemoveVolumes: true } },
+    );
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'core.bulk',
-      ['app.delete', [[app.name, { remove_images: true, remove_ix_volumes: true }]]],
+      ['app.delete', [[app.id, { remove_images: true, remove_ix_volumes: true }]]],
     );
   });
 });
