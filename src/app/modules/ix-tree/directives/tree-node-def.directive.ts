@@ -1,6 +1,6 @@
 import { DataSource } from '@angular/cdk/collections';
 import { CdkTreeNodeDef } from '@angular/cdk/tree';
-import { Directive, Input } from '@angular/core';
+import { Directive, input, Input } from '@angular/core';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 
 @Directive({
@@ -9,7 +9,9 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
   standalone: true,
 })
 export class TreeNodeDefDirective<T, K = T> extends CdkTreeNodeDef<T> {
-  @Input() treeNodeDefDataSource: DataSource<T> | TreeDataSource<T, K>;
+  readonly treeNodeDefDataSource = input<DataSource<T> | TreeDataSource<T, K>>();
+
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('treeNodeDefWhen') override when!: (index: number, nodeData: T) => boolean;
 
   // ngTemplateContextGuard flag to help with the Language Service

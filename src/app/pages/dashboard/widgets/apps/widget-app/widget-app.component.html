@@ -15,25 +15,28 @@
         [job]="job() | async"
       ></ix-app-card-info>
 
-      <ix-app-cpu-info
-        class="square"
-        [stats]="stats() | async"
-      ></ix-app-cpu-info>
+      @if (stats$) {
+        <ix-app-cpu-info
+          class="square"
+          [stats]="stats$ | async"
+        ></ix-app-cpu-info>
 
-      <ix-app-network-info
-        class="rectangle"
-        [stats]="stats() | async"
-      ></ix-app-network-info>
+        <ix-app-network-info
+          class="rectangle"
+          [stats]="stats$ | async"
+        ></ix-app-network-info>
 
-      <ix-app-memory-info
-        class="square"
-        [stats]="stats() | async"
-      ></ix-app-memory-info>
+        <ix-app-memory-info
+          class="square"
+          [stats]="stats$ | async"
+        ></ix-app-memory-info>
 
-      <ix-app-disk-info
-        class="rectangle"
-        [stats]="stats() | async"
-      ></ix-app-disk-info>
+        <ix-app-disk-info
+          class="rectangle"
+          [stats]="stats$ | async"
+        ></ix-app-disk-info>
+      }
+
     </div>
   </mat-card-content>
 </mat-card>

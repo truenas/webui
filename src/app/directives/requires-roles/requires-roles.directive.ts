@@ -16,6 +16,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class RequiresRolesDirective extends HasAccessDirective {
   private previousRoles: Role[] = [];
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input()
   set ixRequiresRoles(roles: Role[]) {
     if (isEqual(this.previousRoles, roles)) {
@@ -37,6 +38,7 @@ export class RequiresRolesDirective extends HasAccessDirective {
 
   protected override cssClassList: string[] = [];
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('class')
   @HostBinding('class')
   override get elementClass(): string {
