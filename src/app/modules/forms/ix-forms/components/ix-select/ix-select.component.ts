@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, input, Input, OnChanges, OnInit,
+  Component, input, model, OnChanges, OnInit,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
 import { MatOption } from '@angular/material/core';
@@ -53,10 +53,7 @@ export type IxSelectValue = SelectOptionValueType;
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   readonly label = input<string>();
   readonly hint = input<string>();
-
-  @Input()
-  options: Observable<SelectOption[]>;
-
+  readonly options = model<Observable<SelectOption[]>>();
   readonly required = input<boolean>();
   readonly tooltip = input<string>();
   readonly multiple = input<boolean>();
@@ -101,11 +98,11 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   get disabledState(): boolean {
-    return this.isDisabled || !this.options;
+    return this.isDisabled || !this.options();
   }
 
   get isLoadingState(): boolean {
-    return this.isLoading || !this.options;
+    return this.isLoading || !this.options();
   }
 
   constructor(public controlDirective: NgControl, private cdr: ChangeDetectorRef) {
@@ -113,12 +110,12 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnChanges(): void {
-    if (!this.options) {
+    if (!this.options()) {
       this.hasErrorInOptions = true;
     } else {
       this.hasErrorInOptions = false;
       this.isLoading = true;
-      this.opts$ = this.options.pipe(
+      this.opts$ = this.options().pipe(
         catchError((error: unknown) => {
           console.error(error);
           this.hasErrorInOptions = true;

@@ -16,10 +16,10 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -65,11 +65,11 @@ export class KernelCardComponent {
   constructor(
     private store$: Store<AppState>,
     private chainedSlideIns: ChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(debugKernel: boolean): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(KernelFormComponent, false, debugKernel)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

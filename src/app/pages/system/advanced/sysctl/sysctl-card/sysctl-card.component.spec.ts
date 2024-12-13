@@ -11,9 +11,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { SysctlCardComponent } from './sysctl-card.component';
 
@@ -55,7 +55,7 @@ describe('SysctlCardComponent', () => {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn() }),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
       }),
       mockAuth(),

@@ -24,7 +24,7 @@
   </div>
 
   <div (click)="$event.stopPropagation()">
-    @for (column of columns; track column) {
+    @for (column of columns(); track column) {
       @if (column.title) {
         <button
           mat-menu-item

@@ -66,7 +66,8 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
-  expandedItems = signal<string[]>([]);
+
+  readonly expandedItems = signal<string[]>([]);
 
   form = this.formBuilder.group<Record<string, string>>({});
   bulkItems = new Map<string, BulkListItem<App>>();

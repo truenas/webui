@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit, output,
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -57,7 +57,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 })
 export class IxDynamicFormItemComponent implements OnInit {
   readonly dynamicForm = input<UntypedFormGroup>();
-  @Input() dynamicSchema: DynamicFormSchemaNode;
+  readonly dynamicSchema = input<DynamicFormSchemaNode>();
   readonly isEditMode = input<boolean>();
 
   readonly addListItem = output<AddListItemEvent>();
@@ -66,7 +66,7 @@ export class IxDynamicFormItemComponent implements OnInit {
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
 
   get isAllListControlsDisabled(): boolean {
-    return (this.dynamicSchema as DynamicFormSchemaList).items.every((item) => {
+    return (this.dynamicSchema() as DynamicFormSchemaList).items.every((item) => {
       return item.editable !== undefined && item.editable !== null && !item.editable;
     });
   }
@@ -76,7 +76,7 @@ export class IxDynamicFormItemComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const dependsOn = this.dynamicSchema?.dependsOn;
+    const dependsOn = this.dynamicSchema()?.dependsOn;
 
     dependsOn?.forEach((depend) => {
       this.dynamicForm()?.valueChanges.pipe(
@@ -91,30 +91,31 @@ export class IxDynamicFormItemComponent implements OnInit {
       });
     });
     if (
-      this.dynamicSchema?.editable !== undefined
-      && !this.dynamicSchema?.editable
+      this.dynamicSchema()?.editable !== undefined
+      && !this.dynamicSchema()?.editable
     ) {
-      this.dynamicForm()?.get(this.dynamicSchema.controlName)?.disable();
+      this.dynamicForm()?.get(this.dynamicSchema().controlName)?.disable();
     }
 
-    if (this.dynamicSchema?.hidden) {
-      (this.dynamicForm().controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$?.next(true);
+    if (this.dynamicSchema()?.hidden) {
+      (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
   }
 
   get getFormArray(): UntypedFormArray {
-    return this.dynamicForm().controls[this.dynamicSchema.controlName] as UntypedFormArray;
+    return this.dynamicForm().controls[this.dynamicSchema().controlName] as UntypedFormArray;
   }
 
   get isHidden$(): Subject<boolean> {
-    return (this.dynamicForm().controls[this.dynamicSchema.controlName] as CustomUntypedFormField)?.hidden$;
+    return (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$;
   }
 
   addControl(schema?: ChartSchemaNode[]): void {
-    if (this.dynamicSchema.type === DynamicFormSchemaType.List) {
+    const dynamicSchema = this.dynamicSchema();
+    if (dynamicSchema.type === DynamicFormSchemaType.List) {
       this.addListItem.emit({
         array: this.getFormArray,
-        schema: schema || this.dynamicSchema.itemsSchema,
+        schema: schema || dynamicSchema.itemsSchema,
       });
     }
   }
