@@ -32,7 +32,7 @@ export interface FibreChannelStatusNode {
   physical: boolean;
   wwpn?: string;
   wwpn_b?: string;
-  sessions: unknown[];
+  sessions: string[];
 }
 
 export interface FibreChannelStatus {
