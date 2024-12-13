@@ -320,6 +320,7 @@ export interface ApiCallDirectory {
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
   'app.used_ports': { params: void; response: number[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
 
   // Audit
   'audit.config': { params: void; response: AuditConfig };

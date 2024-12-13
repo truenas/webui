@@ -1,0 +1,43 @@
+<h1 matDialogTitle>
+  {{ 'Delete App' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p class="message">
+    {{ 'Delete {name}?' | translate: { name: data.name } }}
+  </p>
+
+  @if (data.showRemoveVolumes) {
+    <ix-checkbox
+      formControlName="removeVolumes"
+      [label]="'Remove iXVolumes' | translate"
+    ></ix-checkbox>
+
+    @if (data.showRemoveVolumes && form.value.removeVolumes) {
+      <ix-checkbox
+        formControlName="forceRemoveVolumes"
+        [label]="'Force-remove iXVolumes' | translate"
+      ></ix-checkbox>
+    }
+  }
+
+  <ix-checkbox
+    formControlName="removeImages"
+    [label]="'Remove Images' | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="delete"
+      [disabled]="form.invalid"
+    >
+      {{ 'Delete' | translate }}
+    </button>
+  </ix-form-actions>
+</form>
