@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
-      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
     @if (!wasScanInitiated) {

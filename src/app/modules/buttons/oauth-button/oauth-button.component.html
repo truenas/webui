@@ -7,5 +7,5 @@
   [color]="isLoggedIn() ? 'accent' : 'primary'"
   (click)="onOauthClicked()"
 >
-  {{ buttonText | translate }}
+  {{ buttonText() | translate }}
 </button>

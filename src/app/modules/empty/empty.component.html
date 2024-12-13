@@ -3,17 +3,17 @@
   [class.large]="conf()?.large"
   [class.compact]="conf()?.compact"
 >
-  @if (!isLoading) {
+  @if (!isLoading()) {
     <div class="icon-div">
       <ix-icon class="icon" [name]="getIcon()" [fullSize]="true"></ix-icon>
     </div>
   }
-  @if (isLoading) {
+  @if (isLoading()) {
     <div>
       <mat-spinner [diameter]="40"></mat-spinner>
     </div>
   }
-  @if (!isLoading) {
+  @if (!isLoading()) {
     <div>
       <h3 class="empty-title">{{ conf().title | translate }}</h3>
       @if (conf().message && !conf().compact) {

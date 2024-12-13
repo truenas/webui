@@ -46,7 +46,7 @@
       [tooltip]="helptext.properties_exclude_tooltip | translate"
     ></ix-chips>
   }
-  @if (isPush) {
+  @if (isPush()) {
     <ix-select
       formControlName="periodic_snapshot_tasks"
       [label]="'Periodic Snapshot Tasks' | translate"
@@ -87,17 +87,17 @@
   }
   <ix-radio-group
     formControlName="schema_or_regex"
-    [label]="nameOrRegexLabel"
+    [label]="nameOrRegexLabel()"
     [options]="snapshotNamingOptions$"
   ></ix-radio-group>
-  @if (usesNamingSchema && !isPush) {
+  @if (usesNamingSchema && !isPush()) {
     <ix-chips
       formControlName="naming_schema"
       [label]="'Matching naming schema' | translate"
       [tooltip]="helptext.naming_schema_tooltip | translate"
     ></ix-chips>
   }
-  @if (usesNamingSchema && isPush) {
+  @if (usesNamingSchema && isPush()) {
     <ix-chips
       formControlName="also_include_naming_schema"
       [label]="'Also Include Naming Schema' | translate"

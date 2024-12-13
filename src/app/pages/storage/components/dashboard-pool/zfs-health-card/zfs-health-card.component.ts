@@ -1,6 +1,6 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -152,7 +152,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     }
   }
 
-  get iconType(): PoolCardIconType {
+  protected iconType = computed(() => {
     if (!this.pool().healthy) {
       return PoolCardIconType.Error;
     }
@@ -163,9 +163,9 @@ export class ZfsHealthCardComponent implements OnChanges {
       return PoolCardIconType.Faulted;
     }
     return PoolCardIconType.Safe;
-  }
+  });
 
-  get iconTooltip(): string {
+  protected iconTooltip = computed(() => {
     if (!this.pool().healthy) {
       return this.translate.instant('Pool is not healthy');
     }
@@ -176,7 +176,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       return this.translate.instant('Pool status is {status}', { status: this.pool().status });
     }
     return this.translate.instant('Everything is fine');
-  }
+  });
 
   ngOnChanges(): void {
     this.scan = this.pool().scan;

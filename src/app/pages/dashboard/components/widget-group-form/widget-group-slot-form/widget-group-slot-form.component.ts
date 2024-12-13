@@ -63,11 +63,11 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   private categorySubscription: Subscription;
   private typeSubscription: Subscription;
 
-  protected get shouldShowType(): boolean {
+  protected shouldShowType = computed(() => {
     return this.selectedCategory != null
       ? this.selectedCategory() && this.selectedCategory() !== WidgetCategory.Empty
       : false;
-  }
+  });
 
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {

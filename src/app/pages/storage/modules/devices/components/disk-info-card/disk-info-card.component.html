@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Disk Info' | translate }}</h3>
-    @if (isAvailable) {
+    @if (isAvailable()) {
       <button
         mat-button
         ixTest="edit-disk"
@@ -10,7 +10,7 @@
     }
   </mat-card-header>
 
-  @if (isAvailable) {
+  @if (isAvailable()) {
     <mat-card-content>
       <div class="details-item">
         <div class="label">{{ 'Disk Size' | translate }}:</div>
@@ -42,7 +42,7 @@
         </div>
       </div>
 
-      @if (isHdd) {
+      @if (isHdd()) {
         <div class="details-item">
           <div class="label">{{ 'Rotation Rate' | translate }}:</div>
           @if (disk()?.rotationrate) {
@@ -69,7 +69,7 @@
       </div>
     </mat-card-content>
   }
-  @if (!isAvailable) {
+  @if (!isAvailable()) {
     <mat-card-content>
       <div>{{ 'Disk is unavailable' | translate }}</div>
     </mat-card-content>

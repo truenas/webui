@@ -322,6 +322,7 @@ export interface ApiCallDirectory {
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
 
   // App Image
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
@@ -652,7 +653,6 @@ export interface ApiCallDirectory {
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
-  'app.ix_volume.exists': { params: [string]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
