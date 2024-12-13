@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, model, OnInit,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, model, OnInit, signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -34,20 +34,20 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   readonly pageSizeOptions = input([10, 20, 50, 100]);
   readonly currentPage = model(1);
 
-  totalItems = 0;
+  protected totalItems = signal(0);
 
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.pageSize());
-  }
+  protected totalPages = computed(() => {
+    return Math.ceil(this.totalItems() / this.pageSize());
+  });
 
-  get firstPage(): number {
+  protected firstPage = computed(() => {
     return (this.currentPage() - 1) * this.pageSize() + 1;
-  }
+  });
 
-  get lastPage(): number {
+  protected lastPage = computed(() => {
     const lastPage = this.currentPage() * this.pageSize();
-    return lastPage < this.totalItems ? lastPage : this.totalItems;
-  }
+    return lastPage < this.totalItems() ? lastPage : this.totalItems();
+  });
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -61,15 +61,15 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider().totalRows;
-    if (this.currentPage() > this.totalPages && this.currentPage() !== 1) {
+    this.totalItems.set(this.dataProvider().totalRows);
+    if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
       this.goToPage(1);
     }
     this.cdr.markForCheck();
   }
 
   goToPage(pageNumber: number): void {
-    if (pageNumber >= 1 && pageNumber <= this.totalPages) {
+    if (pageNumber >= 1 && pageNumber <= this.totalPages()) {
       this.currentPage.set(pageNumber);
       this.dataProvider().setPagination({
         pageNumber,
@@ -85,7 +85,7 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   }
 
   nextPage(): void {
-    if (this.currentPage() < this.totalPages) {
+    if (this.currentPage() < this.totalPages()) {
       this.goToPage(this.currentPage() + 1);
     }
   }

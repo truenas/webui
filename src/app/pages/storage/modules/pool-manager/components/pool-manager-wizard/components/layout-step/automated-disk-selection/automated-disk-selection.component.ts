@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -47,17 +47,17 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout, Validators.required);
 
-  get isDataVdev(): boolean {
+  protected isDataVdev = computed(() => {
     return this.type() === VdevType.Data;
-  }
+  });
 
-  get dataLayoutTooltip(): string {
-    if (this.isDataVdev) {
+  protected dataLayoutTooltip = computed(() => {
+    if (this.isDataVdev()) {
       return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
     }
 
     return '';
-  }
+  });
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
 
@@ -78,15 +78,15 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return isDraidLayout(this.layoutControl.value);
   }
 
-  get isMetadataVdev(): boolean {
+  protected isMetadataVdev = computed(() => {
     return this.type() === VdevType.Special;
-  }
+  });
 
   private updateStoreOnChanges(): void {
     this.store.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this)).subscribe({
       next: () => {
         if (
-          (!this.canChangeLayout() && !this.isDataVdev)
+          (!this.canChangeLayout() && !this.isDataVdev())
           && (this.type() && this.limitLayouts().length)
         ) {
           this.store.setTopologyCategoryLayout(this.type(), this.limitLayouts()[0]);

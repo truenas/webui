@@ -17,7 +17,7 @@
       [required]="true"
     ></ix-select>
 
-    @if (!isNumberOfVdevsLimitedToOne) {
+    @if (!isNumberOfVdevsLimitedToOne()) {
       <ix-select
         formControlName="vdevsNumber"
         [ixTestOverride]="['vdevs-number', type()]"

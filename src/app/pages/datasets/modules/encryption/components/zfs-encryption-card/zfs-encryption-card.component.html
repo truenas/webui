@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
 
-    @if (canEdit) {
+    @if (canEdit()) {
       <a
         mat-button
         ixTest="edit"
@@ -11,7 +11,7 @@
         {{ 'Edit' | translate }}
       </a>
     }
-    @if (canUnlock) {
+    @if (canUnlock()) {
       <a
         *ixRequiresRoles="[Role.FullAdmin]"
         mat-button
@@ -26,12 +26,12 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Current State' | translate }}:</div>
-      <div class="value">{{ currentStateLabel }}</div>
+      <div class="value">{{ currentStateLabel() }}</div>
     </div>
     @if (dataset().encrypted) {
       <div class="details-item">
         <div class="label">{{ 'Encryption Root' | translate }}:</div>
-        @if (isEncryptionRoot) {
+        @if (isEncryptionRoot()) {
           <div class="value">
             {{ 'Yes' | translate }}
           </div>
@@ -49,7 +49,7 @@
       <div class="details-item">
         <div class="label">{{ 'Type' | translate }}:</div>
         <div class="value">
-          {{ hasPassphrase ? ('Passphrase' | translate) : ('Key' | translate) }}
+          {{ hasPassphrase() ? ('Passphrase' | translate) : ('Key' | translate) }}
         </div>
       </div>
       <div class="details-item">
@@ -58,10 +58,10 @@
       </div>
     }
   </mat-card-content>
-  @if (dataset().encrypted && isEncryptionRoot && !dataset().locked) {
+  @if (dataset().encrypted && isEncryptionRoot() && !dataset().locked) {
     <mat-card-actions>
       <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-        @if (canExportKey && isRoot) {
+        @if (canExportKey() && isRoot()) {
           <button
             mat-button
             ixTest="export-all-keys"
@@ -72,7 +72,7 @@
         }
       </ng-container>
       <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-        @if (canExportKey) {
+        @if (canExportKey()) {
           <button mat-button ixTest="export-key" (click)="onExportKey()">
             {{ 'Export Key' | translate }}
           </button>
@@ -82,8 +82,8 @@
         <button
           mat-button
           ixTest="lock"
-          [matTooltip]="!hasPassphrase ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
-          [disabled]="!hasPassphrase"
+          [matTooltip]="!hasPassphrase() ? ('You can only lock a dataset if it was encrypted with a passphrase' | translate) : ''"
+          [disabled]="!hasPassphrase()"
           (click)="onLock()"
         >
           {{ 'Lock' | translate }}

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, input, OnChanges, OnInit,
+  Component, computed, input, OnChanges, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -81,7 +81,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
 
   topologyWarningsState: TopologyState = { ...this.topologyState };
 
-  get iconType(): PoolCardIconType {
+  protected iconType = computed(() => {
     if (this.isStatusError(this.poolState())) {
       return PoolCardIconType.Error;
     }
@@ -89,9 +89,9 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
-  }
+  });
 
-  get iconTooltip(): string {
+  protected iconTooltip = computed(() => {
     if (this.isStatusError(this.poolState()) || this.isStatusWarning(this.poolState())) {
       return this.translate.instant('Pool contains {status} Data VDEVs', { status: this.poolState().status });
     }
@@ -99,7 +99,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return this.translate.instant('Pool is not healthy');
     }
     return this.translate.instant('Everything is fine');
-  }
+  });
 
   get isDraidLayoutDataVdevs(): boolean {
     return /\bDRAID\b/.test(this.topologyState.data);
@@ -218,9 +218,9 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  protected get isPoolOffline(): boolean {
+  protected isPoolOffline = computed(() => {
     return this.poolState()?.status === PoolStatus.Offline;
-  }
+  });
 
   // TODO: Unclear why this conversion is needed.
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {

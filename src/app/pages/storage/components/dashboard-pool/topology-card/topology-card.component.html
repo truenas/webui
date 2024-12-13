@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Topology' | translate }}
-      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
     <button
@@ -20,7 +20,7 @@
       <div class="vdev-line">
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          @if (!!topologyWarningsState.data && !isPoolOffline) {
+          @if (!!topologyWarningsState.data && !isPoolOffline()) {
             <span
               class="warning"
               [matTooltip]="topologyWarningsState.data"
@@ -28,7 +28,7 @@
               <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
             </span>
           }
-          @if (isPoolOffline) {
+          @if (isPoolOffline()) {
             <span class="warning">
               <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
             </span>
@@ -40,7 +40,7 @@
       </div>
       <div class="vdev-line">
         <b>{{ 'Metadata VDEVs' | translate }}</b>
-        @if (!isPoolOffline) {
+        @if (!isPoolOffline()) {
           <div class="vdev-stats">
             @if (!!topologyWarningsState.metadata) {
               <span class="warning" [matTooltip]="topologyWarningsState.metadata">
@@ -55,7 +55,7 @@
       </div>
       <div class="vdev-line">
         <b>{{ 'Log VDEVs' | translate }}</b>
-        @if (!isPoolOffline) {
+        @if (!isPoolOffline()) {
           <div class="vdev-stats">
             @if (!!topologyWarningsState.log) {
               <span class="warning" [matTooltip]="topologyWarningsState.log">
@@ -70,7 +70,7 @@
       </div>
       <div class="vdev-line">
         <b>{{ 'Cache VDEVs' | translate }}</b>
-        @if (!isPoolOffline) {
+        @if (!isPoolOffline()) {
           <div class="vdev-stats">
             @if (!!topologyWarningsState.cache) {
               <span class="warning" [matTooltip]="topologyWarningsState.cache">
@@ -86,7 +86,7 @@
       @if (!isDraidLayoutDataVdevs) {
         <div class="vdev-line">
           <b>{{ 'Spare VDEVs' | translate }}</b>
-          @if (!isPoolOffline) {
+          @if (!isPoolOffline()) {
             <div class="vdev-stats">
               @if (!!topologyWarningsState.spare) {
                 <span class="warning" [matTooltip]="topologyWarningsState.spare">
@@ -102,7 +102,7 @@
       }
       <div class="vdev-line">
         <b>{{ 'Dedup VDEVs' | translate }}</b>
-        @if (!isPoolOffline) {
+        @if (!isPoolOffline()) {
           <div class="vdev-stats">
             @if (!!topologyWarningsState.dedup) {
               <span class="warning" [matTooltip]="topologyWarningsState.dedup">

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -72,24 +72,24 @@ export class TransportSectionComponent implements OnChanges {
       this.setFormValues(this.replication());
     }
 
-    if (this.isLocal) {
+    if (this.isLocal()) {
       this.form.controls.ssh_credentials.disable();
     } else {
       this.form.controls.ssh_credentials.enable();
     }
   }
 
-  get isLocal(): boolean {
+  protected isLocal = computed(() => {
     return this.transport() === TransportMode.Local;
-  }
+  });
 
-  get isNetcat(): boolean {
+  protected isNetcat = computed(() => {
     return this.transport() === TransportMode.Netcat;
-  }
+  });
 
-  get isSsh(): boolean {
+  protected isSsh = computed(() => {
     return this.transport() === TransportMode.Ssh;
-  }
+  });
 
   setFormValues(replication: ReplicationTask): void {
     this.form.patchValue({
@@ -108,7 +108,7 @@ export class TransportSectionComponent implements OnChanges {
   getPayload(): Partial<ReplicationCreate> {
     const values = this.form.getRawValue();
 
-    if (this.isLocal) {
+    if (this.isLocal()) {
       return {
         large_block: values.large_block,
         compressed: values.compressed,
@@ -121,7 +121,7 @@ export class TransportSectionComponent implements OnChanges {
       };
     }
 
-    if (this.isSsh) {
+    if (this.isSsh()) {
       return {
         ...omitBy({
           ssh_credentials: values.ssh_credentials,
