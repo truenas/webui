@@ -22,8 +22,8 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -104,7 +104,7 @@ export class AccessCardComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
   ) {}
@@ -122,7 +122,7 @@ export class AccessCardComponent implements OnInit {
   }
 
   onConfigure(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIn.open(AccessFormComponent)),
       filter((response) => !!response.response),
       tap(() => {

@@ -18,7 +18,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -93,7 +93,7 @@ describe('AccessCardComponent', () => {
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(ChainedRef),
@@ -128,7 +128,7 @@ describe('AccessCardComponent', () => {
     const configure = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configure.click();
 
-    expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
   });
 

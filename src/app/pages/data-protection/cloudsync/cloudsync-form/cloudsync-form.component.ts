@@ -14,7 +14,7 @@ import {
 } from 'rxjs';
 import {
   catchError,
-  filter, map, pairwise, startWith, tap,
+  filter, map, pairwise, startWith, switchMap, tap,
 } from 'rxjs/operators';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -116,7 +116,7 @@ export class CloudSyncFormComponent implements OnInit {
     chunk_size: [96, Validators.min(5)],
     fast_list: [false],
     encryption: [false],
-    filename_encryption: [true],
+    filename_encryption: [false],
     encryption_password: [''],
     encryption_salt: [''],
     transfers: [4],
@@ -218,30 +218,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-    forkJoin([
-      this.getCredentialsList(),
-      this.getProviders(),
-    ]).pipe(
-      catchError((error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
-        return EMPTY;
-      }),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.isLoading = false;
-      this.cdr.markForCheck();
-
-      this.setFileNodeProvider();
-      this.setBucketNodeProvider();
-      this.setupForm();
-
-      if (this.editingTask) {
-        this.setTaskForEdit();
-      }
-    });
+    this.getInitialData();
   }
 
   setupForm(): void {
@@ -726,6 +703,50 @@ export class CloudSyncFormComponent implements OnInit {
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
     this.chainedRef.close({ response: false, error: null });
+  }
+
+  private getInitialData(): void {
+    this.isLoading = true;
+    forkJoin([
+      this.getCredentialsList(),
+      this.getProviders(),
+    ]).pipe(
+      catchError((error: unknown) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.errorHandler.handleWsFormError(error, this.form);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+
+      this.setFileNodeProvider();
+      this.setBucketNodeProvider();
+      this.setupForm();
+
+      if (this.editingTask) {
+        this.setTaskForEdit();
+      }
+
+      this.listenToFilenameEncryption();
+    });
+  }
+
+  private listenToFilenameEncryption(): void {
+    this.form.controls.filename_encryption.valueChanges.pipe(
+      filter(Boolean),
+      switchMap(() => this.dialogService.confirm({
+        title: this.translate.instant('Warning'),
+        message: this.translate.instant(
+          'This option is experimental in rclone and we recommend you do not use it. Are you sure you want to continue?',
+        ),
+      })),
+      filter((confirmed) => !confirmed),
+      tap(() => this.form.controls.filename_encryption.setValue(false)),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   private handleFolderChange(formControl: FormControl, values: string | string[]): void {

@@ -19,12 +19,12 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -105,7 +105,7 @@ export class CronCardComponent implements OnInit {
     private dialog: DialogService,
     private taskService: TaskService,
     private matDialog: MatDialog,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
     private chainedSlideIns: IxChainedSlideInService,
   ) {}
@@ -172,7 +172,7 @@ export class CronCardComponent implements OnInit {
   }
 
   private openForm(row?: CronjobRow): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(CronFormComponent, false, row)),
       filter((response) => !!response.response),
       untilDestroyed(this),

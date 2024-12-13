@@ -13,12 +13,12 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -67,7 +67,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     private chainedSlideIns: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -81,7 +81,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   onConfigure(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(AllowedAddressesFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
