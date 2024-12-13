@@ -35,8 +35,8 @@ describe('CloudBackupFormComponent', () => {
   const storjCreds = {
     id: 2,
     name: 'Storj iX',
-    provider: CloudSyncProviderName.Storj,
-    attributes: {
+    provider: {
+      type: CloudSyncProviderName.Storj,
       client_id: 'test-client-id',
       client_secret: 'test-client-secret',
       token: 'test-token',
@@ -54,6 +54,7 @@ describe('CloudBackupFormComponent', () => {
     pre_script: '',
     post_script: '',
     snapshot: false,
+    absolute_paths: true,
     include: [],
     exclude: [],
     transfer_setting: CloudsyncTransferSetting.Performance,
@@ -122,6 +123,22 @@ describe('CloudBackupFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('disables absolute paths when snapshot is enabled and resets to false', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Use Absolute Paths': true,
+      });
+
+      await form.fillForm({
+        'Take Snapshot': true,
+      });
+
+      const useAbsolutePathsControl = await form.getControl('Use Absolute Paths');
+
+      expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
+      expect(await useAbsolutePathsControl.getValue()).toBe(false);
+    });
+
     it('adds a new cloud backup task and creates a new bucket', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -159,6 +176,7 @@ describe('CloudBackupFormComponent', () => {
           month: '*',
         },
         snapshot: false,
+        absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
@@ -166,6 +184,7 @@ describe('CloudBackupFormComponent', () => {
 
     it('adds a new cloud backup task when new form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
+
       await form.fillForm({
         'Source Path': '/mnt/my pool 2',
         Name: 'New Cloud Backup Task',
@@ -175,7 +194,8 @@ describe('CloudBackupFormComponent', () => {
         Folder: '/',
         Enabled: false,
         Bucket: 'bucket1',
-        'Take Snapshot': true,
+        'Take Snapshot': false,
+        'Use Absolute Paths': true,
         Exclude: ['/test'],
         'Transfer Setting': 'Fast Storage',
       });
@@ -203,7 +223,8 @@ describe('CloudBackupFormComponent', () => {
           minute: '0',
           month: '*',
         },
-        snapshot: true,
+        snapshot: false,
+        absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
@@ -239,6 +260,7 @@ describe('CloudBackupFormComponent', () => {
         Schedule: 'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
         'Take Snapshot': false,
+        'Use Absolute Paths': true,
         'Transfer Setting': 'Performance',
       });
     });
@@ -251,6 +273,11 @@ describe('CloudBackupFormComponent', () => {
         Bucket: 'bucket1',
         'Source Path': '/mnt/path1',
       });
+
+      const useAbsolutePathsControl = await form.getControl('Use Absolute Paths');
+
+      expect(await useAbsolutePathsControl.isDisabled()).toBe(true);
+      expect(await useAbsolutePathsControl.getValue()).toBe(true);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

@@ -108,7 +108,7 @@ export class CloudSyncWizardComponent {
   }
 
   updateDescriptionValue(): void {
-    const provider = this.existingCredential.provider;
+    const provider = this.existingCredential.provider.type;
 
     const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
     this.whatAndWhen?.form.patchValue({

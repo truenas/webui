@@ -12,6 +12,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
@@ -54,9 +55,12 @@ describe('CloudSyncFormComponent', () => {
     credentials: {
       id: 2,
       name: 'test2',
-      provider: 'MEGA',
-      attributes: { user: 'login', pass: 'password' } as Record<string, string>,
-    },
+      provider: {
+        type: CloudSyncProviderName.Mega,
+        user: 'login',
+        pass: 'password',
+      },
+    } as CloudSyncCredential,
     schedule: {
       minute: '0',
       hour: '0',
@@ -96,6 +100,7 @@ describe('CloudSyncFormComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: jest.fn(() => of(true)),
         })),
+        confirm: jest.fn(() => of(true)),
       }),
       mockApi([
         mockCall('cloudsync.create', existingTask),
@@ -104,16 +109,16 @@ describe('CloudSyncFormComponent', () => {
           {
             id: 1,
             name: 'test1',
-            provider: CloudSyncProviderName.Http,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Http,
               url: 'http',
             },
           },
           {
             id: 2,
             name: 'test2',
-            provider: CloudSyncProviderName.Mega,
-            attributes: {
+            provider: {
+              type: CloudSyncProviderName.Mega,
               user: 'login',
               pass: 'password',
             },
