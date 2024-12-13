@@ -1,5 +1,5 @@
 <mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Fibre Channel Ports' | translate }}</h3>
 
@@ -8,16 +8,6 @@
         [value]="searchQuery()"
         (search)="onSearch($event)"
       ></ix-search-input1>
-
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        color="primary"
-        ixTest="add-fibre-channel-port"
-        (click)="doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
     </div>
   </mat-toolbar-row>
   <mat-card-content>
@@ -36,7 +26,7 @@
         ix-table-body
         [columns]="columns()"
         [dataProvider]="dataProvider"
-        [isLoading]="dataProvider.isLoading$ | async"
+        [isLoading]="isLoading()"
       >
       </tbody>
     </ix-table>

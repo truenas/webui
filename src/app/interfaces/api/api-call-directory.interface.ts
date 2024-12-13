@@ -111,6 +111,7 @@ import {
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
 import {
+  FibreChannelHost,
   FibreChannelPort,
   FibreChannelPortChoices,
   FibreChannelPortUpdate,
@@ -460,6 +461,10 @@ export interface ApiCallDirectory {
 
   // Fibre Channel
   'fc.capable': { params: []; response: boolean };
+
+  // Fibre Channel Host
+  'fc.fc_host.query': { params: []; response: FibreChannelHost[] };
+  'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
 
   // Fibre Channel Port
   'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
