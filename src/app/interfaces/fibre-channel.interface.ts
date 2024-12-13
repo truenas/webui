@@ -40,3 +40,11 @@ export interface FibreChannelStatus {
   A: FibreChannelStatusNode;
   B: FibreChannelStatusNode;
 }
+
+export interface FibreChannelHost {
+  id: number;
+  alias: string;
+  wwpn: string;
+  wwpn_b: string;
+  npiv: number;
+}

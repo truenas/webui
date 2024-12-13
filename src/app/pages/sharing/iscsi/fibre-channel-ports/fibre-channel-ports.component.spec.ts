@@ -1,19 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
+import { FibreChannelHost, FibreChannelPort, FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { FibreChannelPortsFormComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports-form/fibre-channel-ports-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import {
+  VirtualPortsNumberDialogComponent,
+} from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { FibreChannelPortsComponent } from './fibre-channel-ports.component';
 
@@ -23,71 +23,75 @@ describe('FibreChannelPortsComponent', () => {
   let table: IxTableHarness;
   let store$: MockStore;
 
-  const mockFibreChannelPort = {
-    id: 1,
-    port: 'fc1',
-    wwpn: '10:00:00:00:00:00:00:01',
-    wwpn_b: '10:00:00:00:00:00:00:02',
-    target: {
-      id: 1,
-      iscsi_target_name: 'target1',
-    },
-  } as FibreChannelPort;
+  const hosts = [
+    { alias: 'fc0', npiv: 2 },
+    { alias: 'fc1', npiv: 1 },
+  ] as FibreChannelHost[];
 
-  const mockFcStatus = [
+  const ports = [
+    {
+      port: 'fc0',
+      wwpn: 'naa.220034800d75aec4',
+      wwpn_b: 'naa.220034800d75aec5',
+      target: {
+        id: 1,
+        iscsi_target_name: 'target1',
+      },
+    },
+    {
+      port: 'fc0/1',
+      wwpn: 'naa.220034800d75aec8',
+      wwpn_b: 'naa.220034800d75aec9',
+      target: {
+        id: 2,
+        iscsi_target_name: 'target2',
+      },
+    },
+    {
+      port: 'fc1',
+      wwpn: 'naa.220034800d75aec6',
+      wwpn_b: 'naa.220034800d75aec7',
+      target: {
+        id: 2,
+        iscsi_target_name: 'target2',
+      },
+    },
+  ] as FibreChannelPort[];
+
+  const statuses = [
     {
       port: 'fc0',
       A: {
-        port_type: 'INITIATOR',
-        port_state: 'ONLINE',
-        speed: '16Gb',
-        physical: true,
-        wwpn: '10:00:00:00:00:00:00:01',
+        port_state: 'Online',
       },
       B: {
-        port_type: 'INITIATOR',
-        port_state: 'OFFLINE',
-        speed: '16Gb',
-        physical: true,
-        wwpn: '10:00:00:00:00:00:00:02',
+        port_state: 'Offline',
       },
     },
     {
       port: 'fc1',
       A: {
-        port_type: 'TARGET',
-        port_state: 'ONLINE',
-        speed: '32Gb',
-        physical: true,
-        wwpn: '20:00:00:00:00:00:00:01',
+        port_state: 'Online',
       },
       B: {
-        port_type: 'TARGET',
-        port_state: 'ONLINE',
-        speed: '32Gb',
-        physical: true,
-        wwpn: '20:00:00:00:00:00:00:02',
+        port_state: 'Online',
       },
     },
-  ];
+  ] as FibreChannelStatus[];
 
   const createComponent = createComponentFactory({
     component: FibreChannelPortsComponent,
     providers: [
       mockAuth(),
       mockApi([
-        mockCall('fcport.query', [mockFibreChannelPort]),
-        mockCall('fcport.delete'),
-        mockCall('fcport.status', mockFcStatus as FibreChannelStatus[]),
+        mockCall('fc.fc_host.query', hosts),
+        mockCall('fcport.query', ports),
+        mockCall('fcport.status', statuses),
       ]),
-      mockProvider(SlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
-      }),
-      mockProvider(SlideInRef, {
-        slideInClosed$: of(true),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(true)),
+        })),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -115,46 +119,39 @@ describe('FibreChannelPortsComponent', () => {
   });
 
   it('should show correct table rows', async () => {
-    const expectedRows = [
-      ['Port', 'Target', 'WWPN', 'WWPN (B)', 'State', ''],
-      [
-        'fc1',
-        'target1',
-        '10:00:00:00:00:00:00:01',
-        '10:00:00:00:00:00:00:02',
-        'A:ONLINE B:ONLINE',
-        '',
-      ],
-    ];
-
     const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
+    expect(cells).toEqual([
+      ['Port', 'Target', 'WWPN', 'WWPN (B)', 'State', ''],
+      ['fc0', 'target1', 'naa.220034800d75aec4', 'naa.220034800d75aec5', 'A: Online B: Offline', ''],
+      ['– fc0/1 (virtual)', 'target2', 'naa.220034800d75aec8', 'naa.220034800d75aec9', 'A: – B: –', ''],
+      ['– fc0/2 (virtual)', '', '', '', 'A: – B: –', ''],
+      ['fc1', 'target2', 'naa.220034800d75aec6', 'naa.220034800d75aec7', 'A: Online B: Online', ''],
+      ['– fc1/1 (virtual)', '', '', '', 'A: – B: –', ''],
+    ]);
+  });
+
+  it('shows edit icon on physical ports only', async () => {
+    const firstRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 1, 5);
+    const secondRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 2, 5);
+    const thirdRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 3, 5);
+    const fourthRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 4, 5);
+    const fifthRowIcons = await table.getAllHarnessesInCell(IxIconHarness, 5, 5);
+
+    expect(firstRowIcons).toHaveLength(1);
+    expect(await firstRowIcons[0].getName()).toBe('edit');
+    expect(secondRowIcons).toHaveLength(0);
+    expect(thirdRowIcons).toHaveLength(0);
+    expect(fourthRowIcons).toHaveLength(1);
+    expect(await fourthRowIcons[0].getName()).toBe('edit');
+    expect(fifthRowIcons).toHaveLength(0);
   });
 
   it('opens fibre channel port form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open)
-      .toHaveBeenCalledWith(FibreChannelPortsFormComponent, { data: mockFibreChannelPort });
-  });
-
-  it('opens confirmation dialog when Delete is clicked and deletes the port when confirmed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-delete' }), 1, 5);
-    await deleteButton.click();
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Delete Fibre Channel Port',
-      message: 'Are you sure you want to delete Fibre Channel Port fc1?',
-      buttonText: 'Delete',
-      cancelText: 'Cancel',
-    });
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [1]);
-  });
-
-  it('should load data on init', () => {
-    const apiService = spectator.inject(ApiService);
-    expect(apiService.call).toHaveBeenCalledWith('fcport.query');
+    expect(spectator.inject(MatDialog).open)
+      .toHaveBeenCalledWith(VirtualPortsNumberDialogComponent, { data: hosts[0] });
   });
 
   it('should show/hide WWPN (B) column based on HA status', async () => {
@@ -165,10 +162,5 @@ describe('FibreChannelPortsComponent', () => {
 
     const headers = await table.getHeaderTexts();
     expect(headers).not.toContain('WWPN (B)');
-  });
-
-  it('should show correct state from status data', async () => {
-    const cells = await table.getCellTexts();
-    expect(cells[1][4]).toBe('A:ONLINE B:ONLINE');
   });
 });
