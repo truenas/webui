@@ -20,7 +20,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, filter,
+  forkJoin,
   Observable,
+  switchMap,
 } from 'rxjs';
 import { CatalogAppState } from 'app/enums/catalog-app-state.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -36,6 +38,11 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
+import {
+  AppDeleteDialogInputData,
+  AppDeleteDialogOutputData,
+} from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
@@ -122,18 +129,18 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   get isBulkStartDisabled(): boolean {
     return this.checkedApps.every(
-      (app) => [CatalogAppState.Running, CatalogAppState.Deploying].includes(app.state),
+      (app) => [CatalogAppState.Running, CatalogAppState.Deploying].includes(app?.state),
     );
   }
 
   get isBulkStopDisabled(): boolean {
     return this.checkedApps.every(
-      (app) => [CatalogAppState.Stopped, CatalogAppState.Crashed].includes(app.state),
+      (app) => [CatalogAppState.Stopped, CatalogAppState.Crashed].includes(app?.state),
     );
   }
 
   get isBulkUpgradeDisabled(): boolean {
-    return !this.checkedApps.some((app) => app.upgrade_available);
+    return !this.checkedApps.some((app) => app?.upgrade_available);
   }
 
   get activeCheckedApps(): App[] {
@@ -374,43 +381,64 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkDelete(): void {
-    const checkedNames = this.checkedAppsNames;
-    const name = checkedNames.join(', ');
-    this.dialogService.confirm({
-      title: helptextApps.apps.delete_dialog.title,
-      message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Remove iXVolumes'),
-    })
-      .pipe(filter(({ confirmed }) => Boolean(confirmed)), untilDestroyed(this))
-      .subscribe(({ secondaryCheckbox }) => {
-        this.dialogService.jobDialog(
-          this.ws.job('core.bulk', ['app.delete', checkedNames.map(
-            (item) => [item, { remove_images: true, remove_ix_volumes: secondaryCheckbox }],
-          )]),
-          { title: helptextApps.apps.delete_dialog.job },
-        )
-          .afterClosed()
-          .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-          .subscribe((job: Job<CoreBulkResponse[]>) => {
-            if (!this.dataSource.length) {
-              this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-            }
-            this.dialogService.closeAllDialogs();
-            let message = '';
-            job.result.forEach((item) => {
-              if (item.error !== null) {
-                message = message + '<li>' + item.error + '</li>';
-              }
-            });
+    forkJoin(this.checkedAppsNames.map((appName) => this.appService.checkIfAppIxVolumeExists(appName)))
+      .pipe(
+        this.loader.withLoader(),
+        switchMap((ixVolumesExist) => {
+          return this.matDialog.open<
+          AppDeleteDialogComponent,
+          AppDeleteDialogInputData,
+          AppDeleteDialogOutputData
+          >(AppDeleteDialogComponent, {
+            data: {
+              name: this.checkedAppsNames.join(', '),
+              showRemoveVolumes: ixVolumesExist.some(Boolean),
+            },
+          }).afterClosed();
+        }),
+        filter(Boolean),
+        switchMap((options) => this.executeBulkDeletion(options)),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job: Job<CoreBulkResponse[]>) => this.handleDeletionResult(job));
+  }
 
-            if (message !== '') {
-              message = '<ul>' + message + '</ul>';
-              this.dialogService.error({ title: helptextApps.bulkActions.title, message });
-            }
-          });
-        this.toggleAppsChecked(false);
-      });
+  private executeBulkDeletion(options: AppDeleteDialogOutputData): Observable<Job<CoreBulkResponse[]>> {
+    const bulkDeletePayload = this.checkedAppsNames.map((name) => [
+      name,
+      {
+        remove_images: options.removeImages,
+        remove_ix_volumes: options.removeVolumes,
+        force_remove_ix_volumes: options.forceRemoveVolumes,
+      },
+    ]);
+
+    return this.dialogService.jobDialog(
+      this.ws.job('core.bulk', ['app.delete', bulkDeletePayload]),
+      { title: helptextApps.apps.delete_dialog.job },
+    ).afterClosed();
+  }
+  private handleDeletionResult(job: Job<CoreBulkResponse[]>): void {
+    if (!this.dataSource.length) {
+      this.redirectToInstalledAppsWithoutDetails();
+    }
+    this.dialogService.closeAllDialogs();
+    const errorMessages = this.getErrorMessages(job.result);
+    if (errorMessages) {
+      this.dialogService.error({ title: helptextApps.bulkActions.title, message: errorMessages });
+    }
+    this.toggleAppsChecked(false);
+  }
+
+  private getErrorMessages(results: CoreBulkResponse[]): string {
+    const errors = results.filter((item) => item.error).map((item) => `<li>${item.error}</li>`);
+
+    return errors.length ? `<ul>${errors.join('')}</ul>` : '';
+  }
+
+  private redirectToInstalledAppsWithoutDetails(): void {
+    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
   }
 
   getAppStatus(name: string): AppStatus {
