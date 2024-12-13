@@ -63,7 +63,7 @@ describe('IxTableColumnsSelectorComponent', () => {
 
   it('initializes with the correct default and hidden columns', () => {
     const hiddenColumnsTitles = spectator.component.hiddenColumns.selected.map((col) => col.title);
-    const selectedColumnsTitles = spectator.component.columns.filter((col) => !col.hidden).map((col) => col.title);
+    const selectedColumnsTitles = spectator.component.columns().filter((col) => !col.hidden).map((col) => col.title);
 
     expect(hiddenColumnsTitles).toEqual(expect.arrayContaining(['Description', 'Enabled']));
     expect(selectedColumnsTitles).toEqual(expect.arrayContaining(['Users', 'Command', 'Schedule']));
