@@ -70,13 +70,13 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
-    const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
+    const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex());
     const availableIndexes = Array.from({ length: this.columns().length }, (_, idx) => idx)
       .filter((idx) => !templatedCellIndexes.includes(idx));
 
     this.customCells.forEach((cell) => {
-      if (cell.columnIndex === undefined) {
-        cell.columnIndex = availableIndexes.shift();
+      if (cell.columnIndex() === undefined) {
+        cell.columnIndex.set(availableIndexes.shift());
       }
     });
 
@@ -91,7 +91,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
-    return this.customCells.toArray().find((cell) => cell.columnIndex === idx)?.templateRef;
+    return this.customCells.toArray().find((cell) => cell.columnIndex() === idx)?.templateRef;
   }
 
   onToggle(row: T): void {

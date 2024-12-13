@@ -19,6 +19,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import {
+  GlobalTargetConfigurationComponent,
+} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
@@ -81,7 +84,7 @@ export class ServiceExtraActionsComponent {
   configureService(service: Service): void {
     switch (service.service) {
       case ServiceName.Iscsi:
-        this.navigateAndInteract.navigateAndInteract(['/sharing', 'iscsi'], 'global-configuration');
+        this.slideInService.open(GlobalTargetConfigurationComponent);
         break;
       case ServiceName.Nfs:
         this.slideInService.open(ServiceNfsComponent, { wide: true });

@@ -30,8 +30,11 @@ export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
   @ViewChild(TreeNodeOutletDirective, { static: true }) override _nodeOutlet: TreeNodeOutletDirective<T>;
   private destroy$ = new Subject<void>();
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename, @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @stylistic/ts/max-len
+  // eslint-disable-next-line @angular-eslint/no-input-rename, @typescript-eslint/no-explicit-any,@angular-eslint/prefer-signals
   @Input('ixTreeControl') override treeControl!: TreeControl<T, any>;
+
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('ixDataSource')
   override get dataSource(): DataSource<T> | Observable<T[]> | T[] {
     return super.dataSource;

@@ -6,6 +6,9 @@ import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import {
+  AssociatedExtentsCardComponent,
+} from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
+import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
 import {
@@ -19,15 +22,19 @@ describe('TargetDetailsComponent', () => {
   let mockApiService: jest.Mocked<ApiService>;
 
   const mockPort = {
-    id: 'Port-1',
+    id: 1,
     wwpn: '10:00:00:00:c9:20:00:00',
     wwpn_b: '10:00:00:00:c9:20:00:01',
-  } as unknown as FibreChannelPort;
+  } as FibreChannelPort;
 
   const createComponent = createComponentFactory({
     component: TargetDetailsComponent,
     declarations: [
-      MockComponents(AuthorizedNetworksCardComponent, FibreChannelPortCardComponent),
+      MockComponents(
+        AuthorizedNetworksCardComponent,
+        FibreChannelPortCardComponent,
+        AssociatedExtentsCardComponent,
+      ),
     ],
     providers: [
       mockApi([

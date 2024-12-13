@@ -19,11 +19,11 @@ import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 export class DatasetIconComponent {
   readonly dataset = input.required<DatasetDetails>();
 
-  protected isRoot = computed(() => isRootDataset(this.dataset()));
+  protected readonly isRoot = computed(() => isRootDataset(this.dataset()));
 
-  protected isZvol = computed(() => this.dataset().type === DatasetType.Volume);
+  protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  protected iconName = computed(() => {
+  protected readonly iconName = computed(() => {
     if (this.isRoot()) {
       return 'ix-dataset-root';
     }

@@ -5,7 +5,7 @@
       <mat-select
         ixTest="pageSize"
         tabIndex="0"
-        [value]="pageSize"
+        [value]="pageSize()"
         [aria-label]="'Items per page' | translate"
         (selectionChange)="onPageSizeChange($event)"
       >
@@ -29,7 +29,7 @@
     <button
       mat-icon-button
       ixTest="max-left"
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage() === 1"
       [attr.aria-label]="'First Page' | translate"
       (click)="goToPage(1)"
     >
@@ -38,7 +38,7 @@
     <button
       mat-icon-button
       ixTest="left"
-      [disabled]="currentPage === 1"
+      [disabled]="currentPage() === 1"
       [attr.aria-label]="'Previous Page' | translate"
       (click)="previousPage()"
     >
@@ -48,7 +48,7 @@
       mat-icon-button
       ixTest="right"
       [attr.aria-label]="'Next Page' | translate"
-      [disabled]="currentPage === totalPages || !totalPages"
+      [disabled]="currentPage() === totalPages || !totalPages"
       (click)="nextPage()"
     >
       <ix-icon name="mdi-chevron-right"></ix-icon>
@@ -57,7 +57,7 @@
       mat-icon-button
       ixTest="max-right"
       [attr.aria-label]="'Last Page' | translate"
-      [disabled]="currentPage === totalPages || !totalPages"
+      [disabled]="currentPage() === totalPages || !totalPages"
       (click)="goToPage(totalPages)"
     >
       <ix-icon name="last_page"></ix-icon>
