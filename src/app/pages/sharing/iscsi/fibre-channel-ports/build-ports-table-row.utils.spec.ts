@@ -62,65 +62,71 @@ describe('buildPortsTableRow', () => {
     const result = buildPortsTableRow(hosts, ports, statuses);
 
     expect(result).toEqual([
-      [
-        {
-          name: 'fc0',
-          wwpn: 'naa.220034800d75aec4',
-          wwpn_b: 'naa.220034800d75aec5',
-          a_port_state: 'Online',
-          b_port_state: 'Offline',
-          target: {
-            id: 1,
-            iscsi_target_name: 'target1',
-          },
-          host: {
-            alias: 'fc0',
-            npiv: 2,
-          },
+      {
+        name: 'fc0',
+        wwpn: 'naa.220034800d75aec4',
+        wwpn_b: 'naa.220034800d75aec5',
+        aPortState: 'Online',
+        bPortState: 'Offline',
+        target: {
+          id: 1,
+          iscsi_target_name: 'target1',
         },
-        {
-          name: 'fc0/1',
-          wwpn: 'naa.220034800d75aec8',
-          wwpn_b: 'naa.220034800d75aec9',
-          target: {
-            id: 2,
-            iscsi_target_name: 'target2',
-          },
-          host: {
-            alias: 'fc0',
-            npiv: 2,
-          },
+        host: {
+          alias: 'fc0',
+          npiv: 2,
         },
-        {
-          name: 'fc0/2',
-          host: {
-            alias: 'fc0',
-            npiv: 2,
-          },
+        isPhysical: true,
+      },
+      {
+        name: 'fc0/1',
+        wwpn: 'naa.220034800d75aec8',
+        wwpn_b: 'naa.220034800d75aec9',
+        target: {
+          id: 2,
+          iscsi_target_name: 'target2',
         },
-        {
-          name: 'fc1',
-          wwpn: 'naa.220034800d75aec6',
-          wwpn_b: 'naa.220034800d75aec7',
-          target: {
-            id: 2,
-            iscsi_target_name: 'target2',
-          },
-          a_port_state: 'Online',
-          b_port_state: 'Online',
-          host: {
-            alias: 'fc1',
-            npiv: 1,
-          },
+        aPortState: undefined,
+        bPortState: undefined,
+        isPhysical: false,
+        host: undefined,
+      },
+      {
+        name: 'fc0/2',
+        host: undefined,
+        target: undefined,
+        aPortState: undefined,
+        bPortState: undefined,
+        isPhysical: false,
+        wwpn: undefined,
+        wwpn_b: undefined,
+      },
+      {
+        name: 'fc1',
+        wwpn: 'naa.220034800d75aec6',
+        wwpn_b: 'naa.220034800d75aec7',
+        target: {
+          id: 2,
+          iscsi_target_name: 'target2',
         },
-        {
-          name: 'fc1/1',
-          host: {
-            alias: 'fc1',
-            npiv: 1,
-          },
+        aPortState: 'Online',
+        bPortState: 'Online',
+        host: {
+          alias: 'fc1',
+          npiv: 1,
         },
-      ],
+        isPhysical: true,
+      },
+      {
+        name: 'fc1/1',
+        host: undefined,
+        target: undefined,
+        aPortState: undefined,
+        bPortState: undefined,
+        isPhysical: false,
+        wwpn: undefined,
+        wwpn_b: undefined,
+      },
     ]);
   });
 });
