@@ -3085,7 +3085,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "REPORTING_WRITE"
+      "FULL_ADMIN"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
