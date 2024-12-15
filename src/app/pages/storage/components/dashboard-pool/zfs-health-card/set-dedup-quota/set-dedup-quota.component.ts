@@ -8,7 +8,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { DeduplicationQuotaType } from 'app/enums/deduplication-setting.enum';
+import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -96,11 +96,11 @@ export class SetDedupQuotaComponent {
     let payload: UpdatePool;
     switch (this.form.value.quotaType) {
       case QuotaType.Auto:
-        payload = { dedup_table_quota: DeduplicationQuotaType.Auto };
+        payload = { dedup_table_quota: NewDeduplicationQuotaSetting.Auto };
         break;
       case QuotaType.Custom:
         payload = {
-          dedup_table_quota: DeduplicationQuotaType.Custom,
+          dedup_table_quota: NewDeduplicationQuotaSetting.Custom,
           dedup_table_quota_value: this.form.value.quotaValue,
         };
         break;

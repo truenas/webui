@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
-import { DeduplicationQuotaType } from 'app/enums/deduplication-setting.enum';
+import { NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -75,7 +75,7 @@ describe('SetDedupQuotaComponent', () => {
       await submitButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
-        dedup_table_quota: DeduplicationQuotaType.Auto,
+        dedup_table_quota: NewDeduplicationQuotaSetting.Auto,
       }]);
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -107,7 +107,7 @@ describe('SetDedupQuotaComponent', () => {
       await submitButton.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [2, {
-        dedup_table_quota: DeduplicationQuotaType.Custom,
+        dedup_table_quota: NewDeduplicationQuotaSetting.Custom,
         dedup_table_quota_value: 200 * MiB,
       }]);
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);

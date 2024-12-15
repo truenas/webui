@@ -1,4 +1,4 @@
-import { DeduplicationSetting, DeduplicationQuotaType } from 'app/enums/deduplication-setting.enum';
+import { DeduplicationSetting, NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -87,7 +87,7 @@ export interface UpdatePool {
   topology?: UpdatePoolTopology;
   autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
-  dedup_table_quota?: DeduplicationQuotaType;
+  dedup_table_quota?: NewDeduplicationQuotaSetting;
   dedup_table_quota_value?: number;
 }
 

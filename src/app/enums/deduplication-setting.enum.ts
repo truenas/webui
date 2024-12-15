@@ -12,7 +12,7 @@ export const deduplicationSettingLabels = new Map<DeduplicationSetting, string>(
   [DeduplicationSetting.Verify, T('Verify')],
 ]);
 
-export enum DeduplicationQuotaType {
+export enum NewDeduplicationQuotaSetting {
   Auto = 'AUTO',
   Custom = 'CUSTOM',
 }
