@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -73,15 +73,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CsrAddComponent {
-  @ViewChild(CsrIdentifierAndTypeComponent) identifierAndType: CsrIdentifierAndTypeComponent;
+  protected readonly identifierAndType = viewChild(CsrIdentifierAndTypeComponent);
 
   // Adding new
-  @ViewChild(CertificateOptionsComponent) options: CertificateOptionsComponent;
-  @ViewChild(CertificateSubjectComponent) subject: CertificateSubjectComponent;
-  @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing
-  @ViewChild(CsrImportComponent) import: CsrImportComponent;
+  protected readonly import = viewChild(CsrImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -99,7 +99,7 @@ export class CsrAddComponent {
   ) { }
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.ImportCsr;
+    return this.identifierAndType()?.form?.value.create_type === CertificateCreateType.ImportCsr;
   }
 
   getNewCsrSteps(): [
@@ -108,14 +108,14 @@ export class CsrAddComponent {
     CertificateSubjectComponent,
     CertificateConstraintsComponent,
   ] {
-    return [this.identifierAndType, this.options, this.subject, this.constraints];
+    return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
   getImportCsrSteps(): [
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
   ] {
-    return [this.identifierAndType, this.import];
+    return [this.identifierAndType(), this.import()];
   }
 
   // TODO: Similar code between all certificate forms.
@@ -130,7 +130,7 @@ export class CsrAddComponent {
       step.form.patchValue(otherFields);
     });
 
-    this.constraints.setFromProfile(extensions);
+    this.constraints().setFromProfile(extensions);
   }
 
   updateSummary(): void {

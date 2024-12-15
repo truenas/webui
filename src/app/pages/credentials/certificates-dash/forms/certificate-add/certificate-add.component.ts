@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -73,15 +73,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateAddComponent {
-  @ViewChild(CertificateIdentifierAndTypeComponent) identifierAndType: CertificateIdentifierAndTypeComponent;
+  protected readonly identifierAndType = viewChild(CertificateIdentifierAndTypeComponent);
 
   // Adding new certificate
-  @ViewChild(CertificateOptionsComponent) options: CertificateOptionsComponent;
-  @ViewChild(CertificateSubjectComponent) subject: CertificateSubjectComponent;
-  @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing existing certificate
-  @ViewChild(CertificateImportComponent) import: CertificateImportComponent;
+  protected readonly import = viewChild(CertificateImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -99,7 +99,7 @@ export class CertificateAddComponent {
   ) {}
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CertificateCreateType.Import;
+    return this.identifierAndType()?.form?.value.create_type === CertificateCreateType.Import;
   }
 
   getNewCertificateSteps(): [
@@ -108,11 +108,11 @@ export class CertificateAddComponent {
     CertificateSubjectComponent,
     CertificateConstraintsComponent,
   ] {
-    return [this.identifierAndType, this.options, this.subject, this.constraints];
+    return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
   getImportCertificateSteps(): [CertificateIdentifierAndTypeComponent, CertificateImportComponent] {
-    return [this.identifierAndType, this.import];
+    return [this.identifierAndType(), this.import()];
   }
 
   onSubmit(): void {
@@ -149,7 +149,7 @@ export class CertificateAddComponent {
       step.form.patchValue(otherFields);
     });
 
-    this.constraints.setFromProfile(extensions);
+    this.constraints().setFromProfile(extensions);
   }
 
   updateSummary(): void {

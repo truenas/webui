@@ -3,8 +3,7 @@ import {
   ChangeDetectorRef,
   Component, input,
   OnChanges,
-  OnInit,
-  ViewChild,
+  OnInit, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -70,7 +69,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly canCreateDataset = input(false);
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
-  @ViewChild('tree', { static: true }) tree: TreeComponent;
+  // TODO: Should be private, but it's used directly in tests
+  readonly tree = viewChild(TreeComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
 
@@ -87,7 +87,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   get createDatasetDisabled(): boolean {
     return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
-      || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
+      || !this.tree().treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
       || this.isDisabled;
   }
 
@@ -163,7 +163,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
     if (this.multiple()) {
       this.selectTreeNodes([
-        ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
+        ...Object.keys(this.tree().treeModel.selectedLeafNodeIds),
         event.node.id as string,
       ]);
     } else {
@@ -176,7 +176,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
     if (this.multiple()) {
       this.selectTreeNodes(
-        Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+        Object.keys(this.tree().treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
       );
     } else {
       this.selectTreeNodes([]);
@@ -197,7 +197,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onSelectionChanged(): void {
-    let newValue: string[] | string = Object.entries(this.tree.treeModel.selectedLeafNodeIds)
+    let newValue: string[] | string = Object.entries(this.tree().treeModel.selectedLeafNodeIds)
       .filter(([, isSelected]) => isSelected)
       .map(([nodeId]) => nodeId);
 
@@ -242,13 +242,13 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
           return;
         }
 
-        const parentNode = this.tree.treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
+        const parentNode = this.tree().treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
         parentNode?.expand();
 
         this.setInitialNode();
         this.writeValue(`${this.root()}/${dataset.name}`);
         this.onChange(this.value);
-        this.tree.treeModel.update();
+        this.tree().treeModel.update();
       });
   }
 
@@ -277,11 +277,11 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   private selectTreeNodes(nodeIds: string[]): void {
     const treeState = {
-      ...this.tree.treeModel.getState(),
+      ...this.tree().treeModel.getState(),
       selectedLeafNodeIds: nodeIds.reduce((acc, nodeId) => ({ ...acc, [nodeId]: true }), {}),
     };
 
-    this.tree.treeModel.setState(treeState);
+    this.tree().treeModel.setState(treeState);
   }
 
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
