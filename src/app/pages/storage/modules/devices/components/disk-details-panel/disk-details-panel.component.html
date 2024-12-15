@@ -2,21 +2,21 @@
   <h3 class="title">
     <div class="mobile-prefix">
       <ix-mobile-back-button
-        (onClose)="onCloseMobileDetails()"
+        (close)="onCloseMobileDetails()"
       ></ix-mobile-back-button>
       {{ 'Details for' | translate }}
     </div>
 
     <span class="prefix">{{ 'Details for' | translate }}</span>
 
-    <div class="full-path" [matTooltip]="title | translate">
+    <div class="full-path" [matTooltip]="title() | translate">
       <ix-topology-item-icon
         class="title-icon"
         [topologyItem]="topologyItem()"
         [disk]="disk()"
       ></ix-topology-item-icon>
       <span class="device-name">
-        {{ title | translate }}
+        {{ title() | translate }}
       </span>
     </div>
   </h3>
@@ -34,7 +34,7 @@
       (deviceRemoved)="onCloseMobileDetails()"
     ></ix-zfs-info-card>
 
-    @if (isTopologyDisk && hasTopologyItemDisk) {
+    @if (isTopologyDisk() && hasTopologyItemDisk()) {
       <ix-hardware-disk-encryption
         [topologyDisk]="topologyItem() | cast"
       ></ix-hardware-disk-encryption>
@@ -42,11 +42,11 @@
       <ix-smart-info-card
         [topologyDisk]="topologyItem() | cast"
         [disk]="disk()"
-        [hasSmartTestSupport]="hasSmartTestSupport"
+        [hasSmartTestSupport]="hasSmartTestSupport()"
       ></ix-smart-info-card>
     }
 
-    @if (isTopologyDisk) {
+    @if (isTopologyDisk()) {
       <ix-disk-info-card
         [topologyDisk]="topologyItem() | cast"
         [disk]="disk()"

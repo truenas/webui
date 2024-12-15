@@ -4,7 +4,7 @@
     *ixRequiresRoles="requiredRoles()"
     color="primary"
     [aria-label]="isRunning() ? ('Stop service' | translate) : ('Start service' | translate)"
-    [ixTest]="['service', 'running', testIdServiceName, 'toggle']"
+    [ixTest]="['service', 'running', testIdServiceName(), 'toggle']"
     [checked]="isRunning()"
     (change)="onSlideToggleChanged($event)"
     (click)="$event.stopPropagation()"

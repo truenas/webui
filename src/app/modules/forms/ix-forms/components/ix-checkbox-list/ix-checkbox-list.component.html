@@ -16,7 +16,7 @@
       class="checkbox"
       color="primary"
       [checked]="isChecked(option.value)"
-      [style.flex-basis]="fieldFlex"
+      [style.flex-basis]="fieldFlex()"
       [attr.aria-label]="option.label"
       [disabled]="isDisabled"
       [ixTest]="[controlDirective.name, option.label]"

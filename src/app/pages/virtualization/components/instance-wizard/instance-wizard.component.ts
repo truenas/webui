@@ -36,7 +36,6 @@ import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -48,7 +47,6 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
@@ -73,18 +71,16 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     IxCheckboxComponent,
     MatButton,
-    IxCheckboxListComponent,
     TestDirective,
     IxFieldsetComponent,
     ReadOnlyComponent,
     AsyncPipe,
     IxListComponent,
-    RegisteredControlDirective,
     IxFormGlossaryComponent,
     IxFormSectionComponent,
+    IxCheckboxListComponent,
     IxListItemComponent,
     IxSelectComponent,
-    IxButtonGroupComponent,
     IxExplorerComponent,
     NgxSkeletonLoaderModule,
   ],
@@ -95,12 +91,14 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
+  protected readonly visibleImageName = new FormControl('');
   protected readonly VirtualizationNicType = VirtualizationNicType;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
-  readonly nicType$ = of(mapToOptions(virtualizationNicTypeLabels, this.translate));
+  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
+  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
   readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
@@ -131,6 +129,7 @@ export class InstanceWizardComponent {
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
+    use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
     bridged_nics: [[] as string[]],
@@ -146,7 +145,6 @@ export class InstanceWizardComponent {
       destination: FormControl<string>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
-    nic_type: [VirtualizationNicType.Bridged],
   });
 
   get hasRequiredRoles(): Observable<boolean> {
@@ -183,6 +181,7 @@ export class InstanceWizardComponent {
         }
 
         this.form.controls.image.setValue(image.id);
+        this.visibleImageName.setValue(image.label);
       });
   }
 

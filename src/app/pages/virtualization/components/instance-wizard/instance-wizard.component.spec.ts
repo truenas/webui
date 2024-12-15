@@ -148,6 +148,9 @@ describe('InstanceWizardComponent', () => {
     const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
     await usbDeviceCheckbox.setValue(true);
 
+    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+    await useDefaultNetworkCheckbox.setValue(false);
+
     const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
     await nicDeviceCheckbox.setValue(true);
 
@@ -178,6 +181,41 @@ describe('InstanceWizardComponent', () => {
         { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
         { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],
+      image: 'almalinux/8/cloud',
+      memory: GiB,
+      environment: {},
+    }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('sends no NIC devices when default network settings checkbox is set', async () => {
+    await form.fillForm({
+      Name: 'new',
+      Autostart: true,
+      'CPU Configuration': '1-2',
+      'Memory Size': '1 GiB',
+    });
+
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+    await browseButton.click();
+
+    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+    await useDefaultNetworkCheckbox.setValue(false);
+
+    const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
+    await nicDeviceCheckbox.setValue(true);
+
+    await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+    await createButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      name: 'new',
+      autostart: true,
+      cpu: '1-2',
+      devices: [],
       image: 'almalinux/8/cloud',
       memory: GiB,
       environment: {},

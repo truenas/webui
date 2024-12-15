@@ -9,6 +9,7 @@ import { Directive, Input } from '@angular/core';
 export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
   override _indent = 24;
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('treeNodePadding')
   override get level(): number {
     return this._level;
@@ -18,6 +19,7 @@ export class TreeNodePaddingDirective<T> extends CdkTreeNodePadding<T> {
     this._setLevelInput(value);
   }
 
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input('treeNodePaddingIndent')
   override get indent(): number | string {
     return this._indent;

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -53,7 +53,7 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  get fieldFlex(): string {
+  protected fieldFlex = computed(() => {
     if (!this.inlineFields()) {
       return '100%';
     }
@@ -63,7 +63,7 @@ export class IxCheckboxListComponent implements ControlValueAccessor {
     }
 
     return '50%';
-  }
+  });
 
   onChange: (value: (string | number)[]) => void = (): void => {};
   onTouch: () => void = (): void => {};

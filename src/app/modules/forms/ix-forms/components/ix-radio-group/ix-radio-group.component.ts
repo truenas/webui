@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -61,7 +61,7 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  get fieldFlex(): string {
+  protected fieldFlex = computed(() => {
     if (!this.inlineFields()) {
       return '100%';
     }
@@ -71,7 +71,7 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
     }
 
     return '50%';
-  }
+  });
 
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};

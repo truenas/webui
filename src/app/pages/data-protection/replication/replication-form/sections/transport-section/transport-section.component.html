@@ -1,5 +1,5 @@
 <ix-fieldset [title]="'Transport Options' | translate" [formGroup]="form">
-  @if (!isLocal) {
+  @if (!isLocal()) {
     <ix-ssh-credentials-select
       formControlName="ssh_credentials"
       [label]="'SSH Connection' | translate"
@@ -7,7 +7,7 @@
       [tooltip]="helptext.ssh_credentials_tooltip | translate"
     ></ix-ssh-credentials-select>
   }
-  @if (isNetcat) {
+  @if (isNetcat()) {
     <ix-select
       formControlName="netcat_active_side"
       [label]="'Netcat Active Side' | translate"
@@ -38,7 +38,7 @@
       [tooltip]="helptext.netcat_passive_side_connect_address_tooltip | translate"
     ></ix-input>
   }
-  @if (isSsh) {
+  @if (isSsh()) {
     <ix-select
       formControlName="compression"
       [label]="'Stream Compression' | translate"

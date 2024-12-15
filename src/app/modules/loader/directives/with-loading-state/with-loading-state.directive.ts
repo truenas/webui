@@ -1,8 +1,9 @@
 import {
-  ChangeDetectorRef, Directive, Input, OnDestroy, TemplateRef, ViewContainerRef,
+  ChangeDetectorRef, Directive, input, OnChanges, OnDestroy, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { isObservable, Observable, Subscription } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   WithLoadingStateErrorComponent,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state-error/with-loading-state-error.component';
@@ -23,7 +24,7 @@ import {
   selector: '[ixWithLoadingState]',
   standalone: true,
 })
-export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
+export class WithLoadingStateDirective<V = unknown> implements OnChanges, OnDestroy {
   renderSubscription: Subscription;
 
   constructor(
@@ -32,7 +33,22 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  @Input('ixWithLoadingState') set state(state$: LoadingState<V> | Observable<LoadingState<V>>) {
+  readonly state = input.required<LoadingState<V> | Observable<LoadingState<V>>>({
+    alias: 'ixWithLoadingState',
+  });
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if ('state' in changes) {
+      this.updateView();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.renderSubscription?.unsubscribe();
+  }
+
+  private updateView(): void {
+    const state$ = this.state();
     this.renderSubscription?.unsubscribe();
 
     if (isObservable(state$)) {
@@ -40,10 +56,6 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
     } else {
       this.renderState(state$);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.renderSubscription?.unsubscribe();
   }
 
   private renderState(state: LoadingState<V>): void {

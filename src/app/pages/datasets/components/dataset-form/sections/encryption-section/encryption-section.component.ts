@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit, output,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, output,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -41,11 +41,11 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
 
   readonly formValidityChange = output<boolean>();
 
-  get inheritEncryptionLabel(): string {
+  protected inheritEncryptionLabel = computed(() => {
     return this.parent().encrypted
       ? this.translate.instant('Inherit (encrypted)')
       : this.translate.instant('Inherit (non-encrypted)');
-  }
+  });
 
   // TODO: Add conditional validators
   readonly form = this.formBuilder.group({
@@ -95,11 +95,11 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     return this.form.controls.encryption_type.value === DatasetEncryptionType.Passphrase;
   }
 
-  get parentHasPassphrase(): boolean {
+  protected parentHasPassphrase = computed(() => {
     return this.parent()
       && this.parent().encrypted
       && this.parent().key_format.value === EncryptionKeyFormat.Passphrase;
-  }
+  });
 
   ngOnChanges(): void {
     if (this.parent()) {
@@ -145,7 +145,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   }
 
   private setInheritValues(): void {
-    if (this.parentHasPassphrase) {
+    if (this.parentHasPassphrase()) {
       this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
     }
 

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -39,9 +39,9 @@ export class EmptyComponent {
     }
   }
 
-  get isLoading(): boolean {
+  protected isLoading = computed(() => {
     return this.conf().type === EmptyType.Loading;
-  }
+  });
 
   getIcon(): MarkedIcon {
     let icon = iconMarker('ix-truenas-logo');

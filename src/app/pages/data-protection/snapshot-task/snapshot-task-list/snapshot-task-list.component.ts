@@ -158,10 +158,6 @@ export class SnapshotTaskListComponent implements OnInit {
     ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
-
   get hiddenColumns(): Column<PeriodicSnapshotTaskUi, ColumnComponent<PeriodicSnapshotTaskUi>>[] {
     return this.columns.filter((column) => column?.hidden);
   }

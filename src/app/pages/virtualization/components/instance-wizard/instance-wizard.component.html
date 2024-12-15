@@ -6,10 +6,13 @@
 
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
-    <ix-form-section [label]="'Instance Configuration' | translate" [help]="'Instance Configuration' | translate">
+    <ix-form-section
+      [label]="'Instance Configuration' | translate" 
+      [help]="'Instance Configuration' | translate"
+    >
       <ix-input
         formControlName="name"
-        [label]="'Name'"
+        [label]="'Name' | translate"
         [required]="true"
       ></ix-input>
 
@@ -21,7 +24,7 @@
       <div class="image-field">
         <ix-input
           class="input"
-          formControlName="image"
+          [formControlName]="image"
           [readonly]="true"
           [label]="'Image' | translate"
           [required]="true"
@@ -36,7 +39,10 @@
       </div>
     </ix-form-section>
 
-    <ix-form-section [label]="'CPU & Memory' | translate" [help]="'CPU & Memory' | translate">
+    <ix-form-section
+      [label]="'CPU & Memory' | translate"
+      [help]="'CPU & Memory' | translate"
+    >
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
@@ -52,7 +58,10 @@
       ></ix-input>
     </ix-form-section>
 
-    <ix-form-section [label]="'Environment' | translate" [help]="'Environment' | translate">
+    <ix-form-section
+      [label]="'Environment' | translate"
+      [help]="'Environment' | translate"
+    >
       <ix-list
         formArrayName="environment_variables"
         [empty]="form.controls.environment_variables.controls.length === 0"
@@ -83,7 +92,10 @@
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section [label]="'Disks' | translate" [help]="'Disks' | translate">
+    <ix-form-section
+      [label]="'Disks' | translate"
+      [help]="'Disks' | translate"
+    >
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
@@ -114,10 +126,10 @@
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section [label]="'Network' | translate" [help]="'Network' | translate">
-    </ix-form-section>
-
-    <ix-form-section [label]="'Proxies' | translate" [help]="'Proxies' | translate">
+    <ix-form-section
+      [label]="'Proxies' | translate"
+      [help]="'Proxies' | translate"
+    >
       <ix-list
         formArrayName="proxies"
         [empty]="form.controls.proxies.controls.length === 0"
@@ -171,46 +183,44 @@
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section [label]="'NIC' | translate" [help]="'NIC' | translate">
-      @if (hasPendingInterfaceChanges()) {
-        <p class="warning">
-          {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
-        </p>
-      } @else {
-        <ix-button-group
-          formControlName="nic_type"
-          [options]="nicType$"
-          [inlineFields]="true"
-          [attr.aria-label]="'NIC Type' | translate"
-          [label]="'NIC Type' | translate"
-        ></ix-button-group>
+    <ix-form-section 
+      [label]="'Network' | translate"
+      [help]="'Network' | translate"
+    >
+      <ix-checkbox
+        formControlName="use_default_network"
+        [label]="'Use default network settings' | translate"
+      ></ix-checkbox>
 
-        @if (form.controls.nic_type.value === VirtualizationNicType.Bridged) {
+      @if (!form.controls.use_default_network.value) {
+        @if (hasPendingInterfaceChanges()) {
+          <p class="warning">
+            {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
+          </p>
+        } @else {
           @if ((bridgedNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
+              <p>{{ bridgedNicTypeLabel | translate }}</p>
+
               <ix-checkbox-list
                 formControlName="bridged_nics"
                 [label]="'Bridged NICs' | translate"
                 [options]="bridgedNicDevices$"
               ></ix-checkbox-list>
-            } @else {
-              <p>{{ 'No NICs Found' | translate }}</p>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
-        }
 
-        @if (form.controls.nic_type.value === VirtualizationNicType.Macvlan) {
           @if ((macVlanNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
+              <p>{{ macVlanNicTypeLabel | translate }}</p>
+
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"
                 [label]="'Macvlan NICs' | translate"
                 [options]="macVlanNicDevices$"
               ></ix-checkbox-list>
-            } @else {
-              <p>{{ 'No NICs Found' | translate }}</p>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -219,9 +229,12 @@
       }
     </ix-form-section>
 
-    @if ((usbDevices$| async); as usbDevices) {
-      @if (usbDevices.length) {
-        <ix-form-section [label]="'USB Devices' | translate" [help]="'USB Devices' | translate">
+    @if ((usbDevices$ | async); as usbDevices) {
+      @if (usbDevices.length > 0) {
+        <ix-form-section
+          [label]="'USB Devices' | translate"
+          [help]="'USB Devices' | translate"
+        >
           <ix-checkbox-list
             [formControlName]="'usb_devices'"
             [label]="'USB Devices' | translate"
@@ -232,8 +245,11 @@
     }
 
     @if ((gpuDevices$ | async); as gpuDevices) {
-      @if (gpuDevices.length) {
-        <ix-form-section [label]="'GPU Devices' | translate" [help]="'GPU Devices' | translate">
+      @if (gpuDevices.length > 0) {
+        <ix-form-section
+          [label]="'GPU Devices' | translate"
+          [help]="'GPU Devices' | translate"
+        >
           <ix-checkbox-list
             formControlName="gpu_devices"
             [label]="'GPU Devices' | translate"
