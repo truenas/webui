@@ -91,7 +91,6 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly visibleImageName = new FormControl('');
   protected readonly VirtualizationNicType = VirtualizationNicType;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -181,7 +180,6 @@ export class InstanceWizardComponent {
         }
 
         this.form.controls.image.setValue(image.id);
-        this.visibleImageName.setValue(image.label);
       });
   }
 
