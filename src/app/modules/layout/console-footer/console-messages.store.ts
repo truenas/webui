@@ -39,7 +39,7 @@ export class ConsoleMessagesStore extends ComponentStore<ConsoleMessagesState> i
   }
 
   subscribeToMessageUpdates(): void {
-    this.api.subscribeToLogs(this.logPath)
+    this.api.subscribe(this.logPath)
       .pipe(
         map((event) => event.fields),
         filter((log) => typeof log?.data === 'string'),

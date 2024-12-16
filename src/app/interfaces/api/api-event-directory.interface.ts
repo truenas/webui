@@ -1,7 +1,7 @@
 import { DockerStatusData } from 'app/enums/docker-config.interface';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { App, AppStats } from 'app/interfaces/app.interface';
+import { App, AppContainerLog, AppStats } from 'app/interfaces/app.interface';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -23,9 +23,11 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
+  'app.container_log_follow': { response: AppContainerLog };
   'app.image.query': { response: ContainerImage };
   'app.query': { response: App };
   'app.stats': { response: AppStats[] };
+  'boot.environment.query': { response: BootEnvironment };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'disk.query': { response: Disk };
@@ -33,19 +35,19 @@ export interface ApiEventDirectory {
   'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
   'failover.reboot.info': { response: FailoverRebootInfo };
   'failover.status': { response: { status: FailoverStatus } };
+  'filesystem.file_tail_follow': { response: { data: string } };
   'group.query': { response: Group };
   'pool.query': { response: Pool };
-  'virt.global.config': { response: VirtualizationGlobalConfig };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'service.query': { response: Service };
   'smart.test.progress': { response: SmartTestProgressUpdate };
   'system.reboot.info': { response: SystemRebootInfo };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
-  'virt.instance.query': { response: VirtualizationInstance };
+  'virt.global.config': { response: VirtualizationGlobalConfig };
   'virt.instance.metrics': { response: VirtualizationInstanceMetrics };
+  'virt.instance.query': { response: VirtualizationInstance };
   'vm.query': { response: VirtualMachine };
   'zfs.pool.scan': { response: PoolScan };
   'zfs.snapshot.query': { response: ZfsSnapshot };
-  'boot.environment.query': { response: BootEnvironment };
 }
