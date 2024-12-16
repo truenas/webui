@@ -2,7 +2,7 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Usage' | translate }}
-      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
+      <ix-pool-card-icon [type]="iconType()" [tooltip]="iconTooltip()"></ix-pool-card-icon>
     </h3>
 
     <a
@@ -19,15 +19,15 @@
       <div>
         <ix-gauge-chart
           class="gauge"
-          [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
+          [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
           [colorBlank]="chartBlankColor"
           [width]="150"
           [height]="150"
-          [label]="usedPercentage / 100 | percent: '1.0-1'"
-          [value]="usedPercentage > 100 ? 100 : usedPercentage"
-          [style]="isLowCapacity ? 'color: var(--red);' : ''"
+          [label]="usedPercentage() / 100 | percent: '1.0-1'"
+          [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
+          [style]="isLowCapacity() ? 'color: var(--red);' : ''"
         ></ix-gauge-chart>
-        @if (isLowCapacity) {
+        @if (isLowCapacity()) {
           <div class="warning-container">
             <span>
               <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
@@ -42,7 +42,7 @@
         <div class="capacity-caption">
           <b>{{ 'Usable Capacity' | translate }}:</b>
           <span class="value-caption">
-            {{ capacity | ixFileSize }}
+            {{ capacity() | ixFileSize }}
           </span>
         </div>
         <ul class="list-caption">
@@ -72,7 +72,7 @@
         class="link"
         [ixTest]="[poolState().name, 'view-disk-space-reports']"
         [routerLink]="['/reportsdashboard', 'disk']"
-        [queryParams]="{ disks }"
+        [queryParams]="{ disks: disks() }"
       >
         {{ 'View Disk Space Reports' | translate }}
       </a>

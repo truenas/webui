@@ -11,14 +11,14 @@
     ></ix-select>
   </div>
 } @else {
-  @if (isDataVdev || isMetadataVdev) {
+  @if (isDataVdev() || isMetadataVdev()) {
     <ix-input
       [ixTestOverride]="['layout']"
       [keepLastPart]="true"
       [formControl]="layoutControl"
       [label]="'Layout' | translate"
       [readonly]="true"
-      [tooltip]="dataLayoutTooltip"
+      [tooltip]="dataLayoutTooltip()"
       [required]="false"
     ></ix-input>
   }

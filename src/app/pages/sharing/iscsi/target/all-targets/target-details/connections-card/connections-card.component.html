@@ -1,0 +1,24 @@
+<ix-card-expand-collapse>
+  <mat-card class="card">
+    <mat-card-header>
+      <h3 mat-card-title>
+        {{ 'iSCSI Connections' | translate }}
+      </h3>
+    </mat-card-header>
+    <mat-card-content>
+      @if (isLoading()) {
+        <ngx-skeleton-loader></ngx-skeleton-loader>
+      } @else {
+        @if (sessions()?.length > 0) {
+          @for (session of sessions(); track session.initiator_addr) {
+            <div class="connection">
+              {{ session.initiator }} | {{ session.initiator_addr }}
+            </div>
+          }
+        } @else {
+          <p>{{ 'No connections' }}</p>
+        }
+      }
+    </mat-card-content>
+  </mat-card>
+</ix-card-expand-collapse>

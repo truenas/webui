@@ -22,7 +22,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-menu-item
       ixTest="start-selected"
-      [disabled]="isBulkStartDisabled"
+      [disabled]="isBulkStartDisabled()"
       (click)="bulkStart.emit()"
     >
       <span>{{ 'Start All Selected' | translate }}</span>
@@ -31,7 +31,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-menu-item
       ixTest="stop-selected"
-      [disabled]="isBulkStopDisabled"
+      [disabled]="isBulkStopDisabled()"
       (click)="bulkStop.emit()"
     >
       <span>{{ 'Stop All Selected' | translate }}</span>
@@ -40,7 +40,7 @@
       *ixRequiresRoles="requiredRoles"
       mat-menu-item
       ixTest="upgrade-selected"
-      [disabled]="isBulkUpgradeDisabled"
+      [disabled]="isBulkUpgradeDisabled()"
       (click)="bulkUpgrade.emit()"
     >
       <span>{{ 'Upgrade All Selected' | translate }}</span>

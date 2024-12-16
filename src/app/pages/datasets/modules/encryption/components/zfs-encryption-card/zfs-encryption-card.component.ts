@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatAnchor, MatButton } from '@angular/material/button';
 import {
@@ -65,21 +65,21 @@ export class ZfsEncryptionCardComponent {
     private datasetStore: DatasetTreeStore,
   ) { }
 
-  get hasPassphrase(): boolean {
+  protected hasPassphrase = computed(() => {
     return isPasswordEncrypted(this.dataset());
-  }
+  });
 
-  get isEncryptionRoot(): boolean {
+  protected isEncryptionRoot = computed(() => {
     return isEncryptionRoot(this.dataset());
-  }
+  });
 
-  get currentStateLabel(): string {
+  protected currentStateLabel = computed(() => {
     if (!this.dataset().encrypted) {
       return this.translate.instant('Unencrypted');
     }
 
     if (this.dataset().locked) {
-      if (!this.isEncryptionRoot) {
+      if (!this.isEncryptionRoot()) {
         return this.translate.instant('Locked by ancestor');
       }
 
@@ -87,19 +87,19 @@ export class ZfsEncryptionCardComponent {
     }
 
     return this.translate.instant('Unlocked');
-  }
+  });
 
-  get canExportKey(): boolean {
-    return !this.hasPassphrase && this.dataset().key_loaded;
-  }
+  protected canExportKey = computed(() => {
+    return !this.hasPassphrase() && this.dataset().key_loaded;
+  });
 
-  get canEdit(): boolean {
+  protected canEdit = computed(() => {
     return this.dataset().encrypted && !this.dataset().locked;
-  }
+  });
 
-  get canUnlock(): boolean {
-    return this.isEncryptionRoot && this.dataset().locked && !this.parentDataset()?.locked;
-  }
+  protected canUnlock = computed(() => {
+    return this.isEncryptionRoot() && this.dataset().locked && !this.parentDataset()?.locked;
+  });
 
   onEditPressed(): void {
     const dialog = this.matDialog.open(EncryptionOptionsDialogComponent, {
@@ -135,9 +135,9 @@ export class ZfsEncryptionCardComponent {
     });
   }
 
-  get isRoot(): boolean {
+  protected isRoot = computed(() => {
     return isRootDataset(this.dataset());
-  }
+  });
 
   protected readonly Role = Role;
 }

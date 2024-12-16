@@ -10,7 +10,7 @@
         [options]="widgetCategoriesOptions()"
         [label]="'Widget Category' | translate"
       ></ix-select>
-      @if (shouldShowType) {
+      @if (shouldShowType()) {
         <ix-select
           class="half-width"
           formControlName="type"

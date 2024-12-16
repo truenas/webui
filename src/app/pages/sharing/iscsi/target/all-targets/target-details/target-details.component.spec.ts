@@ -42,6 +42,7 @@ describe('TargetDetailsComponent', () => {
         mockCall('fcport.status', []),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.targetextent.query', []),
+        mockCall('iscsi.global.sessions', []),
       ]),
     ],
   });

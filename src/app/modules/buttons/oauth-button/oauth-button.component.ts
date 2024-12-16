@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, input, OnDestroy, output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, Inject, input, OnDestroy, output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -39,7 +39,7 @@ export class OauthButtonComponent implements OnDestroy {
     this.onLogInWithGmailSuccess(message);
   };
 
-  get buttonText(): string {
+  protected buttonText = computed(() => {
     switch (this.oauthType()) {
       case OauthButtonType.Jira:
         if (this.isLoggedIn()) {
@@ -61,7 +61,7 @@ export class OauthButtonComponent implements OnDestroy {
     }
 
     return '';
-  }
+  });
 
   constructor(
     private cdr: ChangeDetectorRef,
