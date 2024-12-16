@@ -874,11 +874,6 @@ mat-list-item {
   }
 }
 
-.highlighted-element {
-  outline: 1.5px solid var(--primary) !important;
-  transition: 0.3s ease all;
-}
-
 @media(max-width: $breakpoint-sm) {
   .mdc-dialog__container,
   mat-dialog-container {
