@@ -5,8 +5,9 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatTabNav, MatTabLink, MatTabNavPanel } from '@angular/material/tabs';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { async } from 'rxjs';
+import { async, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -19,6 +20,7 @@ import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
@@ -44,6 +46,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 export class IscsiComponent {
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
+  protected readonly needRefresh$ = new Subject<void>();
 
   protected readonly navLinks$ = this.iscsiService.hasFibreChannel().pipe(
     map((hasFibreChannel) => {
@@ -88,7 +91,10 @@ export class IscsiComponent {
   ) {}
 
   openWizard(): void {
-    this.slideInService.open(IscsiWizardComponent);
+    this.slideInService.open(IscsiWizardComponent)
+      .slideInClosed$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.iscsiService.refreshData());
   }
 
   openGlobalTargetConfiguration(): void {
