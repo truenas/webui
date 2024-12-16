@@ -51,8 +51,8 @@ export class NavigateAndInteractService {
 
     this.window.addEventListener('scroll', () => {
       this.updateOverlayPosition(targetElement, overlay);
-    });
-    timer(2000).pipe(untilDestroyed(this)).subscribe({
+    }, true);
+    timer(2150).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.removeOverlay(overlay);
       },
