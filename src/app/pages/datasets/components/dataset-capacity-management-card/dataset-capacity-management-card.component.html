@@ -1,14 +1,14 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>
-      @if (isFilesystem) {
+      @if (isFilesystem()) {
         {{ 'Dataset Space Management' | translate }}
       }
-      @if (isZvol) {
+      @if (isZvol()) {
         {{ 'Zvol Space Management' | translate }}
       }
     </h3>
-    @if (!isZvol) {
+    @if (!isZvol()) {
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
@@ -21,7 +21,7 @@
     <ix-space-management-chart [dataset]="dataset()"></ix-space-management-chart>
 
     <div class="chart-extra">
-      @if (!isZvol) {
+      @if (!isZvol()) {
         @if (dataset()?.refreservation?.parsed) {
           <div class="details-item">
             <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
@@ -42,7 +42,7 @@
         }
       }
 
-      @if (isZvol) {
+      @if (isZvol()) {
         <div class="details-item">
           <div class="label">{{ 'Provisioning Type' | translate }}:</div>
           @if (dataset().thick_provisioned) {
@@ -70,10 +70,10 @@
     <div class="details">
       <div class="details-item">
         <div class="label">
-          @if (isFilesystem) {
+          @if (isFilesystem()) {
             {{ 'Space Available to Dataset' | translate }}:
           }
-          @if (isZvol) {
+          @if (isZvol()) {
             {{ 'Space Available to Zvol' | translate }}:
           }
         </div>
@@ -81,10 +81,10 @@
           {{ dataset().available.parsed | ixFileSize }}
         </div>
       </div>
-      @if ((isFilesystem && hasQuota) || hasRefQuota) {
+      @if ((isFilesystem() && hasQuota()) || hasRefQuota()) {
         <div class="details-item">
           <div class="label">{{ 'Applied Dataset Quota' | translate }}:</div>
-          @if (hasQuota) {
+          @if (hasQuota()) {
             <div class="value">
               {{
                 '{n} (applies to descendants)' | translate : {
@@ -98,32 +98,33 @@
             </div>
           }
         </div>
-     }@if (hasInheritedQuotas) {
-      <div class="details-item">
-        <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
-        <div class="value">
-          {{
-            '{n} from {dataset}' | translate : {
-              n: inheritedQuotasDataset.quota.parsed | ixFileSize,
-              dataset: inheritedQuotasDataset.name
-            }
-          }}
+      }
+      @if (hasInheritedQuotas()) {
+        <div class="details-item">
+          <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
+          <div class="value">
+            {{
+              '{n} from {dataset}' | translate : {
+                n: inheritedQuotasDataset.quota.parsed | ixFileSize,
+                dataset: inheritedQuotasDataset.name
+              }
+            }}
+          </div>
+          <a
+            [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
+            [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
+          >
+            {{ 'Go To Dataset' }}
+          </a>
         </div>
-        <a
-          [ixTest]="[inheritedQuotasDataset.id, 'go-to-dataset']"
-          [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
-        >
-          {{ 'Go To Dataset' }}
-        </a>
-      </div>
-    }
+      }
   </div>
 
-  @if (!isZvol) {
+  @if (!isZvol()) {
     <div class="details">
       <div class="details-item">
         <div class="label">{{ 'User Quotas' | translate }}:</div>
-          @if (checkQuotas) {
+          @if (checkQuotas()) {
             @if (!isLoadingQuotas) {
               <div class="value">
                 {{ 'Quotas set for {n, plural, one {# user} other {# users} }' | translate: { n: userQuotas } }}
@@ -134,7 +135,7 @@
           } @else {
             {{ 'None' | translate }}
           }
-          @if (checkQuotas) {
+          @if (checkQuotas()) {
             <a
               [ixTest]="[dataset().id, 'manage-user-quotas']"
               [routerLink]="['/', 'datasets', dataset().id, 'user-quotas']"
@@ -146,7 +147,7 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Group Quotas' | translate }}:</div>
-        @if (checkQuotas) {
+        @if (checkQuotas()) {
           @if (!isLoadingQuotas) {
             <div class="value">
               {{ 'Quotas set for {n, plural, one {# group} other {# groups} }' | translate: { n: groupQuotas } }}
@@ -157,7 +158,7 @@
         } @else {
           {{ 'None' | translate }}
         }
-        @if (checkQuotas) {
+        @if (checkQuotas()) {
           <a
             [ixTest]="[dataset().id, 'manage-group-quotas']"
             [routerLink]="['/', 'datasets', dataset().id, 'group-quotas']"

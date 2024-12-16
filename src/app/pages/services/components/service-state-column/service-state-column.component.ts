@@ -43,9 +43,9 @@ export class ServiceStateColumnComponent extends ColumnComponent<ServiceRow> {
 
   protected readonly isRunning = computed(() => this.service().state === ServiceStatus.Running);
 
-  get testIdServiceName(): string {
+  protected testIdServiceName = computed(() => {
     return convertStringToId(this.service().name).replace(/\./g, '');
-  }
+  });
 
   private servicesService = inject(ServicesService);
   private api = inject(ApiService);

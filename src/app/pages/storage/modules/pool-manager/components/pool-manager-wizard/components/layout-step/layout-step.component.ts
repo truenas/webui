@@ -32,10 +32,6 @@ export class LayoutStepComponent implements OnInit {
 
   protected topologyCategory: PoolManagerTopologyCategory;
 
-  get isVdevsLimitedToOne(): boolean {
-    return this.type() === VdevType.Spare || this.type() === VdevType.Cache || this.type() === VdevType.Log;
-  }
-
   constructor(
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,

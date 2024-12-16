@@ -21,7 +21,7 @@
   @for (option of options() | async; track option) {
     <div
       class="radio-item"
-      [style.flex-basis]="fieldFlex"
+      [style.flex-basis]="fieldFlex()"
     >
       <mat-radio-button
         [value]="option.value"

@@ -3,8 +3,8 @@
   <div class="title-container">
     <div class="title-and-indicator">
       <h1>{{ pageTitle() ? (pageTitle() | translate) : (currentTitle$ | async) | translate }}</h1>
-      @if (hasNewIndicator$ | async) {
-        <ix-new-page-badge></ix-new-page-badge>
+      @if ((hasNewIndicator$ | async) || customBadgeTitle()) {
+        <ix-header-badge [customBadgeTitle]="customBadgeTitle()"></ix-header-badge>
       }
     </div>
 

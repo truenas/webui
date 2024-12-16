@@ -12,10 +12,10 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 
 describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
@@ -40,7 +40,7 @@ describe('AllowedAddressesCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AdvancedSettingsService, {
+      mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockApi([
@@ -77,7 +77,7 @@ describe('AllowedAddressesCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
+    expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AllowedAddressesFormComponent);
   });
 

@@ -114,9 +114,6 @@
       </ix-list>
     </ix-fieldset>
 
-    <ix-fieldset [title]="'Network' | translate">
-    </ix-fieldset>
-
     <ix-fieldset [title]="'Proxies' | translate">
       <ix-list
         formArrayName="proxies"
@@ -171,22 +168,22 @@
       </ix-list>
     </ix-fieldset>
 
-    <ix-fieldset [title]="'NIC' | translate">
-      @if (hasPendingInterfaceChanges()) {
-        <p class="warning">
-          {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
-        </p>
-      } @else {
-        <ix-button-group
-          formControlName="nic_type"
-          [options]="nicType$"
-          [inlineFields]="true"
-          [attr.aria-label]="'NIC Type' | translate"
-        ></ix-button-group>
+    <ix-fieldset [title]="'Network' | translate">
+      <ix-checkbox
+        formControlName="use_default_network"
+        [label]="'Use default network settings' | translate"
+      ></ix-checkbox>
 
-        @if (form.controls.nic_type.value === VirtualizationNicType.Bridged) {
+      @if (!form.controls.use_default_network.value) {
+        @if (hasPendingInterfaceChanges()) {
+          <p class="warning">
+            {{ 'NIC selection is currently restricted due to pending network changes.' | translate }}
+          </p>
+        } @else {
           @if ((bridgedNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
+              <p>{{ bridgedNicTypeLabel | translate }}</p>
+
               <div formGroupName="bridged_nics">
                 @for (device of devices; track device) {
                   <ix-checkbox
@@ -195,17 +192,15 @@
                   ></ix-checkbox>
                 }
               </div>
-            } @else {
-              <p>{{ 'No NICs Found' | translate }}</p>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
-        }
 
-        @if (form.controls.nic_type.value === VirtualizationNicType.Macvlan) {
           @if ((macVlanNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
+              <p>{{ macVlanNicTypeLabel | translate }}</p>
+
               <div formGroupName="mac_vlan_nics">
                 @for (device of devices; track device) {
                   <ix-checkbox
@@ -214,8 +209,6 @@
                   ></ix-checkbox>
                 }
               </div>
-            } @else {
-              <p>{{ 'No NICs Found' | translate }}</p>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>

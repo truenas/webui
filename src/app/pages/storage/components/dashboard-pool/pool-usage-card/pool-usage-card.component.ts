@@ -1,7 +1,7 @@
 import { PercentPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, input, OnInit,
+  Component, computed, input, OnInit,
 } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
@@ -68,33 +68,33 @@ export class PoolUsageCardComponent implements OnInit {
     this.chartLowCapacityColor = this.themeService.currentTheme().red;
   }
 
-  get isLowCapacity(): boolean {
-    return this.usedPercentage >= maxPct;
-  }
+  protected isLowCapacity = computed(() => {
+    return this.usedPercentage() >= maxPct;
+  });
 
-  get disks(): string[] {
+  protected disks = computed(() => {
     return getPoolDisks(this.poolState());
-  }
+  });
 
-  get capacity(): number {
+  protected capacity = computed(() => {
     return this.rootDataset().available.parsed + this.rootDataset().used.parsed;
-  }
+  });
 
-  get usedPercentage(): number {
-    return this.rootDataset().used.parsed / this.capacity * 100;
-  }
+  protected usedPercentage = computed(() => {
+    return this.rootDataset().used.parsed / this.capacity() * 100;
+  });
 
-  get iconType(): PoolCardIconType {
-    if (this.isLowCapacity) {
+  protected iconType = computed(() => {
+    if (this.isLowCapacity()) {
       return PoolCardIconType.Warn;
     }
     return PoolCardIconType.Safe;
-  }
+  });
 
-  get iconTooltip(): string {
-    if (this.isLowCapacity) {
+  protected iconTooltip = computed(() => {
+    if (this.isLowCapacity()) {
       return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct });
     }
     return this.translate.instant('Everything is fine');
-  }
+  });
 }

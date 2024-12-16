@@ -1,0 +1,27 @@
+<h1 matDialogTitle>
+  {{ 'Change Number Of Virtual Ports' | translate }}
+</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+  <ix-input
+    formControlName="virtualPorts"
+    type="number"
+    [required]="true"
+    [label]="'Virtual Ports' | translate"
+  ></ix-input>
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="delete"
+      [disabled]="form.invalid"
+    >
+      {{ 'Change' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

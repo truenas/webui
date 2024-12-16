@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,9 +17,6 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import {
-  NetdataDialogComponent,
-} from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
 import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
@@ -74,7 +70,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private store$: Store<AppState>,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -141,9 +136,5 @@ export class ReportsGlobalControlsComponent implements OnInit {
         this.store$.dispatch(autoRefreshReportsToggled());
       });
     });
-  }
-
-  openNetdata(): void {
-    this.matDialog.open(NetdataDialogComponent);
   }
 }

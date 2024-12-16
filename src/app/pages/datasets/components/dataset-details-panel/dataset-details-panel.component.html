@@ -2,7 +2,7 @@
   <h3 class="title" [class.no-buttons]="dataset().locked || isZvol()">
     <div class="mobile-prefix">
       <ix-mobile-back-button
-        (onClose)="onCloseMobileDetails()"
+        (close)="onCloseMobileDetails()"
       ></ix-mobile-back-button>
       {{ 'Details for' | translate }}
     </div>

@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, OnInit, input, computed,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -66,29 +66,29 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   userQuotas: number;
   groupQuotas: number;
 
-  get isFilesystem(): boolean {
+  protected isFilesystem = computed(() => {
     return this.dataset().type === DatasetType.Filesystem;
-  }
+  });
 
-  get isZvol(): boolean {
+  protected isZvol = computed(() => {
     return this.dataset().type === DatasetType.Volume;
-  }
+  });
 
-  get checkQuotas(): boolean {
-    return !this.dataset().locked && this.isFilesystem && !this.dataset().readonly;
-  }
+  protected checkQuotas = computed(() => {
+    return !this.dataset().locked && this.isFilesystem() && !this.dataset().readonly;
+  });
 
-  get hasQuota(): boolean {
+  protected hasQuota = computed(() => {
     return Boolean(this.dataset()?.quota?.parsed);
-  }
+  });
 
-  get hasRefQuota(): boolean {
+  protected hasRefQuota = computed(() => {
     return Boolean(this.dataset()?.refquota?.parsed);
-  }
+  });
 
-  get hasInheritedQuotas(): boolean {
+  protected hasInheritedQuotas = computed(() => {
     return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
-  }
+  });
 
   constructor(
     private api: ApiService,
@@ -102,13 +102,13 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     this.getInheritedQuotas();
     const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
-    if (selectedDatasetHasChanged && this.checkQuotas) {
+    if (selectedDatasetHasChanged && this.checkQuotas()) {
       this.refreshQuotas$.next();
     }
   }
 
   ngOnInit(): void {
-    if (this.checkQuotas) {
+    if (this.checkQuotas()) {
       this.initQuotas();
       this.refreshQuotas$.next();
     }

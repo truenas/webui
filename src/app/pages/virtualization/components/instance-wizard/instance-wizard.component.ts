@@ -36,7 +36,6 @@ import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -76,7 +75,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
-    IxButtonGroupComponent,
     IxExplorerComponent,
     NgxSkeletonLoaderModule,
   ],
@@ -93,7 +91,8 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
-  readonly nicType$ = of(mapToOptions(virtualizationNicTypeLabels, this.translate));
+  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
+  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
   readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
@@ -124,6 +123,7 @@ export class InstanceWizardComponent implements OnInit {
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
+    use_default_network: [true],
     usb_devices: this.formBuilder.record<boolean>({}),
     gpu_devices: this.formBuilder.record<boolean>({}),
     bridged_nics: this.formBuilder.record<boolean>({}),
@@ -139,7 +139,6 @@ export class InstanceWizardComponent implements OnInit {
       destination: FormControl<string>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
-    nic_type: [VirtualizationNicType.Bridged],
   });
 
   get hasRequiredRoles(): Observable<boolean> {
@@ -303,21 +302,25 @@ export class InstanceWizardComponent implements OnInit {
         dev_type: VirtualizationDeviceType.Gpu,
       }));
 
-    const macVlanNics = Object.entries(this.form.controls.mac_vlan_nics.value)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([parent]) => ({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Macvlan,
-      }));
+    const macVlanNics = !this.form.controls.use_default_network.value
+      ? Object.entries(this.form.controls.mac_vlan_nics.value)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([parent]) => ({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Macvlan,
+        }))
+      : [];
 
-    const bridgedNics = Object.entries(this.form.controls.bridged_nics.value)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([parent]) => ({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Bridged,
-      }));
+    const bridgedNics = !this.form.controls.use_default_network.value
+      ? Object.entries(this.form.controls.bridged_nics.value)
+        .filter(([_, isSelected]) => isSelected)
+        .map(([parent]) => ({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Bridged,
+        }))
+      : [];
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Proxy,

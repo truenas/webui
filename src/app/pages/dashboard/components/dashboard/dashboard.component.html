@@ -1,7 +1,6 @@
-<ix-page-header [title]="'Dashboard' | translate" [loading]="isLoading()">
+<ix-page-header [pageTitle]="'Dashboard' | translate" [loading]="isLoading()">
   @if (!isEditing()) {
     <button
-      *ixNewFeatureIndicator="newFeatureConfig"
       mat-button
       color="primary"
       ixTest="configure-dashboard"

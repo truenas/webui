@@ -17,12 +17,12 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -66,12 +66,12 @@ export class StorageCardComponent {
 
   constructor(
     private chainedSlideIns: ChainedSlideInService,
-    private advancedSettings: AdvancedSettingsService,
+    private firstTimeWarning: FirstTimeWarningService,
     private api: ApiService,
   ) {}
 
   onConfigurePressed(): void {
-    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+    this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.open(StorageSettingsFormComponent, false, this.storageSettings)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

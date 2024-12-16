@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, computed,
   input, output,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -45,29 +45,29 @@ export class DiskDetailsPanelComponent {
 
   readonly closeMobileDetails = output();
 
-  get title(): string {
+  protected title = computed(() => {
     if (isTopologyDisk(this.topologyItem())) {
       return this.topologyItem().disk || this.topologyItem().guid;
     }
 
     return this.topologyItem().type;
-  }
+  });
 
-  get isTopologyDisk(): boolean {
+  protected isTopologyDisk = computed(() => {
     return isTopologyDisk(this.topologyItem());
-  }
+  });
 
-  get hasTopologyItemDisk(): boolean {
+  protected hasTopologyItemDisk = computed(() => {
     if (isTopologyDisk(this.topologyItem())) {
       return this.topologyItem().disk !== null;
     }
 
     return false;
-  }
+  });
 
-  get hasSmartTestSupport(): boolean {
+  protected hasSmartTestSupport = computed(() => {
     return this.disksWithSmartTestSupport().includes(this.disk().devname);
-  }
+  });
 
   onCloseMobileDetails(): void {
     this.closeMobileDetails.emit();
