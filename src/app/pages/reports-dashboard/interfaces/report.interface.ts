@@ -3,11 +3,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportZoomLevel } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
 
-export interface DateTime {
-  dateFormat: string;
-  timeFormat: string;
-}
-
 export interface TimeData {
   /**
    * Seconds since epoch time

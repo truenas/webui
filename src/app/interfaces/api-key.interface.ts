@@ -24,8 +24,3 @@ export type UpdateApiKeyRequest = [number, {
   reset?: boolean;
   expires_at?: ApiTimestamp;
 }];
-
-export interface ApiKeyAllowListItem {
-  method: string;
-  resource: string;
-}

@@ -4235,7 +4235,6 @@
   "New password": "새로운 비밀번호",
   "New password and confirmation should match.": "새로운 비밀번호와 비밀번호 확인이 일치해야 합니다.",
   "New users are not given <b>su</b> permissions if <i>wheel</i> is their primary group.": "새로운 사용자의 주 그룹이 <i>wheel</i>인 경우 <b>su</b> 권한을 부여할 수 없습니다.",
-  "New widgets and layouts.": "새로운 위젯과 배치",
   "Newsletter": "소식지",
   "Next": "다음",
   "Next Page": "다음 쪽",

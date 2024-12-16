@@ -10,7 +10,6 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { User } from '@sentry/angular';
 import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
@@ -78,11 +77,5 @@ export class UserMenuComponent {
       .subscribe(() => {
         this.router.navigate(['/signin']);
       });
-  }
-
-  viewUserApiKeys(user: User): void {
-    this.router.navigate(['/credentials/users/api-keys'], {
-      queryParams: { userName: user.username },
-    });
   }
 }
