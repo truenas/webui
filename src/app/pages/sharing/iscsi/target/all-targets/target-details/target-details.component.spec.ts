@@ -39,6 +39,7 @@ describe('TargetDetailsComponent', () => {
     providers: [
       mockApi([
         mockCall('fcport.query', [mockPort]),
+        mockCall('fcport.status', []),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.targetextent.query', []),
       ]),
