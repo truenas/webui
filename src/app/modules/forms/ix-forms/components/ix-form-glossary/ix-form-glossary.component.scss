@@ -1,8 +1,14 @@
 @import 'scss-imports/variables';
 
+:host {
+  position: relative;
+}
+
 .search-container {
   margin-left: 16px;
   min-width: 250px;
+  position: sticky;
+  top: 0;
   width: 20%;
 
   @media (max-width: $breakpoint-xs) {
