@@ -1,7 +1,6 @@
 import { CdkNestedTreeNode, CdkTreeNode, CDK_TREE_NODE_OUTLET_NODE } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, Component, HostBinding,
-  input,
+  ChangeDetectionStrategy, Component, HostBinding, input,
 } from '@angular/core';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 
@@ -22,5 +21,6 @@ import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource
 })
 export class NestedTreeNodeComponent<T, K = T> extends CdkNestedTreeNode<T, K> {
   @HostBinding('class.ix-nested-tree-node') get hostClass(): boolean { return true; }
-  readonly treeNodeDefDataSource = input<NestedTreeDataSource<T>>(undefined);
+
+  readonly treeNodeDefDataSource = input<NestedTreeDataSource<T>>();
 }

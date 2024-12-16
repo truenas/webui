@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -62,13 +62,13 @@ export class DiskInfoCardComponent {
     private devicesStore: DevicesStore,
   ) {}
 
-  get isHdd(): boolean {
+  protected isHdd = computed(() => {
     return this.disk()?.type === DiskType.Hdd;
-  }
+  });
 
-  get isAvailable(): boolean {
+  protected isAvailable = computed(() => {
     return !!this.disk();
-  }
+  });
 
   onEdit(): void {
     const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });

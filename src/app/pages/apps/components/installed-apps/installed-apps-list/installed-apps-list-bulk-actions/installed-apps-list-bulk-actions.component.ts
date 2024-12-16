@@ -2,7 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   input,
-  output,
+  output, computed,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -13,6 +13,7 @@ import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { App } from 'app/interfaces/app.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
     IxIconComponent,
     MatButton,
     TranslateModule,
+    TestDirective,
   ],
 })
 
@@ -41,19 +43,19 @@ export class InstalledAppsListBulkActionsComponent {
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
-  get isBulkStartDisabled(): boolean {
+  protected isBulkStartDisabled = computed(() => {
     return this.checkedApps().every(
       (app) => [AppState.Running, AppState.Deploying].includes(app.state),
     );
-  }
+  });
 
-  get isBulkStopDisabled(): boolean {
+  protected isBulkStopDisabled = computed(() => {
     return this.checkedApps().every(
       (app) => [AppState.Stopped, AppState.Crashed].includes(app.state),
     );
-  }
+  });
 
-  get isBulkUpgradeDisabled(): boolean {
+  protected isBulkUpgradeDisabled = computed(() => {
     return !this.checkedApps().some((app) => app.upgrade_available);
-  }
+  });
 }

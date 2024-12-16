@@ -2,7 +2,7 @@
   <ix-fieldset [title]="'Encryption Options' | translate" [formGroup]="form">
     <ix-checkbox
       formControlName="inherit_encryption"
-      [label]="inheritEncryptionLabel"
+      [label]="inheritEncryptionLabel()"
       [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
     ></ix-checkbox>
     @if (!isInheritingEncryption) {
@@ -12,7 +12,7 @@
         [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
       ></ix-checkbox>
       @if (hasEncryption) {
-        @if (!parentHasPassphrase) {
+        @if (!parentHasPassphrase()) {
           <ix-select
             formControlName="encryption_type"
             [label]="'Encryption Type' | translate"

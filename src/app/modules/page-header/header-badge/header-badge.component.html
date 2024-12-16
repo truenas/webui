@@ -1,0 +1,14 @@
+<div class="new-page-feedback">
+  @if (customBadgeTitle(); as title) {
+    <span>{{ title | translate }}</span>
+  } @else {
+    <span>{{ 'NEW' | translate }}</span>
+
+    <button
+      *ixIfNightly
+      mat-button
+      ixTest="new-page-feedback"
+      (click)="leaveFeedbackPressed()"
+    >{{ 'Leave Feedback' | translate }}</button>
+  }
+</div>

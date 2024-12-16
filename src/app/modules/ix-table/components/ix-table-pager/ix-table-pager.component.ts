@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, input, Input, OnInit,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, model, OnInit, signal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatOption } from '@angular/material/core';
@@ -30,24 +30,24 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   readonly dataProvider = input.required<DataProvider<T>>();
-  @Input() pageSize = 50;
+  readonly pageSize = model(50);
   readonly pageSizeOptions = input([10, 20, 50, 100]);
-  @Input() currentPage = 1;
+  readonly currentPage = model(1);
 
-  totalItems = 0;
+  protected totalItems = signal(0);
 
-  get totalPages(): number {
-    return Math.ceil(this.totalItems / this.pageSize);
-  }
+  protected totalPages = computed(() => {
+    return Math.ceil(this.totalItems() / this.pageSize());
+  });
 
-  get firstPage(): number {
-    return (this.currentPage - 1) * this.pageSize + 1;
-  }
+  protected firstPage = computed(() => {
+    return (this.currentPage() - 1) * this.pageSize() + 1;
+  });
 
-  get lastPage(): number {
-    const lastPage = this.currentPage * this.pageSize;
-    return lastPage < this.totalItems ? lastPage : this.totalItems;
-  }
+  protected lastPage = computed(() => {
+    const lastPage = this.currentPage() * this.pageSize();
+    return lastPage < this.totalItems() ? lastPage : this.totalItems();
+  });
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -55,43 +55,43 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
 
   ngOnInit(): void {
     this.dataProvider().setPagination({
-      pageNumber: this.currentPage,
-      pageSize: this.pageSize,
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize(),
     });
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider().totalRows;
-    if (this.currentPage > this.totalPages && this.currentPage !== 1) {
+    this.totalItems.set(this.dataProvider().totalRows);
+    if (this.currentPage() > this.totalPages() && this.currentPage() !== 1) {
       this.goToPage(1);
     }
     this.cdr.markForCheck();
   }
 
   goToPage(pageNumber: number): void {
-    if (pageNumber >= 1 && pageNumber <= this.totalPages) {
-      this.currentPage = pageNumber;
+    if (pageNumber >= 1 && pageNumber <= this.totalPages()) {
+      this.currentPage.set(pageNumber);
       this.dataProvider().setPagination({
         pageNumber,
-        pageSize: this.pageSize,
+        pageSize: this.pageSize(),
       });
     }
   }
 
   previousPage(): void {
-    if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
+    if (this.currentPage() > 1) {
+      this.goToPage(this.currentPage() - 1);
     }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
+    if (this.currentPage() < this.totalPages()) {
+      this.goToPage(this.currentPage() + 1);
     }
   }
 
   onPageSizeChange($event: MatSelectChange): void {
-    this.pageSize = $event.value as number;
+    this.pageSize.set($event.value as number);
     this.goToPage(1);
   }
 }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -74,9 +74,9 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     this.listenForResetEvents();
   }
 
-  get isNumberOfVdevsLimitedToOne(): boolean {
+  protected isNumberOfVdevsLimitedToOne = computed(() => {
     return this.type() === VdevType.Spare || this.type() === VdevType.Cache || this.type() === VdevType.Log;
-  }
+  });
 
   protected onDisksSelected(disks: DetailsDisk[]): void {
     this.selectedDisks = disks;
@@ -121,7 +121,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
       this.store.setAutomaticTopologyCategory(this.type(), {
         width: values.width,
-        vdevsNumber: this.isNumberOfVdevsLimitedToOne ? 1 : values.vdevsNumber,
+        vdevsNumber: this.isNumberOfVdevsLimitedToOne() ? 1 : values.vdevsNumber,
       });
     });
   }

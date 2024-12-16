@@ -30,6 +30,9 @@ import {
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
+import {
+  GlobalTargetConfigurationComponent,
+} from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -107,13 +110,12 @@ describe('ServicesComponent', () => {
   });
 
   describe('edit', () => {
-    it('should redirect and open form to configure iSCSI service page when edit button is pressed', async () => {
+    it('should open iSCSI global configuration form', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Iscsi) + 1;
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(NavigateAndInteractService).navigateAndInteract)
-        .toHaveBeenCalledWith(['/sharing', 'iscsi'], 'global-configuration');
+      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
     });
 
     it('should open FTP configuration when edit button is pressed', async () => {

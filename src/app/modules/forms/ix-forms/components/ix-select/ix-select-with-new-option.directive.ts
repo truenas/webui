@@ -57,9 +57,9 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
     if (!ixSelect) {
       return;
     }
-    ixSelect.options = this.options.asObservable();
-    ixSelect.ngOnChanges();
-    ixSelect.controlDirective.control.valueChanges.pipe(
+    this.ixSelect().options.set(this.options.asObservable());
+    this.ixSelect().ngOnChanges();
+    this.ixSelect().controlDirective.control.valueChanges.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),

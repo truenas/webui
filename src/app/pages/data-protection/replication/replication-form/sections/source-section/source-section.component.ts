@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -113,19 +113,19 @@ export class SourceSectionComponent implements OnChanges {
     }
   }
 
-  get isPush(): boolean {
+  protected isPush = computed(() => {
     return this.direction() === Direction.Push;
-  }
+  });
 
   get usesNamingSchema(): boolean {
     return this.form.controls.schema_or_regex.value === SnapshotNamingOption.NamingSchema;
   }
 
-  get nameOrRegexLabel(): string {
-    return this.isPush
+  protected nameOrRegexLabel = computed(() => {
+    return this.isPush()
       ? this.translate.instant('Also include snapshots with the name')
       : this.translate.instant('Include snapshots with the name');
-  }
+  });
 
   setFormValues(replication: ReplicationTask): void {
     this.form.patchValue({
@@ -165,7 +165,7 @@ export class SourceSectionComponent implements OnChanges {
       exclude: values.exclude,
     };
 
-    if (this.isPush) {
+    if (this.isPush()) {
       payload.periodic_snapshot_tasks = values.periodic_snapshot_tasks;
     } else {
       payload.periodic_snapshot_tasks = [];

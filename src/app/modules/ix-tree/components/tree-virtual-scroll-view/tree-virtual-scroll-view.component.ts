@@ -74,6 +74,8 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   readonly ixItemSize = input(defaultSize);
   readonly ixMinBufferPx = input(defaultSize * 4);
   readonly ixMaxBufferPx = input(defaultSize * 8);
+
+  // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input() override trackBy!: TrackByFunction<T>;
 
   readonly viewportScrolled = output<number>();

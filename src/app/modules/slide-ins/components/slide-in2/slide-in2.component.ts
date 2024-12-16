@@ -1,7 +1,7 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
+  Component, computed,
   ElementRef,
   HostListener,
   Injector, input,
@@ -47,9 +47,9 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     this.onBackdropClicked();
   }
 
-  get isTop(): boolean {
+  protected isTop = computed(() => {
     return this.index() === this.lastIndex();
-  }
+  });
 
   isSlideInOpen = false;
   wide = false;

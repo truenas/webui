@@ -1,10 +1,14 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import {
+  AssociatedExtentsCardComponent,
+} from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
 import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
@@ -19,15 +23,20 @@ describe('TargetDetailsComponent', () => {
   let mockApiService: jest.Mocked<ApiService>;
 
   const mockPort = {
-    id: 'Port-1',
+    id: 1,
     wwpn: '10:00:00:00:c9:20:00:00',
     wwpn_b: '10:00:00:00:c9:20:00:01',
-  } as unknown as FibreChannelPort;
+  } as FibreChannelPort;
 
   const createComponent = createComponentFactory({
     component: TargetDetailsComponent,
-    declarations: [
-      MockComponents(AuthorizedNetworksCardComponent, FibreChannelPortCardComponent),
+    imports: [
+      NgxSkeletonLoaderComponent,
+      MockComponents(
+        AuthorizedNetworksCardComponent,
+        FibreChannelPortCardComponent,
+        AssociatedExtentsCardComponent,
+      ),
     ],
     providers: [
       mockApi([

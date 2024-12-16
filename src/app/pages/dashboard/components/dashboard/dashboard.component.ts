@@ -14,7 +14,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { DisableFocusableElementsDirective } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
-import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -59,7 +58,6 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
   standalone: true,
   imports: [
     PageHeaderComponent,
-    NewFeatureIndicatorDirective,
     MatButton,
     TestDirective,
     UiSearchDirective,

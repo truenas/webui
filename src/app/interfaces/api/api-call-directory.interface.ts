@@ -111,6 +111,7 @@ import {
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
 import {
+  FibreChannelHost,
   FibreChannelPort,
   FibreChannelPortChoices,
   FibreChannelPortUpdate,
@@ -322,6 +323,7 @@ export interface ApiCallDirectory {
   'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
+  'app.ix_volume.exists': { params: [string]; response: boolean };
 
   // App Image
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
@@ -460,6 +462,10 @@ export interface ApiCallDirectory {
 
   // Fibre Channel
   'fc.capable': { params: []; response: boolean };
+
+  // Fibre Channel Host
+  'fc.fc_host.query': { params: []; response: FibreChannelHost[] };
+  'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
 
   // Fibre Channel Port
   'fcport.create': { params: [FibreChannelPortUpdate]; response: FibreChannelPort };
@@ -652,7 +658,6 @@ export interface ApiCallDirectory {
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
-  'app.ix_volume.exists': { params: [string]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
@@ -697,7 +702,6 @@ export interface ApiCallDirectory {
   'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
-  'reporting.netdataweb_generate_password': { params: []; response: string };
 
   // Rsynctask
   'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };

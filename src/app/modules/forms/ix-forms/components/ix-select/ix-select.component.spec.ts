@@ -121,7 +121,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'No options\' if options length === 0', async () => {
-      spectator.component.options = of<SelectOption[]>([]);
+      spectator.setHostInput('options', of<SelectOption[]>([]));
       spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
@@ -134,7 +134,7 @@ describe('IxSelectComponent', () => {
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
       jest.spyOn(console, 'error').mockImplementation();
 
-      spectator.component.options = throwError(() => new Error('Some Error'));
+      spectator.setHostInput('options', throwError(() => new Error('Some Error')));
       spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
@@ -146,10 +146,11 @@ describe('IxSelectComponent', () => {
     });
 
     it('allows some options to be disabled', async () => {
-      spectator.component.options = of([
+      spectator.setHostInput('options', of([
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland', disabled: true },
-      ]);
+      ]));
+
       spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
@@ -161,10 +162,10 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows options tooltip if it is provided', async () => {
-      spectator.component.options = of([
+      spectator.setHostInput('options', of([
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland', tooltip: 'Not really green.' },
-      ]);
+      ]));
       spectator.component.ngOnChanges();
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();

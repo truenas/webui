@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,9 +7,9 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
-  selector: 'ix-new-page-badge',
-  templateUrl: './new-page-badge.component.html',
-  styleUrls: ['./new-page-badge.component.scss'],
+  selector: 'ix-header-badge',
+  templateUrl: './header-badge.component.html',
+  styleUrls: ['./header-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -19,7 +19,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
   ],
 })
-export class NewPageBadgeComponent {
+export class HeaderBadgeComponent {
+  readonly customBadgeTitle = input<string>();
+
   constructor(private matDialog: MatDialog) {}
 
   leaveFeedbackPressed(): void {

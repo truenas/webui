@@ -7,14 +7,14 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { IfNightlyDirective } from 'app/directives/if-nightly/if-nightly.directive';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import { NewPageBadgeComponent } from 'app/modules/page-header/is-new-indicator/new-page-badge.component';
+import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/header-badge.component';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-describe('NewPageBadgeComponent', () => {
-  let spectator: Spectator<NewPageBadgeComponent>;
+describe('HeaderBadgeComponent', () => {
+  let spectator: Spectator<HeaderBadgeComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: NewPageBadgeComponent,
+    component: HeaderBadgeComponent,
     imports: [
       IfNightlyDirective,
     ],
