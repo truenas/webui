@@ -68,7 +68,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       : false;
   });
 
-  private settingsContainer = viewChild('settingsContainer', { read: ViewContainerRef });
+  readonly settingsContainer = viewChild('settingsContainer', { read: ViewContainerRef });
 
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();

@@ -1,8 +1,9 @@
+import { signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import {
@@ -154,6 +155,10 @@ describe('IxDynamicFormItemComponent', () => {
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(IxInputComponent, 'inputElementRef', signal(null));
+    MockInstance(IxCodeEditorComponent, 'inputArea', signal(null));
+    MockInstance(IxExplorerComponent, 'tree', signal(null));
     spectator = createComponent();
   });
 

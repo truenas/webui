@@ -64,7 +64,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected isDisabled$ = new BehaviorSubject<boolean>(false);
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
-  private readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
+  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
 
   editorView: EditorView;
 

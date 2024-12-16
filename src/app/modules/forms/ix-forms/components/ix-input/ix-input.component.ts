@@ -73,7 +73,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly format = input<(value: string | number) => string>();
   readonly parse = input<(value: string | number) => string | number>();
 
-  private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
+  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
 
   private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
