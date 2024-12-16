@@ -120,8 +120,13 @@ export class AcmednsFormComponent implements OnInit {
     this.dynamicSection = [{
       name: '',
       description: '',
-      schema: schemas.map((schema) => this.parseSchemaForDynamicSchema(schema))
-        .reduce((all, val) => all.concat(val), []),
+      schema: Array.from(
+        new Map(
+          schemas
+            .flatMap((schema) => this.parseSchemaForDynamicSchema(schema))
+            .map((item) => [item.controlName, item]),
+        ).values(),
+      ),
     }];
 
     this.dnsAuthenticatorList = schemas.map((schema) => this.parseSchemaForDnsAuthList(schema));
