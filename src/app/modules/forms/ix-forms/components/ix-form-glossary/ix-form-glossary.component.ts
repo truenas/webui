@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import {
   debounceTime,
+  delay,
   distinctUntilChanged,
   map,
 } from 'rxjs/operators';
@@ -82,6 +83,7 @@ export class IxFormGlossaryComponent implements OnInit {
 
   private handleControlsUpdates(): void {
     this.formService.controlNamesWithlabels.pipe(
+      delay(0),
       map((controlsWithLabels) => controlsWithLabels.map(
         (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),
       )),
@@ -93,6 +95,7 @@ export class IxFormGlossaryComponent implements OnInit {
 
   private handleSectionUpdates(): void {
     this.formService.controlSections$.pipe(
+      delay(0),
       untilDestroyed(this),
     ).subscribe({
       next: (sectionsWithControls) => {

@@ -70,6 +70,7 @@
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
           <ix-list-item
+            [formGroupName]="i"
             [label]="'Environment Variable' | translate"
             (delete)="removeEnvironmentVariable(i)"
           >
@@ -105,6 +106,7 @@
         @for (disk of form.controls.disks.controls; track disk; let i = $index) {
           <ix-list-item
             [label]="'Disk' | translate"
+            [formGroupName]="i"
             (delete)="removeDisk(i)"
           >
             <ix-explorer
@@ -138,6 +140,7 @@
         @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
           <ix-list-item
             [label]="'Proxy' | translate"
+            [formGroupName]="i"
             (delete)="removeProxy(i)"
           >
             <div class="protocol-and-port">
