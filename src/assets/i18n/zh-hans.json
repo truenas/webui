@@ -265,6 +265,7 @@
   "You can only lock a dataset if it was encrypted with a passphrase": "",
   "You have unsaved changes. Are you sure you want to close?": "",
   "iSCSI Authorized Networks": "",
+  "iSCSI Connections": "",
   "iSCSI Global Configuration": "",
   "iSCSI Service": "",
   "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "",

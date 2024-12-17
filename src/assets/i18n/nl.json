@@ -155,6 +155,7 @@
   "Wait for container to shut down cleanly": "",
   "You are about to convert {appName} to a custom app. This will allow you to edit its yaml file directly.\nWarning. This operation cannot be undone.": "",
   "iSCSI Authorized Networks": "",
+  "iSCSI Connections": "",
   "iSCSI Global Configuration": "",
   "iSCSI Service": "",
   "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "",

@@ -351,6 +351,7 @@
   "You have unsaved changes. Are you sure you want to close?": "",
   "ZFS Errors": "",
   "iSCSI Authorized Networks": "",
+  "iSCSI Connections": "",
   "iSCSI Global Configuration": "",
   "iSCSI Service": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",

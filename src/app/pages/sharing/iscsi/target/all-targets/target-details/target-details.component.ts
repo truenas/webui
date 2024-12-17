@@ -11,6 +11,7 @@ import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/a
 import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
+import { ConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/connections-card/connections-card.component';
 import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -24,6 +25,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     AuthorizedNetworksCardComponent,
     FibreChannelPortCardComponent,
     AssociatedExtentsCardComponent,
+    ConnectionsCardComponent,
   ],
 })
 export class TargetDetailsComponent {

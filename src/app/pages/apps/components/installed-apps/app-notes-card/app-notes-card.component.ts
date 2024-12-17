@@ -7,7 +7,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { App } from 'app/interfaces/app.interface';
-import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component';
+import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
 
 @Component({
   selector: 'ix-app-notes-card',
@@ -20,7 +20,7 @@ import { AppSectionExpandCollapseComponent } from 'app/pages/apps/components/app
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
-    AppSectionExpandCollapseComponent,
+    CardExpandCollapseComponent,
     TranslateModule,
     MarkdownModule,
   ],
