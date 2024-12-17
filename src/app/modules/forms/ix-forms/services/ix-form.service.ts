@@ -8,7 +8,7 @@ import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registe
 @Injectable({ providedIn: 'root' })
 export class IxFormService {
   private controls = new Map<string, HTMLElement>();
-  private sections = new Map<IxFormSectionComponent, Map<string, NgControl | null>>();
+  private sections = new Map<IxFormSectionComponent, (NgControl | null)[]>();
   controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
   controlSections$ = new BehaviorSubject<SectionWithControls[]>([]);
 
@@ -52,15 +52,14 @@ export class IxFormService {
   }
 
   registerSectionControl(
-    name: string,
     control: NgControl | null,
     formSection: IxFormSectionComponent,
   ): void {
     let controls = this.sections.get(formSection);
-    if (!controls?.size) {
-      controls = new Map();
+    if (!controls?.length) {
+      controls = [];
     }
-    controls.set(name, control);
+    controls.push(control);
     this.sections.set(formSection, controls);
     this.updateSections();
   }
@@ -70,16 +69,14 @@ export class IxFormService {
     this.controlNamesWithlabels.next(this.getControlsLabels());
   }
 
-  unregisterSectionControl(section: IxFormSectionComponent, control: string): void {
-    const namedControls = this.sections.get(section) || new Map<string, NgControl>();
-    namedControls.delete(control);
+  unregisterSectionControl(section: IxFormSectionComponent, control: NgControl | null): void {
+    const namedControls = (this.sections.get(section) || []).filter((ngControl) => ngControl !== control);
 
-    if (namedControls.size) {
+    if (namedControls.length) {
       this.sections.set(section, namedControls);
     } else {
       this.sections.delete(section);
     }
-
     this.updateSections();
   }
 

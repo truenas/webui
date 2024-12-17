@@ -4,5 +4,5 @@ import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix
 export interface ControlNameWithLabel { label: string; name: string }
 export interface SectionWithControls {
   section: IxFormSectionComponent;
-  controls: Map<string, NgControl | null> | undefined;
+  controls: (NgControl | null)[] | undefined;
 }

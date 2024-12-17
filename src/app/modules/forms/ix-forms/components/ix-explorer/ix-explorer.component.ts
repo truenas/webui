@@ -29,7 +29,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -59,7 +59,15 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     RegisteredControlDirective,
   ],
   hostDirectives: [
-    { ...registeredDirectiveConfig },
+    {
+      directive: RegisteredControlDirective,
+      inputs: [
+        'label',
+        'formControlName',
+        'formArrayName',
+        'formGroupName',
+      ],
+    },
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {

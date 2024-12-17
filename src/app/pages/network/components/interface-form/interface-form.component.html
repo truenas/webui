@@ -173,7 +173,6 @@
           >
             @for (network of form.controls.aliases.controls; track network; let i = $index) {
               <ix-list-item
-                [formGroupName]="i"
                 [label]="'Aliases' | translate"
                 (delete)="removeAlias(i)"
               >

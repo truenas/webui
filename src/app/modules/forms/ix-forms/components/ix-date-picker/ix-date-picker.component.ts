@@ -12,7 +12,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LocaleService } from 'app/services/locale.service';
@@ -40,7 +40,15 @@ type OnTouchedFn = () => void;
     RegisteredControlDirective,
   ],
   hostDirectives: [
-    { ...registeredDirectiveConfig },
+    {
+      directive: RegisteredControlDirective,
+      inputs: [
+        'label',
+        'formControlName',
+        'formArrayName',
+        'formGroupName',
+      ],
+    },
   ],
   providers: [
     FormatDateTimePipe,

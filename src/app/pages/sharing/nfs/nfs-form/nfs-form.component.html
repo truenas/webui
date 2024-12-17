@@ -86,7 +86,6 @@
         >
           @for (network of form.controls.networks.controls; track network; let i = $index) {
             <ix-list-item
-              [formGroupName]="i"
               [label]="'Networks' | translate"
               (delete)="removeNetworkControl(i)"
             >
@@ -111,7 +110,6 @@
           @for (network of form.controls.hosts.controls; track network; let i = $index) {
             <ix-list-item
               [label]="'Hosts' | translate"
-              [formGroupName]="i"
               (delete)="removeHostControl(i)"
             >
               <ix-input

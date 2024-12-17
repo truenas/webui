@@ -62,12 +62,12 @@ export class IxFormGlossaryComponent implements OnInit {
   protected sectionsValidity = new Map<IxFormSectionComponent, boolean>();
   private sectionControlsSubscriptions = new Map<
     IxFormSectionComponent,
-    Record<string, Subscription>
+    Map<NgControl, Subscription>
   >();
 
   private sectionControlsValidities = new Map<
     IxFormSectionComponent,
-    Record<string, boolean>
+    Map<NgControl, boolean>
   >();
 
   constructor(
@@ -108,20 +108,23 @@ export class IxFormGlossaryComponent implements OnInit {
 
       this.initializeSectionValidity(
         section,
-        Array.from(controls).map(([, control]) => control),
+        controls,
       );
 
-      const sectionControlSubscriptions = this.sectionControlsSubscriptions.get(section) || {};
-      for (const [name, control] of controls) {
-        this.setControlValidity(section, name, control ? control.valid : true);
+      const sectionControlSubscriptions
+        = this.sectionControlsSubscriptions.get(section) || new Map<NgControl, Subscription>();
 
-        sectionControlSubscriptions[name] = control?.statusChanges.pipe(
+      for (const control of controls) {
+        this.setControlValidity(section, control, control ? control.valid : true);
+
+        const subscription = control?.statusChanges.pipe(
           untilDestroyed(this),
         ).subscribe({
           next: () => {
-            this.setControlValidity(section, name, control.valid);
+            this.setControlValidity(section, control, control.valid);
           },
         });
+        sectionControlSubscriptions.set(control, subscription);
       }
       this.sectionControlsSubscriptions.set(section, sectionControlSubscriptions);
     }
@@ -134,23 +137,24 @@ export class IxFormGlossaryComponent implements OnInit {
 
   private setControlValidity(
     section: IxFormSectionComponent,
-    control: string,
+    control: NgControl,
     valid: boolean,
   ): void {
-    const sectionControlValidities = this.sectionControlsValidities.get(section) || {};
-    sectionControlValidities[control] = valid;
+    const sectionControlValidities = this.sectionControlsValidities.get(section) || new Map<NgControl, boolean>();
+    sectionControlValidities.set(control, valid);
 
     this.sectionControlsValidities.set(section, sectionControlValidities);
-    this.sectionsValidity.set(section, Object.values(sectionControlValidities).every(Boolean));
+    this.sectionsValidity.set(section, Array.from(sectionControlValidities.values()).every(Boolean));
     this.cdr.markForCheck();
   }
 
   private resetSubscriptionsAndValidities(section: IxFormSectionComponent): void {
-    this.sectionControlsValidities.set(section, {});
-    for (const subscription of Object.values(this.sectionControlsSubscriptions.get(section) || {})) {
+    this.sectionControlsValidities.set(section, new Map<NgControl, boolean>());
+    const subscriptions = Array.from(this.sectionControlsSubscriptions.get(section)?.values() || []);
+    for (const subscription of subscriptions) {
       subscription?.unsubscribe();
     }
-    this.sectionControlsSubscriptions.set(section, {});
+    this.sectionControlsSubscriptions.set(section, new Map<NgControl, Subscription>());
   }
 
   protected isSectionValid(section: IxFormSectionComponent): boolean {

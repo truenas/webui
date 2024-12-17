@@ -19,7 +19,6 @@
         >
           @for (entry of form.controls.entries.controls; track entry; let i = $index) {
             <ix-list-item
-              [formGroupName]="i"
               [label]="'ACL Entries' | translate"
               (delete)="removeAce(i)"
             >

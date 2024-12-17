@@ -32,7 +32,6 @@
         >
           @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
             <ix-list-item
-              [formGroupName]="i"
               [canDelete]="false"
             >
               <div>

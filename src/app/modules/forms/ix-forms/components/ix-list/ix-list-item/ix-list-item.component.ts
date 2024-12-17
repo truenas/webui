@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -20,9 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestDirective,
     RegisteredControlDirective,
-  ],
-  hostDirectives: [
-    { ...registeredDirectiveConfig },
   ],
 })
 export class IxListItemComponent {

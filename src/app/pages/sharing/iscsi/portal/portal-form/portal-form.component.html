@@ -26,7 +26,6 @@
           @for (item of listen; track item; let i = $index) {
             <ix-list-item 
               [label]="'IP Address' | translate" 
-              [formGroupName]="i"
               (delete)="onDelete(i)"
             >
               <ix-select
