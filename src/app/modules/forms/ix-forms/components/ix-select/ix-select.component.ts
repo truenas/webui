@@ -18,7 +18,7 @@ import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -51,18 +51,9 @@ export type IxSelectValue = SelectOptionValueType;
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
-    RegisteredControlDirective,
   ],
   hostDirectives: [
-    {
-      directive: RegisteredControlDirective,
-      inputs: [
-        'label',
-        'formControlName',
-        'formArrayName',
-        'formGroupName',
-      ],
-    },
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {

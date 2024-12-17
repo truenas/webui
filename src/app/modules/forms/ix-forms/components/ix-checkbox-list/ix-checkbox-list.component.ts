@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @UntilDestroy()
@@ -29,18 +29,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     RegisteredControlDirective,
     TranslateModule,
     TestDirective,
-    RegisteredControlDirective,
   ],
   hostDirectives: [
-    {
-      directive: RegisteredControlDirective,
-      inputs: [
-        'label',
-        'formControlName',
-        'formArrayName',
-        'formGroupName',
-      ],
-    },
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxCheckboxListComponent implements ControlValueAccessor {

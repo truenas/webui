@@ -8,7 +8,7 @@ import {
 import { MatSlideToggleChange, MatSlideToggle } from '@angular/material/slide-toggle';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
@@ -28,15 +28,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     RegisteredControlDirective,
   ],
   hostDirectives: [
-    {
-      directive: RegisteredControlDirective,
-      inputs: [
-        'label',
-        'formControlName',
-        'formArrayName',
-        'formGroupName',
-      ],
-    },
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxSlideToggleComponent implements ControlValueAccessor {

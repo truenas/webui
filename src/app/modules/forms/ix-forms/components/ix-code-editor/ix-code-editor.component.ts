@@ -29,7 +29,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 @UntilDestroy()
@@ -49,15 +49,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
     RegisteredControlDirective,
   ],
   hostDirectives: [
-    {
-      directive: RegisteredControlDirective,
-      inputs: [
-        'label',
-        'formControlName',
-        'formArrayName',
-        'formGroupName',
-      ],
-    },
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
