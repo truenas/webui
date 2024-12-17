@@ -14,9 +14,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
-  selector: 'ix-app-section-expand-collapse',
-  templateUrl: './app-section-expand-collapse.component.html',
-  styleUrls: ['./app-section-expand-collapse.component.scss'],
+  selector: 'ix-card-expand-collapse',
+  templateUrl: './card-expand-collapse.component.html',
+  styleUrls: ['./card-expand-collapse.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -25,7 +25,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class AppSectionExpandCollapseComponent implements OnChanges {
+export class CardExpandCollapseComponent implements OnChanges {
   section = viewChild<ElementRef<HTMLElement>>('section');
   maxHeight = input<number>(250);
   height = signal<number>(this.maxHeight());

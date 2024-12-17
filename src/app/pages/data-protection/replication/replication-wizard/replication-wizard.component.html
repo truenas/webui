@@ -9,12 +9,12 @@
     <mat-vertical-stepper [linear]="true">
       <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
 
-      <mat-step [stepControl]="whatAndWhere?.form">
+      <mat-step [stepControl]="whatAndWhere()?.form">
         <ng-template matStepLabel>{{ 'What and Where' | translate }}</ng-template>
         <ix-replication-what-and-where (customRetentionVisibleChange)="isCustomRetentionVisible = $event"></ix-replication-what-and-where>
       </mat-step>
 
-      <mat-step [stepControl]="when?.form">
+      <mat-step [stepControl]="when()?.form">
         <ng-template matStepLabel>{{ 'When' | translate }}</ng-template>
         <ix-replication-when [isCustomRetentionVisible]="isCustomRetentionVisible" (save)="onSubmit()"></ix-replication-when>
       </mat-step>

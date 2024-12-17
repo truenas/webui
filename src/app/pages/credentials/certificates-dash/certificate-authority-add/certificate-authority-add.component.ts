@@ -2,8 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  ViewChild,
+  Component, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -81,15 +80,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateAuthorityAddComponent implements AfterViewInit {
-  @ViewChild(CaIdentifierAndTypeComponent) identifierAndType: CaIdentifierAndTypeComponent;
+  protected readonly identifierAndType = viewChild(CaIdentifierAndTypeComponent);
 
   // Adding new
-  @ViewChild(CertificateOptionsComponent) options: CertificateOptionsComponent;
-  @ViewChild(CertificateSubjectComponent) subject: CertificateSubjectComponent;
-  @ViewChild(CertificateConstraintsComponent) constraints: CertificateConstraintsComponent;
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing
-  @ViewChild(CaImportComponent) import: CaImportComponent;
+  protected readonly import = viewChild(CaImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -107,11 +106,11 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   ) {}
 
   get isImport(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CaCreateType.Import;
+    return this.identifierAndType()?.form?.value.create_type === CaCreateType.Import;
   }
 
   get hasSignedBy(): boolean {
-    return this.identifierAndType?.form?.value.create_type === CaCreateType.Intermediate;
+    return this.identifierAndType()?.form?.value.create_type === CaCreateType.Intermediate;
   }
 
   ngAfterViewInit(): void {
@@ -124,11 +123,11 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     CertificateSubjectComponent,
     CertificateConstraintsComponent,
   ] {
-    return [this.identifierAndType, this.options, this.subject, this.constraints];
+    return [this.identifierAndType(), this.options(), this.subject(), this.constraints()];
   }
 
   getImportCaSteps(): [CaIdentifierAndTypeComponent, CaImportComponent] {
-    return [this.identifierAndType, this.import];
+    return [this.identifierAndType(), this.import()];
   }
 
   onProfileSelected(profile: CertificateProfile): void {
@@ -142,7 +141,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
       step.form.patchValue(otherFields);
     });
 
-    this.constraints.setFromProfile(extensions);
+    this.constraints().setFromProfile(extensions);
   }
 
   updateSummary(): void {
@@ -180,7 +179,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   }
 
   private setDefaultConstraints(): void {
-    this.constraints.form.patchValue({
+    this.constraints().form.patchValue({
       BasicConstraints: {
         enabled: true,
         BasicConstraints: [BasicConstraint.Ca],

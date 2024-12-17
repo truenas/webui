@@ -87,10 +87,6 @@ export class DashboardComponent implements OnInit {
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
   readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
-  readonly newFeatureConfig = {
-    key: 'dashboardConfigure',
-    message: this.translate.instant('New widgets and layouts.'),
-  };
 
   readonly customLayout = computed(() => {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));

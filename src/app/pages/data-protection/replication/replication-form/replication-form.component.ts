@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -74,11 +74,11 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ReplicationFormComponent implements OnInit {
-  @ViewChild(GeneralSectionComponent, { static: true }) generalSection: GeneralSectionComponent;
-  @ViewChild(TransportSectionComponent, { static: true }) transportSection: TransportSectionComponent;
-  @ViewChild(SourceSectionComponent, { static: true }) sourceSection: SourceSectionComponent;
-  @ViewChild(TargetSectionComponent, { static: true }) targetSection: TargetSectionComponent;
-  @ViewChild(ScheduleSectionComponent, { static: true }) scheduleSection: ScheduleSectionComponent;
+  protected readonly generalSection = viewChild(GeneralSectionComponent);
+  protected readonly transportSection = viewChild(TransportSectionComponent);
+  protected readonly sourceSection = viewChild(SourceSectionComponent);
+  protected readonly targetSection = viewChild(TargetSectionComponent);
+  protected readonly scheduleSection = viewChild(ScheduleSectionComponent);
 
   isLoading = false;
 
@@ -110,21 +110,21 @@ export class ReplicationFormComponent implements OnInit {
   ) {
     this.chainedRef.requireConfirmationWhen(() => {
       return of(
-        this.generalSection.form.dirty
-        || this.transportSection.form.dirty
-        || this.sourceSection.form.dirty
-        || this.targetSection.form.dirty
-        || this.scheduleSection.form.dirty,
+        this.generalSection().form.dirty
+        || this.transportSection().form.dirty
+        || this.sourceSection().form.dirty
+        || this.targetSection().form.dirty
+        || this.scheduleSection().form.dirty,
       );
     });
     this.existingReplication = this.chainedRef.getData();
     this.chainedRef.requireConfirmationWhen(() => {
       return of(
-        this.generalSection.form.dirty
-        || this.transportSection.form.dirty
-        || this.sourceSection.form.dirty
-        || this.targetSection.form.dirty
-        || this.scheduleSection.form.dirty,
+        this.generalSection().form.dirty
+        || this.transportSection().form.dirty
+        || this.sourceSection().form.dirty
+        || this.targetSection().form.dirty
+        || this.scheduleSection().form.dirty,
       );
     });
   }
@@ -152,24 +152,24 @@ export class ReplicationFormComponent implements OnInit {
     ScheduleSectionComponent,
   ] {
     return [
-      this.generalSection,
-      this.transportSection,
-      this.sourceSection,
-      this.targetSection,
-      this.scheduleSection,
+      this.generalSection(),
+      this.transportSection(),
+      this.sourceSection(),
+      this.targetSection(),
+      this.scheduleSection(),
     ];
   }
 
   get isLocal(): boolean {
-    return this.generalSection.form.controls.transport.value === TransportMode.Local;
+    return this.generalSection().form.controls.transport.value === TransportMode.Local;
   }
 
   get isPush(): boolean {
-    return this.generalSection.form.controls.direction.value === Direction.Push;
+    return this.generalSection().form.controls.direction.value === Direction.Push;
   }
 
   get usesNameRegex(): boolean {
-    return this.sourceSection.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
+    return this.sourceSection().form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
   get isFormValid(): boolean {
@@ -226,11 +226,11 @@ export class ReplicationFormComponent implements OnInit {
 
   private countSnapshotsOnChanges(): void {
     merge(
-      this.generalSection.form.controls.transport.valueChanges,
-      this.generalSection.form.controls.direction.valueChanges,
-      this.sourceSection.form.controls.name_regex.valueChanges,
-      this.sourceSection.form.controls.also_include_naming_schema.valueChanges,
-      this.sourceSection.form.controls.source_datasets.valueChanges,
+      this.generalSection().form.controls.transport.valueChanges,
+      this.generalSection().form.controls.direction.valueChanges,
+      this.sourceSection().form.controls.name_regex.valueChanges,
+      this.sourceSection().form.controls.also_include_naming_schema.valueChanges,
+      this.sourceSection().form.controls.source_datasets.valueChanges,
     )
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
@@ -309,9 +309,9 @@ export class ReplicationFormComponent implements OnInit {
 
   private updateExplorersOnChanges(): void {
     merge(
-      this.generalSection.form.controls.direction.valueChanges,
-      this.generalSection.form.controls.transport.valueChanges,
-      this.transportSection.form.controls.ssh_credentials.valueChanges,
+      this.generalSection().form.controls.direction.valueChanges,
+      this.generalSection().form.controls.transport.valueChanges,
+      this.transportSection().form.controls.ssh_credentials.valueChanges,
     )
       .pipe(
         // Workaround for https://github.com/angular/angular/issues/13129
@@ -320,8 +320,8 @@ export class ReplicationFormComponent implements OnInit {
       )
       .subscribe(() => this.updateExplorers());
 
-    this.transportSection.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.targetSection.form.controls.target_dataset.reset();
+    this.transportSection().form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.targetSection().form.controls.target_dataset.reset();
     });
   }
 
@@ -346,7 +346,7 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(
         switchMap((sshCredentials) => {
           this.sshCredentials = sshCredentials;
-          return this.transportSection.form.controls.ssh_credentials.valueChanges;
+          return this.transportSection().form.controls.ssh_credentials.valueChanges;
         }),
         untilDestroyed(this),
       )
@@ -364,7 +364,7 @@ export class ReplicationFormComponent implements OnInit {
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
-          this.generalSection.form.controls.sudo.setValue(useSudo);
+          this.generalSection().form.controls.sudo.setValue(useSudo);
           this.isSudoDialogShown = true;
         });
       });

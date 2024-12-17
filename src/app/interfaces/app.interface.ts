@@ -303,3 +303,10 @@ export type AppDeleteParams = [
 ];
 
 export type AppRollbackParams = [app_name: string, { app_version: string; rollback_snapshot: boolean }];
+
+export interface AppContainerLog {
+  data: string;
+  timestamp: string;
+  msg?: string;
+  collection?: string;
+}

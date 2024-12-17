@@ -93,7 +93,7 @@
               @if (currentStartDate) {
                 <h4 class="legend-timestamp">
                   <strong>{{ 'Start' | translate }}:</strong>
-                  <span class="font-normal">
+                  <span class="date">
                     <ix-date [date]="currentStartDate"></ix-date>
                   </span>
                 </h4>
@@ -101,7 +101,7 @@
               @if (currentEndDate) {
                 <h4 class="legend-timestamp">
                   <strong>{{ 'End' | translate }}:</strong>
-                  <span class="font-normal">
+                  <span class="date">
                     <ix-date [date]="currentEndDate"></ix-date>
                   </span>
                 </h4>
@@ -116,7 +116,7 @@
                   <h4>
                     <strong>{{ 'Time' | translate }}:</strong>
                     @if (legendData?.xHTML) {
-                      <span class="font-normal">
+                      <span class="date">
                         <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
                       </span>
                     }
@@ -156,7 +156,7 @@
                           <strong>{{ legendItem | translate }}</strong>
                         </span>
                         @if (legendData?.series?.[i]?.yHTML && shouldShowLegendValue) {
-                          <span class="font-normal">:
+                          <span class="date">:
                             {{ legendData.series[i].yHTML | translate }}
                           </span>
                         }

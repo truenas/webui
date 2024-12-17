@@ -30,12 +30,19 @@ import { TopologyItem } from 'app/interfaces/storage.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import {
+  PruneDedupTableDialogComponent,
+} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
+import {
+  SetDedupQuotaComponent,
+} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
 import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -67,6 +74,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     DecimalPipe,
     PercentPipe,
   ],
+  providers: [FileSizePipe],
 })
 export class ZfsHealthCardComponent implements OnChanges {
   readonly pool = input.required<Pool>();
@@ -81,7 +89,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   readonly poolStatusLabels = poolStatusLabels;
 
-  protected readonly requiredRoles = [Role.ReportingWrite];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private api: ApiService,
@@ -91,7 +99,18 @@ export class ZfsHealthCardComponent implements OnChanges {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private store: PoolsDashboardStore,
+    private fileSizePipe: FileSizePipe,
   ) { }
+
+  deduplicationStats = computed(() => {
+    if (this.pool().dedup_table_quota !== 'auto' && this.pool().dedup_table_quota !== '0') {
+      const value = this.fileSizePipe.transform(this.pool().dedup_table_size);
+      const quota = this.fileSizePipe.transform(parseInt(this.pool().dedup_table_quota, 10));
+      return `${value} / ${quota}`;
+    }
+
+    return this.fileSizePipe.transform(this.pool().dedup_table_size);
+  });
 
   get scanLabel(): string {
     if (!this.isScrub) {
@@ -231,6 +250,22 @@ export class ZfsHealthCardComponent implements OnChanges {
   onEditAutotrim(): void {
     this.matDialog
       .open(AutotrimDialogComponent, { data: this.pool() })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.store.loadDashboard());
+  }
+
+  onPruneDedupTable(): void {
+    this.matDialog
+      .open(PruneDedupTableDialogComponent, { data: this.pool() })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.store.loadDashboard());
+  }
+
+  onSetDedupQuota(): void {
+    this.matDialog
+      .open(SetDedupQuotaComponent, { data: this.pool() })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.store.loadDashboard());
