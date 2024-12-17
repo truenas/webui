@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, Component,
-  viewChild,
+  ChangeDetectionStrategy, Component, viewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,7 +29,7 @@ import {
   ],
 })
 export class PcloudProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  readonly oauthComponent = viewChild(OauthProviderComponent);
+  private readonly oauthComponent = viewChild(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],

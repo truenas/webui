@@ -74,11 +74,11 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ReplicationFormComponent implements OnInit {
-  readonly generalSection = viewChild(GeneralSectionComponent);
-  readonly transportSection = viewChild(TransportSectionComponent);
-  readonly sourceSection = viewChild(SourceSectionComponent);
-  readonly targetSection = viewChild(TargetSectionComponent);
-  readonly scheduleSection = viewChild(ScheduleSectionComponent);
+  protected readonly generalSection = viewChild(GeneralSectionComponent);
+  protected readonly transportSection = viewChild(TransportSectionComponent);
+  protected readonly sourceSection = viewChild(SourceSectionComponent);
+  protected readonly targetSection = viewChild(TargetSectionComponent);
+  protected readonly scheduleSection = viewChild(ScheduleSectionComponent);
 
   isLoading = false;
 

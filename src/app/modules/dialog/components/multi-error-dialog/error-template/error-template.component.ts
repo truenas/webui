@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, input, viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, input, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle } from '@angular/material/dialog';
@@ -29,11 +29,10 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ErrorTemplateComponent {
-  readonly errorMessageWrapper = viewChild<ElementRef<HTMLElement>>('errorMessageWrapper');
-  readonly errorTitle = viewChild<ElementRef<HTMLElement>>('errorTitle');
-  readonly errorMdContent = viewChild<ElementRef<HTMLElement>>('errorMdContent');
-  readonly errorBtPanel = viewChild<ElementRef<HTMLElement>>('errorBtPanel');
-  readonly errorBtText = viewChild<ElementRef<HTMLElement>>('errorBtText');
+  private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild('errorMessageWrapper', { read: ElementRef });
+  private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild('errorMdContent', { read: ElementRef });
+  private readonly errorBtPanel: Signal<ElementRef<HTMLElement>> = viewChild('errorBtPanel', { read: ElementRef });
+  private readonly errorBtText: Signal<ElementRef<HTMLElement>> = viewChild('errorBtText', { read: ElementRef });
 
   readonly title = input<string>();
   readonly message = input<string>();

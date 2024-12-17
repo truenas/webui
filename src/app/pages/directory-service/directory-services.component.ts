@@ -78,9 +78,9 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  readonly idmapListComponent = viewChild(IdmapListComponent);
-  readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
-  readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
+  private readonly idmapListComponent = viewChild(IdmapListComponent);
+  private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
+  private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
@@ -209,17 +209,14 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    const idmapListComponent = this.idmapListComponent();
-    if (idmapListComponent) {
-      idmapListComponent.getIdmaps();
+    if (this.idmapListComponent()) {
+      this.idmapListComponent().getIdmaps();
     }
-    const kerberosKeytabsListComponent = this.kerberosKeytabsListComponent();
-    if (kerberosKeytabsListComponent) {
-      kerberosKeytabsListComponent.getKerberosKeytabs();
+    if (this.kerberosKeytabsListComponent()) {
+      this.kerberosKeytabsListComponent().getKerberosKeytabs();
     }
-    const kerberosRealmsListComponent = this.kerberosRealmsListComponent();
-    if (kerberosRealmsListComponent) {
-      kerberosRealmsListComponent.getKerberosRealms();
+    if (this.kerberosRealmsListComponent()) {
+      this.kerberosRealmsListComponent().getKerberosRealms();
     }
   }
 

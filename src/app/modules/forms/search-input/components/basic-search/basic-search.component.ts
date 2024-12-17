@@ -1,12 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  input,
-  model,
-  output,
-  viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, input, model, output, Signal, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
@@ -37,7 +31,7 @@ export class BasicSearchComponent implements AfterViewInit {
   readonly queryChange = output<string>();
   readonly runSearch = output();
 
-  readonly searchControl = viewChild<ElementRef<HTMLInputElement>>('searchControl');
+  private readonly searchControl: Signal<ElementRef<HTMLElement>> = viewChild('searchControl', { read: ElementRef });
 
   ngAfterViewInit(): void {
     this.focusInput();

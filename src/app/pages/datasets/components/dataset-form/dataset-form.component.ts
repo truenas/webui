@@ -68,10 +68,10 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
-  readonly nameAndOptionsSection = viewChild(NameAndOptionsSectionComponent);
-  readonly encryptionSection = viewChild(EncryptionSectionComponent);
-  readonly quotasSection = viewChild(QuotasSectionComponent);
-  readonly otherOptionsSection = viewChild(OtherOptionsSectionComponent);
+  private nameAndOptionsSection = viewChild(NameAndOptionsSectionComponent);
+  private encryptionSection = viewChild(EncryptionSectionComponent);
+  private quotasSection = viewChild(QuotasSectionComponent);
+  private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
 
@@ -238,11 +238,10 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
         const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
-        const nameAndOptionsSection = this.nameAndOptionsSection();
-        if (nameAndOptionsSection.canCreateSmb && datasetPresetFormValue.create_smb) {
+        if (this.nameAndOptionsSection().canCreateSmb && datasetPresetFormValue.create_smb) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
         }
-        if (nameAndOptionsSection.canCreateNfs && datasetPresetFormValue.create_nfs) {
+        if (this.nameAndOptionsSection().canCreateNfs && datasetPresetFormValue.create_nfs) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading = false;

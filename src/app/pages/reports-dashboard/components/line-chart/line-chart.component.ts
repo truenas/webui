@@ -4,8 +4,11 @@ import {
   OnDestroy,
   OnChanges,
   ElementRef,
-  ChangeDetectionStrategy, output, input,
+  ChangeDetectionStrategy,
+  output,
+  input,
   viewChild,
+  Signal,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
@@ -49,7 +52,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly stacked = input(false);
   readonly labelY = input('Label Y');
 
-  readonly el = viewChild<ElementRef<HTMLElement>>('wrapper');
+  private readonly el: Signal<ElementRef<HTMLElement>> = viewChild('wrapper', { read: ElementRef });
 
   lastMinDate: number;
   lastMaxDate: number;

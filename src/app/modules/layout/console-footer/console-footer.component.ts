@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit,
-  viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,7 +17,7 @@ import { ConsolePanelDialogComponent } from 'app/modules/layout/console-footer/c
   imports: [AsyncPipe],
 })
 export class ConsoleFooterComponent implements OnInit {
-  readonly messageContainer = viewChild<ElementRef<HTMLElement>>('messageContainer');
+  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild('messageContainer', { read: ElementRef });
 
   lastThreeLogLines$ = this.messagesStore.lastThreeLogLines$;
 

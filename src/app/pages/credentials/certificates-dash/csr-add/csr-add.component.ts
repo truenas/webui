@@ -73,15 +73,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CsrAddComponent {
-  readonly identifierAndType = viewChild(CsrIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild(CsrIdentifierAndTypeComponent);
 
   // Adding new
-  readonly options = viewChild(CertificateOptionsComponent);
-  readonly subject = viewChild(CertificateSubjectComponent);
-  readonly constraints = viewChild(CertificateConstraintsComponent);
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing
-  readonly import = viewChild(CsrImportComponent);
+  protected readonly import = viewChild(CsrImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 

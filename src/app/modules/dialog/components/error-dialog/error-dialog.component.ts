@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, viewChild,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -35,12 +35,6 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ErrorDialogComponent {
-  readonly errorMessageWrapper = viewChild<ElementRef>('errorMessageWrapper');
-  readonly errorTitle = viewChild<ElementRef>('errorTitle');
-  readonly errorMdContent = viewChild<ElementRef>('errorMdContent');
-  readonly errorBtPanel = viewChild<ElementRef>('errorBtPanel');
-  readonly errorBtText = viewChild<ElementRef>('errorBtText');
-
   title: string;
   message: string;
   backtrace: string;

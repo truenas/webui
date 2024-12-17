@@ -9,7 +9,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 })
 export class FirstTimeWarningService {
   shownWarnings = new Set<string>();
-  shownConfirmations = new Set<string>();
 
   constructor(
     private dialogService: DialogService,

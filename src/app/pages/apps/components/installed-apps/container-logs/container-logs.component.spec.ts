@@ -27,7 +27,7 @@ describe('ContainerLogsComponent', () => {
     it('subscribes to logs updates', () => {
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(LogsDetailsDialogComponent, { width: '400px' });
 
-      expect(spectator.inject(ApiService).subscribeToLogs).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
         'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
       );
     });
@@ -83,7 +83,7 @@ describe('ContainerLogsComponent', () => {
           }) as unknown as MatDialogRef<LogsDetailsDialogComponent>),
         }),
         mockProvider(ApiService, {
-          subscribeToLogs: jest.fn(() => of({
+          subscribe: jest.fn(() => of({
             fields: {
               timestamp: '[12:34]',
               data: 'Some logs.',

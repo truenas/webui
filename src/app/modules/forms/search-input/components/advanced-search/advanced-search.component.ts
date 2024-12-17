@@ -4,8 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef, input,
-  OnInit, output,
-  viewChild,
+  OnInit, output, Signal, viewChild,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatCalendar } from '@angular/material/datepicker';
@@ -56,7 +55,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   readonly switchToBasic = output();
   readonly runSearch = output();
 
-  readonly inputArea = viewChild<ElementRef<HTMLElement>>('inputArea');
+  private readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
 
   protected hasQueryErrors = false;
   protected queryInputValue: string;

@@ -132,13 +132,6 @@ describe('ApiService', () => {
     });
   });
 
-  describe('subscribeToLogs', () => {
-    it('should successfully subscribe to logs', () => {
-      spectator.service.subscribeToLogs('filesystem.file_tail_follow');
-      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('filesystem.file_tail_follow');
-    });
-  });
-
   describe('clearSubscriptions', () => {
     it('should clear all event subscriptions', () => {
       spectator.service.clearSubscriptions();

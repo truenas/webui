@@ -40,7 +40,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   readonly index = input<number>();
   readonly lastIndex = input<number>();
 
-  readonly slideInBody = viewChild('chainedBody', { read: ViewContainerRef });
+  private readonly slideInBody = viewChild('chainedBody', { read: ViewContainerRef });
   private needConfirmation: () => Observable<boolean>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {

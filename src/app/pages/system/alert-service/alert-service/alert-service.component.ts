@@ -107,7 +107,7 @@ export class AlertServiceComponent implements OnInit {
 
   isLoading = false;
 
-  readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
+  private readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
 
@@ -223,11 +223,10 @@ export class AlertServiceComponent implements OnInit {
   }
 
   private renderAlertServiceForm(): void {
-    const alertServiceContainer = this.alertServiceContainer();
-    alertServiceContainer?.clear();
+    this.alertServiceContainer()?.clear();
 
     const formClass = this.getAlertServiceClass();
-    const formRef = alertServiceContainer.createComponent(formClass);
+    const formRef = this.alertServiceContainer().createComponent(formClass);
     this.alertServiceForm = formRef.instance;
   }
 

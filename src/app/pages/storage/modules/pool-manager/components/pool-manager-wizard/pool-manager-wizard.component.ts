@@ -94,7 +94,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 
-  readonly stepper = viewChild<MatStepper>('stepper');
+  private readonly stepper = viewChild('stepper', { read: MatStepper });
 
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),

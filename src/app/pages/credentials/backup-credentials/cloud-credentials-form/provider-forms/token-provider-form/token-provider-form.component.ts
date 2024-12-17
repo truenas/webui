@@ -30,7 +30,7 @@ import {
   ],
 })
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  readonly oauthComponent = viewChild(OauthProviderComponent);
+  private readonly oauthComponent = viewChild(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],

@@ -1,5 +1,6 @@
 import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
 import { FormGroup } from '@ngneat/reactive-forms';
+import { Observable } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/app.interface';
 import {
@@ -141,18 +142,13 @@ const afterEnum = [[{
     controlName: 'variable_select_int',
     required: true,
     title: 'Label Select Int',
-    // TODO: Rework not to rely on rxjs internals
-    options: expect.objectContaining({
-      _subscribe: expect.any(Function),
-    }),
+    options: expect.any(Observable),
     type: 'enum',
   }, {
     controlName: 'variable_select_string',
     required: false,
     title: 'Label Select String',
-    options: expect.objectContaining({
-      _subscribe: expect.any(Function),
-    }),
+    options: expect.any(Observable),
     type: 'enum',
   }] as DynamicFormSchemaEnum[],
   controlName: 'variable_dict',

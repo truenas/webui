@@ -2,7 +2,11 @@ import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import {
   Component,
   OnChanges,
-  OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef, input,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  input,
   viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
@@ -84,7 +88,7 @@ export class ReportComponent implements OnInit, OnChanges {
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
 
-  readonly lineChart = viewChild(LineChartComponent);
+  private readonly lineChart = viewChild(LineChartComponent);
 
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);

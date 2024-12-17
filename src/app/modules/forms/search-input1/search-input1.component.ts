@@ -3,11 +3,10 @@ import {
   Component,
   ElementRef,
   HostListener,
-  viewChild,
   OnInit,
   OnChanges,
   HostBinding, output,
-  input,
+  input, viewChild, Signal,
 } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -42,7 +41,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
 
   readonly search = output<string>();
 
-  readonly input = viewChild<ElementRef<HTMLInputElement>>('ixSearchInput');
+  private input: Signal<ElementRef<HTMLInputElement>> = viewChild('ixSearchInput', { read: ElementRef });
 
   @HostBinding('class.disabled')
   get disabledClass(): boolean {

@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  viewChild,
+  Component, viewChild,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatStepper, MatStep, MatStepLabel } from '@angular/material/stepper';
@@ -70,8 +69,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ReplicationWizardComponent {
-  readonly whatAndWhere = viewChild(ReplicationWhatAndWhereComponent);
-  readonly when = viewChild(ReplicationWhenComponent);
+  protected whatAndWhere = viewChild(ReplicationWhatAndWhereComponent);
+  protected when = viewChild(ReplicationWhenComponent);
 
   protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 

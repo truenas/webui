@@ -7,8 +7,7 @@ import {
   ElementRef,
   input,
   OnChanges,
-  OnInit,
-  viewChild,
+  OnInit, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
@@ -65,7 +64,8 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected isDisabled$ = new BehaviorSubject<boolean>(false);
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
-  readonly inputArea = viewChild<ElementRef<HTMLElement>>('inputArea');
+  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
+
   editorView: EditorView;
 
   protected value$ = new BehaviorSubject<string>('');

@@ -31,7 +31,8 @@ import { SlideInService } from 'app/services/slide-in.service';
 })
 export class SlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();
-  readonly slideInBody = viewChild('body', { read: ViewContainerRef });
+
+  private readonly slideInBody = viewChild('body', { read: ViewContainerRef });
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();

@@ -78,12 +78,13 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
-  readonly osStep = viewChild(OsStepComponent);
+  protected readonly osStep = viewChild(OsStepComponent);
+  // TODO: Should be protected, but used in the test.
   readonly cpuAndMemoryStep = viewChild(CpuAndMemoryStepComponent);
   readonly diskStep = viewChild(DiskStepComponent);
-  readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
-  readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
-  readonly gpuStep = viewChild(GpuStepComponent);
+  protected readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
+  protected readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
+  protected readonly gpuStep = viewChild(GpuStepComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 

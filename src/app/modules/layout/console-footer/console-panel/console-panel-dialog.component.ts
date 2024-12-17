@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, ElementRef, OnInit,
-  viewChild,
+  ChangeDetectionStrategy, Component, ElementRef, OnInit, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogContent, MatDialogActions, MatDialogClose } from '@angular/material/dialog';
@@ -28,7 +27,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ConsolePanelDialogComponent implements OnInit {
-  readonly messageContainer = viewChild<ElementRef<HTMLElement>>('messageContainer');
+  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild('messageContainer', { read: ElementRef });
 
   lines$ = this.messagesStore.lines$;
 

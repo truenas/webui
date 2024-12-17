@@ -60,9 +60,10 @@
 <div class="cell cell-update">
   <ix-app-update-cell [app]="app()" [showIcon]="true"></ix-app-update-cell>
 </div>
-<div *ixRequiresRoles="requiredRoles" class="cell cell-action">
+<div class="cell cell-action">
   @if (isAppStopped()) {
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'start']"
@@ -74,6 +75,7 @@
     </button>
   } @else {
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'restart']"
@@ -85,6 +87,7 @@
     </button>
 
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-icon-button
       matTooltipPosition="above"
       [ixTest]="[app().name, 'stop']"

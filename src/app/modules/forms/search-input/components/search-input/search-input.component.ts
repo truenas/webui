@@ -1,11 +1,7 @@
 import {
   ChangeDetectionStrategy,
-  Component,
-  model,
-  OnChanges,
-  output,
-  viewChild,
-  input,
+  Component, input, model,
+  OnChanges, output, viewChild,
 } from '@angular/core';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchComponent } from 'app/modules/forms/search-input/components/advanced-search/advanced-search.component';
@@ -33,7 +29,8 @@ export class SearchInputComponent<T> implements OnChanges {
   readonly queryChange = output<SearchQuery<T>>();
   readonly runSearch = output();
 
-  readonly advancedSearch = viewChild<AdvancedSearchComponent<T>>('advancedSearch');
+  // TODO: Outside of scope for this component. Solve elsewhere.
+  readonly advancedSearch = viewChild('advancedSearch', { read: AdvancedSearchComponent });
 
   ngOnChanges(): void {
     this.selectModeFromQuery();

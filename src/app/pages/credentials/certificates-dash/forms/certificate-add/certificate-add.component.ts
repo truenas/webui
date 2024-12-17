@@ -73,15 +73,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateAddComponent {
-  readonly identifierAndType = viewChild(CertificateIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild(CertificateIdentifierAndTypeComponent);
 
   // Adding new certificate
-  readonly options = viewChild(CertificateOptionsComponent);
-  readonly subject = viewChild(CertificateSubjectComponent);
-  readonly constraints = viewChild(CertificateConstraintsComponent);
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing existing certificate
-  readonly import = viewChild(CertificateImportComponent);
+  protected readonly import = viewChild(CertificateImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 

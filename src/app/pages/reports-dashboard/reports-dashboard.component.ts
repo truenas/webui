@@ -3,10 +3,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
-  viewChild,
 } from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
@@ -51,9 +49,6 @@ import { ReportsService } from './reports.service';
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
-  readonly viewport = viewChild(CdkVirtualScrollViewport);
-  readonly container = viewChild<ElementRef>('container');
-
   readonly searchableElements = reportingElements;
 
   scrollContainer: HTMLElement;

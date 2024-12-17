@@ -2,8 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
-  viewChild,
+  Component, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -81,15 +80,15 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateAuthorityAddComponent implements AfterViewInit {
-  readonly identifierAndType = viewChild(CaIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild(CaIdentifierAndTypeComponent);
 
   // Adding new
-  readonly options = viewChild(CertificateOptionsComponent);
-  readonly subject = viewChild(CertificateSubjectComponent);
-  readonly constraints = viewChild(CertificateConstraintsComponent);
+  protected readonly options = viewChild(CertificateOptionsComponent);
+  protected readonly subject = viewChild(CertificateSubjectComponent);
+  protected readonly constraints = viewChild(CertificateConstraintsComponent);
 
   // Importing
-  readonly import = viewChild(CaImportComponent);
+  protected readonly import = viewChild(CaImportComponent);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 

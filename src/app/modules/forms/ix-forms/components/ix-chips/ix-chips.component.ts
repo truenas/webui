@@ -7,6 +7,7 @@ import {
   ElementRef,
   input,
   OnChanges,
+  Signal,
   viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
@@ -90,7 +91,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private resolvedOptions: Option[] = [];
 
-  readonly chipInput = viewChild<ElementRef<HTMLInputElement>>('chipInput');
+  private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild('chipInput', { read: ElementRef });
 
   suggestions$: Observable<string[]>;
   values: string[] = [];

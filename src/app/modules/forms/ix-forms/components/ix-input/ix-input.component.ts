@@ -5,8 +5,7 @@ import {
   ElementRef,
   input,
   OnChanges,
-  OnInit,
-  viewChild,
+  OnInit, Signal, viewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -74,7 +73,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly format = input<(value: string | number) => string>();
   readonly parse = input<(value: string | number) => string | number>();
 
-  readonly inputElementRef = viewChild<ElementRef<HTMLInputElement>>('ixInput');
+  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
 
   private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
@@ -235,9 +234,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   optionSelected(option: Option): void {
-    const inputElementRef = this.inputElementRef();
-    if (inputElementRef?.nativeElement) {
-      inputElementRef.nativeElement.value = option.label;
+    if (this.inputElementRef()?.nativeElement) {
+      this.inputElementRef().nativeElement.value = option.label;
     }
 
     this.value = option.value;
