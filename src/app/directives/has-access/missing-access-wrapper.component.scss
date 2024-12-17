@@ -38,7 +38,8 @@
   .mat-icon,
   a,
   .mat-mdc-menu-item-text {
-    opacity: 0.25;
+    color: var(--mdc-icon-button-icon-color);
+    opacity: 0.5;
 
     &:disabled {
       color: var(--mdc-icon-button-icon-color);
