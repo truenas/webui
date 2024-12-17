@@ -34,7 +34,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class WidgetResourcesService {
-  // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
   readonly refreshInterval$ = timer(0, 5000);
