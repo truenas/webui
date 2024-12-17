@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,7 +30,7 @@ import {
   ],
 })
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  @ViewChild(OauthProviderComponent, { static: false }) oauthComponent: OauthProviderComponent;
+  private readonly oauthComponent = viewChild(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -66,7 +66,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
       if (this.hasOAuth) {
-        this.oauthComponent.form.patchValue(values);
+        this.oauthComponent().form.patchValue(values);
       }
       this.cdr.detectChanges();
     });
@@ -82,7 +82,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
     }
 
     return {
-      ...this.oauthComponent?.form?.value,
+      ...this.oauthComponent()?.form?.value,
       ...this.form.value,
     };
   }

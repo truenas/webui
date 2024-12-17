@@ -275,7 +275,7 @@ describe('IxExplorerComponent', () => {
 
       formControl.setValue([]);
 
-      spectator.component.tree.treeModel = {
+      spectator.component.tree().treeModel = {
         ...mockTreeMock,
         selectedLeafNodes: [{ data: { isMountpoint: true } }],
       } as TreeModel;
@@ -290,7 +290,7 @@ describe('IxExplorerComponent', () => {
 
       formControl.setValue('/mnt/place');
 
-      spectator.component.tree.treeModel = {
+      spectator.component.tree().treeModel = {
         ...mockTreeMock,
         selectedLeafNodes: [{ data: { isMountpoint: false } }],
       } as TreeModel;
@@ -306,7 +306,7 @@ describe('IxExplorerComponent', () => {
 
       formControl.setValue('/mnt/place');
 
-      spectator.component.tree.treeModel = {
+      spectator.component.tree().treeModel = {
         ...mockTreeMock,
         selectedLeafNodes: [{ data: { isMountpoint: true } }],
       } as TreeModel;
@@ -327,7 +327,7 @@ describe('IxExplorerComponent', () => {
       formControl.setValue('/mnt/place');
       formControl.enable();
 
-      spectator.component.tree.treeModel = {
+      spectator.component.tree().treeModel = {
         ...mockTreeMock,
         selectedLeafNodes: [{
           data: { isMountpoint: true },
