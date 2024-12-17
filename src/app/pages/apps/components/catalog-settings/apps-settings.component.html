@@ -26,6 +26,7 @@
         >
           @for (network of form.controls.address_pools.controls; track network; let i = $index) {
             <ix-list-item
+              [formGroupName]="i"
               [label]="'Address Pool' | translate"
               (delete)="removeAddressPool(i)"
             >
