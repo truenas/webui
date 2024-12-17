@@ -1,8 +1,9 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { signal } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
@@ -36,6 +37,10 @@ describe('GlobalSearchTriggerComponent', () => {
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(GlobalSearchComponent, 'searchInput', signal(null));
+    MockInstance(GlobalSearchComponent, 'searchBoxWrapper', signal(null));
+
     spectator = createComponent();
     jest.spyOn(spectator.inject(Overlay), 'create');
     spectator.detectChanges();

@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -48,6 +49,11 @@ describe('WidgetGroupFormComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(SlideInRef),
     ],
+  });
+
+  beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal(null));
   });
 
   describe('check layout selector', () => {

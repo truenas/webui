@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -78,9 +78,9 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  @ViewChild(IdmapListComponent) idmapListComponent: IdmapListComponent;
-  @ViewChild(KerberosKeytabsListComponent) kerberosKeytabsListComponent: KerberosKeytabsListComponent;
-  @ViewChild(KerberosRealmsListComponent) kerberosRealmsListComponent: KerberosRealmsListComponent;
+  private readonly idmapListComponent = viewChild(IdmapListComponent);
+  private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
+  private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
@@ -209,14 +209,14 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    if (this.idmapListComponent) {
-      this.idmapListComponent.getIdmaps();
+    if (this.idmapListComponent()) {
+      this.idmapListComponent().getIdmaps();
     }
-    if (this.kerberosKeytabsListComponent) {
-      this.kerberosKeytabsListComponent.getKerberosKeytabs();
+    if (this.kerberosKeytabsListComponent()) {
+      this.kerberosKeytabsListComponent().getKerberosKeytabs();
     }
-    if (this.kerberosRealmsListComponent) {
-      this.kerberosRealmsListComponent.getKerberosRealms();
+    if (this.kerberosRealmsListComponent()) {
+      this.kerberosRealmsListComponent().getKerberosRealms();
     }
   }
 
