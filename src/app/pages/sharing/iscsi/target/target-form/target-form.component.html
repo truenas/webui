@@ -64,6 +64,7 @@
               @for (entry of form.controls.groups.controls; track entry; let i = $index) {
                 <ix-list-item
                   [label]="'Groups' | translate"
+                  [formGroupName]="i"
                   (delete)="deleteGroup(i)"
                 >
                   <ix-select
