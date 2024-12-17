@@ -1,11 +1,10 @@
-import { MatInputModule } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import {
   DisconnectedMessageComponent,
@@ -42,10 +41,7 @@ describe('SigninComponent', () => {
   const createComponent = createComponentFactory({
     component: SigninComponent,
     imports: [
-      MatInputModule,
-      MockComponents(IxIconComponent),
-    ],
-    declarations: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         SigninFormComponent,
         DisconnectedMessageComponent,

@@ -1,7 +1,6 @@
-import { MatCardModule } from '@angular/material/card';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
@@ -27,8 +26,10 @@ describe('InstanceMetricsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: InstanceMetricsComponent,
-    imports: [MatCardModule, TranslateModule.forRoot()],
-    declarations: [MockComponent(InstanceMetricsLineChartComponent)],
+    imports: [
+      NgxSkeletonLoaderComponent,
+      MockComponent(InstanceMetricsLineChartComponent),
+    ],
     providers: [
       mockProvider(ApiService, {
         subscribe: jest.fn(() => of({ fields: mockMetrics })),

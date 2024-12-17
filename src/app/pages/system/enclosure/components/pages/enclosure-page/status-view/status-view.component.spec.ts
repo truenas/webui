@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
 import {
@@ -18,7 +19,8 @@ describe('StatusViewComponent', () => {
   let spectator: Spectator<StatusViewComponent>;
   const createComponent = createComponentFactory({
     component: StatusViewComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         EnclosureSideComponent,
         EnclosureSideSwitchComponent,

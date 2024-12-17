@@ -20,7 +20,7 @@ describe('EnclosureWizardStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(PoolManagerStore, {
         startOver$,
         enclosures$: of([{

@@ -36,7 +36,7 @@ describe('SpareWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),

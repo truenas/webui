@@ -31,7 +31,7 @@ describe('GeneralWizardStepComponent', () => {
       PoolWarningsComponent,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),

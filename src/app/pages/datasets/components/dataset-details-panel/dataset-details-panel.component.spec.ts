@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -48,7 +49,8 @@ describe('DatasetDetailsPanelComponent', () => {
   } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetDetailsPanelComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         DatasetIconComponent,
         DatasetDetailsCardComponent,

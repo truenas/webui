@@ -1,6 +1,7 @@
 import { CdkTree } from '@angular/cdk/tree';
 import {
-  ChangeDetectionStrategy, Component, HostBinding, ViewChild, ViewEncapsulation,
+  ChangeDetectionStrategy, Component, HostBinding, ViewEncapsulation,
+  viewChild,
 } from '@angular/core';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
@@ -22,5 +23,5 @@ import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-nod
 })
 export class TreeViewComponent<T> extends Tree<T> {
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
-  @ViewChild(TreeNodeOutletDirective, { static: true }) nodeOutlet!: TreeNodeOutletDirective<T>;
+  readonly nodeOutlet = viewChild.required(TreeNodeOutletDirective);
 }

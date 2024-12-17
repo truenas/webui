@@ -6,6 +6,8 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockDeclaration } from 'ng-mocks';
+import { ImgFallbackDirective } from 'ngx-img-fallback';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -63,6 +65,10 @@ describe('InstalledAppsListComponent', () => {
     imports: [
       MatTableModule,
       FakeProgressBarComponent,
+      ImgFallbackDirective,
+      NgxPopperjsContentComponent,
+      NgxPopperjsLooseDirective,
+      NgxPopperjsDirective,
     ],
     declarations: [
       EmptyComponent,

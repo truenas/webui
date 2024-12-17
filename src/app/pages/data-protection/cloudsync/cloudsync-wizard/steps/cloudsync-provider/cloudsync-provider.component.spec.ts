@@ -51,7 +51,7 @@ describe('CloudSyncProviderComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(ChainedRef, chainedComponentRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),

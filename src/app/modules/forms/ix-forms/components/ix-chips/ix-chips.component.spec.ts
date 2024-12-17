@@ -2,18 +2,14 @@ import { HarnessLoader, parallel, TestKey } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
 import { NgControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatChipGridHarness } from '@angular/material/chips/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import {
   createHostFactory, mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 describe('IxChipsComponent', () => {
@@ -26,15 +22,9 @@ describe('IxChipsComponent', () => {
     component: IxChipsComponent,
     imports: [
       ReactiveFormsModule,
-      MatAutocompleteModule,
-      MatChipsModule,
     ],
     providers: [
       mockProvider(NgControl),
-    ],
-    declarations: [
-      IxErrorsComponent,
-      MockComponent(IxLabelComponent),
     ],
   });
 
@@ -76,9 +66,9 @@ describe('IxChipsComponent', () => {
 
     const label = spectator.query(IxLabelComponent);
     expect(label).toExist();
-    expect(label.label).toBe('Apply To Groups');
-    expect(label.required).toBe(true);
-    expect(label.tooltip).toBe('Select local groups.');
+    expect(label.label()).toBe('Apply To Groups');
+    expect(label.required()).toBe(true);
+    expect(label.tooltip()).toBe('Select local groups.');
   });
 
   it('after creating the chip, the input field should be cleared', async () => {

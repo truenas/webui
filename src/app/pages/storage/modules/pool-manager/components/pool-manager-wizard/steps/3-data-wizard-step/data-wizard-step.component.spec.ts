@@ -39,7 +39,7 @@ describe('DataWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(AddVdevsStore, {
         pool$: of(null),
       }),

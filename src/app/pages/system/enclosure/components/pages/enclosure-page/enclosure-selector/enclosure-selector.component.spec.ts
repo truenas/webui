@@ -4,6 +4,7 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import {
   EnclosureSideComponent,
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
@@ -20,7 +21,10 @@ describe('EnclosureSelectorComponent', () => {
   ];
   const createComponent = createComponentFactory({
     component: EnclosureSelectorComponent,
-    declarations: [MockComponent(EnclosureSideComponent)],
+    imports: [
+      NgxSkeletonLoaderComponent,
+      MockComponent(EnclosureSideComponent),
+    ],
     providers: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => ({ id: '1' }),

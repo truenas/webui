@@ -4,7 +4,11 @@ import {
   OnDestroy,
   OnChanges,
   ElementRef,
-  ChangeDetectionStrategy, output, input, viewChild, Signal,
+  ChangeDetectionStrategy,
+  output,
+  input,
+  viewChild,
+  Signal,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
