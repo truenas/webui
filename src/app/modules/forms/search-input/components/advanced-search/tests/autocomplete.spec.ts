@@ -82,10 +82,10 @@ describe('AdvancedSearchComponent – autocomplete', () => {
       await (await searchHarness.getInputArea()).click();
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
-        'Сервіс',
         'Event',
         'Timestamp',
         'Username',
+        'Сервіс',
       ]);
     });
 
@@ -166,10 +166,10 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
-        'Сервіс',
         'Event',
         'Timestamp',
         'Username',
+        'Сервіс',
       ]);
     });
 
