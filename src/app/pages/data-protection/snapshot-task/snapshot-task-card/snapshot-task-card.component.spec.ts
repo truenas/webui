@@ -13,11 +13,11 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -84,12 +84,12 @@ describe('SnapshotTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -123,7 +123,7 @@ describe('SnapshotTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
       data: snapshotTasks[0],
       wide: true,
     });
@@ -133,7 +133,7 @@ describe('SnapshotTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
       data: undefined,
       wide: true,
     });

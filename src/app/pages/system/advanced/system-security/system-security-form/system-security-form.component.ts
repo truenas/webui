@@ -12,8 +12,8 @@ import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,7 +29,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -56,13 +56,13 @@ export class SystemSecurityFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private chainedRef: ChainedRef<SystemSecurityConfig>,
+    private slideInRef: SlideInRef<SystemSecurityConfig>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
   ) {
-    this.systemSecurityConfig = this.chainedRef.getData();
+    this.systemSecurityConfig = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -84,7 +84,7 @@ export class SystemSecurityFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
         this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
       });
   }

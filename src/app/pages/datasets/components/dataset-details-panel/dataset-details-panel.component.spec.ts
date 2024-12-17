@@ -10,7 +10,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
@@ -26,7 +26,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
@@ -62,7 +62,7 @@ describe('DatasetDetailsPanelComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
         })),
@@ -83,7 +83,7 @@ describe('DatasetDetailsPanelComponent', () => {
         ],
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -106,7 +106,7 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
       DatasetFormComponent,
       { data: { datasetId: 'root/parent/child', isNew: true }, wide: true },
     );
@@ -115,7 +115,7 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
       ZvolFormComponent,
       { data: { parentId: 'root/parent/child', isNew: true } },
     );

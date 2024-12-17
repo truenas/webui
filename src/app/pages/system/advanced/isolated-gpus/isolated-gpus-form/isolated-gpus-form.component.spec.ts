@@ -11,11 +11,11 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
+import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -49,7 +49,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
         }),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -64,7 +64,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      mockProvider(ChainedRef, { close: jest.fn() }),
+      mockProvider(SlideInRef, { close: jest.fn() }),
       mockAuth(),
     ],
   });

@@ -18,7 +18,7 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -95,7 +95,7 @@ export class RolesCardComponent {
   });
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private datasetStore: DatasetTreeStore,
   ) {}
 

@@ -14,20 +14,20 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { Subscription, timer } from 'rxjs';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-slide-in',
-  templateUrl: './slide-in.component.html',
-  styleUrls: ['./slide-in.component.scss'],
+  selector: 'ix-old-slide-in',
+  templateUrl: './old-slide-in.component.html',
+  styleUrls: ['./old-slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CdkTrapFocus],
 })
-export class SlideInComponent implements OnInit, OnDestroy {
+export class OldSlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();
 
   private readonly slideInBody = viewChild('body', { read: ViewContainerRef });
@@ -44,7 +44,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private renderer: Renderer2,
     private cdr: ChangeDetectorRef,
     private defaultInjector: Injector,
@@ -87,7 +87,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
   openSlideIn<T, D>(
     componentType: Type<T>,
     params?: { wide?: boolean; data?: D; injector?: Injector },
-  ): SlideInRef<T, D> {
+  ): OldSlideInRef<T, D> {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
     }
@@ -116,12 +116,12 @@ export class SlideInComponent implements OnInit, OnDestroy {
     componentType: Type<T>,
     data?: D,
     parentInjector?: Injector,
-  ): SlideInRef<T, D> {
-    const slideInRef = new SlideInRef<T, D>();
+  ): OldSlideInRef<T, D> {
+    const slideInRef = new OldSlideInRef<T, D>();
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: SlideInRef, useValue: slideInRef },
+        { provide: OldSlideInRef, useValue: slideInRef },
       ],
       parent: parentInjector,
     });

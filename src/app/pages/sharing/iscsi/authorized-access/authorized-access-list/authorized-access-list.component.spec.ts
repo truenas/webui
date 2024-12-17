@@ -16,10 +16,10 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const authAccess: IscsiAuthAccess[] = [
@@ -50,11 +50,11 @@ describe('AuthorizedAccessListComponent', () => {
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
       mockProvider(MatDialog, {
@@ -78,14 +78,14 @@ describe('AuthorizedAccessListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
   });
 
   it('opens authorized access form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
       data: authAccess[0],
     });
   });

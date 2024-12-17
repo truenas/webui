@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { snapshotTaskCardElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.elements';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -125,7 +125,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,

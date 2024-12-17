@@ -16,7 +16,7 @@ import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/compo
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const datasetQuotas = {
   refreservation: {
@@ -87,7 +87,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
           },
         }]),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
         })),
@@ -197,7 +197,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open)
+    expect(spectator.inject(OldSlideInService).open)
       .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
   });
 });

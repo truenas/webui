@@ -15,9 +15,9 @@ import { User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { SmbAclComponent } from './smb-acl.component';
@@ -74,9 +74,9 @@ describe('SmbAclComponent', () => {
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(UserService, {
         smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
@@ -103,7 +103,7 @@ describe('SmbAclComponent', () => {
   });
 
   it('shows name of the share in the title', () => {
-    const title = spectator.query('ix-modal-header');
+    const title = spectator.query('ix-old-modal-header');
     expect(title).toHaveText('Share ACL for myshare');
   });
 
@@ -239,6 +239,6 @@ describe('SmbAclComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 });

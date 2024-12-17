@@ -31,7 +31,7 @@ import {
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -96,7 +96,7 @@ export class StaticRoutesCardComponent implements OnInit {
   constructor(
     private matDialog: MatDialog,
     private api: ApiService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}

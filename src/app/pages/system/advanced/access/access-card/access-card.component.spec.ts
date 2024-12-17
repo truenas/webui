@@ -16,12 +16,12 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -90,13 +90,13 @@ describe('AccessCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedRef),
+      mockProvider(SlideInRef),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => true),
       }),
@@ -129,7 +129,7 @@ describe('AccessCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AccessFormComponent);
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {

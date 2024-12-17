@@ -20,7 +20,7 @@ import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -57,7 +57,7 @@ export class AllTargetsComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
   ) {}
 
   ngOnInit(): void {

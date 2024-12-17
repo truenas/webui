@@ -18,8 +18,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -36,7 +36,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   imports: [
     CloudSyncProviderComponent,
     CloudSyncWhatAndWhenComponent,
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCardModule,
     MatStepperModule,
     TranslateModule,
@@ -56,7 +56,7 @@ export class CloudSyncWizardComponent {
   existingCredential: CloudSyncCredential;
 
   constructor(
-    private chainedRef: ChainedRef<unknown>,
+    private slideInRef: SlideInRef<unknown>,
     private api: ApiService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -64,7 +64,7 @@ export class CloudSyncWizardComponent {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
-    this.chainedRef.requireConfirmationWhen(() => of(this.whatAndWhen.form.dirty || this.cloudSyncProvider.isDirty()));
+    this.slideInRef.requireConfirmationWhen(() => of(this.whatAndWhen.form.dirty || this.cloudSyncProvider.isDirty()));
   }
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
@@ -96,7 +96,7 @@ export class CloudSyncWizardComponent {
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.chainedRef.close({ response, error: null });
+        this.slideInRef.close({ response, error: null });
 
         this.cdr.markForCheck();
       },

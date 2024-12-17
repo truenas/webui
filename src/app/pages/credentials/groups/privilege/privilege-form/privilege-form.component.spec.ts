@@ -13,7 +13,7 @@ import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -61,7 +61,7 @@ describe('PrivilegeFormComponent', () => {
         ] as PrivilegeRole[]),
         mockCall('system.general.update'),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

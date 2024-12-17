@@ -46,8 +46,8 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ServicesService } from 'app/services/services.service';
-import { SlideInService } from 'app/services/slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -144,7 +144,7 @@ export class ServicesComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,

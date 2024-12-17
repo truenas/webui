@@ -7,10 +7,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 describe('KerberosKeytabsFormComponent', () => {
@@ -30,10 +30,10 @@ describe('KerberosKeytabsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockApi([
         mockCall('kerberos.keytab.create'),

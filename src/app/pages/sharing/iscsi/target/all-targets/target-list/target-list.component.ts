@@ -30,7 +30,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -98,7 +98,7 @@ export class TargetListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {

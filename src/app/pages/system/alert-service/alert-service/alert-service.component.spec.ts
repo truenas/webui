@@ -14,7 +14,7 @@ import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -100,7 +100,7 @@ describe('AlertServiceComponent', () => {
       OpsGenieServiceComponent,
     ],
     providers: [
-      MockProvider(SlideInRef, {
+      MockProvider(OldSlideInRef, {
         close: jest.fn(),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -162,7 +162,7 @@ describe('AlertServiceComponent', () => {
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
@@ -244,7 +244,7 @@ describe('AlertServiceComponent', () => {
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

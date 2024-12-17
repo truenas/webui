@@ -19,7 +19,7 @@ import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-av
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 
 describe('DiskInfoCardComponent', () => {
@@ -36,7 +36,7 @@ describe('DiskInfoCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
           componentInstance: {
@@ -109,7 +109,7 @@ describe('DiskInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {

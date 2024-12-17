@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   InstanceProxyFormComponent,
@@ -30,7 +30,7 @@ describe('InstanceProxyFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             getData: () => ({
               instanceId: 'my-instance',
             }),
@@ -42,7 +42,7 @@ describe('InstanceProxyFormComponent', () => {
     });
 
     it('shows a title for creating a proxy', () => {
-      expect(spectator.query('ix-modal-header2')).toHaveText('Add Proxy');
+      expect(spectator.query('ix-modal-header')).toHaveText('Add Proxy');
     });
 
     it('creates a new proxy for the instance provided when form is submitted', async () => {
@@ -58,7 +58,7 @@ describe('InstanceProxyFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
         error: false,
       });
@@ -77,7 +77,7 @@ describe('InstanceProxyFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             getData: () => ({
               instanceId: 'my-instance',
               proxy: {
@@ -96,7 +96,7 @@ describe('InstanceProxyFormComponent', () => {
     });
 
     it('shows a title for editing a proxy', () => {
-      expect(spectator.query('ix-modal-header2')).toHaveText('Edit Proxy');
+      expect(spectator.query('ix-modal-header')).toHaveText('Edit Proxy');
     });
 
     it('shows values for the proxy that is being edited', async () => {
@@ -132,7 +132,7 @@ describe('InstanceProxyFormComponent', () => {
         dev_type: VirtualizationDeviceType.Proxy,
       }]);
 
-      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
         error: false,
       });

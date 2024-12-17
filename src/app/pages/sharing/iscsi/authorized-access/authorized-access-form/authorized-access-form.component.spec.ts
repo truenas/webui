@@ -8,12 +8,12 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AuthorizedAccessFormComponent', () => {
@@ -37,13 +37,13 @@ describe('AuthorizedAccessFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
       mockApi([
         mockCall('iscsi.auth.create'),
         mockCall('iscsi.auth.update'),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -77,7 +77,7 @@ describe('AuthorizedAccessFormComponent', () => {
         peersecret: 'peer123456789012',
         discovery_auth: 'NONE',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -135,7 +135,7 @@ describe('AuthorizedAccessFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

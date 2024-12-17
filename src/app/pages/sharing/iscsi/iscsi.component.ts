@@ -17,7 +17,7 @@ import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/glob
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @Component({
   selector: 'ix-iscsi',
@@ -83,7 +83,7 @@ export class IscsiComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private iscsiService: IscsiService,
   ) {}
 

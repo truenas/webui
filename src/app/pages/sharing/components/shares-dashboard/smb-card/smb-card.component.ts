@@ -42,7 +42,7 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -140,7 +140,7 @@ export class SmbCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
