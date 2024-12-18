@@ -291,6 +291,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.FirstUse);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!pool;
       }),
@@ -299,6 +300,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.Errors);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!dockerStarted;
       }),
@@ -307,6 +309,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           this.dataSource = [];
           this.showLoadStatus(EmptyType.NoPageData);
           this.cdr.markForCheck();
+          this.redirectToInstalledAppsWithoutDetails();
         }
         return !!apps.length;
       }),
