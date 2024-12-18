@@ -444,7 +444,7 @@ export interface ApiCallDirectory {
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
-  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
+  'enclosure.label.set': { params: [enclosureId: string, label: string]; response: Enclosure };
   'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover

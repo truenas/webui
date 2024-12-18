@@ -23,7 +23,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('enclosure.update'),
+        mockCall('enclosure.label.set'),
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
@@ -50,7 +50,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'New label' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'New label']);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('New label');
   });
 
@@ -61,7 +61,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.update', ['1234', { label: 'TRUENAS-M40-HA' }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'TRUENAS-M40-HA']);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('TRUENAS-M40-HA');
   });
 });
