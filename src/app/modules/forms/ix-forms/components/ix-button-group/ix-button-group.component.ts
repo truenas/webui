@@ -29,6 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     ReactiveFormsModule,
     AsyncPipe,
     TranslateModule,
+    TestDirective,
     TestOverrideDirective,
     RegisteredControlDirective,
     TestDirective,

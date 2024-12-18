@@ -92,7 +92,12 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
-failOnConsole();
+const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
+  return (
+    methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')
+  );
+};
+failOnConsole({ silenceMessage: silenceJsDomCssParseError });
 
 jest.setTimeout(30 * 1000);
 

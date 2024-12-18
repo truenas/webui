@@ -6,7 +6,9 @@ import {
   Component,
   ElementRef,
   input,
-  OnChanges, Signal, viewChild,
+  OnChanges,
+  Signal,
+  viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';

@@ -1,11 +1,8 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import { TooltipComponent } from '@angular/material/tooltip';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 
 describe('IxCodeEditor', () => {
@@ -15,11 +12,6 @@ describe('IxCodeEditor', () => {
     component: IxCodeEditorComponent,
     imports: [
       ReactiveFormsModule,
-    ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
     ],
   });
 
@@ -47,9 +39,9 @@ describe('IxCodeEditor', () => {
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
-      expect(label.label).toBe('Code Editor');
-      expect(label.required).toBe(true);
-      expect(label.tooltip).toBe('Enter json code');
+      expect(label.label()).toBe('Code Editor');
+      expect(label.required()).toBe(true);
+      expect(label.tooltip()).toBe('Enter json code');
     });
   });
 

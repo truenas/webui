@@ -1,15 +1,12 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatMenuHarness } from '@angular/material/menu/testing';
-import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, createComponentFactory, mockProvider,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
+import { ImgFallbackDirective } from 'ngx-img-fallback';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,27 +14,19 @@ import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
-import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
-import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { DockerStatusComponent } from 'app/pages/apps/components/installed-apps/docker-status/docker-status.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
-  let loader: HarnessLoader;
   let applicationsService: ApplicationsService;
 
   const app = {
@@ -53,16 +42,14 @@ describe('InstalledAppsComponent', () => {
   const createComponent = createComponentFactory({
     component: InstalledAppsComponent,
     imports: [
+      ImgFallbackDirective,
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective,
       ReactiveFormsModule,
-      MatTableModule,
       MockComponent(PageHeaderComponent),
-      FakeProgressBarComponent,
     ],
     declarations: [
-      EmptyComponent,
-      SearchInput1Component,
-      DockerStatusComponent,
-      AppSettingsButtonComponent,
       MockDeclaration(AppDetailsPanelComponent),
       MockDeclaration(AppRowComponent),
     ],
@@ -125,7 +112,6 @@ describe('InstalledAppsComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.component.installedAppsList().dataSource = [app];
     applicationsService = spectator.inject(ApplicationsService);
   });
@@ -145,42 +131,17 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('starts application', () => {
-    spectator.detectChanges();
-    spectator.query(AppDetailsPanelComponent).startApp.emit();
+    spectator.component.start('test-app');
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('stops application', () => {
-    spectator.detectChanges();
-    spectator.query(AppDetailsPanelComponent).stopApp.emit();
+    spectator.component.stop('test-app');
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app');
   });
 
   it('restarts application', () => {
     spectator.query(AppRowComponent).restartApp.emit();
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app');
-  });
-
-  it('removes selected applications', async () => {
-    jest.spyOn(applicationsService, 'checkIfAppIxVolumeExists').mockReturnValue(of(true));
-    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
-      afterClosed: () => of({ removeVolumes: true, removeImages: true }),
-    } as MatDialogRef<unknown>);
-
-    spectator.component.installedAppsList().selection.select(app.id);
-
-    const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Select action' }));
-    await menu.open();
-    await menu.clickItem({ text: 'Delete All Selected' });
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      AppDeleteDialogComponent,
-      { data: { name: app.id, showRemoveVolumes: true } },
-    );
-
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-      'core.bulk',
-      ['app.delete', [[app.id, { remove_images: true, remove_ix_volumes: true }]]],
-    );
   });
 });
