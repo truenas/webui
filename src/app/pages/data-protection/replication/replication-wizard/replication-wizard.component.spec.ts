@@ -19,7 +19,6 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
@@ -66,7 +65,7 @@ describe('ReplicationWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const chainedRef: ChainedRef<ReplicationTask> = {
+  const slideInRef: SlideInRef<ReplicationTask> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(() => undefined),
@@ -96,9 +95,8 @@ describe('ReplicationWizardComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
     ],
   });
 
@@ -198,6 +196,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+    expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
   });
 });

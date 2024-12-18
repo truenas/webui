@@ -20,8 +20,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -35,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -73,10 +73,10 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private authService: AuthService,
     private router: Router,
-    private chainedRef: ChainedRef<GlobalTwoFactorConfig>,
+    private slideInRef: SlideInRef<GlobalTwoFactorConfig>,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.twoFactorConfig = this.chainedRef.getData();
+    this.twoFactorConfig = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -125,7 +125,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;

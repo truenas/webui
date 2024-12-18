@@ -44,7 +44,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
@@ -160,7 +160,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private chainedRef: ChainedRef<unknown>,
+    private slideInRef: SlideInRef<unknown>,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -301,7 +301,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.chainedRef.swap(CloudSyncFormComponent, true);
+      this.slideInRef.swap(CloudSyncFormComponent, true);
     });
   }
 

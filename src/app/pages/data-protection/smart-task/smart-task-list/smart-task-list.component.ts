@@ -35,7 +35,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -118,7 +118,7 @@ export class SmartTaskListComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private storageService: StorageService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private taskService: TaskService,
     private translate: TranslateService,
     private dialogService: DialogService,

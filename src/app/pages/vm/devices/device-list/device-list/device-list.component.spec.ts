@@ -21,7 +21,7 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceListComponent', () => {
@@ -63,7 +63,7 @@ describe('DeviceListComponent', () => {
         mockCall('vm.device.query', devices),
       ]),
       mockAuth(),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
@@ -102,7 +102,7 @@ describe('DeviceListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(DeviceFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(DeviceFormComponent, {
       data: {
         device: devices[0],
         virtualMachineId: 76,

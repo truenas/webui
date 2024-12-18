@@ -40,7 +40,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -130,7 +130,7 @@ export class ScrubListComponent implements OnInit {
     private crontabExplanation: CrontabExplanationPipe,
     private taskService: TaskService,
     private api: ApiService,
-    private slideIn: SlideInService,
+    private slideIn: OldSlideInService,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,

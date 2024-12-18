@@ -36,14 +36,14 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
@@ -204,7 +204,7 @@ export class DiskListComponent implements OnInit {
     private router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -251,14 +251,14 @@ export class DiskListComponent implements OnInit {
 
   edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef: SlideInRef<DiskBulkEditComponent | DiskFormComponent>;
+    let slideInRef: OldSlideInRef<DiskBulkEditComponent | DiskFormComponent>;
 
     if (preparedDisks.length > 1) {
       slideInRef = this.slideInService.open(DiskBulkEditComponent);
-      (slideInRef as SlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
+      (slideInRef as OldSlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
     } else {
       slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
-      (slideInRef as SlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
+      (slideInRef as OldSlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
     }
 
     slideInRef.slideInClosed$.pipe(

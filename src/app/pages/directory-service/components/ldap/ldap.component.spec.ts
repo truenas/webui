@@ -15,11 +15,11 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -66,7 +66,7 @@ describe('LdapComponent', () => {
           { id: 2, realm: 'Realm 2' },
         ] as KerberosRealm[]),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(SystemGeneralService, {
         refreshDirServicesCache: jest.fn(() => of(null)),
         getCertificates: () => of([
@@ -80,7 +80,7 @@ describe('LdapComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -165,6 +165,6 @@ describe('LdapComponent', () => {
       }],
     );
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 });

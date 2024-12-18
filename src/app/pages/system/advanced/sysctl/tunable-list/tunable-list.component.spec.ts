@@ -18,7 +18,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TunableListComponent', () => {
@@ -108,7 +108,7 @@ describe('TunableListComponent', () => {
       SearchInput1Component,
     ],
     providers: [
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(DialogService, {
@@ -153,14 +153,14 @@ describe('TunableListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(TunableFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TunableFormComponent);
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       TunableFormComponent,
       false,
       {

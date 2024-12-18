@@ -18,8 +18,8 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -40,7 +40,7 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -84,7 +84,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
-    private chainedSlideInRef: ChainedRef<unknown>,
+    private slideInRef: SlideInRef<unknown>,
   ) {}
 
   ngOnInit(): void {
@@ -165,6 +165,6 @@ export class AccessFormComponent implements OnInit {
 
   private showSuccessNotificationAndClose(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
-    this.chainedSlideInRef.close({ response: true, error: null });
+    this.slideInRef.close({ response: true, error: null });
   }
 }

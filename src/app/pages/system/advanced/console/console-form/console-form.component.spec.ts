@@ -15,10 +15,10 @@ import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-chec
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -39,7 +39,7 @@ describe('ConsoleFormComponent', () => {
         }),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -59,7 +59,7 @@ describe('ConsoleFormComponent', () => {
           },
         ],
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({
           consolemenu: true,

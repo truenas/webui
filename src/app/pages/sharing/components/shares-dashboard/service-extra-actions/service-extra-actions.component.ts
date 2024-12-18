@@ -23,7 +23,7 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -65,7 +65,7 @@ export class ServiceExtraActionsComponent {
     private translate: TranslateService,
     private api: ApiService,
     private router: Router,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,

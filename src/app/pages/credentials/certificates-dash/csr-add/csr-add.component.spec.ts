@@ -17,7 +17,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CsrIdentifierAndTypeComponent,
@@ -83,7 +83,7 @@ describe('CsrAddComponent', () => {
         }),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -185,7 +185,7 @@ describe('CsrAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {

@@ -12,7 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { IscsiComponent } from './iscsi.component';
 
 describe('IscsiComponent', () => {
@@ -35,7 +35,7 @@ describe('IscsiComponent', () => {
       }),
       mockAuth(),
       mockApi(),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
     ],
   });
 
@@ -48,7 +48,7 @@ describe('IscsiComponent', () => {
     const configurationButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Target Configuration' }));
     await configurationButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
   });
 
   it('shows a navtab with supported links', async () => {

@@ -11,10 +11,10 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -49,7 +49,7 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -61,7 +61,7 @@ describe('ExtentFormComponent', () => {
           key_device_3: 'value_device_3',
         } as Choices),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -124,7 +124,7 @@ describe('ExtentFormComponent', () => {
         type: IscsiExtentType.Disk,
         xen: true,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -188,7 +188,7 @@ describe('ExtentFormComponent', () => {
           xen: true,
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

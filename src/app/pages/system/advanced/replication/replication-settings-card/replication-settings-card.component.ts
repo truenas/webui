@@ -21,8 +21,8 @@ import { replicationSettingsCardElements } from 'app/pages/system/advanced/repli
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -65,13 +65,13 @@ export class ReplicationSettingsCardComponent {
 
   constructor(
     private api: ApiService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(
+      switchMap(() => this.slideIn.open(
         ReplicationSettingsFormComponent,
         false,
         this.replicationConfig,

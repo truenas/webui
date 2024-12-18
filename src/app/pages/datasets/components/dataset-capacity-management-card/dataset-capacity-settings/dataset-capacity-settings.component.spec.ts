@@ -13,13 +13,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { fillControlValues, getControlValues } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
@@ -36,8 +36,8 @@ describe('DatasetCapacitySettingsComponent', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(SlideInService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInService),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -169,7 +169,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('only sends updated properties on form submit', async () => {

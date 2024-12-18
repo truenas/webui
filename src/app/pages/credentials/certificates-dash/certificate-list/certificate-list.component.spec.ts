@@ -17,10 +17,10 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { CertificateListComponent } from './certificate-list.component';
@@ -78,13 +78,13 @@ describe('CertificateListComponent', () => {
           afterClosed: jest.fn(() => of(undefined)),
         })),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(SlideInRef, {
+      mockProvider(OldSlideInRef, {
         slideInClosed$: of(true),
       }),
       mockProvider(MatDialog, {
@@ -112,14 +112,14 @@ describe('CertificateListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: certificates[0],
       wide: true,
     });

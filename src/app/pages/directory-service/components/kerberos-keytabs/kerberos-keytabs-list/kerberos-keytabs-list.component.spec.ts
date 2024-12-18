@@ -14,7 +14,7 @@ import {
 import {
   KerberosKeytabsListComponent,
 } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KerberosKeytabsListComponent', () => {
@@ -27,7 +27,7 @@ describe('KerberosKeytabsListComponent', () => {
       MockComponent(KerberosKeytabsFormComponent),
     ],
     providers: [
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(undefined),
         })),
@@ -69,6 +69,6 @@ describe('KerberosKeytabsListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(KerberosKeytabsFormComponent);
   });
 });

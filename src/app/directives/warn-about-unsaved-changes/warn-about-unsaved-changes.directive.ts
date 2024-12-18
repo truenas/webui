@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 
 @UntilDestroy()
 @Directive({
@@ -23,7 +23,7 @@ export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
   constructor(
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideInRef: SlideInRef<T>,
+    private slideInRef: OldSlideInRef<T>,
   ) {}
 
   ngOnInit(): void {

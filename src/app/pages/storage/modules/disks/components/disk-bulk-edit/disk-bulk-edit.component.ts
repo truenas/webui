@@ -21,8 +21,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -34,7 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -73,7 +73,7 @@ export class DiskBulkEditComponent {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<DiskBulkEditComponent, boolean>,
+    private slideInRef: OldSlideInRef<DiskBulkEditComponent, boolean>,
     private snackbarService: SnackbarService,
     private errorHandler: FormErrorHandlerService,
   ) {}

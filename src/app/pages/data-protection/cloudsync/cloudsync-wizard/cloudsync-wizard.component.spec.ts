@@ -11,12 +11,10 @@ import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { CloudSyncWizardComponent } from './cloudsync-wizard.component';
 
@@ -25,7 +23,7 @@ describe('CloudSyncWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const chainedRef: ChainedRef<unknown> = {
+  const slideInRef: SlideInRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
@@ -40,7 +38,7 @@ describe('CloudSyncWizardComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockApi([
         mockCall('cloudsync.create'),
@@ -52,9 +50,7 @@ describe('CloudSyncWizardComponent', () => {
         mockCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideInService),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
     ],
   });
 

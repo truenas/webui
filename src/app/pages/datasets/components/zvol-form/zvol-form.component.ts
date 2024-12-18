@@ -33,8 +33,8 @@ import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -82,7 +82,7 @@ interface ZvolFormData {
   providers: [CloudCredentialService],
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     IxFieldsetComponent,
@@ -228,7 +228,7 @@ export class ZvolFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
-    private slideInRef: SlideInRef<ZvolFormComponent>,
+    private slideInRef: OldSlideInRef<ZvolFormComponent>,
     @Inject(SLIDE_IN_DATA) private slideInData: { isNew: boolean; parentId: string },
   ) {
     this.form.controls.key.disable();

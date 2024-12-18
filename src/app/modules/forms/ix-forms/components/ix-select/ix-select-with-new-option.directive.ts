@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
@@ -23,7 +23,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
 
   private options = new BehaviorSubject<Option[]>([]);
 
-  private chainedSlideIn = inject(ChainedSlideInService);
+  private slideIn = inject(SlideIn);
   private translateService = inject(TranslateService);
 
   ngOnInit(): void {
@@ -43,8 +43,8 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
     });
   }
 
-  abstract getValueFromChainedResponse(
-    result: ChainedComponentResponse,
+  abstract getValueFromSlideInResponse(
+    result: SlideInResponse,
   ): IxSelectValue;
   abstract getFormComponentType(): ComponentType<unknown>;
   abstract fetchOptions(): Observable<Option[]>;
@@ -64,16 +64,16 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
       switchMap(() => {
-        return this.chainedSlideIn.open(
+        return this.slideIn.open(
           this.getFormComponentType(),
           this.formComponentIsWide,
           this.getFormInputData(),
         );
       }),
-      filter((response: ChainedComponentResponse) => !response.error),
+      filter((response: SlideInResponse) => !response.error),
       tap(
         (response) => this.ixSelect().controlDirective.control.setValue(
-          this.getValueFromChainedResponse(response),
+          this.getValueFromSlideInResponse(response),
         ),
       ),
       switchMap(() => this.fetchOptions()),

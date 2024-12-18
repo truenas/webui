@@ -11,15 +11,15 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InitShutdownCardComponent', () => {
@@ -61,10 +61,10 @@ describe('InitShutdownCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -107,7 +107,7 @@ describe('InitShutdownCardComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Prepare system');
     await editButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
       false,
       expect.objectContaining(scripts[0]),

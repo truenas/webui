@@ -20,8 +20,8 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -58,7 +58,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   providers: [ReplicationService],
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -106,9 +106,9 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private authService: AuthService,
-    private chainedRef: ChainedRef<ReplicationTask>,
+    private slideInRef: SlideInRef<ReplicationTask>,
   ) {
-    this.chainedRef.requireConfirmationWhen(() => {
+    this.slideInRef.requireConfirmationWhen(() => {
       return of(
         this.generalSection().form.dirty
         || this.transportSection().form.dirty
@@ -117,8 +117,8 @@ export class ReplicationFormComponent implements OnInit {
         || this.scheduleSection().form.dirty,
       );
     });
-    this.existingReplication = this.chainedRef.getData();
-    this.chainedRef.requireConfirmationWhen(() => {
+    this.existingReplication = this.slideInRef.getData();
+    this.slideInRef.requireConfirmationWhen(() => {
       return of(
         this.generalSection().form.dirty
         || this.transportSection().form.dirty
@@ -200,7 +200,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.chainedRef.close({ response, error: null });
+            this.slideInRef.close({ response, error: null });
           },
           error: (error: unknown) => {
             this.isLoading = false;
@@ -212,7 +212,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.chainedRef.swap(
+    this.slideInRef.swap(
       ReplicationWizardComponent,
       true,
     );

@@ -13,8 +13,8 @@ import {
 import {
   SelfEncryptingDriveFormComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SelfEncryptingDriveCardComponent', () => {
@@ -37,7 +37,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
           },
         ],
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(FirstTimeWarningService, {
@@ -66,7 +66,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
       false,
       { sedPassword: '********', sedUser: 'admin' },

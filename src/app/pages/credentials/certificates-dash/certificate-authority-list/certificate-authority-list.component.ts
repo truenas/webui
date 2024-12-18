@@ -50,7 +50,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -143,7 +143,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   constructor(
     private matDialog: MatDialog,
     private api: ApiService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private download: DownloadService,

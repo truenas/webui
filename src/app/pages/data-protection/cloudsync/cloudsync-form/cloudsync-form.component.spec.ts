@@ -17,13 +17,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncFormComponent', () => {
@@ -81,7 +81,7 @@ describe('CloudSyncFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudSyncFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const chainedComponentRef: ChainedRef<CloudSyncTaskUi> = {
+  const slideInRef: SlideInRef<CloudSyncTaskUi> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
@@ -143,12 +143,12 @@ describe('CloudSyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(FilesystemService),
-      mockProvider(ChainedRef, chainedComponentRef),
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -193,7 +193,7 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -201,8 +201,8 @@ describe('CloudSyncFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
-            ...chainedComponentRef,
+          mockProvider(SlideInRef, {
+            ...slideInRef,
             getData,
           }),
         ],
@@ -279,7 +279,7 @@ describe('CloudSyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 });

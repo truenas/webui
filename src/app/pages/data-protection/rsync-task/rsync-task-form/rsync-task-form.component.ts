@@ -32,8 +32,8 @@ import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -48,7 +48,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -149,9 +149,9 @@ export class RsyncTaskFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
     private validatorsService: IxValidatorsService,
-    private chainedSlideInRef: ChainedRef<RsyncTask>,
+    private slideInRef: SlideInRef<RsyncTask>,
   ) {
-    this.editingTask = this.chainedSlideInRef.getData();
+    this.editingTask = this.slideInRef.getData();
   }
 
   get isModuleMode(): boolean {
@@ -224,7 +224,7 @@ export class RsyncTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.chainedSlideInRef.close({ response: task, error: null });
+        this.slideInRef.close({ response: task, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

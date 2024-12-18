@@ -25,12 +25,12 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -158,7 +158,7 @@ describe('SmbFormComponent', () => {
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
@@ -172,7 +172,7 @@ describe('SmbFormComponent', () => {
         info: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       provideMockStore({
         selectors: [{
           selector: selectServices,

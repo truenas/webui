@@ -20,12 +20,12 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapService } from 'app/services/idmap.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdmapFormComponent', () => {
@@ -92,7 +92,7 @@ describe('IdmapFormComponent', () => {
           },
         } as IdmapBackendOptions),
       }),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -101,7 +101,7 @@ describe('IdmapFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -140,7 +140,7 @@ describe('IdmapFormComponent', () => {
           unix_primary_group: true,
         },
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
 
     it('sets name to TDB and hides it when SMB - Primary Domain is selected', async () => {

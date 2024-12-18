@@ -36,7 +36,7 @@ import {
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -134,7 +134,7 @@ export class ExtentListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,

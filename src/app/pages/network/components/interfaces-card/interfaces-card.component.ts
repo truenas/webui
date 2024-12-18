@@ -43,7 +43,7 @@ import {
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -137,7 +137,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private dialogService: DialogService,
     private api: ApiService,
     private loader: AppLoaderService,

@@ -16,7 +16,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AlertServiceListComponent', () => {
@@ -53,7 +53,7 @@ describe('AlertServiceListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),
         })),
@@ -81,7 +81,7 @@ describe('AlertServiceListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AlertServiceComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AlertServiceComponent, {
       data: alertServices[0],
     });
   });
@@ -90,7 +90,7 @@ describe('AlertServiceListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AlertServiceComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AlertServiceComponent);
   });
 
   it('deletes Alert Service with confirmation when Delete button is pressed', async () => {

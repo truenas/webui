@@ -14,7 +14,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('BootEnvironmentListComponent', () => {
@@ -43,7 +43,7 @@ describe('BootEnvironmentListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(MatSnackBar),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
       }),

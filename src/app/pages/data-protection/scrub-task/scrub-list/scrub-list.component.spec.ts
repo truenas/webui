@@ -16,7 +16,7 @@ import {
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -66,7 +66,7 @@ describe('ScrubListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
         }),
@@ -149,7 +149,7 @@ describe('ScrubListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Apps');
     await editIcon.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: scrubTasks[0],
     });
   });

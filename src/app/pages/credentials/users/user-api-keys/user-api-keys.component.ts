@@ -46,7 +46,7 @@ import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/c
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -161,7 +161,7 @@ export class UserApiKeysComponent implements OnInit {
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
-    private slideIn: SlideInService,
+    private slideIn: OldSlideInService,
     private route: ActivatedRoute,
   ) { }
 

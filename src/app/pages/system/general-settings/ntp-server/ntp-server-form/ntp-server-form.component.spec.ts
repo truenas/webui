@@ -8,9 +8,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { NtpServerFormComponent } from './ntp-server-form.component';
 
@@ -30,8 +30,8 @@ describe('NtpServerFormComponent', () => {
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
       ]),
-      mockProvider(SlideInService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInService),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],

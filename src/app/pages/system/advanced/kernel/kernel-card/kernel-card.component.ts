@@ -18,8 +18,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -64,13 +64,13 @@ export class KernelCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(debugKernel: boolean): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(KernelFormComponent, false, debugKernel)),
+      switchMap(() => this.slideIn.open(KernelFormComponent, false, debugKernel)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

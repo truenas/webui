@@ -11,10 +11,10 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ZvolFormComponent', () => {
@@ -108,9 +108,9 @@ describe('ZvolFormComponent', () => {
           'AES-256-GCM': 'AES-256-GCM',
         }),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -180,7 +180,7 @@ describe('ZvolFormComponent', () => {
         },
         type: 'VOLUME',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     }));
   });
 
@@ -222,7 +222,7 @@ describe('ZvolFormComponent', () => {
         volsize: 2147483648,
       }]);
 
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     }));
   });
 });

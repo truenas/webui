@@ -32,7 +32,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -97,7 +97,7 @@ export class SshKeypairCardComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,

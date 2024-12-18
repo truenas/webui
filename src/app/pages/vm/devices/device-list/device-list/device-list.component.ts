@@ -36,7 +36,7 @@ import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -101,7 +101,7 @@ export class DeviceListComponent implements OnInit {
   constructor(
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private matDialog: MatDialog,

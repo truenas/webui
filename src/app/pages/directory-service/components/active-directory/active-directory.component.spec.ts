@@ -16,7 +16,7 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -25,7 +25,7 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -87,8 +87,8 @@ describe('ActiveDirectoryComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInService),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -203,7 +203,7 @@ describe('ActiveDirectoryComponent', () => {
         netbiosalias: ['alias1', 'alias2'],
       }],
     );
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {

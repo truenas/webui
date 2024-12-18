@@ -11,9 +11,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
@@ -24,7 +24,7 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
-  const chainedRef: ChainedRef<unknown> = {
+  const slideInRef: SlideInRef<unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),
@@ -47,7 +47,7 @@ describe('AccessFormComponent', () => {
         mockCall('system.general.update'),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of(true)),
         components$: of([]),
       }),
@@ -66,7 +66,7 @@ describe('AccessFormComponent', () => {
           value: { login_banner: 'test' },
         }],
       }),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -111,6 +111,6 @@ describe('AccessFormComponent', () => {
     expect(store$.dispatch).toHaveBeenCalledWith(generalConfigUpdated());
     expect(store$.dispatch).toHaveBeenCalledWith(advancedConfigUpdated());
     expect(store$.dispatch).toHaveBeenCalledWith(loginBannerUpdated({ loginBanner: '' }));
-    expect(chainedRef.close).toHaveBeenCalled();
+    expect(slideInRef.close).toHaveBeenCalled();
   });
 });

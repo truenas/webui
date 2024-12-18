@@ -8,9 +8,9 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SedFormComponent', () => {
@@ -27,11 +27,11 @@ describe('SedFormComponent', () => {
         mockCall('system.advanced.update'),
         mockCall('system.advanced.sed_global_password', '123'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({ sedPassword: '123', sedUser: SedUser.User })),
       }),

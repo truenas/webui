@@ -16,8 +16,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy(this)
@@ -56,7 +56,7 @@ export class AuditCardComponent {
   );
 
   constructor(
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private api: ApiService,
     private translate: TranslateService,
     private firstTimeWarning: FirstTimeWarningService,
@@ -64,7 +64,7 @@ export class AuditCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(AuditFormComponent)),
+      switchMap(() => this.slideIn.open(AuditFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
         this.reloadConfig$.next();

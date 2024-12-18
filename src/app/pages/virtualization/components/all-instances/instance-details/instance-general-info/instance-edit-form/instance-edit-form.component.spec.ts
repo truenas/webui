@@ -16,7 +16,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -59,7 +59,7 @@ describe('InstanceEditFormComponent', () => {
           ),
         })),
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         getData: () => mockInstance,
         close: jest.fn(),
       }),
@@ -98,7 +98,7 @@ describe('InstanceEditFormComponent', () => {
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: {
         id: 'updated_instance',
         autostart: true,

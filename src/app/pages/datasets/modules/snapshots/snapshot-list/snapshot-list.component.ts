@@ -51,7 +51,7 @@ import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/s
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -191,7 +191,7 @@ export class SnapshotListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private route: ActivatedRoute,
   ) {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';

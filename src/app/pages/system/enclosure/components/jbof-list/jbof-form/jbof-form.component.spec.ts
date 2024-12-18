@@ -8,10 +8,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('JbofFormComponent', () => {
@@ -28,9 +28,9 @@ describe('JbofFormComponent', () => {
         mockCall('jbof.create'),
         mockCall('jbof.update'),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -64,7 +64,7 @@ describe('JbofFormComponent', () => {
         mgmt_password: 'qwerty',
       }]);
 
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 

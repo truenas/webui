@@ -37,9 +37,9 @@ import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -138,7 +138,7 @@ export class CronCardComponent implements OnInit {
     private matDialog: MatDialog,
     private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -204,7 +204,7 @@ export class CronCardComponent implements OnInit {
 
   private openForm(row?: CronjobRow): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(CronFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(CronFormComponent, false, row)),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({

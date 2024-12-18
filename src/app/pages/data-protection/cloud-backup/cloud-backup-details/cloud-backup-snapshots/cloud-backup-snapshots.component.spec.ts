@@ -10,10 +10,10 @@ import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -52,13 +52,13 @@ describe('CloudBackupSnapshotsComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(StorageService),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(SlideInRef, {
+      mockProvider(OldSlideInRef, {
         slideInClosed$: of(true),
       }),
       provideMockStore({
@@ -96,7 +96,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('handles restore functionality', async () => {
-    const slideInService = spectator.inject(SlideInService);
+    const slideInService = spectator.inject(OldSlideInService);
 
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 2);
     await restoreButton.click();

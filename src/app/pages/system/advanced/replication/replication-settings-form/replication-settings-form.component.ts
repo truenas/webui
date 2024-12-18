@@ -14,8 +14,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -28,7 +28,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -63,9 +63,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private chainedRef: ChainedRef<ReplicationConfig>,
+    private slideInRef: SlideInRef<ReplicationConfig>,
   ) {
-    this.replicationConfig = this.chainedRef.getData();
+    this.replicationConfig = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -90,7 +90,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

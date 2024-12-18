@@ -16,9 +16,9 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('StorageSettingsFormComponent', () => {
@@ -42,7 +42,7 @@ describe('StorageSettingsFormComponent', () => {
         } as SystemDatasetConfig),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -61,7 +61,7 @@ describe('StorageSettingsFormComponent', () => {
           },
         ],
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({ swapSize: 5, systemDsPool: 'current-pool' })),
       }),

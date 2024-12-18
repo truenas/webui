@@ -10,18 +10,18 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
-  const componentRef: ChainedRef<unknown> = {
+  const componentRef: SlideInRef<unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),
@@ -50,10 +50,10 @@ describe('AllowedAddressesCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedRef, componentRef),
+      mockProvider(SlideInRef, componentRef),
     ],
   });
 
@@ -78,7 +78,7 @@ describe('AllowedAddressesCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AllowedAddressesFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AllowedAddressesFormComponent);
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {

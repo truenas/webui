@@ -11,7 +11,7 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import {
   CertificateDetailsComponent,
@@ -44,7 +44,7 @@ describe('CertificateAuthorityEditComponent', () => {
         mockCall('certificateauthority.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService),
       mockAuth(),
       {
@@ -88,7 +88,7 @@ describe('CertificateAuthorityEditComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('certificateauthority.update', [1,
       { name: 'New Name', add_to_trusted_store: true },
     ]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('opens modal for authority certificate when View/Download Certificate is pressed', async () => {

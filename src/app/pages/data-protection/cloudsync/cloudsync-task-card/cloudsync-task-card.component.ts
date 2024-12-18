@@ -42,8 +42,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -160,7 +160,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private dialogService: DialogService,
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,

@@ -28,10 +28,10 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FocusService } from 'app/services/focus.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -73,8 +73,8 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private slideInService: SlideInService,
-    private chainedSlideInService: ChainedSlideInService,
+    private oldSlideInService: OldSlideInService,
+    private slideInService: SlideIn,
     private dialogService: DialogService,
     private focusService: FocusService,
     @Inject(DOCUMENT) private document: Document,
@@ -145,7 +145,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    [this.slideInService, this.chainedSlideInService].forEach((service) => service.closeAll());
+    [this.oldSlideInService, this.slideInService].forEach((service) => service.closeAll());
 
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();

@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ export class DataProtectionCardComponent {
   protected readonly searchableElements = dataProtectionCardElements;
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
   ) {}

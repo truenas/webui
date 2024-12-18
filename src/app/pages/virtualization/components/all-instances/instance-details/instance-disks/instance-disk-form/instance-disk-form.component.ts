@@ -14,8 +14,8 @@ import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-ex
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -39,7 +39,7 @@ interface FormOptions {
     TranslateModule,
     MatCard,
     MatCardContent,
-    ModalHeader2Component,
+    ModalHeaderComponent,
     IxFieldsetComponent,
     FormActionsComponent,
     MatButton,
@@ -65,7 +65,7 @@ export class InstanceDiskFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: ChainedRef<FormOptions>,
+    private slideInRef: SlideInRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystem: FilesystemService,

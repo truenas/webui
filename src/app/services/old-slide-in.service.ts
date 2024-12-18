@@ -6,17 +6,20 @@ import {
   merge, Observable, Subject, timer,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { FocusService } from 'app/services/focus.service';
 
+/**
+ * @deprecated Use SlideInService instead.
+ */
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
-export class SlideInService {
-  slideInComponent: SlideInComponent;
-  slideInRefMap = new Map<string, SlideInRef<unknown>>();
+export class OldSlideInService {
+  slideInComponent: OldSlideInComponent;
+  slideInRefMap = new Map<string, OldSlideInRef<unknown>>();
   /**
    * Emits when any slide in has been closed.
    * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
@@ -36,14 +39,14 @@ export class SlideInService {
   }
 
   // TODO: Rework via cdk overlays or something else that would make it easier to use in tests.
-  setSlideComponent(slideComponent: SlideInComponent): void {
+  setSlideComponent(slideComponent: OldSlideInComponent): void {
     this.slideInComponent = slideComponent;
   }
 
   open<T, D>(
     component: Type<T>,
     params?: { wide?: boolean; data?: D; injector?: Injector },
-  ): SlideInRef<T, D> {
+  ): OldSlideInRef<T, D> {
     this.slideInRefMap.forEach((ref) => ref.close());
 
     const slideInRef = this.slideInComponent.openSlideIn<T, D>(component, params);

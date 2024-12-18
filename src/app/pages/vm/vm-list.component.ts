@@ -47,7 +47,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -180,7 +180,7 @@ export class VmListComponent implements OnInit {
   }
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
     private api: ApiService,

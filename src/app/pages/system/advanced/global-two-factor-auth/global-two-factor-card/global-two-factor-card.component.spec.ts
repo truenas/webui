@@ -9,8 +9,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('GlobalTwoFactorAuthCardComponent', () => {
   let spectator: Spectator<GlobalTwoFactorAuthCardComponent>;
@@ -19,7 +19,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     component: GlobalTwoFactorAuthCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(FirstTimeWarningService, {
@@ -56,7 +56,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       GlobalTwoFactorAuthFormComponent,
       false,
       {

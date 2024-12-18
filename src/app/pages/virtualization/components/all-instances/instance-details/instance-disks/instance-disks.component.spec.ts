@@ -16,7 +16,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('InstanceDisksComponent', () => {
   let spectator: Spectator<InstanceDisksComponent>;
@@ -48,7 +48,7 @@ describe('InstanceDisksComponent', () => {
         devices: () => disks,
         loadDevices: jest.fn(),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
         })),
@@ -78,7 +78,7 @@ describe('InstanceDisksComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: undefined, instanceId: 'my-instance' });
   });
 
@@ -86,7 +86,7 @@ describe('InstanceDisksComponent', () => {
     const actionsMenu = spectator.query(DeviceActionsMenuComponent);
     actionsMenu.edit.emit();
 
-    expect(spectator.inject(ChainedSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: disks[0], instanceId: 'my-instance' });
   });
 });

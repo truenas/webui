@@ -12,11 +12,11 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const staticRoutes = Array.from({ length: 10 }).map((val, index) => ({
   destination: `192.168.1.${index + 1}`,
@@ -43,12 +43,12 @@ describe('StaticRoutesCardComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(true),
         })),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -73,14 +73,14 @@ describe('StaticRoutesCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent);
   });
 
   it('opens static route form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(StaticRouteFormComponent, {
       data: {
         description: 'Test description for route 0',
         destination: '192.168.1.1',

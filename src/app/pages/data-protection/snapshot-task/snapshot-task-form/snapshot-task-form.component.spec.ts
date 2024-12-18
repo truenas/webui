@@ -11,11 +11,11 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -65,7 +65,7 @@ describe('SnapshotTaskComponent', () => {
         mockCall('pool.snapshottask.update'),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => of([
           { label: 'test', value: 'test' },
@@ -87,7 +87,7 @@ describe('SnapshotTaskComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -132,7 +132,7 @@ describe('SnapshotTaskComponent', () => {
           month: '*',
         },
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -194,7 +194,7 @@ describe('SnapshotTaskComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

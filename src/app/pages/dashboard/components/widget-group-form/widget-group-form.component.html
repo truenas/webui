@@ -1,6 +1,6 @@
-<ix-modal-header2
+<ix-modal-header
   [title]="'Widget Editor' | translate"
-></ix-modal-header2>
+></ix-modal-header>
 <form class="ix-form-container" (submit)="$event.preventDefault(); onSubmit()">
   <ix-fieldset>
     <div class="form-row">
@@ -42,7 +42,7 @@
       mat-button
       type="button"
       [ixTest]="['cancel-add-widget-group-btn']"
-      (click)="chainedRef.close({ response: false, error: null })"
+      (click)="slideInRef.close({ response: false, error: null })"
     >{{ 'Cancel' | translate }}</button>
   </ix-form-actions>
 </form>

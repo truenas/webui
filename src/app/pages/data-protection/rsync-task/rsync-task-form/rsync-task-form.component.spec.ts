@@ -17,10 +17,10 @@ import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideIn } from 'app/services/slide-in';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -54,7 +54,7 @@ describe('RsyncTaskFormComponent', () => {
     extra: ['param=value'],
   } as RsyncTask;
 
-  const chainedRef: ChainedRef<RsyncTask> = {
+  const slideInRef: SlideInRef<RsyncTask> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),
@@ -82,7 +82,7 @@ describe('RsyncTaskFormComponent', () => {
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
@@ -102,7 +102,7 @@ describe('RsyncTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -166,7 +166,7 @@ describe('RsyncTaskFormComponent', () => {
         times: false,
         user: 'steven',
       }]);
-      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -174,7 +174,7 @@ describe('RsyncTaskFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, { ...chainedRef, getData: jest.fn(() => ({ ...existingTask, id: 1 })) }),
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ ...existingTask, id: 1 })) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -235,7 +235,7 @@ describe('RsyncTaskFormComponent', () => {
           delayupdates: true,
         },
       ]);
-      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {

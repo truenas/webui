@@ -37,7 +37,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -169,7 +169,7 @@ export class SnapshotTaskListComponent implements OnInit {
     private taskService: TaskService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {

@@ -11,8 +11,8 @@ import { tap } from 'rxjs';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
@@ -35,7 +35,7 @@ import { WidgetGroupSlotFormComponent } from './widget-group-slot-form/widget-gr
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxIconGroupComponent,
@@ -75,7 +75,7 @@ export class WidgetGroupFormComponent {
   });
 
   constructor(
-    protected chainedRef: ChainedRef<WidgetGroup>,
+    protected slideInRef: SlideInRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
   ) {
     this.setupLayoutUpdates();
@@ -83,7 +83,7 @@ export class WidgetGroupFormComponent {
   }
 
   private setInitialFormValues(): void {
-    const widgetGroup = this.chainedRef.getData();
+    const widgetGroup = this.slideInRef.getData();
     if (!widgetGroup) {
       this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       return;
@@ -147,7 +147,7 @@ export class WidgetGroupFormComponent {
     if (this.settingsHasErrors()) {
       return;
     }
-    this.chainedRef.close({
+    this.slideInRef.close({
       response: this.group(),
       error: false,
     });

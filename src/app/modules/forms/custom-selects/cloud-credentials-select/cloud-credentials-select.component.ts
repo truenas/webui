@@ -10,8 +10,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
-import { ChainedComponentResponse } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { SlideInResponse } from 'app/services/slide-in';
 
 @Component({
   selector: 'ix-cloud-credentials-select',
@@ -48,7 +48,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  getValueFromChainedResponse(result: ChainedComponentResponse<CloudSyncCredential>): IxSelectValue {
+  getValueFromSlideInResponse(result: SlideInResponse<CloudSyncCredential>): IxSelectValue {
     return result.response.id;
   }
 

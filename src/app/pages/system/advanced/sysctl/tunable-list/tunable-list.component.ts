@@ -32,8 +32,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -115,7 +115,7 @@ export class TunableListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private snackbar: SnackbarService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -136,7 +136,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.open(TunableFormComponent).pipe(
+    this.slideIn.open(TunableFormComponent).pipe(
       filter((response) => !!response.response),
       tap(() => this.getTunables()),
       untilDestroyed(this),
@@ -144,7 +144,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doEdit(tunable: Tunable): void {
-    this.chainedSlideIns.open(TunableFormComponent, false, tunable).pipe(
+    this.slideIn.open(TunableFormComponent, false, tunable).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

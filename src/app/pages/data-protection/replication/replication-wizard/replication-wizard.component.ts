@@ -36,8 +36,8 @@ import {
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
@@ -56,7 +56,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   providers: [ReplicationService],
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -93,10 +93,10 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
-    private chainedSlideInRef: ChainedRef<unknown>,
+    private slideInRef: SlideInRef<unknown>,
     private authService: AuthService,
   ) {
-    this.chainedSlideInRef.requireConfirmationWhen(() => {
+    this.slideInRef.requireConfirmationWhen(() => {
       return of(this.whatAndWhere().form.dirty || this.when().form.dirty);
     });
   }
@@ -168,7 +168,7 @@ export class ReplicationWizardComponent {
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.chainedSlideInRef.close({ response: createdReplication, error: null });
+      this.slideInRef.close({ response: createdReplication, error: null });
     });
   }
 

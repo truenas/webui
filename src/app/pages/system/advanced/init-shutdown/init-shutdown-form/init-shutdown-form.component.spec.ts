@@ -13,10 +13,10 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('InitShutdownFormComponent', () => {
@@ -34,7 +34,7 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -47,7 +47,7 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
-      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockAuth(),
     ],
   });
@@ -114,7 +114,7 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             close: jest.fn(),
             getData: jest.fn(() => ({
               id: 13,

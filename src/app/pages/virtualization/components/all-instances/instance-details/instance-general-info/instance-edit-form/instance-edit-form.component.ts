@@ -24,8 +24,8 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -35,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-instance-edit-form',
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     IxInputComponent,
     ReactiveFormsModule,
     TranslateModule,
@@ -72,7 +72,7 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    private slideInRef: ChainedRef<VirtualizationInstance>,
+    private slideInRef: SlideInRef<VirtualizationInstance>,
   ) {
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });

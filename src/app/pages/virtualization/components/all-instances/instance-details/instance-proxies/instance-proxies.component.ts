@@ -17,7 +17,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class InstanceProxiesComponent {
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
   constructor(
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private deviceStore: VirtualizationDevicesStore,
   ) {}
 

@@ -45,9 +45,9 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import {
-  ModalHeaderComponent,
-} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+  OldModalHeaderComponent,
+} from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -70,7 +70,7 @@ const defaultHomePath = '/var/empty';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -224,7 +224,7 @@ export class UserFormComponent implements OnInit {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
-    private slideInRef: SlideInRef<UserFormComponent>,
+    private slideInRef: OldSlideInRef<UserFormComponent>,
     private snackbar: SnackbarService,
     private storageService: StorageService,
     private downloadService: DownloadService,

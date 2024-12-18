@@ -1,21 +1,36 @@
-<div class="ix-slidein-title-bar">
-  <h3 class="ix-formtitle">
+<div
+  class="ix-slidein-title-bar"
+  [class.has-many-components]="componentsSize() > 1"
+>
+  @if (componentsSize() > 1 && !disableClose()) {
+    <button
+      mat-icon-button
+      id="ix-close-icon"
+      [ixTest]="['close-slide-in']"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
+      (click)="close()"
+    >
+      <ix-icon name="mdi-chevron-left" ></ix-icon>
+    </button>
+  }
+  <h3 class="ix-form-title">
     {{ title() | translate }}
-    @if (requiredRoles()?.length && !(hasRequiredRoles() | async)) {
+    @if (requiredRoles()?.length && !(hasRequiredRoles | async)) {
       <ix-readonly-badge></ix-readonly-badge>
     }
   </h3>
-
-  @if (!disableClose()) {
-    <ix-icon
-      tabindex="0"
-      name="cancel"
+  @if (componentsSize() <= 1 && !disableClose()) {
+    <button
+      mat-icon-button
       id="ix-close-icon"
-      type="button"
-      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
+      [ixTest]="['close-slide-in']"
+      [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title() }"
       (click)="close()"
-      (keydown.enter)="close()"
-    ></ix-icon>
+    >
+      <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>
+    </button>
   }
 </div>
 

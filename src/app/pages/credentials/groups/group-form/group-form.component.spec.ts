@@ -15,7 +15,7 @@ import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -68,7 +68,7 @@ describe('GroupFormComponent', () => {
         mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
       mockAuth(),

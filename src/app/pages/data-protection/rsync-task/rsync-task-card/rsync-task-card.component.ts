@@ -38,8 +38,8 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -146,7 +146,7 @@ export class RsyncTaskCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
-    private chainedSlideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -184,7 +184,7 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const closer$ = this.chainedSlideIn.open(RsyncTaskFormComponent, true, row);
+    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getRsyncTasks();
     });

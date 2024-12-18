@@ -13,7 +13,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
@@ -54,7 +54,7 @@ describe('DiskBulkEditComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockApi([
@@ -124,7 +124,7 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

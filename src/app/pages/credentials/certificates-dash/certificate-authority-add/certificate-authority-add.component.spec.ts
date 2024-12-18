@@ -16,7 +16,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority, CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CertificateAuthorityAddComponent,
@@ -124,7 +124,7 @@ describe('CertificateAuthorityAddComponent', () => {
         }),
         mockCall('certificateauthority.create'),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatSnackBar),
       mockAuth(),
       mockProvider(SystemGeneralService, {
@@ -185,7 +185,7 @@ describe('CertificateAuthorityAddComponent', () => {
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('certificateauthority.create', [expectedInternalCa]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('create a new CA when Type = Intermediate and form is submitted', async () => {
@@ -213,7 +213,7 @@ describe('CertificateAuthorityAddComponent', () => {
       create_type: CaCreateType.Intermediate,
       signedby: 1,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CA and form is submitted', async () => {

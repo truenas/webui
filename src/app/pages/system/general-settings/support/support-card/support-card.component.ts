@@ -42,7 +42,7 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -96,7 +96,7 @@ export class SupportCardComponent implements OnInit {
     protected api: ApiService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,

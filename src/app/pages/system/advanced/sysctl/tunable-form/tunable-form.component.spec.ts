@@ -11,9 +11,9 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TunableFormComponent', () => {
@@ -30,12 +30,12 @@ describe('TunableFormComponent', () => {
         mockJob('tunable.create', fakeSuccessfulJob()),
         mockJob('tunable.update', fakeSuccessfulJob()),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => undefined),
       }),
@@ -76,7 +76,7 @@ describe('TunableFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             close: jest.fn(),
             getData: jest.fn(() => ({
               id: 1,

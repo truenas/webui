@@ -42,8 +42,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -73,7 +73,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -181,7 +181,7 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: SlideInRef<InterfaceFormComponent>,
+    private slideInRef: OldSlideInRef<InterfaceFormComponent>,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}

@@ -10,10 +10,10 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -38,9 +38,9 @@ describe('DatasetQuotaAddFormComponent', () => {
         ]),
         groupQueryDsCache: () => of(),
       }),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -84,7 +84,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -125,7 +125,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

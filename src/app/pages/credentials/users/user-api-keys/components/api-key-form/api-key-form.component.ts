@@ -26,8 +26,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -53,7 +53,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatButton,
     MatCard,
     MatCardContent,
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TestDirective,
@@ -108,7 +108,7 @@ export class ApiKeyFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: SlideInRef<ApiKeyFormComponent>,
+    private slideInRef: OldSlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
     private api: ApiService,
     private loader: AppLoaderService,

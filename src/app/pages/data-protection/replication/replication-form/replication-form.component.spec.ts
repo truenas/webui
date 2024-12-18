@@ -19,7 +19,6 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -43,7 +42,6 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -86,7 +84,7 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const chainedRef: ChainedRef<ReplicationTask> = {
+  const slideInRef: SlideInRef<ReplicationTask> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),
@@ -180,13 +178,8 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(ChainedSlideInService, {
-        components$: of([]),
-        open: jest.fn(() => of()),
-      }),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -215,7 +208,7 @@ describe('ReplicationFormComponent', () => {
       await switchButton.click();
 
       expect(
-        chainedRef.swap,
+        slideInRef.swap,
       ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
     });
 
@@ -240,7 +233,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
 
     it('shows eligible snapshots message', fakeAsync(() => {
@@ -275,7 +268,7 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, { ...chainedRef, getData: jest.fn(() => ({ id: 1 } as ReplicationTask)) }),
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ id: 1 } as ReplicationTask)) }),
         ],
       });
       tick();
@@ -300,7 +293,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 

@@ -14,11 +14,11 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('UserApiKeysComponent', () => {
@@ -78,12 +78,12 @@ describe('UserApiKeysComponent', () => {
         mockCall('api_key.query', apiKeys),
         mockCall('api_key.delete'),
       ]),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
       }),
-      mockProvider(SlideInRef, {
+      mockProvider(OldSlideInRef, {
         slideInClosed$: of(true),
       }),
     ],
@@ -99,7 +99,7 @@ describe('UserApiKeysComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
   });
 
   it('renders a button that opens API docs', async () => {
@@ -125,7 +125,7 @@ describe('UserApiKeysComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
       data: apiKeys[0],
     });
   });

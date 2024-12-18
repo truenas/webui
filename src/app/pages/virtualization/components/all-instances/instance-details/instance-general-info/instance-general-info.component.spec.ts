@@ -25,7 +25,7 @@ import {
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const instance = {
@@ -63,7 +63,7 @@ describe('InstanceGeneralInfoComponent', () => {
     providers: [
       IxFormatterService,
       mockAuth(),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: { id: 'updated_instance' },
         })),
@@ -146,7 +146,7 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(InstanceEditFormComponent, false, instance);
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });

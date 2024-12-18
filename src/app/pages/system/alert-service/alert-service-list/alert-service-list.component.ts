@@ -34,7 +34,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -120,7 +120,7 @@ export class AlertServiceListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private api: ApiService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) { }

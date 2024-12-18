@@ -19,9 +19,9 @@ import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpu
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
+import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class IsolatedGpusCardComponent implements OnInit {
     private firstTimeWarning: FirstTimeWarningService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
   ) {}
 
@@ -75,7 +75,7 @@ export class IsolatedGpusCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(IsolatedGpusFormComponent)),
+      switchMap(() => this.slideIn.open(IsolatedGpusFormComponent)),
       filter((response) => !!response.response),
       tap(() => this.loadIsolatedGpus()),
       untilDestroyed(this),

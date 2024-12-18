@@ -13,10 +13,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ProactiveComponent', () => {
@@ -49,9 +49,9 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available_and_enabled', true),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -101,7 +101,7 @@ describe('ProactiveComponent', () => {
       secondary_email: 'test-user@test-user.com',
       secondary_phone: '+999999999',
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('shows a warning when support is not available', async () => {

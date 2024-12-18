@@ -17,12 +17,12 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { SlideIn2Component } from 'app/modules/slide-ins/components/slide-in2/slide-in2.component';
+import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
 describe('IxSlideIn2Component', () => {
   const existingTask = {
@@ -75,11 +75,11 @@ describe('IxSlideIn2Component', () => {
     next_run: 'Disabled',
     state: { state: JobState.Pending },
   } as CloudSyncTaskUi;
-  const close$ = new Subject<ChainedComponentResponse>();
-  let spectator: Spectator<SlideIn2Component>;
+  const close$ = new Subject<SlideInResponse>();
+  let spectator: Spectator<SlideInComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: SlideIn2Component,
+    component: SlideInComponent,
     imports: [
       A11yModule,
       CloudSyncFormComponent,
@@ -136,7 +136,7 @@ describe('IxSlideIn2Component', () => {
         }]),
       ]),
       mockProvider(FilesystemService),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => undefined),
@@ -144,7 +144,7 @@ describe('IxSlideIn2Component', () => {
       }),
       mockProvider(ElementRef),
       mockProvider(Renderer2),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         isTopComponentWide$: of(false),
         popComponent: jest.fn(),
         swapComponent: jest.fn(),
@@ -193,7 +193,7 @@ describe('IxSlideIn2Component', () => {
     expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
     expect(close$.complete).toHaveBeenCalled();
     tick(305);
-    expect(spectator.inject(ChainedSlideInService).popComponent).toHaveBeenCalledWith('id');
+    expect(spectator.inject(SlideIn).popComponent).toHaveBeenCalledWith('id');
     discardPeriodicTasks();
   }));
 

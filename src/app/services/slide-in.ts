@@ -8,45 +8,46 @@ import {
 } from 'rxjs';
 import { FocusService } from 'app/services/focus.service';
 
-export interface IncomingChainedComponent {
+export interface IncomingSlideInComponent {
   component: ComponentType<unknown>;
   wide: boolean;
   data: unknown;
   swapComponentId?: string;
 }
 
-export interface ChainedSlideInState {
-  components: Map<string, ChainedComponent>;
+export interface SlideInState {
+  components: Map<string, SlideInComponent>;
 }
 
-export interface ChainedComponent {
+export interface SlideInComponent {
   component: Type<unknown>;
-  close$: Subject<ChainedComponentResponse>;
+  close$: Subject<SlideInResponse>;
   wide: boolean;
   data: unknown;
   isComponentAlive?: boolean;
 }
 
-export interface ChainedComponentResponse<T = unknown> {
+export interface SlideInResponse<T = unknown> {
   response: T;
   error: unknown;
 }
 
-export interface ChainedComponentSerialized {
+export interface ComponentSerialized {
   id: string;
   component: Type<unknown>;
-  close$: Subject<ChainedComponentResponse>;
+  close$: Subject<SlideInResponse>;
   data?: unknown;
   wide?: boolean;
   isComponentAlive?: boolean;
 }
 
 @UntilDestroy()
+// eslint-disable-next-line angular-file-naming/service-filename-suffix
 @Injectable({
   providedIn: 'root',
 })
-export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
-  readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
+export class SlideIn extends ComponentStore<SlideInState> {
+  readonly components$: Observable<ComponentSerialized[]> = this.select(
     (state) => this.getAliveComponents(state.components),
   );
 
@@ -71,11 +72,11 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
     );
   });
 
-  private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponent) => {
+  private pushComponentToStore = this.updater((state, componentInfo: SlideInComponent) => {
     const newMap = new Map(state.components);
     const componentId = UUID.UUID();
     newMap.set(componentId, {
-      ...chainedComponentInfo,
+      ...componentInfo,
     });
     return {
       components: newMap,
@@ -87,8 +88,8 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
     component: Type<unknown>,
     wide = false,
     data?: unknown,
-  ): Observable<ChainedComponentResponse> {
-    const close$ = new Subject<ChainedComponentResponse>();
+  ): Observable<SlideInResponse> {
+    const close$ = new Subject<SlideInResponse>();
     this.pushComponentToStore({
       component,
       wide,
@@ -116,7 +117,7 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
     };
   });
 
-  swapComponent = this.updater((state, swapInfo: IncomingChainedComponent) => {
+  swapComponent = this.updater((state, swapInfo: IncomingSlideInComponent) => {
     const newMap = new Map(state.components);
     const popped = newMap.get(swapInfo.swapComponentId);
     const close$ = popped.close$;
@@ -138,7 +139,7 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
     };
   });
 
-  mapToSerializedArray(map: Map<string, ChainedComponent>): ChainedComponentSerialized[] {
+  mapToSerializedArray(map: Map<string, SlideInComponent>): ComponentSerialized[] {
     return Array.from(map, ([id, componentInfo]) => {
       return {
         id,
@@ -147,11 +148,11 @@ export class ChainedSlideInService extends ComponentStore<ChainedSlideInState> {
         wide: componentInfo.wide,
         data: componentInfo.data,
         isComponentAlive: componentInfo.isComponentAlive,
-      } as ChainedComponentSerialized;
+      } as ComponentSerialized;
     });
   }
 
-  getAliveComponents(components: Map<string, ChainedComponent>): ChainedComponentSerialized[] {
+  getAliveComponents(components: Map<string, SlideInComponent>): ComponentSerialized[] {
     return this.mapToSerializedArray(components).filter(
       (component) => component.isComponentAlive,
     );
