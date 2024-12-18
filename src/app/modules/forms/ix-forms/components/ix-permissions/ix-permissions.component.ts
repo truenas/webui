@@ -8,7 +8,7 @@ import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -26,7 +26,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
-    RegisteredControlDirective,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },

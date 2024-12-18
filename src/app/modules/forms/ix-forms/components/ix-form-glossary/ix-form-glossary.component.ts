@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,7 +8,6 @@ import {
 import {
   FormBuilder, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -20,18 +18,13 @@ import {
   map,
 } from 'rxjs/operators';
 import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { SectionWithControls } from 'app/interfaces/form-sections.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 
 @UntilDestroy()
 @Component({
@@ -41,15 +34,8 @@ import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-ap
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    PageHeaderComponent,
-    ReadOnlyComponent,
     IxInputComponent,
-    AppMetadataCardComponent,
-    MatButton,
-    RequiresRolesDirective,
-    AsyncPipe,
     TranslateModule,
-    TestDirective,
     ReactiveFormsModule,
     IxIconComponent,
   ],
@@ -82,7 +68,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   private handleControlsUpdates(): void {
-    this.formService.controlNamesWithlabels.pipe(
+    this.formService.controlNamesWithLabels$.pipe(
       delay(0),
       map((controlsWithLabels) => controlsWithLabels.map(
         (nameWithLabel) => ({ label: nameWithLabel.label, value: nameWithLabel.name }),

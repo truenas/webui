@@ -1,6 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { NgControl } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ControlNameWithLabel, SectionWithControls } from 'app/interfaces/form-sections.interface';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -9,8 +9,11 @@ import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registe
 export class IxFormService {
   private controls = new Map<string, HTMLElement>();
   private sections = new Map<IxFormSectionComponent, (NgControl | null)[]>();
-  controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
-  controlSections$ = new BehaviorSubject<SectionWithControls[]>([]);
+  private readonly controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
+  private readonly controlSections = new BehaviorSubject<SectionWithControls[]>([]);
+
+  controlNamesWithLabels$: Observable<ControlNameWithLabel[]> = this.controlNamesWithlabels.asObservable();
+  controlSections$: Observable<SectionWithControls[]> = this.controlSections.asObservable();
 
   getControlNames(): (string | number | null)[] {
     return [...this.controls.keys()];
@@ -85,6 +88,6 @@ export class IxFormService {
     for (const [section, controls] of this.sections.entries()) {
       controlSections.push({ section, controls });
     }
-    this.controlSections$.next(controlSections);
+    this.controlSections.next(controlSections);
   }
 }

@@ -8,7 +8,7 @@ import { MatSelectChange, MatSelect } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective, registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkService } from 'app/services/network.service';
@@ -27,7 +27,6 @@ import { NetworkService } from 'app/services/network.service';
     MatOption,
     IxErrorsComponent,
     TranslateModule,
-    RegisteredControlDirective,
     TestDirective,
     TestOverrideDirective,
   ],
