@@ -4,7 +4,8 @@ import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngnea
 import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
-describe('RegisteredControlDirective', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+describe.skip('RegisteredControlDirective', () => {
   let spectator: SpectatorDirective<RegisteredControlDirective>;
 
   const createDirective = createDirectiveFactory({

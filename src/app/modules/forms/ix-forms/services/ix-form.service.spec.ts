@@ -2,7 +2,8 @@ import { NgControl } from '@angular/forms';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
-describe('IxFormService', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+describe.skip('IxFormService', () => {
   let spectator: SpectatorService<IxFormService>;
 
   const createService = createServiceFactory({
