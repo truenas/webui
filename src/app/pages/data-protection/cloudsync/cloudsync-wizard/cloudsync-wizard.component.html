@@ -13,7 +13,7 @@
         ></ix-cloudsync-provider>
       </mat-step>
 
-      <mat-step [stepControl]="whatAndWhen?.form">
+      <mat-step [stepControl]="whatAndWhen()?.form">
         <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
         <ix-cloudsync-what-and-when
           [credentialId]="existingCredential?.id"

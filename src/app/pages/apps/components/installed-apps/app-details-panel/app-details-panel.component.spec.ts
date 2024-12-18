@@ -1,6 +1,8 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { ImgFallbackDirective } from 'ngx-img-fallback';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { App } from 'app/interfaces/app.interface';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -12,12 +14,18 @@ describe('AppDetailsPanelComponent', () => {
 
   const app = {
     id: 'ix-test-app',
-    metadata: {},
+    metadata: {
+      host_mounts: [1],
+    },
   } as App;
 
   const createComponent = createComponentFactory({
     component: AppDetailsPanelComponent,
-    declarations: [
+    imports: [
+      ImgFallbackDirective,
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective,
       MockComponents(
         AppInfoCardComponent,
         AppWorkloadsCardComponent,

@@ -1,7 +1,7 @@
 import { NgStyle } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, HostListener, input, OnDestroy, OnInit, ViewChild,
+  Component, ElementRef, HostListener, input, OnDestroy, OnInit, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,7 +47,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class TerminalComponent implements OnInit, OnDestroy {
   readonly conf = input.required<TerminalConfiguration>();
 
-  @ViewChild('terminal', { static: true }) container: ElementRef<HTMLElement>;
+  private readonly container: Signal<ElementRef<HTMLElement>> = viewChild('terminal', { read: ElementRef });
 
   waitParentChanges = 300;
   fontSize = 14;
@@ -166,7 +166,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   drawTerminal(): void {
-    this.xterm.open(this.container.nativeElement);
+    this.xterm.open(this.container().nativeElement);
     this.fitAddon.fit();
   }
 

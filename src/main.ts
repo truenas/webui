@@ -1,5 +1,7 @@
 import { provideHttpClient, withInterceptorsFromDi, HttpClient } from '@angular/common/http';
-import { enableProdMode, ErrorHandler, importProvidersFrom } from '@angular/core';
+import {
+  enableProdMode, ErrorHandler, importProvidersFrom, inject,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   provideNativeDateAdapter,
@@ -9,7 +11,12 @@ import { MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarConfig } from '@angular/mater
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import {
-  withPreloading, provideRouter, PreloadAllModules, withComponentInputBinding,
+  withPreloading,
+  provideRouter,
+  PreloadAllModules,
+  withComponentInputBinding,
+  withNavigationErrorHandler,
+  NavigationError,
 } from '@angular/router';
 import { provideEffects } from '@ngrx/effects';
 import { provideRouterStore } from '@ngrx/router-store';
@@ -24,6 +31,7 @@ import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
+import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
@@ -36,7 +44,6 @@ import { SubscriptionManagerService } from 'app/services/websocket/subscription-
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
-import { AppComponent } from './app/app.component';
 
 if (environment.production) {
   enableProdMode();
@@ -125,6 +132,17 @@ bootstrapApplication(AppComponent, {
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    provideRouter(rootRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
+    provideRouter(
+      rootRoutes,
+      withPreloading(PreloadAllModules),
+      withComponentInputBinding(),
+      withNavigationErrorHandler((error: NavigationError) => {
+        const chunkFailedMessage = /Loading chunk \d+ failed/;
+        if (chunkFailedMessage.test(String(error.error))) {
+          inject<Window>(WINDOW).location.reload();
+        }
+        console.error(error);
+      }),
+    ),
   ],
 });

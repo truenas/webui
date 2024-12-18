@@ -2,18 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDatepickerInputHarness } from '@angular/material/datepicker/testing';
-import { MatInputModule } from '@angular/material/input';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { parseISO } from 'date-fns';
-import { MockComponent } from 'ng-mocks';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { LocaleService } from 'app/services/locale.service';
 import { IxDatepickerComponent } from './ix-date-picker.component';
 
@@ -26,13 +21,6 @@ describe('IxDatePickerComponent', () => {
     component: IxDatepickerComponent,
     imports: [
       ReactiveFormsModule,
-      MatDatepickerModule,
-      MatInputModule,
-    ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(IxIconComponent),
     ],
     providers: [
       mockProvider(LocaleService, {
@@ -71,9 +59,9 @@ describe('IxDatePickerComponent', () => {
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
-      expect(label.label).toBe('Label');
-      expect(label.tooltip).toBe('Tooltip');
-      expect(label.required).toBe(true);
+      expect(label.label()).toBe('Label');
+      expect(label.tooltip()).toBe('Tooltip');
+      expect(label.required()).toBe(true);
     });
 
     it('opens datepicker when input is clicked', async () => {

@@ -1,6 +1,5 @@
 import {
-  Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
-  ViewChild,
+  Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, viewChild,
 } from '@angular/core';
 import { NgModel, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -75,7 +74,7 @@ import { StaticRoutesCardComponent } from './components/static-routes-card/stati
 export class NetworkComponent implements OnInit {
   protected readonly searchableElements = networkElements;
 
-  @ViewChild('checkinTimeoutField', { static: false }) checkinTimeoutField: NgModel;
+  readonly checkinTimeoutField = viewChild<NgModel>('checkinTimeoutField');
 
   isHaEnabled = false;
   hasPendingChanges = false;
@@ -92,7 +91,7 @@ export class NetworkComponent implements OnInit {
   helptext = helptextInterfaces;
 
   get isCheckinTimeoutFieldInvalid(): boolean {
-    return this.checkinTimeoutField?.invalid;
+    return this.checkinTimeoutField()?.invalid;
   }
 
   constructor(

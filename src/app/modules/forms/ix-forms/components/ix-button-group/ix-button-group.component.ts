@@ -28,8 +28,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatHint,
     AsyncPipe,
     TranslateModule,
-    TestOverrideDirective,
     TestDirective,
+    TestOverrideDirective,
     RegisteredControlDirective,
   ],
 })

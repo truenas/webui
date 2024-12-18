@@ -1,7 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate,
 } from '@angular/cdk/testing';
-import { IxTooltipHarness } from 'app/modules/tooltip/tooltip.harness';
+import { TooltipHarness } from 'app/modules/tooltip/tooltip.harness';
 
 export interface IxLabelFilters extends BaseHarnessFilters {
   label: string;
@@ -10,7 +10,7 @@ export interface IxLabelFilters extends BaseHarnessFilters {
 export class IxLabelHarness extends ComponentHarness {
   static readonly hostSelector = 'ix-label';
 
-  readonly getTooltip = this.locatorFor(IxTooltipHarness);
+  readonly getTooltip = this.locatorFor(TooltipHarness);
 
   static with(options: IxLabelFilters): HarnessPredicate<IxLabelHarness> {
     return new HarnessPredicate(IxLabelHarness, options)

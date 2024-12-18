@@ -2,7 +2,8 @@
 @import 'scss-imports/cssvars';
 $standard-height: 40px;
 @include mat.all-component-typographies();
-@include mat.core();
+@include mat.elevation-classes();
+@include mat.app-background();
 @include mat.slide-toggle-density(-1);
 @include mat.radio-density(-1);
 @include mat.checkbox-density(-1);

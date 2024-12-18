@@ -86,7 +86,6 @@ export class InstanceWizardComponent implements OnInit {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly visibleImageName = new FormControl('');
-  protected readonly VirtualizationNicType = VirtualizationNicType;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 

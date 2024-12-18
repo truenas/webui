@@ -8,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
+import { KiB } from 'app/constants/bytes.constant';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
@@ -26,6 +27,12 @@ import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-po
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import {
+  PruneDedupTableDialogComponent,
+} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/prune-dedup-table-dialog/prune-dedup-table-dialog.component';
+import {
+  SetDedupQuotaComponent,
+} from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -260,6 +267,71 @@ describe('ZfsHealthCardComponent', () => {
       await resumeButton.click();
 
       expect(spectator.inject(ApiService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+    });
+  });
+
+  describe('deduplication', () => {
+    it('does not show deduplication line if there are no deduplication stats', () => {
+      const detailsItem = spectator.query(byText('Deduplication Table:'));
+      expect(detailsItem).not.toExist();
+    });
+
+    it('shows deduplication stats for various quota settings', () => {
+      // Auto
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_quota: 'auto',
+        dedup_table_size: 100 * KiB,
+      });
+      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB');
+
+      // Custom
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_quota: String(200 * KiB),
+        dedup_table_size: 100 * KiB,
+      });
+      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB / 200 KiB');
+
+      // None
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_quota: '0',
+        dedup_table_size: 100 * KiB,
+      });
+      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB');
+    });
+
+    it('opens SetDedupQuotaComponent when Set Quota is pressed', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_size: 100 * KiB,
+      });
+
+      spectator.click(spectator.query(byText('Set Quota')));
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetDedupQuotaComponent, {
+        data: {
+          ...pool,
+          dedup_table_size: 100 * KiB,
+        },
+      });
+    });
+
+    it('opens PruneDedupTableDialogComponent when Prune is pressed', () => {
+      spectator.setInput('pool', {
+        ...pool,
+        dedup_table_size: 100 * KiB,
+      });
+
+      spectator.click(spectator.query(byText('Prune')));
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialogComponent, {
+        data: {
+          ...pool,
+          dedup_table_size: 100 * KiB,
+        },
+      });
     });
   });
 });

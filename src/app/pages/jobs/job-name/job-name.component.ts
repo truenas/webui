@@ -6,7 +6,7 @@ import { MatIconButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatTooltip } from '@angular/material/tooltip';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -18,6 +18,7 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-job-name',
   templateUrl: './job-name.component.html',

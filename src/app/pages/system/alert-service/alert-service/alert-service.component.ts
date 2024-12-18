@@ -3,8 +3,8 @@ import {
   ChangeDetectorRef,
   Component, Inject, OnInit,
   Type,
-  ViewChild,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormsModule,
@@ -107,7 +107,7 @@ export class AlertServiceComponent implements OnInit {
 
   isLoading = false;
 
-  @ViewChild('alertServiceContainer', { static: true, read: ViewContainerRef }) alertServiceContainer: ViewContainerRef;
+  private readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
 
@@ -223,10 +223,10 @@ export class AlertServiceComponent implements OnInit {
   }
 
   private renderAlertServiceForm(): void {
-    this.alertServiceContainer?.clear();
+    this.alertServiceContainer()?.clear();
 
     const formClass = this.getAlertServiceClass();
-    const formRef = this.alertServiceContainer.createComponent(formClass);
+    const formRef = this.alertServiceContainer().createComponent(formClass);
     this.alertServiceForm = formRef.instance;
   }
 

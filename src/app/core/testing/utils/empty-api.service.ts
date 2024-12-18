@@ -8,6 +8,5 @@ export class EmptyApiService {
   callAndSubscribe = getMissingInjectionErrorFactory(ApiService.name);
   startJob = getMissingInjectionErrorFactory(ApiService.name);
   subscribe = getMissingInjectionErrorFactory(ApiService.name);
-  subscribeToLogs = getMissingInjectionErrorFactory(ApiService.name);
   clearSubscriptions = getMissingInjectionErrorFactory(ApiService.name);
 }

@@ -1,8 +1,9 @@
+import { signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import {
@@ -20,15 +21,12 @@ import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/compon
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -138,22 +136,13 @@ describe('IxDynamicFormItemComponent', () => {
     imports: [
       ReactiveFormsModule,
     ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(IxInputComponent),
-      MockComponent(IxListComponent),
-      MockComponent(IxCodeEditorComponent),
-      MockComponent(IxListItemComponent),
-      MockComponent(IxSelectComponent),
-      MockComponent(IxCheckboxComponent),
-      MockComponent(IxIpInputWithNetmaskComponent),
-      MockComponent(IxExplorerComponent),
-      CastPipe,
-    ],
   });
 
   beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(IxInputComponent, 'inputElementRef', signal(null));
+    MockInstance(IxCodeEditorComponent, 'inputArea', signal(null));
+    MockInstance(IxExplorerComponent, 'tree', signal(null));
     spectator = createComponent();
   });
 
@@ -166,9 +155,9 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-input')).toBeVisible();
-      expect(spectator.query(IxInputComponent).required).toBe(inputSchema.required);
-      expect(spectator.query(IxInputComponent).type).toBe(inputSchema.inputType);
-      expect(spectator.query(IxInputComponent).tooltip).toBe(inputSchema.tooltip);
+      expect(spectator.query(IxInputComponent).required()).toBe(inputSchema.required);
+      expect(spectator.query(IxInputComponent).type()).toBe(inputSchema.inputType);
+      expect(spectator.query(IxInputComponent).tooltip()).toBe(inputSchema.tooltip);
 
       expect(spectator.query('ix-input')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.input as CustomUntypedFormField;
@@ -188,8 +177,8 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-code-editor')).toBeVisible();
-      expect(spectator.query(IxCodeEditorComponent).required).toBe(textSchema.required);
-      expect(spectator.query(IxCodeEditorComponent).tooltip).toBe(textSchema.tooltip);
+      expect(spectator.query(IxCodeEditorComponent).required()).toBe(textSchema.required);
+      expect(spectator.query(IxCodeEditorComponent).tooltip()).toBe(textSchema.tooltip);
       expect(spectator.query('ix-code-editor')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.text as CustomUntypedFormField;
       if (!field.hidden$) {
@@ -208,9 +197,9 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-select')).toBeVisible();
-      expect(spectator.query(IxSelectComponent).required).toBe(selectSchema.required);
-      expect(spectator.query(IxSelectComponent).hideEmpty).toBe(selectSchema.hideEmpty);
-      expect(spectator.query(IxSelectComponent).tooltip).toBe(selectSchema.tooltip);
+      expect(spectator.query(IxSelectComponent).required()).toBe(selectSchema.required);
+      expect(spectator.query(IxSelectComponent).hideEmpty()).toBe(selectSchema.hideEmpty);
+      expect(spectator.query(IxSelectComponent).tooltip()).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.select as CustomUntypedFormField;
@@ -230,8 +219,8 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-checkbox')).toBeVisible();
-      expect(spectator.query(IxCheckboxComponent).required).toBe(checkboxSchema.required);
-      expect(spectator.query(IxCheckboxComponent).tooltip).toBe(checkboxSchema.tooltip);
+      expect(spectator.query(IxCheckboxComponent).required()).toBe(checkboxSchema.required);
+      expect(spectator.query(IxCheckboxComponent).tooltip()).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.checkbox as CustomUntypedFormField;
@@ -251,8 +240,8 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-ip-input-with-netmask')).toBeVisible();
-      expect(spectator.query(IxIpInputWithNetmaskComponent).required).toBe(ipaddrSchema.required);
-      expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip).toBe(ipaddrSchema.tooltip);
+      expect(spectator.query(IxIpInputWithNetmaskComponent).required()).toBe(ipaddrSchema.required);
+      expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip()).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.ipaddr as CustomUntypedFormField;
@@ -272,8 +261,8 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-explorer')).toBeVisible();
-      expect(spectator.query(IxExplorerComponent).required).toBe(explorerSchema.required);
-      expect(spectator.query(IxExplorerComponent).tooltip).toBe(explorerSchema.tooltip);
+      expect(spectator.query(IxExplorerComponent).required()).toBe(explorerSchema.required);
+      expect(spectator.query(IxExplorerComponent).tooltip()).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.explorer as CustomUntypedFormField;
@@ -295,8 +284,8 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-list')).toBeVisible();
       expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items.length);
-      expect(spectator.query(IxListComponent).empty).toBe(false);
-      expect(spectator.query(IxListComponent).label).toBe(listSchema.title);
+      expect(spectator.query(IxListComponent).empty()).toBe(false);
+      expect(spectator.query(IxListComponent).label()).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
       const field = spectator.component.dynamicForm().controls.list as CustomUntypedFormField;

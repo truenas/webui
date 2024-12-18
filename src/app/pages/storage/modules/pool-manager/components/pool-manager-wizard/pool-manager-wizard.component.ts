@@ -1,7 +1,7 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, output, viewChild,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCard } from '@angular/material/card';
@@ -94,7 +94,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 
-  @ViewChild('stepper') stepper: MatStepper;
+  private readonly stepper = viewChild('stepper', { read: MatStepper });
 
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
@@ -206,13 +206,13 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   goToLastStep(): void {
-    this.stepper.selectedIndex = this.stepper.steps.length - 1;
+    this.stepper().selectedIndex = this.stepper().steps.length - 1;
     this.cdr.markForCheck();
   }
 
   listenForStartOver(): void {
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.stepper.selectedIndex = 0;
+      this.stepper().selectedIndex = 0;
       this.activatedSteps = {};
     });
   }
@@ -244,7 +244,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
       if (result) {
-        setTimeout(() => this.stepper.selectedIndex = getPoolCreationWizardStepIndex[this.activeStep]);
+        setTimeout(() => this.stepper().selectedIndex = getPoolCreationWizardStepIndex[this.activeStep]);
       }
       this.cdr.markForCheck();
     });
