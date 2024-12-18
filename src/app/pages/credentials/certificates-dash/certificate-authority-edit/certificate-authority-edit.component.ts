@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
@@ -32,7 +34,12 @@ export class CertificateAuthorityEditComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
-  });
+    add_to_trusted_store: [false],
+  }) as FormGroup<{
+    name: FormControl<string | null>;
+    add_to_trusted_store: FormControl<boolean>;
+    renew_days?: FormControl<number | null>;
+  }>;
 
   certificateAuthority: CertificateAuthority;
 

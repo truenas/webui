@@ -268,6 +268,7 @@
   "Add new": "",
   "Add the required no. of disks to get a vdev size estimate": "",
   "Add this user to additional groups.": "",
+  "Add to trusted store": "",
   "Add {item}": "",
   "Added disks are erased, then the pool is extended onto the new disks with the chosen topology. Existing data on the pool is kept intact.": "",
   "Adding data VDEVs of different types is not supported.": "",
