@@ -1,0 +1,19 @@
+<div class="search-container">
+  <div class="search-card">
+    <ix-input
+      [prefixIcon]="iconMarker('search')"
+      [formControl]="searchControl"
+      [placeholder]="'Search Input Fields' | translate"
+      [autocompleteOptions]="searchOptions()"
+    ></ix-input>
+    
+    @for (section of sections(); track section) {
+      <div class="section" (click)="onSectionClick(section)">
+        {{ section.label() }}
+        @if (!isSectionValid(section)) {
+          <ix-icon name="warning"></ix-icon>
+        }
+      </div>
+    }
+  </div>
+</div>

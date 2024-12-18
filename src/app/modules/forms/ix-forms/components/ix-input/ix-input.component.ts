@@ -10,6 +10,7 @@ import {
 import {
   ControlValueAccessor,
   NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatIconButton } from '@angular/material/button';
@@ -24,7 +25,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -45,6 +46,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatIconButton,
     MatTooltip,
     MatAutocomplete,
+    ReactiveFormsModule,
     MatOption,
     MatError,
     IxErrorsComponent,
@@ -52,7 +54,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {

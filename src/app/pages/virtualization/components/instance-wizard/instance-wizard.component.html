@@ -6,7 +6,10 @@
 
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
-    <ix-fieldset [title]="'Instance Configuration' | translate">
+    <ix-form-section
+      [label]="'Instance Configuration' | translate" 
+      [help]="'Instance Configuration' | translate"
+    >
       <ix-input
         formControlName="name"
         [label]="'Name' | translate"
@@ -21,7 +24,7 @@
       <div class="image-field">
         <ix-input
           class="input"
-          [formControl]="visibleImageName"
+          formControlName="image"
           [readonly]="true"
           [label]="'Image' | translate"
           [required]="true"
@@ -34,9 +37,12 @@
           (click)="onBrowseImages()"
         >{{ 'Browse Catalog' | translate }}</button>
       </div>
-    </ix-fieldset>
+    </ix-form-section>
 
-    <ix-fieldset [title]="'CPU & Memory' | translate">
+    <ix-form-section
+      [label]="'CPU & Memory' | translate"
+      [help]="'CPU & Memory' | translate"
+    >
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
@@ -50,9 +56,12 @@
         [parse]="formatter.memorySizeParsing"
         [hint]="containersHelptext.memoryHint"
       ></ix-input>
-    </ix-fieldset>
+    </ix-form-section>
 
-    <ix-fieldset [title]="'Environment' | translate">
+    <ix-form-section
+      [label]="'Environment' | translate"
+      [help]="'Environment' | translate"
+    >
       <ix-list
         formArrayName="environment_variables"
         [empty]="form.controls.environment_variables.controls.length === 0"
@@ -81,9 +90,12 @@
           </ix-list-item>
         }
       </ix-list>
-    </ix-fieldset>
+    </ix-form-section>
 
-    <ix-fieldset [title]="'Disks' | translate">
+    <ix-form-section
+      [label]="'Disks' | translate"
+      [help]="'Disks' | translate"
+    >
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
@@ -93,8 +105,8 @@
       >
         @for (disk of form.controls.disks.controls; track disk; let i = $index) {
           <ix-list-item
-            [formGroupName]="i"
             [label]="'Disk' | translate"
+            [formGroupName]="i"
             (delete)="removeDisk(i)"
           >
             <ix-explorer
@@ -112,9 +124,12 @@
           </ix-list-item>
         }
       </ix-list>
-    </ix-fieldset>
+    </ix-form-section>
 
-    <ix-fieldset [title]="'Proxies' | translate">
+    <ix-form-section
+      [label]="'Proxies' | translate"
+      [help]="'Proxies' | translate"
+    >
       <ix-list
         formArrayName="proxies"
         [empty]="form.controls.proxies.controls.length === 0"
@@ -124,8 +139,8 @@
       >
         @for (proxy of form.controls.proxies.controls; track proxy; let i = $index) {
           <ix-list-item
-            [formGroupName]="i"
             [label]="'Proxy' | translate"
+            [formGroupName]="i"
             (delete)="removeProxy(i)"
           >
             <div class="protocol-and-port">
@@ -166,9 +181,12 @@
           </ix-list-item>
         }
       </ix-list>
-    </ix-fieldset>
+    </ix-form-section>
 
-    <ix-fieldset [title]="'Network' | translate">
+    <ix-form-section 
+      [label]="'Network' | translate"
+      [help]="'Network' | translate"
+    >
       <ix-checkbox
         formControlName="use_default_network"
         [label]="'Use default network settings' | translate"
@@ -184,14 +202,11 @@
             @if (devices.length > 0) {
               <p>{{ bridgedNicTypeLabel | translate }}</p>
 
-              <div formGroupName="bridged_nics">
-                @for (device of devices; track device) {
-                  <ix-checkbox
-                    [formControlName]="device.value"
-                    [label]="device.label"
-                  ></ix-checkbox>
-                }
-              </div>
+              <ix-checkbox-list
+                formControlName="bridged_nics"
+                [label]="'Bridged NICs' | translate"
+                [options]="bridgedNicDevices$"
+              ></ix-checkbox-list>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -201,49 +216,46 @@
             @if (devices.length > 0) {
               <p>{{ macVlanNicTypeLabel | translate }}</p>
 
-              <div formGroupName="mac_vlan_nics">
-                @for (device of devices; track device) {
-                  <ix-checkbox
-                    [formControlName]="device.value"
-                    [label]="device.label"
-                  ></ix-checkbox>
-                }
-              </div>
+              <ix-checkbox-list
+                formControlName="mac_vlan_nics"
+                [label]="'Macvlan NICs' | translate"
+                [options]="macVlanNicDevices$"
+              ></ix-checkbox-list>
             }
           } @else {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
         }
       }
-    </ix-fieldset>
+    </ix-form-section>
 
     @if ((usbDevices$ | async); as usbDevices) {
       @if (usbDevices.length > 0) {
-        <ix-fieldset [title]="'USB Devices' | translate">
-          <div formGroupName="usb_devices">
-            @for (device of usbDevices; track device) {
-              <ix-checkbox
-                [formControlName]="device.value"
-                [label]="device.label"
-              ></ix-checkbox>
-            }
-          </div>
-        </ix-fieldset>
+        <ix-form-section
+          [label]="'USB Devices' | translate"
+          [help]="'USB Devices' | translate"
+        >
+          <ix-checkbox-list
+            [formControlName]="'usb_devices'"
+            [label]="'USB Devices' | translate"
+            [options]="usbDevices$"
+          ></ix-checkbox-list>
+        </ix-form-section>
       }
     }
 
     @if ((gpuDevices$ | async); as gpuDevices) {
       @if (gpuDevices.length > 0) {
-        <ix-fieldset [title]="'GPU Devices' | translate">
-          <div formGroupName="gpu_devices">
-            @for (device of gpuDevices; track device) {
-              <ix-checkbox
-                [formControlName]="device.value"
-                [label]="device.label"
-              ></ix-checkbox>
-            }
-          </div>
-        </ix-fieldset>
+        <ix-form-section
+          [label]="'GPU Devices' | translate"
+          [help]="'GPU Devices' | translate"
+        >
+          <ix-checkbox-list
+            formControlName="gpu_devices"
+            [label]="'GPU Devices' | translate"
+            [options]="gpuDevices$"
+          ></ix-checkbox-list>
+        </ix-form-section>
       }
     }
 
@@ -259,4 +271,5 @@
       </button>
     </div>
   </form>
+  <ix-form-glossary class="glossary"></ix-form-glossary>
 </div>
