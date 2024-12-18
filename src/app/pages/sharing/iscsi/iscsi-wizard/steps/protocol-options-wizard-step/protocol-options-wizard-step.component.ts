@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnInit,
+  ChangeDetectionStrategy, Component, input, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -9,18 +9,18 @@ import { map, of, switchMap } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
+import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-portal-wizard-step',
-  templateUrl: './portal-wizard-step.component.html',
+  selector: 'ix-protocol-options-wizard-step',
+  templateUrl: './protocol-options-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -28,11 +28,13 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxSelectComponent,
     IxListComponent,
     IxListItemComponent,
+    IxChipsComponent,
     TranslateModule,
   ],
 })
-export class PortalWizardStepComponent implements OnInit {
-  form = input<IscsiWizardComponent['form']['controls']['portal']>();
+export class ProtocolOptionsWizardStepComponent implements OnInit {
+  form = input<IscsiWizardComponent['form']['controls']['options']>();
+  isFibreChannelMode = input(false);
 
   readonly helptextSharingIscsi = helptextSharingIscsi;
 
@@ -58,15 +60,13 @@ export class PortalWizardStepComponent implements OnInit {
     untilDestroyed(this),
   );
 
-  readonly isNewPortal = computed<boolean>(() => {
-    const form = this.form();
-    return form.controls.portal.enabled && form.value.portal === newOption;
-  });
+  get isNewPortal(): boolean {
+    return this.form().controls.listen.enabled && this.form().value.portal === newOption;
+  }
 
   constructor(
     private iscsiService: IscsiService,
     private fb: FormBuilder,
-    private validatorsService: IxValidatorsService,
     private translate: TranslateService,
   ) {}
 

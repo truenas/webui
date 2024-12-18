@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
-import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
@@ -20,8 +20,8 @@ import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-device-wizard-step',
-  templateUrl: './device-wizard-step.component.html',
+  selector: 'ix-extent-wizard-step',
+  templateUrl: './extent-wizard-step.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -32,8 +32,8 @@ import { IscsiService } from 'app/services/iscsi.service';
     TranslateModule,
   ],
 })
-export class DeviceWizardStepComponent implements OnInit {
-  readonly form = input<IscsiWizardComponent['form']['controls']['device']>();
+export class ExtentWizardStepComponent implements OnInit {
+  readonly form = input<IscsiWizardComponent['form']['controls']['extent']>();
 
   readonly helptextSharingIscsi = helptextSharingIscsi;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
@@ -48,15 +48,6 @@ export class DeviceWizardStepComponent implements OnInit {
   readonly diskOptions$ = this.iscsiService.getExtentDevices()
     .pipe(
       choicesToOptions(),
-      switchMap((options) => of([
-        ...options,
-        { label: this.translate.instant('Create New'), value: newOption },
-      ])),
-    );
-
-  readonly targetOptions$ = this.iscsiService.getTargets()
-    .pipe(
-      idNameArrayToOptions(),
       switchMap((options) => of([
         ...options,
         { label: this.translate.instant('Create New'), value: newOption },

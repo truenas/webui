@@ -10,6 +10,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -18,20 +19,22 @@ import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
-import { DeviceWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/device-wizard-step/device-wizard-step.component';
-import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/initiator-wizard-step/initiator-wizard-step.component';
-import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
+import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
+import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
+import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
@@ -44,9 +47,9 @@ describe('IscsiWizardComponent', () => {
     imports: [
       ReactiveFormsModule,
       MatStepperModule,
-      DeviceWizardStepComponent,
-      PortalWizardStepComponent,
-      InitiatorWizardStepComponent,
+      TargetWizardStepComponent,
+      ExtentWizardStepComponent,
+      ProtocolOptionsWizardStepComponent,
     ],
     providers: [
       mockAuth(),
@@ -55,6 +58,7 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockApi([
+        mockCall('fc.capable', true),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
@@ -75,15 +79,26 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
       ]),
       provideMockStore({
-        selectors: [{
-          selector: selectServices,
-          value: [{
-            service: ServiceName.Iscsi,
-            id: 4,
-            enable: false,
-            state: ServiceStatus.Stopped,
-          } as Service],
-        }],
+        selectors: [
+          {
+            selector: selectServices,
+            value: [{
+              service: ServiceName.Iscsi,
+              id: 4,
+              enable: false,
+              state: ServiceStatus.Stopped,
+            } as Service],
+          },
+          {
+            selector: selectSystemInfo,
+            value: {
+              version: 'TrueNAS-SCALE-22.12',
+              license: {
+                features: [LicenseFeature.FibreChannel],
+              },
+            } as SystemInfo,
+          },
+        ],
       }),
       mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -124,13 +139,13 @@ describe('IscsiWizardComponent', () => {
     await saveButton.click();
     tick();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(7, 'pool.dataset.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
       name: 'new_pool/test-name',
       type: 'VOLUME',
       volsize: 1073741824,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'iscsi.extent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
       blocksize: 512,
       disk: 'zvol/my+pool/test_zvol',
       insecure_tpc: true,
@@ -140,18 +155,19 @@ describe('IscsiWizardComponent', () => {
       xen: false,
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.portal.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
       comment: 'test-name',
       listen: [{ ip: '::' }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.initiator.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
       comment: 'test-name',
       initiators: ['initiator1', 'initiator2'],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.target.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
       name: 'test-name',
+      mode: 'ISCSI',
       groups: [{
         auth: null,
         authmethod: 'NONE',
@@ -160,7 +176,7 @@ describe('IscsiWizardComponent', () => {
       }],
     }]);
 
-    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.targetextent.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
       extent: 11,
       target: 15,
     }]);

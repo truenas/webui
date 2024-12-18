@@ -22,6 +22,7 @@ import {
   IscsiExtentRpm,
   IscsiExtentType,
   IscsiExtentUsefor,
+  IscsiTargetMode,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -51,14 +52,14 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
+import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { DeviceWizardStepComponent } from './steps/device-wizard-step/device-wizard-step.component';
-import { InitiatorWizardStepComponent } from './steps/initiator-wizard-step/initiator-wizard-step.component';
-import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wizard-step.component';
+import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wizard-step.component';
 
 @UntilDestroy()
 @Component({
@@ -74,13 +75,13 @@ import { PortalWizardStepComponent } from './steps/portal-wizard-step/portal-wiz
     MatStepper,
     MatStep,
     MatStepLabel,
-    DeviceWizardStepComponent,
     MatButton,
     MatStepperNext,
     TestDirective,
-    PortalWizardStepComponent,
+    TargetWizardStepComponent,
+    ExtentWizardStepComponent,
+    ProtocolOptionsWizardStepComponent,
     MatStepperPrevious,
-    InitiatorWizardStepComponent,
     RequiresRolesDirective,
     TranslateModule,
     UseIxIconsInStepperComponent,
@@ -99,7 +100,11 @@ export class IscsiWizardComponent implements OnInit {
   createdTargetExtent: IscsiTargetExtent;
 
   form = this.fb.group({
-    device: this.fb.group({
+    target: this.fb.group({
+      target: [newOption as typeof newOption | number, [Validators.required]],
+      mode: [IscsiTargetMode.Iscsi],
+    }),
+    extent: this.fb.group({
       name: ['', [
         Validators.required,
         forbiddenValues(this.namesInUse),
@@ -112,13 +117,10 @@ export class IscsiWizardComponent implements OnInit {
       dataset: ['', [Validators.required]],
       volsize: [null as number, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
-      target: [newOption as typeof newOption | number, [Validators.required]],
     }),
-    portal: this.fb.group({
+    options: this.fb.group({
       portal: [null as typeof newOption | number, [Validators.required]],
       listen: this.fb.array<string>([]),
-    }),
-    initiator: this.fb.group({
       initiators: [[] as string[]],
     }),
   }, {
@@ -138,32 +140,36 @@ export class IscsiWizardComponent implements OnInit {
   ];
 
   get isNewZvol(): boolean {
-    return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
+    return this.form.controls.extent.enabled && this.form.value.extent.disk === newOption;
   }
 
   get isNewPortal(): boolean {
-    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === newOption;
+    return this.form.controls.options.controls.portal.enabled && this.form.value.options.portal === newOption;
   }
 
   get isNewTarget(): boolean {
-    return this.form.value.device.target === newOption;
+    return this.form.value.target.target === newOption;
   }
 
   get isNewInitiator(): boolean {
-    return this.form.controls.initiator.enabled;
+    return this.form.controls.options.enabled;
+  }
+
+  get isFibreChannelMode(): boolean {
+    return this.form.value.target.mode === IscsiTargetMode.Fc;
   }
 
   get zvolPayload(): DatasetCreate {
     const value = this.form.value;
     return {
-      name: value.device.dataset.replace(`${mntPath}/`, '') + '/' + value.device.name,
+      name: value.extent.dataset.replace(`${mntPath}/`, '') + '/' + value.extent.name,
       type: DatasetType.Volume,
-      volsize: value.device.volsize,
+      volsize: value.extent.volsize,
     };
   }
 
   get extentPayload(): IscsiExtentUpdate {
-    const value = this.form.value.device;
+    const value = this.form.value.extent;
     const blocksizeDefault = 512;
     const blocksizeModernos = 4096;
     const extentPayload = {
@@ -194,16 +200,16 @@ export class IscsiWizardComponent implements OnInit {
   get portalPayload(): IscsiPortalUpdate {
     const value = this.form.value;
     return {
-      comment: value.device.name,
-      listen: value.portal.listen.map((ip) => ({ ip } as IscsiInterface)),
+      comment: value.extent.name,
+      listen: value.options.listen.map((ip) => ({ ip } as IscsiInterface)),
     };
   }
 
   get initiatorPayload(): IscsiInitiatorGroupUpdate {
     const value = this.form.value;
     return {
-      comment: value.device.name,
-      ...(value.initiator.initiators.length ? { initiators: value.initiator.initiators } : {}),
+      comment: value.extent.name,
+      ...(value.options.initiators.length ? { initiators: value.options.initiators } : {}),
     };
   }
 
@@ -211,9 +217,10 @@ export class IscsiWizardComponent implements OnInit {
     const value = this.form.value;
 
     return {
-      name: value.device.name,
+      name: value.extent.name,
+      mode: value.target.mode,
       groups: [{
-        portal: this.isNewPortal ? this.createdPortal.id : value.portal.portal,
+        portal: this.isNewPortal ? this.createdPortal.id : value.options.portal,
         initiator: this.isNewInitiator ? this.createdInitiator.id : null,
         authmethod: IscsiAuthMethod.None,
         auth: null,
@@ -225,7 +232,7 @@ export class IscsiWizardComponent implements OnInit {
     const value = this.form.value;
 
     return {
-      target: this.isNewTarget ? this.createdTarget.id : value.device.target,
+      target: this.isNewTarget ? this.createdTarget.id : value.target.target,
       extent: this.createdExtent.id,
     } as IscsiTargetExtentUpdate;
   }
@@ -251,26 +258,32 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.form.controls.device.controls.path.disable();
-    this.form.controls.device.controls.filesize.disable();
-    this.form.controls.device.controls.dataset.disable();
-    this.form.controls.device.controls.volsize.disable();
-    this.disablePortalGroup();
+    this.form.controls.extent.controls.path.disable();
+    this.form.controls.extent.controls.filesize.disable();
+    this.form.controls.extent.controls.dataset.disable();
+    this.form.controls.extent.controls.volsize.disable();
+    this.form.controls.options.controls.listen.disable();
 
-    this.form.controls.device.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
+    this.form.controls.target.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
       if (target === newOption) {
-        this.form.controls.portal.enable();
-        this.form.controls.initiator.enable();
+        this.form.controls.options.enable();
+        this.form.controls.target.controls.mode.setValue(IscsiTargetMode.Iscsi);
       } else {
-        this.form.controls.portal.disable();
-        this.form.controls.initiator.disable();
-        this.disablePortalGroup();
+        this.form.controls.options.disable();
+        this.form.controls.options.controls.listen.disable();
       }
     });
-  }
 
-  disablePortalGroup(): void {
-    this.form.controls.portal.controls.listen.disable();
+    this.form.controls.target.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+      if (mode === IscsiTargetMode.Iscsi) {
+        this.form.controls.options.controls.portal.enable();
+        this.form.controls.options.controls.initiators.enable();
+      } else {
+        this.form.controls.options.controls.portal.setValue(null);
+        this.form.controls.options.controls.portal.disable();
+        this.form.controls.options.controls.initiators.disable();
+      }
+    });
   }
 
   createZvol(payload: DatasetCreate): Promise<Dataset> {

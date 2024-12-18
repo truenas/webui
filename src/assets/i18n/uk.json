@@ -1327,6 +1327,7 @@
   "Prompt": "",
   "Properties Exclude": "",
   "Properties Override": "",
+  "Protocol Options": "",
   "Provide helpful notations related to the share, e.g. ‘Shared to everybody’.     Maximum length is 120 characters.": "",
   "Provisioning Type": "",
   "Proxies": "",

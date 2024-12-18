@@ -1425,6 +1425,7 @@
   "Promote": "",
   "Properties Exclude": "",
   "Properties Override": "",
+  "Protocol Options": "",
   "Prototyping": "",
   "Provide helpful notations related to the share, e.g. ‘Shared to everybody’.     Maximum length is 120 characters.": "",
   "Provides a plugin interface for Winbind to use varying backends to store  SID/uid/gid mapping tables. The correct setting depends on the environment in which the NAS is deployed.": "",
