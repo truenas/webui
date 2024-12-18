@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {
   combineLatest, map, Subscription, switchMap, tap,
 } from 'rxjs';
+import { AppContainerLog } from 'app/interfaces/app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -21,13 +22,6 @@ import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
 import { ApiService } from 'app/services/websocket/api.service';
-
-interface ContainerLogEvent {
-  data: string;
-  timestamp: string;
-  msg?: string;
-  collection?: string;
-}
 
 @UntilDestroy()
 @Component({
@@ -47,17 +41,16 @@ interface ContainerLogEvent {
   ],
 })
 export class ContainerLogsComponent implements OnInit {
-  @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
+  private logContainer: Signal<ElementRef<HTMLElement>> = viewChild('logContainer', { read: ElementRef });
 
   fontSize = 14;
   appName: string;
   containerId: string;
-  subscriptionMethod = '';
   isLoading = false;
   defaultTailLines = 500;
 
   private logsChangedListener: Subscription;
-  logs: ContainerLogEvent[] = [];
+  logs: AppContainerLog[] = [];
 
   constructor(
     private api: ApiService,
@@ -92,23 +85,23 @@ export class ContainerLogsComponent implements OnInit {
       tap((value: LogsDetailsDialogComponent['form']['value'] | boolean) => {
         if (typeof value === 'boolean' && !value) {
           this.location.back();
+          return;
         }
-      }),
-      tap((details: LogsDetailsDialogComponent['form']['value']) => {
-        this.subscriptionMethod = `app.container_log_follow: ${JSON.stringify({
-          app_name: this.appName,
-          container_id: this.containerId,
-          tail_lines: details.tail_lines || this.defaultTailLines,
-        })}`;
 
         this.logs = [];
         this.isLoading = true;
       }),
-      switchMap(() => this.api.subscribeToLogs(this.subscriptionMethod)),
+      switchMap((details: LogsDetailsDialogComponent['form']['value']) => {
+        return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
+          app_name: this.appName,
+          container_id: this.containerId,
+          tail_lines: details.tail_lines || this.defaultTailLines,
+        })}`);
+      }),
       map((apiEvent) => apiEvent.fields),
       untilDestroyed(this),
     ).subscribe({
-      next: (log: ContainerLogEvent) => {
+      next: (log: AppContainerLog) => {
         this.isLoading = false;
 
         if (log && log.msg !== 'nosub') {
@@ -128,7 +121,7 @@ export class ContainerLogsComponent implements OnInit {
 
   scrollToBottom(): void {
     try {
-      this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
+      this.logContainer().nativeElement.scrollTop = this.logContainer().nativeElement.scrollHeight;
     } catch (_: unknown) {
       // Ignore error
     }

@@ -1,9 +1,7 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,9 +9,7 @@ import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/
 import { SimpleComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 class FakeProvider implements IxComboboxProvider {
   constructor(private options: Option[]) { }
@@ -36,12 +32,6 @@ describe('IxComboboxComponent', () => {
     component: IxComboboxComponent,
     imports: [
       ReactiveFormsModule,
-      MatAutocompleteModule,
-    ],
-    declarations: [
-      MockComponent(IxErrorsComponent),
-      MockComponent(IxLabelComponent),
-      MockComponent(TooltipComponent),
     ],
   });
 
@@ -73,9 +63,9 @@ describe('IxComboboxComponent', () => {
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
-      expect(label.label).toBe('Apply To Group');
-      expect(label.required).toBe(true);
-      expect(label.tooltip).toBe('Select group to delete');
+      expect(label.label()).toBe('Apply To Group');
+      expect(label.required()).toBe(true);
+      expect(label.tooltip()).toBe('Select group to delete');
     });
   });
 

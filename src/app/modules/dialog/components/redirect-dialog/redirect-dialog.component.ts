@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, Inject, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, Inject, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -27,7 +27,7 @@ import {
   ],
 })
 export class RedirectDialogComponent {
-  @ViewChild('el', { static: false }) el: ElementRef<HTMLInputElement>;
+  readonly el = viewChild.required<ElementRef<HTMLInputElement>>('el');
 
   constructor(
     public dialogRef: MatDialogRef<RedirectDialogComponent>,
@@ -35,8 +35,8 @@ export class RedirectDialogComponent {
   ) {}
 
   copyToClipboard(): void {
-    this.el.nativeElement.focus();
-    this.el.nativeElement.select();
+    this.el().nativeElement.focus();
+    this.el().nativeElement.select();
     document.execCommand('copy');
   }
 }

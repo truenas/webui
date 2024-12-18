@@ -1,0 +1,32 @@
+<h1 matDialogTitle>
+  {{ 'Deduplication Quota for {pool}' | translate: { pool: pool.name } }}
+</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+  <ix-select
+    formControlName="quotaType"
+    [label]="'Quota' | translate"
+    [options]="quotaTypeOptions$"
+    [required]="true"
+  ></ix-select>
+
+  @if (hasCustomQuota) {
+    <ix-input
+      formControlName="quotaValue"
+      [label]="'Custom Quota' | translate"
+      [format]="formatter.memorySizeFormatting"
+      [parse]="formatter.memorySizeParsing"
+      [required]="true"
+    ></ix-input>
+  }
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" ixTest="save">
+      {{ 'Save' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

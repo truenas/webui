@@ -57,7 +57,7 @@ export class TargetDetailsComponent {
       if (targetId) {
         this.getPortByTargetId(targetId);
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   private getPortByTargetId(id: number): void {

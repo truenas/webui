@@ -1,6 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
-  AfterViewInit, Directive, OnInit, ViewChild, inject,
+  AfterViewInit, Directive, OnInit, viewChild, inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,7 +19,7 @@ export const addNewIxSelectValue = 'ADD_NEW';
 export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   formComponentIsWide = false;
 
-  @ViewChild(IxSelectComponent) private ixSelect: IxSelectComponent;
+  readonly ixSelect = viewChild(IxSelectComponent);
 
   private options = new BehaviorSubject<Option[]>([]);
 
@@ -53,12 +53,13 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (!this.ixSelect) {
+    const ixSelect = this.ixSelect();
+    if (!ixSelect) {
       return;
     }
-    this.ixSelect.options.set(this.options.asObservable());
-    this.ixSelect.ngOnChanges();
-    this.ixSelect.controlDirective.control.valueChanges.pipe(
+    this.ixSelect().options.set(this.options.asObservable());
+    this.ixSelect().ngOnChanges();
+    this.ixSelect().controlDirective.control.valueChanges.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
@@ -71,7 +72,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       }),
       filter((response: ChainedComponentResponse) => !response.error),
       tap(
-        (response) => this.ixSelect.controlDirective.control.setValue(
+        (response) => this.ixSelect().controlDirective.control.setValue(
           this.getValueFromChainedResponse(response),
         ),
       ),

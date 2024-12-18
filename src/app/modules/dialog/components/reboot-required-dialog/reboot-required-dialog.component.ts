@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
-import { RebootRequiredReasons } from 'app/interfaces/reboot-info.interface';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { FipsService } from 'app/services/fips.service';
 import { AppState } from 'app/store';
@@ -49,10 +48,6 @@ export class RebootRequiredDialogComponent {
     private fips: FipsService,
     private fb: FormBuilder,
   ) {}
-
-  typeReasons(reasons: unknown): RebootRequiredReasons[] {
-    return reasons as RebootRequiredReasons[];
-  }
 
   rebootLocalNode(): void {
     this.fips.restart();

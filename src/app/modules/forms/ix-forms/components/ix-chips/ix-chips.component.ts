@@ -7,7 +7,8 @@ import {
   ElementRef,
   input,
   OnChanges,
-  ViewChild,
+  Signal,
+  viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
@@ -90,7 +91,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private resolvedOptions: Option[] = [];
 
-  @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
+  private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild('chipInput', { read: ElementRef });
 
   suggestions$: Observable<string[]>;
   values: string[] = [];
@@ -176,10 +177,10 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onInputBlur(): void {
     if (!this.allowNewEntries() || this.resolveValue()) {
-      this.chipInput.nativeElement.value = null;
+      this.chipInput().nativeElement.value = null;
       return;
     }
-    this.onAdd(this.chipInput.nativeElement.value);
+    this.onAdd(this.chipInput().nativeElement.value);
   }
 
   // TODO: Workaround for https://github.com/angular/angular/issues/56471
@@ -205,7 +206,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     }
 
     this.suggestions$ = merge(
-      fromEvent(this.chipInput.nativeElement, 'input')
+      fromEvent(this.chipInput().nativeElement, 'input')
         .pipe(
           startWith(''),
           debounceTime(100),
@@ -214,7 +215,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       this.inputReset$,
     ).pipe(
       switchMap(() => {
-        return this.autocompleteProvider()(this.chipInput.nativeElement.value);
+        return this.autocompleteProvider()(this.chipInput().nativeElement.value);
       }),
     );
   }
@@ -226,7 +227,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   private clearInput(): void {
-    this.chipInput.nativeElement.value = '';
+    this.chipInput().nativeElement.value = '';
     this.inputReset$.next();
   }
 }

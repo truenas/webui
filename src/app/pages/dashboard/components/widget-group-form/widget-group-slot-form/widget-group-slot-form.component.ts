@@ -9,7 +9,6 @@ import {
   OnInit,
   Signal,
   Type,
-  ViewChild,
   ViewContainerRef,
   WritableSignal,
   computed,
@@ -17,7 +16,7 @@ import {
   input,
   output,
   runInInjectionContext,
-  signal,
+  signal, viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -69,7 +68,8 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       : false;
   });
 
-  @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
+  readonly settingsContainer = viewChild('settingsContainer', { read: ViewContainerRef });
+
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
@@ -222,7 +222,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   clearUpdates(): void {
     this.categorySubscription?.unsubscribe();
     this.typeSubscription?.unsubscribe();
-    this.settingsContainer?.clear();
+    this.settingsContainer()?.clear();
   }
 
   private setLayoutSupportedWidgets(): void {
@@ -257,11 +257,11 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   }
 
   private refreshSettingsContainer(): void {
-    if (!this.settingsContainer) {
+    if (!this.settingsContainer()) {
       return;
     }
-    this.settingsContainer.remove();
-    this.settingsContainer.clear();
+    this.settingsContainer().remove();
+    this.settingsContainer().clear();
     const slotConfig = this.slot();
     if (slotConfig) {
       this.validityChange.emit([slotConfig.slotPosition, {} as ValidationErrors]);
@@ -274,7 +274,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       return;
     }
 
-    this.settingsContainer.createComponent(settingsComponent, { injector: this.getInjector() });
+    this.settingsContainer().createComponent(settingsComponent, { injector: this.getInjector() });
   }
 
   getInjector(): Injector {

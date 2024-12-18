@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureSideComponent } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
 import {
@@ -26,7 +27,8 @@ describe('PoolsViewComponent', () => {
   const selectedSlot = signal<DashboardEnclosureSlot>(null);
   const createComponent = createComponentFactory({
     component: PoolsViewComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         EnclosureSideComponent,
         EnclosureSideSwitchComponent,

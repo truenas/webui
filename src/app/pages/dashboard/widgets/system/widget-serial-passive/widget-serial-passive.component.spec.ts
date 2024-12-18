@@ -1,5 +1,4 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -14,9 +13,6 @@ describe('WidgetSerialPassiveComponent', () => {
   let spectator: Spectator<WidgetSerialPassiveComponent>;
   const createComponent = createComponentFactory({
     component: WidgetSerialPassiveComponent,
-    declarations: [
-      MockComponent(WidgetDatapointComponent),
-    ],
   });
 
   it('renders serial for the remote system', () => {
@@ -39,9 +35,9 @@ describe('WidgetSerialPassiveComponent', () => {
       ],
     });
 
-    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    const widget = spectator.query(WidgetDatapointComponent);
     expect(widget).toBeTruthy();
-    expect(widget.text).toBe('123456');
+    expect(widget.text()).toBe('123456');
   });
 
   it('shows an error when serial cannot be determined', () => {

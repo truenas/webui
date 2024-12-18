@@ -1,6 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef,
+  Signal,
+  viewChild,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -45,8 +47,11 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
-  @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
-  @ViewChild(forwardRef(() => CloudSyncProviderComponent)) cloudSyncProvider: CloudSyncProviderComponent;
+  readonly whatAndWhen: Signal<CloudSyncWhatAndWhenComponent>
+    = viewChild(forwardRef(() => CloudSyncWhatAndWhenComponent));
+
+  readonly cloudSyncProvider: Signal<CloudSyncProviderComponent>
+    = viewChild(forwardRef(() => CloudSyncProviderComponent));
 
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
@@ -64,7 +69,9 @@ export class CloudSyncWizardComponent {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {
-    this.chainedRef.requireConfirmationWhen(() => of(this.whatAndWhen.form.dirty || this.cloudSyncProvider.isDirty()));
+    this.chainedRef.requireConfirmationWhen(() => of(
+      this.whatAndWhen().form.dirty || this.cloudSyncProvider().isDirty(),
+    ));
   }
 
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
@@ -76,7 +83,7 @@ export class CloudSyncWizardComponent {
     if (!credential) {
       return;
     }
-    this.whatAndWhen?.form.patchValue({ credentials: credential.id });
+    this.whatAndWhen()?.form.patchValue({ credentials: credential.id });
     this.updateDescriptionValue();
     this.cdr.markForCheck();
   }
@@ -88,7 +95,7 @@ export class CloudSyncWizardComponent {
   onSubmit(): void {
     this.isLoading$.next(true);
 
-    const payload = this.whatAndWhen.getPayload();
+    const payload = this.whatAndWhen().getPayload();
 
     this.createTask(payload).pipe(
       untilDestroyed(this),
@@ -110,8 +117,9 @@ export class CloudSyncWizardComponent {
   updateDescriptionValue(): void {
     const provider = this.existingCredential.provider.type;
 
-    const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
-    this.whatAndWhen?.form.patchValue({
+    const whatAndWhen = this.whatAndWhen();
+    const sourcePath = whatAndWhen?.form.controls.path_source.value.join(', ');
+    whatAndWhen?.form.patchValue({
       description: `${cloudSyncProviderNameMap.get(provider)} - ${sourcePath}`,
     });
     this.cdr.markForCheck();

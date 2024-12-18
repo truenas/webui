@@ -1,29 +1,20 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
-import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { JobsListComponent } from 'app/pages/jobs/jobs-list.component';
 import { DownloadService } from 'app/services/download.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -71,19 +62,7 @@ describe('JobsListComponent', () => {
   const createComponent = createComponentFactory({
     component: JobsListComponent,
     imports: [
-      MatTabsModule,
       MockComponent(PageHeaderComponent),
-      SearchInput1Component,
-      MatButtonToggleGroup,
-      MatButtonToggle,
-      CopyButtonComponent,
-      IxTableCellDirective,
-      IxTableDetailsRowDirective,
-    ],
-    declarations: [
-      JobNameComponent,
-      JobLogsRowComponent,
-      FakeFormatDateTimePipe,
     ],
     providers: [
       mockProvider(LocaleService, {

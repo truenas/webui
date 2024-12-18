@@ -3,8 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  ViewChild,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -85,7 +85,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   forbiddenNames: string[] = [];
   credentials: CloudSyncCredential[] = [];
 
-  @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
+  private readonly providerFormContainer = viewChild('providerFormContainer', { read: ViewContainerRef });
 
   readonly helptext = helptext;
 
@@ -289,13 +289,13 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   private renderProviderForm(): void {
-    this.providerFormContainer?.clear();
+    this.providerFormContainer()?.clear();
     if (!this.selectedProvider) {
       return;
     }
 
     const formClass = getProviderFormClass(this.selectedProvider.name);
-    const formRef = this.providerFormContainer.createComponent(formClass);
+    const formRef = this.providerFormContainer().createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
   }

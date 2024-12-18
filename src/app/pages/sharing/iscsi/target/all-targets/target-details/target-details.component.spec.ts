@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -29,7 +30,8 @@ describe('TargetDetailsComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TargetDetailsComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
       MockComponents(
         AuthorizedNetworksCardComponent,
         FibreChannelPortCardComponent,

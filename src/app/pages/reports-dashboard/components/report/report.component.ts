@@ -1,9 +1,13 @@
 import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import {
   Component,
-  ViewChild,
   OnChanges,
-  OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef, input,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  input,
+  viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';
@@ -84,7 +88,7 @@ export class ReportComponent implements OnInit, OnChanges {
   readonly report = input.required<Report>();
   readonly identifier = input<string>();
 
-  @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
+  private readonly lineChart = viewChild(LineChartComponent);
 
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
@@ -185,11 +189,11 @@ export class ReportComponent implements OnInit, OnChanges {
 
     this.store$.pipe(
       waitForPreferences,
-      filter(() => Boolean(this.lineChart?.chart)),
+      filter(() => Boolean(this.lineChart()?.chart)),
       delay(toggleMenuDuration),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.lineChart.chart.resize();
+      this.lineChart().chart.resize();
     });
 
     this.store$.pipe(

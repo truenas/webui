@@ -179,21 +179,21 @@ describe('VmWizardComponent', () => {
   }
 
   it('sets some form fields when OS is selected', async () => {
-    jest.spyOn(spectator.component.cpuAndMemoryStep.form, 'patchValue');
-    jest.spyOn(spectator.component.diskStep.form, 'patchValue');
+    jest.spyOn(spectator.component.cpuAndMemoryStep().form, 'patchValue');
+    jest.spyOn(spectator.component.diskStep().form, 'patchValue');
 
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
     });
 
-    expect(spectator.component.cpuAndMemoryStep.form.patchValue).toHaveBeenCalledWith({
+    expect(spectator.component.cpuAndMemoryStep().form.patchValue).toHaveBeenCalledWith({
       cores: 1,
       memory: 4 * GiB,
       threads: 1,
       vcpus: 2,
     });
-    expect(spectator.component.diskStep.form.patchValue).toHaveBeenCalledWith({
+    expect(spectator.component.diskStep().form.patchValue).toHaveBeenCalledWith({
       volsize: 40 * GiB,
     });
   });
