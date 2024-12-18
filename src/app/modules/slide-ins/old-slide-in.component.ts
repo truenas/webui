@@ -4,12 +4,14 @@ import {
   Component,
   ElementRef,
   HostListener,
-  Injector, input,
+  Injector,
   OnDestroy,
   OnInit,
   Renderer2,
-  Type, viewChild,
+  Type,
   ViewContainerRef,
+  viewChild,
+  input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';

@@ -20,7 +20,6 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
-import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
@@ -43,7 +42,6 @@ import { OldSlideInService } from 'app/services/old-slide-in.service';
     FakeProgressBarComponent,
     MatToolbarRow,
     SearchInput1Component,
-    IxTableColumnsSelectorComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,

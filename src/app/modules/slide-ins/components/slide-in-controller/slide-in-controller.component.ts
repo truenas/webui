@@ -1,7 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, input, OnDestroy, OnInit, ViewChild,
+  Component, ElementRef, input, OnDestroy, OnInit,
+  viewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
@@ -22,7 +23,7 @@ import {
 export class SlideInControllerComponent implements OnInit, OnDestroy {
   readonly id = input<string>();
 
-  @ViewChild('componentWrapper') container: HTMLElement;
+  readonly container = viewChild<HTMLElement>('componentWrapper');
   protected components: ComponentSerialized[];
   private element: HTMLElement;
 

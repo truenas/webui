@@ -12,7 +12,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
@@ -39,8 +38,8 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      CdkStepper,
-      mockProvider(OldSlideInRef, slideInRef),
+      mockProvider(CdkStepper),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockApi([
         mockCall('cloudsync.create'),
@@ -55,7 +54,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(OldSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

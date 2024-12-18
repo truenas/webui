@@ -2,8 +2,9 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component, Inject, OnInit,
-  Type, viewChild,
+  Type,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import {
   FormBuilder, Validators, ReactiveFormsModule, FormsModule,

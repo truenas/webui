@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
@@ -22,8 +23,10 @@ describe('CustomAppButtonComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: CustomAppButtonComponent,
-    imports: [],
-    declarations: [MockComponent(AppCardComponent)],
+    imports: [
+      LazyLoadImageDirective,
+      MockComponent(AppCardComponent),
+    ],
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {

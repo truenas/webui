@@ -8,8 +8,9 @@ import {
   OnDestroy,
   OnInit,
   Renderer2,
-  Type, viewChild,
+  Type,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';

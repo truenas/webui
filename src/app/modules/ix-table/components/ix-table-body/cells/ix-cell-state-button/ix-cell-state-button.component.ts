@@ -64,8 +64,6 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
 
     this.state.set(job.state);
-  }, {
-    allowSignalWrites: true,
   });
 
   getJob: (row: T) => Job;

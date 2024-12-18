@@ -2,6 +2,8 @@ import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
@@ -48,7 +50,11 @@ describe('MiniPageComponent', () => {
 
   const createComponent = createComponentFactory({
     component: MiniPageComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
+      NgxPopperjsContentComponent,
+      NgxPopperjsDirective,
+      NgxPopperjsLooseDirective,
       MockComponents(
         MiniPoolsComponent,
         MiniEnclosureComponent,

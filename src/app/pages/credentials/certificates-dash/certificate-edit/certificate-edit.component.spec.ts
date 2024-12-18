@@ -162,6 +162,11 @@ describe('CertificateEditComponent', () => {
       const renewDaysInput = await loader.getHarness(IxInputHarness.with({ label: 'Renew Certificate Days Before Expiry' }));
       expect(await renewDaysInput.getValue()).toBe('');
     });
+
+    it('shows add to trusted store checkbox for ACME certificate', async () => {
+      const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
+      expect(addToTrustedStoreCheckbox).toExist();
+    });
   });
 
   describe('CSR', () => {
@@ -176,6 +181,11 @@ describe('CertificateEditComponent', () => {
       });
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not show add to trusted store checkbox for CSR', async () => {
+      const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
+      expect(addToTrustedStoreCheckbox).not.toExist();
     });
 
     it('opens slidein for creating ACME certificates when Create ACME Certificate is pressed', async () => {

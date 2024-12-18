@@ -13,7 +13,6 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -36,7 +35,6 @@ interface FormOptions {
   imports: [
     IxExplorerComponent,
     IxInputComponent,
-    IxListItemComponent,
     ReactiveFormsModule,
     TranslateModule,
     MatCard,

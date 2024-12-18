@@ -91,7 +91,7 @@ export class AppInfoCardComponent {
     const app = this.app();
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
-  }, { allowSignalWrites: true });
+  });
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
