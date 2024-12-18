@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
 @UntilDestroy()
@@ -9,6 +9,8 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class NavigateAndInteractService {
+  private prevHighlightDiv: HTMLDivElement | null;
+  private prevSubscription: Subscription | null;
   constructor(
     private router: Router,
     @Inject(WINDOW) private window: Window,
@@ -34,27 +36,40 @@ export class NavigateAndInteractService {
   createOverlay(targetElement: HTMLElement): void {
     if (!targetElement) return;
 
-    const overlay: HTMLDivElement | null = this.window.document.createElement('div');
+    if (this.prevHighlightDiv) {
+      this.removeOverlay(this.prevHighlightDiv);
+      this.prevHighlightDiv = null;
+      if (this.prevSubscription) {
+        this.prevSubscription.unsubscribe();
+        this.prevSubscription = null;
+      }
+    }
+
+    this.prevHighlightDiv = this.window.document.createElement('div');
 
     const rect = targetElement.getBoundingClientRect();
-    overlay.style.position = 'absolute';
-    overlay.style.top = `${rect.top + this.window.scrollY}px`;
-    overlay.style.left = `${rect.left + this.window.scrollX}px`;
-    overlay.style.width = `${rect.width}px`;
-    overlay.style.height = `${rect.height}px`;
-    overlay.style.border = '2px solid var(--primary)';
-    overlay.style.pointerEvents = 'none';
-    overlay.style.zIndex = '1000';
+    this.prevHighlightDiv.style.position = 'absolute';
+    this.prevHighlightDiv.style.top = `${rect.top + this.window.scrollY}px`;
+    this.prevHighlightDiv.style.left = `${rect.left + this.window.scrollX}px`;
+    this.prevHighlightDiv.style.width = `${rect.width}px`;
+    this.prevHighlightDiv.style.height = `${rect.height}px`;
+    this.prevHighlightDiv.style.border = '2px solid var(--primary)';
+    this.prevHighlightDiv.style.pointerEvents = 'none';
+    this.prevHighlightDiv.style.zIndex = '1000';
 
-    this.window.document.body.appendChild(overlay);
-    this.updateOverlayPosition(targetElement, overlay);
+    this.window.document.body.appendChild(this.prevHighlightDiv);
+    this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
 
     this.window.addEventListener('scroll', () => {
-      this.updateOverlayPosition(targetElement, overlay);
+      this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
     }, true);
-    timer(2150).pipe(untilDestroyed(this)).subscribe({
+
+    this.prevSubscription = timer(2150).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.removeOverlay(overlay);
+        this.removeOverlay(this.prevHighlightDiv);
+        this.prevHighlightDiv = null;
+        this.prevSubscription?.unsubscribe();
+        this.prevSubscription = null;
       },
     });
   }
