@@ -207,7 +207,7 @@
   "Identify light is now off.": "La luz de identificación ahora está apagada.",
   "Identify light is off.": "La luz de identificación está apagada.",
   "Identify light is on.": "La luz de identificación está encendida.",
-  "Idle": ""Inactivo,
+  "Idle": "Inactivo",
   "Idmap": "Idmap",
   "Idmap Backend": "Backend de Idmap",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "Si al descargar un archivo aparece el error \"Este archivo se identificó como malware o spam y no se puede descargar\" con el código de error \"cannotDownloadAbusiveFile\", habilitá esta bandera para indicar que reconocés los riesgos de descargar el archivo y TrueNAS lo va a descargar sea como sea.",
