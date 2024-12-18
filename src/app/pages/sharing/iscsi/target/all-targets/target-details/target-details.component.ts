@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, computed, effect, input,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -12,6 +13,7 @@ import {
   AuthorizedNetworksCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/authorized-networks-card/authorized-networks-card.component';
 import { ConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/connections-card/connections-card.component';
+import { FibreChannelConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-connections-card/fibre-channel-connections-card.component';
 import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -24,6 +26,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   imports: [
     AuthorizedNetworksCardComponent,
     FibreChannelPortCardComponent,
+    FibreChannelConnectionsCardComponent,
     AssociatedExtentsCardComponent,
     ConnectionsCardComponent,
   ],
@@ -32,6 +35,7 @@ export class TargetDetailsComponent {
   readonly target = input.required<IscsiTarget>();
 
   targetPort = signal<FibreChannelPort>(null);
+  connections = toSignal(this.api.call('fcport.status'));
 
   protected hasIscsiCards = computed(() => [
     IscsiTargetMode.Iscsi,
