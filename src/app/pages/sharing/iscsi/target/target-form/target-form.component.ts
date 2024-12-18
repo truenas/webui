@@ -17,7 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { Option, nullOption, skipOption } from 'app/interfaces/option.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -31,6 +31,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -54,6 +55,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxIpInputWithNetmaskComponent,
     IxSelectComponent,
     FormActionsComponent,
+    FcPortsControlsComponent,
     RequiresRolesDirective,
     MatButton,
     TestDirective,
@@ -68,6 +70,10 @@ export class TargetFormComponent implements OnInit {
 
   get isAsyncValidatorPending(): boolean {
     return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+  }
+
+  get isFibreChannelMode(): boolean {
+    return this.form.value.mode === IscsiTargetMode.Fc;
   }
 
   get title(): string {
@@ -138,6 +144,11 @@ export class TargetFormComponent implements OnInit {
     auth_networks: this.formBuilder.array<string>([]),
   });
 
+  fcForm = this.formBuilder.group({
+    port: [nullOption as string, [Validators.required]],
+    host_id: [null as number, [Validators.required]],
+  });
+
   constructor(
     protected iscsiService: IscsiService,
     private translate: TranslateService,
@@ -162,6 +173,10 @@ export class TargetFormComponent implements OnInit {
 
     this.form.patchValue({
       ...this.editingTarget,
+    });
+
+    this.fcForm.patchValue({
+      port: skipOption,
     });
   }
 

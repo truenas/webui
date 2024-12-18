@@ -14,6 +14,7 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -29,6 +30,7 @@ import { IscsiService } from 'app/services/iscsi.service';
     IxListComponent,
     IxListItemComponent,
     IxChipsComponent,
+    FcPortsControlsComponent,
     TranslateModule,
   ],
 })

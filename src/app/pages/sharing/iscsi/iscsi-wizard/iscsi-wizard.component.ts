@@ -41,7 +41,7 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
-import { newOption } from 'app/interfaces/option.interface';
+import { newOption, nullOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
@@ -122,6 +122,10 @@ export class IscsiWizardComponent implements OnInit {
       portal: [null as typeof newOption | number, [Validators.required]],
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
+      fcport: this.fb.group({
+        port: [nullOption as string, [Validators.required]],
+        host_id: [null as number, [Validators.required]],
+      }),
     }),
   }, {
     validators: [
@@ -278,10 +282,12 @@ export class IscsiWizardComponent implements OnInit {
       if (mode === IscsiTargetMode.Iscsi) {
         this.form.controls.options.controls.portal.enable();
         this.form.controls.options.controls.initiators.enable();
+        this.form.controls.options.controls.fcport.disable();
       } else {
         this.form.controls.options.controls.portal.setValue(null);
         this.form.controls.options.controls.portal.disable();
         this.form.controls.options.controls.initiators.disable();
+        this.form.controls.options.controls.fcport.enable();
       }
     });
   }

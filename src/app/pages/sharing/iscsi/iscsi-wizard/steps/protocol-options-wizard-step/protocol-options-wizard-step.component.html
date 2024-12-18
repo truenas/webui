@@ -1,6 +1,6 @@
 <ng-container [formGroup]="form()">
   @if(isFibreChannelMode()) {
-    <!-- TODO: Implement block -->
+    <ix-fc-ports-controls [form]="form().controls.fcport"></ix-fc-ports-controls>
   } @else {
     <ix-select
       formControlName="portal"
