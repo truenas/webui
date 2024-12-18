@@ -1,12 +1,11 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, input,
+  Component, ChangeDetectionStrategy, input,
 } from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { FibreChannelStatus } from 'app/interfaces/fibre-channel.interface';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @Component({
   standalone: true,
@@ -22,12 +21,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
   ],
 })
-export class FibreChannelConnectionsCardComponent implements OnInit {
+export class FibreChannelConnectionsCardComponent {
   connections = input<FibreChannelStatus[]>([]);
-
-  constructor(private api: ApiService) { }
-
-  ngOnInit(): void {
-    console.info('init');
-  }
 }
