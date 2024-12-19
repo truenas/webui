@@ -4,7 +4,7 @@ export interface MailConfig {
   fromemail: string;
   fromname: string;
   id: number;
-  oauth: GmailOauthConfig | Record<string, never>;
+  oauth: MailOauthConfig | Record<string, never>;
   outgoingserver: string;
   pass: string;
   port: number;
@@ -13,10 +13,11 @@ export interface MailConfig {
   user: string;
 }
 
-export interface GmailOauthConfig {
+export interface MailOauthConfig {
   client_id: string;
   client_secret: string;
   refresh_token: string;
+  provider: MailSendMethod;
 }
 
 export interface MailConfigUpdate {
@@ -24,7 +25,7 @@ export interface MailConfigUpdate {
   smtp?: boolean;
   fromemail: string;
   fromname: string;
-  oauth: GmailOauthConfig;
+  oauth: MailOauthConfig;
   outgoingserver?: string;
   pass?: string;
   port?: number;
@@ -44,4 +45,10 @@ export interface SendMailParams {
   attachments?: boolean;
   queue?: boolean;
   extra_headers?: Record<string, unknown>;
+}
+
+export enum MailSendMethod {
+  Smtp = 'smtp',
+  Gmail = 'gmail',
+  Outlook = 'outlook',
 }

@@ -51,6 +51,10 @@ export const helptextSystemEmail = {
       placeholder: 'GMail OAuth',
       tooltip: T('Enable GMail OAuth authentication.'),
     },
+    outlook: {
+      placeholder: 'Outlook OAuth',
+      tooltip: T('Enable Outlook OAuth authentication.'),
+    },
   },
 
   auth: {

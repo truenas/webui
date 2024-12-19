@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
-import { MailConfig } from 'app/interfaces/mail-config.interface';
+import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { SlideInService } from 'app/services/slide-in.service';
@@ -24,7 +24,7 @@ const fakeEmailConfig: MailConfig = {
   user: null as string,
 };
 
-describe('EmailCardComponent', () => {
+describe('EmailCardComponent with SMTP', () => {
   let spectator: Spectator<EmailCardComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
@@ -59,5 +59,71 @@ describe('EmailCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
+  });
+});
+
+describe('EmailCardComponent with Gmail OAuth', () => {
+  let spectator: Spectator<EmailCardComponent>;
+  let loader: HarnessLoader;
+  const createComponent = createComponentFactory({
+    component: EmailCardComponent,
+    providers: [
+      mockApi([
+        mockCall('mail.config', {
+          ...fakeEmailConfig,
+          oauth: { client_id: '123', provider: 'gmail' } as MailOauthConfig,
+        }),
+      ]),
+      mockProvider(SlideInService, {
+        open: jest.fn(() => ({ slideInClosed$: of() })),
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('shows Email related settings', async () => {
+    const items = await loader.getAllHarnesses(MatListItemHarness);
+    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+
+    expect(itemTexts).toEqual([
+      'Send Mail Method: GMail OAuth',
+    ]);
+  });
+});
+
+describe('EmailCardComponent with Outlook OAuth', () => {
+  let spectator: Spectator<EmailCardComponent>;
+  let loader: HarnessLoader;
+  const createComponent = createComponentFactory({
+    component: EmailCardComponent,
+    providers: [
+      mockApi([
+        mockCall('mail.config', {
+          ...fakeEmailConfig,
+          oauth: { client_id: '123', provider: 'outlook' } as MailOauthConfig,
+        }),
+      ]),
+      mockProvider(SlideInService, {
+        open: jest.fn(() => ({ slideInClosed$: of() })),
+      }),
+    ],
+  });
+
+  beforeEach(() => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('shows Email related settings', async () => {
+    const items = await loader.getAllHarnesses(MatListItemHarness);
+    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+
+    expect(itemTexts).toEqual([
+      'Send Mail Method: Outlook OAuth',
+    ]);
   });
 });
