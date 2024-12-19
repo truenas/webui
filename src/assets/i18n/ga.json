@@ -5,6 +5,7 @@
   "<i>{disk}</i> has been detached.": "",
   "AD users and groups by default will have a domain name prefix (`DOMAIN\\`). In some edge cases this may cause erratic behavior from some clients and applications that are poorly designed and cannot handle the prefix. Set only if required for a specific application or client. Note that using this setting is not recommended as it may cause collisions with local user account names.": "",
   "Add Custom App": "",
+  "Add to trusted store": "",
   "Additional Parameters String": "",
   "Address Pool": "",
   "Address Pools": "",

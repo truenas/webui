@@ -34,6 +34,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
         this.translate.instant(helptextSystemCertificates.add.name.errors),
       ),
     ]],
+    add_to_trusted_store: [false],
     create_type: [CertificateCreateType.CreateInternal],
     profile: [''],
   });
