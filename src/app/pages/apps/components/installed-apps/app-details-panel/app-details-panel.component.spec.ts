@@ -12,7 +12,11 @@ describe('AppDetailsPanelComponent', () => {
 
   const app = {
     id: 'ix-test-app',
-    metadata: {},
+    metadata: {
+      run_as_context: [{
+        description: 'Run as context',
+      }],
+    },
   } as App;
 
   const createComponent = createComponentFactory({
@@ -51,5 +55,18 @@ describe('AppDetailsPanelComponent', () => {
     const appMetadataCard = spectator.query(AppMetadataCardComponent);
     expect(appMetadataCard).toBeTruthy();
     expect(appMetadataCard.appMetadata).toStrictEqual(app.metadata);
+  });
+
+  it('hides metadata card if metadata props are not set', () => {
+    spectator.setInput('app', {
+      ...app,
+      metadata: {
+        host_mounts: [],
+        capabilities: [],
+        run_as_context: [],
+      },
+    });
+    const appMetadataCard = spectator.query(AppMetadataCardComponent);
+    expect(appMetadataCard).toBeFalsy();
   });
 });
