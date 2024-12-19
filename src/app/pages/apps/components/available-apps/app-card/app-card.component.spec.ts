@@ -1,9 +1,9 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -12,7 +12,8 @@ describe('AppCardComponent', () => {
   let spectator: Spectator<AppCardComponent>;
   const createComponent = createComponentFactory({
     component: AppCardComponent,
-    declarations: [
+    imports: [
+      LazyLoadImageDirective,
       MockComponent(AppCardLogoComponent),
     ],
     providers: [
@@ -20,7 +21,6 @@ describe('AppCardComponent', () => {
         installedApps$: of([{}, {}, {}] as App[]),
       }),
     ],
-    imports: [OrNotAvailablePipe],
   });
 
   beforeEach(() => {

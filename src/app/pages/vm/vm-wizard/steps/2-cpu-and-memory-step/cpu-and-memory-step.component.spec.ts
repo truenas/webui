@@ -21,7 +21,7 @@ describe('CpuAndMemoryStepComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockApi([
         mockCall('vm.maximum_supported_vcpus', 27),
         mockCall('vm.cpu_model_choices', {

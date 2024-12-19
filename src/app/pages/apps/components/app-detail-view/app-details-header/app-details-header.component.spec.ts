@@ -6,15 +6,13 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
-import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppDetailsHeaderComponent,
@@ -44,11 +42,7 @@ describe('AppDetailsHeaderComponent', () => {
     component: AppDetailsHeaderComponent,
     imports: [
       ViewContainerRef,
-      CleanLinkPipe,
-      OrNotAvailablePipe,
-      NgxSkeletonLoaderModule,
-    ],
-    declarations: [
+      LazyLoadImageDirective,
       MockComponent(AppCardLogoComponent),
     ],
     providers: [

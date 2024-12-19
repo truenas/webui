@@ -30,7 +30,7 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import failOnConsole from 'jest-fail-on-console';
-import { MockProvider } from 'ng-mocks';
+import { MockDirective, MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -55,6 +55,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
@@ -67,6 +68,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -90,11 +92,19 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
-failOnConsole();
+const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
+  return (
+    methodName === 'error' && message.startsWith('Error: Could not parse CSS stylesheet')
+  );
+};
+failOnConsole({ silenceMessage: silenceJsDomCssParseError });
 
 jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
+  declarations: [
+    MockDirective(RegisteredControlDirective),
+  ],
   imports: [
     HttpClientModule,
     MatCheckboxModule,
@@ -121,6 +131,8 @@ defineGlobalsInjections({
     IxSelectComponent,
     IxFieldsetComponent,
     ModalHeaderComponent,
+    IxFormSectionComponent,
+    RegisteredControlDirective,
     ModalHeader2Component,
     IxButtonGroupComponent,
     IxExplorerComponent,

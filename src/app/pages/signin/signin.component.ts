@@ -4,8 +4,6 @@ import {
   Inject,
 } from '@angular/core';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatFormField } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,7 +16,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
 import { FailoverStatusComponent } from 'app/pages/signin/failover-status/failover-status.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -37,8 +34,6 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    MatFormField,
-    MatInput,
     MatProgressBar,
     MatCard,
     MatCardContent,
@@ -51,7 +46,6 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
     AsyncPipe,
     TranslateModule,
     CopyrightLineComponent,
-    TestDirective,
   ],
   providers: [SigninStore],
 })

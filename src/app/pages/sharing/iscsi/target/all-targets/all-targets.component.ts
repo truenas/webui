@@ -6,7 +6,9 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, repeat, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -62,6 +64,7 @@ export class AllTargetsComponent implements OnInit {
 
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((targets) => {
         this.targets.set(targets);
 

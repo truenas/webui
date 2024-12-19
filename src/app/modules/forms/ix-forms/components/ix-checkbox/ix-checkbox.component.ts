@@ -3,13 +3,14 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatCheckboxChange, MatCheckbox } from '@angular/material/checkbox';
 import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
@@ -25,9 +26,12 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TooltipComponent,
     WarningComponent,
     IxErrorsComponent,
+    ReactiveFormsModule,
     MatHint,
     TestDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxCheckboxComponent implements ControlValueAccessor {

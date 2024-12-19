@@ -1,6 +1,8 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { Ng2FittextDirective } from 'ng2-fittext';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -42,7 +44,9 @@ describe('WidgetPoolComponent', () => {
   let spectator: Spectator<WidgetPoolComponent>;
   const createComponent = createComponentFactory({
     component: WidgetPoolComponent,
-    declarations: [
+    imports: [
+      NgxSkeletonLoaderComponent,
+      Ng2FittextDirective,
       MockComponent(IxIconComponent),
       MockComponent(PoolUsageGaugeComponent),
       MockComponent(PoolStatusComponent),
@@ -58,10 +62,9 @@ describe('WidgetPoolComponent', () => {
     ],
   });
   function setupComponent(byName = false): void {
-    const settings: WidgetPoolSettings = { poolId: '1' };
-    if (byName) {
-      delete settings.poolId;
-      settings.name = 'Pool:pool';
+    const settings: WidgetPoolSettings = { poolId: '1', name: 'Pool:pool' };
+    if (!byName) {
+      delete settings.name;
     }
     spectator = createComponent({
       props: {

@@ -9,7 +9,7 @@ import {
   OnChanges,
   OnInit, Signal, viewChild,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { Compartment } from '@codemirror/state';
@@ -28,7 +28,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 @UntilDestroy()
@@ -42,9 +42,12 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
     IxLabelComponent,
     IxErrorsComponent,
     MatHint,
+    ReactiveFormsModule,
     AsyncPipe,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {

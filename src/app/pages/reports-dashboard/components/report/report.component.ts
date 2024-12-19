@@ -2,7 +2,12 @@ import { DOCUMENT, KeyValuePipe } from '@angular/common';
 import {
   Component,
   OnChanges,
-  OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef, input, viewChild,
+  OnInit,
+  Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  input,
+  viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardTitle, MatCardContent } from '@angular/material/card';

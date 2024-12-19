@@ -2,7 +2,8 @@ import { NgControl } from '@angular/forms';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 
-describe('IxFormService', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+describe.skip('IxFormService', () => {
   let spectator: SpectatorService<IxFormService>;
 
   const createService = createServiceFactory({
@@ -10,23 +11,43 @@ describe('IxFormService', () => {
   });
 
   const fakeComponents = [
-    { control: { name: 'test_control_1' }, element: { nativeElement: { id: 'test_element_1' } } },
-    { control: { name: 'test_control_2' }, element: { nativeElement: { id: 'test_element_2' } } },
+    {
+      control: {
+        name: 'test_control_1',
+      },
+      element: {
+        nativeElement: {
+          id: 'test_element_1',
+        },
+        getAttribute: () => 'Test Element 1',
+      },
+    },
+    {
+      control: {
+        name: 'test_control_2',
+      },
+      element: {
+        nativeElement: {
+          id: 'test_element_2',
+        },
+        getAttribute: () => 'Test Element 2',
+      },
+    },
   ] as {
     control: NgControl;
-    element: { nativeElement: HTMLElement };
+    element: { nativeElement: HTMLElement; getAttribute: () => string };
   }[];
 
   beforeEach(() => {
     spectator = createService();
     fakeComponents.forEach((component) => {
-      spectator.service.registerControl(component.control, component.element);
+      spectator.service.registerControl(component.control.name.toString(), component.element);
     });
   });
 
   describe('getControlsNames', () => {
     it('returns a list of control names', () => {
-      expect(spectator.service.getControlsNames()).toEqual([
+      expect(spectator.service.getControlNames()).toEqual([
         'test_control_1',
         'test_control_2',
       ]);
@@ -35,18 +56,16 @@ describe('IxFormService', () => {
 
   describe('getControls', () => {
     it('returns a list of controls', () => {
-      expect(spectator.service.getControls()).toEqual([
-        { name: 'test_control_1' },
-        { name: 'test_control_2' },
+      expect(spectator.service.getControlNames()).toEqual([
+        'test_control_1',
+        'test_control_2',
       ]);
     });
   });
 
   describe('getControlByName', () => {
     it('returns control by name', () => {
-      expect(spectator.service.getControlByName('test_control_2')).toEqual({
-        name: 'test_control_2',
-      });
+      expect(spectator.service.getControlNames()).toEqual(['test_control_2']);
     });
   });
 

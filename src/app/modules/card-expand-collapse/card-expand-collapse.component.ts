@@ -40,7 +40,7 @@ export class CardExpandCollapseComponent implements OnChanges {
         this.setHeight();
         this.section().nativeElement.style.maxHeight = `${this.maxHeight()}px`;
       }
-    }, { allowSignalWrites: true });
+    });
   }
 
   ngOnChanges(): void {

@@ -21,7 +21,7 @@ describe('CertificateSubjectComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(SystemGeneralService, {
         getCertificateCountryChoices: () => of({
           CA: 'Canada',

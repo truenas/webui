@@ -9,14 +9,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  HostBinding, input,
+  HostBinding,
   Input,
   IterableDiffers,
   OnChanges,
   OnDestroy,
   OnInit, output,
   TrackByFunction,
-  ViewChild,
+  viewChild,
+  input,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -67,16 +68,15 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
   ],
 })
 export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit, OnDestroy {
+  readonly nodeOutlet = viewChild.required(TreeNodeOutletDirective);
+  readonly virtualScrollViewport = viewChild.required(CdkVirtualScrollViewport);
+  @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
   readonly ixItemSize = input(defaultSize);
   readonly ixMinBufferPx = input(defaultSize * 4);
   readonly ixMaxBufferPx = input(defaultSize * 8);
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input() override trackBy!: TrackByFunction<T>;
-
-  @ViewChild(TreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: TreeNodeOutletDirective<T>;
-  @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
-  @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
 
   readonly viewportScrolled = output<number>();
   readonly viewportResized = output<ResizedEvent>();
@@ -87,7 +87,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   private scrollableElement: HTMLElement | null = null;
 
   get isScrollTopButtonVisible(): boolean {
-    return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize() * 8;
+    return this.virtualScrollViewport().measureScrollOffset('top') > this.ixItemSize() * 8;
   }
 
   constructor(
@@ -162,6 +162,6 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   }
 
   private readonly scrolled = (): void => {
-    this.viewportScrolled.emit(this.virtualScrollViewport.elementRef.nativeElement.scrollLeft);
+    this.viewportScrolled.emit(this.virtualScrollViewport().elementRef.nativeElement.scrollLeft);
   };
 }

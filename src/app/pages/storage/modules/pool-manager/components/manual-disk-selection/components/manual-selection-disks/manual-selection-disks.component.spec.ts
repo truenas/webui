@@ -67,6 +67,7 @@ describe('ManualSelectionDisksComponent', () => {
   });
 
   beforeEach(() => {
+    jest.spyOn(console, 'warn').mockImplementation();
     spectator = createComponent({
       props: {
         enclosures: [

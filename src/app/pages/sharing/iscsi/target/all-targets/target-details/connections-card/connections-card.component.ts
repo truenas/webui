@@ -47,7 +47,7 @@ export class ConnectionsCardComponent {
       this.sessions.set(null);
       this.isLoading.set(true);
       this.getConnectionsByInitiatorId();
-    }, { allowSignalWrites: true });
+    });
   }
 
   private getConnectionsByInitiatorId(): void {

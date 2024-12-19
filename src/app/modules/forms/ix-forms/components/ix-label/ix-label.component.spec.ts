@@ -1,7 +1,6 @@
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
@@ -9,9 +8,6 @@ describe('IxLabelComponent', () => {
   let spectator: Spectator<IxLabelComponent>;
   const createComponent = createComponentFactory({
     component: IxLabelComponent,
-    declarations: [
-      MockComponent(TooltipComponent),
-    ],
   });
 
   beforeEach(() => {
@@ -34,8 +30,8 @@ describe('IxLabelComponent', () => {
     spectator.setInput('tooltip', 'Enter your first name');
 
     const tooltip = spectator.query(TooltipComponent);
-    expect(tooltip.header).toBe('First Name');
-    expect(tooltip.message).toBe('Enter your first name');
+    expect(tooltip.header()).toBe('First Name');
+    expect(tooltip.message()).toBe('Enter your first name');
   });
 
   it('shows an asterisk when label is provided and required is true', () => {
