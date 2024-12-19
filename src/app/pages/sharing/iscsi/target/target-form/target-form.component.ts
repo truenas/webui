@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { IscsiAuthMethod, IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
@@ -33,6 +33,7 @@ import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
+import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -156,6 +157,7 @@ export class TargetFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
+    private fcService: FibreChannelService,
     private slideInRef: SlideInRef<TargetFormComponent>,
     private targetNameValidationService: TargetNameValidationService,
     @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
@@ -185,14 +187,26 @@ export class TargetFormComponent implements OnInit {
 
     this.isLoading = true;
     this.cdr.markForCheck();
-    let request$: Observable<unknown>;
+    let request$: Observable<IscsiTarget>;
     if (this.isNew) {
       request$ = this.api.call('iscsi.target.create', [values]);
     } else {
       request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    request$.pipe(
+      switchMap((target) => {
+        if (!this.isFibreChannelMode) {
+          return of(target);
+        }
+        return this.fcService.linkFiberChannelToTarget(
+          target.id,
+          this.fcForm.value.port,
+          this.fcForm.value.host_id,
+        ).pipe(map(() => target));
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.slideInRef.close(response);

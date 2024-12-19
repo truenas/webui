@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  lastValueFrom, forkJoin,
+  lastValueFrom, forkJoin, switchMap, of, map,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -55,6 +55,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -156,7 +157,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get isNewInitiator(): boolean {
-    return this.form.controls.options.enabled;
+    return this.form.controls.options.controls.initiators.enabled;
   }
 
   get isFibreChannelMode(): boolean {
@@ -223,12 +224,14 @@ export class IscsiWizardComponent implements OnInit {
     return {
       name: value.extent.name,
       mode: value.target.mode,
-      groups: [{
-        portal: this.isNewPortal ? this.createdPortal.id : value.options.portal,
-        initiator: this.isNewInitiator ? this.createdInitiator.id : null,
-        authmethod: IscsiAuthMethod.None,
-        auth: null,
-      }],
+      groups: this.isFibreChannelMode
+        ? []
+        : [{
+            portal: this.isNewPortal ? this.createdPortal.id : value.options.portal,
+            initiator: this.isNewInitiator ? this.createdInitiator.id : null,
+            authmethod: IscsiAuthMethod.None,
+            auth: null,
+          }],
     } as IscsiTargetUpdate;
   }
 
@@ -245,6 +248,7 @@ export class IscsiWizardComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: SlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
+    private fcService: FibreChannelService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -309,7 +313,18 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
-    return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
+    return lastValueFrom(this.api.call('iscsi.target.create', [payload]).pipe(
+      switchMap((target) => {
+        if (!this.isFibreChannelMode) {
+          return of(target);
+        }
+        return this.fcService.linkFiberChannelToTarget(
+          target.id,
+          this.form.value.options.fcport.port,
+          this.form.value.options.fcport.host_id,
+        ).pipe(map(() => target));
+      }),
+    ));
   }
 
   createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {

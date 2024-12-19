@@ -12,7 +12,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { Option, skipOption } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -23,6 +23,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -75,11 +76,16 @@ describe('TargetFormComponent', () => {
       }),
       mockProvider(SlideInService),
       mockProvider(DialogService),
+      mockProvider(FibreChannelService, {
+        linkFiberChannelToTarget: jest.fn(() => of(null)),
+      }),
       mockProvider(SlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockApi([
+        mockCall('fc.fc_host.query', []),
+        mockCall('fcport.port_choices', {}),
         mockCall('iscsi.target.create'),
-        mockCall('iscsi.target.update'),
+        mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
         mockCall('iscsi.target.validate_name', null),
         mockCall('fc.capable', true),
         mockCall('iscsi.portal.query', [{
@@ -232,6 +238,11 @@ describe('TargetFormComponent', () => {
             auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
           },
         ],
+      );
+      expect(spectator.inject(FibreChannelService).linkFiberChannelToTarget).toHaveBeenCalledWith(
+        123,
+        skipOption,
+        undefined,
       );
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
