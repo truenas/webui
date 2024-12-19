@@ -9,6 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -80,10 +81,16 @@ describe('CertificateAuthorityEditComponent', () => {
     const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Identifier' }));
     await nameInput.setValue('New Name');
 
+    const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
+    await addToTrustedStoreCheckbox.toggle();
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificateauthority.update', [1, { name: 'New Name' }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      'certificateauthority.update',
+      [1, { name: 'New Name', add_to_trusted_store: true }],
+    );
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
@@ -111,5 +118,10 @@ describe('CertificateAuthorityEditComponent', () => {
         extension: 'crt',
       } as ViewCertificateDialogData,
     });
+  });
+
+  it('shows add to trusted store checkbox', async () => {
+    const addToTrustedStoreCheckbox = await loader.getHarnessOrNull(IxCheckboxHarness.with({ label: 'Add to trusted store' }));
+    expect(addToTrustedStoreCheckbox).toExist();
   });
 });

@@ -39,8 +39,10 @@ export class CertificateEditComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
+    add_to_trusted_store: [false],
   }) as FormGroup<{
     name: FormControl<string | null>;
+    add_to_trusted_store: FormControl<boolean>;
     renew_days?: FormControl<number | null>;
   }>;
 
@@ -112,7 +114,13 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.job('certificate.update', [this.certificate.id, this.form.value])
+    const payload = this.form.value;
+
+    if (this.isCsr) {
+      delete payload.add_to_trusted_store;
+    }
+
+    this.ws.job('certificate.update', [this.certificate.id, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {

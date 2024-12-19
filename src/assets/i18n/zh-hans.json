@@ -4,6 +4,7 @@
   "<i>This option is experimental in rclone and we recommend you do not use it.  It may not work correctly with long filenames.</i><br><br>  Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  <a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" target=\"_blank\">\"Standard\" file name encryption mode</a>.  The original directory structure is preserved. A filename with the same  name always has the same encrypted filename.<br><br>  <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an  incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not  transfer any files but still report that the task was successful. To  verify that files were transferred successfully, click the finished  task status to see a list of transferred files.": "",
   "<i>{disk}</i> has been detached.": "",
   "<p>The system will reboot to perform this operation!</p> <p><font color=\"red\">All passwords are reset when the  uploaded configuration database file was saved  without the Password Secret Seed. </font></p>": "",
+  "Add to trusted store": "",
   "Administrative user": "",
   "All users": "",
   "Allow Duplicate GIDs": "",
