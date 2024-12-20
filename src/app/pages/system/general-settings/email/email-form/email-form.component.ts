@@ -13,7 +13,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
-import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
+import {
+  MailConfig, MailConfigUpdate, MailOauthConfig, MailSendMethod,
+} from 'app/interfaces/mail-config.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -35,11 +37,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
-
-enum SendMethod {
-  Smtp = 'smtp',
-  Gmail = 'gmail',
-}
 
 @UntilDestroy()
 @Component({
@@ -69,7 +66,7 @@ enum SendMethod {
 export class EmailFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  sendMethodControl = new FormControl(SendMethod.Smtp);
+  sendMethodControl = new FormControl(MailSendMethod.Smtp);
 
   form = this.formBuilder.group({
     fromemail: ['', [Validators.required, emailValidator()]],
@@ -90,17 +87,21 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {
       label: helptextSystemEmail.send_mail_method.smtp.placeholder,
       tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.smtp.tooltip),
-      value: SendMethod.Smtp,
+      value: MailSendMethod.Smtp,
     },
     {
       label: helptextSystemEmail.send_mail_method.gmail.placeholder,
       tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.gmail.tooltip),
-      value: SendMethod.Gmail,
+      value: MailSendMethod.Gmail,
+    },
+    {
+      label: helptextSystemEmail.send_mail_method.outlook.placeholder,
+      tooltip: this.translate.instant(helptextSystemEmail.send_mail_method.outlook.tooltip),
+      value: MailSendMethod.Outlook,
     },
   ]);
 
@@ -112,7 +113,29 @@ export class EmailFormComponent implements OnInit {
 
   readonly helptext = helptextSystemEmail;
 
-  private oauthCredentials: GmailOauthConfig | Record<string, never>;
+  private oauthCredentials: MailOauthConfig | Record<string, never>;
+
+  get oauthType(): OauthButtonType | undefined {
+    switch (this.sendMethodControl.value) {
+      case MailSendMethod.Gmail:
+        return OauthButtonType.Gmail;
+      case MailSendMethod.Outlook:
+        return OauthButtonType.Outlook;
+      default:
+        return undefined;
+    }
+  }
+
+  get oauthUrl(): string | undefined {
+    switch (this.sendMethodControl.value) {
+      case MailSendMethod.Gmail:
+        return 'https://truenas.com/oauth/gmail?origin=';
+      case MailSendMethod.Outlook:
+        return 'https://www.truenas.com/oauth/outlook?origin=';
+      default:
+        return undefined;
+    }
+  }
 
   constructor(
     private api: ApiService,
@@ -134,11 +157,11 @@ export class EmailFormComponent implements OnInit {
   }
 
   get isSmtp(): boolean {
-    return this.sendMethodControl.value === SendMethod.Smtp;
+    return this.sendMethodControl.value === MailSendMethod.Smtp;
   }
 
   get hasOauthAuthorization(): boolean {
-    return Boolean(this.oauthCredentials?.client_id);
+    return this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
@@ -169,7 +192,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   onLoggedIn(credentials: unknown): void {
-    this.oauthCredentials = credentials as GmailOauthConfig;
+    this.oauthCredentials = credentials as MailOauthConfig;
   }
 
   onSubmit(): void {
@@ -197,7 +220,7 @@ export class EmailFormComponent implements OnInit {
     this.form.patchValue(this.emailConfig);
 
     if (this.emailConfig?.oauth?.client_id) {
-      this.sendMethodControl.setValue(SendMethod.Gmail);
+      this.sendMethodControl.setValue(this.emailConfig.oauth?.provider);
       this.oauthCredentials = this.emailConfig.oauth;
     }
     this.cdr.markForCheck();
@@ -241,8 +264,16 @@ export class EmailFormComponent implements OnInit {
       update = {
         fromemail: '',
         fromname: '',
-        oauth: this.oauthCredentials as GmailOauthConfig,
+        oauth: this.oauthCredentials as MailOauthConfig,
       };
+
+      update.oauth.provider = this.sendMethodControl.value;
+
+      if (this.sendMethodControl.value === MailSendMethod.Outlook) {
+        update.outgoingserver = 'smtp-mail.outlook.com';
+        update.port = 587;
+        update.security = MailSecurity.Tls;
+      }
     }
 
     return update;

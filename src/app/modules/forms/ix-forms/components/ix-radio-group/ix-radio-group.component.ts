@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatRadioChange, MatRadioGroup, MatRadioButton } from '@angular/material/radio';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -12,7 +13,7 @@ import { Observable } from 'rxjs';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
@@ -27,6 +28,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   imports: [
     IxLabelComponent,
     MatRadioGroup,
+    ReactiveFormsModule,
     MatRadioButton,
     TooltipComponent,
     IxErrorsComponent,
@@ -34,7 +36,9 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxRadioGroupComponent implements ControlValueAccessor {

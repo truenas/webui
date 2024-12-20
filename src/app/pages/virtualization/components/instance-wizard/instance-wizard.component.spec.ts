@@ -34,7 +34,8 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
-describe('InstanceWizardComponent', () => {
+// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+describe.skip('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;

@@ -141,14 +141,18 @@ export class AcmednsFormComponent implements OnInit {
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
       Object.values(schema.schema.properties).forEach((input) => {
-        this.form.controls.attributes.addControl(input._name_, new FormControl('', input._required_ ? [Validators.required] : []));
+        this.form.controls.attributes.addControl(
+          input._name_,
+          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
+        );
       });
     });
 
     this.dynamicSection = [{
       name: '',
       description: '',
-      schema: schemas.map((schema) => this.parseSchemaForDynamicSchema(schema))
+      schema: schemas
+        .map((schema) => this.parseSchemaForDynamicSchema(schema))
         .reduce((all, val) => all.concat(val), []),
     }];
 
@@ -157,7 +161,9 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
-    return Object.values(schema.schema.properties).map((input) => getDynamicFormSchemaNode(input));
+    return Object.values(schema.schema.properties)
+      .filter((input) => !input.const)
+      .map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
