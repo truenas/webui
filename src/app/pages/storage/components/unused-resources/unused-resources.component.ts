@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnusedResourcesComponent implements OnInit {
-  @Input() pools: Pool[];
+  readonly pools = input.required<Pool[]>();
+
   noPoolsDisks: DetailsDisk[] = [];
   exportedPoolsDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
@@ -30,10 +31,15 @@ export class UnusedResourcesComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
-  ) { }
+  ) {
+    effect(() => {
+      if (this.pools()) {
+        this.updateUnusedDisks();
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.updateUnusedDisks();
     this.subscribeToDiskQuery();
   }
 
@@ -72,7 +78,7 @@ export class UnusedResourcesComponent implements OnInit {
   private addUnusedDisksToStorage(disks: DetailsDisk[]): void {
     this.matDialog.open(ManageUnusedDiskDialogComponent, {
       data: {
-        pools: this.pools,
+        pools: this.pools(),
         unusedDisks: [...disks],
       },
       width: '600px',
