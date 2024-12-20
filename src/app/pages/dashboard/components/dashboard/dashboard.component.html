@@ -75,10 +75,11 @@
       @for (group of renderedGroups(); track group; let i = $index) {
         <div
           class="group-slot"
+          cdkDrag
+          cdkDragPreviewContainer="parent"
           @groupRemovedTrigger
         >
           <div
-            cdkDrag
             class="group-container"
             [class.editing]="isEditing()"
           >
