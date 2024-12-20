@@ -1,5 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 
+// TODO: Add harness for this component
+
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
