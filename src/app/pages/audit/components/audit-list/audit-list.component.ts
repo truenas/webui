@@ -2,6 +2,7 @@ import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input, output,
   Inject,
+  computed,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
@@ -10,7 +11,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
-import { ControllerType } from 'app/enums/controller-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -53,9 +53,9 @@ export class AuditListComponent {
   protected readonly searchableElements = auditElements;
   readonly isHaLicensed = input<boolean>();
   readonly isMobileView = input<boolean>();
-  readonly controllerType = input.required<ControllerType>();
   readonly toggleShowMobileDetails = output<boolean>();
   readonly dataProvider = input<AuditApiDataProvider>();
+  readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   columns = createTable<AuditEntry>([
     textColumn({

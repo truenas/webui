@@ -1,10 +1,12 @@
 <ix-page-header>
   @if (isHaLicensed()) {
-    <p>{{ 'Controller' | translate }}</p>
-    <mat-button-toggle-group [value]="controllerType()" (change)="controllerTypeChanged($event)">
-      <mat-button-toggle [value]="ControllerType.Active">{{ 'Active' | translate }}</mat-button-toggle>
-      <mat-button-toggle [value]="ControllerType.Standby">{{ 'Standby' | translate }}</mat-button-toggle>
-    </mat-button-toggle-group>
+    <ix-button-group
+      [formControl]="controllerTypeControl"
+      [label]="'Controller' | translate"
+      [options]="controllerTypeOptions$"
+      [inlineFields]="true"
+      [attr.aria-label]="'Controller Type' | translate"
+    ></ix-button-group>
   }
 
   <a
@@ -24,7 +26,6 @@
   <ix-audit-list
     master
     [dataProvider]="dataProvider"
-    [controllerType]="controllerType()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-audit-list>

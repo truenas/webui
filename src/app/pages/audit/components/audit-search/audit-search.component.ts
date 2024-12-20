@@ -11,12 +11,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
+  filter,
   map, Observable, of, shareReplay, take,
 } from 'rxjs';
 import {
   AuditService, auditServiceLabels, AuditEvent, auditEventLabels,
 } from 'app/enums/audit.enum';
-import { ControllerType } from 'app/enums/controller-type.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
@@ -53,7 +53,6 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class AuditSearchComponent implements OnInit {
   readonly isMobileView = input.required<boolean>();
   readonly dataProvider = input.required<AuditApiDataProvider>();
-  readonly controllerType = input.required<ControllerType>();
   readonly toggleShowMobileDetails = output<boolean>();
 
   protected searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
@@ -84,14 +83,22 @@ export class AuditSearchComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private urlOptionsService: UrlOptionsService,
     private translate: TranslateService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadParamsFromRoute();
 
-    this.dataProvider().controlsStateUpdated.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateUrlOptions();
-    });
+    this.dataProvider().controlsStateUpdated
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.updateUrlOptions();
+      });
+
+    this.dataProvider().currentPage$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((auditEntries) => {
+        this.setSearchProperties(auditEntries);
+      });
   }
 
   updateUrlOptions(): void {
@@ -132,87 +139,85 @@ export class AuditSearchComponent implements OnInit {
   }
 
   private setSearchProperties(auditEntries: AuditEntry[]): void {
-    this.searchProperties.update(() => {
-      return searchProperties<AuditEntry>([
-        textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
-        dateProperty(
-          'message_timestamp',
-          this.translate.instant('Timestamp'),
-        ),
-        textProperty(
-          'address',
-          this.translate.instant('Address'),
-          of(auditEntries.map((log) => ({
-            label: log.address,
-            value: `"${log.address}"`,
-          }))),
-        ),
-        textProperty(
-          'service',
-          this.translate.instant('Service'),
-          of(Object.values(AuditService).map((key) => ({
-            label: this.translate.instant(auditServiceLabels.get(key)),
-            value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
-          }))),
-          auditServiceLabels,
-        ),
-        textProperty(
-          'username',
-          this.translate.instant('User'),
-          this.apiAndLocalUserSuggestions$(),
-        ),
-        textProperty(
-          'event',
-          this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((key) => ({
-            label: this.translate.instant(auditEventLabels.get(key)),
-            value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
-          }))),
-          auditEventLabels,
-        ),
-        textProperty(
-          'event_data.clientAccount',
-          this.translate.instant('SMB - Client Account'),
-          this.apiAndLocalUserSuggestions$(),
-        ),
-        textProperty('event_data.host', this.translate.instant('SMB - Host')),
-        textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
-        textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
-        textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
-        textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
-        textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
-        textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
-        textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
-        textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
-        textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
-        textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
-        textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
-        textProperty(
-          'event_data.vers.major',
-          this.translate.instant('SMB - Vers Major'),
-          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-        ),
-        textProperty(
-          'event_data.vers.minor',
-          this.translate.instant('SMB - Vers Minor'),
-          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-        ),
-        textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
-        textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
-        textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
-        textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
-        textProperty(
-          'event_data.credentials.credentials',
-          this.translate.instant('Middleware - Credentials'),
-          of(Object.values(CredentialType).map((key) => ({
-            label: this.translate.instant(credentialTypeLabels.get(key)),
-            value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
-          }))),
-          credentialTypeLabels,
-        ),
-        textProperty('event_data.method', this.translate.instant('Middleware - Method')),
-      ]);
-    });
+    this.searchProperties.set(searchProperties<AuditEntry>([
+      textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
+      dateProperty(
+        'message_timestamp',
+        this.translate.instant('Timestamp'),
+      ),
+      textProperty(
+        'address',
+        this.translate.instant('Address'),
+        of(auditEntries.map((log) => ({
+          label: log.address,
+          value: `"${log.address}"`,
+        }))),
+      ),
+      textProperty(
+        'service',
+        this.translate.instant('Service'),
+        of(Object.values(AuditService).map((key) => ({
+          label: this.translate.instant(auditServiceLabels.get(key)),
+          value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
+        }))),
+        auditServiceLabels,
+      ),
+      textProperty(
+        'username',
+        this.translate.instant('User'),
+        this.apiAndLocalUserSuggestions$(),
+      ),
+      textProperty(
+        'event',
+        this.translate.instant('Event'),
+        of(Object.values(AuditEvent).map((key) => ({
+          label: this.translate.instant(auditEventLabels.get(key)),
+          value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
+        }))),
+        auditEventLabels,
+      ),
+      textProperty(
+        'event_data.clientAccount',
+        this.translate.instant('SMB - Client Account'),
+        this.apiAndLocalUserSuggestions$(),
+      ),
+      textProperty('event_data.host', this.translate.instant('SMB - Host')),
+      textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
+      textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
+      textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
+      textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
+      textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
+      textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
+      textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
+      textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
+      textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
+      textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
+      textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
+      textProperty(
+        'event_data.vers.major',
+        this.translate.instant('SMB - Vers Major'),
+        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+      ),
+      textProperty(
+        'event_data.vers.minor',
+        this.translate.instant('SMB - Vers Minor'),
+        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+      ),
+      textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
+      textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
+      textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
+      textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
+      textProperty(
+        'event_data.credentials.credentials',
+        this.translate.instant('Middleware - Credentials'),
+        of(Object.values(CredentialType).map((key) => ({
+          label: this.translate.instant(credentialTypeLabels.get(key)),
+          value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
+        }))),
+        credentialTypeLabels,
+      ),
+      textProperty('event_data.method', this.translate.instant('Middleware - Method')),
+    ]));
   }
 
   private loadParamsFromRoute(): void {

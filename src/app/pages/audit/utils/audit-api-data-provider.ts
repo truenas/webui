@@ -20,9 +20,8 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
     return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
-  constructor(api: ApiService, props: Partial<AuditApiDataProvider> = {}) {
+  constructor(api: ApiService) {
     super(api, 'audit.query');
-    Object.assign(this, props);
   }
 
   protected override countRows(): Observable<number> {

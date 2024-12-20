@@ -45,7 +45,7 @@
       [searchQuery]="searchQuery()"
       [sorting]="dataProvider().sorting"
       [defaultFilters]="basicQueryFilters()"
-      [controllerType]="controllerType()"
+      [controllerType]="dataProvider().selectedControllerType"
     ></ix-export-button>
   }
 </ng-template>
