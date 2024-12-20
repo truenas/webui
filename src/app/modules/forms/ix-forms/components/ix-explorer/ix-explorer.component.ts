@@ -5,7 +5,7 @@ import {
   OnChanges,
   OnInit, viewChild,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatHint } from '@angular/material/form-field';
@@ -28,7 +28,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -53,8 +53,11 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
+    ReactiveFormsModule,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {

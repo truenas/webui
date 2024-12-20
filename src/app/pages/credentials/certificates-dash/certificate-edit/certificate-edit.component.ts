@@ -141,7 +141,13 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.api.job('certificate.update', [this.certificate.id, this.form.value])
+    const payload = this.form.value;
+
+    if (this.isCsr) {
+      delete payload.add_to_trusted_store;
+    }
+
+    this.api.job('certificate.update', [this.certificate.id, payload])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
