@@ -1,6 +1,6 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
-  Component, OnInit, ChangeDetectionStrategy, input, output,
+  Component, ChangeDetectionStrategy, input, output,
   Inject,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -49,8 +49,9 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
     AuditSearchComponent,
   ],
 })
-export class AuditListComponent implements OnInit {
+export class AuditListComponent {
   protected readonly searchableElements = auditElements;
+  readonly isHaLicensed = input<boolean>();
   readonly isMobileView = input<boolean>();
   readonly controllerType = input.required<ControllerType>();
   readonly toggleShowMobileDetails = output<boolean>();
@@ -118,9 +119,5 @@ export class AuditListComponent implements OnInit {
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }
-  }
-
-  ngOnInit(): void {
-    console.info('init');
   }
 }

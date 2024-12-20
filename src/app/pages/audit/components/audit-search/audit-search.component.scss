@@ -4,7 +4,6 @@
 .actions-bar {
   display: flex;
   justify-content: space-between;
-  padding: 8px 12px;
 
   @media (max-width: $breakpoint-sm) {
     display: block;

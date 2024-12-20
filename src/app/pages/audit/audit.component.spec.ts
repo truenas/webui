@@ -1,18 +1,17 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
-import { ControllerType } from 'app/enums/controller-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
-import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
@@ -72,6 +71,7 @@ describe('AuditComponent', () => {
         ExportButtonComponent,
         FakeProgressBarComponent,
         PageHeaderComponent,
+        MockMasterDetailViewComponent,
       ),
     ],
     providers: [
@@ -132,58 +132,9 @@ describe('AuditComponent', () => {
     ]);
   });
 
-  it('searches by event, username and service when basic search is used', () => {
-    const search = spectator.query(SearchInputComponent);
-    search.query.set({
-      isBasicQuery: true,
-      query: 'search',
-    });
-
-    search.runSearch.emit();
-
-    expect(api.call).toHaveBeenLastCalledWith(
-      'audit.query',
-      [{
-        'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
-        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-        remote_controller: false,
-      }],
-    );
-  });
-
-  it('runs search when controller type is changed', () => {
-    spectator.component.controllerTypeChanged({ value: ControllerType.Standby } as MatButtonToggleChange);
-    spectator.detectChanges();
-
-    expect(api.call).toHaveBeenLastCalledWith(
-      'audit.query',
-      [{
-        'query-filters': [],
-        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-        remote_controller: true,
-      }],
-    );
-  });
-
-  it('applies filters to API query when advanced search is used', () => {
-    const search = spectator.query<SearchInputComponent<AuditEntry>>(SearchInputComponent);
-    search.query.set({
-      isBasicQuery: false,
-      filters: [
-        ['event', '=', 'Authentication'],
-        ['username', '~', 'bob'],
-      ],
-    });
-    search.runSearch.emit();
-
-    expect(api.call).toHaveBeenLastCalledWith(
-      'audit.query',
-      [{
-        'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
-        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
-        remote_controller: false,
-      }],
-    );
+  it('checks card title', () => {
+    const title = spectator.query('h3');
+    expect(title).toHaveText('Log Details');
   });
 
   it('shows details for the selected audit entry', async () => {

@@ -1,4 +1,4 @@
-<mat-card class="header-card item-search">
+<div class="header-card item-search">
   <ix-fake-progress-bar
     class="loader-bar"
     [loading]="dataProvider().isLoading$ | async"
@@ -33,7 +33,7 @@
       <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
     }
   </div>
-</mat-card>
+</div>
 
 
 <ng-template #exportButton>

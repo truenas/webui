@@ -6,7 +6,6 @@ import {
   output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -45,7 +44,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     AsyncPipe,
     FakeProgressBarComponent,
     MatButton,
-    MatCard,
     NgTemplateOutlet,
     SearchInputComponent,
     TranslateModule,

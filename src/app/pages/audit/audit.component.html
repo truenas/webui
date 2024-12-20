@@ -30,15 +30,13 @@
   ></ix-audit-list>
 
   <ng-container detail-header>
-    {{ 'Details for' | translate }}
-    {{ dataProvider.expandedRow?.event }}
+    {{ 'Log Details' | translate }}
   </ng-container>
 
   <ng-container detail>
     @if (dataProvider.expandedRow) {
       <ix-log-details-panel
         [log]="dataProvider.expandedRow"
-        (hide)="closeMobileDetails()"
       ></ix-log-details-panel>
     }
   </ng-container>
