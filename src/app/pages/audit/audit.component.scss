@@ -1,8 +1,6 @@
 @import 'scss-imports/variables';
 @import 'mixins/layout';
 
-@include tree-node-with-details-container;
-
 .container {
   gap: 16px;
 }
@@ -20,38 +18,13 @@
     height: 100%;
   }
 
-  ix-table {
-    height: 100%;
-  }
-
   .user-avatar,
-  .user-avatar > div {
+  .user-avatar>div {
     align-items: center;
     display: flex;
 
     span {
       margin: 0 0 0 8px !important;
-    }
-  }
-
-  .sticky-header {
-    height: inherit;
-    min-height: 48px;
-    top: 38px;
-
-    @media(max-width: $breakpoint-md) {
-      position: static;
-    }
-
-    > thead {
-      align-items: center;
-      display: flex;
-      width: 100%;
-
-      th {
-        align-items: center;
-        display: flex;
-      }
     }
   }
 
@@ -102,7 +75,7 @@
       width: 100%;
       z-index: 1;
 
-      > div {
+      >div {
         align-items: center;
         display: flex;
         font-weight: bold;
@@ -132,47 +105,6 @@
 .header-card {
   border-radius: 0;
   margin-bottom: 16px;
-}
-
-.actions-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 12px;
-
-  @media (max-width: $breakpoint-sm) {
-    display: block;
-  }
-
-  .search-container {
-    column-gap: 12px;
-    display: flex;
-
-    @media (max-width: $breakpoint-singlecolumn) {
-      width: 100%;
-    }
-
-    @media (max-width: $breakpoint-sm) {
-      display: block;
-    }
-
-    .search-button-wrapper {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-
-      @media (max-width: $breakpoint-sm) {
-        margin-top: 8px;
-      }
-    }
-
-    .search-input {
-      @media (min-width: $breakpoint-sm) {
-        max-width: 90%;
-      }
-
-      width: 100%;
-    }
-  }
 }
 
 .mobile-hidden {
