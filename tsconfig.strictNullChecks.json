@@ -406,8 +406,6 @@
     "./src/app/modules/forms/toolbar-slider/toolbar-slider.component.ts",
     "./src/app/modules/feedback/interfaces/feedback.interface.ts",
     "./src/app/modules/feedback/interfaces/file-ticket.interface.ts",
-    "./src/app/modules/ix-drop-grid/ix-drag-handle.directive.ts",
-    "./src/app/modules/ix-drop-grid/ix-drop-grid.tokens.ts",
     "./src/app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array.ts",
     "./src/app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-control.ts",
     "./src/app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field.ts",

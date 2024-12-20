@@ -66,21 +66,20 @@
 } @else {
   <div
     class="groups"
-    ixDropGrid
-    [ixDropGridModel]="renderedGroups()"
+    cdkDropList
+    cdkDropListOrientation="mixed"
     [ixUiSearch]="searchableElements.elements.dashboard"
-    [cdkDropListGroupDisabled]="!isEditing()"
-    (ixDropGridModelChange)="onGroupsReordered($event)"
+    (cdkDropListDropped)="onGroupsReordered($event)"
   >
     @if (renderedGroups().length > 0) {
       @for (group of renderedGroups(); track group; let i = $index) {
         <div
           class="group-slot"
-          ixDropGridItem
+          cdkDrag
+          cdkDragPreviewContainer="parent"
           @groupRemovedTrigger
         >
           <div
-            ixDrag
             class="group-container"
             [class.editing]="isEditing()"
           >

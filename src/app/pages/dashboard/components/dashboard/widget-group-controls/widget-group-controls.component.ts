@@ -1,9 +1,9 @@
+import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
-import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -18,7 +18,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
     IxIconComponent,
     TranslateModule,
-    IxDragHandleDirective,
+    CdkDragHandle,
   ],
 })
 export class WidgetGroupControlsComponent {
