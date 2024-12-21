@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import { filter, repeat, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -143,6 +143,7 @@ export class ExtentListComponent implements OnInit {
 
   ngOnInit(): void {
     const extents$ = this.iscsiService.getExtents().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((extents) => this.extents = extents),
       untilDestroyed(this),
     );

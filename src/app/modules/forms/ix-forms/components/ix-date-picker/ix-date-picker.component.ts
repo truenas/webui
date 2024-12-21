@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, input, signal,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { DateAdapter } from '@angular/material/core';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatHint, MatSuffix } from '@angular/material/form-field';
@@ -12,7 +12,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LocaleService } from 'app/services/locale.service';
@@ -32,11 +32,14 @@ type OnTouchedFn = () => void;
     MatDatepickerModule,
     MatHint,
     MatInput,
+    ReactiveFormsModule,
     TestDirective,
     TestOverrideDirective,
     TranslateModule,
     MatSuffix,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
   providers: [
     FormatDateTimePipe,

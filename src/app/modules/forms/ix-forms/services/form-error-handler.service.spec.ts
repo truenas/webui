@@ -56,7 +56,7 @@ describe('FormErrorHandlerService', () => {
         } as ErrorReport)),
       }),
       mockProvider(IxFormService, {
-        getControlsNames: jest.fn(() => Object.keys(formGroup.controls)),
+        getControlNames: jest.fn(() => Object.keys(formGroup.controls)),
       }),
     ],
   });

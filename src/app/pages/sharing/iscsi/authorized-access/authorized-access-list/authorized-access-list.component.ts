@@ -7,7 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, repeat, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -146,6 +148,7 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   ngOnInit(): void {
     const authorizedAccess$ = this.iscsiService.getAuth().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((authAccess) => this.authAccess = authAccess),
       untilDestroyed(this),
     );

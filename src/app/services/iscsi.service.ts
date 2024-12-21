@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
   combineLatest, map, Observable,
+  Subject,
 } from 'rxjs';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -21,10 +22,20 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class IscsiService {
+  private refreshData$ = new Subject<void>();
+
   constructor(
     protected api: ApiService,
     private store$: Store<AppState>,
   ) {}
+
+  listenForDataRefresh(): Observable<void> {
+    return this.refreshData$;
+  }
+
+  refreshData(): void {
+    this.refreshData$.next();
+  }
 
   getIpChoices(): Observable<Choices> {
     return this.api.call('iscsi.portal.listen_ip_choices');
