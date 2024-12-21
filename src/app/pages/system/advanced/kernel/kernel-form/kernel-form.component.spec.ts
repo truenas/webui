@@ -8,9 +8,9 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KernelFormComponent', () => {
@@ -26,11 +26,11 @@ describe('KernelFormComponent', () => {
       mockApi([
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
-      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       provideMockStore(),
       mockAuth(),
     ],
@@ -39,7 +39,7 @@ describe('KernelFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       providers: [
-        mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => true) }),
+        mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => true) }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

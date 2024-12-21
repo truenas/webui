@@ -35,8 +35,8 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -53,7 +53,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -144,9 +144,9 @@ export class CloudBackupFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
     private cloudCredentialService: CloudCredentialService,
-    private chainedRef: ChainedRef<CloudBackup>,
+    private slideInRef: SlideInRef<CloudBackup>,
   ) {
-    this.editingTask = chainedRef.getData();
+    this.editingTask = slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -271,7 +271,7 @@ export class CloudBackupFormComponent implements OnInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.chainedRef.close({ response, error: null });
+        this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

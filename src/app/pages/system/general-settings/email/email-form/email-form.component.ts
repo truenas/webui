@@ -29,8 +29,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,7 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -148,7 +148,7 @@ export class EmailFormComponent implements OnInit {
     private validatorService: IxValidatorsService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: SlideInRef<EmailFormComponent>,
+    private slideInRef: OldSlideInRef<EmailFormComponent>,
     @Inject(SLIDE_IN_DATA) private emailConfig: MailConfig,
   ) {}
 

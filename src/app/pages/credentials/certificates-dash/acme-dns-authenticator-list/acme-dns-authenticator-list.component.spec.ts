@@ -14,10 +14,10 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
@@ -46,13 +46,13 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
         onClose$: of(),
       }),
-      mockProvider(SlideInRef, {
+      mockProvider(OldSlideInRef, {
         slideInClosed$: of(true),
       }),
       mockAuth(),
@@ -74,14 +74,14 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
   });
 
   it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
       data: authenticators[0],
     });
   });

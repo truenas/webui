@@ -26,7 +26,7 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
+import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -60,7 +60,7 @@ describe('NetworkComponent', () => {
     ],
     declarations: [
       InterfacesCardComponent,
-      SlideInComponent,
+      OldSlideInComponent,
       InterfaceFormComponent,
       MockComponents(
         NetworkConfigurationCardComponent,
@@ -131,7 +131,7 @@ describe('NetworkComponent', () => {
   beforeEach(() => {
     spectator = createHost(`
       <ix-network></ix-network>
-      <ix-slide-in id="ix-slide-in-form"></ix-slide-in>
+      <ix-old-slide-in id="ix-slide-in-form"></ix-old-slide-in>
     `);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);

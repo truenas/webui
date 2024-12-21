@@ -24,7 +24,7 @@ import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-bac
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { BackupTaskActionsComponent } from './backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from './backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from './backup-task-tile/backup-task-tile.component';
@@ -124,7 +124,7 @@ export class WidgetBackupComponent implements OnInit {
   constructor(
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideInService: ChainedSlideInService,
+    private slideIn: SlideIn,
     private widgetResourcesService: WidgetResourcesService,
   ) {}
 
@@ -163,7 +163,7 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addCloudSyncTask(): void {
-    this.chainedSlideInService.open(
+    this.slideIn.open(
       CloudSyncWizardComponent,
       true,
     ).pipe(
@@ -177,7 +177,7 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideInService.open(ReplicationWizardComponent, true);
+    const closer$ = this.slideIn.open(ReplicationWizardComponent, true);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -185,7 +185,7 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addRsyncTask(): void {
-    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
+    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
   }
 

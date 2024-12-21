@@ -46,8 +46,8 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -163,7 +163,7 @@ export class CloudSyncListComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private taskService: TaskService,
-    private chainedSlideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
@@ -272,7 +272,7 @@ export class CloudSyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.chainedSlideIn.open(CloudSyncFormComponent, true, row).pipe(
+      this.slideIn.open(CloudSyncFormComponent, true, row).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -281,7 +281,7 @@ export class CloudSyncListComponent implements OnInit {
         },
       });
     } else {
-      this.chainedSlideIn.open(CloudSyncWizardComponent, true).pipe(
+      this.slideIn.open(CloudSyncWizardComponent, true).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({

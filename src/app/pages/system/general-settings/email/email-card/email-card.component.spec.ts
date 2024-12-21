@@ -9,7 +9,7 @@ import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const fakeEmailConfig: MailConfig = {
   id: 1,
@@ -33,7 +33,7 @@ describe('EmailCardComponent with SMTP', () => {
       mockApi([
         mockCall('mail.config', fakeEmailConfig),
       ]),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
@@ -58,7 +58,8 @@ describe('EmailCardComponent with SMTP', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
+    expect(spectator.inject(OldSlideInService).open)
+      .toHaveBeenCalledWith(EmailFormComponent, { data: fakeEmailConfig });
   });
 });
 
@@ -74,7 +75,7 @@ describe('EmailCardComponent with Gmail OAuth', () => {
           oauth: { client_id: '123', provider: 'gmail' } as MailOauthConfig,
         }),
       ]),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],
@@ -107,7 +108,7 @@ describe('EmailCardComponent with Outlook OAuth', () => {
           oauth: { client_id: '123', provider: 'outlook' } as MailOauthConfig,
         }),
       ]),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
     ],

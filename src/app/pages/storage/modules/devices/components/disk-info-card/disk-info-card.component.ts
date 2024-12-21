@@ -25,7 +25,7 @@ import {
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class DiskInfoCardComponent {
 
   constructor(
     private matDialog: MatDialog,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
   ) {}

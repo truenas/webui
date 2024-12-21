@@ -28,7 +28,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -110,7 +110,7 @@ export class NtpServerCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private dialog: DialogService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
   ) {}
 
   ngOnInit(): void {

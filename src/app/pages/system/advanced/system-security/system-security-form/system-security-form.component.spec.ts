@@ -12,7 +12,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -48,7 +48,7 @@ describe('SystemSecurityFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),
       }),
