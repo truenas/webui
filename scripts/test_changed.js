@@ -41,10 +41,10 @@ function runJestWithTestFiles(testFiles) {
   if (testFiles.length > 0) {
     try {
       console.log('Running tests for collected test files...');
-      const result = execSync(`jest ${testFiles.join(' ')} --no-cache`, { stdio: 'inherit' });
-      console.log(result.toString());
+      execSync(`jest ${testFiles.join(' ')}`, { stdio: 'inherit' });
+      console.log('All tests passed. 😎');
     } catch (error) {
-      console.error('Some tests failed.');
+      console.error('Some tests failed. 😩');
     }
   } else {
     console.log('No tests to run.');
