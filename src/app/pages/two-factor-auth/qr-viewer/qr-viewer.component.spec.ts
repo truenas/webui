@@ -35,7 +35,7 @@ describe('QrViewerComponent', () => {
   });
 
   it('shows qr code', () => {
-    const qrCode = spectator.query(QrCodeComponent);
+    const qrCode = spectator.query(QrCodeComponent)!;
     expect(qrCode).toBeTruthy();
     expect(qrCode.size).toBe(200);
   });

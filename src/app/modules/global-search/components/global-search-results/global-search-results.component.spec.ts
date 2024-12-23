@@ -115,7 +115,7 @@ describe('GlobalSearchResultsComponent', () => {
     expect(sectionHeaders[0].textContent).toBe(' UI ');
     expect(sectionHeaders[1].textContent).toBe(' Help ');
 
-    const emptyContent = spectator.query('h4.no-results');
+    const emptyContent = spectator.query('h4.no-results')!;
     expect(emptyContent.textContent).toBe('No results found in {section}');
 
     const sectionContent = spectator.queryAll('.section-content');
@@ -139,7 +139,7 @@ describe('GlobalSearchResultsComponent', () => {
     let shownResults = spectator.queryAll('.search-result');
     expect(shownResults).toHaveLength(spectator.component.initialResultsLimit);
 
-    const showAllButton = spectator.query('.toggle-show-more');
+    const showAllButton = spectator.query('.toggle-show-more')!;
     spectator.click(showAllButton);
     spectator.detectChanges();
 
@@ -172,7 +172,7 @@ describe('GlobalSearchResultsComponent', () => {
     spectator.setInput('results', mockResults);
     spectator.detectChanges();
 
-    const removeIcon = spectator.query('.icon');
+    const removeIcon = spectator.query('.icon')!;
     const recentSearchRemovedSpy = jest.spyOn(spectator.component.recentSearchRemoved, 'emit');
 
     spectator.click(removeIcon);

@@ -49,7 +49,7 @@ describe('VolumeMountsDialogComponent', () => {
 
   it('shows a table with information about volume mounts', () => {
     const cells = spectator.queryAll('tr').map((row: HTMLElement) => {
-      return Array.from(row.querySelectorAll('td, th')).map((cell) => cell.textContent.trim());
+      return Array.from(row.querySelectorAll('td, th')).map((cell) => cell.textContent!.trim());
     });
 
     expect(cells).toEqual([

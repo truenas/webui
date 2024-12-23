@@ -1,10 +1,10 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { ApiErrorName } from 'app/enums/api.enum';
+import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
-import { ApiError } from 'app/interfaces/api-error.interface';
+import { ApiError, ApiTraceFrame } from 'app/interfaces/api-error.interface';
 import { ErrorResponse } from 'app/interfaces/api-message.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -15,7 +15,10 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const errorResponse = {
   jsonrpc: '2.0',
+  id: '1',
   error: {
+    code: JsonRpcErrorCode.CallError,
+    message: 'Validation error',
     data: {
       error: 11,
       errname: ApiErrorName.Validation,
@@ -31,11 +34,11 @@ const errorResponse = {
           22,
         ],
       ],
-      trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] },
+      trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
       reason: 'Test reason',
     },
   },
-} as ErrorResponse;
+} satisfies ErrorResponse;
 
 const formGroup = new FormGroup({
   test_control_1: new FormControl(''),

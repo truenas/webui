@@ -61,7 +61,7 @@ describe('SchedulerComponent', () => {
     spectator.setHostInput('required', true);
     spectator.setHostInput('tooltip', 'Enter the location of the system.');
 
-    const label = spectator.query(IxLabelComponent);
+    const label = spectator.query(IxLabelComponent)!;
     expect(label).toExist();
     expect(label.label()).toBe('Apply To Groups');
     expect(label.required()).toBe(true);

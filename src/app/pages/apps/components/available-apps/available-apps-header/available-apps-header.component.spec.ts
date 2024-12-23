@@ -124,7 +124,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('refreshes app when Refresh Catalog is pressed', () => {
-    spectator.click(spectator.query(byText('Refresh Catalog')));
+    spectator.click(spectator.query(byText('Refresh Catalog'))!);
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');

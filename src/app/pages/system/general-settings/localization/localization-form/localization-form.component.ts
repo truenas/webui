@@ -65,7 +65,7 @@ export class LocalizationFormComponent implements OnInit {
 
   sortLanguagesByName = true;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     language: ['', [Validators.required]],
     kbdmap: [''],
     timezone: ['', [Validators.required]],

@@ -238,7 +238,7 @@ describe('DashboardComponent', () => {
     });
 
     it('updates order when widgets are reordered via drag and drop', () => {
-      const list = spectator.query(CdkDropList<WidgetGroup>);
+      const list = spectator.query(CdkDropList<WidgetGroup>)!;
       list.dropped.emit({ previousIndex: 0, currentIndex: 3 } as CdkDragDrop<WidgetGroup>);
       spectator.detectChanges();
 

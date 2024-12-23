@@ -9,7 +9,7 @@ import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppLoaderService {
-  dialogRef: MatDialogRef<AppLoaderComponent>;
+  dialogRef: MatDialogRef<AppLoaderComponent> | null;
 
   constructor(
     private matDialog: MatDialog,
@@ -29,7 +29,7 @@ export class AppLoaderService {
   }
 
   open(title: string = T('Please wait')): Observable<boolean> {
-    if (this.dialogRef !== undefined) {
+    if (this.dialogRef !== null) {
       return EMPTY;
     }
 
@@ -46,7 +46,7 @@ export class AppLoaderService {
     if (this.dialogRef) {
       this.tryToRestoreFocusToThePreviousDialog();
       this.dialogRef.close();
-      this.dialogRef = undefined;
+      this.dialogRef = null;
     }
   }
 
@@ -59,7 +59,7 @@ export class AppLoaderService {
   }
 
   private tryToRestoreFocusToThePreviousDialog(): void {
-    const previousDialogs = this.matDialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef.id);
+    const previousDialogs = this.matDialog.openDialogs.filter((dialog) => dialog.id !== this.dialogRef?.id);
     const previousDialogId = previousDialogs[previousDialogs.length - 1]?.id;
 
     if (previousDialogId) {

@@ -32,7 +32,7 @@ import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/a
   ],
 })
 export class AppDeleteDialogComponent {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     removeVolumes: [false],
     removeImages: [true],
     forceRemoveVolumes: [false],

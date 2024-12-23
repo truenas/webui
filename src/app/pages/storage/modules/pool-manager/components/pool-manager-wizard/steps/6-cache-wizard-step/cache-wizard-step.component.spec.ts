@@ -48,7 +48,7 @@ describe('CacheWizardStepComponent', () => {
   });
 
   it('has the correct inputs', () => {
-    const layoutComponent = spectator.query(LayoutStepComponent);
+    const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextManager.cache_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeFalsy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);

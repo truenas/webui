@@ -47,7 +47,7 @@ describe('ModalHeader2Component', () => {
   });
 
   it('shows proper title', () => {
-    const title = spectator.query('.ix-form-title');
+    const title = spectator.query('.ix-form-title')!;
     expect(title.textContent).toBe(' Add Cloudsync Task ');
   });
 
@@ -55,7 +55,7 @@ describe('ModalHeader2Component', () => {
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('cancel');
   });
 
@@ -77,7 +77,7 @@ describe('ModalHeader2Component', () => {
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('mdi-chevron-left');
   });
 });

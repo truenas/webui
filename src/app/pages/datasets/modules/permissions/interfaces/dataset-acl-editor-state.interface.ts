@@ -4,9 +4,9 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 export interface DatasetAclEditorState {
   isLoading: boolean;
   isSaving: boolean;
-  mountpoint: string;
-  acl: Acl;
-  stat: FileSystemStat;
+  mountpoint: string | null;
+  acl: Acl | null;
+  stat: FileSystemStat | null;
   selectedAceIndex: number;
   acesWithError: number[]; // Indices
 }

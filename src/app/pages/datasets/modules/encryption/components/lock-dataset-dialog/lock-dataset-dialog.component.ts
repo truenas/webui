@@ -42,7 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class LockDatasetDialogComponent {
   readonly requiredRoles = [Role.DatasetWrite];
 
-  forceCheckbox = new FormControl(false);
+  forceCheckbox = new FormControl(false, { nonNullable: true });
 
   constructor(
     private api: ApiService,

@@ -79,7 +79,7 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   it('checks colspan attribute', () => {
-    expect(spectator.query('td').getAttribute('colspan')).toBe('5');
+    expect(spectator.query('td')!.getAttribute('colspan')).toBe('5');
   });
 
   it('should redirect to group members form', async () => {
