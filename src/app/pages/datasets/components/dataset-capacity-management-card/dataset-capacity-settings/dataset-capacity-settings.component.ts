@@ -19,8 +19,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -35,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -111,7 +111,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private validators: IxValidatorsService,
-    private slideInRef: SlideInRef<DatasetCapacitySettingsComponent>,
+    private slideInRef: OldSlideInRef<DatasetCapacitySettingsComponent>,
     @Inject(SLIDE_IN_DATA) public dataset: DatasetDetails,
   ) {
     this.setFormRelations();

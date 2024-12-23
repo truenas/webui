@@ -21,8 +21,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -65,12 +65,12 @@ export class GlobalTwoFactorAuthCardComponent {
   constructor(
     private api: ApiService,
     private firstTimeWarning: FirstTimeWarningService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(
+      switchMap(() => this.slideIn.open(
         GlobalTwoFactorAuthFormComponent,
         false,
         twoFactorAuthConfig,

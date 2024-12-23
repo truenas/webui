@@ -21,4 +21,5 @@ export interface SchemaProperties {
   type: SchemaType | SchemaType[];
   _name_: string;
   _required_: boolean;
+  const?: string;
 }

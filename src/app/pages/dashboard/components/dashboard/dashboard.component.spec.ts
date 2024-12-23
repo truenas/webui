@@ -26,7 +26,7 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };
@@ -62,7 +62,7 @@ describe('DashboardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ error: false, response: groupA })),
       }),
       mockProvider(SnackbarService),
@@ -121,15 +121,15 @@ describe('DashboardComponent', () => {
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
 
-      expect(spectator.inject(ChainedSlideInService).open)
+      expect(spectator.inject(SlideIn).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
     });
 
     it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
       const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
 
-      jest.spyOn(spectator.inject(ChainedSlideInService), 'open')
-        .mockReturnValue(of({ response: updatedGroup } as ChainedComponentResponse));
+      jest.spyOn(spectator.inject(SlideIn), 'open')
+        .mockReturnValue(of({ response: updatedGroup } as SlideInResponse));
 
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
@@ -157,7 +157,7 @@ describe('DashboardComponent', () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(ChainedSlideInService).open)
+      expect(spectator.inject(SlideIn).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 

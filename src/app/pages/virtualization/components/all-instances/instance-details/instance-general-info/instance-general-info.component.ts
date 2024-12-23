@@ -24,8 +24,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -68,7 +68,7 @@ export class InstanceGeneralInfoComponent {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private router: Router,
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private instancesStore: VirtualizationInstancesStore,
     private deviceStore: VirtualizationDevicesStore,
   ) {}

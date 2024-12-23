@@ -19,7 +19,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 
@@ -74,7 +74,7 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -104,6 +104,6 @@ describe('VmListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(VmWizardComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(VmWizardComponent);
   });
 });

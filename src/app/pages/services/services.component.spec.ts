@@ -34,7 +34,7 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -75,7 +75,7 @@ describe('ServicesComponent', () => {
         mockCall('service.stop'),
       ]),
       mockProvider(DialogService),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(IscsiService),
       mockProvider(NavigateAndInteractService),
       provideMockStore({
@@ -115,7 +115,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
     });
 
     it('should open FTP configuration when edit button is pressed', async () => {
@@ -123,7 +123,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
     });
 
     it('should open NFS configuration when edit button is pressed', async () => {
@@ -131,7 +131,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
     });
 
     it('should open SNMP configuration when edit button is pressed', async () => {
@@ -139,7 +139,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
     });
 
     it('should open UPS configuration when edit button is pressed', async () => {
@@ -147,7 +147,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
     });
 
     it('should open SSH configuration when edit button is pressed', async () => {
@@ -155,7 +155,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
     });
 
     it('should open SMB configuration when edit button is pressed', async () => {
@@ -163,7 +163,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
     });
 
     it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
@@ -171,7 +171,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
+      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
     });
   });
 

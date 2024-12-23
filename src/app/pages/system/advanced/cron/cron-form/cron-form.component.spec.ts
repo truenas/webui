@@ -11,10 +11,10 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SlideIn } from 'app/services/slide-in';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -40,7 +40,7 @@ describe('CronFormComponent', () => {
   } as Cronjob;
 
   const getData = jest.fn(() => existingCronJob);
-  const componentRef: ChainedRef<Cronjob> = {
+  const componentRef: SlideInRef<Cronjob> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),
@@ -68,7 +68,7 @@ describe('CronFormComponent', () => {
           },
         ],
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
@@ -78,7 +78,7 @@ describe('CronFormComponent', () => {
           { username: 'steven' },
         ] as User[]),
       }),
-      mockProvider(ChainedRef, componentRef),
+      mockProvider(SlideInRef, componentRef),
       mockAuth(),
     ],
   });
@@ -127,7 +127,7 @@ describe('CronFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, { ...componentRef, getData }),
+          mockProvider(SlideInRef, { ...componentRef, getData }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

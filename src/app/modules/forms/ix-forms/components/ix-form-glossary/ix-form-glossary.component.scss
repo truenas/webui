@@ -1,0 +1,45 @@
+@import 'scss-imports/variables';
+
+:host {
+  position: relative;
+}
+
+.search-container {
+  margin-left: 16px;
+  min-width: 250px;
+  position: sticky;
+  top: 0;
+  width: 20%;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
+
+  .search-card {
+    background-color: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 14px 14px;
+    position: sticky;
+    top: 10px;
+
+    .section {
+      color: var(--fg1);
+      display: flex;
+      font-family: var(--font-family-body);
+      font-size: 15px;
+      gap: 5px;
+      padding: 10px;
+
+      ix-icon {
+        color: var(--red);
+      }
+    }
+
+    .section:hover {
+      background-color: var(--contrast-lighter);
+      cursor: pointer;
+    }
+  }
+}

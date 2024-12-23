@@ -18,8 +18,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -50,7 +50,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -94,7 +94,7 @@ export class CertificateAddComponent {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: SlideInRef<CertificateAddComponent>,
+    private slideInRef: OldSlideInRef<CertificateAddComponent>,
     private snackbar: SnackbarService,
   ) {}
 

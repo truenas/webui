@@ -20,7 +20,7 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
@@ -50,7 +50,7 @@ describe('SnapshotListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       provideMockStore({
         selectors: [
           {
@@ -127,6 +127,6 @@ describe('SnapshotListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
   });
 });

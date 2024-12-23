@@ -1,0 +1,14 @@
+<ix-fieldset
+  [id]="label()"
+  [title]="label() | translate"
+>
+  <mat-divider class="divider" inset></mat-divider>
+  <div class="section">
+    <div class="fieldset">
+      <ng-content></ng-content>
+    </div>
+    <div class="help" [hidden]="!help()">
+      <div class="value">{{ help() }}</div>
+    </div>
+  </div>
+</ix-fieldset>

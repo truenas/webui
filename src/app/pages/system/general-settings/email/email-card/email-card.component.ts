@@ -16,7 +16,7 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -45,7 +45,7 @@ export class EmailCardComponent {
   emailConfig$: Observable<LoadingState<MailConfig>> = this.api.call('mail.config').pipe(toLoadingState());
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {}

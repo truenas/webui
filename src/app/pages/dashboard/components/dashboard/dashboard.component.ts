@@ -32,8 +32,8 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -98,7 +98,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashboardStore: DashboardStore,
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -127,7 +127,7 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
+      .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
+      .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }

@@ -11,7 +11,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeDataSource: NtpServer[] = [
@@ -48,7 +48,7 @@ describe('NtpServerCardComponent', () => {
   let spectator: Spectator<NtpServerCardComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  let slideInRef: SlideInService;
+  let slideInRef: OldSlideInService;
   let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
@@ -62,7 +62,7 @@ describe('NtpServerCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
@@ -73,7 +73,7 @@ describe('NtpServerCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
-    slideInRef = spectator.inject(SlideInService);
+    slideInRef = spectator.inject(OldSlideInService);
     table = await loader.getHarness(IxTableHarness);
   });
 

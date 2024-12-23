@@ -10,9 +10,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AuditFormComponent', () => {
@@ -35,13 +35,13 @@ describe('AuditFormComponent', () => {
         } as AuditConfig),
         mockCall('audit.update'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
       mockProvider(DialogService),
       provideMockStore(),
-      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn() }),
+      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn() }),
       mockAuth(),
     ],
   });

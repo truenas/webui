@@ -19,28 +19,28 @@ import {
   filter, Observable, of, Subscription, switchMap, timer,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
-  ChainedComponentResponse,
-  ChainedComponentSerialized,
-  ChainedSlideInService,
-} from 'app/services/chained-slide-in.service';
+  SlideInResponse,
+  ComponentSerialized,
+  SlideIn,
+} from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-slide-in2',
-  templateUrl: './slide-in2.component.html',
-  styleUrls: ['./slide-in2.component.scss'],
+  selector: 'ix-slide-in',
+  templateUrl: './slide-in.component.html',
+  styleUrls: ['./slide-in.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [CdkTrapFocus],
 })
-export class SlideIn2Component implements OnInit, OnDestroy {
-  readonly componentInfo = input<ChainedComponentSerialized>();
+export class SlideInComponent implements OnInit, OnDestroy {
+  readonly componentInfo = input<ComponentSerialized>();
   readonly index = input<number>();
   readonly lastIndex = input<number>();
 
-  private readonly slideInBody = viewChild('chainedBody', { read: ViewContainerRef });
+  private readonly slideInBody = viewChild('slideInBody', { read: ViewContainerRef });
   private needConfirmation: () => Observable<boolean>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
@@ -62,7 +62,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private translate: TranslateService,
     private renderer: Renderer2,
-    private chainedSlideInService: ChainedSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
@@ -81,7 +81,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
         wide: this.componentInfo().wide, data: this.componentInfo().data,
       });
     }
-    this.chainedSlideInService.isTopComponentWide$.pipe(
+    this.slideIn.isTopComponentWide$.pipe(
       untilDestroyed(this),
     ).subscribe((wide) => {
       this.wide = wide;
@@ -89,7 +89,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.chainedSlideInService.popComponent(this.componentInfo().id);
+    this.slideIn.popComponent(this.componentInfo().id);
     this.element.remove();
   }
 
@@ -123,7 +123,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
       timer(50).pipe(
         untilDestroyed(this),
       ).subscribe({
-        next: () => this.chainedSlideInService.popComponent(this.componentInfo().id),
+        next: () => this.slideIn.popComponent(this.componentInfo().id),
       });
     });
   }
@@ -160,9 +160,9 @@ export class SlideIn2Component implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         {
-          provide: ChainedRef<D>,
+          provide: SlideInRef<D>,
           useValue: {
-            close: (response: ChainedComponentResponse): void => {
+            close: (response: SlideInResponse): void => {
               (!response.response ? this.canCloseSlideIn() : of(true)).pipe(
                 filter(Boolean),
                 untilDestroyed(this),
@@ -180,7 +180,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
                 untilDestroyed(this),
               ).subscribe({
                 next: () => {
-                  this.chainedSlideInService.swapComponent({
+                  this.slideIn.swapComponent({
                     swapComponentId: this.componentInfo().id,
                     component,
                     wide,
@@ -196,7 +196,7 @@ export class SlideIn2Component implements OnInit, OnDestroy {
             requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
               this.needConfirmation = needConfirmation;
             },
-          } as ChainedRef<D>,
+          } as SlideInRef<D>,
         },
       ],
     });

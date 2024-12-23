@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, effect, input, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,10 +35,15 @@ export class UnusedResourcesComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
-  ) { }
+  ) {
+    effect(() => {
+      if (this.pools()) {
+        this.updateUnusedDisks();
+      }
+    });
+  }
 
   ngOnInit(): void {
-    this.updateUnusedDisks();
     this.subscribeToDiskQuery();
   }
 

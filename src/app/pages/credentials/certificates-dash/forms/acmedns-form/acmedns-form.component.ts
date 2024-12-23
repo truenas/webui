@@ -27,8 +27,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -45,7 +45,7 @@ interface DnsAuthenticatorList {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -100,7 +100,7 @@ export class AcmednsFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInRef: SlideInRef<AcmednsFormComponent>,
+    private slideInRef: OldSlideInRef<AcmednsFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
@@ -141,14 +141,18 @@ export class AcmednsFormComponent implements OnInit {
   private createAuthenticatorControls(schemas: AuthenticatorSchema[]): void {
     schemas.forEach((schema) => {
       Object.values(schema.schema.properties).forEach((input) => {
-        this.form.controls.attributes.addControl(input._name_, new FormControl('', input._required_ ? [Validators.required] : []));
+        this.form.controls.attributes.addControl(
+          input._name_,
+          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
+        );
       });
     });
 
     this.dynamicSection = [{
       name: '',
       description: '',
-      schema: schemas.map((schema) => this.parseSchemaForDynamicSchema(schema))
+      schema: schemas
+        .map((schema) => this.parseSchemaForDynamicSchema(schema))
         .reduce((all, val) => all.concat(val), []),
     }];
 
@@ -157,7 +161,9 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
-    return Object.values(schema.schema.properties).map((input) => getDynamicFormSchemaNode(input));
+    return Object.values(schema.schema.properties)
+      .filter((input) => !input.const)
+      .map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {

@@ -14,7 +14,7 @@ import {
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class AllInstancesHeaderComponent {
   });
 
   constructor(
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private configStore: VirtualizationConfigStore,
   ) {}
 
