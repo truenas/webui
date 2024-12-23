@@ -47,7 +47,7 @@ import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 interface QuotaData {
@@ -199,7 +199,7 @@ export class DatasetQuotasListComponent implements OnInit {
     protected loader: AppLoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private cdr: ChangeDetectorRef,
     private emptyService: EmptyService,
   ) { }

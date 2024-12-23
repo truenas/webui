@@ -8,7 +8,7 @@ import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.util
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
@@ -38,7 +38,7 @@ describe('GlobalConfigFormComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({
           pool: 'poolio',
@@ -85,7 +85,7 @@ describe('GlobalConfigFormComponent', () => {
       v6_network: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
       response: undefined,
       error: false,
     });

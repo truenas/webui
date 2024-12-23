@@ -1,6 +1,6 @@
 @import 'scss-imports/cssvars';
 
-.ix-chained-slide-in-form {
+.ix-slide-in-form {
   bottom: 0;
   min-width: 480px;
 
@@ -17,14 +17,14 @@
   z-index: 999;
 }
 
-.ix-chained-slide-in-form.open {
+.ix-slide-in-form.open {
   overflow-x: hidden;
   overflow-y: auto;
   right: 0;
   // transition: 200ms;
 }
 
-.ix-chained-slide-in-background {
+.ix-slide-in-background {
 
   /* semi-transparent black  */
   bottom: 0;
@@ -40,16 +40,16 @@
   z-index: -10;
 }
 
-.ix-chained-slide-in-background {
+.ix-slide-in-background {
   background-color: #000;
 }
 
-.ix-chained-slide-in-background.open {
+.ix-slide-in-background.open {
   transition: 200ms;
   z-index: 900;
 }
 
-.ix-chained-slide-in-form.open.wide {
+.ix-slide-in-form.open.wide {
   width: 800px;
 
   @media(max-width: $breakpoint-sm) {
@@ -58,7 +58,7 @@
 }
 
 @media #{$media-lt-sm} {
-  .ix-chained-slide-in2-form {
+  .ix-slide-in2-form {
     min-width: 100%;
     right: -100%;
     width: 100%;

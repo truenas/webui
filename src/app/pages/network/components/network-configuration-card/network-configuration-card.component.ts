@@ -24,7 +24,7 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -60,7 +60,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
   ) {}

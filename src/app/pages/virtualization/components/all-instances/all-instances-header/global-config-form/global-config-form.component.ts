@@ -14,10 +14,10 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import {
-  ModalHeader2Component,
-} from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+  ModalHeaderComponent,
+} from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -31,7 +31,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     FormActionsComponent,
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatButton,
     MatCard,
     MatCardContent,
@@ -70,7 +70,7 @@ export class GlobalConfigFormComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: ChainedRef<VirtualizationGlobalConfig>,
+    private slideInRef: SlideInRef<VirtualizationGlobalConfig>,
   ) {
     const currentConfig = this.slideInRef.getData();
 

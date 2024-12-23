@@ -38,7 +38,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
@@ -46,7 +46,7 @@ import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-f
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
@@ -196,7 +196,7 @@ export class BootEnvironmentListComponent implements OnInit {
     private api: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -222,7 +222,7 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  handleSlideInClosed(slideInRef: SlideInRef<unknown>): void {
+  handleSlideInClosed(slideInRef: OldSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),

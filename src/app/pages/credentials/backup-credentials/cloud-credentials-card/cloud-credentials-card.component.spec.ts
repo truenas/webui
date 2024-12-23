@@ -15,11 +15,11 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudCredentialsCardComponent', () => {
@@ -72,10 +72,10 @@ describe('CloudCredentialsCardComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -104,7 +104,7 @@ describe('CloudCredentialsCardComponent', () => {
     await addButton.click();
 
     expect(
-      spectator.inject(ChainedSlideInService).open,
+      spectator.inject(SlideIn).open,
     ).toHaveBeenCalledWith(CloudCredentialsFormComponent);
   });
 
@@ -112,7 +112,7 @@ describe('CloudCredentialsCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
     expect(
-      spectator.inject(ChainedSlideInService).open,
+      spectator.inject(SlideIn).open,
     ).toHaveBeenCalledWith(CloudCredentialsFormComponent, false, { existingCredential: credentials[0] });
   });
 

@@ -18,7 +18,7 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('InstanceProxiesComponent', () => {
   let spectator: Spectator<InstanceProxiesComponent>;
@@ -52,7 +52,7 @@ describe('InstanceProxiesComponent', () => {
       MockComponent(DeviceActionsMenuComponent),
     ],
     providers: [
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
           error: false,
@@ -84,7 +84,7 @@ describe('InstanceProxiesComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(InstanceProxyFormComponent, false, { instanceId: 'my-instance', proxy: undefined });
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
   });
@@ -93,7 +93,7 @@ describe('InstanceProxiesComponent', () => {
     const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
     actionsMenu.edit.emit();
 
-    expect(spectator.inject(ChainedSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(InstanceProxyFormComponent, false, { proxy: devices[1], instanceId: 'my-instance' });
   });
 

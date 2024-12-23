@@ -6,29 +6,29 @@ import { MockComponent } from 'ng-mocks';
 import { Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { ChainedComponentResponse, ChainedComponentSerialized, ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideInResponse, ComponentSerialized, SlideIn } from 'app/services/slide-in';
 
 describe('ModalHeader2Component', () => {
-  let spectator: Spectator<ModalHeader2Component>;
-  const components$ = new Subject<ChainedComponentSerialized[]>();
-  const closeSubject$ = new Subject<ChainedComponentResponse>();
-  const backSubject$ = new Subject<ChainedComponentResponse>();
+  let spectator: Spectator<ModalHeaderComponent>;
+  const components$ = new Subject<ComponentSerialized[]>();
+  const closeSubject$ = new Subject<SlideInResponse>();
+  const backSubject$ = new Subject<SlideInResponse>();
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: ModalHeader2Component,
+    component: ModalHeaderComponent,
     declarations: [
       MockComponent(CloudSyncWizardComponent),
     ],
     providers: [
       mockAuth(),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         components$,
       }),
-      mockProvider(ChainedRef, {
+      mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => undefined),
         swap: jest.fn(),
@@ -54,7 +54,7 @@ describe('ModalHeader2Component', () => {
   it('shows a working close button when only 1 component is in the queue', async () => {
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({ response: false, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
     const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('cancel');
   });
@@ -72,11 +72,11 @@ describe('ModalHeader2Component', () => {
       close$: backSubject$,
       data: undefined,
       wide: false,
-    }] as ChainedComponentSerialized[]);
+    }] as ComponentSerialized[]);
     spectator.detectChanges();
     const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '#ix-close-icon' }));
     await closeButton.click();
-    expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({ response: false, error: null });
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: false, error: null });
     const icon = spectator.query(IxIconComponent)!;
     expect(icon.name()).toBe('mdi-chevron-left');
   });

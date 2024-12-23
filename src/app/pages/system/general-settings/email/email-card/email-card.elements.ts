@@ -15,7 +15,7 @@ export const emailCardElements = {
     },
     sendMethod: {
       hierarchy: [T('Send Method')],
-      synonyms: [T('SMTP'), T('Gmail')],
+      synonyms: [T('SMTP'), T('Gmail'), T('Outlook')],
     },
   },
 } satisfies UiSearchableElement;

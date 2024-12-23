@@ -35,8 +35,8 @@ import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-d
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -134,7 +134,7 @@ export class CronListComponent implements OnInit {
     private taskService: TaskService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
   ) {}
@@ -163,7 +163,7 @@ export class CronListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.open(CronFormComponent)
+    this.slideIn.open(CronFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
@@ -171,7 +171,7 @@ export class CronListComponent implements OnInit {
   }
 
   doEdit(row: CronjobRow): void {
-    this.chainedSlideIns.open(CronFormComponent, false, row)
+    this.slideIn.open(CronFormComponent, false, row)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();

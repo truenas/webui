@@ -30,9 +30,9 @@ import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -93,7 +93,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     private api: ApiService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private firstTimeWarning: FirstTimeWarningService,
@@ -111,7 +111,7 @@ export class AllowedAddressesCardComponent implements OnInit {
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(AllowedAddressesFormComponent)),
+      switchMap(() => this.slideIn.open(AllowedAddressesFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
         this.getAllowedAddresses();
