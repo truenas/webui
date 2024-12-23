@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
+import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { nullOption, skipOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -17,7 +18,11 @@ export class FibreChannelService {
    * @param port Fiber channel port. May not be specified when hostId is present.
    * @param hostId Host ID. Must be specified to create a new virtual port when port is not specified.
    */
-  linkFiberChannelToTarget(targetId: number, port: string, hostId?: number): Observable<unknown> {
+  linkFiberChannelToTarget(
+    targetId: number,
+    port: string,
+    hostId?: number,
+  ): Observable<FibreChannelPort | null | true> {
     const fcPort$ = hostId ? this.createNewPort(hostId) : of(port);
 
     return forkJoin([

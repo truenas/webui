@@ -35,8 +35,8 @@ export class TargetWizardStepComponent {
   readonly targetOptions$ = this.iscsiService.getTargets().pipe(
     idNameArrayToOptions(),
     switchMap((options) => of([
-      ...options,
       { label: this.translate.instant('Create New'), value: newOption },
+      ...options,
     ])),
   );
 

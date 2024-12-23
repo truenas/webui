@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  lastValueFrom, forkJoin, switchMap, of, map,
+  lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,6 +28,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import {
   IscsiExtent,
   IscsiExtentUpdate,
@@ -313,18 +314,11 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   createTarget(payload: IscsiTargetUpdate): Promise<IscsiTarget> {
-    return lastValueFrom(this.api.call('iscsi.target.create', [payload]).pipe(
-      switchMap((target) => {
-        if (!this.isFibreChannelMode) {
-          return of(target);
-        }
-        return this.fcService.linkFiberChannelToTarget(
-          target.id,
-          this.form.value.options.fcport.port,
-          this.form.value.options.fcport.host_id,
-        ).pipe(map(() => target));
-      }),
-    ));
+    return lastValueFrom(this.api.call('iscsi.target.create', [payload]));
+  }
+
+  createTargetFiberChannel(targetId: number, port: string, hostId: number): Promise<FibreChannelPort | null | true> {
+    return lastValueFrom(this.fcService.linkFiberChannelToTarget(targetId, port, hostId));
   }
 
   createTargetExtent(payload: IscsiTargetExtentUpdate): Promise<IscsiTargetExtent> {
@@ -332,6 +326,9 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   rollBack(): void {
+    this.isLoading = false;
+    this.cdr.markForCheck();
+
     const requests = [];
 
     if (this.createdZvol) {
@@ -359,13 +356,11 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     if (requests.length) {
-      forkJoin(requests).pipe(untilDestroyed(this)).subscribe(() => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
+      this.loader.open(this.translate.instant('Rollback'));
+      forkJoin(requests).pipe(untilDestroyed(this)).subscribe({
+        next: () => this.loader.close(),
+        error: () => this.loader.close(),
       });
-    } else {
-      this.isLoading = false;
-      this.cdr.markForCheck();
     }
   }
 
@@ -453,9 +448,21 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
+    if (this.isNewTarget && this.isFibreChannelMode) {
+      await this.createTargetFiberChannel(
+        this.createdTarget.id,
+        this.form.value.options.fcport.port,
+        this.form.value.options.fcport.host_id,
+      ).then(() => {}, (err: unknown) => this.handleError(err));
+    }
+
+    if (this.toStop) {
+      this.rollBack();
+      return;
+    }
+
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    this.loader.close();
     this.isLoading = false;
     this.cdr.markForCheck();
     this.slideInRef.close(true);

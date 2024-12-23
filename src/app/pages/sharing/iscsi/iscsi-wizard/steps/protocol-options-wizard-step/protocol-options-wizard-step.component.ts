@@ -51,8 +51,8 @@ export class ProtocolOptionsWizardStepComponent implements OnInit {
       });
     }),
     switchMap((options) => of([
-      ...options,
       { label: this.translate.instant('Create New'), value: newOption },
+      ...options,
     ])),
     untilDestroyed(this),
   );

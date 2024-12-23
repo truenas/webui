@@ -49,8 +49,8 @@ export class ExtentWizardStepComponent implements OnInit {
     .pipe(
       choicesToOptions(),
       switchMap((options) => of([
-        ...options,
         { label: this.translate.instant('Create New'), value: newOption },
+        ...options,
       ])),
     );
 
