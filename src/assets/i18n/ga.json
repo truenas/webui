@@ -102,7 +102,7 @@
   "Delete Item": "",
   "Delete Snapshot": "",
   "Delete Target \"{name}\"": "",
-  "Delete all {amount} associated extents": "",
+  "Delete {n} associated {n, plural, one {extent} other {extents}}": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots} }": "",
   "Determines whether restic backup will contain absolute or relative paths": "",
   "Device deleted": "",
