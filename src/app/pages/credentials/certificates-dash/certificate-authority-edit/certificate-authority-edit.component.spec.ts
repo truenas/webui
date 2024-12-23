@@ -70,7 +70,7 @@ describe('CertificateAuthorityEditComponent', () => {
   });
 
   it('shows details of a certificate authority', () => {
-    const certificateDetails = spectator.query(CertificateDetailsComponent);
+    const certificateDetails = spectator.query(CertificateDetailsComponent)!;
     expect(certificateDetails).toBeTruthy();
     expect(certificateDetails.certificate).toEqual(certificateAuthority);
   });

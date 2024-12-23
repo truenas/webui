@@ -92,7 +92,7 @@ describe('CertificateEditComponent', () => {
     });
 
     it('shows details of a certificate', () => {
-      const certificateDetails = spectator.query(CertificateDetailsComponent);
+      const certificateDetails = spectator.query(CertificateDetailsComponent)!;
       expect(certificateDetails).toBeTruthy();
       expect(certificateDetails.certificate).toEqual(certificate);
       expect(certificateDetails.showSignedBy).toBe(true);

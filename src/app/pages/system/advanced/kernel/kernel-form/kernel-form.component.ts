@@ -47,7 +47,7 @@ export class KernelFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     debugkernel: [false],
   });
 

@@ -22,6 +22,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   ],
 })
 export class MissingAccessWrapperComponent {
-  readonly template = input<TemplateRef<HTMLElement>>();
+  readonly template = input.required<TemplateRef<HTMLElement>>();
   readonly class = input<string>();
 }

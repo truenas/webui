@@ -33,8 +33,8 @@ interface SigninState {
     status: FailoverStatus;
     ips?: string[];
     disabledReasons?: FailoverDisabledReason[];
-  };
-  loginBanner: string;
+  } | null;
+  loginBanner: string | null;
 }
 
 const initialState: SigninState = {
@@ -65,8 +65,8 @@ export class SigninStore extends ComponentStore<SigninState> {
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
 
-  private failoverStatusSubscription: Subscription;
-  private disabledReasonsSubscription: Subscription;
+  private failoverStatusSubscription: Subscription | null = null;
+  private disabledReasonsSubscription: Subscription | null = null;
 
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {

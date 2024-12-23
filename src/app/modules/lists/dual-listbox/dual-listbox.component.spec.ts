@@ -35,7 +35,7 @@ describe('DualListBoxComponent', () => {
 
   it('should call selectItem when an item is clicked', () => {
     const selectItemSpy = jest.spyOn(spectator.component, 'selectItem');
-    const listItemElement = spectator.query('mat-list-item', { root: true });
+    const listItemElement = spectator.query('mat-list-item', { root: true })!;
 
     spectator.click(listItemElement);
 

@@ -31,7 +31,7 @@ export class IxListComponent implements AfterViewInit {
   readonly label = input<string>();
   readonly tooltip = input<string>();
   readonly empty = input<boolean>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly canAdd = input(true);
   // TODO: See if this belongs to the consuming component.
   readonly default = input<unknown[]>();

@@ -28,7 +28,7 @@ describe('WidgetCpuTemperatureBarComponent', () => {
   });
 
   it('shows cpu core bar without usage', () => {
-    const bar = spectator.query(CpuCoreBarComponent);
+    const bar = spectator.query(CpuCoreBarComponent)!;
     expect(bar).not.toBeNull();
     expect(bar.hideUsage).toBe(true);
   });

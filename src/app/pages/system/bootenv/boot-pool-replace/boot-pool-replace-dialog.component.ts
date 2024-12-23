@@ -51,7 +51,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   protected isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     dev: ['', Validators.required],
   });
 
@@ -94,7 +94,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
 
   onSubmit(): void {
     const oldDisk = this.pk;
-    const { dev: newDisk } = this.form.value;
+    const { dev: newDisk } = this.form.getRawValue();
 
     this.isFormLoading = true;
     this.dialogService.jobDialog(

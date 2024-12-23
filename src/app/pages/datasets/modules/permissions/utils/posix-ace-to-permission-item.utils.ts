@@ -11,7 +11,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/utils/permissions-to-description.utils';
 
 export function posixAceToPermissionItem(translate: TranslateService, ace: PosixAclItem): PermissionItem {
-  let name = translate.instant(posixAclTagLabels.get(ace.tag));
+  let name = translate.instant(posixAclTagLabels.get(ace.tag) || ace.tag);
   if (ace.default) {
     name = `${name} – ${translate.instant('default')}`;
   }

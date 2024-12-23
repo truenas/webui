@@ -115,12 +115,12 @@ describe('EventDataDetailsCardComponent', () => {
   });
 
   it('renders Event Data in Yaml format', () => {
-    const cardContent = spectator.query('mat-card pre');
+    const cardContent = spectator.query('mat-card pre')!;
     expect(cardContent.textContent).toBe(yamlContent);
   });
 
   it('shows a Copy button', () => {
-    const copyButton = spectator.query(CopyButtonComponent);
+    const copyButton = spectator.query(CopyButtonComponent)!;
     expect(copyButton).toExist();
     expect(copyButton.text).toBe(yamlContent);
   });
