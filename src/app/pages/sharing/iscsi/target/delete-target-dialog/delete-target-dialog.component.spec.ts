@@ -51,7 +51,7 @@ describe('DeleteTargetDialogComponent', () => {
   it('deletes the target when delete button is clicked', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Delete all 2 associated extents': true,
+      'Delete 2 associated extents': true,
       'Force Delete': false,
     });
 
@@ -70,7 +70,7 @@ describe('DeleteTargetDialogComponent', () => {
   });
 
   it('shows extents checkbox when there are associated extents', async () => {
-    const extentsCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Delete all 2 associated extents' }));
+    const extentsCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Delete 2 associated extents' }));
     expect(extentsCheckbox).toBeTruthy();
   });
 });
