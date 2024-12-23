@@ -139,7 +139,7 @@ describe('AlertServiceComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.create', [{
@@ -169,7 +169,7 @@ describe('AlertServiceComponent', () => {
       const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
       await sendTestAlertButton.click();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.test', [{
         attributes: {
@@ -209,7 +209,7 @@ describe('AlertServiceComponent', () => {
       });
       tick();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
     }));
 
@@ -223,7 +223,7 @@ describe('AlertServiceComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      const opsGenie = spectator.query(OpsGenieServiceComponent);
+      const opsGenie = spectator.query(OpsGenieServiceComponent)!;
       expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.update', [

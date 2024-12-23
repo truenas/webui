@@ -101,7 +101,7 @@ describe('InstanceGeneralInfoComponent', () => {
   });
 
   it('renders details in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(5);
     expect(chartExtra[0]).toHaveText('Status: Running');
     expect(chartExtra[1]).toHaveText('Autostart: Yes');

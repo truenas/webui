@@ -65,7 +65,7 @@ export class CronFormComponent implements OnInit {
       : this.translate.instant('Edit Cron Job');
   }
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     description: [''],
     command: ['', Validators.required],
     user: ['', Validators.required],

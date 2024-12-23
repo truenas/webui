@@ -19,6 +19,6 @@ describe('IxHeaderCellTextComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.element.textContent.trim()).toBe('Test Column');
+    expect(spectator.element.textContent!.trim()).toBe('Test Column');
   });
 });

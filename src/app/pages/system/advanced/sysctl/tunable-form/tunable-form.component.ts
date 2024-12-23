@@ -59,7 +59,7 @@ export class TunableFormComponent implements OnInit {
 
   isFormLoading = false;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     var: ['', Validators.required], // TODO Add pattern and explanation for it
     value: ['', Validators.required],
     comment: [''],

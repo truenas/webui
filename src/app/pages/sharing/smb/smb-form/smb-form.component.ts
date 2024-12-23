@@ -90,7 +90,7 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
-  existingSmbShare: SmbShare;
+  private existingSmbShare: SmbShare | null;
   defaultSmbShare: SmbShare;
 
   isLoading = false;

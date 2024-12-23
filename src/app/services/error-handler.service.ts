@@ -177,7 +177,7 @@ export class ErrorHandlerService implements ErrorHandler {
       parsedError = this.parseApiError(extractedError);
     } else if (isFailedJob(extractedError)) {
       parsedError = this.parseJobError(extractedError);
-    } else if (typeof extractedError === 'string') {
+    } else {
       parsedError = {
         title: (this.translate?.instant('Error') || 'Error'),
         message: extractedError,

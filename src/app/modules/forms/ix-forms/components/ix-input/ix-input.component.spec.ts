@@ -64,7 +64,7 @@ describe('IxInputComponent', () => {
         spectator.setHostInput('required', true);
         spectator.setHostInput('tooltip', 'Minimum length is 8 characters.');
 
-        const label = spectator.query(IxLabelComponent);
+        const label = spectator.query(IxLabelComponent)!;
         expect(label).toExist();
         expect(label.label()).toBe('New Password');
         expect(label.required()).toBe(true);
@@ -199,12 +199,12 @@ describe('IxInputComponent', () => {
         spectator.setHostInput('type', 'password');
 
         expect(spectator.query('input')).toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent).name()).toBe('visibility_off');
+        expect(spectator.query(IxIconComponent)!.name()).toBe('visibility_off');
 
         spectator.click('.toggle_pw');
 
         expect(spectator.query('input')).not.toHaveClass('password-field');
-        expect(spectator.query(IxIconComponent).name()).toBe('visibility');
+        expect(spectator.query(IxIconComponent)!.name()).toBe('visibility');
       });
     });
 

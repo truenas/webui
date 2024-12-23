@@ -106,7 +106,7 @@ export class IxFormatterService {
     hstr: string,
     dec = false,
     allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
-  ): { number: string; unit: string } {
+  ): { number: string | null; unit: string | null } {
     let num;
     let unit = '';
 
@@ -119,7 +119,7 @@ export class IxFormatterService {
     hstr = hstr.replace(/\s+/g, '');
 
     // get leading number
-    let match = [];
+    let match: RegExpMatchArray | null;
     if (dec) {
       match = hstr.match(/^(\d+(\.\d+)?)/);
     } else {

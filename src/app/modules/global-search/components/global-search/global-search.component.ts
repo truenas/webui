@@ -56,7 +56,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild('searchInput', { read: ElementRef });
   searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild('searchBoxWrapper', { read: ElementRef });
 
-  searchControl = new FormControl<string>('');
+  searchControl = new FormControl<string>('', { nonNullable: true });
   searchResults: UiSearchableElement[];
   isLoading = false;
   systemVersion: string;

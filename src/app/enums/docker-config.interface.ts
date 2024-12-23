@@ -15,7 +15,7 @@ export interface DockerAddressPool {
 }
 
 export interface DockerConfigUpdate {
-  pool?: string;
+  pool?: string | null;
   nvidia?: boolean;
   address_pools?: DockerAddressPool[];
   enable_image_updates?: boolean;

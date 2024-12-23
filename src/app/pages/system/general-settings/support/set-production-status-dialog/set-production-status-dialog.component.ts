@@ -40,7 +40,7 @@ export interface SetProductionStatusDialogResult {
 export class SetProductionStatusDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
 
-  sendInitialDebugCheckbox = new FormControl(false);
+  sendInitialDebugCheckbox = new FormControl(false, { nonNullable: true });
 
   constructor(
     private dialogRef: MatDialogRef<SetProductionStatusDialogComponent, SetProductionStatusDialogResult>,

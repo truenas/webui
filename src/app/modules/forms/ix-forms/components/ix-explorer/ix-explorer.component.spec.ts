@@ -105,7 +105,7 @@ describe.skip('IxExplorerComponent', () => {
 
   describe('rendering – tree', () => {
     it('renders a TreeComponent with a root nodes based on `root` attribute', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       expect(tree.nodes).toEqual([
         {
           hasChildren: true,
@@ -118,7 +118,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('passes correct options to TreeComponent', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       expect(tree.options).toMatchObject({
         displayField: 'name',
         idField: 'path',
@@ -127,7 +127,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('calls nodeProvider when getChildren from TreeComponent options is called', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       tree.options.getChildren({ path: mntPath });
 
       expect(fakeNodeProvider).toHaveBeenCalledWith({ path: mntPath });
@@ -180,7 +180,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('updates form control when user selects a node', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
 
       expect(mockTreeMock.setState).toHaveBeenCalledWith({ selectedLeafNodeIds: { '/mnt/new': true } });
@@ -188,7 +188,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('updates form control when user deselects a node', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
       (tree.deselect as EventEmitter<unknown>).emit({ node: { id: '/mnt/new' } });
 
@@ -233,7 +233,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('updates form control when user selects multiple nodes', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new2' } });
 
@@ -247,7 +247,7 @@ describe.skip('IxExplorerComponent', () => {
     });
 
     it('updates form control when user deselects multiple nodes', () => {
-      const tree = spectator.query(TreeComponent);
+      const tree = spectator.query(TreeComponent)!;
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });
       (tree.select as EventEmitter<unknown>).emit({ node: { id: '/mnt/new2' } });
       (tree.deselect as EventEmitter<unknown>).emit({ node: { id: '/mnt/new1' } });

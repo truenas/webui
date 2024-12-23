@@ -38,7 +38,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly tooltip = input<string>();
   readonly hint = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
 
   onChange: (value: string) => void = (): void => {};
   onTouched: () => void = (): void => {};

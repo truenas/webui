@@ -52,8 +52,8 @@ export class GlobalConfigFormComponent {
   protected readonly form = this.formBuilder.nonNullable.group({
     pool: [''],
     bridge: [this.autoBridge],
-    v4_network: [null as string],
-    v6_network: [null as string],
+    v4_network: [null as string | null],
+    v6_network: [null as string | null],
   });
 
   protected poolOptions$ = this.api.call('virt.global.pool_choices').pipe(choicesToOptions());

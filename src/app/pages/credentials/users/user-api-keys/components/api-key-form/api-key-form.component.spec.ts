@@ -49,7 +49,7 @@ describe('ApiKeyFormComponent', () => {
     ],
   });
 
-  async function setupTest(apiKey?: Partial<ApiKey>): Promise<void> {
+  async function setupTest(apiKey?: Partial<ApiKey> | null): Promise<void> {
     spectator = createComponent({
       providers: [
         {

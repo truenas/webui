@@ -62,7 +62,7 @@ export class StorageSettingsFormComponent implements OnInit {
 
   isFormLoading = false;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     pool: ['', Validators.required],
   });
 

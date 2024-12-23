@@ -124,7 +124,7 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('shows details', () => {
-    spectator.click(spectator.query('ix-app-row'));
+    spectator.click(spectator.query('ix-app-row')!);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
       '/apps/installed', 'test-catalog-train', 'ix-test-app',
     ]);
@@ -141,7 +141,7 @@ describe('InstalledAppsComponent', () => {
   });
 
   it('restarts application', () => {
-    spectator.query(AppRowComponent).restartApp.emit();
+    spectator.query(AppRowComponent)!.restartApp.emit();
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app');
   });
 });

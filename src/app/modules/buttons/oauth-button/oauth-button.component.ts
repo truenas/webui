@@ -30,7 +30,7 @@ export class OauthButtonComponent implements OnDestroy {
   readonly disabled = input(false);
   readonly oauthUrl = input<string>();
   // TODO: Figure out in another way.
-  readonly testId = input<string>();
+  readonly testId = input.required<string>();
 
   readonly loggedIn = output<unknown>();
 

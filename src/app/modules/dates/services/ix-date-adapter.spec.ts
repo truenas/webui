@@ -26,7 +26,7 @@ describe('IxDateAdapter', () => {
 
       const result = spectator.service.format(mockDate, { year: 'numeric', month: 'numeric', day: 'numeric' });
 
-      expect(spectator.inject(FormatDateTimePipe).transform).toHaveBeenCalledWith(mockDate, null, ' ');
+      expect(spectator.inject(FormatDateTimePipe).transform).toHaveBeenCalledWith(mockDate, undefined, ' ');
       expect(result).toBe(formattedDate);
     });
 

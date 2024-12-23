@@ -27,7 +27,11 @@ describe('OauthButtonComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        testId: 'oauth-button',
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

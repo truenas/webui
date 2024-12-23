@@ -16,7 +16,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
   standalone: true,
 })
 export class WarnAboutUnsavedChangesDirective<T> implements OnInit {
-  readonly formGroup = input<FormGroup>();
+  readonly formGroup = input.required<FormGroup>();
 
   private formSubmitted = false;
 

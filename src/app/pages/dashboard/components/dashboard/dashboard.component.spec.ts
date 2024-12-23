@@ -245,7 +245,7 @@ describe('DashboardComponent', () => {
     });
 
     it('updates order when widgets are reordered via drag and drop', () => {
-      const dropGrid = spectator.query(IxDropGridDirective);
+      const dropGrid = spectator.query(IxDropGridDirective)!;
       dropGrid.ixDropGridModelChange.emit([groupB, groupC, groupD, groupA]);
       spectator.detectChanges();
 

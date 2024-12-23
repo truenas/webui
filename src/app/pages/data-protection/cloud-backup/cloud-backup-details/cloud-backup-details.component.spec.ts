@@ -46,25 +46,25 @@ describe('CloudBackupDetailsComponent', () => {
   });
 
   it('renders backup schedule', () => {
-    const component = spectator.query(CloudBackupScheduleComponent);
+    const component = spectator.query(CloudBackupScheduleComponent)!;
     expect(component).toExist();
     expect(component.backup).toBe(testBackup);
   });
 
   it('renders backup stats', () => {
-    const component = spectator.query(CloudBackupStatsComponent);
+    const component = spectator.query(CloudBackupStatsComponent)!;
     expect(component).toExist();
     expect(component.backup).toBe(testBackup);
   });
 
   it('renders backup excluded paths when exclude paths are not empty', () => {
-    const component = spectator.query(CloudBackupExcludedPathsComponent);
+    const component = spectator.query(CloudBackupExcludedPathsComponent)!;
     expect(component).toExist();
     expect(component.backup).toBe(testBackup);
   });
 
   it('renders backup snapshots', () => {
-    const component = spectator.query(CloudBackupSnapshotsComponent);
+    const component = spectator.query(CloudBackupSnapshotsComponent)!;
     expect(component).toExist();
     expect(component.backup).toBe(testBackup);
   });

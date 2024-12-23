@@ -236,7 +236,7 @@ export class VmWizardComponent implements OnInit {
     return forkJoin(requests);
   }
 
-  private getNicRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getNicRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.makeDeviceRequest(vm.id, {
       attributes: {
         dtype: VmDeviceType.Nic,
@@ -250,7 +250,7 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getDiskRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getDiskRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
@@ -277,7 +277,7 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getCdromRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getCdromRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.makeDeviceRequest(vm.id, {
       attributes: {
         dtype: VmDeviceType.Cdrom,
@@ -295,7 +295,7 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
@@ -312,7 +312,7 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice> {
+  private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice | null> {
     return this.api.call('vm.device.create', [{
       vm: vmId,
       ...payload,

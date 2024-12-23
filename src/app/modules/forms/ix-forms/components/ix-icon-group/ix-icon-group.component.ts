@@ -36,7 +36,7 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   readonly options = input.required<IconGroupOption[]>();
   readonly label = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
 
   protected isDisabled = false;
   protected value: IconGroupOption['value'];

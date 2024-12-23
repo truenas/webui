@@ -64,7 +64,7 @@ export type EnclosureElements = {
 export interface EnclosureElement {
   descriptor: string;
   status: string;
-  value?: string;
+  value: string | null;
   value_raw?: number | string;
 }
 
@@ -79,18 +79,18 @@ export interface DashboardEnclosureSlot {
   drive_bay_number?: number;
   descriptor: string;
   status: EnclosureStatus;
-  dev: string;
+  dev: string | null;
   supports_identify_light?: boolean;
   drive_bay_light_status: DriveBayLightStatus | null;
-  size?: number;
-  model?: string;
+  size?: number | null;
+  model?: string | null;
   is_top: boolean;
   is_front: boolean;
   is_rear: boolean;
   is_internal: boolean;
-  serial?: string;
-  type?: DiskType;
-  rotationrate?: number;
+  serial?: string | null;
+  type?: DiskType | null;
+  rotationrate?: number | null;
   pool_info: EnclosureSlotPoolInfo | null;
 }
 

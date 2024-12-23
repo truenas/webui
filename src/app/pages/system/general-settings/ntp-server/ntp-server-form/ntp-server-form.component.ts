@@ -49,7 +49,7 @@ export class NtpServerFormComponent implements OnInit {
 
   isFormLoading = false;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     address: [''],
     burst: [false],
     iburst: [true],

@@ -80,8 +80,8 @@ describe('DatasetDetailsCardComponent', () => {
 
   function getDetails(): Record<string, string> {
     return spectator.queryAll('.details-item').reduce((acc, item: HTMLElement) => {
-      const key = item.querySelector('.label').textContent;
-      const value = item.querySelector('.value').textContent.trim();
+      const key = item.querySelector('.label')!.textContent;
+      const value = item.querySelector('.value')!.textContent.trim();
       acc[key] = value;
       return acc;
     }, {} as Record<string, string>);

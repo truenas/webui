@@ -114,7 +114,7 @@ describe('AppBulkUpgradeComponent', () => {
   });
 
   it('checks for the correct payload and success toast', async () => {
-    const expandHeader = spectator.query('mat-expansion-panel-header');
+    const expandHeader = spectator.query('mat-expansion-panel-header')!;
     expandHeader.dispatchEvent(new Event('click'));
     spectator.detectChanges();
     const jobArguments: CoreBulkQuery = ['app.upgrade', [

@@ -29,7 +29,7 @@ describe('TransferModeExplanationComponent', () => {
   });
 
   it('shows the transfer mode description', () => {
-    const description = spectator.query('.description');
+    const description = spectator.query('.description')!;
 
     expect(description.innerHTML).toEqual(helptextCloudSync.transfer_mode_warning_sync);
   });

@@ -17,7 +17,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 describe('ApiService', () => {
   let spectator: SpectatorService<ApiService>;
   let wsHandler: WebSocketHandlerService;
-  const responses$ = new BehaviorSubject<IncomingMessage>(null);
+  const responses$ = new BehaviorSubject<IncomingMessage | null>(null);
 
   const createService = createServiceFactory({
     service: ApiService,

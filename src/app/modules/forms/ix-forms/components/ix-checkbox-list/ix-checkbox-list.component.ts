@@ -36,7 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxCheckboxListComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly options = input<Observable<Option[]>>();
   readonly inlineFields = input<boolean>();
   readonly inlineFieldFlex = input<string>();
