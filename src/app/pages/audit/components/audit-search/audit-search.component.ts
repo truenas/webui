@@ -3,7 +3,6 @@ import {
   Component, OnInit, ChangeDetectionStrategy, input,
   computed,
   signal,
-  output,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
@@ -53,7 +52,6 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class AuditSearchComponent implements OnInit {
   readonly isMobileView = input.required<boolean>();
   readonly dataProvider = input.required<AuditApiDataProvider>();
-  readonly toggleShowMobileDetails = output<boolean>();
 
   protected searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
   protected searchProperties = signal<SearchProperty<AuditEntry>[]>([]);

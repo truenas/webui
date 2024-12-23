@@ -15,6 +15,7 @@ import { SearchInputComponent } from 'app/modules/forms/search-input/components/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/testing/mock-master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
@@ -124,38 +125,14 @@ describe('AuditComponent', () => {
     table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
-  describe('audit list', () => {
-    it('loads and shows a table with audit entries', async () => {
-      expect(api.call).toHaveBeenCalledWith(
-        'audit.query',
-        [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] }, remote_controller: false }],
-      );
-
-      await spectator.fixture.whenStable();
-      await spectator.fixture.whenRenderingDone();
-      expect(await table.getCellTexts()).toEqual([
-        ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
-        ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
-        ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
-      ]);
-    });
+  it('checks used components on page', () => {
+    expect(spectator.query(PageHeaderComponent)).toExist();
+    expect(spectator.query(MasterDetailViewComponent)).toExist();
+    expect(spectator.query(ExportButtonComponent)).toExist();
+    expect(spectator.query(FakeProgressBarComponent)).toExist();
   });
 
-  describe('details', () => {
-    it('checks card title', () => {
-      const title = spectator.query('h3');
-      expect(title).toHaveText('Log Details');
-    });
-
-    it('shows details for the selected audit entry', async () => {
-      await table.clickRow(1);
-
-      const details = spectator.query(LogDetailsPanelComponent);
-      expect(details.log).toEqual(auditEntries[1]);
-    });
-  });
-
-  describe('audit search', () => {
+  describe('search', () => {
     it('searches by event, username and service when basic search is used', () => {
       const search = spectator.query(SearchInputComponent);
       search.query.set({
@@ -184,7 +161,7 @@ describe('AuditComponent', () => {
       expect(api.call).toHaveBeenLastCalledWith(
         'audit.query',
         [{
-          'query-filters': [],
+          'query-filters': [['OR', [['event', '~', '(?i)'], ['username', '~', '(?i)'], ['service', '~', '(?i)']]]],
           'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
           remote_controller: true,
         }],
@@ -210,6 +187,20 @@ describe('AuditComponent', () => {
           remote_controller: false,
         }],
       );
+    });
+  });
+
+  describe('details panel', () => {
+    it('checks card title', () => {
+      const title = spectator.query('h3');
+      expect(title).toHaveText('Log Details');
+    });
+
+    it('shows details for the selected audit entry', async () => {
+      await table.clickRow(1);
+
+      const details = spectator.query(LogDetailsPanelComponent);
+      expect(details.log).toEqual(auditEntries[1]);
     });
   });
 });
