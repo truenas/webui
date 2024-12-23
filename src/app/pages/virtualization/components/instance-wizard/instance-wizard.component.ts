@@ -122,7 +122,6 @@ export class InstanceWizardComponent {
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    autostart: [false],
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
@@ -246,9 +245,9 @@ export class InstanceWizardComponent {
 
     return {
       devices,
+      autostart: true,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
-      autostart: this.form.controls.autostart.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
       environment: this.environmentVariablesPayload,
