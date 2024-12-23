@@ -50,12 +50,12 @@ import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-dat
   ],
 })
 export class AuditListComponent {
+  readonly dataProvider = input.required<AuditApiDataProvider>();
+  readonly isMobileView = input.required<boolean>();
+
   protected readonly searchableElements = auditElements;
-  readonly isHaLicensed = input<boolean>();
-  readonly isMobileView = input<boolean>();
-  readonly toggleShowMobileDetails = output<boolean>();
-  readonly dataProvider = input<AuditApiDataProvider>();
-  readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
+  protected readonly toggleShowMobileDetails = output<boolean>();
+  protected readonly controllerType = computed(() => this.dataProvider().selectedControllerType);
 
   columns = createTable<AuditEntry>([
     textColumn({

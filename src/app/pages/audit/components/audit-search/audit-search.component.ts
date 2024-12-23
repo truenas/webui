@@ -50,11 +50,11 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class AuditSearchComponent implements OnInit {
-  readonly isMobileView = input.required<boolean>();
   readonly dataProvider = input.required<AuditApiDataProvider>();
+  readonly isMobileView = input.required<boolean>();
 
-  protected searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
-  protected searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
+  protected readonly searchQuery = signal<SearchQuery<AuditEntry>>({ query: '', isBasicQuery: true });
+  protected readonly searchProperties = signal<SearchProperty<AuditEntry>[]>([]);
   protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
 
   private userSuggestions$ = this.api.call('user.query').pipe(

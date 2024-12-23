@@ -41,7 +41,6 @@ describe('AuditListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent({
       props: {
-        isHaLicensed: true,
         isMobileView: false,
         dataProvider: mockAuditApiDataProvider,
       },

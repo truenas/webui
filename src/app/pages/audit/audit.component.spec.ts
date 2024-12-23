@@ -5,7 +5,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
@@ -20,6 +19,7 @@ import { MockMasterDetailViewComponent } from 'app/modules/master-detail-view/te
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AuditComponent } from 'app/pages/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
+import { auditEntries } from 'app/pages/audit/testing/mock-audit-api-data-provider';
 import { LocaleService } from 'app/services/locale.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -30,40 +30,6 @@ describe('AuditComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let table: IxTableHarness;
-
-  const auditEntries = [
-    {
-      audit_id: '1',
-      timestamp: {
-        $date: 1712932440770,
-      },
-      message_timestamp: 1712932440,
-      address: '10.220.2.21',
-      username: 'Administrator',
-      service: AuditService.Smb,
-      event: AuditEvent.Authentication,
-      event_data: {
-        clientAccount: 'Administrator',
-      },
-    },
-    {
-      audit_id: '2',
-      timestamp: {
-        $date: 1712932952481,
-      },
-      message_timestamp: 1712932952,
-      address: '10.220.2.21',
-      username: 'bob',
-      service: AuditService.Smb,
-      event: AuditEvent.Create,
-      event_data: {
-        file_type: 'FILE',
-        file: {
-          path: 'test.txt',
-        },
-      },
-    },
-  ] as AuditEntry[];
 
   const createComponent = createComponentFactory({
     component: AuditComponent,

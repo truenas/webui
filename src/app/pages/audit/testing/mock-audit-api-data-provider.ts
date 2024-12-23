@@ -4,7 +4,7 @@ import { ControllerType } from 'app/enums/controller-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 
-const auditEntries = [
+export const auditEntries = [
   {
     audit_id: '1',
     timestamp: {
