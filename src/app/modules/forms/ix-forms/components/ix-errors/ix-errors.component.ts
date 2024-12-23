@@ -99,7 +99,6 @@ export class IxErrorsComponent implements OnChanges {
           return this.getDefaultError(error as DefaultValidationError);
         });
 
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         this.messages = newErrors.filter((message) => !!message) as string[];
 
         if (this.control().errors) {
