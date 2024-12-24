@@ -19,6 +19,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -65,6 +66,7 @@ export class BootPoolDeleteDialogComponent {
     private fb: FormBuilder,
     private api: ApiService,
     private dialogRef: MatDialogRef<BootPoolDeleteDialogComponent>,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) public bootenvs: BootEnvironment[],
   ) {
     this.bootenvs.forEach((bootenv) => {
@@ -85,6 +87,7 @@ export class BootPoolDeleteDialogComponent {
 
     this.api.job('core.bulk', ['boot.environment.destroy', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], { id: string }[][]>) => !!job.result?.length),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].flat().forEach((params, index: number) => {

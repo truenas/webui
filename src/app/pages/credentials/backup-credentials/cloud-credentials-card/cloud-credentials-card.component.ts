@@ -125,9 +125,15 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   getProviders(): void {
-    this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
-      providers.forEach((provider) => this.providers.set(provider.name, provider.title));
-    });
+    this.cloudCredentialService
+      .getProviders()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((providers) => {
+        providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+      });
   }
 
   setDefaultSort(): void {

@@ -28,6 +28,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -93,6 +94,7 @@ export class SshConnectionCardComponent implements OnInit {
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
   ) {}
 
@@ -139,7 +141,11 @@ export class SshConnectionCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('keychaincredential.delete', [credential.id])),
+        switchMap(() => {
+          return this.api.call('keychaincredential.delete', [credential.id]).pipe(
+            this.errorHandler.catchError(),
+          );
+        }),
         untilDestroyed(this),
       )
       .subscribe(() => {

@@ -35,6 +35,7 @@ import {
   basicConstraintOptions,
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -94,6 +95,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     private translate: TranslateService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -303,6 +305,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
     this.api.call('certificate.extended_key_usage_choices')
       .pipe(
         choicesToOptions(),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe((options) => {

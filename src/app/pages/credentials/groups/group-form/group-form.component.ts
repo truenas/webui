@@ -32,6 +32,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -101,7 +102,8 @@ export class GroupFormComponent implements OnInit {
     private api: ApiService,
     private slideInRef: OldSlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
     private snackbar: SnackbarService,
@@ -198,7 +200,7 @@ export class GroupFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -246,7 +248,11 @@ export class GroupFormComponent implements OnInit {
 
   private getPrivilegesList(): void {
     this.api.call('privilege.query', [])
-      .pipe(untilDestroyed(this)).subscribe((privileges) => {
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((privileges) => {
         this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
           return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
         });
