@@ -35,7 +35,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class InstallationMediaStepComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     iso_path: [''],
   });
 

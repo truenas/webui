@@ -13,7 +13,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
-  currentLanguage: string = null;
+  currentLanguage: string | null = null;
   availableLangs = [
     {
       code: 'af',

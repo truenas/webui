@@ -35,7 +35,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     return hierarchyItem;
   }
 
-  private highlightTimeout: Timeout = null;
+  private highlightTimeout: Timeout | null = null;
 
   constructor(
     private renderer: Renderer2,
@@ -96,7 +96,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     setTimeout(() => {
       anchorRef.focus();
       anchorRef.scrollIntoView();
-      document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
+      document.querySelector<HTMLElement>('.rightside-content-hold')?.scrollBy(0, -20);
       ['click', 'keydown'].forEach((event) => document.addEventListener(event, removeHighlightStyling, { once: true }));
     }, searchDelayConst);
 

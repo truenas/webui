@@ -22,8 +22,8 @@ import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-lo
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { sedCardElements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.elements';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -83,13 +83,13 @@ export class SelfEncryptingDriveCardComponent {
   constructor(
     private store$: Store<AppState>,
     private api: ApiService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigure(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(SelfEncryptingDriveFormComponent, false, this.sedConfig)),
+      switchMap(() => this.slideIn.open(SelfEncryptingDriveFormComponent, false, this.sedConfig)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

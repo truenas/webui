@@ -90,7 +90,7 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
   ],
 })
 export class PoolManagerWizardComponent implements OnInit, OnDestroy {
-  protected existingPool: Pool = null;
+  protected existingPool: Pool | null = null;
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 

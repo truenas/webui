@@ -8,11 +8,11 @@ import { Router } from '@angular/router';
 import {
   createServiceFactory, mockProvider, SpectatorService, createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
@@ -24,7 +24,7 @@ import { SlideInService } from 'app/services/slide-in.service';
 class TestComponent {
   text: string;
   constructor(
-    public slideInRef: SlideInRef<DiskFormComponent, string>,
+    public slideInRef: OldSlideInRef<DiskFormComponent, string>,
     @Inject(SLIDE_IN_DATA) private value: string,
   ) {
     this.text = value;
@@ -36,22 +36,22 @@ class TestComponent {
 }
 
 describe('IxSlideInService', () => {
-  let spectator: SpectatorService<SlideInService>;
-  let service: SlideInService;
-  let spectatorComponent: Spectator<SlideInComponent>;
+  let spectator: SpectatorService<OldSlideInService>;
+  let service: OldSlideInService;
+  let spectatorComponent: Spectator<OldSlideInComponent>;
 
   const createService = createServiceFactory({
-    service: SlideInService,
+    service: OldSlideInService,
     providers: [
       Location,
       Router,
     ],
   });
   const createComponent = createComponentFactory({
-    component: SlideInComponent,
+    component: OldSlideInComponent,
     providers: [
       mockProvider(ElementRef),
-      SlideInService,
+      OldSlideInService,
     ],
     imports: [
       A11yModule,
@@ -73,7 +73,7 @@ describe('IxSlideInService', () => {
       const instanceRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
 
       expect(service.slideInComponent.openSlideIn).toHaveBeenCalledWith(TestComponent, { wide: true, data: 'Component created dynamically' });
-      expect(instanceRef).toBeInstanceOf(SlideInRef);
+      expect(instanceRef).toBeInstanceOf(OldSlideInRef);
     });
 
     it('should be call \'closeAll\' method after route navigation', async () => {
@@ -110,7 +110,7 @@ describe('IxSlideInService', () => {
       const slideInRef = service.open(TestComponent, { wide: true, data: 'Component created dynamically' });
       // check injected SlideInRef
 
-      expect(slideInRef.componentInstance.slideInRef).toBeInstanceOf(SlideInRef);
+      expect(slideInRef.componentInstance.slideInRef).toBeInstanceOf(OldSlideInRef);
     });
 
     it('after close slide observable \'slideInClosed$\' should emit response', () => {

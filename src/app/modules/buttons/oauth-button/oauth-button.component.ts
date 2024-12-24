@@ -4,7 +4,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
-import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
+import { MailSendMethod, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -30,13 +30,17 @@ export class OauthButtonComponent implements OnDestroy {
   readonly disabled = input(false);
   readonly oauthUrl = input<string>();
   // TODO: Figure out in another way.
-  readonly testId = input<string>();
+  readonly testId = input.required<string>();
 
   readonly loggedIn = output<unknown>();
 
   private readonly jiraAuthFn = (message: OauthJiraMessage): void => this.onLogInWithJiraSuccess(message);
-  private readonly gmailAuthFn = (message: OauthMessage<GmailOauthConfig>): void => {
+  private readonly gmailAuthFn = (message: OauthMessage<MailOauthConfig>): void => {
     this.onLogInWithGmailSuccess(message);
+  };
+
+  private readonly outlookAuthFn = (message: OauthMessage<MailOauthConfig>): void => {
+    this.onLogInWithOutlookSuccess(message);
   };
 
   protected buttonText = computed(() => {
@@ -58,6 +62,12 @@ export class OauthButtonComponent implements OnDestroy {
           return this.translate.instant('Logged In To Gmail');
         }
         return this.translate.instant('Log In To Gmail');
+
+      case OauthButtonType.Outlook:
+        if (this.isLoggedIn()) {
+          return this.translate.instant('Logged In To Outlook');
+        }
+        return this.translate.instant('Log In To Outlook');
     }
 
     return '';
@@ -86,11 +96,27 @@ export class OauthButtonComponent implements OnDestroy {
       case OauthButtonType.Gmail:
         this.onLoginWithGmail();
         break;
+      case OauthButtonType.Outlook:
+        this.onLoginWithOutlook();
+        break;
     }
   }
 
   private onLoginWithJira(): void {
     this.doCommonOauthLoginLogic(this.jiraAuthFn);
+  }
+
+  private onLogInWithProvider(): void {
+    const authFn = (message: OauthMessage<OauthProviderData>): void => this.onLoggedInWithProviderSuccess(message);
+    this.doCommonOauthLoginLogic(authFn);
+  }
+
+  private onLoginWithGmail(): void {
+    this.doCommonOauthLoginLogic(this.gmailAuthFn);
+  }
+
+  private onLoginWithOutlook(): void {
+    this.doCommonOauthLoginLogic(this.outlookAuthFn);
   }
 
   private onLogInWithJiraSuccess(message: OauthJiraMessage): void {
@@ -102,24 +128,32 @@ export class OauthButtonComponent implements OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private onLoginWithGmail(): void {
-    this.doCommonOauthLoginLogic(this.gmailAuthFn);
-  }
-
-  private onLogInWithGmailSuccess(message: OauthMessage<GmailOauthConfig>): void {
+  private onLogInWithGmailSuccess(message: OauthMessage<MailOauthConfig>): void {
     if (message.data.oauth_portal) {
       if (message.data.error) {
         this.handleProviderError(message.data.error);
       } else {
-        this.loggedIn.emit(message.data.result);
+        this.loggedIn.emit({
+          ...message.data.result,
+          provider: MailSendMethod.Gmail,
+        });
         this.cdr.markForCheck();
       }
     }
   }
 
-  private onLogInWithProvider(): void {
-    const authFn = (message: OauthMessage<OauthProviderData>): void => this.onLoggedInWithProviderSuccess(message);
-    this.doCommonOauthLoginLogic(authFn);
+  private onLogInWithOutlookSuccess(message: OauthMessage<MailOauthConfig>): void {
+    if (message.data.oauth_portal) {
+      if (message.data.error) {
+        this.handleProviderError(message.data.error);
+      } else {
+        this.loggedIn.emit({
+          ...message.data.result,
+          provider: MailSendMethod.Outlook,
+        });
+        this.cdr.markForCheck();
+      }
+    }
   }
 
   private onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
@@ -140,7 +174,7 @@ export class OauthButtonComponent implements OnDestroy {
 
   private doCommonOauthLoginLogic(
     authFn: (
-      message: OauthMessage<GmailOauthConfig> | OauthMessage<OauthProviderData> | OauthJiraMessage
+      message: OauthMessage<MailOauthConfig> | OauthMessage<OauthProviderData> | OauthJiraMessage
     ) => void,
   ): void {
     this.window.removeEventListener('message', authFn, false);

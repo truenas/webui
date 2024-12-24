@@ -92,7 +92,7 @@ describe('JobItemComponent', () => {
     });
     jest.spyOn(spectator.component.aborted, 'emit').mockImplementation();
 
-    spectator.click(spectator.query('.job-button-abort'));
+    spectator.click(spectator.query('.job-button-abort')!);
 
     expect(spectator.component.aborted.emit).toHaveBeenCalledTimes(1);
   });
@@ -120,7 +120,7 @@ describe('JobItemComponent', () => {
     });
     jest.spyOn(spectator.component.opened, 'emit').mockImplementation();
 
-    spectator.click(spectator.query('.job-item-body'));
+    spectator.click(spectator.query('.job-item-body')!);
 
     expect(spectator.component.opened.emit).toHaveBeenCalledTimes(1);
 

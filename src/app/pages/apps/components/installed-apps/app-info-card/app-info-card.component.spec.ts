@@ -20,8 +20,8 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
-import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppInfoCardComponent', () => {
@@ -197,7 +197,7 @@ describe('AppInfoCardComponent', () => {
   it('opens slide-in form to edit custom app when Edit button is pressed', async () => {
     setupTest({ ...fakeApp, custom_app: true });
 
-    const slideIn = spectator.inject(SlideInService);
+    const slideIn = spectator.inject(OldSlideInService);
     jest.spyOn(slideIn, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

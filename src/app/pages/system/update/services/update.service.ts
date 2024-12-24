@@ -16,9 +16,9 @@ export class UpdateService {
   updateDownloaded$ = new BehaviorSubject<boolean>(false);
   isLoading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<boolean>(false);
-  generalUpdateError$ = new BehaviorSubject<string>(undefined);
+  generalUpdateError$ = new BehaviorSubject<string | undefined>(undefined);
   packages$ = new BehaviorSubject<Package[]>([]);
-  status$ = new BehaviorSubject<SystemUpdateStatus>(undefined);
+  status$ = new BehaviorSubject<SystemUpdateStatus | undefined>(undefined);
   releaseNotesUrl$ = new BehaviorSubject<string>('');
   changeLog$ = new BehaviorSubject<string>('');
 

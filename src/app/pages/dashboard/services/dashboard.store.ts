@@ -29,7 +29,7 @@ export interface DashboardState {
   /**
    * Ordered.
    */
-  groups: WidgetGroup[];
+  groups: WidgetGroup[] | null;
 }
 
 export const initialState: DashboardState = {

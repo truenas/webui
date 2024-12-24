@@ -10,7 +10,15 @@ export interface ServicesState extends EntityState<Service> {
 
 export const adapter = createEntityAdapter<Service>({
   selectId: (service) => service.id,
-  sortComparer: (a, b) => serviceNames.get(a.service).localeCompare(serviceNames.get(b.service)),
+  sortComparer: (a, b) => {
+    const aName = serviceNames.get(a.service);
+    const bName = serviceNames.get(b.service);
+
+    if (!aName || !bName) {
+      return a.service.localeCompare(b.service);
+    }
+    return aName.localeCompare(bName);
+  },
 });
 
 export const initialState: ServicesState = adapter.getInitialState({

@@ -51,7 +51,7 @@ type OnTouchedFn = () => void;
 })
 export class IxDatepickerComponent implements ControlValueAccessor {
   readonly label = input<string>();
-  readonly placeholder = input<string>();
+  readonly placeholder = input<string>('');
   readonly hint = input<string>();
   readonly tooltip = input<string>();
   readonly required = input(false);

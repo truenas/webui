@@ -66,7 +66,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly placeholder = input<string>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
   /**
    * A function that provides the options for the autocomplete dropdown.
@@ -92,11 +92,11 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
    */
   readonly resolveOptions = input<Observable<Option[]>>();
 
-  private resolvedOptions: Option[] = [];
+  private resolvedOptions: Option[] | null = [];
 
   private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild('chipInput', { read: ElementRef });
 
-  suggestions$: Observable<string[]>;
+  suggestions$: Observable<string[] | null>;
   values: string[] = [];
   isDisabled = false;
 
@@ -203,7 +203,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   private setAutocomplete(): void {
-    if (!this.autocompleteProvider()) {
+    const autocompleteProvider = this.autocompleteProvider();
+    if (!autocompleteProvider) {
       this.suggestions$ = null;
       return;
     }
@@ -218,7 +219,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       this.inputReset$,
     ).pipe(
       switchMap(() => {
-        return this.autocompleteProvider()(this.chipInput().nativeElement.value);
+        return autocompleteProvider(this.chipInput().nativeElement.value);
       }),
     );
   }

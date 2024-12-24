@@ -4631,7 +4631,8 @@
     ],
     "synonyms": [
       "SMTP",
-      "Gmail"
+      "Gmail",
+      "Outlook"
     ],
     "requiredRoles": [],
     "visibleTokens": [],

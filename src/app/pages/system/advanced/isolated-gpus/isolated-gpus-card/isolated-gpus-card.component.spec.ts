@@ -12,9 +12,9 @@ import {
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('IsolatedGpusCardComponent', () => {
   let spectator: Spectator<IsolatedGpusCardComponent>;
@@ -31,7 +31,7 @@ describe('IsolatedGpusCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
@@ -52,6 +52,6 @@ describe('IsolatedGpusCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(IsolatedGpusFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(IsolatedGpusFormComponent);
   });
 });

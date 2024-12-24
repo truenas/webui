@@ -46,15 +46,15 @@ describe('AppDetailsPanelComponent', () => {
   });
 
   it('shows all the cards', () => {
-    const appInfoCard = spectator.query(AppInfoCardComponent);
+    const appInfoCard = spectator.query(AppInfoCardComponent)!;
     expect(appInfoCard).toBeTruthy();
     expect(appInfoCard.app).toBe(app);
 
-    const appContainersCard = spectator.query(AppWorkloadsCardComponent);
+    const appContainersCard = spectator.query(AppWorkloadsCardComponent)!;
     expect(appContainersCard).toBeTruthy();
     expect(appContainersCard.app).toStrictEqual(app);
 
-    const appMetadataCard = spectator.query(AppMetadataCardComponent);
+    const appMetadataCard = spectator.query(AppMetadataCardComponent)!;
     expect(appMetadataCard).toBeTruthy();
     expect(appMetadataCard.appMetadata).toStrictEqual(app.metadata);
   });

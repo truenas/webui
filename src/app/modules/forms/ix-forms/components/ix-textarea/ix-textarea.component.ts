@@ -39,7 +39,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
   readonly placeholder = input<string>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly rows = input(4);
   readonly readonly = input<boolean>();
 

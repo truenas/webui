@@ -8,8 +8,8 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('AuditCardComponent', () => {
   let spectator: Spectator<AuditCardComponent>;
@@ -18,7 +18,7 @@ describe('AuditCardComponent', () => {
     component: AuditCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of(true)),
       }),
       mockProvider(FirstTimeWarningService, {
@@ -58,6 +58,6 @@ describe('AuditCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(AuditFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuditFormComponent);
   });
 });

@@ -22,8 +22,8 @@ import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
@@ -44,7 +44,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -65,7 +65,7 @@ export class LocalizationFormComponent implements OnInit {
 
   sortLanguagesByName = true;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     language: ['', [Validators.required]],
     kbdmap: [''],
     timezone: ['', [Validators.required]],
@@ -146,7 +146,7 @@ export class LocalizationFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private slideInRef: SlideInRef<LocalizationFormComponent>,
+    private slideInRef: OldSlideInRef<LocalizationFormComponent>,
     @Inject(WINDOW) private window: Window,
     @Inject(SLIDE_IN_DATA) private localizationSettings: LocalizationSettings,
   ) { }

@@ -29,6 +29,6 @@ describe('AppCardLogoComponent', () => {
   });
 
   it('shows app logo', () => {
-    expect(spectator.query(LazyLoadImageDirective).lazyImage).toBe('https://www.seti.org/logo.png');
+    expect(spectator.query(LazyLoadImageDirective)!.lazyImage).toBe('https://www.seti.org/logo.png');
   });
 });

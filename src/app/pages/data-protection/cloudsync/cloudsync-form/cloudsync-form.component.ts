@@ -52,8 +52,8 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -78,7 +78,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   providers: [CloudCredentialService],
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -228,12 +228,12 @@ export class CloudSyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-    private chainedRef: ChainedRef<CloudSyncTaskUi>,
+    private slideInRef: SlideInRef<CloudSyncTaskUi>,
   ) {
-    this.chainedRef.requireConfirmationWhen(() => {
+    this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingTask = this.chainedRef.getData();
+    this.editingTask = this.slideInRef.getData();
   }
 
   getCredentialsList(): Observable<CloudSyncCredential[]> {
@@ -734,7 +734,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.chainedRef.close({ response, error: null });
+        this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;
@@ -745,7 +745,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.chainedRef.swap(
+    this.slideInRef.swap(
       CloudSyncWizardComponent,
       true,
     );
@@ -753,7 +753,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.chainedRef.close({ response: false, error: null });
+    this.slideInRef.close({ response: false, error: null });
   }
 
   private getInitialData(): void {

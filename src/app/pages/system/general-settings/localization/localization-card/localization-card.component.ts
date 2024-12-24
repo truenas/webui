@@ -20,7 +20,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -67,7 +67,7 @@ export class LocalizationCardComponent {
   constructor(
     public localeService: LocaleService,
     private store$: Store<AppState>,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private sysGeneralService: SystemGeneralService,
   ) {}
 

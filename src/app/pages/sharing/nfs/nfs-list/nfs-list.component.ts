@@ -36,7 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -158,7 +158,7 @@ export class NfsListComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}

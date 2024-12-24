@@ -22,7 +22,7 @@ import {
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -50,7 +50,7 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,

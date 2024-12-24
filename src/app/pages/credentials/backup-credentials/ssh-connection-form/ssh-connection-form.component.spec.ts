@@ -13,7 +13,7 @@ import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-metho
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
@@ -37,7 +37,7 @@ describe('SshConnectionFormComponent', () => {
     },
   } as KeychainSshCredentials;
 
-  const closeChainedRef = jest.fn();
+  const closeSlideInRef = jest.fn();
   const getNoData = jest.fn(() => undefined);
   const getData = jest.fn(() => existingConnection);
 
@@ -61,12 +61,12 @@ describe('SshConnectionFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
       mockAuth(),
-      mockProvider(ChainedRef, {
-        close: closeChainedRef,
+      mockProvider(SlideInRef, {
+        close: closeSlideInRef,
         getData: getNoData,
         swap: jest.fn(),
         requireConfirmationWhen: jest.fn(),
-      } as ChainedRef<KeychainSshCredentials>),
+      } as SlideInRef<KeychainSshCredentials>),
     ],
   });
 
@@ -74,12 +74,12 @@ describe('SshConnectionFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
-            close: closeChainedRef,
+          mockProvider(SlideInRef, {
+            close: closeSlideInRef,
             getData,
             swap: jest.fn(),
             requireConfirmationWhen: jest.fn(),
-          } as ChainedRef<KeychainSshCredentials>),
+          } as SlideInRef<KeychainSshCredentials>),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -126,7 +126,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
   });
 
@@ -170,7 +170,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       }]);
-      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeSlideInRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {

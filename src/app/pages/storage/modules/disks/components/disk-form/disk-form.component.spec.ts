@@ -12,7 +12,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { DiskFormComponent } from './disk-form.component';
@@ -42,7 +42,7 @@ describe('DiskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockApi([
@@ -114,7 +114,7 @@ describe('DiskFormComponent', () => {
       togglesmart: true,
       passwd: '',
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

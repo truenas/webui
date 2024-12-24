@@ -46,7 +46,7 @@ describe('CloudBackupStatsComponent', () => {
   });
 
   it('renders Details in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(8);
     expect(chartExtra[0]).toHaveText('Path: /mnt/test');
     expect(chartExtra[1]).toHaveText('Credentials: Storj');

@@ -48,7 +48,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class OsStepComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     os: [null as VmOs],
     hyperv_enlightenments: [false],
     name: ['',

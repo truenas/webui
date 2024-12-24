@@ -108,7 +108,7 @@ export class FeedbackDialogComponent implements OnInit {
         this.allowedTypes.push(FeedbackType.Bug);
 
         const allowedOptions = this.allowedTypes.map((type) => ({
-          label: this.translate.instant(feedbackTypesLabels.get(type)),
+          label: this.translate.instant(feedbackTypesLabels.get(type) || type),
           value: type,
         }));
 

@@ -11,7 +11,7 @@ import {
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import { VirtualizationStateComponent } from 'app/pages/virtualization/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {
@@ -30,7 +30,7 @@ describe('AllInstancesHeaderComponent', () => {
     ],
     providers: [
       mockProvider(VirtualizationConfigStore, storeMock),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of(undefined)),
       }),
     ],
@@ -48,7 +48,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
 
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
+      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.NoPool);
 
       const selectPoolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Select Pool' }));
@@ -61,7 +61,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
+      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initializing);
 
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
@@ -77,7 +77,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
+      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Initialized);
 
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
@@ -94,7 +94,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(3);
 
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
+      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Locked);
 
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
@@ -111,7 +111,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect((spectator.fixture.nativeElement as HTMLElement).children).toHaveLength(2);
 
-      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent);
+      const virtualizationStateComponent = spectator.query(VirtualizationStateComponent)!;
       expect(virtualizationStateComponent.state).toBe(VirtualizationGlobalState.Error);
 
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
@@ -127,7 +127,7 @@ describe('AllInstancesHeaderComponent', () => {
       const globalSettingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Global Settings' }));
       await globalSettingsButton.click();
 
-      expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         GlobalConfigFormComponent,
         false,
         { dataset: 'pool1/dataset1' },

@@ -12,12 +12,12 @@ import { LocalizationSettings } from 'app/interfaces/localization-settings.inter
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
@@ -74,7 +74,7 @@ describe('LocalizationFormComponent', () => {
           { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
       provideMockStore({
@@ -92,7 +92,7 @@ describe('LocalizationFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -154,7 +154,7 @@ describe('LocalizationFormComponent', () => {
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

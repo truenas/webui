@@ -14,8 +14,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -30,7 +30,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -47,7 +47,7 @@ export class KernelFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     debugkernel: [false],
   });
 
@@ -66,9 +66,9 @@ export class KernelFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private chainedRef: ChainedRef<boolean>,
+    private slideInRef: SlideInRef<boolean>,
   ) {
-    if (chainedRef.getData()) {
+    if (slideInRef.getData()) {
       this.debugkernel = true;
     }
   }
@@ -95,7 +95,7 @@ export class KernelFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {

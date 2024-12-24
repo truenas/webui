@@ -17,8 +17,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,7 +39,7 @@ export interface SedConfig {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -98,9 +98,9 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
-    private chainedRef: ChainedRef<SedConfig>,
+    private slideInRef: SlideInRef<SedConfig>,
   ) {
-    this.sedConfig = this.chainedRef.getData();
+    this.sedConfig = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -118,7 +118,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {

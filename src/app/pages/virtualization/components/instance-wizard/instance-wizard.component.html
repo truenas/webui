@@ -7,7 +7,7 @@
 <div class="container">
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
-      [label]="'Instance Configuration' | translate" 
+      [label]="'Instance Configuration' | translate"
       [help]="'Instance Configuration' | translate"
     >
       <ix-input
@@ -15,11 +15,6 @@
         [label]="'Name' | translate"
         [required]="true"
       ></ix-input>
-
-      <ix-checkbox
-        formControlName="autostart"
-        [label]="'Autostart' | translate"
-      ></ix-checkbox>
 
       <div class="image-field">
         <ix-input
@@ -183,7 +178,7 @@
       </ix-list>
     </ix-form-section>
 
-    <ix-form-section 
+    <ix-form-section
       [label]="'Network' | translate"
       [help]="'Network' | translate"
     >

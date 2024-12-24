@@ -14,7 +14,7 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -26,9 +26,9 @@ import {
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudBackupFormComponent', () => {
@@ -77,7 +77,7 @@ describe('CloudBackupFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const chainedComponentRef: ChainedRef<CloudBackup> = {
+  const slideInRef: SlideInRef<CloudBackup> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
@@ -103,7 +103,7 @@ describe('CloudBackupFormComponent', () => {
           CloudsyncTransferSetting.FastStorage,
         ]),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
@@ -113,7 +113,7 @@ describe('CloudBackupFormComponent', () => {
         getBuckets: jest.fn(() => of([{ Name: 'bucket1', Path: 'path_to_bucket1', Enabled: true }])),
       }),
       mockProvider(FilesystemService),
-      mockProvider(ChainedRef, chainedComponentRef),
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -179,7 +179,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: false,
         transfer_setting: CloudsyncTransferSetting.Default,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {
@@ -227,7 +227,7 @@ describe('CloudBackupFormComponent', () => {
         absolute_paths: true,
         transfer_setting: CloudsyncTransferSetting.FastStorage,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -235,8 +235,8 @@ describe('CloudBackupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
-            ...chainedComponentRef,
+          mockProvider(SlideInRef, {
+            ...slideInRef,
             getData,
           }),
         ],
@@ -308,7 +308,7 @@ describe('CloudBackupFormComponent', () => {
         snapshot: false,
         transfer_setting: CloudsyncTransferSetting.Performance,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 });

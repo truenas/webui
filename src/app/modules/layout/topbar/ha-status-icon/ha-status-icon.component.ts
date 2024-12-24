@@ -92,7 +92,7 @@ export class HaStatusIconComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((haStatus) => {
-      this.failoverDisabledReasons = haStatus.reasons;
+      this.failoverDisabledReasons = haStatus.reasons || [];
       this.cdr.markForCheck();
     });
   }

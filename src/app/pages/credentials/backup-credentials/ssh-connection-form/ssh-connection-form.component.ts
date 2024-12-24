@@ -38,8 +38,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -57,7 +57,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -173,11 +173,11 @@ export class SshConnectionFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    private chainedRef: ChainedRef<KeychainSshCredentials>,
+    private slideInRef: SlideInRef<KeychainSshCredentials>,
   ) { }
 
   ngOnInit(): void {
-    this.existingConnection = this.chainedRef.getData();
+    this.existingConnection = this.slideInRef.getData();
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }
@@ -232,7 +232,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.chainedRef.close({ response: newCredential, error: null });
+        this.slideInRef.close({ response: newCredential, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

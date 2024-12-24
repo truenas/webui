@@ -30,9 +30,9 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { sysctlCardElements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -110,7 +110,7 @@ export class SysctlCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -155,7 +155,7 @@ export class SysctlCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.chainedSlideIns.open(TunableFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(TunableFormComponent, false, row)),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

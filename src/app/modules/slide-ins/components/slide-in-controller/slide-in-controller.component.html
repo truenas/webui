@@ -1,0 +1,22 @@
+<div
+  id="ix-slide-in-wrapper"
+  [class]="['ix-chained', 'ix-slide-in-form']"
+  [class.open]="components.length"
+  [class.wide]="slideIn.isTopComponentWide$ | async"
+>
+  @for (component of components; track component.id; let i = $index) {
+    <ix-slide-in
+      class="slide-in2-form"
+      [lastIndex]="components.length - 1"
+      [id]="component.id"
+      [index]="i"
+      [componentInfo]="component"
+    ></ix-slide-in>
+  }
+</div>
+
+<div
+  id="ix-slide-in-background"
+  [class]="['ix-slide-in-background', 'ix-background']"
+  [class.open]="components.length"
+></div>

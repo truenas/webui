@@ -19,7 +19,7 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CertificateAddComponent,
@@ -91,7 +91,7 @@ describe('CertificateAddComponent', () => {
         ] as Certificate[]),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -203,7 +203,7 @@ describe('CertificateAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import Certificate and form is submitted', async () => {
@@ -258,7 +258,7 @@ describe('CertificateAddComponent', () => {
 
     await nextButton.click();
 
-    const summary = spectator.query(SummaryComponent);
+    const summary = spectator.query(SummaryComponent)!;
     expect(summary.summary).toEqual([
       [
         { label: 'Name', value: 'import' },
@@ -272,13 +272,13 @@ describe('CertificateAddComponent', () => {
   });
 
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
-    const optionsForm = spectator.query(CertificateOptionsComponent);
-    const subjectForm = spectator.query(CertificateSubjectComponent);
+    const optionsForm = spectator.query(CertificateOptionsComponent)!;
+    const subjectForm = spectator.query(CertificateSubjectComponent)!;
 
     jest.spyOn(optionsForm.form, 'patchValue');
     jest.spyOn(subjectForm.form, 'patchValue');
 
-    const constraintsForm = spectator.query(CertificateConstraintsComponent);
+    const constraintsForm = spectator.query(CertificateConstraintsComponent)!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
     await form.fillForm({

@@ -44,7 +44,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 export class IxRadioGroupComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly options = input<Observable<RadioOption[]>>();
   readonly inlineFields = input<boolean>();
   readonly inlineFieldFlex = input<string>();

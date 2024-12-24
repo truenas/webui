@@ -59,10 +59,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   readonly label = input<string>();
   readonly hint = input<string>();
   readonly options = model<Observable<SelectOption[]>>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly multiple = input<boolean>();
-  readonly emptyValue = input<string>(null);
+  readonly emptyValue = input<string | null>(null);
   readonly hideEmpty = input(false);
   readonly showSelectAll = input(false);
   readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);
@@ -118,12 +118,13 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnChanges(): void {
-    if (!this.options()) {
+    const options$ = this.options();
+    if (!options$) {
       this.hasErrorInOptions = true;
     } else {
       this.hasErrorInOptions = false;
       this.isLoading = true;
-      this.opts$ = this.options().pipe(
+      this.opts$ = options$.pipe(
         catchError((error: unknown) => {
           console.error(error);
           this.hasErrorInOptions = true;

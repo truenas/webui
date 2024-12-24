@@ -13,7 +13,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -36,7 +36,7 @@ describe('ApiKeyFormComponent', () => {
         mockCall('api_key.update', {} as ApiKey),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService),
       mockProvider(LocaleService, {
         timezone: 'UTC',
@@ -49,7 +49,7 @@ describe('ApiKeyFormComponent', () => {
     ],
   });
 
-  async function setupTest(apiKey?: Partial<ApiKey>): Promise<void> {
+  async function setupTest(apiKey?: Partial<ApiKey> | null): Promise<void> {
     spectator = createComponent({
       providers: [
         {
@@ -79,7 +79,7 @@ describe('ApiKeyFormComponent', () => {
       username: 'root',
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -123,7 +123,7 @@ describe('ApiKeyFormComponent', () => {
       reset: false,
       expires_at: null,
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -155,7 +155,7 @@ describe('ApiKeyFormComponent', () => {
         $date: parseISO('2024-12-22T00:00:00Z').getTime(),
       },
     }]);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });

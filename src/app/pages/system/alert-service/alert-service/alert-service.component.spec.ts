@@ -14,7 +14,7 @@ import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -93,7 +93,7 @@ describe('AlertServiceComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertServiceComponent,
     providers: [
-      MockProvider(SlideInRef, {
+      MockProvider(OldSlideInRef, {
         close: jest.fn(),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -139,7 +139,7 @@ describe('AlertServiceComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.create', [{
@@ -155,7 +155,7 @@ describe('AlertServiceComponent', () => {
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
@@ -169,7 +169,7 @@ describe('AlertServiceComponent', () => {
       const sendTestAlertButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Alert' }));
       await sendTestAlertButton.click();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.getSubmitAttributes).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.test', [{
         attributes: {
@@ -209,7 +209,7 @@ describe('AlertServiceComponent', () => {
       });
       tick();
 
-      const awsSnsForm = spectator.query(AwsSnsServiceComponent);
+      const awsSnsForm = spectator.query(AwsSnsServiceComponent)!;
       expect(awsSnsForm.setValues).toHaveBeenCalledWith(existingService.attributes);
     }));
 
@@ -223,7 +223,7 @@ describe('AlertServiceComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      const opsGenie = spectator.query(OpsGenieServiceComponent);
+      const opsGenie = spectator.query(OpsGenieServiceComponent)!;
       expect(opsGenie.getSubmitAttributes).toHaveBeenCalled();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.update', [
@@ -237,7 +237,7 @@ describe('AlertServiceComponent', () => {
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

@@ -1,7 +1,9 @@
 import {
   animate, group as groupAnimations, style, transition, trigger,
 } from '@angular/animations';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
+} from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
 } from '@angular/core';
@@ -19,9 +21,6 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
-import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,8 +32,8 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -62,15 +61,14 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     TestDirective,
     UiSearchDirective,
     NgxSkeletonLoaderModule,
-    IxDropGridDirective,
-    IxDropGridItemDirective,
-    IxDragDirective,
     WidgetGroupControlsComponent,
     DisableFocusableElementsDirective,
     WidgetGroupComponent,
     EmptyComponent,
     TranslateModule,
     MatTooltip,
+    CdkDrag,
+    CdkDropList,
   ],
   providers: [
     WidgetResourcesService,
@@ -100,7 +98,7 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private dashboardStore: DashboardStore,
-    private slideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -129,7 +127,7 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
+      .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
@@ -143,7 +141,7 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
+      .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
@@ -162,8 +160,11 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  protected onGroupsReordered(groups: WidgetGroup[]): void {
-    this.renderedGroups.set(groups);
+  protected onGroupsReordered(cdkEvent: CdkDragDrop<WidgetGroup[]>): void {
+    this.renderedGroups.update((groups) => {
+      moveItemInArray(groups, cdkEvent.previousIndex, cdkEvent.currentIndex);
+      return groups;
+    });
   }
 
   protected onDeleteGroup(groupToRemove: WidgetGroup): void {

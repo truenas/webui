@@ -46,7 +46,7 @@ import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.compon
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -202,7 +202,7 @@ export class SmbListComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private router: Router,
