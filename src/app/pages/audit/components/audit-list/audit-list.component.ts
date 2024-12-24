@@ -1,7 +1,6 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input, output,
-  Inject,
   computed,
 } from '@angular/core';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -11,7 +10,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { auditServiceLabels, auditEventLabels } from 'app/enums/audit.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -95,7 +93,6 @@ export class AuditListComponent {
     private sanitizer: DomSanitizer,
     protected emptyService: EmptyService,
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
   ) { }
 
   private getEventDataForLog(row: AuditEntry): string {
@@ -108,16 +105,7 @@ export class AuditListComponent {
   }
 
   expanded(row: AuditEntry): void {
-    if (!row) {
-      return;
-    }
-
-    if (this.isMobileView()) {
-      this.toggleShowMobileDetails.emit(true);
-
-      // TODO: Do not rely on querying DOM elements
-      // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
+    if (!row || !this.isMobileView()) return;
+    this.toggleShowMobileDetails.emit(true);
   }
 }

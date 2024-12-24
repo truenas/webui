@@ -137,7 +137,7 @@ export class AuditSearchComponent implements OnInit {
   }
 
   private setSearchProperties(auditEntries: AuditEntry[]): void {
-    this.searchProperties.set(searchProperties<AuditEntry>([
+    this.searchProperties.update(() => searchProperties<AuditEntry>([
       textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
       dateProperty(
         'message_timestamp',
