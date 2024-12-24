@@ -1,3 +1,5 @@
+@import 'mixins/text';
+
 :host {
   align-items: center;
   display: flex;
@@ -48,6 +50,27 @@
   line-height: inherit;
   margin-bottom: 6px;
   margin-top: 3px;
+
+  &.collapsed {
+    @include line-clamp(5);
+  }
+}
+
+.expand-collapse-link {
+  cursor: pointer;
+  display: flex;
+  font-size: inherit;
+  font-weight: normal;
+  height: inherit;
+  justify-content: center;
+  line-height: inherit;
+  margin: 0 0 5px;
+  opacity: 0.8;
+  width: 100%;
+
+  &.collapsed {
+    margin-top: -8px;
+  }
 }
 
 .alert-node {

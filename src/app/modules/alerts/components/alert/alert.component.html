@@ -12,7 +12,23 @@
       {{ levelLabel() }}
     </h3>
   }
-  <h4 class="alert-message" [innerHTML]="alert().formatted"></h4>
+  <h4
+    #alertMessage
+    class="alert-message"
+    [class.collapsed]="isCollapsed()"
+    [innerHTML]="alert().formatted"
+  ></h4>
+  @if (isExpandable()) {
+    <button
+      mat-button
+      class="expand-collapse-link"
+      [ixTest]="[alert().key, 'expand']"
+      [class.collapsed]="isCollapsed()"
+      (click)="toggleCollapse()"
+    >
+      {{ isCollapsed() ? ('Expand' | translate) : ('Collapse' | translate) }}
+    </button>
+  }
   @if (isHaLicensed()) {
     <div class="alert-node">{{ alert().node }}</div>
   }
