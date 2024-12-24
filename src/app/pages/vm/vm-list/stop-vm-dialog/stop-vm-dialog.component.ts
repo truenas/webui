@@ -42,7 +42,7 @@ export interface StopVmDialogData {
   ],
 })
 export class StopVmDialogComponent {
-  forceAfterTimeoutCheckbox = new FormControl(false);
+  forceAfterTimeoutCheckbox = new FormControl(false, { nonNullable: true });
   protected readonly requiredRoles = [Role.VmWrite];
 
   readonly helptext = helptextVmList;

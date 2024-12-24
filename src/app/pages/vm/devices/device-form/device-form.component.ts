@@ -93,7 +93,7 @@ export class DeviceFormComponent implements OnInit {
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number);
 
-  cdromForm = this.formBuilder.group({
+  cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
   });
 
@@ -117,7 +117,7 @@ export class DeviceFormComponent implements OnInit {
     size: [null as number],
   });
 
-  pciForm = this.formBuilder.group({
+  pciForm = this.formBuilder.nonNullable.group({
     pptdev: ['', Validators.required],
   });
 

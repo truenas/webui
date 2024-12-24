@@ -76,7 +76,7 @@ describe('TruecommandButtonComponent', () => {
       });
 
       it(`shows correct message when user clicks on the ${expectedButtonId} button`, () => {
-        spectator.click(spectator.query(expectedButtonId));
+        spectator.click(spectator.query(expectedButtonId)!);
 
         if (expectedDialogType === 'form') {
           expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(TruecommandSignupModalComponent);

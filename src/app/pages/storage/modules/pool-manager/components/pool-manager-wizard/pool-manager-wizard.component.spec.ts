@@ -254,7 +254,7 @@ describe('PoolManagerWizardComponent', () => {
       });
 
       await wizard.selectStep({ label: 'Review' });
-      spectator.query(ReviewWizardStepComponent).createPool.emit();
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
       expect(spectator.inject(MatDialog, true).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
         disableClose: true,

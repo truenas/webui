@@ -13,8 +13,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 export interface AddVdevsState {
-  pool: Pool;
-  topology: PoolTopology;
+  pool: Pool | null;
+  topology: PoolTopology | null;
   isLoading: boolean;
 }
 

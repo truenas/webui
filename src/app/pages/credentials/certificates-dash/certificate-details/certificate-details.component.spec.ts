@@ -47,8 +47,8 @@ describe('CertificateDetailsComponent', () => {
   function getDetails(): Record<string, string> {
     const itemElements = spectator.queryAll('dl > div');
     return itemElements.reduce((acc, item) => {
-      const key = item.querySelector('dt').textContent;
-      const value = item.querySelector('dd').textContent;
+      const key = item.querySelector('dt')!.textContent;
+      const value = item.querySelector('dd')!.textContent;
       acc[key] = value;
       return acc;
     }, {} as Record<string, string>);

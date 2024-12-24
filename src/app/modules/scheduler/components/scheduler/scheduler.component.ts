@@ -58,7 +58,7 @@ export class SchedulerComponent implements ControlValueAccessor {
 
   isDisabled = false;
   crontab: string;
-  customCrontab: string;
+  customCrontab: string | null;
 
   onTouched: () => void;
   onChange: (crontab: string) => void;
@@ -107,7 +107,7 @@ export class SchedulerComponent implements ControlValueAccessor {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((newCrontab: string) => {
         if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {
-          this.customCrontab = undefined;
+          this.customCrontab = null;
         } else {
           this.customCrontab = newCrontab;
         }
@@ -132,7 +132,7 @@ export class SchedulerComponent implements ControlValueAccessor {
       this.onCustomOptionSelected(selection);
     } else {
       this.crontab = selection;
-      this.customCrontab = undefined;
+      this.customCrontab = null;
       this.onChange(selection);
       this.cdr.markForCheck();
     }

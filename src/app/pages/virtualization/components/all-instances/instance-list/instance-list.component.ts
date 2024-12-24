@@ -103,8 +103,7 @@ export class InstanceListComponent {
       if (instanceId && this.instances().some((instance) => instance.id === instanceId)) {
         this.deviceStore.selectInstance(instanceId);
       } else {
-        const [firstInstance] = this.instances();
-        this.navigateToDetails(firstInstance);
+        this.navigateToDetails(this.instances()[0]);
       }
     });
   }
