@@ -4,6 +4,7 @@
   "Api Keys": "",
   "Both": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots} }": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "",
   "{n, plural, one {# Environment Variable} other {# Environment Variables} }": "",
   "{n, plural, one {Failed Disk} other {Failed Disks} }": "",

@@ -16,8 +16,6 @@ export interface SmartTestTask {
 export type SmartTestTaskUpdate = Omit<SmartTestTask, 'id'>;
 
 export interface SmartTestTaskUi extends SmartTestTask {
-  cron_schedule: string;
-  frequency: string;
   next_run: string;
   disksLabel?: string[];
 }

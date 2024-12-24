@@ -3,14 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
@@ -67,6 +71,14 @@ describe('SnapshotTaskListComponent', () => {
       IxTableColumnsSelectorComponent,
       IxTableDetailsRowDirective,
       IxTableDetailsRowComponent,
+    ],
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 12:00 AM, every day'))] },
+        },
+      ],
     ],
     providers: [
       mockAuth(),

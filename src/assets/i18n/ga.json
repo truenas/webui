@@ -380,6 +380,7 @@
   "iSCSI Service": "",
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{n, plural, =0 {No Errors} one {# Error} other {# Errors}}": "",
   "{n, plural, =0 {No Tasks} one {# Task} other {# Tasks}} Configured": "",
   "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "",
