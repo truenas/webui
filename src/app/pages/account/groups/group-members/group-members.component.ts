@@ -53,7 +53,7 @@ export class GroupMembersComponent implements OnInit {
       switchMap((groups) => {
         this.group = groups[0];
         this.cdr.markForCheck();
-        return this.ws.call('user.query');
+        return this.ws.call('user.query', [[['local', '=', true]]]);
       }),
       untilDestroyed(this),
     ).subscribe((users) => {
