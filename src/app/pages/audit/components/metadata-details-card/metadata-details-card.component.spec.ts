@@ -48,7 +48,7 @@ describe('MetadataDetailsCardComponent', () => {
   });
 
   it('renders Metadata in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(3);
     expect(chartExtra[0]).toHaveText('Audit ID: 557cbf43-8c04-4250-bce6-e9ee1f45ec23');
     expect(chartExtra[1]).toHaveText('Version: Minor');

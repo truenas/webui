@@ -155,7 +155,7 @@ describe('JobsPanelComponent', () => {
   it('aborts a job when abort button is pressed', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const abortButton = spectator.query('.job-button-abort');
+    const abortButton = spectator.query('.job-button-abort')!;
     spectator.click(abortButton);
 
     expect(api.call).toHaveBeenCalledWith('core.job_abort', [1]);

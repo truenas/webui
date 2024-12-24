@@ -36,11 +36,11 @@ import {
   imports: [CdkTrapFocus],
 })
 export class SlideInComponent implements OnInit, OnDestroy {
-  readonly componentInfo = input<ComponentSerialized>();
+  readonly componentInfo = input.required<ComponentSerialized>();
   readonly index = input<number>();
   readonly lastIndex = input<number>();
 
-  private readonly slideInBody = viewChild('slideInBody', { read: ViewContainerRef });
+  private readonly slideInBody = viewChild.required('slideInBody', { read: ViewContainerRef });
   private needConfirmation: () => Observable<boolean>;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {

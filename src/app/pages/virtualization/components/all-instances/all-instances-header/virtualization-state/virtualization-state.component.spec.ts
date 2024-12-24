@@ -27,7 +27,7 @@ describe('VirtualizationStateComponent', () => {
       },
     });
 
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name).toBe('settings');
     expect(spectator.query('.status-text')).toHaveText('Pool is not selected');
   });
@@ -39,7 +39,7 @@ describe('VirtualizationStateComponent', () => {
       },
     });
 
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name).toBe('check');
     expect(spectator.query('.status-text')).toHaveText('Initialized');
   });
@@ -51,7 +51,7 @@ describe('VirtualizationStateComponent', () => {
       },
     });
 
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name).toBe('mdi-lock');
     expect(spectator.query('.status-text')).toHaveText('Dataset is locked');
   });
@@ -63,7 +63,7 @@ describe('VirtualizationStateComponent', () => {
       },
     });
 
-    const icon = spectator.query(IxIconComponent);
+    const icon = spectator.query(IxIconComponent)!;
     expect(icon.name).toBe('mdi-close');
     expect(spectator.query('.status-text')).toHaveText('Error');
   });
@@ -75,7 +75,7 @@ describe('VirtualizationStateComponent', () => {
       },
     });
 
-    const spinner = spectator.query(MatProgressSpinner);
+    const spinner = spectator.query(MatProgressSpinner)!;
     expect(spinner).toBeTruthy();
     expect(spinner.diameter).toBe(24);
     expect(spectator.query('.status-text')).toHaveText('Initializing...');

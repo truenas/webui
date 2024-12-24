@@ -43,7 +43,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
 
   wasDatasetCloned = false;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     dataset_dst: ['', Validators.required],
   });
 
@@ -61,7 +61,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   ) {}
 
   get datasetName(): string {
-    return this.form.value.dataset_dst;
+    return this.form.getRawValue().dataset_dst;
   }
 
   ngOnInit(): void {

@@ -11,7 +11,7 @@ import { MissingAccessWrapperComponent } from 'app/directives/has-access/missing
 })
 export class HasAccessDirective {
   private wrapperContainer: ComponentRef<MissingAccessWrapperComponent>;
-  private previousAccess: boolean = null;
+  private previousAccess: boolean | null = null;
 
   // eslint-disable-next-line @angular-eslint/prefer-signals
   @Input()

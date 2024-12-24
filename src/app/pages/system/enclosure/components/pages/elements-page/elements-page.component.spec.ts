@@ -57,7 +57,7 @@ describe('ElementsComponent', () => {
   });
 
   it('renders header with name of the current view', () => {
-    const header = spectator.query(EnclosureHeaderComponent);
+    const header = spectator.query(EnclosureHeaderComponent)!;
     expect(header.title).toBe('Voltage on M40');
   });
 
@@ -74,7 +74,7 @@ describe('ElementsComponent', () => {
   it('renders an error when view from route param is not available for current enclosure', () => {
     spectator.setRouteParam('view', 'Cooling Fan');
 
-    const empty = spectator.query(EmptyComponent);
+    const empty = spectator.query(EmptyComponent)!;
     expect(empty).toExist();
     expect(empty.conf).toEqual({
       large: true,

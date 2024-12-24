@@ -7,7 +7,7 @@ export const networkInterfacesChanged = createAction(
 
 export const networkInterfacesCheckinLoaded = createAction(
   '[Network Interfaces] Checkin Loaded',
-  props<{ hasPendingChanges: boolean; checkinWaiting: number }>(),
+  props<{ hasPendingChanges: boolean; checkinWaiting: number | null }>(),
 );
 
 export const checkinIndicatorPressed = createAction(

@@ -128,7 +128,7 @@ describe('KmipComponent', () => {
   });
 
   it('checks whether KMIP sync is pending and shows KMIP status', () => {
-    const statusText = spectator.query('.key-status');
+    const statusText = spectator.query('.key-status')!;
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('kmip.kmip_sync_pending');
     expect(statusText.textContent).toContain('Disabled');

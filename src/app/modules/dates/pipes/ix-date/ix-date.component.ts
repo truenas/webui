@@ -20,7 +20,7 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class IxDateComponent {
   /** Date must be in browser timezone */
-  readonly date = input<number | Date>();
+  readonly date = input.required<number | Date>();
 
   machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;

@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class DualListBoxComponent extends DualListComponent {
   sourceName = input.required<string>();
   targetName = input.required<string>();
-  listItemIcon = input<MarkedIcon>(null);
+  listItemIcon = input<MarkedIcon | null>(null);
 
   moveAll(): void {
     this.selectAll(this.available);

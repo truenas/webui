@@ -28,7 +28,7 @@ const gapRotation = 45 * 5;
 })
 export class GaugeChartComponent {
   label = input('');
-  value = input<number>();
+  value = input.required<number>();
 
   colorFill = input<string, string>('', {
     transform: (color: string) => this.conversionColor(color),

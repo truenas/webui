@@ -39,7 +39,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
     nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
     nic_attach: ['', Validators.required],
@@ -66,7 +66,9 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const typeLabel = this.translate.instant(vmNicTypeLabels.get(this.form.value.nic_type));
+    const typeLabel = this.translate.instant(
+      vmNicTypeLabels.get(this.form.value.nic_type) || this.form.value.nic_type,
+    );
     return [
       {
         label: this.translate.instant('NIC'),

@@ -74,7 +74,7 @@ describe('IxSelectComponent', () => {
       spectator.setHostInput('required', true);
       spectator.setHostInput('tooltip', 'Select group to use.');
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select Group');
       expect(label.required()).toBe(true);

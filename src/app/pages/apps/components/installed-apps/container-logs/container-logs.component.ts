@@ -41,7 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ContainerLogsComponent implements OnInit {
-  private logContainer: Signal<ElementRef<HTMLElement>> = viewChild('logContainer', { read: ElementRef });
+  private logContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('logContainer', { read: ElementRef });
 
   fontSize = 14;
   appName: string;

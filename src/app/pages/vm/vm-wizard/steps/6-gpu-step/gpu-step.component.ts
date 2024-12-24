@@ -32,7 +32,7 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   ],
 })
 export class GpuStepComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     hide_from_msr: [false],
     ensure_display_device: [true],
     gpus: [[] as string[], {

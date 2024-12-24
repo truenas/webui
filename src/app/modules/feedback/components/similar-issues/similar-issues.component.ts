@@ -29,11 +29,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SimilarIssuesComponent implements OnChanges {
-  readonly query = input<string>();
+  readonly query = input.required<string>();
 
   protected similarIssues$ = new BehaviorSubject<SimilarIssue[]>([]);
   protected isLoading$ = new BehaviorSubject<boolean>(false);
-  private query$ = new BehaviorSubject<string>(null);
+  private query$ = new BehaviorSubject<string>('');
 
   protected readonly jiraHostname = 'https://ixsystems.atlassian.net';
 

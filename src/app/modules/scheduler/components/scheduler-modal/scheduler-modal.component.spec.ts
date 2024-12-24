@@ -109,7 +109,7 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('shows preview column for the current crontab', () => {
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
 
       expect(previewColumn.crontab).toBe('0 2 * * mon');
       expect(previewColumn.timezone).toBe('America/New_York');
@@ -154,7 +154,7 @@ describe('SchedulerModalComponent', () => {
       const weekdays = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
       await parallel(() => weekdays.map((weekday) => weekday.check()));
 
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
       expect(previewColumn.crontab).toBe('0 2 * * *');
     });
 
@@ -162,7 +162,7 @@ describe('SchedulerModalComponent', () => {
       const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
       await parallel(() => months.map((month) => month.check()));
 
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
       expect(previewColumn.crontab).toBe('0 2 * * mon');
     });
 

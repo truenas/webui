@@ -51,7 +51,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
    */
   highlightedCalendarDays = new Set<number>();
 
-  cronPreview: CronSchedulePreview;
+  cronPreview: CronSchedulePreview | null;
 
   readonly calendar: Signal<MatCalendar<Date>> = viewChild('calendar', { read: MatCalendar });
 

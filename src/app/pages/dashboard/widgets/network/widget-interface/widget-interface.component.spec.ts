@@ -126,7 +126,7 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(NetworkChartComponent);
+      const chart = spectator.query(NetworkChartComponent)!;
       expect(chart).not.toBeNull();
 
       const data = chart.data;
@@ -210,7 +210,7 @@ describe('WidgetInterfaceComponent', () => {
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
-      const chart = spectator.query(NetworkChartComponent);
+      const chart = spectator.query(NetworkChartComponent)!;
       expect(chart).not.toBeNull();
 
       const data = chart.data;
