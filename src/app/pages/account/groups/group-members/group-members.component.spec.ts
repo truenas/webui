@@ -65,7 +65,7 @@ describe('GroupMembersComponent', () => {
     expect(await userList.getItems()).toHaveLength(1);
     expect(await memberList.getItems()).toHaveLength(1);
 
-    expect(ws.call).toHaveBeenCalledWith('user.query');
+    expect(ws.call).toHaveBeenCalledWith('user.query', [[['local', '=', true]]]);
     expect(ws.call).toHaveBeenCalledWith('group.query', [[['id', '=', 1]]]);
   });
 
