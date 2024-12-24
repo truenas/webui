@@ -37,7 +37,7 @@ describe('IxCodeEditor', () => {
       spectator.setHostInput('required', true);
       spectator.setHostInput('tooltip', 'Enter json code');
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Code Editor');
       expect(label.required()).toBe(true);
@@ -57,13 +57,13 @@ describe('IxCodeEditor', () => {
     it('when called with false, input is not disabled', () => {
       spectator.component.setDisabledState(false);
       spectator.detectChanges();
-      const element = spectator.query('.cm-content');
+      const element = spectator.query('.cm-content')!;
       expect(element.getAttribute('contenteditable')).toBe('true');
     });
     it('when called with true, input is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
-      const element = spectator.query('.cm-content');
+      const element = spectator.query('.cm-content')!;
       expect(element.getAttribute('contenteditable')).toBe('false');
     });
   });

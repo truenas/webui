@@ -48,7 +48,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   isFormLoading = false;
   protected helptextSystemBootenv = helptextSystemBootenv;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     dev: ['', Validators.required],
     expand: [false],
   });
@@ -101,7 +101,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading = true;
 
-    const { dev, expand } = this.form.value;
+    const { dev, expand } = this.form.getRawValue();
     this.dialogService.jobDialog(
       this.api.job('boot.attach', [dev, { expand }]),
       { title: this.translate.instant('Attaching Disk to Boot Pool') },

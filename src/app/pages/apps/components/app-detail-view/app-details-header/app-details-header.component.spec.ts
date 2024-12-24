@@ -110,7 +110,7 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     it('shows app logo', () => {
-      const logo = spectator.query(AppCardLogoComponent);
+      const logo = spectator.query(AppCardLogoComponent)!;
       expect(logo).toExist();
       expect(logo.url).toBe(application.icon_url);
     });

@@ -47,7 +47,7 @@ export class DeleteExtentDialogComponent {
     Role.SharingWrite,
   ];
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     remove: [false],
     force: [false],
   });
@@ -66,7 +66,7 @@ export class DeleteExtentDialogComponent {
   }
 
   onDelete(): void {
-    const { remove, force } = this.form.value;
+    const { remove, force } = this.form.getRawValue();
 
     this.api.call('iscsi.extent.delete', [this.extent.id, remove, force])
       .pipe(

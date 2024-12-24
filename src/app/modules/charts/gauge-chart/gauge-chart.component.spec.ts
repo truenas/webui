@@ -25,6 +25,7 @@ describe('GaugeChartComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        value: 0,
         colorFill: '#000',
         colorBlank: 'var(--bg2)',
       },
@@ -38,7 +39,7 @@ describe('GaugeChartComponent', () => {
 
   it('renders donut chart', () => {
     spectator.setInput('value', 50);
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
 
     expect(chart).toExist();
     expect(chart.datasets).toMatchObject([

@@ -63,7 +63,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   readonly label = input<string>();
   readonly hint = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly allowCustomValue = input(false);
 
@@ -87,7 +87,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   value: string | number = '';
   isDisabled = false;
   filterValue: string;
-  selectedOption: Option = null;
+  selectedOption: Option | null = null;
   textContent = '';
 
   onChange: (value: string | number) => void = (): void => {};

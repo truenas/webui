@@ -35,7 +35,7 @@ export class IxValidatorsService {
     condition: (control: AbstractControl) => boolean,
     validator: ValidatorFn,
   ): ValidatorFn => {
-    return (control: AbstractControl): ValidationErrors => {
+    return (control: AbstractControl): ValidationErrors | null => {
       if (condition(control)) {
         return validator(control);
       }

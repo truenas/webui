@@ -25,7 +25,7 @@ describe('InterfaceStatusIconComponent', () => {
     spectator = createComponent({
       props: { update },
     });
-    icon = spectator.query(IxIconComponent);
+    icon = spectator.query(IxIconComponent)!;
   }
 
   describe('disabled', () => {
@@ -52,7 +52,7 @@ describe('InterfaceStatusIconComponent', () => {
     });
 
     it('shows sent and received rate in icon tooltip', () => {
-      const tooltip = spectator.query(MatTooltip);
+      const tooltip = spectator.query(MatTooltip)!;
 
       expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });

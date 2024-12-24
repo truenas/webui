@@ -64,7 +64,7 @@ describe('IxChipsComponent', () => {
     spectator.setHostInput('required', true);
     spectator.setHostInput('tooltip', 'Select local groups.');
 
-    const label = spectator.query(IxLabelComponent);
+    const label = spectator.query(IxLabelComponent)!;
     expect(label).toExist();
     expect(label.label()).toBe('Apply To Groups');
     expect(label.required()).toBe(true);
@@ -72,7 +72,7 @@ describe('IxChipsComponent', () => {
   });
 
   it('after creating the chip, the input field should be cleared', async () => {
-    const input = await matChipList.getInput();
+    const input = (await matChipList.getInput())!;
     await input.setValue('operator');
     await input.sendSeparatorKey(TestKey.ENTER);
 
@@ -91,7 +91,7 @@ describe('IxChipsComponent', () => {
   });
 
   it('sets value when user types it in', async () => {
-    const input = await matChipList.getInput();
+    const input = (await matChipList.getInput())!;
     await input.setValue('operator');
     await input.sendSeparatorKey(TestKey.ENTER);
     await input.setValue('root');
@@ -102,7 +102,7 @@ describe('IxChipsComponent', () => {
 
   it('does not create chip after leaving the focus of the input if there is [allowNewEntries]=false', async () => {
     spectator.setHostInput('allowNewEntries', false);
-    const input = await matChipList.getInput();
+    const input = (await matChipList.getInput())!;
     await input.setValue('www-date');
     await input.blur();
 
@@ -111,7 +111,7 @@ describe('IxChipsComponent', () => {
 
   it('does not create chip in any way if there is [allowNewEntries]=false', async () => {
     spectator.setHostInput('allowNewEntries', false);
-    const input = await matChipList.getInput();
+    const input = (await matChipList.getInput())!;
     await input.setValue('www-date');
     await input.sendSeparatorKey(TestKey.ENTER);
 
@@ -145,7 +145,7 @@ describe('IxChipsComponent', () => {
 
   it('disables input when form control is disabled', async () => {
     formControl.disable();
-    const input = await matChipList.getInput();
+    const input = (await matChipList.getInput())!;
     const container = spectator.query('ix-chips .input-container');
 
     expect(await input.isDisabled()).toBeTruthy();
@@ -156,7 +156,7 @@ describe('IxChipsComponent', () => {
     it('the autocomplete list should be open after focused on the input', fakeAsync(async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
       spectator.tick(100);
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.focus();
       const isOpen = await matAutocomplete.isOpen();
       const options = await matAutocomplete.getOptions();
@@ -170,7 +170,7 @@ describe('IxChipsComponent', () => {
       + ' after autocomplete should be closed', fakeAsync(async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
       spectator.tick(100);
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.setValue('s');
       spectator.tick(100);
       const options = await matAutocomplete.getOptions();
@@ -186,7 +186,7 @@ describe('IxChipsComponent', () => {
     it('the autocomplete list should be open after creating the chip', fakeAsync(async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
       spectator.tick(100);
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.setValue('ssl-cert');
       spectator.tick(100);
       await input.sendSeparatorKey(TestKey.ENTER);
@@ -200,7 +200,7 @@ describe('IxChipsComponent', () => {
     it('the autocomplete panel should be hidden if list is empty', fakeAsync(async () => {
       spectator.setHostInput('autocompleteProvider', jest.fn(() => of([])));
       spectator.tick(100);
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.focus();
       const isOpen = await matAutocomplete.isOpen();
 
@@ -216,7 +216,7 @@ describe('IxChipsComponent', () => {
         { label: 'Option 2', value: 2 },
       ]));
 
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.setValue('Option 1');
       await input.sendSeparatorKey(TestKey.ENTER);
 
@@ -230,7 +230,7 @@ describe('IxChipsComponent', () => {
         { label: 'Option 2', value: 2 },
       ]));
 
-      const input = await matChipList.getInput();
+      const input = (await matChipList.getInput())!;
       await input.setValue('Option 1');
       await input.sendSeparatorKey(TestKey.ENTER);
 

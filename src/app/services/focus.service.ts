@@ -44,7 +44,7 @@ export class FocusService {
     this.document.getElementById(id)?.focus();
   }
 
-  focusFirstFocusableElement(element: HTMLElement): void {
+  focusFirstFocusableElement(element: HTMLElement | null): void {
     if (!element) return;
 
     const focusableElements = this.getFocusableElements(element);

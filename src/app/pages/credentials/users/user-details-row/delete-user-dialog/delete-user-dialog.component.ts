@@ -46,7 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class DeleteUserDialogComponent implements OnInit {
   readonly requiredRoles = [Role.AccountWrite];
 
-  deleteGroupCheckbox = new FormControl(false);
+  deleteGroupCheckbox = new FormControl(false, { nonNullable: true });
   isLastGroupMember = false;
 
   readonly deleteMessage = T('Are you sure you want to delete user <b>"{user}"</b>?');

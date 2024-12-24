@@ -42,7 +42,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
     applyGroup: boolean;
   }>();
 
-  protected saveParameters = this.formBuilder.group({
+  protected saveParameters = this.formBuilder.nonNullable.group({
     recursive: [false],
     traverse: [false],
     validate_effective_acl: [true],
@@ -71,7 +71,7 @@ export class AclEditorSaveControlsComponent implements OnInit {
   ));
 
   protected onSavePressed(): void {
-    const saveParameters = this.saveParameters.value;
+    const saveParameters = this.saveParameters.getRawValue();
 
     this.store.saveAcl({
       recursive: saveParameters.recursive,

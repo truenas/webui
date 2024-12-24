@@ -45,7 +45,7 @@ describe('IxButtonGroupComponent', () => {
       spectator.setHostInput('required', true);
       spectator.setHostInput('tooltip', 'Value is required.');
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('I would like to');
       expect(label.required()).toBe(true);

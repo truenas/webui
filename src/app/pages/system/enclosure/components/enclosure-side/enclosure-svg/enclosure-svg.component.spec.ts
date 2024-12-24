@@ -134,7 +134,7 @@ describe('EnclosureSvgComponent', () => {
       });
 
       it('adds static class to svg container', () => {
-        expect(spectator.query('.svg-container').classList).toContain('static');
+        expect(spectator.query('.svg-container')!.classList).toContain('static');
       });
     });
 
@@ -181,7 +181,7 @@ describe('EnclosureSvgComponent', () => {
       spectator.detectChanges();
       tick();
 
-      const skeletonLoader = spectator.query(NgxSkeletonLoaderComponent);
+      const skeletonLoader = spectator.query(NgxSkeletonLoaderComponent)!;
       expect(skeletonLoader).toBeTruthy();
       expect(skeletonLoader.animation).toBe(false);
       expect(skeletonLoader.theme).toEqual({

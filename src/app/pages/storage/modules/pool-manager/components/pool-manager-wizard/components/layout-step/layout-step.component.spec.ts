@@ -74,7 +74,7 @@ describe('LayoutStepComponent', () => {
   });
 
   it('by default shows automated disk selection passing inputs', () => {
-    const automatedSelection = spectator.query(AutomatedDiskSelectionComponent);
+    const automatedSelection = spectator.query(AutomatedDiskSelectionComponent)!;
     expect(automatedSelection).toBeTruthy();
     expect(automatedSelection.limitLayouts).toBe(limitLayouts);
     expect(automatedSelection.type).toBe(VdevType.Data);
@@ -96,7 +96,7 @@ describe('LayoutStepComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.query(AutomatedDiskSelectionComponent)).toBeFalsy();
-    const customLayout = spectator.query(CustomLayoutAppliedComponent);
+    const customLayout = spectator.query(CustomLayoutAppliedComponent)!;
     expect(customLayout).toBeTruthy();
     expect(customLayout.type).toBe(VdevType.Data);
     expect(customLayout.vdevs).toBe(topologyCategory.vdevs);

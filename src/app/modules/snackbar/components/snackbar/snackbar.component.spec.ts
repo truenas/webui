@@ -43,14 +43,14 @@ describe('SnackbarComponent', () => {
   });
 
   it('shows an icon when it is set in config', () => {
-    expect(spectator.query(IxIconComponent).name).toBe('error');
+    expect(spectator.query(IxIconComponent)!.name).toBe('error');
   });
 
   it('shows the button and executes the action when it is set in config', async () => {
     const testButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Test Button' }));
     expect(testButton).not.toBeNull();
 
-    await testButton.click();
+    await testButton!.click();
     expect(fakeAction).toHaveBeenCalled();
   });
 });

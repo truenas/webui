@@ -48,12 +48,12 @@ export interface StartServiceDialogResult {
   ],
 })
 export class StartServiceDialogComponent implements OnInit {
-  startAutomaticallyControl = new FormControl(true);
+  startAutomaticallyControl = new FormControl(true, { nonNullable: true });
   protected isLoading = false;
   private service: Service;
 
   get serviceHumanName(): string {
-    return serviceNames.get(this.serviceName);
+    return serviceNames.get(this.serviceName) || this.serviceName;
   }
 
   get isDisabled(): boolean {

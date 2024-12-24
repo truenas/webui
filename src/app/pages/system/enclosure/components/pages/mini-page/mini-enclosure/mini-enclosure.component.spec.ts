@@ -89,7 +89,7 @@ describe('MiniEnclosureComponent', () => {
   });
 
   it('renders slots and their dev names or "Empty"', () => {
-    const slots = spectator.query('.slots-and-numbers').children;
+    const slots = spectator.query('.slots-and-numbers')!.children;
     expect(slots).toHaveLength(3);
     expect(slots[0]).toHaveText('1 ada1');
     expect(slots[1]).toHaveText('2 ada2');
@@ -97,7 +97,7 @@ describe('MiniEnclosureComponent', () => {
   });
 
   it('renders an enclosure graphic', () => {
-    const enclosureComponent = spectator.query(EnclosureSideStubComponent);
+    const enclosureComponent = spectator.query(EnclosureSideStubComponent)!;
     expect(enclosureComponent).toExist();
     expect(enclosureComponent.enclosure()).toBe(enclosure);
     expect(enclosureComponent.selectedSlot()).toBeNull();
@@ -110,7 +110,7 @@ describe('MiniEnclosureComponent', () => {
   });
 
   it('selects a slot when it is clicked on in enclosure svg', () => {
-    const enclosureComponent = spectator.query(EnclosureSideStubComponent);
+    const enclosureComponent = spectator.query(EnclosureSideStubComponent)!;
     enclosureComponent.selectedSlot.set(enclosure.elements[EnclosureElementType.ArrayDeviceSlot][1]);
 
     expect(spectator.inject(EnclosureStore).selectSlot).toHaveBeenCalledWith(1);

@@ -14,7 +14,7 @@ describe('DockerStatusComponent', () => {
     imports: [MapValuePipe],
   });
 
-  function setupTest(status: DockerStatus): void {
+  function setupTest(status: DockerStatus | null): void {
     spectator = createComponent({
       providers: [
         mockProvider(DockerStore, {
