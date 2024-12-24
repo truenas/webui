@@ -73,7 +73,7 @@ export class DeleteTargetDialogComponent implements OnInit {
       (sessions) => {
         sessions.forEach((session) => {
           if (Number(session.target.split(':')[1]) === this.target.id) {
-            this.warningMessage = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
+            this.warningMessage = `<font color="orange">${this.translate.instant('Warning: iSCSI Target is currently in use.</font><br>')}`;
           }
         });
 

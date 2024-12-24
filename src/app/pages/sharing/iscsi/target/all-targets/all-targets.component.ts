@@ -83,7 +83,7 @@ export class AllTargetsComponent implements OnInit {
 
   deleteTarget(target: IscsiTarget): void {
     this.matDialog
-      .open(DeleteTargetDialogComponent, { data: target })
+      .open(DeleteTargetDialogComponent, { data: target, width: '600px' })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {

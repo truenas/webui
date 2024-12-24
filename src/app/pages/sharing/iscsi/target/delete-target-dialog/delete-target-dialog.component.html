@@ -6,7 +6,11 @@
   }
 
   <p>
-    {{ 'You are about to delete the target "{name}". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.' | translate: { name: target.name } }}
+    @if (targetExtents().length > 0) {
+      {{ 'You are about to delete the target "{name}". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.' | translate: { name: target.name } }}
+    } @else {
+      {{ 'You are about to delete the target "{name}".' | translate: { name: target.name } }}
+    }
   </p>
 
   <form [formGroup]="form">
@@ -34,7 +38,7 @@
     <button
       *ixRequiresRoles="requiredRoles"
       mat-button
-      color="primary"
+      color="error"
       ixTest="delete"
       [disabled]="form.invalid"
       (click)="onDelete()"

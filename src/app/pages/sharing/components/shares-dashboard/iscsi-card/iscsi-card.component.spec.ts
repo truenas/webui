@@ -134,7 +134,7 @@ describe('IscsiCardComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       DeleteTargetDialogComponent,
-      { data: iscsiShares[0] },
+      { data: iscsiShares[0], width: '600px' },
     );
   });
 });

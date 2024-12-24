@@ -35,7 +35,9 @@ describe('DeleteTargetDialogComponent', () => {
         mockCall('iscsi.target.delete'),
       ]),
       mockProvider(IscsiService, {
-        getGlobalSessions: jest.fn(() => of([])),
+        getGlobalSessions: jest.fn(() => of([{
+          target: 'test:1',
+        }])),
         getTargetExtents: jest.fn(() => of(extents)),
       }),
       mockProvider(MatDialogRef),
@@ -72,5 +74,11 @@ describe('DeleteTargetDialogComponent', () => {
   it('shows extents checkbox when there are associated extents', async () => {
     const extentsCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Delete 2 associated extents' }));
     expect(extentsCheckbox).toBeTruthy();
+  });
+
+  it('shows warning message when target is in use', () => {
+    const warningMessages = spectator.queryAll('p');
+
+    expect(warningMessages.find((message) => message.textContent)).toHaveText('Warning: iSCSI Target is currently in use.');
   });
 });

@@ -180,7 +180,7 @@ export class IscsiCardComponent implements OnInit {
 
   doDelete(iscsi: IscsiTarget): void {
     this.matDialog
-      .open(DeleteTargetDialogComponent, { data: iscsi })
+      .open(DeleteTargetDialogComponent, { data: iscsi, width: '600px' })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
