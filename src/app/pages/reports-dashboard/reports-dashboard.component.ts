@@ -88,8 +88,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
-        this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
+        this.diskReports = this.allReports.filter((report) => report.name === ReportingGraphName.Disk);
+        this.otherReports = this.allReports.filter((report) => report.name !== ReportingGraphName.Disk);
 
         this.activateTabFromUrl();
         this.cdr.markForCheck();
@@ -236,7 +236,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = devices.includes(item.identifiers[0]);
+      const [,, identifier] = item.identifiers[0].split(' | ');
+      const deviceMatch = devices.includes(identifier);
       const metricMatch = metrics.includes(item.name);
       const condition = deviceMatch && metricMatch;
       if (condition) {
