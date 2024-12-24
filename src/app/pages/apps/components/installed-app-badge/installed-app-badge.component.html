@@ -1,0 +1,8 @@
+<a
+  class="installed-badge"
+  [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
+  [ixTest]="[app()?.name, 'installed-badge']"
+  (click)="navigateToAllInstalledPage($event)"
+>
+  {{ 'Installed' | translate }}
+</a>
