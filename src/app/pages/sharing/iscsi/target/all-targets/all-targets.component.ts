@@ -4,10 +4,11 @@ import {
   signal,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  filter, repeat, switchMap, tap,
+  filter, repeat, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,6 +20,7 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
+import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -59,6 +61,7 @@ export class AllTargetsComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
+    private matDialog: MatDialog,
     private slideInService: OldSlideInService,
   ) {}
 
@@ -79,35 +82,14 @@ export class AllTargetsComponent implements OnInit {
   }
 
   deleteTarget(target: IscsiTarget): void {
-    this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-      (sessions) => {
-        let warningMsg = '';
-        sessions.forEach((session) => {
-          if (Number(session.target.split(':')[1]) === target.id) {
-            warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-          }
-        });
-        const deleteMsg = this.translate.instant('Delete Target {name}', { name: target.name });
-
-        this.dialogService.confirm({
-          title: this.translate.instant('Delete'),
-          message: warningMsg + deleteMsg,
-          buttonText: this.translate.instant('Delete'),
-        }).pipe(
-          filter(Boolean),
-          switchMap(() => this.api.call('iscsi.target.delete', [target.id, true]).pipe(this.loader.withLoader())),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.dataProvider.load();
-            this.dataProvider.expandedRow = null;
-          },
-          error: (error: unknown) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
-    );
+    this.matDialog
+      .open(DeleteTargetDialogComponent, { data: target, width: '600px' })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.dataProvider.load();
+        this.dataProvider.expandedRow = null;
+      });
   }
 
   editTarget(target: IscsiTarget): void {

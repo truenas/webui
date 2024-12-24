@@ -5,12 +5,13 @@ import {
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
@@ -36,6 +37,7 @@ import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
+import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
@@ -129,6 +131,7 @@ export class IscsiCardComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private store$: Store<ServicesState>,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {
     effect(() => {
@@ -176,21 +179,11 @@ export class IscsiCardComponent implements OnInit {
   }
 
   doDelete(iscsi: IscsiTarget): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Are you sure you want to delete iSCSI Share <b>"{name}"</b>?', { name: iscsi.name }),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.api.call('iscsi.target.delete', [iscsi.id])),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.dataProvider.load();
-      },
-      error: (err: unknown) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
-      },
-    });
+    this.matDialog
+      .open(DeleteTargetDialogComponent, { data: iscsi, width: '600px' })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
   setDefaultSort(): void {
