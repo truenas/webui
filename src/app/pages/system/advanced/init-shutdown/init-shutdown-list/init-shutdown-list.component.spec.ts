@@ -18,7 +18,7 @@ import {
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InitShutdownListComponent', () => {
@@ -54,7 +54,7 @@ describe('InitShutdownListComponent', () => {
         mockCall('initshutdownscript.query', scripts),
         mockCall('initshutdownscript.delete'),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of([])),
       }),
       mockProvider(DialogService, {
@@ -82,7 +82,7 @@ describe('InitShutdownListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(ChainedSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
       false,
       expect.objectContaining(scripts[0]),

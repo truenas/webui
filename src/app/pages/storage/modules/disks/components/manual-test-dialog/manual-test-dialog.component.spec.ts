@@ -67,7 +67,7 @@ describe('ManualTestDialogComponent', () => {
   });
 
   it('shows list of disks that do not support SMART', () => {
-    const unsupportedMessage = spectator.query(byText('These disks do not support S.M.A.R.T. tests:'));
+    const unsupportedMessage = spectator.query(byText('These disks do not support S.M.A.R.T. tests:'))!;
 
     const unsupportedDisks = unsupportedMessage.nextElementSibling;
 

@@ -22,18 +22,17 @@ import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { SlideIn } from 'app/services/slide-in';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const chainedRef: ChainedRef<unknown> = {
+  const slideInRef: SlideInRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     requireConfirmationWhen: jest.fn(),
@@ -47,7 +46,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       SshCredentialsSelectComponent,
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockAuth(),
       mockApi([
         mockCall('replication.query', [
@@ -72,7 +71,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
       mockProvider(DatasetService),
@@ -81,11 +80,10 @@ describe('ReplicationWhatAndWhereComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -208,7 +206,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(
-      chainedRef.swap,
+      slideInRef.swap,
     ).toHaveBeenCalledWith(ReplicationFormComponent, true);
   });
 });

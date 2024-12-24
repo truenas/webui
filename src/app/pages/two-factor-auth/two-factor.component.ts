@@ -134,7 +134,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  getProvisioningUriSecret(uri: string): string {
+  getProvisioningUriSecret(uri: string): string | null {
     const url = new URL(uri);
     const params = new URLSearchParams(url.search);
 

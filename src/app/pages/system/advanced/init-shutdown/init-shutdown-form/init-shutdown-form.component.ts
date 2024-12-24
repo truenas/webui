@@ -23,8 +23,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -37,7 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -108,9 +108,9 @@ export class InitShutdownFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
-    private chainedRef: ChainedRef<InitShutdownScript>,
+    private slideInRef: SlideInRef<InitShutdownScript>,
   ) {
-    this.editingScript = this.chainedRef.getData();
+    this.editingScript = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -150,7 +150,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading = false;
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

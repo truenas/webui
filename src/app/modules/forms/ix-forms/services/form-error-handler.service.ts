@@ -32,7 +32,7 @@ export class FormErrorHandlerService {
     error: unknown,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},
-    triggerAnchor: string = undefined,
+    triggerAnchor: string | undefined = undefined,
   ): void {
     const isValidationError = isErrorResponse(error)
       && isApiError(error.error.data)
@@ -65,7 +65,7 @@ export class FormErrorHandlerService {
     error: ApiError | Job,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
-    triggerAnchor: string,
+    triggerAnchor: string | undefined,
   ): void {
     this.isFocusedOnError = false;
     this.needToShowError = false;
@@ -75,10 +75,10 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       const control = this.getFormField(formGroup, field, fieldsMap);
-      const controlsNames = this.formService.getControlsNames();
+      const controlsNames = this.formService.getControlNames();
 
       if (triggerAnchor && control && !controlsNames.includes(field)) {
-        const triggerAnchorRef: HTMLElement = this.document.getElementById(triggerAnchor);
+        const triggerAnchorRef = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
           setTimeout(() => {
@@ -112,7 +112,7 @@ export class FormErrorHandlerService {
     errorMessage: string;
     error: ApiError | Job;
   }): void {
-    const controlsNames = this.formService.getControlsNames();
+    const controlsNames = this.formService.getControlNames();
 
     if (!control || !controlsNames.includes(field)) {
       console.error(`Could not find control ${field}.`);

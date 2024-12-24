@@ -40,7 +40,7 @@ describe('MiniDriveStatsComponent', () => {
   });
 
   it('shows a disk icon', () => {
-    const icon = spectator.query(DiskIconComponent);
+    const icon = spectator.query(DiskIconComponent)!;
     expect(icon).toExist();
     expect(icon.name).toBe('ada1');
     expect(icon.type).toBe(DiskType.Hdd);

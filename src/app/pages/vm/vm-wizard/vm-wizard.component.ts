@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -24,8 +24,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
@@ -54,7 +54,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -78,37 +78,38 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
-  @ViewChild(OsStepComponent, { static: true }) osStep: OsStepComponent;
-  @ViewChild(CpuAndMemoryStepComponent, { static: true }) cpuAndMemoryStep: CpuAndMemoryStepComponent;
-  @ViewChild(DiskStepComponent, { static: true }) diskStep: DiskStepComponent;
-  @ViewChild(NetworkInterfaceStepComponent, { static: true }) networkInterfaceStep: NetworkInterfaceStepComponent;
-  @ViewChild(InstallationMediaStepComponent, { static: true }) installationMediaStep: InstallationMediaStepComponent;
-  @ViewChild(GpuStepComponent, { static: true }) gpuStep: GpuStepComponent;
+  protected readonly osStep = viewChild(OsStepComponent);
+  // TODO: Should be protected, but used in the test.
+  readonly cpuAndMemoryStep = viewChild(CpuAndMemoryStepComponent);
+  readonly diskStep = viewChild(DiskStepComponent);
+  protected readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
+  protected readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
+  protected readonly gpuStep = viewChild(GpuStepComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
   get osForm(): OsStepComponent['form']['value'] {
-    return this.osStep.form.value;
+    return this.osStep().form.value;
   }
 
   get cpuAndMemoryForm(): CpuAndMemoryStepComponent['form']['value'] {
-    return this.cpuAndMemoryStep.form.value;
+    return this.cpuAndMemoryStep().form.value;
   }
 
   get diskForm(): DiskStepComponent['form']['value'] {
-    return this.diskStep.form.value;
+    return this.diskStep().form.value;
   }
 
   get nicForm(): NetworkInterfaceStepComponent['form']['value'] {
-    return this.networkInterfaceStep.form.value;
+    return this.networkInterfaceStep().form.value;
   }
 
   get mediaForm(): InstallationMediaStepComponent['form']['value'] {
-    return this.installationMediaStep.form.value;
+    return this.installationMediaStep().form.value;
   }
 
   get gpuForm(): GpuStepComponent['form']['value'] {
-    return this.gpuStep.form.value;
+    return this.gpuStep().form.value;
   }
 
   isLoading = false;
@@ -118,7 +119,7 @@ export class VmWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideInRef: SlideInRef<VmWizardComponent>,
+    private slideInRef: OldSlideInRef<VmWizardComponent>,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
@@ -132,12 +133,12 @@ export class VmWizardComponent implements OnInit {
 
   updateSummary(): void {
     const steps = [
-      this.osStep,
-      this.cpuAndMemoryStep,
-      this.diskStep,
-      this.networkInterfaceStep,
-      this.installationMediaStep,
-      this.gpuStep,
+      this.osStep(),
+      this.cpuAndMemoryStep(),
+      this.diskStep(),
+      this.networkInterfaceStep(),
+      this.installationMediaStep(),
+      this.gpuStep(),
     ];
 
     this.summary = steps.map((step) => step.getSummary());
@@ -167,27 +168,27 @@ export class VmWizardComponent implements OnInit {
   }
 
   private setDefaultsFromOs(): void {
-    this.osStep.form.controls.os.valueChanges
+    this.osStep().form.controls.os.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((os) => {
         if (os === VmOs.Windows) {
-          this.cpuAndMemoryStep.form.patchValue({
+          this.cpuAndMemoryStep().form.patchValue({
             vcpus: 2,
             cores: 1,
             threads: 1,
             memory: 4 * GiB,
           });
-          this.diskStep.form.patchValue({
+          this.diskStep().form.patchValue({
             volsize: 40 * GiB,
           });
         } else {
-          this.cpuAndMemoryStep.form.patchValue({
+          this.cpuAndMemoryStep().form.patchValue({
             vcpus: 1,
             cores: 1,
             threads: 1,
             memory: 512 * MiB,
           });
-          this.diskStep.form.patchValue({
+          this.diskStep().form.patchValue({
             volsize: 10 * GiB,
           });
         }
@@ -235,7 +236,7 @@ export class VmWizardComponent implements OnInit {
     return forkJoin(requests);
   }
 
-  private getNicRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getNicRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.makeDeviceRequest(vm.id, {
       attributes: {
         dtype: VmDeviceType.Nic,
@@ -249,7 +250,7 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getDiskRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getDiskRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     if (this.diskForm.newOrExisting === NewOrExistingDisk.New) {
       const hdd = this.diskForm.datastore + '/' + this.osForm.name.replace(/\s+/g, '-') + '-' + Math.random().toString(36).substring(7);
       return this.makeDeviceRequest(vm.id, {
@@ -276,7 +277,7 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getCdromRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getCdromRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.makeDeviceRequest(vm.id, {
       attributes: {
         dtype: VmDeviceType.Cdrom,
@@ -294,7 +295,7 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
+  private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice | null> {
     return this.api.call('vm.port_wizard').pipe(
       switchMap((port) => {
         return this.makeDeviceRequest(vm.id, {
@@ -311,7 +312,7 @@ export class VmWizardComponent implements OnInit {
     );
   }
 
-  private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice> {
+  private makeDeviceRequest(vmId: number, payload: VmDeviceUpdate): Observable<VmDevice | null> {
     return this.api.call('vm.device.create', [{
       vm: vmId,
       ...payload,

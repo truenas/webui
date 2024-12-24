@@ -31,8 +31,8 @@ import { NavigationComponent } from 'app/modules/layout/navigation/navigation.co
 import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/secondary-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
-import { ChainedSlideInComponent } from 'app/modules/slide-ins/components/chained-slide-in/chained-slide-in.component';
-import { SlideInComponent } from 'app/modules/slide-ins/slide-in.component';
+import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
+import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { LanguageService } from 'app/services/language.service';
 import { SentryService } from 'app/services/sentry.service';
@@ -41,9 +41,7 @@ import { SidenavService } from 'app/services/sidenav.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import {
-  selectBuildYear, selectCopyrightText, selectIsEnterprise, waitForSystemInfo,
-} from 'app/store/system-info/system-info.selectors';
+import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -67,8 +65,8 @@ import {
     RouterOutlet,
     ConsoleFooterComponent,
     AlertsPanelComponent,
-    SlideInComponent,
-    ChainedSlideInComponent,
+    SlideInControllerComponent,
+    OldSlideInComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,
@@ -80,7 +78,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
-  readonly copyrightYear = toSignal(this.store$.select(selectBuildYear));
   readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   readonly copyrightText = toSignal(this.store$.select(selectCopyrightText));
   readonly copyrightTooltip = computed(() => `${this.copyrightText()} by iXsystems, Inc.`);

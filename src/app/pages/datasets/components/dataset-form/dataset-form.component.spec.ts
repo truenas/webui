@@ -17,7 +17,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -34,7 +34,7 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -97,7 +97,7 @@ describe('DatasetFormComponent', () => {
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
         mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -113,7 +113,7 @@ describe('DatasetFormComponent', () => {
         }),
       }),
       mockProvider(Router),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -126,19 +126,19 @@ describe('DatasetFormComponent', () => {
     });
 
     it('toggles between Advanced mode when corresponding button is pressed', async () => {
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
 
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(true);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
       expect(spectator.query(QuotasSectionComponent)).toExist();
 
       const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
       await basicButton.click();
 
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
     });
   });

@@ -3085,7 +3085,7 @@
     ],
     "synonyms": [],
     "requiredRoles": [
-      "REPORTING_WRITE"
+      "FULL_ADMIN"
     ],
     "visibleTokens": [],
     "anchorRouterLink": [
@@ -4650,7 +4650,8 @@
     ],
     "synonyms": [
       "SMTP",
-      "Gmail"
+      "Gmail",
+      "Outlook"
     ],
     "requiredRoles": [],
     "visibleTokens": [],

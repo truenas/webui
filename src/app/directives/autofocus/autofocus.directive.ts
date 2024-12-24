@@ -14,6 +14,6 @@ export class AutofocusDirective implements AfterViewInit {
     // Do not intercept focus when a full-screen dialog is open.
     const rootNode = this.host.nativeElement.getRootNode() as HTMLElement;
     if (rootNode.querySelector('ix-full-screen-dialog')) return;
-    this.host.nativeElement.querySelector<HTMLElement>('input, textarea, select').focus();
+    this.host.nativeElement.querySelector<HTMLElement>('input, textarea, select')?.focus();
   }
 }

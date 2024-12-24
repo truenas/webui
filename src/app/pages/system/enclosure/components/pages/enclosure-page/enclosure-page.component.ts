@@ -64,7 +64,7 @@ export class EnclosurePageComponent {
     }
 
     this.router.navigate(['/system', 'viewenclosure', enclosure.id, 'mini']);
-  }, { allowSignalWrites: true });
+  });
 
   constructor(
     private store: EnclosureStore,

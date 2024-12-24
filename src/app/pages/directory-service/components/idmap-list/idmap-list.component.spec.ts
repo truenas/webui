@@ -18,7 +18,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdmapListComponent', () => {
@@ -72,7 +72,7 @@ describe('IdmapListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
         }),
@@ -152,7 +152,7 @@ describe('IdmapListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(IdmapFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(IdmapFormComponent, {
       data: idmapRecords[0],
     });
   });
@@ -176,6 +176,6 @@ describe('IdmapListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(IdmapFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(IdmapFormComponent);
   });
 });

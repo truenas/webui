@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
@@ -13,7 +14,7 @@ import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-c
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
@@ -22,14 +23,16 @@ describe('CustomAppButtonComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: CustomAppButtonComponent,
-    imports: [],
-    declarations: [MockComponent(AppCardComponent)],
+    imports: [
+      LazyLoadImageDirective,
+      MockComponent(AppCardComponent),
+    ],
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {
         selectedPool$: of('selected pool'),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
@@ -74,6 +77,6 @@ describe('CustomAppButtonComponent', () => {
     const installButton = await menu.getItems({ text: /Install via YAML$/ });
     await installButton[0].click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
   });
 });

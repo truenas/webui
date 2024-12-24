@@ -1,4 +1,4 @@
-<ix-modal-header2 [requiredRoles]="requiredRoles" [title]="'Cloud Sync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header2>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="'Cloud Sync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
@@ -13,7 +13,7 @@
         ></ix-cloudsync-provider>
       </mat-step>
 
-      <mat-step [stepControl]="whatAndWhen?.form">
+      <mat-step [stepControl]="whatAndWhen()?.form">
         <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
         <ix-cloudsync-what-and-when
           [credentialId]="existingCredential?.id"

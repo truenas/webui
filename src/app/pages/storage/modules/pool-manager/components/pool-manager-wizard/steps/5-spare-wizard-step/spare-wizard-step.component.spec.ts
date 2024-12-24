@@ -36,7 +36,7 @@ describe('SpareWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(PoolManagerStore, {
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),
@@ -48,7 +48,7 @@ describe('SpareWizardStepComponent', () => {
   });
 
   it('has the correct inputs', () => {
-    const layoutComponent = spectator.query(LayoutStepComponent);
+    const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextManager.spare_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeFalsy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);

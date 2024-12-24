@@ -23,13 +23,13 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -53,7 +53,7 @@ describe('IscsiWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -100,7 +100,7 @@ describe('IscsiWizardComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -183,6 +183,6 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   }));
 });

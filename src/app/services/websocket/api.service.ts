@@ -25,7 +25,6 @@ import {
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod, ApiJobParams, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import {
-  ApiEvent,
   ApiEventMethod,
   ApiEventTyped,
   ErrorResponse,
@@ -116,10 +115,6 @@ export class ApiService {
       }),
       takeUntil(this.clearSubscriptions$),
     );
-  }
-
-  subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
-    return this.subscribe(name as ApiEventMethod) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 
   clearSubscriptions(): void {

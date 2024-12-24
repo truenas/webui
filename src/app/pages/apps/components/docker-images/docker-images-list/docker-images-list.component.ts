@@ -33,7 +33,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
@@ -135,7 +135,7 @@ export class DockerImagesListComponent implements OnInit {
     public formatter: IxFormatterService,
     private api: ApiService,
     private matDialog: MatDialog,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private fileSizePipe: FileSizePipe,
   ) {

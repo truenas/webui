@@ -7,7 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, repeat, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -33,7 +35,7 @@ import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -143,7 +145,7 @@ export class PortalListComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,
@@ -154,6 +156,7 @@ export class PortalListComponent implements OnInit {
       this.ipChoices = new Map(Object.entries(choices));
     });
     const portals$ = this.api.call('iscsi.portal.query', []).pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((portals) => this.portals = portals),
     );
 

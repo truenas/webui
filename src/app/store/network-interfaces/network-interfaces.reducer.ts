@@ -3,7 +3,7 @@ import { networkInterfacesCheckinLoaded } from 'app/store/network-interfaces/net
 
 export interface NetworkInterfacesState {
   hasPendingChanges: boolean;
-  checkinWaiting: number;
+  checkinWaiting: number | null;
 }
 
 const initialState: NetworkInterfacesState = {

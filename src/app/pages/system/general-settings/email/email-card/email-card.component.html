@@ -19,7 +19,11 @@
       <mat-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
         <span class="label">{{ 'Send Mail Method' | translate }}:</span>
         <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
-          {{ !emailConfig?.oauth?.client_id ? helptext.send_mail_method.smtp.placeholder : helptext.send_mail_method.gmail.placeholder }}
+          {{
+            !emailConfig?.oauth?.client_id
+              ? helptext.send_mail_method.smtp.placeholder
+              : helptext.send_mail_method[emailConfig?.oauth?.provider]?.placeholder
+          }}
         </span>
       </mat-list-item>
 

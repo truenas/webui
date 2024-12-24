@@ -15,7 +15,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
 
@@ -41,7 +41,7 @@ describe('DockerImagesListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };
@@ -85,6 +85,6 @@ describe('DockerImagesListComponent', () => {
     const pullImageButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pull Image' }));
     await pullImageButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PullImageFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(PullImageFormComponent);
   });
 });

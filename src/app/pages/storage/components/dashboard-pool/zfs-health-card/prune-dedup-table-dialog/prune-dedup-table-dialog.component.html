@@ -1,0 +1,50 @@
+<h1 matDialogTitle>
+  {{ 'Prune Deduplication Table' | translate }}
+</h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="submit()">
+  <ix-radio-group
+    formControlName="pruneBy"
+    [label]="'Prune By' | translate"
+    [options]="pruneByOptions$"
+    [required]="true"
+  ></ix-radio-group>
+
+  <!-- TODO: Build ix slider component -->
+  @if (isPruningByPercentage) {
+    <ix-label [label]="'Percentage' | translate" [required]="true"></ix-label>
+    <mat-slider
+      class="percentage-slider"
+      ixTest="percentage"
+      showTickMarks
+      discrete
+      [displayWith]="formatSliderAsPercentage"
+      [min]="1"
+      [max]="100"
+      [step]="1"
+    >
+      <input
+        matSliderThumb
+        ixTest="slider-thumb"
+        formControlName="percentage"
+      >
+    </mat-slider>
+  } @else {
+    <ix-input
+      formControlName="days"
+      type="number"
+      [label]="'Age (in days)' | translate"
+      [required]="true"
+    ></ix-input>
+  }
+
+  <ix-form-actions class="actions">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button mat-button type="submit" color="primary" ixTest="prune">
+      {{ 'Prune' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

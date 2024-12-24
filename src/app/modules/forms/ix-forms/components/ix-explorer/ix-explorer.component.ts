@@ -3,10 +3,9 @@ import {
   ChangeDetectorRef,
   Component, input,
   OnChanges,
-  OnInit,
-  ViewChild,
+  OnInit, viewChild,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatError, MatHint } from '@angular/material/form-field';
@@ -29,7 +28,7 @@ import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-erro
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -54,8 +53,11 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     TranslateModule,
     RequiresRolesDirective,
     TestDirective,
+    ReactiveFormsModule,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
@@ -63,14 +65,15 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly hint = input<string>();
   readonly multiple = input(false);
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly root = input(mntPath);
   readonly nodeProvider = input<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   readonly canCreateDataset = input(false);
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
-  @ViewChild('tree', { static: true }) tree: TreeComponent;
+  // TODO: Should be private, but it's used directly in tests
+  readonly tree = viewChild(TreeComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
 
@@ -87,7 +90,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   get createDatasetDisabled(): boolean {
     return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
-      || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
+      || !this.tree().treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
       || this.isDisabled;
   }
 
@@ -163,7 +166,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
     if (this.multiple()) {
       this.selectTreeNodes([
-        ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
+        ...Object.keys(this.tree().treeModel.selectedLeafNodeIds),
         event.node.id as string,
       ]);
     } else {
@@ -176,7 +179,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onNodeDeselect(event: { node: TreeNode<ExplorerNodeData> }): void {
     if (this.multiple()) {
       this.selectTreeNodes(
-        Object.keys(this.tree.treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
+        Object.keys(this.tree().treeModel.selectedLeafNodeIds).filter((node) => node !== event.node.id),
       );
     } else {
       this.selectTreeNodes([]);
@@ -197,7 +200,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onSelectionChanged(): void {
-    let newValue: string[] | string = Object.entries(this.tree.treeModel.selectedLeafNodeIds)
+    let newValue: string[] | string = Object.entries(this.tree().treeModel.selectedLeafNodeIds)
       .filter(([, isSelected]) => isSelected)
       .map(([nodeId]) => nodeId);
 
@@ -242,13 +245,13 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
           return;
         }
 
-        const parentNode = this.tree.treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
+        const parentNode = this.tree().treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
         parentNode?.expand();
 
         this.setInitialNode();
         this.writeValue(`${this.root()}/${dataset.name}`);
         this.onChange(this.value);
-        this.tree.treeModel.update();
+        this.tree().treeModel.update();
       });
   }
 
@@ -277,11 +280,11 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   private selectTreeNodes(nodeIds: string[]): void {
     const treeState = {
-      ...this.tree.treeModel.getState(),
+      ...this.tree().treeModel.getState(),
       selectedLeafNodeIds: nodeIds.reduce((acc, nodeId) => ({ ...acc, [nodeId]: true }), {}),
     };
 
-    this.tree.treeModel.setState(treeState);
+    this.tree().treeModel.setState(treeState);
   }
 
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {

@@ -2,7 +2,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Component } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
@@ -17,7 +17,7 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   BaseProviderFormComponent,
@@ -93,26 +93,17 @@ describe('CloudCredentialsFormComponent', () => {
   } as CloudSyncCredential;
 
   const getData = jest.fn(() => ({ existingCredential: fakeCloudSyncCredential }));
-  const chainedRef = {
+  const slideInRef = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
   };
 
   const createComponent = createComponentFactory({
     component: CloudCredentialsFormComponent,
-    imports: [
-      ReactiveFormsModule,
-      CloudSyncProviderDescriptionComponent,
-      StorjProviderFormComponent,
-    ],
-    declarations: [
-      TokenProviderFormComponent,
-      S3ProviderFormComponent,
-    ],
     providers: [
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
@@ -251,7 +242,7 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(chainedRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+        expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
@@ -289,8 +280,8 @@ describe('CloudCredentialsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
-            ...chainedRef,
+          mockProvider(SlideInRef, {
+            ...slideInRef,
             getData,
           }),
         ],
@@ -336,7 +327,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(chainedRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+      expect(slideInRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

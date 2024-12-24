@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, ElementRef, input, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, input, Signal, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle } from '@angular/material/dialog';
@@ -29,11 +29,10 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ErrorTemplateComponent {
-  @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef<HTMLElement>;
-  @ViewChild('errorTitle') errorTitle: ElementRef<HTMLElement>;
-  @ViewChild('errorMdContent') errorMdContent: ElementRef<HTMLElement>;
-  @ViewChild('errorBtPanel') errorBtPanel: ElementRef<HTMLElement>;
-  @ViewChild('errorBtText') errorBtText: ElementRef<HTMLElement>;
+  private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild('errorMessageWrapper', { read: ElementRef });
+  private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild('errorMdContent', { read: ElementRef });
+  private readonly errorBtPanel: Signal<ElementRef<HTMLElement>> = viewChild('errorBtPanel', { read: ElementRef });
+  private readonly errorBtText: Signal<ElementRef<HTMLElement>> = viewChild('errorBtText', { read: ElementRef });
 
   readonly title = input<string>();
   readonly message = input<string>();
@@ -50,10 +49,10 @@ export class ErrorTemplateComponent {
   ) {}
 
   toggleOpen(): void {
-    const messageWrapper = this.errorMessageWrapper.nativeElement;
-    const content = this.errorMdContent.nativeElement;
-    const btPanel = this.errorBtPanel.nativeElement;
-    const txtarea = this.errorBtText.nativeElement;
+    const messageWrapper = this.errorMessageWrapper().nativeElement;
+    const content = this.errorMdContent().nativeElement;
+    const btPanel = this.errorBtPanel().nativeElement;
+    const txtarea = this.errorBtText().nativeElement;
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {

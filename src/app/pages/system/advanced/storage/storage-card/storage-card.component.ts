@@ -21,8 +21,8 @@ import { storageCardElements } from 'app/pages/system/advanced/storage/storage-c
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -65,14 +65,14 @@ export class StorageCardComponent {
   );
 
   constructor(
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private firstTimeWarning: FirstTimeWarningService,
     private api: ApiService,
   ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(StorageSettingsFormComponent, false, this.storageSettings)),
+      switchMap(() => this.slideIn.open(StorageSettingsFormComponent, false, this.storageSettings)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

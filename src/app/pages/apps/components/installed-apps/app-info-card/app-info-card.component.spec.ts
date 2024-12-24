@@ -7,18 +7,12 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponents, MockDirective } from 'ng-mocks';
-import { ImgFallbackDirective, ImgFallbackModule } from 'ngx-img-fallback';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockApi, mockJob, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
-import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
-import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -26,9 +20,8 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
-import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppInfoCardComponent', () => {
@@ -73,19 +66,6 @@ describe('AppInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
-    imports: [
-      CleanLinkPipe,
-      OrNotAvailablePipe,
-      AppVersionPipe,
-      ImgFallbackModule,
-    ],
-    declarations: [
-      MockComponents(
-        AppCardLogoComponent,
-        NgxSkeletonLoaderComponent,
-      ),
-      MockDirective(ImgFallbackDirective),
-    ],
     providers: [
       mockProvider(ApplicationsService, {
         getAppUpgradeSummary: jest.fn(() => of(upgradeSummary)),
@@ -217,7 +197,7 @@ describe('AppInfoCardComponent', () => {
   it('opens slide-in form to edit custom app when Edit button is pressed', async () => {
     setupTest({ ...fakeApp, custom_app: true });
 
-    const slideIn = spectator.inject(SlideInService);
+    const slideIn = spectator.inject(OldSlideInService);
     jest.spyOn(slideIn, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

@@ -21,8 +21,8 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -116,13 +116,13 @@ export class SyslogCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private firstTimeWarning: FirstTimeWarningService,
   ) {}
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(SyslogFormComponent, false, this.syslogConfig)),
+      switchMap(() => this.slideIn.open(SyslogFormComponent, false, this.syslogConfig)),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({

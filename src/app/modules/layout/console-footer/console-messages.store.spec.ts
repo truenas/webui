@@ -9,7 +9,7 @@ describe('ConsoleMessagesStore', () => {
     service: ConsoleMessagesStore,
     providers: [
       mockProvider(ApiService, {
-        subscribeToLogs: jest.fn(() => of({
+        subscribe: jest.fn(() => of({
           fields: {
             data: '[12:34] Line 1.\n[12:35] Line 2.\n[12:35] Line 3.\n[12:35] Line 4.',
           },
@@ -25,7 +25,7 @@ describe('ConsoleMessagesStore', () => {
   it('subscribeToMessageUpdates - subscribes to log updates and calls addMessage when new message is received', async () => {
     spectator.service.subscribeToMessageUpdates();
 
-    expect(spectator.inject(ApiService).subscribeToLogs)
+    expect(spectator.inject(ApiService).subscribe)
       .toHaveBeenCalledWith('filesystem.file_tail_follow:/var/log/messages:500');
     const state = await firstValueFrom(spectator.service.state$);
     expect(state).toEqual({

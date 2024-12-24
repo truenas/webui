@@ -22,8 +22,8 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { UserService } from 'app/services/user.service';
@@ -36,7 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -65,7 +65,7 @@ export class CronFormComponent implements OnInit {
       : this.translate.instant('Edit Cron Job');
   }
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     description: [''],
     command: ['', Validators.required],
     user: ['', Validators.required],
@@ -99,9 +99,9 @@ export class CronFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private chainedRef: ChainedRef<Cronjob>,
+    private slideInRef: SlideInRef<Cronjob>,
   ) {
-    this.editingCron = this.chainedRef.getData();
+    this.editingCron = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
@@ -142,7 +142,7 @@ export class CronFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Cron job updated'));
         }
         this.isLoading = false;
-        this.chainedRef.close({ response: true, error: null });
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

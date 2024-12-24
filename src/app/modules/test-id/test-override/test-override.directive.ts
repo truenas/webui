@@ -1,6 +1,5 @@
 import {
   Directive, input,
-  Input,
 } from '@angular/core';
 
 /**
@@ -13,7 +12,10 @@ import {
   standalone: true,
 })
 export class TestOverrideDirective {
-  // eslint-disable-next-line @angular-eslint/prefer-signals
-  @Input('ixTestOverride') overrideDescription: number | string | (string | number)[];
+  readonly overrideDescription = input<number | string | (string | number)[] | undefined>(
+    undefined,
+  { alias: 'ixTestOverride' },
+  );
+
   readonly keepLastPart = input<boolean>();
 }

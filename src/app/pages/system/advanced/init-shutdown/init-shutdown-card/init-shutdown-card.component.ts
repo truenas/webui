@@ -36,9 +36,9 @@ import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdow
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -121,7 +121,7 @@ export class InitShutdownCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private firstTimeWarning: FirstTimeWarningService,
     protected emptyService: EmptyService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -167,7 +167,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private openForm(row?: InitShutdownScript): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.open(InitShutdownFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(InitShutdownFormComponent, false, row)),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),
       untilDestroyed(this),

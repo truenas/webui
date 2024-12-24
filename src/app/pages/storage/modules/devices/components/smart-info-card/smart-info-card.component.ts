@@ -54,8 +54,8 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class SmartInfoCardComponent implements OnChanges {
-  topologyDisk = input<TopologyDisk>();
-  disk = input<Disk>();
+  readonly topologyDisk = input.required<TopologyDisk>();
+  readonly disk = input<Disk>();
   hasSmartTestSupport = input(false);
 
   readonly requiredRoles = [Role.FullAdmin];

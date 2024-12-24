@@ -1,0 +1,66 @@
+@import 'scss-imports/cssvars';
+
+.ix-slide-in-form {
+  bottom: 0;
+  min-width: 480px;
+
+  /* enables scrolling for tall modals */
+  overflow: auto;
+  position: fixed;
+  right: -480px;
+  top: 48px;
+  // transition: 200ms;
+  width: 480px;
+
+  /* z-index must be higher than .ix-slide-in2-background */
+  /* ...but less than 1000 otherwise you cover select */
+  z-index: 999;
+}
+
+.ix-slide-in-form.open {
+  overflow-x: hidden;
+  overflow-y: auto;
+  right: 0;
+  // transition: 200ms;
+}
+
+.ix-slide-in-background {
+
+  /* semi-transparent black  */
+  bottom: 0;
+  left: 0;
+  opacity: 0.75;
+  /* modal background fixed across whole screen */
+  position: fixed;
+  right: 0;
+  top: 48px;
+  transition: 100ms;
+
+  /* z-index must be below .ix-slide-in and above everything else  */
+  z-index: -10;
+}
+
+.ix-slide-in-background {
+  background-color: #000;
+}
+
+.ix-slide-in-background.open {
+  transition: 200ms;
+  z-index: 900;
+}
+
+.ix-slide-in-form.open.wide {
+  width: 800px;
+
+  @media(max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+}
+
+@media #{$media-lt-sm} {
+  .ix-slide-in2-form {
+    min-width: 100%;
+    right: -100%;
+    width: 100%;
+  }
+}

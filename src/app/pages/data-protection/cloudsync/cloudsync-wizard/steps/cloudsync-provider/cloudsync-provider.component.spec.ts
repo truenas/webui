@@ -12,23 +12,23 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncProviderComponent', () => {
   let spectator: Spectator<CloudSyncProviderComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const chainedComponentRef = {
+  const slideInRef = {
     next: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
@@ -51,8 +51,8 @@ describe('CloudSyncProviderComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      CdkStepper,
-      mockProvider(ChainedRef, chainedComponentRef),
+      mockProvider(CdkStepper),
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
@@ -64,7 +64,7 @@ describe('CloudSyncProviderComponent', () => {
         getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
       mockProvider(DatasetService),
@@ -73,7 +73,7 @@ describe('CloudSyncProviderComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),

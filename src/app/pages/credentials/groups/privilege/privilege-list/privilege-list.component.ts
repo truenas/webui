@@ -38,7 +38,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -143,7 +143,7 @@ export class PrivilegeListComponent implements OnInit {
   );
 
   constructor(
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,

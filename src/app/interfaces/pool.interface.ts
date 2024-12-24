@@ -1,4 +1,4 @@
-import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { DeduplicationSetting, NewDeduplicationQuotaSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -46,6 +46,8 @@ export interface Pool {
   is_upgraded?: boolean;
   size: number;
   algorithm: ZfsProperty<string, string>;
+  dedup_table_quota: string | null;
+  dedup_table_size: number;
 }
 
 export type PoolTopology = {
@@ -85,6 +87,8 @@ export interface UpdatePool {
   topology?: UpdatePoolTopology;
   autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
+  dedup_table_quota?: NewDeduplicationQuotaSetting;
+  dedup_table_quota_value?: number;
 }
 
 // TODO: Maybe replace first 5 keys with VdevType enum once old pool manager is removed.
@@ -148,4 +152,10 @@ export interface PoolInstance {
   fragmentation: string;
   autotrim: ZfsProperty<string>;
   topology: PoolTopology;
+}
+
+export interface PruneDedupTableParams {
+  pool_name: string;
+  percentage?: number;
+  days?: number;
 }

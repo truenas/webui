@@ -5,12 +5,12 @@ import {
   ElementRef,
   input,
   OnChanges,
-  OnInit,
-  ViewChild,
+  OnInit, Signal, viewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor,
   NgControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatIconButton } from '@angular/material/button';
@@ -25,7 +25,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { MarkedIcon } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
@@ -46,6 +46,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatIconButton,
     MatTooltip,
     MatAutocomplete,
+    ReactiveFormsModule,
     MatOption,
     MatError,
     IxErrorsComponent,
@@ -53,16 +54,18 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TranslateModule,
     TestOverrideDirective,
     TestDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
   readonly label = input<string>();
-  readonly placeholder = input<string>();
+  readonly placeholder = input<string>('');
   readonly prefixIcon = input<MarkedIcon>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly readonly = input<boolean>();
   readonly type = input<string>();
   readonly autocomplete = input('off');
@@ -74,7 +77,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly format = input<(value: string | number) => string>();
   readonly parse = input<(value: string | number) => string | number>();
 
-  @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
+  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
 
   private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
@@ -122,8 +125,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value && this.format()) {
-      formatted = this.format()(value);
+    const formatFn = this.format();
+    if (value && formatFn) {
+      formatted = formatFn(value);
     }
     this.formatted = formatted;
     this.value = value;
@@ -134,8 +138,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     const value = ixInput.value;
     this.value = value;
     this.formatted = value;
-    if (value && this.parse()) {
-      this.value = this.parse()(value);
+    const parseFn = this.parse();
+    if (value && parseFn) {
+      this.value = parseFn(value);
     }
     this.onChange(this.value);
     this.filterOptions();
@@ -235,8 +240,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   optionSelected(option: Option): void {
-    if (this.inputElementRef?.nativeElement) {
-      this.inputElementRef.nativeElement.value = option.label;
+    if (this.inputElementRef()?.nativeElement) {
+      this.inputElementRef().nativeElement.value = option.label;
     }
 
     this.value = option.value;

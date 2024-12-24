@@ -18,10 +18,10 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { PortalListComponent } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.component';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const portals: IscsiPortal[] = [
@@ -57,11 +57,11 @@ describe('PortalListComponent', () => {
         mockCall('iscsi.portal.delete'),
         mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
       ]),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(SlideInService, {
+      mockProvider(OldSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
       mockProvider(MatDialog, {
@@ -86,14 +86,14 @@ describe('PortalListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PortalFormComponent);
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(PortalFormComponent);
   });
 
   it('opens portal form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(SlideInService).open).toHaveBeenCalledWith(PortalFormComponent, {
+    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(PortalFormComponent, {
       data: portals[0],
     });
   });

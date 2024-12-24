@@ -12,13 +12,13 @@ import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { GmailOauthConfig, MailConfig } from 'app/interfaces/mail-config.interface';
+import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -89,11 +89,11 @@ describe('EmailFormComponent', () => {
                 client_id: 'new_client_id',
               },
             },
-          } as OauthMessage<GmailOauthConfig>);
+          } as OauthMessage<MailOauthConfig>);
         }),
         removeEventListener: jest.fn(),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: fakeEmailConfig },
       mockAuth(),
     ],
@@ -141,7 +141,7 @@ describe('EmailFormComponent', () => {
       );
     });
 
-    it('calls removeEventListener when oAuth callback is called', async () => {
+    it('calls removeEventListener when gmail oAuth callback is called', async () => {
       await form.fillForm({
         'Send Mail Method': 'GMail OAuth',
       });
@@ -171,6 +171,7 @@ describe('EmailFormComponent', () => {
           client_id: 'new_client_id',
           client_secret: 'new_secret',
           refresh_token: 'new_token',
+          provider: 'gmail',
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
@@ -203,6 +204,107 @@ describe('EmailFormComponent', () => {
               client_id: 'new_client_id',
               client_secret: 'new_secret',
               refresh_token: 'new_token',
+              provider: 'gmail',
+            },
+          },
+        ],
+      );
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'Test email sent.',
+      );
+    });
+
+    it('opens new window with OAuth page when user presses Log In To Outlook', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+      });
+
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      const window = spectator.inject<Window>(WINDOW);
+      expect(window.open).toHaveBeenCalledWith(
+        'https://www.truenas.com/oauth/outlook?origin=http%3A%2F%2Ftruenas.com%2Fsystem%2Femail',
+        '_blank',
+        'width=640,height=480',
+      );
+      expect(window.addEventListener).toHaveBeenCalledWith(
+        'message',
+        expect.any(Function),
+        false,
+      );
+    });
+
+    it('calls removeEventListener when outlook oAuth callback is called', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+      });
+
+      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      await loginButton.click();
+
+      expect(spectator.inject<Window>(WINDOW).removeEventListener)
+        .toHaveBeenCalledWith('message', expect.any(Function), false);
+    });
+
+    it('saves Outlook Oauth config when user authorizes via Outlook and saves the form', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+      });
+
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [{
+        fromemail: '',
+        fromname: '',
+        outgoingserver: 'smtp-mail.outlook.com',
+        port: 587,
+        security: 'TLS',
+        oauth: {
+          client_id: 'new_client_id',
+          client_secret: 'new_secret',
+          refresh_token: 'new_token',
+          provider: 'outlook',
+        },
+      }]);
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        'Email settings updated.',
+      );
+    });
+
+    it('sends test email with Outlook Oauth config when Outlook used and Send Test Mail is pressed', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+      });
+
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
+      await sendTestEmailButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+        'mail.send',
+        [
+          {
+            subject: 'Test Message',
+            text: 'This is a test message from TrueNAS SCALE.',
+          },
+          {
+            fromemail: '',
+            fromname: '',
+            outgoingserver: 'smtp-mail.outlook.com',
+            port: 587,
+            security: 'TLS',
+            oauth: {
+              client_id: 'new_client_id',
+              client_secret: 'new_secret',
+              refresh_token: 'new_token',
+              provider: 'outlook',
             },
           },
         ],
@@ -301,6 +403,7 @@ describe('EmailFormComponent', () => {
         client_id: 'client_id',
         client_secret: 'secret',
         refresh_token: 'token',
+        provider: 'gmail',
       },
     };
 
@@ -322,6 +425,38 @@ describe('EmailFormComponent', () => {
         'Send Mail Method': 'GMail OAuth',
       });
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
+    });
+  });
+
+  describe('Outlook OAuth', () => {
+    const fakeOutlookEmailConfig = {
+      ...fakeEmailConfig,
+      oauth: {
+        client_id: 'client_id',
+        client_secret: 'secret',
+        refresh_token: 'token',
+        provider: 'outlook',
+      },
+    };
+
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: fakeOutlookEmailConfig },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('shows current Outlook config when Outlook is set', async () => {
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Send Mail Method': 'Outlook OAuth',
+      });
+      expect(spectator.query('.oauth-message')).toHaveText('Outlook credentials have been applied.');
     });
   });
 });

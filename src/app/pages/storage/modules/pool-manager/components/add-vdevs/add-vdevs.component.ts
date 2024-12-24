@@ -51,9 +51,9 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
 })
 export class AddVdevsComponent implements OnInit {
   protected hasConfigurationPreview = true;
-  protected existingPool: Pool = null;
+  protected existingPool: Pool | null = null;
   protected poolDisks: DetailsDisk[] = [];
-  protected topology: PoolManagerTopology = null;
+  protected topology: PoolManagerTopology | null = null;
 
   constructor(
     private addVdevsStore: AddVdevsStore,

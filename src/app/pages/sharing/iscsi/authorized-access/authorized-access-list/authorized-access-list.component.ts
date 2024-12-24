@@ -7,7 +7,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, repeat, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -35,7 +37,7 @@ import {
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -138,7 +140,7 @@ export class AuthorizedAccessListComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,
@@ -146,6 +148,7 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   ngOnInit(): void {
     const authorizedAccess$ = this.iscsiService.getAuth().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((authAccess) => this.authAccess = authAccess),
       untilDestroyed(this),
     );

@@ -1,0 +1,19 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Fibre Channel Connections' | translate }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    @for(connection of connections(); track connection) {
+      @if (connection?.A?.wwpn && connection?.A?.sessions?.length) {
+        <p>{{ connection.A.wwpn }} ({{ 'Active Controller' | translate }})</p>
+      }
+      @if (connection?.B?.wwpn_b && connection?.B?.sessions?.length) {
+        <p>{{ connection.B.wwpn_b }} ({{ 'Passive Controller' | translate }})</p>
+      }
+    } @empty {
+      <p>{{ 'No connections' | translate }}</p>
+    }
+  </mat-card-content>
+</mat-card>

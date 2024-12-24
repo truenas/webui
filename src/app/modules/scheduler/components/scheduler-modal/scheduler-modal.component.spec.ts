@@ -1,12 +1,13 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import {
@@ -77,6 +78,11 @@ describe('SchedulerModalComponent', () => {
     };
   }
 
+  beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(SchedulerPreviewColumnComponent, 'calendar', signal(null));
+  });
+
   describe('base operations', () => {
     beforeEach(() => {
       spectator = createComponent();
@@ -103,7 +109,7 @@ describe('SchedulerModalComponent', () => {
     });
 
     it('shows preview column for the current crontab', () => {
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
 
       expect(previewColumn.crontab).toBe('0 2 * * mon');
       expect(previewColumn.timezone).toBe('America/New_York');
@@ -148,7 +154,7 @@ describe('SchedulerModalComponent', () => {
       const weekdays = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
       await parallel(() => weekdays.map((weekday) => weekday.check()));
 
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
       expect(previewColumn.crontab).toBe('0 2 * * *');
     });
 
@@ -156,7 +162,7 @@ describe('SchedulerModalComponent', () => {
       const months = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.months' }));
       await parallel(() => months.map((month) => month.check()));
 
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
       expect(previewColumn.crontab).toBe('0 2 * * mon');
     });
 

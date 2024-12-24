@@ -42,8 +42,8 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
-import { SlideInService } from 'app/services/slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -91,7 +91,7 @@ export class AppInfoCardComponent {
     const app = this.app();
     this.isRollbackPossible.set(false);
     this.updateRollbackSetup(app.name);
-  }, { allowSignalWrites: true });
+  });
 
   protected readonly appDetailsRouterUrl = computed<string[]>(() => {
     const app = this.app();
@@ -109,7 +109,7 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
-    private slideIn: SlideInService,
+    private slideIn: OldSlideInService,
     @Inject(WINDOW) private window: Window,
   ) {}
 

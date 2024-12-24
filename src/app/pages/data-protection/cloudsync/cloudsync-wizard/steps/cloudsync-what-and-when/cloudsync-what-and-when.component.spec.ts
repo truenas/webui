@@ -12,20 +12,19 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const chainedRef: ChainedRef<unknown> = {
+  const slideInRef: SlideInRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),
@@ -39,8 +38,8 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      CdkStepper,
-      mockProvider(ChainedRef, chainedRef),
+      mockProvider(CdkStepper),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
       mockApi([
         mockCall('cloudsync.create'),
@@ -48,14 +47,13 @@ describe('CloudSyncWhatAndWhenComponent', () => {
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.providers', [googlePhotosProvider]),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DatasetService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(SlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -132,7 +130,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(chainedRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
+    expect(slideInRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
   });
 
   it('checks payload when use invalid s3 credentials', async () => {

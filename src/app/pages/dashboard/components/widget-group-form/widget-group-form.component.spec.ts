@@ -1,15 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
@@ -18,13 +18,13 @@ import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/wid
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
   let loader: HarnessLoader;
 
-  const chainedComponentRef: ChainedRef<WidgetGroup> = {
+  const slideInRef: SlideInRef<WidgetGroup> = {
     close: jest.fn(),
     getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
     swap: jest.fn(),
@@ -42,12 +42,16 @@ describe('WidgetGroupFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ChainedRef, chainedComponentRef),
-      mockProvider(SlideInService),
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(OldSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
-      mockProvider(SlideInRef),
     ],
+  });
+
+  beforeEach(() => {
+    // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
+    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal(null));
   });
 
   describe('check layout selector', () => {
@@ -72,7 +76,7 @@ describe('WidgetGroupFormComponent', () => {
       spectator = createComponent({
         providers: [
           {
-            provide: ChainedRef,
+            provide: SlideInRef,
             useValue: {
               getData: () => ({
                 layout: WidgetGroupLayout.Halves,
@@ -83,18 +87,18 @@ describe('WidgetGroupFormComponent', () => {
               }) as WidgetGroup,
               close: jest.fn(),
               requireConfirmationWhen: () => of(false),
-            } as ChainedRef<WidgetGroup>,
+            } as SlideInRef<WidgetGroup>,
           },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('returns group object in chainedRef response when form is submitted', async () => {
+    it('returns group object in slideInRef response when form is submitted', async () => {
       const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submitBtn.click();
-      const chainedRef = spectator.inject(ChainedRef);
-      expect(chainedRef.close).toHaveBeenCalledWith({
+      const ref = spectator.inject(SlideInRef);
+      expect(ref.close).toHaveBeenCalledWith({
         error: false,
         response: {
           layout: WidgetGroupLayout.Halves,
@@ -142,7 +146,7 @@ describe('WidgetGroupFormComponent', () => {
       const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submitBtn.click();
 
-      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         error: false,
         response: {
           layout: WidgetGroupLayout.Halves,

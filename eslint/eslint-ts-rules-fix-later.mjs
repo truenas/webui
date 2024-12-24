@@ -7,6 +7,8 @@ export const fixLaterRules = {
   "@typescript-eslint/prefer-regexp-exec": ["off"],
   "@typescript-eslint/no-dynamic-delete": ["off"],
   "@typescript-eslint/class-literal-property-style": ["off"],
+  // TODO: Reenable after strict null checks have been implemented
+  "@typescript-eslint/no-unnecessary-type-assertion": ["off"],
   "no-prototype-builtins": ["off"],
   "@smarttools/rxjs/no-nested-subscribe": ["off"],
 

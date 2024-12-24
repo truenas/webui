@@ -1,7 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -31,7 +31,7 @@ import { KerberosKeytabsListComponent } from 'app/pages/directory-service/compon
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
@@ -78,9 +78,9 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  @ViewChild(IdmapListComponent) idmapListComponent: IdmapListComponent;
-  @ViewChild(KerberosKeytabsListComponent) kerberosKeytabsListComponent: KerberosKeytabsListComponent;
-  @ViewChild(KerberosRealmsListComponent) kerberosRealmsListComponent: KerberosRealmsListComponent;
+  private readonly idmapListComponent = viewChild(IdmapListComponent);
+  private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
+  private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),
@@ -91,7 +91,7 @@ export class DirectoryServicesComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -209,14 +209,14 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    if (this.idmapListComponent) {
-      this.idmapListComponent.getIdmaps();
+    if (this.idmapListComponent()) {
+      this.idmapListComponent().getIdmaps();
     }
-    if (this.kerberosKeytabsListComponent) {
-      this.kerberosKeytabsListComponent.getKerberosKeytabs();
+    if (this.kerberosKeytabsListComponent()) {
+      this.kerberosKeytabsListComponent().getKerberosKeytabs();
     }
-    if (this.kerberosRealmsListComponent) {
-      this.kerberosRealmsListComponent.getKerberosRealms();
+    if (this.kerberosRealmsListComponent()) {
+      this.kerberosRealmsListComponent().getKerberosRealms();
     }
   }
 

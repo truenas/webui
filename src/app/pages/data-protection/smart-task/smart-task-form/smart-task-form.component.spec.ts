@@ -10,11 +10,11 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -56,7 +56,7 @@ describe('SmartTaskFormComponent', () => {
           sdc: 'sdc',
         }),
       ]),
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(DialogService),
       provideMockStore({
         selectors: [
@@ -66,7 +66,7 @@ describe('SmartTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -101,7 +101,7 @@ describe('SmartTaskFormComponent', () => {
         },
         type: SmartTestType.Long,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -151,7 +151,7 @@ describe('SmartTaskFormComponent', () => {
         },
         type: SmartTestType.Offline,
       }]);
-      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
     });
   });
 });

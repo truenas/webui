@@ -35,8 +35,8 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -118,7 +118,7 @@ export class InitShutdownListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private chainedSlideIns: ChainedSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
@@ -132,13 +132,13 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   addScript(): void {
-    this.chainedSlideIns.open(InitShutdownFormComponent)
+    this.slideIn.open(InitShutdownFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   editScript(script: InitShutdownScript): void {
-    this.chainedSlideIns.open(InitShutdownFormComponent, false, script)
+    this.slideIn.open(InitShutdownFormComponent, false, script)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, viewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -29,7 +29,7 @@ import {
   ],
 })
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
+  private readonly oauthComponent = viewChild(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -46,14 +46,14 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
-      this.oauthComponent.form.patchValue(values);
+      this.oauthComponent().form.patchValue(values);
       this.cdr.detectChanges();
     });
   }
 
   override getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     return {
-      ...this.oauthComponent?.form?.value,
+      ...this.oauthComponent()?.form?.value,
       ...this.form.value,
     };
   }

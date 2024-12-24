@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, viewChild,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -21,8 +21,8 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -52,7 +52,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -68,10 +68,10 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
-  @ViewChild(NameAndOptionsSectionComponent) nameAndOptionsSection: NameAndOptionsSectionComponent;
-  @ViewChild(EncryptionSectionComponent) encryptionSection: EncryptionSectionComponent;
-  @ViewChild(QuotasSectionComponent) quotasSection: QuotasSectionComponent;
-  @ViewChild(OtherOptionsSectionComponent) otherOptionsSection: OtherOptionsSectionComponent;
+  private nameAndOptionsSection = viewChild(NameAndOptionsSectionComponent);
+  private encryptionSection = viewChild(EncryptionSectionComponent);
+  private quotasSection = viewChild(QuotasSectionComponent);
+  private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
 
@@ -109,13 +109,13 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       OtherOptionsSectionComponent,
       QuotasSectionComponent?,
     ] = [
-      this.nameAndOptionsSection,
-      this.encryptionSection,
-      this.otherOptionsSection,
+      this.nameAndOptionsSection(),
+      this.encryptionSection(),
+      this.otherOptionsSection(),
     ];
 
     if (this.isAdvancedMode) {
-      sections.push(this.quotasSection);
+      sections.push(this.quotasSection());
     }
 
     return sections;
@@ -123,8 +123,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   get updateSections(): [NameAndOptionsSectionComponent, OtherOptionsSectionComponent] {
     return [
-      this.nameAndOptionsSection,
-      this.otherOptionsSection,
+      this.nameAndOptionsSection(),
+      this.otherOptionsSection(),
     ];
   }
 
@@ -137,7 +137,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<DatasetFormComponent>,
+    private slideInRef: OldSlideInRef<DatasetFormComponent>,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
   ) {}
@@ -152,7 +152,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.nameAndOptionsSection.form.controls.share_type.valueChanges
+    this.nameAndOptionsSection().form.controls.share_type.valueChanges
       .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
         this.datasetPreset = datasetPreset;
       });
@@ -237,11 +237,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
-        const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-        if (this.nameAndOptionsSection.canCreateSmb && datasetPresetFormValue.create_smb) {
+        const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
+        if (this.nameAndOptionsSection().canCreateSmb && datasetPresetFormValue.create_smb) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
         }
-        if (this.nameAndOptionsSection.canCreateNfs && datasetPresetFormValue.create_nfs) {
+        if (this.nameAndOptionsSection().canCreateNfs && datasetPresetFormValue.create_nfs) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading = false;
@@ -297,8 +297,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   private createSmb(dataset: Dataset): Observable<Dataset> {
-    const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.canCreateSmb) {
+    const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
+    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection().canCreateSmb) {
       return of(dataset);
     }
     return this.api.call('sharing.smb.create', [{
@@ -311,8 +311,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   private createNfs(dataset: Dataset): Observable<Dataset> {
-    const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.canCreateNfs) {
+    const datasetPresetFormValue = this.nameAndOptionsSection().datasetPresetForm.value;
+    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection().canCreateNfs) {
       return of(dataset);
     }
     return this.api.call('sharing.nfs.create', [{

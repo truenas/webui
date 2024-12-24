@@ -39,7 +39,7 @@ describe('DataWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(AddVdevsStore, {
         pool$: of(null),
       }),
@@ -59,7 +59,7 @@ describe('DataWizardStepComponent', () => {
   });
 
   it('has the correct inputs', () => {
-    const layoutComponent = spectator.query(LayoutStepComponent);
+    const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextManager.data_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);

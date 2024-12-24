@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, input, model, OnChanges, OnInit,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatOption } from '@angular/material/core';
 import { MatHint } from '@angular/material/form-field';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -16,7 +18,7 @@ import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -37,6 +39,7 @@ export type IxSelectValue = SelectOptionValueType;
     FormsModule,
     MatSelectTrigger,
     IxIconComponent,
+    ReactiveFormsModule,
     MatOption,
     MatTooltip,
     TooltipComponent,
@@ -47,17 +50,19 @@ export type IxSelectValue = SelectOptionValueType;
     TranslateModule,
     TestDirective,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   readonly label = input<string>();
   readonly hint = input<string>();
   readonly options = model<Observable<SelectOption[]>>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly multiple = input<boolean>();
-  readonly emptyValue = input<string>(null);
+  readonly emptyValue = input<string | null>(null);
   readonly hideEmpty = input(false);
   readonly showSelectAll = input(false);
   readonly compareWith = input<(val1: unknown, val2: unknown) => boolean>((val1, val2) => val1 === val2);
@@ -105,17 +110,21 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     return this.isLoading || !this.options();
   }
 
-  constructor(public controlDirective: NgControl, private cdr: ChangeDetectorRef) {
+  constructor(
+    public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.controlDirective.valueAccessor = this;
   }
 
   ngOnChanges(): void {
-    if (!this.options()) {
+    const options$ = this.options();
+    if (!options$) {
       this.hasErrorInOptions = true;
     } else {
       this.hasErrorInOptions = false;
       this.isLoading = true;
-      this.opts$ = this.options().pipe(
+      this.opts$ = options$.pipe(
         catchError((error: unknown) => {
           console.error(error);
           this.hasErrorInOptions = true;

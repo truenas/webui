@@ -13,8 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -29,7 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatButton,
@@ -61,7 +61,7 @@ export class PullImageFormComponent {
 
   constructor(
     private api: ApiService,
-    private slideInRef: SlideInRef<PullImageFormComponent>,
+    private slideInRef: OldSlideInRef<PullImageFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,

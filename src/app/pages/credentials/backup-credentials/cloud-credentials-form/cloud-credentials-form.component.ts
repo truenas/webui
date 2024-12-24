@@ -3,8 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  ViewChild,
   ViewContainerRef,
+  viewChild,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -27,8 +27,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
-import { ModalHeader2Component } from 'app/modules/slide-ins/components/modal-header2/modal-header2.component';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -53,7 +53,7 @@ export interface CloudCredentialFormInput {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeader2Component,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -85,7 +85,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   forbiddenNames: string[] = [];
   credentials: CloudSyncCredential[] = [];
 
-  @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
+  private readonly providerFormContainer = viewChild('providerFormContainer', { read: ViewContainerRef });
 
   readonly helptext = helptext;
 
@@ -99,9 +99,9 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private chainedRef: ChainedRef<CloudCredentialFormInput>,
+    private slideInRef: SlideInRef<CloudCredentialFormInput>,
   ) {
-    const data = this.chainedRef.getData();
+    const data = this.slideInRef.getData();
     this.existingCredential = data?.existingCredential;
     this.limitProviders = data?.providers;
     // Has to be earlier than potential `setCredentialsForEdit` call
@@ -169,7 +169,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.chainedRef.close({ response, error: null });
+          this.slideInRef.close({ response, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -289,13 +289,13 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   private renderProviderForm(): void {
-    this.providerFormContainer?.clear();
+    this.providerFormContainer()?.clear();
     if (!this.selectedProvider) {
       return;
     }
 
     const formClass = getProviderFormClass(this.selectedProvider.name);
-    const formRef = this.providerFormContainer.createComponent(formClass);
+    const formRef = this.providerFormContainer().createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
   }

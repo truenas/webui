@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   InstanceDiskFormComponent,
@@ -32,7 +32,7 @@ describe('InstanceDiskFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             getData: () => ({
               instanceId: 'my-instance',
             }),
@@ -44,7 +44,7 @@ describe('InstanceDiskFormComponent', () => {
     });
 
     it('shows a title for creating a disk', () => {
-      expect(spectator.query('ix-modal-header2')).toHaveText('Add Disk');
+      expect(spectator.query('ix-modal-header')).toHaveText('Add Disk');
     });
 
     it('creates a new disk for the instance provided when form is submitted', async () => {
@@ -58,7 +58,7 @@ describe('InstanceDiskFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
         error: false,
       });
@@ -75,7 +75,7 @@ describe('InstanceDiskFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(ChainedRef, {
+          mockProvider(SlideInRef, {
             getData: () => ({
               instanceId: 'my-instance',
               disk: {
@@ -92,7 +92,7 @@ describe('InstanceDiskFormComponent', () => {
     });
 
     it('shows a title for editing a disk', () => {
-      expect(spectator.query('ix-modal-header2')).toHaveText('Edit Disk');
+      expect(spectator.query('ix-modal-header')).toHaveText('Edit Disk');
     });
 
     it('shows values for the disk that is being edited', async () => {
@@ -123,7 +123,7 @@ describe('InstanceDiskFormComponent', () => {
         name: 'existing-disk',
       }]);
 
-      expect(spectator.inject(ChainedRef).close).toHaveBeenCalledWith({
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
         response: true,
         error: false,
       });

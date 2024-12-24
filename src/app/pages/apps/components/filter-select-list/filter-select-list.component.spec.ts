@@ -50,7 +50,7 @@ describe('FilterSelectListComponent', () => {
     it('renders a label', () => {
       spectator.setHostInput('label', 'Filter Label');
 
-      const label = spectator.query('.label');
+      const label = spectator.query('.label')!;
       expect(label).toExist();
       expect(label.textContent).toBe('Filter Label');
     });
@@ -58,7 +58,7 @@ describe('FilterSelectListComponent', () => {
     it('shows a list of options', () => {
       const items = spectator.queryAll('.item');
       expect(items).toHaveLength(3);
-      const labels = items.map((item) => item.textContent.replace(/\s/g, ''));
+      const labels = items.map((item) => item.textContent!.replace(/\s/g, ''));
       expect(labels[0]).toBe('label1');
       expect(labels[1]).toBe('label2');
       expect(labels[2]).toBe('label3');

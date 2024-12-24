@@ -1,7 +1,6 @@
 import { Type } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
@@ -19,14 +18,12 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
     let spectator: Spectator<WidgetGroupComponent>;
     const createComponent = createComponentFactory({
       component: WidgetGroupComponent,
-      declarations: [
-        MockComponents(
-          WidgetHostnameActiveComponent,
-          WidgetInterfaceIpComponent,
-          WidgetHelpComponent,
-          WidgetErrorComponent,
-          WidgetSysInfoPassiveComponent,
-        ),
+      imports: [
+        WidgetHostnameActiveComponent,
+        WidgetInterfaceIpComponent,
+        WidgetHelpComponent,
+        WidgetErrorComponent,
+        WidgetSysInfoPassiveComponent,
       ],
       providers: [
         provideMockStore({
@@ -73,17 +70,17 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const widget1 = spectator.query(WidgetInterfaceIpComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(widget1).toExist();
-      expect(widget1.size).toBe(SlotSize.Half);
-      expect(widget1.settings).toMatchObject({ interface: 'eno1' });
+      expect(widget1.size()).toBe(SlotSize.Half);
+      expect(widget1.settings()).toMatchObject({ interface: 'eno1' });
 
       const widget2 = spectator.query(WidgetHostnameActiveComponent, { parentSelector: '.slot:nth-child(2)' });
       expect(widget2).toExist();
-      expect(widget2.size).toBe(SlotSize.Quarter);
+      expect(widget2.size()).toBe(SlotSize.Quarter);
 
       const widget3 = spectator.query(WidgetInterfaceIpComponent, { parentSelector: '.slot:nth-child(3)' });
       expect(widget3).toExist();
-      expect(widget3.size).toBe(SlotSize.Quarter);
-      expect(widget3.settings).toMatchObject({ interface: 'eno2' });
+      expect(widget3.size()).toBe(SlotSize.Quarter);
+      expect(widget3.settings()).toMatchObject({ interface: 'eno2' });
     });
 
     it('leaves a slot empty when widget for that slot is null', () => {
@@ -139,7 +136,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot' });
       expect(errorComponent).toExist();
-      expect(errorComponent.message).toBe('Borked widget is not supported.');
+      expect(errorComponent.message()).toBe('Borked widget is not supported.');
     });
 
     it('renders error when widget does not support slot size', () => {
@@ -159,7 +156,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(errorComponent).toExist();
-      expect(errorComponent.message).toBe('System Information – Active widget does not support quarter size.');
+      expect(errorComponent.message()).toBe('System Information – Active widget does not support quarter size.');
     });
   });
 }

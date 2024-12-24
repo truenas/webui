@@ -25,8 +25,8 @@ import {
   doesNotEqualFgValidator,
   matchOthersFgValidator,
 } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -38,7 +38,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    ModalHeaderComponent,
+    OldModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -139,7 +139,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private validatorService: IxValidatorsService,
-    private slideInRef: SlideInRef<AuthorizedAccessFormComponent>,
+    private slideInRef: OldSlideInRef<AuthorizedAccessFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingAccess: IscsiAuthAccess,
   ) {}
 

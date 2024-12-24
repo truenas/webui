@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import { filter, repeat, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
@@ -36,7 +36,7 @@ import {
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
 import { extentListElements } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.elements';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -134,7 +134,7 @@ export class ExtentListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -143,6 +143,7 @@ export class ExtentListComponent implements OnInit {
 
   ngOnInit(): void {
     const extents$ = this.iscsiService.getExtents().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((extents) => this.extents = extents),
       untilDestroyed(this),
     );

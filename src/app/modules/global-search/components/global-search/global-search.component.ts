@@ -1,10 +1,10 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
 import { DOCUMENT } from '@angular/common';
 import {
-  Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, ElementRef, ChangeDetectorRef,
   Inject,
   AfterViewInit,
-  OnDestroy,
+  OnDestroy, Signal, viewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
@@ -28,10 +28,10 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { FocusService } from 'app/services/focus.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -53,17 +53,17 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
-  @ViewChild('searchBoxWrapper') searchBoxWrapper: ElementRef<HTMLElement>;
+  searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild('searchInput', { read: ElementRef });
+  searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild('searchBoxWrapper', { read: ElementRef });
 
-  searchControl = new FormControl<string>('');
+  searchControl = new FormControl<string>('', { nonNullable: true });
   searchResults: UiSearchableElement[];
   isLoading = false;
   systemVersion: string;
   detachOverlay: () => void; // passed from global-search-trigger
 
   get isSearchInputFocused(): boolean {
-    return document.activeElement === this.searchInput?.nativeElement;
+    return document.activeElement === this.searchInput()?.nativeElement;
   }
 
   constructor(
@@ -73,8 +73,8 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private slideInService: SlideInService,
-    private chainedSlideInService: ChainedSlideInService,
+    private oldSlideInService: OldSlideInService,
+    private slideInService: SlideIn,
     private dialogService: DialogService,
     private focusService: FocusService,
     @Inject(DOCUMENT) private document: Document,
@@ -88,11 +88,11 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.searchBoxWrapper.nativeElement.addEventListener('focusout', this.handleFocusOut.bind(this));
+    this.searchBoxWrapper().nativeElement.addEventListener('focusout', this.handleFocusOut.bind(this));
   }
 
   ngOnDestroy(): void {
-    this.searchBoxWrapper.nativeElement.removeEventListener('focusout', this.handleFocusOut.bind(this));
+    this.searchBoxWrapper().nativeElement.removeEventListener('focusout', this.handleFocusOut.bind(this));
   }
 
   handleKeyDown(event: KeyboardEvent): void {
@@ -145,7 +145,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    [this.slideInService, this.chainedSlideInService].forEach((service) => service.closeAll());
+    [this.oldSlideInService, this.slideInService].forEach((service) => service.closeAll());
 
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
@@ -177,7 +177,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private focusInputElement(): void {
-    this.searchInput.nativeElement?.focus();
+    this.searchInput().nativeElement?.focus();
   }
 
   private getSystemVersion(): void {
@@ -210,7 +210,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private handleTabOutFromGlobalSearch(event: KeyboardEvent): void {
-    const focusableElements = this.focusService.getFocusableElements(this.searchBoxWrapper.nativeElement);
+    const focusableElements = this.focusService.getFocusableElements(this.searchBoxWrapper().nativeElement);
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -229,7 +229,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private handleFocusOut(event: FocusEvent): void {
     const relatedTarget = event.relatedTarget as HTMLElement;
-    if (relatedTarget && !this.searchBoxWrapper.nativeElement.contains(relatedTarget)) {
+    if (relatedTarget && !this.searchBoxWrapper().nativeElement.contains(relatedTarget)) {
       this.detachOverlay();
     }
   }

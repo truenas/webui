@@ -49,9 +49,9 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -153,7 +153,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private chainedSlideIn: ChainedSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -197,7 +197,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideIn.open(ReplicationWizardComponent, true);
+    const closer$ = this.slideIn.open(ReplicationWizardComponent, true);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -205,7 +205,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    const closer$ = this.chainedSlideIn.open(ReplicationFormComponent, true, row);
+    const closer$ = this.slideIn.open(ReplicationFormComponent, true, row);
 
     closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());

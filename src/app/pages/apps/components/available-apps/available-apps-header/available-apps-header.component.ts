@@ -60,7 +60,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
   form = this.fb.group({
-    sort: [null as AppsFiltersSort],
+    sort: [null as (AppsFiltersSort | null)],
     categories: [[] as string[]],
   });
 

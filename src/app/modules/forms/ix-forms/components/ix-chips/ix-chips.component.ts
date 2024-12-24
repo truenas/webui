@@ -7,9 +7,10 @@ import {
   ElementRef,
   input,
   OnChanges,
-  ViewChild,
+  Signal,
+  viewChild,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteTrigger, MatAutocomplete } from '@angular/material/autocomplete';
 import {
   MatChipGrid, MatChipRow, MatChipRemove, MatChipInput,
@@ -27,7 +28,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -46,6 +47,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxIconComponent,
     MatChipRemove,
     MatAutocompleteTrigger,
+    ReactiveFormsModule,
     MatChipInput,
     MatAutocomplete,
     MatOption,
@@ -54,7 +56,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     AsyncPipe,
     TestDirective,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {
@@ -62,7 +66,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly placeholder = input<string>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly allowNewEntries = input(true);
   /**
    * A function that provides the options for the autocomplete dropdown.
@@ -88,11 +92,11 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
    */
   readonly resolveOptions = input<Observable<Option[]>>();
 
-  private resolvedOptions: Option[] = [];
+  private resolvedOptions: Option[] | null = [];
 
-  @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
+  private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild('chipInput', { read: ElementRef });
 
-  suggestions$: Observable<string[]>;
+  suggestions$: Observable<string[] | null>;
   values: string[] = [];
   isDisabled = false;
 
@@ -176,10 +180,10 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onInputBlur(): void {
     if (!this.allowNewEntries() || this.resolveValue()) {
-      this.chipInput.nativeElement.value = null;
+      this.chipInput().nativeElement.value = null;
       return;
     }
-    this.onAdd(this.chipInput.nativeElement.value);
+    this.onAdd(this.chipInput().nativeElement.value);
   }
 
   // TODO: Workaround for https://github.com/angular/angular/issues/56471
@@ -199,13 +203,14 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   private setAutocomplete(): void {
-    if (!this.autocompleteProvider()) {
+    const autocompleteProvider = this.autocompleteProvider();
+    if (!autocompleteProvider) {
       this.suggestions$ = null;
       return;
     }
 
     this.suggestions$ = merge(
-      fromEvent(this.chipInput.nativeElement, 'input')
+      fromEvent(this.chipInput().nativeElement, 'input')
         .pipe(
           startWith(''),
           debounceTime(100),
@@ -214,7 +219,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       this.inputReset$,
     ).pipe(
       switchMap(() => {
-        return this.autocompleteProvider()(this.chipInput.nativeElement.value);
+        return autocompleteProvider(this.chipInput().nativeElement.value);
       }),
     );
   }
@@ -226,7 +231,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   private clearInput(): void {
-    this.chipInput.nativeElement.value = '';
+    this.chipInput().nativeElement.value = '';
     this.inputReset$.next();
   }
 }

@@ -3,9 +3,12 @@ import {
   AfterViewInit,
   OnDestroy,
   OnChanges,
-  ViewChild,
   ElementRef,
-  ChangeDetectionStrategy, output, input,
+  ChangeDetectionStrategy,
+  output,
+  input,
+  viewChild,
+  Signal,
 } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
@@ -49,7 +52,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly stacked = input(false);
   readonly labelY = input('Label Y');
 
-  @ViewChild('wrapper', { static: true }) el: ElementRef<HTMLElement>;
+  private readonly el: Signal<ElementRef<HTMLElement>> = viewChild('wrapper', { read: ElementRef });
 
   lastMinDate: number;
   lastMaxDate: number;
@@ -114,7 +117,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (update) {
       this.chart.updateOptions(options);
     } else {
-      this.chart = new Dygraph(this.el.nativeElement, data, options);
+      this.chart = new Dygraph(this.el().nativeElement, data, options);
     }
   }
 

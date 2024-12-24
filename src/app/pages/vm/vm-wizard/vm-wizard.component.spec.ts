@@ -15,7 +15,7 @@ import {
 } from 'app/enums/vm.enum';
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
@@ -37,7 +37,7 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmWizardComponent', () => {
@@ -63,7 +63,7 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(SlideInService),
+      mockProvider(OldSlideInService),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
@@ -122,7 +122,7 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(SlideInRef),
+      mockProvider(OldSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -179,21 +179,21 @@ describe('VmWizardComponent', () => {
   }
 
   it('sets some form fields when OS is selected', async () => {
-    jest.spyOn(spectator.component.cpuAndMemoryStep.form, 'patchValue');
-    jest.spyOn(spectator.component.diskStep.form, 'patchValue');
+    jest.spyOn(spectator.component.cpuAndMemoryStep().form, 'patchValue');
+    jest.spyOn(spectator.component.diskStep().form, 'patchValue');
 
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
     });
 
-    expect(spectator.component.cpuAndMemoryStep.form.patchValue).toHaveBeenCalledWith({
+    expect(spectator.component.cpuAndMemoryStep().form.patchValue).toHaveBeenCalledWith({
       cores: 1,
       memory: 4 * GiB,
       threads: 1,
       vcpus: 2,
     });
-    expect(spectator.component.diskStep.form.patchValue).toHaveBeenCalledWith({
+    expect(spectator.component.diskStep().form.patchValue).toHaveBeenCalledWith({
       volsize: 40 * GiB,
     });
   });
@@ -333,6 +333,6 @@ describe('VmWizardComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
   });
 });

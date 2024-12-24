@@ -49,19 +49,19 @@ describe('HardwareDiskEncryptionComponent', () => {
     expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
-    const detailsItem = spectator.query(byText('SED Password:', { exact: true }));
+    const detailsItem = spectator.query(byText('SED Password:', { exact: true }))!;
     expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
   });
 
   it('loads and shows whether SED password is set globally', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
 
-    const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }));
+    const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }))!;
     expect(detailsItem.nextElementSibling).toHaveText('Password is set');
   });
 
   it('opens a ManageDiskSedDialogComponent when user clicks on Manage SED Password', () => {
-    spectator.click(spectator.query(byText('Manage SED Password')));
+    spectator.click(spectator.query(byText('Manage SED Password'))!);
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageDiskSedDialogComponent, { data: 'sda' });
   });

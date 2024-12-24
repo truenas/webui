@@ -1,10 +1,11 @@
+import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockDirective } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
 import {
@@ -12,10 +13,6 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
-import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
-import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -29,7 +26,7 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
-import { ChainedComponentResponse, ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };
@@ -49,10 +46,6 @@ describe('DashboardComponent', () => {
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
       MockComponent(WidgetGroupComponent),
-      MockDirective(IxDropGridDirective),
-      MockDirective(IxDropGridItemDirective),
-      MockDirective(IxDragDirective),
-      MockDirective(IxDragHandleDirective),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
     ],
@@ -69,7 +62,7 @@ describe('DashboardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of({ error: false, response: groupA })),
       }),
       mockProvider(SnackbarService),
@@ -128,15 +121,15 @@ describe('DashboardComponent', () => {
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
 
-      expect(spectator.inject(ChainedSlideInService).open)
+      expect(spectator.inject(SlideIn).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
     });
 
     it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
       const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
 
-      jest.spyOn(spectator.inject(ChainedSlideInService), 'open')
-        .mockReturnValue(of({ response: updatedGroup } as ChainedComponentResponse));
+      jest.spyOn(spectator.inject(SlideIn), 'open')
+        .mockReturnValue(of({ response: updatedGroup } as SlideInResponse));
 
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
@@ -164,7 +157,7 @@ describe('DashboardComponent', () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(ChainedSlideInService).open)
+      expect(spectator.inject(SlideIn).open)
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
@@ -245,8 +238,8 @@ describe('DashboardComponent', () => {
     });
 
     it('updates order when widgets are reordered via drag and drop', () => {
-      const dropGrid = spectator.query(IxDropGridDirective);
-      dropGrid.ixDropGridModelChange.emit([groupB, groupC, groupD, groupA]);
+      const list = spectator.query(CdkDropList<WidgetGroup>)!;
+      list.dropped.emit({ previousIndex: 0, currentIndex: 3 } as CdkDragDrop<WidgetGroup>);
       spectator.detectChanges();
 
       const groups = spectator.queryAll(WidgetGroupComponent);

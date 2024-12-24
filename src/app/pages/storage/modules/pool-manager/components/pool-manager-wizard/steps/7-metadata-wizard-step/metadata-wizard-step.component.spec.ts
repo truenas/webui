@@ -37,7 +37,7 @@ describe('MetadataWizardStepComponent', () => {
       MockComponent(LayoutStepComponent),
     ],
     providers: [
-      CdkStepper,
+      mockProvider(CdkStepper),
       mockProvider(AddVdevsStore, {
         pool$: of(null),
         isLoading$: of(false),
@@ -56,7 +56,7 @@ describe('MetadataWizardStepComponent', () => {
   });
 
   it('has the correct inputs', () => {
-    const layoutComponent = spectator.query(LayoutStepComponent);
+    const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextManager.special_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);

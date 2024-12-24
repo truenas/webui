@@ -66,6 +66,7 @@ export class ServicesEffects {
         )
           .afterClosed()
           .pipe(
+            filter((data) => !!data),
             map((data) => {
               if (data.start && data.startAutomatically) {
                 return serviceEnabled();

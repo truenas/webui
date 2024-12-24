@@ -55,7 +55,7 @@ export class AlertComponent implements OnChanges {
   readonly isHaLicensed = input<boolean>();
   readonly requiredRoles = [Role.AlertListWrite];
 
-  alertLevelColor: AlertLevelColor;
+  alertLevelColor: AlertLevelColor | undefined;
   icon: string;
   iconTooltip: string;
 
@@ -71,7 +71,10 @@ export class AlertComponent implements OnChanges {
     private translate: TranslateService,
   ) {}
 
-  readonly levelLabel = computed(() => this.translate.instant(alertLevelLabels.get(this.alert().level)));
+  readonly levelLabel = computed(() => {
+    const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
+    return this.translate.instant(levelLabel);
+  });
 
   ngOnChanges(): void {
     this.setStyles();

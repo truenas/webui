@@ -12,16 +12,16 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ChainedRef } from 'app/modules/slide-ins/chained-component-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { ChainedSlideInService } from 'app/services/chained-slide-in.service';
+import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  const componentRef: ChainedRef<unknown> = {
+  const componentRef: SlideInRef<unknown> = {
     close: jest.fn(),
     getData: jest.fn(),
     requireConfirmationWhen: jest.fn(),
@@ -39,14 +39,14 @@ describe('AllowedAddressesComponent', () => {
           ui_allowlist: ['1.1.1.1/32'],
         } as SystemGeneralConfig),
       ]),
-      mockProvider(ChainedSlideInService, {
+      mockProvider(SlideIn, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(ChainedRef, componentRef),
+      mockProvider(SlideInRef, componentRef),
       provideMockStore(),
       mockAuth(),
     ],

@@ -6,7 +6,9 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, repeat, switchMap, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -20,7 +22,7 @@ import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { SlideInService } from 'app/services/slide-in.service';
+import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -57,11 +59,12 @@ export class AllTargetsComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private slideInService: SlideInService,
+    private slideInService: OldSlideInService,
   ) {}
 
   ngOnInit(): void {
     const targets$ = this.iscsiService.getTargets().pipe(
+      repeat({ delay: () => this.iscsiService.listenForDataRefresh() }),
       tap((targets) => {
         this.targets.set(targets);
 

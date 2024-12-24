@@ -17,7 +17,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 describe('ApiService', () => {
   let spectator: SpectatorService<ApiService>;
   let wsHandler: WebSocketHandlerService;
-  const responses$ = new BehaviorSubject<IncomingMessage>(null);
+  const responses$ = new BehaviorSubject<IncomingMessage | null>(null);
 
   const createService = createServiceFactory({
     service: ApiService,
@@ -129,13 +129,6 @@ describe('ApiService', () => {
       spectator.service.subscribe('alert.list').subscribe();
 
       expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('alert.list');
-    });
-  });
-
-  describe('subscribeToLogs', () => {
-    it('should successfully subscribe to logs', () => {
-      spectator.service.subscribeToLogs('filesystem.file_tail_follow');
-      expect(spectator.inject(SubscriptionManagerService).subscribe).toHaveBeenCalledWith('filesystem.file_tail_follow');
     });
   });
 

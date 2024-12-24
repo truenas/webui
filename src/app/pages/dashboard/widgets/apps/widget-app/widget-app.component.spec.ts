@@ -1,16 +1,14 @@
 import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { Observable, of } from 'rxjs';
 import { AppState } from 'app/enums/app-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App, AppStartQueryParams } from 'app/interfaces/app.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
-import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -47,12 +45,8 @@ describe('WidgetAppComponent', () => {
   const createComponent = createComponentFactory({
     component: WidgetAppComponent,
     imports: [
-      MapValuePipe,
-      NetworkSpeedPipe,
-      FileSizePipe,
-      NgxSkeletonLoaderModule,
-    ],
-    declarations: [
+      LazyLoadImageDirective,
+      NgxSkeletonLoaderComponent,
       MockComponents(
         AppCardInfoComponent,
         AppCardLogoComponent,

@@ -53,7 +53,7 @@ describe('AppDiskInfoComponent', () => {
   });
 
   it('checks network chart receives correct input', fakeAsync(() => {
-    const chartComponent = spectator.query(NetworkChartComponent);
+    const chartComponent = spectator.query(NetworkChartComponent)!;
     expect(chartComponent).toBeTruthy();
 
     spectator.tick(1);

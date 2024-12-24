@@ -1,13 +1,15 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl, FormsModule } from '@angular/forms';
+import {
+  ControlValueAccessor, NgControl, FormsModule, ReactiveFormsModule,
+} from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
@@ -23,10 +25,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatInput,
     FormsModule,
     IxErrorsComponent,
+    ReactiveFormsModule,
     MatHint,
     TestDirective,
     TestOverrideDirective,
-    RegisteredControlDirective,
+  ],
+  hostDirectives: [
+    { ...registeredDirectiveConfig },
   ],
 })
 export class IxTextareaComponent implements ControlValueAccessor {
@@ -34,7 +39,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
   readonly placeholder = input<string>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly rows = input(4);
   readonly readonly = input<boolean>();
 
