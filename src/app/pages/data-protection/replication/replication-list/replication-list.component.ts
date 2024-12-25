@@ -9,6 +9,7 @@ import { filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -187,12 +188,16 @@ export class ReplicationListComponent implements OnInit {
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.ws.job('replication.run', [row.id])),
+      tapOnce(() => {
+        this.snackbar.success(
+          this.translate.instant('Replication «{name}» has started.', { name: row.name }),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
         row.state = { state: job.state };
         row.job = { ...job };
-        this.snackbar.success(this.translate.instant('Replication «{name}» has started.', { name: row.name }));
         this.updateRowStateAndJob(row, job.state, job);
         this.cdr.markForCheck();
       },
