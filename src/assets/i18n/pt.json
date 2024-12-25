@@ -3374,6 +3374,7 @@
   "{comparator} (Range In)": "",
   "{comparator} (Range Not In)": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",
   "{license} contract, expires {date}": "",

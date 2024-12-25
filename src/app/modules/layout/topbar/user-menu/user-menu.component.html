@@ -51,7 +51,9 @@
           ixTest="api-keys"
           mat-menu-item
           [routerLink]="['/credentials/users/api-keys']"
-          [queryParams]="{ userName: user.pw_name }">
+          [queryParams]="{ userName: user.pw_name }"
+          [ixUiSearch]="searchableElements.elements.myApiKeys"
+        >
           <ix-icon name="laptop"></ix-icon>
           {{ 'My API Keys' | translate }}
         </a>

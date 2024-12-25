@@ -99,7 +99,7 @@ export class CronCardComponent implements OnInit {
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
       getValue: (row) => (row.enabled
-        ? this.taskService.getTaskNextTime(row.cron_schedule)
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
     }),
     actionsColumn({
@@ -146,7 +146,6 @@ export class CronCardComponent implements OnInit {
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
         }));
       }),

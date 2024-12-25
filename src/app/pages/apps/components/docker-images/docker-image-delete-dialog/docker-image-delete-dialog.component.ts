@@ -19,6 +19,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -73,6 +74,7 @@ export class DockerImageDeleteDialogComponent {
     private fb: FormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<DockerImageDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public images: ContainerImage[],
   ) {
@@ -92,6 +94,7 @@ export class DockerImageDeleteDialogComponent {
 
     this.api.job('core.bulk', ['app.image.delete', deleteParams]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], DeleteContainerImageParams[]>) => !!job.result),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((response) => {
       response.arguments[1].forEach((params, index: number) => {

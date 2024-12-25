@@ -4272,6 +4272,7 @@
   "iSCSI Global Configuration": "",
   "iSCSI Service": "",
   "iXsystems does not audit or otherwise validate the contents of third-party applications catalogs.     It is incumbent on the user to verify that the new catalog is from a trusted source and that the third-party     properly audits its chart contents. Failure to exercise due diligence may expose the user and their data to     some or all of the following:<br/>    <ul>\n      <li>Malicious software</li>\n      <li>Broken services on TrueNAS host</li>\n      <li>Service disruption on TrueNAS host</li>\n      <li>Broken filesystem permissions on Host or within application</li>\n      <li>Unexpected deletion of user data</li>\n      <li>Unsafe service configuration in application</li>\n      <li>Degradation of TrueNAS host performance and stability</li>\n    </ul>": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# Environment Variable} other {# Environment Variables} }": "",

@@ -243,7 +243,10 @@ export class NetworkComponent implements OnInit {
   commitPendingChanges(): void {
     this.api
       .call('interface.services_restarted_on_sync')
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((services) => {
         if (services.length > 0) {
           const ips: string[] = [];

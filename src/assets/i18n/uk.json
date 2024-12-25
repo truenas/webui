@@ -2136,6 +2136,7 @@
   "{coreCount, plural, one {# core} other {# cores} }": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",

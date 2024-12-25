@@ -7,6 +7,7 @@
   "Warning: iSCSI Target is currently in use.</font><br>": "",
   "You are about to delete the target \"{name}\".": "",
   "You are about to delete the target \"{name}\". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Het lijkt erop dat uw sessie langer dan {lifetime} seconden inactief is geweest.<br>\n              Om veiligheidsredenen loggen we u om {time} uit.\n            ",
   " Est. Usable Raw Capacity": "Geschatte bruikbare ruwe capaciteit",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Wanneer de <b>UPS-modus</b> is ingesteld op <i>slave</i>. Het open netwerkpoortnummer van het UPS <i>Master</i>-systeem invoeren. De standaardpoort is <i>3493</i>.",
