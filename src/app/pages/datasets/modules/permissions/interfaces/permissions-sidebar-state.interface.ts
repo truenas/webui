@@ -3,6 +3,6 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 
 export interface PermissionsCardState {
   isLoading: boolean;
-  stat: FileSystemStat;
-  acl: Acl;
+  stat: FileSystemStat | null;
+  acl: Acl | null;
 }

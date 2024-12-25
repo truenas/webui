@@ -47,7 +47,7 @@ export class DeleteTargetDialogComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
-  protected warningMessage: string = null;
+  protected warningMessage = '';
 
   form = this.formBuilder.group({
     delete_extents: [false],

@@ -14,7 +14,7 @@ export const cloudCredentialsCardElements = {
         T('Add Credential'),
         T('Add Backup Credential'),
         T('New Credential'),
-        T('New Could Credential'),
+        T('New Cloud Credential'),
         T('New Backup Credential'),
         T('Create Credential'),
         T('Create Cloud Credential'),

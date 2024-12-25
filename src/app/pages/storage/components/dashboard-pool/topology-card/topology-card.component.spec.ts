@@ -4468,7 +4468,7 @@ describe('TopologyCardComponent', () => {
       expect(values).toHaveLength(5);
 
       expect(captions[0]).toHaveText('Data VDEVs');
-      expect(spectator.query('.offline-data-vdevs').textContent).toBe('Offline VDEVs');
+      expect(spectator.query('.offline-data-vdevs')!.textContent).toBe('Offline VDEVs');
 
       // Redundancy level should match data VDEVs
       expect(captions[1]).toHaveText('Metadata');

@@ -34,7 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class TargetDetailsComponent {
   readonly target = input.required<IscsiTarget>();
 
-  targetPort = signal<FibreChannelPort>(null);
+  targetPort = signal<FibreChannelPort | null>(null);
   connections = toSignal(this.api.call('fcport.status'));
 
   protected hasIscsiCards = computed(() => [

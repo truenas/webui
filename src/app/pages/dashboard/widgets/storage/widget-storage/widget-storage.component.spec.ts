@@ -155,7 +155,7 @@ describe('WidgetStorageComponent', () => {
     const tiles = spectator.queryAll('.tile');
     expect(tiles).toHaveLength(1);
 
-    const headers = tiles.map((tile) => tile.querySelector('.tile-header-title').textContent.trim());
+    const headers = tiles.map((tile) => tile.querySelector('.tile-header-title')!.textContent!.trim());
     expect(headers).toEqual(['my pool']);
 
     const contents = tiles.map((tile) => {

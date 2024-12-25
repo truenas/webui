@@ -47,7 +47,7 @@ describe('GroupFormComponent', () => {
   const fakeDataGroup = {
     id: 13,
     gid: 1111,
-    sudo_commands: [],
+    sudo_commands: [] as string[],
     name: 'Group A',
     sudo_commands_nopasswd: [allCommands],
     smb: false,

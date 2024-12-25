@@ -117,7 +117,7 @@ describe('InstanceGeneralInfoComponent', () => {
       memory: null,
     });
 
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
 
     expect(chartExtra[3]).toHaveText('CPU: All Host CPUs');
     expect(chartExtra[4]).toHaveText('Memory: Available Host Memory');

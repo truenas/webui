@@ -44,7 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class DeleteGroupDialogComponent {
   readonly requiredRoles = [Role.AccountWrite];
 
-  deleteUsersCheckbox = new FormControl(false);
+  deleteUsersCheckbox = new FormControl(false, { nonNullable: true });
 
   readonly deleteMessage = T('Are you sure you want to delete group <b>"{name}"</b>?');
 

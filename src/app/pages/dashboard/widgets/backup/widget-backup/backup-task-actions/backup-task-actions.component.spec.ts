@@ -31,7 +31,7 @@ describe('BackupTaskActionsComponent', () => {
     spectator.setInput('allCount', 1);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addCloudSyncTask, 'emit');
-    spectator.click(spectator.query('[ixTest="cloud"]'));
+    spectator.click(spectator.query('[ixTest="cloud"]')!);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -39,7 +39,7 @@ describe('BackupTaskActionsComponent', () => {
     spectator.setInput('allCount', 1);
     spectator.detectChanges();
     const spy = jest.spyOn(spectator.component.addReplicationTask, 'emit');
-    spectator.click(spectator.query('[ixTest="another-TrueNAS"]'));
+    spectator.click(spectator.query('[ixTest="another-TrueNAS"]')!);
     expect(spy).toHaveBeenCalled();
   });
 });

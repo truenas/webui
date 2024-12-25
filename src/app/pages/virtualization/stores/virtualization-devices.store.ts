@@ -13,7 +13,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export interface VirtualizationInstanceDeviceState {
   isLoading: boolean;
   devices: VirtualizationDevice[];
-  selectedInstance: VirtualizationInstance;
+  selectedInstance: VirtualizationInstance | null;
 }
 
 const initialState: VirtualizationInstanceDeviceState = {

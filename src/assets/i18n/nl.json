@@ -1,7 +1,9 @@
 {
   "": "",
+  "-": "",
   "Delete Target \"{name}\"": "",
   "Delete {n} associated {n, plural, one {extent} other {extents}}": "",
+  "New Cloud Credential": "",
   "Warning: iSCSI Target is currently in use.</font><br>": "",
   "You are about to delete the target \"{name}\".": "",
   "You are about to delete the target \"{name}\". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.": "",
@@ -2884,7 +2886,6 @@
   "New Certificate Signing Requests": "Nieuwe certificaatondertekeningsverzoeken",
   "New Cloud Backup": "Nieuwe cloudback-up",
   "New Cloud Sync Task": "Nieuwe cloudsynchronisatietaak",
-  "New Could Credential": "Nieuw cloudinloggegeven",
   "New Credential": "Nieuw inloggegeven",
   "New Cron Job": "Nieuwe cronjob",
   "New DNS Authenticator": "Nieuwe DNS-authenticator",

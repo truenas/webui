@@ -176,7 +176,7 @@ export class ServicesComponent implements OnInit {
       waitForServices,
       map((services) => services.map((service) => ({
         ...service,
-        name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
+        name: serviceNames.get(service.service) || service.service,
       }))),
       untilDestroyed(this),
     ).subscribe({

@@ -63,8 +63,8 @@ describe('MiniDriveTemperaturesComponent', () => {
 
     const contents = lines.map((line) => {
       return {
-        label: line.querySelector('.dev').textContent.trim(),
-        temperature: line.querySelector('.temperature').textContent.trim(),
+        label: line.querySelector('.dev')!.textContent!.trim(),
+        temperature: line.querySelector('.temperature')!.textContent!.trim(),
         hideTooltip: !line.querySelector('ix-tooltip'),
       };
     });

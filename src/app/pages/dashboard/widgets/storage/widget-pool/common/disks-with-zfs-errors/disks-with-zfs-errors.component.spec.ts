@@ -14,7 +14,7 @@ describe('DisksWithZfsErrorsComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        pool: null,
+        pool: undefined,
       },
     });
   });

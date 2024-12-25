@@ -2,7 +2,9 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { Subscription, switchMap, tap } from 'rxjs';
+import {
+  of, Subscription, switchMap, tap,
+} from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -10,7 +12,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationConfigState {
   isLoading: boolean;
-  config: VirtualizationGlobalConfig;
+  config: VirtualizationGlobalConfig | null;
 }
 
 const initialState: VirtualizationConfigState = {
@@ -52,7 +54,7 @@ export class VirtualizationConfigStore extends ComponentStore<VirtualizationConf
           catchError((error: unknown) => {
             this.patchState({ isLoading: false });
             this.errorHandler.showErrorModal(error);
-            return undefined;
+            return of(undefined);
           }),
         );
       }),

@@ -105,7 +105,7 @@ export class JobsListComponent implements OnInit {
     dateColumn({
       title: this.translate.instant('Finished'),
       propertyName: 'time_finished',
-      sortBy: (job) => +job.time_finished,
+      sortBy: (job) => Number(job.time_finished),
     }),
   ], {
     uniqueRowTag: (row) => `job-${row.id}`,

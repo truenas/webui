@@ -88,7 +88,7 @@ describe('DeleteDatasetDialogComponent', () => {
       'These services depend on dataset Lab 1 and will be destroyed if the dataset is deleted:',
     );
 
-    const services = attachmentsSection.querySelectorAll('.services > li');
+    const services = attachmentsSection!.querySelectorAll('.services > li');
     expect(services).toHaveLength(2);
     expect(services[0]).toHaveDescendantWithText({
       selector: '.service-name',
@@ -113,7 +113,7 @@ describe('DeleteDatasetDialogComponent', () => {
 
     const processesSection = spectator.query('.known-processes');
     expect(processesSection).toHaveText('These running processes are using Lab 1:');
-    const processes = processesSection.querySelectorAll('li');
+    const processes = processesSection!.querySelectorAll('li');
 
     expect(processes).toHaveLength(2);
     expect(processes[0]).toHaveText('zsh');
@@ -123,7 +123,7 @@ describe('DeleteDatasetDialogComponent', () => {
   it('shows unknown processes that use dataset', () => {
     const processesSection = spectator.query('.unknown-processes');
     expect(processesSection).toHaveText('These unknown processes are using the dataset:');
-    const processes = processesSection.querySelectorAll('li');
+    const processes = processesSection!.querySelectorAll('li');
 
     expect(processes).toHaveLength(2);
     expect(processes[0]).toHaveText('1234 - rm -rf /');

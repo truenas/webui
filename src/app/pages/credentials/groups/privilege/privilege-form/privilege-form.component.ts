@@ -99,7 +99,7 @@ export class PrivilegeFormComponent implements OnInit {
       });
 
       return sortedRoles.map((role) => ({
-        label: roleNames.has(role.name) ? this.translate.instant(roleNames.get(role.name)) : role.name,
+        label: this.translate.instant(roleNames.get(role.name) || role.name),
         value: role.name,
       }));
     }),

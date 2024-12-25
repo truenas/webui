@@ -258,7 +258,7 @@ describe('CertificateAuthorityAddComponent', () => {
     await goToNextStep();
     await goToNextStep();
 
-    const summary = spectator.query(SummaryComponent);
+    const summary = spectator.query(SummaryComponent)!;
     expect(summary.summary).toEqual([
       [
         { label: 'Name', value: 'new' },
@@ -286,13 +286,13 @@ describe('CertificateAuthorityAddComponent', () => {
   });
 
   it('updates form fields and sets constrains when Profile is emitted by CertificateIdentifierAndTypeComponent', async () => {
-    const optionsForm = spectator.query(CertificateOptionsComponent);
-    const subjectForm = spectator.query(CertificateSubjectComponent);
+    const optionsForm = spectator.query(CertificateOptionsComponent)!;
+    const subjectForm = spectator.query(CertificateSubjectComponent)!;
 
     jest.spyOn(optionsForm.form, 'patchValue');
     jest.spyOn(subjectForm.form, 'patchValue');
 
-    const constraintsForm = spectator.query(CertificateConstraintsComponent);
+    const constraintsForm = spectator.query(CertificateConstraintsComponent)!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
     await form.fillForm({

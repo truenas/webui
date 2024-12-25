@@ -15,7 +15,7 @@ import { IxDatepickerComponent } from './ix-date-picker.component';
 describe('IxDatePickerComponent', () => {
   let spectator: SpectatorHost<IxDatepickerComponent>;
   let loader: HarnessLoader;
-  const formControl = new FormControl<Date>(null);
+  const formControl = new FormControl<Date | null>(null);
 
   const createHost = createHostFactory({
     component: IxDatepickerComponent,
@@ -57,7 +57,7 @@ describe('IxDatePickerComponent', () => {
         },
       });
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Label');
       expect(label.tooltip()).toBe('Tooltip');

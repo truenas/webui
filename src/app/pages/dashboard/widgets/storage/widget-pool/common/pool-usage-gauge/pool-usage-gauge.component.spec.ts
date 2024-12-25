@@ -110,8 +110,8 @@ describe('PoolUsageGaugeComponent', () => {
     const lines: { label: string; value: string }[] = [];
     spectator.queryAll('.lines > .line').forEach((line) => {
       lines.push({
-        label: line.querySelector('.label').textContent.trim(),
-        value: line.querySelector('.value').textContent.trim(),
+        label: line.querySelector('.label')!.textContent!.trim(),
+        value: line.querySelector('.value')!.textContent!.trim(),
       });
     });
     expect(lines).toEqual([
@@ -128,10 +128,10 @@ describe('PoolUsageGaugeComponent', () => {
   });
 
   it('shows chart', () => {
-    expect(spectator.query(GaugeChartComponent).label).toBe('80.2%');
-    const value = spectator.query(GaugeChartComponent).value;
+    expect(spectator.query(GaugeChartComponent)!.label).toBe('80.2%');
+    const value = spectator.query(GaugeChartComponent)!.value;
     expect(value).toBeCloseTo(80, 0);
-    expect(spectator.query(GaugeChartComponent).colorFill).toBe('red');
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('red');
   });
 
   it('should display skeleton loader when pool is loading', () => {

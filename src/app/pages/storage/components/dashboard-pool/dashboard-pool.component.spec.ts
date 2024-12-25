@@ -111,13 +111,13 @@ describe('DashboardPoolComponent', () => {
   });
 
   it('shows a ZFS Health card for the pool', () => {
-    const card = spectator.query(ZfsHealthCardComponent);
+    const card = spectator.query(ZfsHealthCardComponent)!;
     expect(card).toBeTruthy();
     expect(card.pool).toBe(pool);
   });
 
   it('shows a disk health card for the pool', () => {
-    const card = spectator.query(DiskHealthCardComponent);
+    const card = spectator.query(DiskHealthCardComponent)!;
     expect(card).toBeTruthy();
     expect(card.poolState).toBe(pool);
   });

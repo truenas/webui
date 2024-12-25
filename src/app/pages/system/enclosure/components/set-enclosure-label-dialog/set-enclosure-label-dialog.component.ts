@@ -77,7 +77,7 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     const newLabel = formValues.resetToDefault ? this.data.defaultLabel : formValues.label;
 
     this.api.call('enclosure.label.set', [this.data.enclosureId, newLabel])

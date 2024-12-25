@@ -1,5 +1,6 @@
 {
   "": "",
+  "-": "",
   "Burst": "",
   "Change Session Timeout in": "",
   "Change from <i>public</i> to increase system security. Can only contain alphanumeric characters, underscores, dashes, periods, and spaces. This can be left empty for <i>SNMPv3</i> networks.": "",
@@ -913,7 +914,7 @@
   "Never": "",
   "New ACME DNS-Authenticator": "",
   "New Certificate Signing Requests": "",
-  "New Could Credential": "",
+  "New Cloud Credential": "",
   "New Cron Job": "",
   "New DNS Authenticator": "",
   "New Exporter": "",

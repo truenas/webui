@@ -126,9 +126,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     textColumn({
       title: this.translate.instant('Service'),
       propertyName: 'service',
-      getValue: (row) => (auditServiceLabels.has(row.service)
-        ? this.translate.instant(auditServiceLabels.get(row.service))
-        : row.service || '-'),
+      getValue: (row) => this.translate.instant(auditServiceLabels.get(row.service) || row.service || '-'),
     }),
     textColumn({
       title: this.translate.instant('User'),
@@ -142,9 +140,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     textColumn({
       title: this.translate.instant('Event'),
       propertyName: 'event',
-      getValue: (row) => (auditEventLabels.has(row.event)
-        ? this.translate.instant(auditEventLabels.get(row.event))
-        : row.event || '-'),
+      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event) || row.event || '-'),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -334,8 +330,8 @@ export class AuditComponent implements OnInit, OnDestroy {
         'service',
         this.translate.instant('Service'),
         of(Object.values(AuditService).map((key) => ({
-          label: this.translate.instant(auditServiceLabels.get(key)),
-          value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
+          label: this.translate.instant(auditServiceLabels.get(key) || key),
+          value: `"${this.translate.instant(auditServiceLabels.get(key) || key)}"`,
         }))),
         auditServiceLabels,
       ),
@@ -348,8 +344,8 @@ export class AuditComponent implements OnInit, OnDestroy {
         'event',
         this.translate.instant('Event'),
         of(Object.values(AuditEvent).map((key) => ({
-          label: this.translate.instant(auditEventLabels.get(key)),
-          value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
+          label: this.translate.instant(auditEventLabels.get(key) || key),
+          value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
         }))),
         auditEventLabels,
       ),
@@ -388,8 +384,8 @@ export class AuditComponent implements OnInit, OnDestroy {
         'event_data.credentials.credentials',
         this.translate.instant('Middleware - Credentials'),
         of(Object.values(CredentialType).map((key) => ({
-          label: this.translate.instant(credentialTypeLabels.get(key)),
-          value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
+          label: this.translate.instant(credentialTypeLabels.get(key) || key),
+          value: `"${this.translate.instant(credentialTypeLabels.get(key) || key)}"`,
         }))),
         credentialTypeLabels,
       ),

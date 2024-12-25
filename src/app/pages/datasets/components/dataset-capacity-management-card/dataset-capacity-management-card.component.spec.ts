@@ -110,11 +110,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows SpaceManagementChartComponent', () => {
-      expect(spectator.query(SpaceManagementChartComponent).dataset).toBe(datasetFilesystem);
+      expect(spectator.query(SpaceManagementChartComponent)!.dataset).toBe(datasetFilesystem);
     });
 
     it('shows chart block', () => {
-      const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
+      const chartExtra = spectator.query('.chart-extra')!.querySelectorAll('.details-item');
       expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Reserved for Dataset:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('1 KiB');
@@ -159,11 +159,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows SpaceManagementChartComponent', () => {
-      expect(spectator.query(SpaceManagementChartComponent).dataset).toBe(datasetZvol);
+      expect(spectator.query(SpaceManagementChartComponent)!.dataset).toBe(datasetZvol);
     });
 
     it('shows chart block', () => {
-      const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
+      const chartExtra = spectator.query('.chart-extra')!.querySelectorAll('.details-item');
       expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Provisioning Type:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('Thick');

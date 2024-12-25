@@ -1,6 +1,7 @@
 {
   "": "",
   "({n, plural, =1 {# widget} other {# widgets}})": "",
+  "-": "",
   "...": "",
   "1m Average": "",
   "2FA": "",
@@ -457,8 +458,8 @@
   "New CSR": "",
   "New Certificate": "",
   "New Cloud Backup": "",
+  "New Cloud Credential": "",
   "New Cloud Sync Task": "",
-  "New Could Credential": "",
   "New Credential": "",
   "New Cron Job": "",
   "New DNS Authenticator": "",

@@ -23,7 +23,7 @@ export class StatusesLegendComponent {
     const statuses = uniq(slotsWithPool.map((slot) => slot.pool_info.disk_status));
 
     return statuses.map((status) => {
-      const statusLabel = enclosureDiskStatusLabels.has(status) ? enclosureDiskStatusLabels.get(status) : status;
+      const statusLabel = enclosureDiskStatusLabels.get(status) || status;
       return [
         this.translate.instant(statusLabel),
         getDiskStatusColor(status),

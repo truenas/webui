@@ -29,7 +29,7 @@ describe('WidgetCpuModelComponent', () => {
       ],
     });
 
-    const widget = spectator.query(WidgetDatapointComponent);
+    const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
     expect(widget.text()).toBe('AMD EPYC 7313P 16-Core Processor');
   });

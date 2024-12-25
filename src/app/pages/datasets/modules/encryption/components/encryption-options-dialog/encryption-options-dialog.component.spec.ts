@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -52,7 +52,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     dataset: {
       id: 'pool/parent/child',
       encryption_root: 'pool/parent/child',
-      children: [],
+      children: [] as DatasetDetails[],
       key_format: {
         value: EncryptionKeyFormat.Passphrase,
       },

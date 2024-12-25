@@ -59,7 +59,7 @@ describe('InstanceMetricsLineChartComponent', () => {
   });
 
   it('configures chart data correctly', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     const data = chart.data as ChartData<'line'>;
 
     expect(data).toMatchObject({
@@ -78,7 +78,7 @@ describe('InstanceMetricsLineChartComponent', () => {
   });
 
   it('uses correct chart options', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     const options = chart.options;
 
     expect(options).toMatchObject({
