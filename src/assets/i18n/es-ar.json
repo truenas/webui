@@ -683,6 +683,7 @@
   "{coreCount, plural, one {# core} other {# cores} }": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{duration} remaining": "",
   "{eligible} of {total} existing snapshots of dataset {dataset} would be replicated with this task.": "",

@@ -2019,6 +2019,7 @@
   "{comparator} (Range In)": "",
   "{comparator} (Range Not In)": "",
   "{comparator} (Starts With)": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
   "{n, plural, one {SAS Expander} other {SAS Expanders} }": "",
   "{n} (applies to descendants)": "",

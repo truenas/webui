@@ -896,6 +896,7 @@
   "{comparator} (Starts With)": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
   "{cpuPercentage}% Avg. Usage": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{email} via {server}": "",
   "{minutes, plural, =1 {# minute} other {# minutes}}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",

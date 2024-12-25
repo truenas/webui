@@ -69,8 +69,6 @@ describe('IxSlideIn2Component', () => {
     locked: false,
     job: null,
     credential: 'test2',
-    cron_schedule: 'Disabled',
-    frequency: 'At 00:00, only on Sunday',
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: JobState.Pending },
