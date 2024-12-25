@@ -165,7 +165,7 @@ export class WidgetBackupComponent implements OnInit {
   addCloudSyncTask(): void {
     this.slideIn.open(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     ).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -177,16 +177,16 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.slideIn.open(ReplicationWizardComponent, true);
-    closer$.pipe(
+    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => this.getBackups());
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {

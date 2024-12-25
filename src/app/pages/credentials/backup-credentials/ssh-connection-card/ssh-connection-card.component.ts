@@ -121,13 +121,15 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const closer$ = this.slideIn.open(SshConnectionFormComponent);
-    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    this.slideIn.open(SshConnectionFormComponent)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const closer$ = this.slideIn.open(SshConnectionFormComponent, false, credential);
-    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    this.slideIn.open(SshConnectionFormComponent, { data: credential })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getCredentials());
   }
 
   doDelete(credential: KeychainSshCredentials): void {

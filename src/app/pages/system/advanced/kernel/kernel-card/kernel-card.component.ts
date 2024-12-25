@@ -70,7 +70,7 @@ export class KernelCardComponent {
 
   onConfigurePressed(debugKernel: boolean): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(KernelFormComponent, false, debugKernel)),
+      switchMap(() => this.slideIn.open(KernelFormComponent, { data: debugKernel })),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

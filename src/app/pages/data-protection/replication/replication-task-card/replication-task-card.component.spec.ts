@@ -127,8 +127,10 @@ describe('ReplicationTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
-      true,
-      replicationTasks[0],
+      {
+        wide: true,
+        data: replicationTasks[0],
+      },
     );
   });
 
@@ -138,7 +140,7 @@ describe('ReplicationTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ReplicationWizardComponent,
-      true,
+      { wide: true },
     );
   });
 

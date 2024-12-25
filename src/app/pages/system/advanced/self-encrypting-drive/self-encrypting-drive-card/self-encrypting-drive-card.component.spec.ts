@@ -68,8 +68,9 @@ describe('SelfEncryptingDriveCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
-      false,
-      { sedPassword: '********', sedUser: 'admin' },
+      {
+        data: { sedPassword: '********', sedUser: 'admin' },
+      },
     );
   });
 });

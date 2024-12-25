@@ -129,8 +129,7 @@ describe('AllInstancesHeaderComponent', () => {
 
       expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         GlobalConfigFormComponent,
-        false,
-        { dataset: 'pool1/dataset1' },
+        { data: { dataset: 'pool1/dataset1' } },
       );
     });
   });

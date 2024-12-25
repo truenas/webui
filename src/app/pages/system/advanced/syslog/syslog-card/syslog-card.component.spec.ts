@@ -75,15 +75,16 @@ describe('SyslogCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SyslogFormComponent,
-      false,
       {
-        fqdn_syslog: true,
-        syslog_audit: false,
-        syslog_tls_certificate: undefined,
-        syslog_tls_certificate_authority: undefined,
-        syslog_transport: 'TCP',
-        sysloglevel: 'F_ALERT',
-        syslogserver: '127.1.2.3',
+        data: {
+          fqdn_syslog: true,
+          syslog_audit: false,
+          syslog_tls_certificate: undefined,
+          syslog_tls_certificate_authority: undefined,
+          syslog_transport: 'TCP',
+          sysloglevel: 'F_ALERT',
+          syslogserver: '127.1.2.3',
+        },
       },
     );
   });

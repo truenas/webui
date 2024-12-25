@@ -51,8 +51,7 @@ describe('SystemSecurityCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
-      false,
-      fakeSystemSecurityConfig,
+      { data: fakeSystemSecurityConfig },
     );
   });
 });

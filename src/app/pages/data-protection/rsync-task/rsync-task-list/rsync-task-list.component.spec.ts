@@ -194,8 +194,10 @@ describe('RsyncTaskListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
-      true,
-      tasks[0],
+      {
+        wide: true,
+        data: tasks[0],
+      },
     );
   });
 

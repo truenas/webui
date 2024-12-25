@@ -58,8 +58,7 @@ describe('StorageCardComponent', () => {
       spectator.inject(SlideIn).open,
     ).toHaveBeenCalledWith(
       StorageSettingsFormComponent,
-      false,
-      { systemDsPool: 'tank' },
+      { data: { systemDsPool: 'tank' } },
     );
   });
 });

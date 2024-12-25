@@ -103,7 +103,7 @@ export class ConsoleCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(ConsoleFormComponent, false, this.consoleConfig)),
+      switchMap(() => this.slideIn.open(ConsoleFormComponent, { data: this.consoleConfig })),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

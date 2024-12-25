@@ -175,8 +175,10 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
-      true,
-      cloudsyncTasks[0],
+      {
+        wide: true,
+        data: cloudsyncTasks[0],
+      },
     );
   });
 
@@ -186,7 +188,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     );
   });
 

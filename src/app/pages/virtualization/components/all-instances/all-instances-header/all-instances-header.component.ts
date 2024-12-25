@@ -53,7 +53,7 @@ export class AllInstancesHeaderComponent {
 
   protected onEdit(): void {
     this.slideIn
-      .open(GlobalConfigFormComponent, false, this.config())
+      .open(GlobalConfigFormComponent, { data: this.config() })
       .pipe(untilDestroyed(this))
       .subscribe();
   }
