@@ -41,7 +41,7 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly hint = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly options = input<Observable<Option[]>>();
   readonly vertical = input(false);
   readonly inlineFields = input(false);

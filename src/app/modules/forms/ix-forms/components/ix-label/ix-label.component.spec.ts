@@ -29,7 +29,7 @@ describe('IxLabelComponent', () => {
   it('renders a tooltip when it is provided', () => {
     spectator.setInput('tooltip', 'Enter your first name');
 
-    const tooltip = spectator.query(TooltipComponent);
+    const tooltip = spectator.query(TooltipComponent)!;
     expect(tooltip.header()).toBe('First Name');
     expect(tooltip.message()).toBe('Enter your first name');
   });

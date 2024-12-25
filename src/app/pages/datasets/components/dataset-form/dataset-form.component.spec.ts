@@ -126,19 +126,19 @@ describe('DatasetFormComponent', () => {
     });
 
     it('toggles between Advanced mode when corresponding button is pressed', async () => {
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
 
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(true);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(true);
       expect(spectator.query(QuotasSectionComponent)).toExist();
 
       const basicButton = await loader.getHarness(MatButtonHarness.with({ text: 'Basic Options' }));
       await basicButton.click();
 
-      expect(spectator.query(OtherOptionsSectionComponent).advancedMode).toBe(false);
+      expect(spectator.query(OtherOptionsSectionComponent)!.advancedMode).toBe(false);
       expect(spectator.query(QuotasSectionComponent)).not.toExist();
     });
   });

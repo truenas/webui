@@ -22,7 +22,7 @@ export interface EnclosureState {
   enclosures: DashboardEnclosure[];
   isLoading: boolean;
   selectedEnclosureIndex: number;
-  selectedSlotNumber: number;
+  selectedSlotNumber: number | null;
   selectedView: EnclosureView;
   selectedSide: EnclosureSide;
 }
@@ -46,12 +46,13 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly selectedSlot = computed(() => {
-    if (this.stateAsSignal().selectedSlotNumber === null || !this.selectedEnclosure()) {
-      return undefined;
+    const selectedSlotNumber = this.stateAsSignal().selectedSlotNumber;
+    if (selectedSlotNumber === null || !this.selectedEnclosure()) {
+      return null;
     }
 
     const elements = this.selectedEnclosure().elements[EnclosureElementType.ArrayDeviceSlot];
-    return elements[this.stateAsSignal().selectedSlotNumber];
+    return elements[selectedSlotNumber];
   });
 
   readonly selectedEnclosure = computed(() => {
@@ -182,7 +183,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     };
   });
 
-  selectSlot = this.updater((state, slotNumber: number) => {
+  selectSlot = this.updater((state, slotNumber: number | null) => {
     return {
       ...state,
       selectedSlotNumber: slotNumber,

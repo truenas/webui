@@ -80,7 +80,7 @@ describe('AppRowComponent', () => {
   });
 
   it('shows app updates', () => {
-    const updateCell = spectator.query(AppUpdateCellComponent);
+    const updateCell = spectator.query(AppUpdateCellComponent)!;
     expect(updateCell).toBeTruthy();
     expect(updateCell.hasUpdate).toBeFalsy();
   });

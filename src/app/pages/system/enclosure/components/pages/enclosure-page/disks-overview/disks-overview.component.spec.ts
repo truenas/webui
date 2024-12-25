@@ -4,7 +4,7 @@ import { EnclosureDiskStatus, EnclosureElementType, EnclosureStatus } from 'app/
 import {
   DashboardEnclosure,
   DashboardEnclosureElements,
-  DashboardEnclosureSlot,
+  DashboardEnclosureSlot, EnclosureElement,
 } from 'app/interfaces/enclosure.interface';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -28,11 +28,11 @@ const fakeSelectedEnclosure = {
       2: {
         status: EnclosureStatus.Ok,
         descriptor: '',
-      } as DashboardEnclosureSlot,
+      } as EnclosureElement,
       3: {
         status: EnclosureStatus.Ok,
         descriptor: '',
-      } as DashboardEnclosureSlot,
+      } as EnclosureElement,
     },
   } as DashboardEnclosureElements,
 } as DashboardEnclosure;

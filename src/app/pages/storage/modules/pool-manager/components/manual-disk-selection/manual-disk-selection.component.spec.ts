@@ -101,7 +101,7 @@ describe('ManualDiskSelectionComponent', () => {
     });
 
     it('renders sidebar with disk inventory', () => {
-      const selectionDisks = spectator.query(ManualSelectionDisksComponent);
+      const selectionDisks = spectator.query(ManualSelectionDisksComponent)!;
       expect(selectionDisks.enclosures).toEqual(enclosures);
     });
 

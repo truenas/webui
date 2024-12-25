@@ -53,7 +53,7 @@ export class FileTicketComponent {
 
   readonly isLoadingChange = output<boolean>();
 
-  protected form = this.formBuilder.group({
+  protected form = this.formBuilder.nonNullable.group({
     title: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.maxLength(20000)]],
     images: [[] as File[], []],

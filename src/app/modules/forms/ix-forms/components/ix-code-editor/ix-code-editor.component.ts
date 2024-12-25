@@ -53,7 +53,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
 export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, ControlValueAccessor {
   readonly label = input<string>();
   readonly hint = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly language = input<CodeEditorLanguage>();
   readonly placeholder = input<string>();

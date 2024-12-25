@@ -42,7 +42,7 @@ export class IxFileInputComponent implements ControlValueAccessor {
   readonly tooltip = input<string>();
   readonly acceptedFiles = input('*.*');
   readonly multiple = input<boolean>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
 
   value: FileList;
   isDisabled = false;

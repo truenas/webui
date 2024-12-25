@@ -4,8 +4,8 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { systemConfigLoaded } from 'app/store/system-config/system-config.actions';
 
 export interface SystemConfigState {
-  generalConfig: SystemGeneralConfig;
-  advancedConfig: AdvancedConfig;
+  generalConfig: SystemGeneralConfig | null;
+  advancedConfig: AdvancedConfig | null;
 }
 
 const initialState: SystemConfigState = {

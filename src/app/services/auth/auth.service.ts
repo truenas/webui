@@ -42,13 +42,13 @@ export class AuthService {
    */
   private readonly tokenRegenerationTimeMillis = 290 * 1000;
 
-  private latestTokenGenerated$ = new ReplaySubject<string>(1);
+  private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
     return this.latestTokenGenerated$.asObservable().pipe(filter((token) => !!token));
   }
 
   get hasAuthToken(): boolean {
-    return this.token && this.token !== 'null';
+    return Boolean(this.token) && this.token !== 'null';
   }
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -79,7 +79,7 @@ export class AuthService {
     map((user) => user.two_factor_config),
   );
 
-  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig;
+  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
 
   constructor(
     private wsManager: WebSocketHandlerService,
@@ -122,7 +122,7 @@ export class AuthService {
     this.setupTokenUpdate();
   }
 
-  login(username: string, password: string, otp: string = null): Observable<LoginResult> {
+  login(username: string, password: string, otp: string | null = null): Observable<LoginResult> {
     return (otp
       ? this.api.call('auth.login_ex_continue', [{ mechanism: LoginExMechanism.OtpToken, otp_token: otp }])
       : this.api.call('auth.login_ex', [{ mechanism: LoginExMechanism.PasswordPlain, username, password }])

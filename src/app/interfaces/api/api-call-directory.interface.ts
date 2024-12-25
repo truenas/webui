@@ -444,7 +444,7 @@ export interface ApiCallDirectory {
   // Enclosure
   'enclosure2.query': { params: void; response: Enclosure[] };
   'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
-  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
+  'enclosure.label.set': { params: [enclosureId: string, label: string]; response: Enclosure };
   'enclosure2.set_slot_status': { params: [SetDriveBayLightStatus]; response: void };
 
   // Failover
@@ -560,7 +560,7 @@ export interface ApiCallDirectory {
   'iscsi.portal.query': { params: QueryParams<IscsiPortal>; response: IscsiPortal[] };
   'iscsi.portal.update': { params: [id: number, target: IscsiPortalUpdate]; response: IscsiPortal };
   'iscsi.target.create': { params: [IscsiTargetUpdate]; response: IscsiTarget };
-  'iscsi.target.delete': { params: [id: number, force?: boolean]; response: boolean };
+  'iscsi.target.delete': { params: [id: number, force?: boolean, delete_extents?: boolean]; response: boolean };
   'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
   'iscsi.target.update': { params: [id: number, target: IscsiTargetUpdate]; response: IscsiTarget };
   'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };

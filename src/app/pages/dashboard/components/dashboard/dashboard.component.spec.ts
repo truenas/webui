@@ -1,10 +1,11 @@
+import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockDirective } from 'ng-mocks';
+import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
 import {
@@ -12,10 +13,6 @@ import {
 } from 'app/directives/disable-focusable-elements/disable-focusable-elements.directive';
 import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicator/new-feature-indicator.directive';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
-import { IxDragDirective } from 'app/modules/ix-drop-grid/ix-drag.directive';
-import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
-import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -49,10 +46,6 @@ describe('DashboardComponent', () => {
       WidgetGroupControlsComponent,
       MockComponent(PageHeaderComponent),
       MockComponent(WidgetGroupComponent),
-      MockDirective(IxDropGridDirective),
-      MockDirective(IxDropGridItemDirective),
-      MockDirective(IxDragDirective),
-      MockDirective(IxDragHandleDirective),
       NewFeatureIndicatorDirective,
       DisableFocusableElementsDirective,
     ],
@@ -245,8 +238,8 @@ describe('DashboardComponent', () => {
     });
 
     it('updates order when widgets are reordered via drag and drop', () => {
-      const dropGrid = spectator.query(IxDropGridDirective);
-      dropGrid.ixDropGridModelChange.emit([groupB, groupC, groupD, groupA]);
+      const list = spectator.query(CdkDropList<WidgetGroup>)!;
+      list.dropped.emit({ previousIndex: 0, currentIndex: 3 } as CdkDragDrop<WidgetGroup>);
       spectator.detectChanges();
 
       const groups = spectator.queryAll(WidgetGroupComponent);

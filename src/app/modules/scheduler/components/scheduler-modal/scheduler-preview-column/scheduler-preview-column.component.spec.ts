@@ -74,7 +74,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {
-    const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
+    const examplesComponent = spectator.query(SchedulerDateExamplesComponent)!;
 
     expect(examplesComponent.startDate).toEqual(parse('2022-02-22 09:28:00', 'yyyy-MM-dd HH:mm:ss', new Date()));
   });
@@ -94,7 +94,7 @@ describe('SchedulerPreviewColumnComponent', () => {
     const calendar = await loader.getHarness(MatCalendarHarness);
     await calendar.next();
 
-    const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
+    const examplesComponent = spectator.query(SchedulerDateExamplesComponent)!;
     expect(examplesComponent.startDate).toEqual(parse('2022-03-01 00:00:00', 'yyyy-MM-dd HH:mm:ss', new Date()));
   });
 

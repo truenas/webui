@@ -89,7 +89,7 @@ describe('PoolsViewComponent', () => {
     });
 
     it('renders legend with vdev disks', () => {
-      const legend = spectator.query(VdevDisksLegendComponent);
+      const legend = spectator.query(VdevDisksLegendComponent)!;
       expect(legend).toExist();
       expect(legend.poolColor).toBe('red');
     });
