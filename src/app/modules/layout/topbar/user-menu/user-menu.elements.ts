@@ -22,6 +22,10 @@ export const userMenuElements = {
     guide: {
       hierarchy: [T('Guide')],
     },
+    myApiKeys: {
+      hierarchy: [T('My API Keys')],
+      synonyms: [T('API Keys')],
+    },
     about: {
       hierarchy: [T('About')],
     },
