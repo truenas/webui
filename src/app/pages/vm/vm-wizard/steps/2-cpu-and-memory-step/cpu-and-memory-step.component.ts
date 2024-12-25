@@ -23,6 +23,7 @@ import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.int
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -90,6 +91,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   get isCpuCustom(): boolean {
@@ -144,10 +146,15 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
   }
 
   private loadMaxSupportedVcpus(): void {
-    this.api.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((maxVcpus) => {
-      this.maxVcpus = maxVcpus;
-      this.cdr.markForCheck();
-    });
+    this.api.call('vm.maximum_supported_vcpus')
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((maxVcpus) => {
+        this.maxVcpus = maxVcpus;
+        this.cdr.markForCheck();
+      });
   }
 
   private setPinVcpusRelation(): void {

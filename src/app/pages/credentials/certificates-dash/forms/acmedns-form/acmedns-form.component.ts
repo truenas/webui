@@ -31,6 +31,7 @@ import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-mo
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 interface DnsAuthenticatorList {
@@ -101,7 +102,8 @@ export class AcmednsFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private slideInRef: OldSlideInRef<AcmednsFormComponent>,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandlerService: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private changeDetectorRef: ChangeDetectorRef,
@@ -119,7 +121,10 @@ export class AcmednsFormComponent implements OnInit {
   private loadSchemas(): void {
     this.isLoading = true;
     this.getAuthenticatorSchemas()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((schemas: AuthenticatorSchema[]) => {
         this.setAuthenticatorOptions(schemas);
         this.createAuthenticatorControls(schemas);
@@ -228,7 +233,7 @@ export class AcmednsFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandlerService.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });

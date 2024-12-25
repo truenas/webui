@@ -181,6 +181,7 @@ export class SmbListComponent implements OnInit {
               next: () => {
                 this.api.call('sharing.smb.delete', [row.id]).pipe(
                   this.appLoader.withLoader(),
+                  this.errorHandler.catchError(),
                   untilDestroyed(this),
                 ).subscribe(() => {
                   this.dataProvider.load();
