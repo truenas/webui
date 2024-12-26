@@ -3,8 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges,
   signal,
-  Signal,
-  viewChild,
+  ViewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -60,10 +59,11 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
 
-  private readonly alertMessage: Signal<ElementRef<HTMLElement>> = viewChild('alertMessage', { read: ElementRef });
+  @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
 
   protected isCollapsed = signal<boolean>(true);
   protected isExpandable = signal<boolean>(false);
+
   protected readonly requiredRoles = [Role.AlertListWrite];
 
   alertLevelColor: AlertLevelColor | undefined;
@@ -92,7 +92,7 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const alertMessageElement = this.alertMessage().nativeElement;
+    const alertMessageElement = this.alertMessage.nativeElement;
     this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
   }
 
