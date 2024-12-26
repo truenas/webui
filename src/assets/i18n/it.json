@@ -3900,6 +3900,7 @@
   "{checked} exporter: {name}": "",
   "{comparator} (In)": "",
   "{coreCount, plural, one {# core} other {# cores} }": "",
+  "{crontabDescription}, from {startHour} to {endHour}": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",

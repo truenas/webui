@@ -482,33 +482,39 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   private loadExistReplication(): void {
-    this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
-      (tasks: ReplicationTask[]) => {
-        const options: Option[] = [];
-        for (const task of tasks) {
-          if (task.transport !== TransportMode.Legacy) {
-            const exp = task.state?.datetime
-              ? this.translate.instant('last run {date}', {
-                date: this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy'),
-              })
-              : this.translate.instant('never ran');
-            const label = `${task.name} (${exp})`;
-            options.push({ label, value: task.id });
+    this.replicationService
+      .getReplicationTasks()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(
+        (tasks: ReplicationTask[]) => {
+          const options: Option[] = [];
+          for (const task of tasks) {
+            if (task.transport !== TransportMode.Legacy) {
+              const exp = task.state?.datetime
+                ? this.translate.instant('last run {date}', {
+                  date: this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy'),
+                })
+                : this.translate.instant('never ran');
+              const label = `${task.name} (${exp})`;
+              options.push({ label, value: task.id });
+            }
           }
-        }
-        this.existReplicationOptions$ = of(options);
-        this.cdr.markForCheck();
+          this.existReplicationOptions$ = of(options);
+          this.cdr.markForCheck();
 
-        this.form.controls.exist_replication.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
-          const selectedTask = tasks.find((task) => task.id === value);
-          if (selectedTask) {
-            this.loadReplicationTask(selectedTask);
-          } else {
-            this.clearReplicationTask();
-          }
-        });
-      },
-    );
+          this.form.controls.exist_replication.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+            const selectedTask = tasks.find((task) => task.id === value);
+            if (selectedTask) {
+              this.loadReplicationTask(selectedTask);
+            } else {
+              this.clearReplicationTask();
+            }
+          });
+        },
+      );
   }
 
   private loadSshConnections(): void {

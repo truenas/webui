@@ -31,6 +31,7 @@ import { KerberosKeytabsListComponent } from 'app/pages/directory-service/compon
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { LdapComponent } from './components/ldap/ldap.component';
@@ -96,6 +97,7 @@ export class DirectoryServicesComponent implements OnInit {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
   }
 
@@ -110,7 +112,11 @@ export class DirectoryServicesComponent implements OnInit {
       this.api.call('ldap.config'),
       this.api.call('kerberos.config'),
     ])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {
         this.isActiveDirectoryEnabled = servicesState.activedirectory !== DirectoryServiceState.Disabled;
         this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;

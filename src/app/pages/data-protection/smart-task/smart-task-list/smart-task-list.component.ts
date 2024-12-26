@@ -22,6 +22,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
@@ -85,15 +88,14 @@ export class SmartTaskListComponent implements OnInit {
       title: this.translate.instant(helptextSmart.smartlist_column_description),
       propertyName: 'desc',
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_frequency),
-      propertyName: 'frequency',
-      getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_next_run),
       propertyName: 'next_run',
-      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
     }),
     actionsColumn({
       actions: [
@@ -187,8 +189,6 @@ export class SmartTaskListComponent implements OnInit {
 
   private transformSmartTasks(smartTasks: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return smartTasks.map((test) => {
-      test.cron_schedule = scheduleToCrontab(test.schedule);
-
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptextSmart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {

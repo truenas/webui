@@ -139,6 +139,24 @@
     "hierarchy": [
       "Toolbar",
       "Settings Menu",
+      "My API Keys"
+    ],
+    "synonyms": [
+      "API Keys"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "routerLink": [
+      "/credentials/users/api-keys"
+    ],
+    "anchor": "my-api-keys",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
       "Guide"
     ],
     "synonyms": [],
@@ -791,11 +809,10 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "User API Keys"
+      "Add API Key"
     ],
     "synonyms": [
-      "Add user linked API Key",
-      "Add API Key"
+      "Add user linked API Key"
     ],
     "requiredRoles": [
       "API_KEY_WRITE",
@@ -809,7 +826,7 @@
       "api-keys"
     ],
     "routerLink": null,
-    "anchor": "credentials-users-user-api-keys",
+    "anchor": "add-api-key",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -817,7 +834,7 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "User API Keys"
+      "API Keys"
     ],
     "synonyms": [
       "User linked API Keys"
@@ -830,7 +847,7 @@
       "api-keys"
     ],
     "routerLink": null,
-    "anchor": "credentials-users-user-api-keys",
+    "anchor": "api-keys",
     "triggerAnchor": null,
     "section": "ui"
   },

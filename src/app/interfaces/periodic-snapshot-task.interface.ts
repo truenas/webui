@@ -35,9 +35,7 @@ export interface PeriodicSnapshotTaskUpdate extends PeriodicSnapshotTaskCreate {
 
 export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   keepfor: string;
-  cron_schedule: string;
   when: string;
-  frequency: string;
   next_run: string;
   last_run: string;
   legacy: boolean;

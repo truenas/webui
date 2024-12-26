@@ -20,6 +20,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -105,10 +108,9 @@ export class SnapshotTaskListComponent implements OnInit {
         });
       },
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
-      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       hidden: true,

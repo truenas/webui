@@ -144,7 +144,6 @@ export class CronListComponent implements OnInit {
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
         }));
       }),

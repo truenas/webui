@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
-import { ScheduleToCrontabPipe } from 'app/modules/pipes/schedule-to-crontab/schedule-to-crontab.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 @Component({
@@ -8,7 +9,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   templateUrl: './ix-cell-schedule.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [ScheduleToCrontabPipe, TestDirective],
+  imports: [TestDirective, ScheduleDescriptionPipe, MatTooltip],
 })
 export class IxCellScheduleComponent<T> extends ColumnComponent<T> {}
 

@@ -28,6 +28,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -83,9 +86,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'description',
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
@@ -316,8 +319,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     return cloudSyncTasks.map((task) => {
       const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
-      task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
-      task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {

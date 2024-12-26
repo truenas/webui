@@ -87,9 +87,14 @@ export class TrainService {
   }
 
   toggleAutoCheck(autoCheck: boolean): void {
-    this.api.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.check();
-    });
+    this.api.call('update.set_auto_download', [autoCheck])
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.check();
+      });
   }
 
   setTrainAndCheck(newTrain: string, prevTrain: string): void {

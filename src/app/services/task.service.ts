@@ -158,7 +158,7 @@ export class TaskService {
   }
 
   /**
-   * @deprecated Use crontabDescription pipe.
+   * @deprecated Use scheduleDescription or crontabExplanation pipe.
    */
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
     options.use24HourTimeFormat = this.localeService.getPreferredTimeFormat() === 'HH:mm:ss';

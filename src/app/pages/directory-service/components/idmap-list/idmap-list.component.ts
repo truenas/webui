@@ -207,27 +207,32 @@ export class IdmapListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
-      if (adConfig.enable) {
-        const slideInRef = this.slideInService.open(IdmapFormComponent);
-        slideInRef.slideInClosed$.pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.getIdmaps();
-        });
-      } else {
-        this.dialogService.confirm({
-          title: helptextIdmap.idmap.enable_ad_dialog.title,
-          message: helptextIdmap.idmap.enable_ad_dialog.message,
-          hideCheckbox: true,
-          buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
-        }).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe({ next: () => this.showActiveDirectoryForm() });
-      }
-    });
+    this.idmapService.getActiveDirectoryStatus()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((adConfig) => {
+        if (adConfig.enable) {
+          const slideInRef = this.slideInService.open(IdmapFormComponent);
+          slideInRef.slideInClosed$.pipe(
+            filter(Boolean),
+            untilDestroyed(this),
+          ).subscribe(() => {
+            this.getIdmaps();
+          });
+        } else {
+          this.dialogService.confirm({
+            title: helptextIdmap.idmap.enable_ad_dialog.title,
+            message: helptextIdmap.idmap.enable_ad_dialog.message,
+            hideCheckbox: true,
+            buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
+          }).pipe(
+            filter(Boolean),
+            untilDestroyed(this),
+          ).subscribe({ next: () => this.showActiveDirectoryForm() });
+        }
+      });
   }
 
   showActiveDirectoryForm(): void {

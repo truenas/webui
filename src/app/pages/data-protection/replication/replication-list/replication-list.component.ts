@@ -11,6 +11,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -217,12 +218,16 @@ export class ReplicationListComponent implements OnInit {
       filter(Boolean),
       tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.api.job('replication.run', [row.id])),
+      tapOnce(() => {
+        this.snackbar.success(
+          this.translate.instant('Replication «{name}» has started.', { name: row.name }),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
         row.state = { state: job.state };
         row.job = { ...job };
-        this.snackbar.success(this.translate.instant('Replication «{name}» has started.', { name: row.name }));
         this.updateRowStateAndJob(row, job.state, job);
         this.cdr.markForCheck();
       },

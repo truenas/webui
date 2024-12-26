@@ -60,7 +60,6 @@ describe('RsyncTaskCardComponent', () => {
         dow: '*',
       },
       locked: false,
-      cron_schedule: '0 * * * *',
       state: {
         state: 'FAILED',
       },
@@ -111,7 +110,6 @@ describe('RsyncTaskCardComponent', () => {
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
     ],
   });
