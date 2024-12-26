@@ -58,6 +58,7 @@ import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/dock
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
+import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
@@ -185,6 +186,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     NetworkSpeedPipe,
     OrNotAvailablePipe,
     TooltipComponent,
+    InstalledAppBadgeComponent,
   ],
 })
 export class AppsModule { }

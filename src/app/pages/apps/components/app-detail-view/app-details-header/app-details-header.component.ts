@@ -6,14 +6,13 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, switchMap, take,
+  filter, Observable, of, switchMap, take,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -34,7 +33,6 @@ export class AppDetailsHeaderComponent {
     protected dockerStore: DockerStore,
     private router: Router,
     private matDialog: MatDialog,
-    private installedAppsStore: InstalledAppsStore,
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -46,26 +44,6 @@ export class AppDetailsHeaderComponent {
     const splitText = this.app?.app_readme?.split('</h1>');
     const readyHtml = splitText[1] || splitText[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
-  }
-
-  navigateToAllInstalledPage(): void {
-    this.installedAppsStore.installedApps$.pipe(
-      map((apps) => {
-        return apps.filter((app) => {
-          return app.metadata.name === this.app.name
-            && app.metadata.train === this.app.train;
-        });
-      }),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (apps) => {
-        if (apps.length) {
-          this.router.navigate(['/apps', 'installed', apps[0].name]);
-        } else {
-          this.router.navigate(['/apps', 'installed']);
-        }
-      },
-    });
   }
 
   private showAgreementWarning(): Observable<unknown> {
