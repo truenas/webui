@@ -86,14 +86,13 @@ export class SlideIn extends ComponentStore<SlideInState> {
   // TODO: Update second argument to options
   open(
     component: Type<unknown>,
-    wide = false,
-    data?: unknown,
+    options?: { wide?: boolean; data?: unknown },
   ): Observable<SlideInResponse> {
     const close$ = new Subject<SlideInResponse>();
     this.pushComponentToStore({
       component,
-      wide,
-      data,
+      wide: options.wide || false,
+      data: options.data,
       close$,
       isComponentAlive: true,
     });

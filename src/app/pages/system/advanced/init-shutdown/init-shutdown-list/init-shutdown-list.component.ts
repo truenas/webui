@@ -138,7 +138,7 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   editScript(script: InitShutdownScript): void {
-    this.slideIn.open(InitShutdownFormComponent, false, script)
+    this.slideIn.open(InitShutdownFormComponent, { data: script })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

@@ -114,8 +114,10 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      cloudBackups[0],
+      {
+        wide: true,
+        data: cloudBackups[0],
+      },
     );
   });
 
@@ -125,8 +127,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      undefined,
+      { wide: true },
     );
   });
 

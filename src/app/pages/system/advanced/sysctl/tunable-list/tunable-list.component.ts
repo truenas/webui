@@ -144,7 +144,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doEdit(tunable: Tunable): void {
-    this.slideIn.open(TunableFormComponent, false, tunable).pipe(
+    this.slideIn.open(TunableFormComponent, { data: tunable }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

@@ -61,8 +61,7 @@ describe('ReplicationSettingsCardComponent', () => {
       spectator.inject(SlideIn).open,
     ).toHaveBeenCalledWith(
       ReplicationSettingsFormComponent,
-      false,
-      { max_parallel_replication_tasks: 5 },
+      { data: { max_parallel_replication_tasks: 5 } },
     );
   });
 });

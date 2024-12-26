@@ -72,7 +72,7 @@ export class StorageCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(StorageSettingsFormComponent, false, this.storageSettings)),
+      switchMap(() => this.slideIn.open(StorageSettingsFormComponent, { data: this.storageSettings })),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

@@ -167,7 +167,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private openForm(row?: InitShutdownScript): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(InitShutdownFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(InitShutdownFormComponent, { data: row })),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),
       untilDestroyed(this),

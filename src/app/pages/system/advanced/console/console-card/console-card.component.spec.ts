@@ -68,13 +68,14 @@ describe('ConsoleCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ConsoleFormComponent,
-      false,
       {
-        consolemenu: true,
-        motd: 'Welcome back',
-        serialconsole: true,
-        serialport: 'ttyS0',
-        serialspeed: '9600',
+        data: {
+          consolemenu: true,
+          motd: 'Welcome back',
+          serialconsole: true,
+          serialport: 'ttyS0',
+          serialspeed: '9600',
+        },
       },
     );
   });

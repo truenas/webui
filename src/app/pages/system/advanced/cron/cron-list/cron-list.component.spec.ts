@@ -142,8 +142,7 @@ describe('CronListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CronFormComponent,
-      false,
-      expect.objectContaining(cronJobs[0]),
+      { data: expect.objectContaining(cronJobs[0]) },
     );
   });
 

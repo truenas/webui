@@ -187,10 +187,11 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true, row);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
-      this.getRsyncTasks();
-    });
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => {
+        this.getRsyncTasks();
+      });
   }
 
   runNow(row: RsyncTaskUi): void {

@@ -210,7 +210,7 @@ export class CloudBackupListComponent implements OnInit {
   }
 
   openForm(row?: CloudBackup): void {
-    this.slideIn.open(CloudBackupFormComponent, true, row)
+    this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),

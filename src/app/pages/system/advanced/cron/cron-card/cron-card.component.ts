@@ -203,7 +203,7 @@ export class CronCardComponent implements OnInit {
 
   private openForm(row?: CronjobRow): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(CronFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(CronFormComponent, { data: row })),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
