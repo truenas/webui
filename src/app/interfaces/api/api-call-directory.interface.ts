@@ -464,7 +464,7 @@ export interface ApiCallDirectory {
   'fc.capable': { params: []; response: boolean };
 
   // Fibre Channel Host
-  'fc.fc_host.query': { params: []; response: FibreChannelHost[] };
+  'fc.fc_host.query': { params: QueryParams<FibreChannelHost>; response: FibreChannelHost[] };
   'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
 
   // Fibre Channel Port

@@ -10,9 +10,31 @@
       <ix-use-ix-icons-in-stepper></ix-use-ix-icons-in-stepper>
 
       <mat-step #matStepInstance>
-        <ng-template matStepLabel>{{ 'Create or Choose Block Device' | translate }}</ng-template>
-        <ix-device-wizard-step [form]="form.controls.device"></ix-device-wizard-step>
+        <ng-template matStepLabel>{{ 'Target' | translate }}</ng-template>
+        <ix-target-wizard-step [form]="form.controls.target"></ix-target-wizard-step>
         <div class="step-buttons">
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            type="button"
+            ixTest="next"
+            [disabled]="form.controls.target.invalid"
+          >{{ 'Next' | translate }}</button>
+        </div>
+      </mat-step>
+
+      <mat-step #matStepInstance>
+        <ng-template matStepLabel>{{ 'Extent' | translate }}</ng-template>
+        <ix-extent-wizard-step [form]="form.controls.extent"></ix-extent-wizard-step>
+        <div class="step-buttons">
+          <button
+            mat-button
+            matStepperPrevious
+            color="accent"
+            type="button"
+            ixTest="back"
+          >{{ 'Back' | translate }}</button>
           @if (isNewTarget) {
             <button
               mat-button
@@ -20,7 +42,7 @@
               color="primary"
               type="button"
               ixTest="next"
-              [disabled]="form.controls.device.invalid"
+              [disabled]="form.controls.extent.invalid"
             >{{ 'Next' | translate }}</button>
           } @else {
             <button
@@ -33,32 +55,14 @@
           }
         </div>
       </mat-step>
+
       @if (isNewTarget) {
         <mat-step #matStepInstance>
-          <ng-template matStepLabel>{{ 'Portal' | translate }}</ng-template>
-          <ix-portal-wizard-step [form]="form.controls.portal"></ix-portal-wizard-step>
-          <div class="step-buttons">
-            <button
-              mat-button
-              matStepperPrevious
-              color="accent"
-              type="button"
-              ixTest="back"
-            >{{ 'Back' | translate }}</button>
-            <button
-              mat-button
-              matStepperNext
-              color="primary"
-              type="button"
-              ixTest="next"
-              [disabled]="form.controls.portal.invalid"
-            >{{ 'Next' | translate }}</button>
-          </div>
-        </mat-step>
-
-        <mat-step #matStepInstance>
-          <ng-template matStepLabel>{{ 'Initiator' | translate }}</ng-template>
-          <ix-initiator-wizard-step [form]="form.controls.initiator"></ix-initiator-wizard-step>
+          <ng-template matStepLabel>{{ 'Protocol Options' | translate }}</ng-template>
+          <ix-protocol-options-wizard-step
+            [form]="form.controls.options"
+            [isFibreChannelMode]="isFibreChannelMode"
+          ></ix-protocol-options-wizard-step>
           <div class="step-buttons">
             <button
               mat-button
