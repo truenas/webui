@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of, Subscription } from 'rxjs';
+import { combineLatest, of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -15,6 +15,7 @@ import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enu
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
+import { BindIp } from 'app/interfaces/bind-ip.interface';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
@@ -24,6 +25,8 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
+import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
@@ -53,6 +56,8 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxCheckboxComponent,
     IxSelectComponent,
     IxComboboxComponent,
+    IxListComponent,
+    IxListItemComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
@@ -87,7 +92,7 @@ export class ServiceSmbComponent implements OnInit {
     filemask: ['', []],
     dirmask: ['', []],
     admin_group: ['', [Validators.maxLength(120)]],
-    bindip: [[] as string[], []],
+    bindip: this.fb.array<BindIp>([]),
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],
@@ -126,7 +131,20 @@ export class ServiceSmbComponent implements OnInit {
     ),
   );
 
-  readonly bindIpAddressOptions$ = this.api.call('smb.bindip_choices').pipe(choicesToOptions());
+  readonly bindIpAddressOptions$ = combineLatest([
+    this.api.call('smb.bindip_choices').pipe(choicesToOptions()),
+    this.api.call('smb.config'),
+  ]).pipe(
+    map(([options, config]) => {
+      return [
+        ...new Set<string>([
+          ...config.bindip.map((item) => item.$ipv4_interface),
+          ...options.map((option) => `${option.value}/32`),
+        ]),
+      ].map((value) => ({ label: value, value }));
+    }),
+  );
+
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
   constructor(
@@ -148,6 +166,7 @@ export class ServiceSmbComponent implements OnInit {
 
     this.api.call('smb.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
+        config.bindip.forEach(() => this.addBindIp());
         this.form.patchValue(config);
         this.isFormLoading = false;
         this.cdr.markForCheck();
@@ -158,6 +177,16 @@ export class ServiceSmbComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  addBindIp(): void {
+    this.form.controls.bindip.push(this.fb.group({
+      $ipv4_interface: ['', [Validators.required]],
+    }));
+  }
+
+  removeBindIp(index: number): void {
+    this.form.controls.bindip.removeAt(index);
   }
 
   onAdvancedSettingsToggled(): void {

@@ -1,9 +1,10 @@
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
+import { BindIp } from 'app/interfaces/bind-ip.interface';
 
 export interface SmbConfig {
   aapl_extensions: boolean;
   admin_group: string;
-  bindip: string[];
+  bindip: BindIp[];
   cifs_SID: string;
   description: string;
   dirmask: string;
