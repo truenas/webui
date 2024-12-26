@@ -207,7 +207,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, true).pipe(
+    this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
@@ -218,8 +218,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const closer$ = this.slideIn.open(CloudSyncFormComponent, true, row);
-    closer$.pipe(
+    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

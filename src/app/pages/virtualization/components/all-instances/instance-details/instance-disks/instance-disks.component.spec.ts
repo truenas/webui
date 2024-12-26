@@ -78,15 +78,19 @@ describe('InstanceDisksComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: undefined, instanceId: 'my-instance' });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceDiskFormComponent,
+      { data: { disk: undefined, instanceId: 'my-instance' } },
+    );
   });
 
   it('opens disk for for edit when actions menu emits (edit)', () => {
     const actionsMenu = spectator.query(DeviceActionsMenuComponent);
     actionsMenu.edit.emit();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: disks[0], instanceId: 'my-instance' });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceDiskFormComponent,
+      { data: { disk: disks[0], instanceId: 'my-instance' } },
+    );
   });
 });

@@ -109,8 +109,7 @@ describe('InitShutdownCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
-      false,
-      expect.objectContaining(scripts[0]),
+      { data: expect.objectContaining(scripts[0]) },
     );
   });
 

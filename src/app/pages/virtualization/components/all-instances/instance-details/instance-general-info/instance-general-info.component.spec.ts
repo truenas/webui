@@ -146,8 +146,10 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceEditFormComponent, false, instance);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceEditFormComponent,
+      { data: instance },
+    );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
     expect(spectator.inject(VirtualizationDevicesStore).selectInstance)

@@ -58,12 +58,13 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       GlobalTwoFactorAuthFormComponent,
-      false,
       {
-        window: 3,
-        enabled: false,
-        services: { ssh: false },
-      } as GlobalTwoFactorConfig,
+        data: {
+          window: 3,
+          enabled: false,
+          services: { ssh: false },
+        } as GlobalTwoFactorConfig,
+      },
     );
   });
 });

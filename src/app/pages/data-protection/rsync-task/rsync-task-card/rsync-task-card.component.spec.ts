@@ -136,8 +136,10 @@ describe('RsyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
-      true,
-      rsyncTasks[0],
+      {
+        wide: true,
+        data: rsyncTasks[0],
+      },
     );
   });
 
@@ -147,8 +149,7 @@ describe('RsyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
-      true,
-      undefined,
+      { wide: true },
     );
   });
 

@@ -274,7 +274,7 @@ export class CloudSyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, true, row).pipe(
+      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -283,7 +283,7 @@ export class CloudSyncListComponent implements OnInit {
         },
       });
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, true).pipe(
+      this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({

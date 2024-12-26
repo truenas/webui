@@ -208,8 +208,10 @@ describe('ReplicationListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
-      true,
-      expect.objectContaining(tasks[0]),
+      {
+        wide: true,
+        data: expect.objectContaining(tasks[0]),
+      },
     );
   });
 

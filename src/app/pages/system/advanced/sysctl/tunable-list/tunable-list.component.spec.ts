@@ -162,15 +162,16 @@ describe('TunableListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       TunableFormComponent,
-      false,
       {
-        comment: 'Description text',
-        enabled: true,
-        id: 12,
-        orig_value: 'truenas',
-        type: 'SYSCTL',
-        value: 'truenas',
-        var: 'kernel.hostname',
+        data: {
+          comment: 'Description text',
+          enabled: true,
+          id: 12,
+          orig_value: 'truenas',
+          type: 'SYSCTL',
+          value: 'truenas',
+          var: 'kernel.hostname',
+        },
       },
     );
   });

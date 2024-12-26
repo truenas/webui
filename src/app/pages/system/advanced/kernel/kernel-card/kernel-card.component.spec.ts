@@ -59,8 +59,7 @@ describe('KernelCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       KernelFormComponent,
-      false,
-      true,
+      { data: true },
     );
   });
 });

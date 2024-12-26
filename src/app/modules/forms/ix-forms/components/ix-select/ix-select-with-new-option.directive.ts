@@ -66,8 +66,10 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       switchMap(() => {
         return this.slideIn.open(
           this.getFormComponentType(),
-          this.formComponentIsWide,
-          this.getFormInputData(),
+          {
+            wide: this.formComponentIsWide,
+            data: this.getFormInputData(),
+          },
         );
       }),
       filter((response: SlideInResponse) => !response.error),

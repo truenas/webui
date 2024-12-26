@@ -194,8 +194,10 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
-      true,
-      expect.objectContaining(cloudSyncList[0]),
+      {
+        wide: true,
+        data: expect.objectContaining(cloudSyncList[0]),
+      },
     );
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');

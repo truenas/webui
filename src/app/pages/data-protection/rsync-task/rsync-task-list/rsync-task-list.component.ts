@@ -246,14 +246,14 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
   private edit(row: RsyncTask): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true, row);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
