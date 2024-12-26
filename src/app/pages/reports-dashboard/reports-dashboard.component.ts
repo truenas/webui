@@ -17,8 +17,6 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { reportingElements } from 'app/pages/reports-dashboard/reports-dashboard.elements';
-import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
 import { LayoutService } from 'app/services/layout.service';
 import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
@@ -40,12 +38,6 @@ import { ReportsService } from './reports.service';
     CdkVirtualForOf,
     ReportComponent,
     MatCard,
-  ],
-  providers: [
-    {
-      provide: PlotterService,
-      useClass: SmoothPlotterService,
-    },
   ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {

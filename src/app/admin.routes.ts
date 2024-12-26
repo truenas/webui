@@ -3,6 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
 import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/admin-layout/admin-layout.component';
+import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
+import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
 import { AuthGuardService } from 'app/services/auth/auth-guard.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 
@@ -72,6 +74,12 @@ export const adminRoutes: Routes = [
         path: 'reportsdashboard',
         loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.routes').then((module) => module.reportsDashboardRoutes),
         data: { title: T('Reporting'), breadcrumb: T('Reporting') },
+        providers: [
+          {
+            provide: PlotterService,
+            useClass: SmoothPlotterService,
+          },
+        ],
       },
       {
         path: 'shell',
