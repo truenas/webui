@@ -7,9 +7,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import {
-  ComponentSerialized,
   SlideIn,
-} from 'app/services/slide-in';
+} from 'app/modules/slide-ins/slide-in';
+import { ComponentSerialized } from 'app/modules/slide-ins/slide-in.interface';
 
 @UntilDestroy()
 @Component({

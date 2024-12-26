@@ -93,7 +93,7 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
     private authService: AuthService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {

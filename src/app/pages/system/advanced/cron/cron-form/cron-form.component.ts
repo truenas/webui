@@ -99,7 +99,7 @@ export class CronFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private slideInRef: SlideInRef<Cronjob>,
+    public slideInRef: SlideInRef<Cronjob | undefined, boolean>,
   ) {
     this.editingCron = this.slideInRef.getData();
   }

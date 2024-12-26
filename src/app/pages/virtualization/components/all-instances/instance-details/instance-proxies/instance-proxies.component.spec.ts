@@ -8,6 +8,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums/virtualization.enum';
 import { VirtualizationProxy, VirtualizationUsb } from 'app/interfaces/virtualization.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceProxiesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxies.component';
@@ -18,7 +19,6 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('InstanceProxiesComponent', () => {
   let spectator: Spectator<InstanceProxiesComponent>;

@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Device } from 'app/interfaces/device.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   IsolatedGpusCardComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
@@ -14,7 +15,6 @@ import {
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('IsolatedGpusCardComponent', () => {
   let spectator: Spectator<IsolatedGpusCardComponent>;

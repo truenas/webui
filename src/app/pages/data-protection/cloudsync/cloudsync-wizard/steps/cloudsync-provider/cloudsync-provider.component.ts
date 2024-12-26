@@ -64,7 +64,7 @@ export class CloudSyncProviderComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
-    private slideInRef: SlideInRef<unknown>,
+    private slideInRef: SlideInRef<unknown, unknown>,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
@@ -144,7 +144,7 @@ export class CloudSyncProviderComponent implements OnInit {
   openAdvanced(): void {
     this.slideInRef.swap(
       CloudSyncFormComponent,
-      true,
+      { wide: true },
     );
   }
 

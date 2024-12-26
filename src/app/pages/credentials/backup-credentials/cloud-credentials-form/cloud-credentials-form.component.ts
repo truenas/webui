@@ -99,7 +99,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudCredentialFormInput>,
+    public slideInRef: SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>,
   ) {
     const data = this.slideInRef.getData();
     this.existingCredential = data?.existingCredential;

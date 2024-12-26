@@ -79,7 +79,7 @@ export class StorageSettingsFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<StorageSettings>,
+    public slideInRef: SlideInRef<StorageSettings, boolean>,
   ) {
     this.storageSettings = this.slideInRef.getData();
   }

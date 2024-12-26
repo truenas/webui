@@ -25,6 +25,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -36,7 +37,6 @@ import {
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { LocaleService } from 'app/services/locale.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';

@@ -70,7 +70,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {

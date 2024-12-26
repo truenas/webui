@@ -24,7 +24,7 @@ describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<WidgetGroup> = {
+  const slideInRef: SlideInRef<WidgetGroup, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
     swap: jest.fn(),
@@ -87,7 +87,7 @@ describe('WidgetGroupFormComponent', () => {
               }) as WidgetGroup,
               close: jest.fn(),
               requireConfirmationWhen: () => of(false),
-            } as SlideInRef<WidgetGroup>,
+            } as SlideInRef<WidgetGroup, unknown>,
           },
         ],
       });

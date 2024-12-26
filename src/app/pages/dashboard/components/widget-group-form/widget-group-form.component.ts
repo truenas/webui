@@ -75,7 +75,7 @@ export class WidgetGroupFormComponent {
   });
 
   constructor(
-    protected slideInRef: SlideInRef<WidgetGroup>,
+    public slideInRef: SlideInRef<WidgetGroup | undefined, WidgetGroup | false>,
     private cdr: ChangeDetectorRef,
   ) {
     this.setupLayoutUpdates();

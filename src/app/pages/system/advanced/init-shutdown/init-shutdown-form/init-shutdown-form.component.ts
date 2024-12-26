@@ -108,7 +108,7 @@ export class InitShutdownFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
-    private slideInRef: SlideInRef<InitShutdownScript>,
+    public slideInRef: SlideInRef<InitShutdownScript | undefined, boolean>,
   ) {
     this.editingScript = this.slideInRef.getData();
   }

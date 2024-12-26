@@ -106,7 +106,7 @@ export class SyslogFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
-    private slideInRef: SlideInRef<SyslogConfig>,
+    public slideInRef: SlideInRef<SyslogConfig, boolean>,
   ) {
     this.syslogConfig = this.slideInRef.getData();
   }

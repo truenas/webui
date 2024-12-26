@@ -84,7 +84,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {

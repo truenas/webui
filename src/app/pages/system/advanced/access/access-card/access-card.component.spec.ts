@@ -16,12 +16,12 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
