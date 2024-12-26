@@ -11,6 +11,7 @@ import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
@@ -124,7 +125,6 @@ describe('ServiceSmbComponent', () => {
 
     expect(values).toEqual({
       'Administrators Group': '',
-      'Bind IP Addresses': [],
       Description: 'TrueNAS Server',
       'Directory Mask': '',
       'Enable Apple SMB2/3 Protocol Extensions': false,
@@ -187,6 +187,14 @@ describe('ServiceSmbComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Settings' }));
     await advancedButton.click();
 
+    const bindIpList = await loader.getHarness(IxListHarness.with({ label: 'Bind IP Addresses' }));
+    await bindIpList.pressAddButton();
+    const bindIpForm1 = await bindIpList.getLastListItem();
+    await bindIpForm1.fillForm({ 'IP Address': '1.1.1.1/32' });
+    await bindIpList.pressAddButton();
+    const bindIpForm2 = await bindIpList.getLastListItem();
+    await bindIpForm2.fillForm({ 'IP Address': '2.2.2.2/32' });
+
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'UNIX Charset': 'UTF-16',
@@ -197,7 +205,6 @@ describe('ServiceSmbComponent', () => {
       'Administrators Group': 'test-group',
       'File Mask': '0666',
       'Directory Mask': '0777',
-      'Bind IP Addresses': ['1.1.1.1', '2.2.2.2'],
       'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
     });
 
@@ -216,7 +223,10 @@ describe('ServiceSmbComponent', () => {
       // New advanced options
       aapl_extensions: true,
       admin_group: 'test-group',
-      bindip: ['1.1.1.1', '2.2.2.2'],
+      bindip: [
+        { $ipv4_interface: '1.1.1.1/32' },
+        { $ipv4_interface: '2.2.2.2/32' },
+      ],
       guest: 'nobody',
       dirmask: '0777',
       filemask: '0666',
