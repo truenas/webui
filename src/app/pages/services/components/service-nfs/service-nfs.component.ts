@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
@@ -68,7 +69,19 @@ export class ServiceNfsComponent implements OnInit {
     userd_manage_gids: helptextServiceNfs.userd_manage_gids,
   };
 
-  readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
+  readonly ipChoices$ = combineLatest([
+    this.ws.call('nfs.bindip_choices').pipe(choicesToOptions()),
+    this.ws.call('nfs.config'),
+  ]).pipe(
+    map(([options, config]) => {
+      return [
+        ...new Set<string>([
+          ...config.bindip,
+          ...options.map((option) => option.value.toString()),
+        ]),
+      ].map((value) => ({ label: value, value }));
+    }),
+  );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];

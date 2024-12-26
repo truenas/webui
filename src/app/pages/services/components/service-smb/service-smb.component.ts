@@ -5,7 +5,7 @@ import { AbstractControl, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of, Subscription } from 'rxjs';
+import { combineLatest, of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
 import { Role } from 'app/enums/role.enum';
@@ -102,7 +102,21 @@ export class ServiceSmbComponent implements OnInit {
       map((groups) => groups.map((group) => ({ label: group.group, value: group.group }))),
     ),
   );
-  readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
+
+  readonly bindIpAddressOptions$ = combineLatest([
+    this.ws.call('smb.bindip_choices').pipe(choicesToOptions()),
+    this.ws.call('smb.config'),
+  ]).pipe(
+    map(([options, config]) => {
+      return [
+        ...new Set<string>([
+          ...config.bindip,
+          ...options.map((option) => option.value.toString()),
+        ]),
+      ].map((value) => ({ label: value, value }));
+    }),
+  );
+
   readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
   constructor(
