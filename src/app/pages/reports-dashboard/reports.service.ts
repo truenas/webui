@@ -1,18 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
@@ -28,11 +24,7 @@ export class ReportsService {
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
 
   constructor(
-    private authService: AuthService,
-    private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private http: HttpClient,
-    @Inject(WINDOW) private window: Window,
   ) {
     this.api.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));

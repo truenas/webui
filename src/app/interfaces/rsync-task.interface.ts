@@ -39,9 +39,7 @@ export type RsyncTaskUpdate = {
 } & Omit<RsyncTask, 'id' | 'job' | 'locked' | 'ssh_credentials'>;
 
 export interface RsyncTaskUi extends RsyncTask {
-  cron_schedule: string;
   next_run: string;
-  frequency: string;
   state: DataProtectionTaskState;
   last_run: string;
 }

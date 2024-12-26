@@ -22,6 +22,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -76,6 +77,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     private api: ApiService,
     private systemGeneralService: SystemGeneralService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnChanges(): void {
@@ -147,7 +149,11 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
 
   private loadSigningAuthorities(): void {
     this.systemGeneralService.getUnsignedCas()
-      .pipe(idNameArrayToOptions(), untilDestroyed(this))
+      .pipe(
+        idNameArrayToOptions(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((options) => {
         if (this.hasSignedBy() && options.length) {
           this.form.patchValue({ signedby: options[0].value });

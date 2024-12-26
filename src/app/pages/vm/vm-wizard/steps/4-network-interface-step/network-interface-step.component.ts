@@ -17,6 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -55,6 +56,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   get isVirtio(): boolean {
@@ -78,9 +80,14 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   private generateRandomMac(): void {
-    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
-      this.form.patchValue({ nic_mac: mac });
-      this.cdr.markForCheck();
-    });
+    this.api.call('vm.random_mac')
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((mac) => {
+        this.form.patchValue({ nic_mac: mac });
+        this.cdr.markForCheck();
+      });
   }
 }

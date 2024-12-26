@@ -50,8 +50,6 @@ export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 
 
 export interface CloudSyncTaskUi extends CloudSyncTask {
   credential: string;
-  cron_schedule: string;
-  frequency: string;
   next_run: string;
   next_run_time: Date | string;
   state: DataProtectionTaskState;

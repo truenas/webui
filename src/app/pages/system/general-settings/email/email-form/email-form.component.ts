@@ -177,18 +177,23 @@ export class EmailFormComponent implements OnInit {
   }
 
   onSendTestEmailPressed(): void {
-    this.api.call('mail.local_administrator_email').pipe(untilDestroyed(this)).subscribe((email) => {
-      if (!email) {
-        this.dialogService.info(
-          this.translate.instant('Email'),
-          this.translate.instant('No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.'),
-        );
-        // TODO: Consider taking user to the user edit page
-        return;
-      }
+    this.api.call('mail.local_administrator_email')
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((email) => {
+        if (!email) {
+          this.dialogService.info(
+            this.translate.instant('Email'),
+            this.translate.instant('No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.'),
+          );
+          // TODO: Consider taking user to the user edit page
+          return;
+        }
 
-      this.sendTestEmail();
-    });
+        this.sendTestEmail();
+      });
   }
 
   onLoggedIn(credentials: unknown): void {

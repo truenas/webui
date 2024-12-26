@@ -28,6 +28,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -97,6 +98,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +148,11 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('acme.dns.authenticator.delete', [authenticator.id])),
+        switchMap(() => {
+          return this.api.call('acme.dns.authenticator.delete', [authenticator.id]).pipe(
+            this.errorHandler.catchError(),
+          );
+        }),
         untilDestroyed(this),
       )
       .subscribe(() => {

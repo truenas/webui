@@ -232,6 +232,7 @@ export class IpmiFormComponent implements OnInit {
             ? of([this.defaultControllerData])
             : this.api.call('ipmi.lan.query', this.queryParams);
         }),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe((dataIpma) => {

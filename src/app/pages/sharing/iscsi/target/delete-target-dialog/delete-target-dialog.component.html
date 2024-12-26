@@ -1,0 +1,49 @@
+<h1 mat-dialog-title>{{ 'Delete Target "{name}"' | translate:{ name: target.name } }}</h1>
+
+<div mat-dialog-content>
+  @if (warningMessage) {
+    <p [innerHTML]="warningMessage"></p>
+  }
+
+  <p>
+    @if (targetExtents().length > 0) {
+      {{ 'You are about to delete the target "{name}". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.' | translate: { name: target.name } }}
+    } @else {
+      {{ 'You are about to delete the target "{name}".' | translate: { name: target.name } }}
+    }
+  </p>
+
+  <form [formGroup]="form">
+    @if (targetExtents().length > 0) {
+      <ix-checkbox
+        formControlName="delete_extents"
+        [label]="'Delete {n} associated {n, plural, one {extent} other {extents}}' | translate: { n: targetExtents().length }"
+      ></ix-checkbox>
+    }
+    <ix-checkbox
+      formControlName="force"
+      [label]="'Force Delete' | translate"
+    ></ix-checkbox>
+  </form>
+</div>
+<mat-dialog-actions>
+  <ix-form-actions>
+    <button
+      mat-button
+      ixTest="cancel"
+      [matDialogClose]="false"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="error"
+      ixTest="delete"
+      [disabled]="form.invalid"
+      (click)="onDelete()"
+    >
+      {{ 'Delete' | translate }}
+    </button>
+  </ix-form-actions>
+</mat-dialog-actions>
