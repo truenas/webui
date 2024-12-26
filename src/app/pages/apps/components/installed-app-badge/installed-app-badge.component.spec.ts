@@ -36,7 +36,7 @@ describe('InstalledAppBadgeComponent', () => {
   });
 
   it('navigates to specific app when clicked and app is found', () => {
-    spectator.component.navigateToAllInstalledPage(new MouseEvent('click'));
+    spectator.component.navigateToAllInstalledPage();
     spectator.fixture.detectChanges();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
@@ -49,7 +49,7 @@ describe('InstalledAppBadgeComponent', () => {
 
   it('navigates to installed apps overview when clicked and app is not found', () => {
     spectator.setInput('app', { name: 'NonExistentApp', train: 'stable' });
-    spectator.component.navigateToAllInstalledPage(new MouseEvent('click'));
+    spectator.component.navigateToAllInstalledPage();
     spectator.fixture.detectChanges();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([

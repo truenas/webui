@@ -32,8 +32,8 @@ export class InstalledAppBadgeComponent {
     private router: Router,
   ) {}
 
-  navigateToAllInstalledPage(event: Event): void {
-    event.preventDefault();
+  navigateToAllInstalledPage(event?: Event): void {
+    event?.preventDefault();
 
     this.installedAppsStore.installedApps$.pipe(
       map((apps) => {
