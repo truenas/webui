@@ -5,6 +5,7 @@ import { App } from 'app/interfaces/app.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
+import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 describe('AppCardComponent', () => {
@@ -13,6 +14,7 @@ describe('AppCardComponent', () => {
     component: AppCardComponent,
     declarations: [
       MockComponent(AppCardLogoComponent),
+      InstalledAppBadgeComponent,
     ],
     providers: [
       mockProvider(InstalledAppsStore, {
