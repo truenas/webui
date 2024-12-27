@@ -21,7 +21,7 @@
   @if (isExpandable()) {
     <button
       mat-button
-      class="expand-collapse-link"
+      class="expand-collapse-button"
       [ixTest]="[alert().key, 'expand']"
       [class.collapsed]="isCollapsed()"
       (click)="toggleCollapse()"

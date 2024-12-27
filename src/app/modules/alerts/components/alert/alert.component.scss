@@ -56,7 +56,8 @@
   }
 }
 
-.expand-collapse-link {
+.expand-collapse-button {
+  background-color: var(--alt-bg1);
   cursor: pointer;
   display: flex;
   font-size: inherit;
