@@ -1,7 +1,10 @@
 {
   "": "",
+  "Container: Linux Only": "",
   "Delete Target \"{name}\"": "",
   "Delete {n} associated {n, plural, one {extent} other {extents}}": "",
+  "VM: Any OS": "",
+  "Virtualization Method": "",
   "Warning: iSCSI Target is currently in use.</font><br>": "",
   "You are about to delete the target \"{name}\".": "",
   "You are about to delete the target \"{name}\". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.": "",
@@ -1002,7 +1005,6 @@
   "Container Shell": "Container shell",
   "Container Write": "Container Schrijven",
   "Containers": "Containers",
-  "Containers (WIP)": "Containers (WIP)",
   "Content Commitment": "Inhoudsbevestiging",
   "Contents of the uploaded Service Account JSON file.": "Inhoud van het geüploade serviceaccount JSON-bestand.",
   "Context menu copy and paste operations     are disabled in the Shell. Copy and paste     shortcuts for Mac are <i>Command+c</i> and     <i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to copy and     <i>Shift+Insert</i> to paste.": "Kopieer- en plakbewerkingen in het contextmenu zijn uitgeschakeld in de Shell. Snelkoppelingen voor kopiëren en plakken voor Mac zijn <i>Command+c</i> en <i>Command+v</i>. Gebruik voor de meeste besturingssystemen <i>Ctrl+Insert</i> om te kopiëren en <i>Shift+Insert</i> om te plakken.",

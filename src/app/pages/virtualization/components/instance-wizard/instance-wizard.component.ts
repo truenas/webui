@@ -24,8 +24,9 @@ import {
   virtualizationNicTypeLabels,
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
-  VirtualizationRemote,
   VirtualizationType,
+  virtualizationTypeIcons,
+  virtualizationTypeLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
@@ -36,11 +37,13 @@ import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -64,23 +67,25 @@ import { ApiService } from 'app/services/websocket/api.service';
   selector: 'ix-instance-wizard',
   standalone: true,
   imports: [
-    PageHeaderComponent,
-    IxInputComponent,
-    ReactiveFormsModule,
-    TranslateModule,
-    IxCheckboxComponent,
-    MatButton,
-    TestDirective,
-    ReadOnlyComponent,
     AsyncPipe,
-    IxListComponent,
+    IxCheckboxComponent,
+    IxCheckboxListComponent,
+    IxExplorerComponent,
     IxFormGlossaryComponent,
     IxFormSectionComponent,
-    IxCheckboxListComponent,
+    IxButtonGroupComponent,
+    IxInputComponent,
+    IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
-    IxExplorerComponent,
+    MatButton,
     NgxSkeletonLoaderModule,
+    PageHeaderComponent,
+    ReactiveFormsModule,
+    ReadOnlyComponent,
+    TestDirective,
+    TranslateModule,
+    IxIconGroupComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -90,6 +95,8 @@ export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly VirtualizationNicType = VirtualizationNicType;
+  protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
+  protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
@@ -109,10 +116,9 @@ export class InstanceWizardComponent {
     }))),
   );
 
-  // TODO: MV supports only [Container, Physical] for now (based on the response)
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
-    [VirtualizationType.Container, VirtualizationGpuType.Physical],
+    [VirtualizationGpuType.Physical],
   ).pipe(
     map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
       label: gpu.description,
@@ -121,8 +127,9 @@ export class InstanceWizardComponent {
   );
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    name: ['', Validators.required],
-    image: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    instance_type: [VirtualizationType.Container, Validators.required],
+    image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
     use_default_network: [true],
@@ -166,7 +173,7 @@ export class InstanceWizardComponent {
       .open(SelectImageDialogComponent, {
         minWidth: '90vw',
         data: {
-          remote: VirtualizationRemote.LinuxContainers,
+          remote: this.form.controls.instance_type.value,
         },
       })
       .afterClosed()
@@ -246,6 +253,7 @@ export class InstanceWizardComponent {
     return {
       devices,
       autostart: true,
+      instance_type: this.form.controls.instance_type.value,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,

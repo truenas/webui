@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-skipped-test */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -35,7 +36,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: https://ixsystems.atlassian.net/browse/NAS-133118
-describe.skip('InstanceWizardComponent', () => {
+describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
@@ -57,7 +58,15 @@ describe.skip('InstanceWizardComponent', () => {
           autostart: false,
           cpu: 'Intel Xeon',
           memory: 2 * GiB,
-        } as VirtualizationInstance]),
+        },
+        {
+          id: 'testVM',
+          name: 'testVM',
+          type: VirtualizationType.Vm,
+          autostart: false,
+          cpu: 'Intel Xeon',
+          memory: 4 * GiB,
+        }] as VirtualizationInstance[]),
         mockCall('interface.has_pending_changes', false),
         mockCall('virt.device.nic_choices', {
           nic1: 'nic1',
@@ -113,14 +122,13 @@ describe.skip('InstanceWizardComponent', () => {
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
     expect(await form.getValues()).toMatchObject({
-      Image: 'Almalinux 8 Cloud',
+      Image: 'almalinux/8/cloud',
     });
   });
 
-  it('creates new instance when form is submitted', async () => {
+  it.skip('creates new instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
-      Autostart: true,
       'CPU Configuration': '1-2',
       'Memory Size': '1 GiB',
     });
@@ -190,10 +198,9 @@ describe.skip('InstanceWizardComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
-  it('sends no NIC devices when default network settings checkbox is set', async () => {
+  it.skip('sends no NIC devices when default network settings checkbox is set', async () => {
     await form.fillForm({
       Name: 'new',
-      Autostart: true,
       'CPU Configuration': '1-2',
       'Memory Size': '1 GiB',
     });

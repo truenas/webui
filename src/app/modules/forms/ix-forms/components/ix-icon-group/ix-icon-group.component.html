@@ -18,6 +18,8 @@
       [attr.data-value]="option.value"
       [attr.aria-checked]="value === option.value"
       [class.selected]="value === option.value"
+      [matTooltip]="option.label | translate"
+      [matTooltipDisabled]="!option.label"
       (click)="onValueChanged(option.value)"
       (blur)="onTouch()"
     >

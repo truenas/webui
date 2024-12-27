@@ -16,6 +16,21 @@
         [required]="true"
       ></ix-input>
 
+      <ix-icon-group
+        formControlName="instance_type"
+        [label]="'Virtualization Method' | translate"
+        [required]="true"
+        [options]="virtualizationTypeIcons"
+        [showLabels]="true"
+      ></ix-icon-group>
+
+      <ix-button-group
+        formControlName="instance_type"
+        [label]="'Virtualization Method' | translate"
+        [options]="virtualizationTypeOptions$"
+        [required]="true"
+      ></ix-button-group>
+
       <div class="image-field">
         <ix-input
           class="input"

@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 
 export enum VirtualizationType {
   Container = 'CONTAINER',
@@ -9,6 +10,19 @@ export const virtualizationTypeLabels = new Map<VirtualizationType, string>([
   [VirtualizationType.Container, T('Container')],
   [VirtualizationType.Vm, T('VM')],
 ]);
+
+export const virtualizationTypeIcons = [
+  {
+    value: VirtualizationType.Container,
+    icon: iconMarker('mdi-linux'),
+    label: T('Container: Linux Only'),
+  },
+  {
+    value: VirtualizationType.Vm,
+    icon: iconMarker('mdi-laptop'),
+    label: T('VM: Any OS'),
+  },
+];
 
 export enum VirtualizationStatus {
   Running = 'RUNNING',
@@ -23,6 +37,7 @@ export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>(
 ]);
 
 export enum VirtualizationRemote {
+  Vm = 'VM',
   LinuxContainers = 'LINUX_CONTAINERS',
 }
 
@@ -82,3 +97,7 @@ export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string
   [VirtualizationNicType.Bridged, T('Bridged Adaptors')],
   [VirtualizationNicType.Macvlan, T('MAC VLAN')],
 ]);
+
+export enum VirtualizationSource {
+  Image = 'IMAGE',
+}
