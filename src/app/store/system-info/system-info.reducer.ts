@@ -8,7 +8,7 @@ import {
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
-  systemInfo: SystemInfo;
+  systemInfo: SystemInfo | null;
   productType: ProductType;
   isIxHardware: boolean;
   buildYear: number;

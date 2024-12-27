@@ -6,8 +6,8 @@ import {
 } from '@angular/material/card';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { TaskService } from 'app/services/task.service';
 
 @Component({
   selector: 'ix-cloud-backup-schedule',
@@ -21,21 +21,17 @@ import { TaskService } from 'app/services/task.service';
     MatCardTitle,
     MatCardContent,
     TranslateModule,
+    ScheduleDescriptionPipe,
   ],
 })
 export class CloudBackupScheduleComponent {
   readonly backup = input.required<CloudBackup>();
-
-  protected readonly frequency = computed(() => {
-    return this.taskService.getTaskCronDescription(scheduleToCrontab(this.backup().schedule));
-  });
 
   protected readonly schedule = computed(() => {
     return this.backup().enabled ? scheduleToCrontab(this.backup().schedule) : this.translate.instant('Disabled');
   });
 
   constructor(
-    private taskService: TaskService,
     private translate: TranslateService,
   ) {}
 }

@@ -31,6 +31,7 @@ import {
   SshKeypairFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -103,6 +104,7 @@ export class SshKeypairCardComponent implements OnInit {
     private dialog: DialogService,
     private keychainCredentialService: KeychainCredentialService,
     private download: DownloadService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -152,7 +154,11 @@ export class SshKeypairCardComponent implements OnInit {
       })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.api.call('keychaincredential.delete', [credential.id])),
+        switchMap(() => {
+          return this.api.call('keychaincredential.delete', [credential.id]).pipe(
+            this.errorHandler.catchError(),
+          );
+        }),
         untilDestroyed(this),
       )
       .subscribe(() => {

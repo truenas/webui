@@ -114,13 +114,27 @@
             [tooltip]="tooltips.dirmask | translate"
           ></ix-input>
 
-          <ix-select
-            formControlName="bindip"
+          <ix-list
+            formArrayName="bindip"
+            [empty]="form.controls.bindip.controls.length === 0"
             [label]="'Bind IP Addresses' | translate"
             [tooltip]="tooltips.bindip | translate"
-            [options]="bindIpAddressOptions$"
-            [multiple]="true"
-          ></ix-select>
+            (add)="addBindIp()"
+          >
+            @for (address of form.controls.bindip.controls; track address; let i = $index) {
+              <ix-list-item
+                [formGroupName]="i"
+                (delete)="removeBindIp(i)"
+              >
+                <ix-select
+                  formControlName="$ipv4_interface"
+                  [label]="'IP Address' | translate"
+                  [options]="bindIpAddressOptions$"
+                  [required]="true"
+                ></ix-select>
+              </ix-list-item>
+            }
+          </ix-list>
         </ix-fieldset>
       }
 

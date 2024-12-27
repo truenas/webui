@@ -37,8 +37,8 @@ export class InterfaceStatusIconComponent {
   });
 
   tooltipText = computed(() => {
-    const sent = this.formatBytes(this.update()?.sent_bytes_rate);
-    const received = this.formatBytes(this.update()?.received_bytes_rate);
+    const sent = this.formatBytes(this.update()?.sent_bytes_rate || 0);
+    const received = this.formatBytes(this.update()?.received_bytes_rate || 0);
 
     if (!sent || !received) {
       return this.translate.instant('N/A');
@@ -48,8 +48,13 @@ export class InterfaceStatusIconComponent {
   });
 
   statusIcon = computed<MarkedIcon>(() => {
-    const hasSent = this.update()?.sent_bytes_rate > this.minRate;
-    const hasReceived = this.update()?.received_bytes_rate > this.minRate;
+    const update = this.update();
+    const hasSent = update
+      ? update.sent_bytes_rate > this.minRate
+      : false;
+    const hasReceived = update
+      ? update.received_bytes_rate > this.minRate
+      : false;
 
     switch (true) {
       case hasSent && hasReceived: return iconMarker('ix-network-upload-download-both');

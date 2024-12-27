@@ -73,8 +73,7 @@ export class ReplicationSettingsCardComponent {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.slideIn.open(
         ReplicationSettingsFormComponent,
-        false,
-        this.replicationConfig,
+        { data: this.replicationConfig },
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

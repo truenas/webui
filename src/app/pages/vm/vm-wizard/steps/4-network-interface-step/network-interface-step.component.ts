@@ -17,6 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -39,7 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     nic_type: [VmNicType.Virtio, Validators.required],
     nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
     nic_attach: ['', Validators.required],
@@ -55,6 +56,7 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
     private translate: TranslateService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   get isVirtio(): boolean {
@@ -66,7 +68,9 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const typeLabel = this.translate.instant(vmNicTypeLabels.get(this.form.value.nic_type));
+    const typeLabel = this.translate.instant(
+      vmNicTypeLabels.get(this.form.value.nic_type) || this.form.value.nic_type,
+    );
     return [
       {
         label: this.translate.instant('NIC'),
@@ -76,9 +80,14 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   private generateRandomMac(): void {
-    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
-      this.form.patchValue({ nic_mac: mac });
-      this.cdr.markForCheck();
-    });
+    this.api.call('vm.random_mac')
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((mac) => {
+        this.form.patchValue({ nic_mac: mac });
+        this.cdr.markForCheck();
+      });
   }
 }

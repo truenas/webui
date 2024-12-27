@@ -26,6 +26,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -83,9 +86,9 @@ export class RsyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Remote Host'),
       propertyName: 'remotehost',
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
@@ -184,10 +187,11 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true, row);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
-      this.getRsyncTasks();
-    });
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => {
+        this.getRsyncTasks();
+      });
   }
 
   runNow(row: RsyncTaskUi): void {

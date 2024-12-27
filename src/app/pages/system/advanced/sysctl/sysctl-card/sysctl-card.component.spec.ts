@@ -97,8 +97,7 @@ describe('SysctlCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       TunableFormComponent,
-      false,
-      expect.objectContaining(items[0]),
+      { data: expect.objectContaining(items[0]) },
     );
   });
 

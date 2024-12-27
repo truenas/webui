@@ -176,6 +176,7 @@ export class AppInfoCardComponent {
         }).afterClosed();
       }),
       filter(Boolean),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     )
       .subscribe((options) => this.executeDelete(name, options));

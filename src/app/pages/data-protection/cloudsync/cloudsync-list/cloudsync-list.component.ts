@@ -25,6 +25,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
@@ -119,10 +122,9 @@ export class CloudSyncListComponent implements OnInit {
       hidden: true,
       getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
-      getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
+      getValue: (task) => task.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
@@ -272,7 +274,7 @@ export class CloudSyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, true, row).pipe(
+      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -281,7 +283,7 @@ export class CloudSyncListComponent implements OnInit {
         },
       });
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, true).pipe(
+      this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({

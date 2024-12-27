@@ -125,7 +125,7 @@ export class DashboardComponent implements OnInit {
 
   protected onAddGroup(): void {
     this.slideIn
-      .open(WidgetGroupFormComponent, true)
+      .open(WidgetGroupFormComponent, { wide: true })
       .pipe(untilDestroyed(this))
       .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {
@@ -139,7 +139,7 @@ export class DashboardComponent implements OnInit {
   protected onEditGroup(i: number): void {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
-      .open(WidgetGroupFormComponent, true, editedGroup)
+      .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
       .pipe(untilDestroyed(this))
       .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {

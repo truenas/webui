@@ -74,7 +74,7 @@ export class InstanceGeneralInfoComponent {
   ) {}
 
   editInstance(): void {
-    this.slideIn.open(InstanceEditFormComponent, false, this.instance())
+    this.slideIn.open(InstanceEditFormComponent, { data: this.instance() })
       .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
       .subscribe((instance: VirtualizationInstance) => {
         this.instancesStore.instanceUpdated(instance);

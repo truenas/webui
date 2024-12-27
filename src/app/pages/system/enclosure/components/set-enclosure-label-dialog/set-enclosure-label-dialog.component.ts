@@ -46,7 +46,7 @@ export interface SetEnclosureLabelDialogData {
 export class SetEnclosureLabelDialogComponent implements OnInit {
   enclosureLabel = 'Enclosure Label';
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     label: ['', [
       Validators.required,
       this.validatorsService.withMessage(

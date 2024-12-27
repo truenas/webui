@@ -1,3 +1,4 @@
 <span
+  [matTooltip]="value | scheduleDescription"
   [ixTest]="[title, uniqueRowTag(row()), 'row-schedule']"
->{{ value | scheduleToCrontab }}</span>
+>{{ value | scheduleDescription }}</span>

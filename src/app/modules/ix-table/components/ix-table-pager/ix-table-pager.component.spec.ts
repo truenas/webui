@@ -39,7 +39,7 @@ describe('IxTablePagerComponent', () => {
   });
 
   it('shows pages', () => {
-    expect(spectator.query('.pages').textContent.trim()).toBe('1 – 2  of 4');
+    expect(spectator.query('.pages')!.textContent!.trim()).toBe('1 – 2  of 4');
   });
 
   it('shows a list of page size options', async () => {
@@ -59,7 +59,7 @@ describe('IxTablePagerComponent', () => {
     await select.clickOptions({ text: '10' });
 
     expect(dataProvider.pagination).toEqual({ pageNumber: 1, pageSize: 10 });
-    expect(spectator.query('.pages').textContent.trim()).toBe('1 – 4  of 4');
+    expect(spectator.query('.pages')!.textContent!.trim()).toBe('1 – 4  of 4');
   });
 
   it('sets pagination when page number is changed', async () => {
@@ -70,7 +70,7 @@ describe('IxTablePagerComponent', () => {
     await buttons[3].click();
 
     expect(dataProvider.pagination).toEqual({ pageNumber: 2, pageSize: 2 });
-    expect(spectator.query('.pages').textContent.trim()).toBe('3 – 4  of 4');
+    expect(spectator.query('.pages')!.textContent!.trim()).toBe('3 – 4  of 4');
   });
 
   it('makes buttons disabled', async () => {

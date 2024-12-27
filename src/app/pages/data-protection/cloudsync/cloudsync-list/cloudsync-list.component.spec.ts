@@ -5,16 +5,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
@@ -99,6 +103,14 @@ describe('CloudSyncListComponent', () => {
       IxTableDetailsRowComponent,
       IxTableDetailsRowDirective,
     ],
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
+        },
+      ],
+    ],
     providers: [
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -148,7 +160,7 @@ describe('CloudSyncListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'State', 'Enabled'],
-      ['custom-cloudlist', '', 'PENDING', 'Yes'],
+      ['custom-cloudlist', 'At 00:00, every day', 'PENDING', 'Yes'],
     ];
 
     const cells = await table.getCellTexts();
@@ -182,8 +194,10 @@ describe('CloudSyncListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
-      true,
-      expect.objectContaining(cloudSyncList[0]),
+      {
+        wide: true,
+        data: expect.objectContaining(cloudSyncList[0]),
+      },
     );
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.query');

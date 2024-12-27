@@ -145,7 +145,7 @@ describe('InstalledAppsListComponent', () => {
   it('shows an empty list when there are no search results', () => {
     expect(spectator.query(EmptyComponent)).not.toExist();
 
-    spectator.query(SearchInput1Component).search.emit('test-app-3');
+    spectator.query(SearchInput1Component)!.search.emit('test-app-3');
     spectator.detectChanges();
 
     const appRows = spectator.queryAll(AppRowComponent);
@@ -155,31 +155,31 @@ describe('InstalledAppsListComponent', () => {
   });
 
   it('shows details', () => {
-    spectator.click(spectator.query('ix-app-row'));
+    spectator.click(spectator.query('ix-app-row')!);
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith([
       '/apps/installed', 'test-catalog-train', 'ix-test-app-1',
     ]);
   });
 
   it('starts application', () => {
-    spectator.query(AppRowComponent).startApp.emit();
+    spectator.query(AppRowComponent)!.startApp.emit();
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-1');
   });
 
   it('stops application', () => {
-    spectator.query(AppRowComponent).stopApp.emit();
+    spectator.query(AppRowComponent)!.stopApp.emit();
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
 
   it('restarts application', () => {
-    spectator.query(AppRowComponent).restartApp.emit();
+    spectator.query(AppRowComponent)!.restartApp.emit();
     expect(applicationsService.restartApplication).toHaveBeenCalledWith('test-app-1');
   });
 
   it('starts sereral applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent).bulkStart.emit();
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStart.emit();
 
     expect(applicationsService.startApplication).toHaveBeenCalledWith('test-app-2');
   });
@@ -187,7 +187,7 @@ describe('InstalledAppsListComponent', () => {
   it('stops sereral applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent).bulkStop.emit();
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
 
     expect(applicationsService.stopApplication).toHaveBeenCalledWith('test-app-1');
   });
@@ -195,7 +195,7 @@ describe('InstalledAppsListComponent', () => {
   it('upgrades sereral applications', async () => {
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent).bulkUpgrade.emit();
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpgrade.emit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppBulkUpgradeComponent, { data: apps });
   });
@@ -207,7 +207,7 @@ describe('InstalledAppsListComponent', () => {
 
     const selectAll = await loader.getHarness(MatCheckboxHarness.with({ selector: '[ixTest="select-all-app"]' }));
     await selectAll.check();
-    spectator.query(InstalledAppsListBulkActionsComponent).bulkDelete.emit();
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkDelete.emit();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppDeleteDialogComponent, {
       data: {

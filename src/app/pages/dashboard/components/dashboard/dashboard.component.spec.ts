@@ -121,8 +121,13 @@ describe('DashboardComponent', () => {
       const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
       await editIcon.click();
 
-      expect(spectator.inject(SlideIn).open)
-        .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        WidgetGroupFormComponent,
+        {
+          wide: true,
+          data: groupA,
+        },
+      );
     });
 
     it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
@@ -157,8 +162,10 @@ describe('DashboardComponent', () => {
       const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
       await addButton.click();
 
-      expect(spectator.inject(SlideIn).open)
-        .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+        WidgetGroupFormComponent,
+        { wide: true },
+      );
     });
 
     it('resets configuration to defaults with confirmation when Reset is pressed', async () => {
@@ -238,7 +245,7 @@ describe('DashboardComponent', () => {
     });
 
     it('updates order when widgets are reordered via drag and drop', () => {
-      const list = spectator.query(CdkDropList<WidgetGroup>);
+      const list = spectator.query(CdkDropList<WidgetGroup>)!;
       list.dropped.emit({ previousIndex: 0, currentIndex: 3 } as CdkDragDrop<WidgetGroup>);
       spectator.detectChanges();
 

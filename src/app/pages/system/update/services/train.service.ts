@@ -18,14 +18,14 @@ import { ApiService } from 'app/services/websocket/api.service';
   providedIn: 'root',
 })
 export class TrainService {
-  selectedTrain$ = new BehaviorSubject<string>(undefined);
-  releaseTrain$ = new BehaviorSubject<boolean>(undefined);
-  preReleaseTrain$ = new BehaviorSubject<boolean>(undefined);
-  nightlyTrain$ = new BehaviorSubject<boolean>(undefined);
+  selectedTrain$ = new BehaviorSubject<string | undefined>(undefined);
+  releaseTrain$ = new BehaviorSubject<boolean | undefined>(undefined);
+  preReleaseTrain$ = new BehaviorSubject<boolean | undefined>(undefined);
+  nightlyTrain$ = new BehaviorSubject<boolean | undefined>(undefined);
   currentTrainDescription$ = new BehaviorSubject<string>('');
   trainDescriptionOnPageLoad$ = new BehaviorSubject<string>('');
   fullTrainList$ = new BehaviorSubject<Record<string, SystemUpdateTrain>>(undefined);
-  trainVersion$ = new BehaviorSubject<string>(null);
+  trainVersion$ = new BehaviorSubject<string | null>(null);
 
   trainValue$ = new BehaviorSubject<string>('');
 
@@ -87,9 +87,14 @@ export class TrainService {
   }
 
   toggleAutoCheck(autoCheck: boolean): void {
-    this.api.call('update.set_auto_download', [autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.check();
-    });
+    this.api.call('update.set_auto_download', [autoCheck])
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.check();
+      });
   }
 
   setTrainAndCheck(newTrain: string, prevTrain: string): void {

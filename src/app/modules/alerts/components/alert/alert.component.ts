@@ -1,7 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges,
+  AfterViewInit,
+  ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges,
+  signal,
+  ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -43,6 +47,7 @@ enum AlertLevelColor {
   imports: [
     IxIconComponent,
     MatTooltip,
+    MatButton,
     TestDirective,
     TranslateModule,
     FormatDateTimePipe,
@@ -50,12 +55,18 @@ enum AlertLevelColor {
     RequiresRolesDirective,
   ],
 })
-export class AlertComponent implements OnChanges {
+export class AlertComponent implements OnChanges, AfterViewInit {
   readonly alert = input.required<Alert>();
   readonly isHaLicensed = input<boolean>();
-  readonly requiredRoles = [Role.AlertListWrite];
 
-  alertLevelColor: AlertLevelColor;
+  @ViewChild('alertMessage', { static: true }) alertMessage: ElementRef<HTMLElement>;
+
+  protected isCollapsed = signal<boolean>(true);
+  protected isExpandable = signal<boolean>(false);
+
+  protected readonly requiredRoles = [Role.AlertListWrite];
+
+  alertLevelColor: AlertLevelColor | undefined;
   icon: string;
   iconTooltip: string;
 
@@ -71,10 +82,22 @@ export class AlertComponent implements OnChanges {
     private translate: TranslateService,
   ) {}
 
-  readonly levelLabel = computed(() => this.translate.instant(alertLevelLabels.get(this.alert().level)));
+  readonly levelLabel = computed(() => {
+    const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
+    return this.translate.instant(levelLabel);
+  });
 
   ngOnChanges(): void {
     this.setStyles();
+  }
+
+  ngAfterViewInit(): void {
+    const alertMessageElement = this.alertMessage.nativeElement;
+    this.isExpandable.set(alertMessageElement.scrollHeight > alertMessageElement.offsetHeight);
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed.set(!this.isCollapsed());
   }
 
   onDismiss(): void {

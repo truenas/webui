@@ -4,13 +4,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { invalidDate } from 'app/constants/invalid-date';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -48,7 +53,13 @@ describe('CronCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CronCardComponent,
-    imports: [
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
+        },
+      ],
     ],
     providers: [
       provideMockStore({
@@ -95,7 +106,7 @@ describe('CronCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'Invalid Date', ''],
+      ['root', "echo 'Hello World'", 'test', 'At 00:00, every day', 'Yes', 'Invalid Date', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -121,8 +132,7 @@ describe('CronCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CronFormComponent,
-      false,
-      expect.objectContaining(cronJobs[0]),
+      { data: expect.objectContaining(cronJobs[0]) },
     );
   });
 

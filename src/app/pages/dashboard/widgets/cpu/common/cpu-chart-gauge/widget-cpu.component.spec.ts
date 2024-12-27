@@ -42,7 +42,7 @@ describe('CpuChartGaugeComponent', () => {
   });
 
   it('shows a chart with cpu average usage', () => {
-    const chart = spectator.query(ViewChartGaugeComponent);
+    const chart = spectator.query(ViewChartGaugeComponent)!;
     expect(chart).not.toBeNull();
     expect(chart.config).toEqual({
       data: ['Load', 75],

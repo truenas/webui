@@ -16,7 +16,7 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
   providedIn: 'root',
 })
 export class TokenLastUsedService {
-  private tokenLastUsed$ = new BehaviorSubject<string>(this.window.localStorage.getItem('tokenLastUsed'));
+  private tokenLastUsed$ = new BehaviorSubject<string | null>(this.window.localStorage.getItem('tokenLastUsed'));
 
   /**
    * Check if token was used no more than 5 minutes ago (default)

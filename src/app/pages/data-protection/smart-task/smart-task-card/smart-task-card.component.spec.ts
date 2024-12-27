@@ -5,15 +5,20 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
@@ -43,8 +48,6 @@ describe('SmartTaskCardComponent', () => {
         month: '*',
         dow: '0',
       },
-      cron_schedule: '0 0 * * 0',
-      frequency: 'At 00:00, only on Sunday',
     },
   ] as SmartTestTaskUi[];
 
@@ -73,7 +76,13 @@ describe('SmartTaskCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmartTaskCardComponent,
-    imports: [
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
+        },
+      ],
     ],
     providers: [
       mockAuth(),
@@ -107,7 +116,6 @@ describe('SmartTaskCardComponent', () => {
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),
     ],
   });
@@ -125,7 +133,7 @@ describe('SmartTaskCardComponent', () => {
         '{serial_lunid}8HG7MZJH_5000cca2700de678,{serial_lunid}8HG7MLTH_5000cca2700de0c8',
         'LONG',
         'test',
-        'At 00:00, only on Sunday',
+        'At 00:00, every day',
         'in 1 day',
         '',
       ],

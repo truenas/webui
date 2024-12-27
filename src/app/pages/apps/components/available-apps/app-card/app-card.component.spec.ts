@@ -43,7 +43,7 @@ describe('AppCardComponent', () => {
   });
 
   it('shows app logo', () => {
-    expect(spectator.query(AppCardLogoComponent).url).toBe('https://www.seti.org/logo.png');
+    expect(spectator.query(AppCardLogoComponent)!.url).toBe('https://www.seti.org/logo.png');
   });
 
   it('shows installed badge when [installed] is true', () => {

@@ -197,17 +197,15 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.slideIn.open(ReplicationWizardComponent, true);
-    closer$.pipe(
+    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getReplicationTasks());
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    const closer$ = this.slideIn.open(ReplicationFormComponent, true, row);
-
-    closer$.pipe(filter(Boolean), untilDestroyed(this))
+    this.slideIn.open(ReplicationFormComponent, { wide: true, data: row })
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 

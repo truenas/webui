@@ -155,7 +155,7 @@ export class SysctlCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.firstTimeWarning.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideIn.open(TunableFormComponent, false, row)),
+      switchMap(() => this.slideIn.open(TunableFormComponent, { data: row })),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

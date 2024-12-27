@@ -51,7 +51,7 @@ describe('DedupWizardStepComponent', () => {
   });
 
   it('has the correct inputs', () => {
-    const layoutComponent = spectator.query(LayoutStepComponent);
+    const layoutComponent = spectator.query(LayoutStepComponent)!;
     expect(layoutComponent.description).toBe(helptextManager.dedup_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);

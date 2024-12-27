@@ -24,7 +24,7 @@ export class IxDateAdapter extends NativeDateAdapter {
       return super.format(date, format);
     }
     // TODO: Pipe does not support disabling time formatting properly.
-    return this.formatDateTime.transform(date, null, ' ');
+    return this.formatDateTime.transform(date, undefined, ' ');
   }
 
   override parse(value: unknown, _?: unknown): Date | null {

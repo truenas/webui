@@ -101,7 +101,7 @@ describe('InstanceGeneralInfoComponent', () => {
   });
 
   it('renders details in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(5);
     expect(chartExtra[0]).toHaveText('Status: Running');
     expect(chartExtra[1]).toHaveText('Autostart: Yes');
@@ -146,8 +146,10 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceEditFormComponent, false, instance);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceEditFormComponent,
+      { data: instance },
+    );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
     expect(spectator.inject(VirtualizationDevicesStore).selectInstance)

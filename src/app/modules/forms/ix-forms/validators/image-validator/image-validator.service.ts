@@ -20,12 +20,12 @@ export class ImageValidatorService {
   ) { }
 
   getImagesValidator(fileSizeLimitBytes: number): AsyncValidatorFn {
-    return (control: FormControl<File[]>): Observable<ValidationErrors> | null => {
+    return (control: FormControl<File[]>): Observable<ValidationErrors | null> => {
       return this.validateImages(control.value, fileSizeLimitBytes).pipe(
         map((validatedFiles) => {
           const invalidFiles = validatedFiles
-            .filter((file) => file.error)
-            .map((file) => file.error);
+            .map((file) => file.error)
+            .filter((error) => !!error);
 
           if (!invalidFiles.length) {
             return null;

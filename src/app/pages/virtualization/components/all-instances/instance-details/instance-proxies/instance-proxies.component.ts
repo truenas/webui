@@ -61,7 +61,8 @@ export class InstanceProxiesComponent {
   }
 
   private openProxyForm(proxy?: VirtualizationProxy): void {
-    this.slideIn.open(InstanceProxyFormComponent, false, { proxy, instanceId: this.deviceStore.selectedInstance().id })
+    this.slideIn
+      .open(InstanceProxyFormComponent, { data: { proxy, instanceId: this.deviceStore.selectedInstance().id } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.deviceStore.loadDevices());
   }

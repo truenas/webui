@@ -116,8 +116,10 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      cloudBackups[0],
+      {
+        wide: true,
+        data: cloudBackups[0],
+      },
     );
   });
 
@@ -127,8 +129,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      undefined,
+      { wide: true },
     );
   });
 

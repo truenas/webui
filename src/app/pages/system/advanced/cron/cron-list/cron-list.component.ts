@@ -144,7 +144,6 @@ export class CronListComponent implements OnInit {
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
         }));
       }),
@@ -171,7 +170,7 @@ export class CronListComponent implements OnInit {
   }
 
   doEdit(row: CronjobRow): void {
-    this.slideIn.open(CronFormComponent, false, row)
+    this.slideIn.open(CronFormComponent, { data: row })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();

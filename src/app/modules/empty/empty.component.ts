@@ -34,8 +34,9 @@ export class EmptyComponent {
   readonly requiredRoles = input<Role[]>();
 
   doAction(): void {
-    if (this.conf().button.action) {
-      this.conf().button.action();
+    const action = this.conf().button?.action;
+    if (action) {
+      action();
     }
   }
 

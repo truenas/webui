@@ -125,9 +125,15 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   getProviders(): void {
-    this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
-      providers.forEach((provider) => this.providers.set(provider.name, provider.title));
-    });
+    this.cloudCredentialService
+      .getProviders()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((providers) => {
+        providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+      });
   }
 
   setDefaultSort(): void {
@@ -139,19 +145,21 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const close$ = this.slideIn.open(CloudCredentialsFormComponent);
-    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
-      this.getCredentials();
-    });
+    this.slideIn.open(CloudCredentialsFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => {
+        this.getCredentials();
+      });
   }
 
   doEdit(credential: CloudSyncCredential): void {
     const close$ = this.slideIn.open(
       CloudCredentialsFormComponent,
-      false,
       {
-        existingCredential: credential,
-      } as CloudCredentialFormInput,
+        data: {
+          existingCredential: credential,
+        } as CloudCredentialFormInput,
+      },
     );
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();

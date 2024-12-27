@@ -1,15 +1,16 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  finalize, forkJoin, Observable, of, tap,
+  combineLatest, finalize, forkJoin, Observable, of, tap,
 } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -105,7 +106,19 @@ export class ServiceNfsComponent implements OnInit {
     userd_manage_gids: helptextServiceNfs.userd_manage_gids,
   };
 
-  readonly ipChoices$ = this.api.call('nfs.bindip_choices').pipe(choicesToOptions());
+  readonly ipChoices$ = combineLatest([
+    this.api.call('nfs.bindip_choices').pipe(choicesToOptions()),
+    this.api.call('nfs.config'),
+  ]).pipe(
+    map(([options, config]) => {
+      return [
+        ...new Set<string>([
+          ...config.bindip,
+          ...options.map((option) => option.value.toString()),
+        ]),
+      ].map((value) => ({ label: value, value }));
+    }),
+  );
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];

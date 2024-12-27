@@ -6,7 +6,7 @@
   </mat-card-header>
   <mat-card-content>
     <p>{{ 'Task Name' | translate }}: {{ backup().description || '-' }}</p>
-    <p>{{ 'Frequency' | translate }}: {{ frequency() }}</p>
+    <p>{{ 'Frequency' | translate }}: {{ backup().schedule | scheduleDescription }}</p>
     <p>{{ 'Schedule' | translate }}: {{ schedule() || '-' }}</p>
   </mat-card-content>
 </mat-card>

@@ -84,17 +84,21 @@ describe('InstanceProxiesComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceProxyFormComponent, false, { instanceId: 'my-instance', proxy: undefined });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceProxyFormComponent,
+      { data: { instanceId: 'my-instance', proxy: undefined } },
+    );
     expect(spectator.inject(VirtualizationDevicesStore).loadDevices).toHaveBeenCalled();
   });
 
   it('opens proxy for for edit when actions menu emits (edit)', () => {
-    const actionsMenu = spectator.query(DeviceActionsMenuComponent);
+    const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
     actionsMenu.edit.emit();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceProxyFormComponent, false, { proxy: devices[1], instanceId: 'my-instance' });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceProxyFormComponent,
+      { data: { proxy: devices[1], instanceId: 'my-instance' } },
+    );
   });
 
   it('renders a button to delete the proxy', () => {

@@ -113,7 +113,7 @@ describe('CloudCredentialsCardComponent', () => {
     await editButton.click();
     expect(
       spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, false, { existingCredential: credentials[0] });
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { data: { existingCredential: credentials[0] } });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {

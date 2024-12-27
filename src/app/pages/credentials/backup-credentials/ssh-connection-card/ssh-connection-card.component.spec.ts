@@ -103,19 +103,20 @@ describe('SshConnectionCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SshConnectionFormComponent,
-      false,
       {
-        attributes: {
-          connect_timeout: 10,
-          host: 'fake.host.name',
-          port: 22,
-          private_key: 4,
-          remote_host_key: 'ssh-rsa FAAAKE',
-          username: 'root',
+        data: {
+          attributes: {
+            connect_timeout: 10,
+            host: 'fake.host.name',
+            port: 22,
+            private_key: 4,
+            remote_host_key: 'ssh-rsa FAAAKE',
+            username: 'root',
+          },
+          id: 5,
+          name: 'test-conn-1',
+          type: 'SSH_CREDENTIALS',
         },
-        id: 5,
-        name: 'test-conn-1',
-        type: 'SSH_CREDENTIALS',
       },
     );
   });

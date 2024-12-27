@@ -72,8 +72,7 @@ export class GlobalTwoFactorAuthCardComponent {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.slideIn.open(
         GlobalTwoFactorAuthFormComponent,
-        false,
-        twoFactorAuthConfig,
+        { data: twoFactorAuthConfig },
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

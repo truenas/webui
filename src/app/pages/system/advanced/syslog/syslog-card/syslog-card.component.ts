@@ -122,7 +122,7 @@ export class SyslogCardComponent {
 
   onConfigurePressed(): void {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.slideIn.open(SyslogFormComponent, false, this.syslogConfig)),
+      switchMap(() => this.slideIn.open(SyslogFormComponent, { data: this.syslogConfig })),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
