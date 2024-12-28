@@ -738,7 +738,7 @@
   "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "",
   "{temp}°C (All Cores)": "{temp}°C (Todos los núcleos)",
   "{temp}°C (Core #{core})": "{temp}°C (Núcleo #{core})",
-  "{temp}°C ({coreCount} cores at {temp}°C)": "{temp}°C ({coreCount} cores at {temp}°C)",
+  "{temp}°C ({coreCount} cores at {temp}°C)": "{temp}°C ({coreCount} núcleos a {temp}°C)",
   "{threadCount, plural, one {# thread} other {# threads} }": "{threadCount, plural, one {# thread} other {# threads} }",
   "{type} VDEVs": "{type} VDEV",
   "{type} at {location}": "{type} en {location}",
