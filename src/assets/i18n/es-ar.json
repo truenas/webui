@@ -687,7 +687,7 @@
   "{comparator} (Range In)": "{comparator} (Rango en)",
   "{comparator} (Range Not In)": "{comparator} (No en rango)",
   "{comparator} (Starts With)": "{comparator} (Comienza con)",
-  "{coreCount, plural, one {# core} other {# cores} }": "{coreCount, plural, one {# core} otro {# cores} }",
+  "{coreCount, plural, one {# core} other {# cores} }": "{coreCount, plural, one {# core} other {# cores} }",
   "{count} snapshots found.": "Se encontraron {count} instantáneas.",
   "{cpuPercentage}% Avg. Usage": "",
   "{crontabDescription}, from {startHour} to {endHour}": "",
