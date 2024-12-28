@@ -84,11 +84,11 @@ describe('Finding app', () => {
     await searchInput.setValue('webdav');
     expect(spectator.inject(AppsFilterStore).applySearchQuery).toHaveBeenLastCalledWith('webdav');
 
-    expect(spectator.query('.section-title').textContent.trim()).toBe('Search Results for «webdav»');
+    expect(spectator.query('.section-title')!.textContent!.trim()).toBe('Search Results for «webdav»');
   });
 
   it('redirect to details app when app card is pressed', () => {
-    const href = spectator.query('.apps a').getAttribute('href');
+    const href = spectator.query('.apps a')!.getAttribute('href');
     expect(href).toBe('/apps/available/community/webdav');
   });
 });

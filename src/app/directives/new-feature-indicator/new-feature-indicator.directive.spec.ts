@@ -31,7 +31,7 @@ describe('NewFeatureIndicatorDirective', () => {
     const element = spectator.fixture.nativeElement as HTMLElement;
 
     expect(element.children).toHaveLength(1);
-    expect(element.firstElementChild.tagName).toBe('ix-new-feature-indicator-wrapper'.toUpperCase());
+    expect(element.firstElementChild!.tagName).toBe('ix-new-feature-indicator-wrapper'.toUpperCase());
   });
 
   it('shows element when the message has already been shown', () => {
@@ -44,6 +44,6 @@ describe('NewFeatureIndicatorDirective', () => {
     const element = spectator.fixture.nativeElement as HTMLElement;
 
     expect(element.children).toHaveLength(1);
-    expect(element.firstElementChild.tagName).toBe('div'.toUpperCase());
+    expect(element.firstElementChild!.tagName).toBe('div'.toUpperCase());
   });
 });

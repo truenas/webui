@@ -70,7 +70,7 @@ describe('AppsStatsService', () => {
       spectator.service.subscribeToUpdates();
       const plexStats$ = spectator.service.getStatsForApp('plex');
 
-      let plexStatsUpdate: AppStats;
+      let plexStatsUpdate: AppStats | undefined = undefined;
       plexStats$.subscribe((stats) => plexStatsUpdate = stats);
 
       expect(plexStatsUpdate).toBe(plexStats);

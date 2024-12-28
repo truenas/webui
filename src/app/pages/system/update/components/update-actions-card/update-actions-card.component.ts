@@ -343,7 +343,7 @@ export class UpdateActionsCardComponent implements OnInit {
     }
   }
 
-  private saveConfigurationIfNecessary(): Observable<void> {
+  private saveConfigurationIfNecessary(): Observable<unknown> {
     if (this.wasConfigurationSaved) {
       return of(null);
     }

@@ -40,8 +40,8 @@ describe('AppMetadataCardComponent', () => {
 
   function getDetails(selector: string): Record<string, string> {
     return spectator.queryAll(selector).reduce((acc, item: HTMLElement) => {
-      const key = item.querySelector('.label').textContent;
-      const value = item.querySelector('.value').textContent;
+      const key = item.querySelector('.label')!.textContent!;
+      const value = item.querySelector('.value')!.textContent!;
       acc[key] = value;
       return acc;
     }, {} as Record<string, string>);

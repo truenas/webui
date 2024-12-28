@@ -44,7 +44,7 @@ describe('MiniDriveTemperaturesComponent', () => {
     providers: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => enclosure,
-        selectedSlot: () => null as DashboardEnclosureSlot,
+        selectedSlot: () => null as DashboardEnclosureSlot | null,
         selectSlot: jest.fn(),
       }),
       mockProvider(DiskTemperatureService, {

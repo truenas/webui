@@ -652,6 +652,7 @@
   "You are about to convert {appName} to a custom app. This will allow you to edit its yaml file directly.\nWarning. This operation cannot be undone.": "",
   "You are about to delete the target \"{name}\".": "",
   "You are about to delete the target \"{name}\". You may also choose to delete all extents associated with this target. Note the volumes will not be deleted with the extents.": "",
+  "You can select multiple items with the Ctrl and Shift keys.": "",
   "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "everyone@": "",

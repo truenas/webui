@@ -386,6 +386,7 @@
   "You are using an insecure connection. Switch to HTTPS for secure access.": "",
   "You can also vote for new features <a target=\"_blank\" href=\"https://forums.truenas.com/feature-requests\">on our forum.</a>": "",
   "You can only lock a dataset if it was encrypted with a passphrase": "",
+  "You can select multiple items with the Ctrl and Shift keys.": "",
   "You have unsaved changes. Are you sure you want to close?": "",
   "ZFS Errors": "",
   "iSCSI Authorized Networks": "",

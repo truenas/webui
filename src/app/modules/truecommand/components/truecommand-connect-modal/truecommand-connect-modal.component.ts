@@ -54,7 +54,7 @@ export class TruecommandConnectModalComponent implements OnInit {
   title: string;
   saveButtonText: string;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     api_key: [''],
     enabled: [true],
   });
@@ -95,9 +95,9 @@ export class TruecommandConnectModalComponent implements OnInit {
 
     const params = {} as UpdateTrueCommand;
 
-    params.enabled = this.form.value.enabled;
+    params.enabled = this.form.getRawValue().enabled;
     if (this.form.value.api_key) {
-      params.api_key = this.form.value.api_key;
+      params.api_key = this.form.getRawValue().api_key;
     }
 
     this.api.call('truecommand.update', [params]).pipe(untilDestroyed(this)).subscribe({

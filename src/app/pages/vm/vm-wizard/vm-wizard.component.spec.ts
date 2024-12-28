@@ -201,7 +201,7 @@ describe('VmWizardComponent', () => {
   it('shows summary on the last step of the wizard', async () => {
     await fillWizard();
 
-    const summary = spectator.query(SummaryComponent);
+    const summary = spectator.query(SummaryComponent)!;
     expect(summary.summary).toEqual([
       [
         { label: 'Name', value: 'test' },

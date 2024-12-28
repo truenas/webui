@@ -66,7 +66,7 @@ export class GuiFormComponent {
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
