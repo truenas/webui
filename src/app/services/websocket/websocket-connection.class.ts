@@ -2,14 +2,14 @@ import { Observable } from 'rxjs';
 import { webSocket as rxjsWebSocket, WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 
 export class WebSocketConnection {
-  private ws$: WebSocketSubject<unknown>;
+  private ws$?: WebSocketSubject<unknown>;
   private wsAsObservable$: Observable<unknown>;
   get stream$(): Observable<unknown> {
     return this.wsAsObservable$;
   }
 
   get closed(): boolean {
-    return this.ws$?.closed;
+    return this.ws$?.closed || true;
   }
 
   constructor(
@@ -29,7 +29,7 @@ export class WebSocketConnection {
   }
 
   send(payload: unknown): void {
-    this.ws$.next(payload);
+    this.ws$?.next(payload);
   }
 
   close(): void {

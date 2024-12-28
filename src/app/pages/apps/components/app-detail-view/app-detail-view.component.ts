@@ -51,7 +51,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
   ],
 })
 export class AppDetailViewComponent implements OnInit {
-  readonly app = signal<AvailableApp>(null);
+  readonly app = signal<AvailableApp | null>(null);
   readonly appId = signal<string>('');
   readonly train = signal<string>('');
   readonly isLoading = signal(true);
@@ -123,6 +123,10 @@ export class AppDetailViewComponent implements OnInit {
   setLightbox(): void {
     const app = this.app();
     const images = app?.screenshots?.map((image) => new ImageItem({ src: image, thumb: image }));
+    if (!images) {
+      return;
+    }
+
     this.items.set(images);
     this.gallery.ref('lightbox').load(this.items());
   }

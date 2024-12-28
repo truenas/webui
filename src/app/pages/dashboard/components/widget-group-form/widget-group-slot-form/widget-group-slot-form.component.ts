@@ -57,7 +57,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   slotConfig = input.required<WidgetGroupSlot<object>>();
   slot = signal<WidgetGroupSlot<object>>(null);
 
-  protected selectedCategory: WritableSignal<WidgetCategory>;
+  protected selectedCategory: WritableSignal<WidgetCategory | null>;
 
   private categorySubscription: Subscription;
   private typeSubscription: Subscription;
@@ -68,7 +68,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       : false;
   });
 
-  readonly settingsContainer = viewChild('settingsContainer', { read: ViewContainerRef });
+  readonly settingsContainer = viewChild.required('settingsContainer', { read: ViewContainerRef });
 
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
@@ -268,7 +268,8 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
       this.settingsChange.emit({ ...slotConfig, settings: undefined });
     }
 
-    const settingsComponent: Type<WidgetSettingsComponent<object>> = widgetRegistry[slotConfig.type]?.settingsComponent;
+    const settingsComponent: Type<WidgetSettingsComponent<object>> | null
+      = widgetRegistry[slotConfig.type]?.settingsComponent;
 
     if (!slotConfig?.type || !settingsComponent) {
       return;

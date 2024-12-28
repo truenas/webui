@@ -37,7 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class ErrorDialogComponent {
   title: string;
   message: string;
-  backtrace: string;
+  backtrace?: string;
   isCloseMoreInfo = true;
   logs: Job;
 

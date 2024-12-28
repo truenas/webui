@@ -95,9 +95,9 @@ export class IxPermissionsComponent implements ControlValueAccessor {
     this.otherExec = permissions.other[PosixPermission.Execute];
   }
 
-  onChange?: (value: string) => void = (): void => {};
+  onChange: (value: string) => void = (): void => {};
 
-  onTouched?: () => void = (): void => {};
+  onTouched: () => void = (): void => {};
 
   registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;

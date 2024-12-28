@@ -30,16 +30,16 @@ export class NetworkService {
     return this.api.call('interface.vlan_parent_interface_choices');
   }
 
-  getLaggPortsChoices(id: string = null): Observable<Choices> {
-    return this.api.call('interface.lag_ports_choices', [id]);
+  getLaggPortsChoices(id?: string): Observable<Choices> {
+    return this.api.call('interface.lag_ports_choices', id ? [id] : []);
   }
 
   getLaggProtocolChoices(): Observable<string[]> {
     return this.api.call('interface.lag_supported_protocols');
   }
 
-  getBridgeMembersChoices(id: string = null): Observable<Choices> {
-    return this.api.call('interface.bridge_members_choices', [id]);
+  getBridgeMembersChoices(id?: string): Observable<Choices> {
+    return this.api.call('interface.bridge_members_choices', id ? [id] : []);
   }
 
   getV4Netmasks(): Option[] {

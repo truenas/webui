@@ -279,7 +279,9 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
     if (categoriesFilter.includes(AppExtraCategory.NewAndUpdated) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.NewAndUpdated)),
+        title: this.translate.instant(
+          appExtraCategoryLabels.get(AppExtraCategory.NewAndUpdated) || AppExtraCategory.NewAndUpdated,
+        ),
         apps: hasCategoriesFilter ? filteredLatestApps : filteredLatestApps.slice(0, this.appsPerCategory),
         totalApps: filteredLatestApps.length,
         category: AppExtraCategory.NewAndUpdated,
@@ -288,7 +290,9 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
     if (categoriesFilter.includes(AppExtraCategory.Recommended) || !hasCategoriesFilter) {
       appsByCategory.push({
-        title: this.translate.instant(appExtraCategoryLabels.get(AppExtraCategory.Recommended)),
+        title: this.translate.instant(
+          appExtraCategoryLabels.get(AppExtraCategory.Recommended) || AppExtraCategory.Recommended,
+        ),
         apps: hasCategoriesFilter ? filteredRecommendedApps : filteredRecommendedApps.slice(0, this.appsPerCategory),
         totalApps: filteredRecommendedApps.length,
         category: AppExtraCategory.Recommended,

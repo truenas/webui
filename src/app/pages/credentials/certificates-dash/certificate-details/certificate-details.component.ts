@@ -15,7 +15,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
   imports: [TranslateModule],
 })
 export class CertificateDetailsComponent {
-  readonly certificate = input<Certificate | CertificateAuthority>();
+  readonly certificate = input.required<Certificate | CertificateAuthority>();
 
   /**
    * Shows Signed By instead of Signed Certificates count.

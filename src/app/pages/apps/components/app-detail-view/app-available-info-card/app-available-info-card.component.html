@@ -20,7 +20,7 @@
           target="_blank"
           [href]="source"
           [title]="source"
-          [ixTest]="[app().name, 'source']"
+          [ixTest]="[app()?.name, 'source']"
         >{{ source | cleanLink }}</a>
         @if (!last) {
           <span>, </span>

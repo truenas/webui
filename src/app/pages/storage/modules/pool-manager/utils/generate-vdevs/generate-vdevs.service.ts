@@ -142,7 +142,7 @@ export class GenerateVdevsService {
     const pickedDisks: DetailsDisk[] = [];
     while (pickedDisks.length < disksNeeded && remainingDisks.length > 0) {
       let nextEnclosure = this.enclosureList.next();
-      let pickedDisk: DetailsDisk;
+      let pickedDisk: DetailsDisk | undefined;
 
       do {
         pickedDisk = remainingDisks.find((disk) => disk.enclosure?.id === nextEnclosure);

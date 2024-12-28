@@ -16,7 +16,7 @@ describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
-  const viewContainerRef: ViewContainerRef = null;
+  const viewContainerRef: ViewContainerRef | null = null;
 
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,

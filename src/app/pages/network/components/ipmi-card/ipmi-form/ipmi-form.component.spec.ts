@@ -64,7 +64,7 @@ describe('IpmiFormComponent', () => {
         mockCall('failover.licensed', true),
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', (params) => {
-          if (params?.length ? params[0]['ipmi-options']['query-remote'] : false) {
+          if (params?.length ? params[0]['ipmi-options']!['query-remote'] : false) {
             return [{
               channel: 1,
               ip_address_source: IpmiIpAddressSource.Static,

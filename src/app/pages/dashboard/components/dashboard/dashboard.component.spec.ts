@@ -34,7 +34,7 @@ describe('DashboardComponent', () => {
   const groupC: WidgetGroup = { layout: WidgetGroupLayout.QuartersAndHalf, slots: [] };
   const groupD: WidgetGroup = { layout: WidgetGroupLayout.HalfAndQuarters, slots: [] };
   const defaultGroups = [groupA, groupB, groupC, groupD];
-  const groups$ = new BehaviorSubject(defaultGroups);
+  const groups$ = new BehaviorSubject<WidgetGroup[] | null>(defaultGroups);
   const isLoading$ = new BehaviorSubject(false);
 
   let spectator: Spectator<DashboardComponent>;

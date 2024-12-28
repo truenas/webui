@@ -28,13 +28,12 @@ describe('UnusedDiskSelectComponent', () => {
         devname: 'da0',
         identifier: '{disk}ABCD',
       },
-
       {
         name: 'exp1',
         size: 10 * TiB,
         devname: 'exp1',
         exported_zpool: 'old-pool',
-      },
+      } as DetailsDisk,
     ] as DetailsDisk[],
     used: [
       {
@@ -111,7 +110,7 @@ describe('UnusedDiskSelectComponent', () => {
   });
 
   it('shows combobox label, required flag and tooltip', async () => {
-    const label = await combobox.getLabelHarness();
+    const label = (await combobox.getLabelHarness())!;
     const tooltip = await label.getTooltip();
 
     expect(await label.getLabel()).toBe('Select Disk');

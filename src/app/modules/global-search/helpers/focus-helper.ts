@@ -1,4 +1,5 @@
 export function moveToNextFocusableElement(): void {
+  // TODO: Refactor to use WINDOW injection token.
   const container = document.querySelector('.search-box-wrapper');
 
   const focusableElements = Array.from(

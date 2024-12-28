@@ -35,7 +35,7 @@ describe('IxHeaderCellCheckboxComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.query('span').textContent!.trim()).toBe('Select All');
+    expect(spectator.query('span')!.textContent!.trim()).toBe('Select All');
   });
 
   it('sets value when checkbox is changed', async () => {

@@ -19,7 +19,7 @@ export const addNewIxSelectValue = 'ADD_NEW';
 export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   formComponentIsWide = false;
 
-  readonly ixSelect = viewChild(IxSelectComponent);
+  readonly ixSelect = viewChild.required(IxSelectComponent);
 
   private options = new BehaviorSubject<Option[]>([]);
 

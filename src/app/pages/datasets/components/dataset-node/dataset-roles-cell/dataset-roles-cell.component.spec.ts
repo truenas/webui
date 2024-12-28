@@ -22,7 +22,7 @@ describe('DatasetRolesCellComponent', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ixIcon = await loader.getHarnessOrNull(IxIconHarness);
+    ixIcon = await loader.getHarness(IxIconHarness);
   }
 
   it('shows "System Dataset" when dataset is marked as system', async () => {

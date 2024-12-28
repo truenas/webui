@@ -2,6 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
@@ -19,7 +20,7 @@ describe('TopologyCategoryDescriptionPipe', () => {
 
   it('returns None when there are no vdevs in topology category', () => {
     expect(spectator.service.transform({
-      vdevs: [],
+      vdevs: [] as DetailsDisk[][],
     } as PoolManagerTopologyCategory)).toBe('None');
   });
 

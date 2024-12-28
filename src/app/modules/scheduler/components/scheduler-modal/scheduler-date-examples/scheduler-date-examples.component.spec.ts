@@ -44,7 +44,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent.trim());
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent!.trim());
     expect(examples).toEqual([
       '2022-02-23 00:00:00',
       '2022-02-24 00:00:00',

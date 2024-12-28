@@ -3,6 +3,7 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -116,8 +117,8 @@ describe('ScheduleDescriptionPipe', () => {
     jest.spyOn(console, 'error').mockImplementation();
 
     expect(spectator.service.transform({})).toBe('');
-    expect(spectator.service.transform(undefined)).toBe('');
-    expect(spectator.service.transform(null)).toBe('');
+    expect(spectator.service.transform(undefined as unknown as Schedule)).toBe('');
+    expect(spectator.service.transform(null as unknown as Schedule)).toBe('');
 
     expect(console.error).toHaveBeenCalledTimes(3);
   });

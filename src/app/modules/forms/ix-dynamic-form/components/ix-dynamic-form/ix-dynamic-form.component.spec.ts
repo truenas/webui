@@ -4,7 +4,7 @@ import {
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchema } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxDynamicFormComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -53,13 +53,13 @@ describe('IxDynamicFormComponent', () => {
   describe('Component methods', () => {
     it('forwarding "addListItem" event', () => {
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.component.addControlNext(undefined);
+      spectator.component.addControlNext({} as AddListItemEvent);
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
 
     it('forwarding "deleteListItem" event', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      spectator.component.removeControlNext(undefined);
+      spectator.component.removeControlNext({} as DeleteListItemEvent);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
     });
   });

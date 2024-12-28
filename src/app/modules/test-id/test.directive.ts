@@ -4,6 +4,8 @@ import {
 import { kebabCase } from 'lodash-es';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
+type SupportedTestId = number | string | null | undefined | (string | number | null | undefined)[];
+
 /**
  * Adds test attribute to the element for the benefit of Release Engineering.
  * Prefer not to use test attributes in our unit tests.
@@ -22,7 +24,7 @@ import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-ov
   standalone: true,
 })
 export class TestDirective {
-  readonly description = input.required<number | string | (string | number)[]>({
+  readonly description = input.required<SupportedTestId>({
     alias: 'ixTest',
   });
 

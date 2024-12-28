@@ -95,7 +95,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   ) {}
 
   redirectToEditPermissions(): void {
-    if (this.acl().trivial) {
+    if (this.acl()?.trivial) {
       this.router.navigate(['/datasets', this.dataset().id, 'permissions', 'edit']);
     } else {
       this.router.navigate(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/' + this.dataset().id } });
@@ -114,7 +114,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   });
 
   readonly canEditPermissions = computed(() => {
-    return this.acl && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
+    return this.acl() && !isRootDataset(this.dataset()) && !this.dataset().locked && !this.dataset().readonly;
   });
 
   readonly isLocked = computed(() => {

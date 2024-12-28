@@ -190,7 +190,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     this.onTouch = onTouched;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled$.next(isDisabled);
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();

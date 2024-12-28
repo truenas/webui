@@ -51,7 +51,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   readonly isAddingVdevs = input(false);
   readonly pool = input<Pool | undefined>(undefined);
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     encryption: [false],
     encryptionStandard: [defaultEncryptionStandard, Validators.required],
