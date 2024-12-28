@@ -82,7 +82,7 @@ describe('SigninStore', () => {
       get: () => of({ twofactor_auth_configured: false }),
     });
     jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
-    jest.spyOn(authService, 'clearAuthToken').mockReturnValue(null);
+    jest.spyOn(authService, 'clearAuthToken').mockReturnValue(undefined);
     jest.spyOn(authService, 'setQueryToken').mockReturnValue(undefined);
   });
 

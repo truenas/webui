@@ -98,7 +98,7 @@ describe('ManualSelectionDisksComponent', () => {
   });
 
   it('updates disks shown when filters are updated', async () => {
-    const filters = spectator.query(ManualSelectionDiskFiltersComponent);
+    const filters = spectator.query(ManualSelectionDiskFiltersComponent)!;
     filters.filtersUpdated.emit({
       search: 'sdb',
     } as ManualDiskSelectionFilters);

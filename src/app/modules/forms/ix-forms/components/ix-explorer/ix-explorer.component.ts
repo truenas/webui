@@ -73,7 +73,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 
   // TODO: Should be private, but it's used directly in tests
-  readonly tree = viewChild(TreeComponent);
+  readonly tree = viewChild.required(TreeComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
 
@@ -81,7 +81,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   value: string | string[];
   isDisabled = false;
   nodes: ExplorerNodeData[] = [];
-  loadingError: string;
+  loadingError: string | null = null;
 
   onChange: (value: string | string[]) => void = (): void => {};
   onTouch: () => void = (): void => {};

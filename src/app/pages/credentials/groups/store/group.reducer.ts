@@ -14,7 +14,7 @@ import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions'
 
 export interface GroupsState extends EntityState<Group> {
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export const adapter = createEntityAdapter<Group>({
@@ -22,7 +22,7 @@ export const adapter = createEntityAdapter<Group>({
   sortComparer: (a, b) => a.group.localeCompare(b.group),
 });
 
-export const groupsInitialState = adapter.getInitialState({
+export const groupsInitialState: GroupsState = adapter.getInitialState({
   isLoading: false,
   error: null,
 });

@@ -42,7 +42,7 @@ describe('FileTicketLicensedFormComponent', () => {
         })),
       }),
       mockProvider(ImageValidatorService, {
-        getImagesValidator: () => () => of(null as ValidationErrors),
+        getImagesValidator: () => () => of(null as ValidationErrors | null),
       }),
       mockProvider(Router, {
         navigate: jest.fn(() => Promise.resolve(true)),

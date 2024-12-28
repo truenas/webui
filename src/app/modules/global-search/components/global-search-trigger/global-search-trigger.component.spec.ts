@@ -1,6 +1,6 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { signal } from '@angular/core';
+import { ElementRef, signal } from '@angular/core';
 import { MatInput } from '@angular/material/input';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
@@ -37,8 +37,8 @@ describe('GlobalSearchTriggerComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(GlobalSearchComponent, 'searchInput', signal(null));
-    MockInstance(GlobalSearchComponent, 'searchBoxWrapper', signal(null));
+    MockInstance(GlobalSearchComponent, 'searchInput', signal({} as ElementRef));
+    MockInstance(GlobalSearchComponent, 'searchBoxWrapper', signal({} as ElementRef));
 
     spectator = createComponent();
     jest.spyOn(spectator.inject(Overlay), 'create');
@@ -53,7 +53,7 @@ describe('GlobalSearchTriggerComponent', () => {
   });
 
   it('renders keyboard shortcut', () => {
-    const shortcut = spectator.query(KeyboardShortcutComponent);
+    const shortcut = spectator.query(KeyboardShortcutComponent)!;
     expect(shortcut.key).toBe('/');
   });
 

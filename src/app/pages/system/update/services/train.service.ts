@@ -121,7 +121,7 @@ export class TrainService {
 
     this.updateService.isLoading$.next(true);
     this.updateService.pendingUpdates();
-    this.updateService.error$.next(null);
+    this.updateService.error$.next(false);
     sessionStorage.updateLastChecked = Date.now();
 
     combineLatest([

@@ -1,5 +1,5 @@
 export interface AppsFiltersValues {
-  sort: AppsFiltersSort;
+  sort: AppsFiltersSort | null;
   categories: string[];
 }
 

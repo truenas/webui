@@ -28,7 +28,7 @@ describe('CloudBackupExcludedPathsComponent', () => {
   });
 
   it('renders Excluded Paths in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(2);
     expect(chartExtra[0]).toHaveText('/mnt/test-1');
     expect(chartExtra[1]).toHaveText('/mnt/test-2');

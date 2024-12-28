@@ -100,7 +100,7 @@ describe('JobsPanelComponent', () => {
       }),
       mockApi([
         mockCall('core.get_jobs', (query) => {
-          if (query[0][0][2] === JobState.Success) {
+          if (query[0]?.[0][2] === JobState.Success) {
             return [];
           }
           return [runningJob, waitingJob, failedJob, transientRunningJob];

@@ -12,7 +12,7 @@ export function forbiddenValues(arrayOfValues: string[], caseInsensitive?: boole
       return null;
     }
 
-    return forbiddenValuesError(arrayOfValues, caseInsensitive, control);
+    return forbiddenValuesError(arrayOfValues, caseInsensitive || false, control);
   };
 }
 

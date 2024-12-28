@@ -320,7 +320,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setSelectOptions(): void {
-    if (!this.parent()) {
+    const parent = this.parent();
+    if (!parent) {
       this.syncOptions$ = this.defaultSyncOptions$;
       this.compressionOptions$ = this.defaultCompressionOptions$;
       this.atimeOptions$ = this.defaultAtimeOptions$;
@@ -336,37 +337,37 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.syncOptions$ = this.defaultSyncOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().sync.value),
+      this.datasetFormService.addInheritOption(parent.sync.value),
     );
     this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().compression.value),
+      this.datasetFormService.addInheritOption(parent.compression.value),
     );
     this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().atime.value),
+      this.datasetFormService.addInheritOption(parent.atime.value),
     );
     this.deduplicationOptions$ = this.defaultDeduplicationOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().deduplication.value),
+      this.datasetFormService.addInheritOption(parent.deduplication.value),
     );
     this.checksumOptions$ = this.defaultChecksumOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().checksum.value),
+      this.datasetFormService.addInheritOption(parent.checksum.value),
     );
     this.readonlyOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().readonly.value),
+      this.datasetFormService.addInheritOption(parent.readonly.value),
     );
     this.execOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().exec.value),
+      this.datasetFormService.addInheritOption(parent.exec.value),
     );
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().snapdev.value),
+      this.datasetFormService.addInheritOption(parent.snapdev.value),
     );
 
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
       this.datasetFormService.addInheritOption(
-        buildNormalizedFileSize(this.parent().recordsize.parsed),
+        buildNormalizedFileSize(parent.recordsize.parsed),
       ),
     );
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().special_small_block_size.value),
+      this.datasetFormService.addInheritOption(parent.special_small_block_size.value),
     );
   }
 
@@ -470,11 +471,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpRecordsizeWarning(): void {
-    if (!this.parent()) {
+    const parent = this.parent();
+    if (!parent) {
       return;
     }
 
-    const root = this.parent().id.split('/')[0];
+    const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
       this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),

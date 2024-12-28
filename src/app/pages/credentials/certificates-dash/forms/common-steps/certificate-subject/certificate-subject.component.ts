@@ -34,7 +34,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   ],
 })
 export class CertificateSubjectComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     country: ['US', Validators.required],
     state: ['', Validators.required],
     city: ['', Validators.required],
@@ -61,7 +61,7 @@ export class CertificateSubjectComponent implements SummaryProvider {
     const summary = [
       {
         label: this.translate.instant('SAN'),
-        value: this.form.value.san.join(', '),
+        value: this.form.value.san?.join(', ') || '',
       },
     ];
 
@@ -69,7 +69,7 @@ export class CertificateSubjectComponent implements SummaryProvider {
       summary.push({ label: this.translate.instant('Common Name'), value: values.common });
     }
 
-    summary.push({ label: this.translate.instant('Email'), value: values.email });
+    summary.push({ label: this.translate.instant('Email'), value: values.email || '' });
 
     // Dept of Connections, Cisco, New York, NY, Unites States
     const subjectFields = [

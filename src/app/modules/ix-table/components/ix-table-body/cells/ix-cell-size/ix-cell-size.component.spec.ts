@@ -21,6 +21,6 @@ describe('IxCellSizeComponent', () => {
   });
 
   it('shows file size in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('5 GiB');
+    expect(spectator.element.textContent!.trim()).toBe('5 GiB');
   });
 });

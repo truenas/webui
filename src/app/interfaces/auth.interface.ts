@@ -14,11 +14,29 @@ export enum LoginExMechanism {
   ApiKeyPlain = 'API_KEY_PLAIN',
 }
 
-export interface LoginExResponse {
-  response_type: LoginExResponseType;
-  user_info?: LoggedInUser;
-  username?: string;
+export interface LoginSuccessResponse {
+  response_type: LoginExResponseType.Success;
+  user_info: LoggedInUser;
 }
+
+export interface LoginAuthErrorResponse {
+  response_type: LoginExResponseType.AuthErr;
+}
+
+export interface LoginExpiredResponse {
+  response_type: LoginExResponseType.Expired;
+}
+
+export interface LoginOtpRequiredResponse {
+  response_type: LoginExResponseType.OtpRequired;
+  username: string;
+}
+
+export type LoginExResponse =
+  | LoginSuccessResponse
+  | LoginAuthErrorResponse
+  | LoginExpiredResponse
+  | LoginOtpRequiredResponse;
 
 export type LoginExQuery =
   | LoginExPasswordQuery

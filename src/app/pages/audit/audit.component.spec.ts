@@ -80,7 +80,7 @@ describe('AuditComponent', () => {
       }),
       mockApi([
         mockCall('audit.query', (params) => {
-          if (params[0]['query-options'].count) {
+          if (params[0]['query-options']!.count) {
             // TODO: Not correct. Figure out how to solve this for query endpoints.
             return 2 as unknown as AuditEntry[];
           }

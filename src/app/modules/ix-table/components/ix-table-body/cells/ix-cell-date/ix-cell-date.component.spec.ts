@@ -33,7 +33,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('2023-07-11 23:10:00');
+      expect(spectator.element.textContent!.trim()).toBe('2023-07-11 23:10:00');
     });
   });
 
@@ -47,7 +47,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('Never');
+      expect(spectator.element.textContent!.trim()).toBe('Never');
     });
   });
 
@@ -61,7 +61,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('N/A');
+      expect(spectator.element.textContent!.trim()).toBe('N/A');
     });
   });
 });

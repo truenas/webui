@@ -2,7 +2,11 @@ import {
   FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  AddListItemEvent,
+  DeleteListItemEvent,
+  DynamicWizardSchema,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { IxDynamicWizardComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-wizard/ix-dynamic-wizard.component';
 
 const dynamicForm = new FormGroup({});
@@ -44,13 +48,13 @@ describe('IxDynamicWizardComponent', () => {
   describe('Component methods', () => {
     it('forwarding "addListItem" event', () => {
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.component.addControlNext(undefined);
+      spectator.component.addControlNext({} as AddListItemEvent);
       expect(spectator.component.addListItem.emit).toHaveBeenCalledTimes(1);
     });
 
     it('forwarding "deleteListItem" event', () => {
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
-      spectator.component.removeControlNext(undefined);
+      spectator.component.removeControlNext({} as DeleteListItemEvent);
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledTimes(1);
     });
   });

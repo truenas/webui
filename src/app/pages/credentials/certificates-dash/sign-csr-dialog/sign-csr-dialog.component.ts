@@ -43,7 +43,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class SignCsrDialogComponent {
   form = this.formBuilder.group({
-    csr_cert_id: [null as number, Validators.required],
+    csr_cert_id: [null as number | null, Validators.required],
     name: ['', Validators.required],
   });
 

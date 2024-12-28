@@ -161,7 +161,7 @@ describe('SourceSectionComponent', () => {
       const sourceNodeProvider = jest.fn();
       spectator.setInput('nodeProvider', sourceNodeProvider);
 
-      const explorer = spectator.query(IxExplorerComponent);
+      const explorer = spectator.query(IxExplorerComponent)!;
       expect(explorer.nodeProvider()).toBe(sourceNodeProvider);
     });
 

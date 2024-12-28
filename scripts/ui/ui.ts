@@ -57,7 +57,7 @@ program
       console.info('Disabling global mock due to remote change.');
     }
 
-    await remoteCommand(options.ip, options.force);
+    await remoteCommand(options.ip, options.force || false);
   });
 
 // Show help message if no arguments are provided

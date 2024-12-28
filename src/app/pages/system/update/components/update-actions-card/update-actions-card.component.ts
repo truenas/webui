@@ -187,7 +187,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   startUpdate(): void {
-    this.updateService.error$.next(null);
+    this.updateService.error$.next(false);
     this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
         this.updateService.status$.next(update.status);
@@ -343,7 +343,7 @@ export class UpdateActionsCardComponent implements OnInit {
     }
   }
 
-  private saveConfigurationIfNecessary(): Observable<void> {
+  private saveConfigurationIfNecessary(): Observable<unknown> {
     if (this.wasConfigurationSaved) {
       return of(null);
     }

@@ -30,6 +30,10 @@ export class AppAvailableInfoCardComponent {
   readonly isLoading = input<boolean>(true);
   readonly app = input<AvailableApp>();
   readonly relativeDate = computed(() => {
-    return formatRelative(new Date(this.app().last_update.$date), new Date());
+    const app = this.app();
+    if (!app) {
+      return '';
+    }
+    return formatRelative(new Date(app.last_update.$date), new Date());
   });
 }

@@ -24,6 +24,6 @@ export class SearchInputHarness extends ComponentHarness {
 
   async toggleMode(): Promise<void> {
     const modeHarness = await this.getActiveModeHarness();
-    return (await modeHarness.getSwitchLink()).click();
+    return (await modeHarness.getSwitchLink())?.click();
   }
 }

@@ -53,8 +53,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
-  searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild('searchInput', { read: ElementRef });
-  searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild('searchBoxWrapper', { read: ElementRef });
+  searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild.required('searchInput', { read: ElementRef });
+  searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('searchBoxWrapper', { read: ElementRef });
 
   searchControl = new FormControl<string>('', { nonNullable: true });
   searchResults: UiSearchableElement[];

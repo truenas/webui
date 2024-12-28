@@ -119,8 +119,8 @@ export class CronFormComponent implements OnInit {
 
   onSubmit(): void {
     const values = {
-      ...this.form.value,
-      schedule: crontabToSchedule(this.form.value.schedule),
+      ...this.form.getRawValue(),
+      schedule: crontabToSchedule(this.form.getRawValue().schedule),
     } as CronjobUpdate;
 
     this.isLoading = true;

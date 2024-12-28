@@ -33,14 +33,14 @@ describe('ContainerLogsComponent', () => {
     });
 
     it('shows meta data', () => {
-      expect(spectator.queryAll('.meta-data .name').map((name) => name.textContent.trim())).toEqual([
+      expect(spectator.queryAll('.meta-data .name').map((name) => name.textContent!.trim())).toEqual([
         'ix-test-app',
         'ix-test-container',
       ]);
     });
 
     it('shows logs', () => {
-      expect(spectator.queryAll('.log-row').map((name) => name.textContent.trim())).toEqual([
+      expect(spectator.queryAll('.log-row').map((name) => name.textContent!.trim())).toEqual([
         '[12:34]Some logs.',
       ]);
     });

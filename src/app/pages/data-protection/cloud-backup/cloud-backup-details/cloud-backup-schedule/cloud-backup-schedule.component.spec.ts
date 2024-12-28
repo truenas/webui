@@ -54,7 +54,7 @@ describe('CloudBackupScheduleComponent', () => {
   });
 
   it('renders Details in card', () => {
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
     expect(chartExtra).toHaveLength(3);
     expect(chartExtra[0]).toHaveText('Task Name: test');
     expect(chartExtra[1]).toHaveText('Frequency: At 00:00, only on Sunday');

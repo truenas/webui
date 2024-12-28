@@ -113,8 +113,8 @@ describe('AppInfoCardComponent', () => {
     setupTest(fakeApp);
     const detailsElements = spectator.queryAll('.details-item');
     const details = detailsElements.map((element) => ({
-      label: element.querySelector('.label').textContent,
-      value: element.querySelector('.value').textContent.trim(),
+      label: element.querySelector('.label')!.textContent!,
+      value: element.querySelector('.value')!.textContent!.trim(),
     }));
     expect(details).toEqual([
       {

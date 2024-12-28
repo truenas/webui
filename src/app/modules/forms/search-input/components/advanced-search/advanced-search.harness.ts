@@ -17,7 +17,7 @@ export class AdvancedSearchHarness extends ComponentHarness {
 
   async setValue(value: string): Promise<void> {
     const inputArea = await this.getInputArea();
-    await inputArea.setContenteditableValue(value);
+    await inputArea.setContenteditableValue?.(value);
 
     await inputArea.dispatchEvent('input');
 
