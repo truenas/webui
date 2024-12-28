@@ -1,3 +1,7 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { By } from '@angular/platform-browser';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
@@ -34,6 +38,8 @@ describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
   let api: ApiService;
   let alert: AlertPageObject;
+  let loader: HarnessLoader;
+
   const createComponent = createComponentFactory({
     component: AlertComponent,
     imports: [
@@ -73,6 +79,7 @@ describe('AlertComponent', () => {
 
     api = spectator.inject(ApiService);
     alert = new AlertPageObject(spectator);
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows alert level', () => {
@@ -126,5 +133,24 @@ describe('AlertComponent', () => {
 
     const state = await firstValueFrom(spectator.inject(Store).pipe(map(selectAlerts)));
     expect(state).toEqual([dummyAlert]);
+  });
+
+  it('shows expand/collapse button when alert message is too long', async () => {
+    const longMessage = 'This is a very long alert message '.repeat(10);
+    spectator.setInput('alert', { ...dummyAlert, formatted: longMessage } as Alert);
+
+    const alertMessageElement = spectator.debugElement.query(By.css('.alert-message')).nativeElement as HTMLElement;
+    jest.spyOn(alertMessageElement, 'scrollHeight', 'get').mockReturnValue(300);
+    jest.spyOn(alertMessageElement, 'offsetHeight', 'get').mockReturnValue(100);
+
+    spectator.component.ngAfterViewInit();
+
+    const expandButton = await loader.getHarness(MatButtonHarness.with({ text: 'Expand' }));
+    expect(expandButton).toExist();
+
+    await expandButton.click();
+
+    const collapseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Collapse' }));
+    expect(collapseButton).toExist();
   });
 });
