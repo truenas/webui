@@ -37,17 +37,19 @@ export class FailoverStatusComponent {
   };
 
   protected statusMessage = computed(() => {
+    const disabledReasons = this.disabledReasons();
+    if (!disabledReasons) {
+      return this.translate.instant('Checking HA status');
+    }
+
     switch (true) {
-      case !this.disabledReasons(): {
-        return this.translate.instant('Checking HA status');
-      }
-      case this.disabledReasons().length === 0: {
+      case disabledReasons.length === 0: {
         return this.translate.instant('HA is enabled.');
       }
-      case this.disabledReasons()[0] === FailoverDisabledReason.NoSystemReady: {
+      case disabledReasons[0] === FailoverDisabledReason.NoSystemReady: {
         return this.translate.instant('HA is reconnecting.');
       }
-      case this.disabledReasons()[0] === FailoverDisabledReason.NoFailover:
+      case disabledReasons[0] === FailoverDisabledReason.NoFailover:
         return this.translate.instant('HA is administratively disabled.');
       default: {
         return this.translate.instant('HA is in a faulted state');
@@ -55,7 +57,7 @@ export class FailoverStatusComponent {
     }
   });
 
-  protected areReasonsShown = computed(() => this.disabledReasons()?.length > 1);
+  protected areReasonsShown = computed(() => Number(this.disabledReasons()?.length) > 1);
 
   constructor(
     private translate: TranslateService,

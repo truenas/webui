@@ -69,13 +69,13 @@ export class SnapshotAddFormComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotWrite];
 
   isFormLoading = true;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
       atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
-      (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
+      (control: AbstractControl) => control.value && control.parent?.get('naming_schema')?.value,
       this.validatorsService.withMessage(
         requiredEmpty(),
         this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),

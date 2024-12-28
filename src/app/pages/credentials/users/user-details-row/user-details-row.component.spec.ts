@@ -36,15 +36,15 @@ const dummyUser = {
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
+  sudo_commands: [] as string[],
+  sudo_commands_nopasswd: [] as string[],
   email: 'test-user@test-user.com',
   group: {
     id: 41,
     bsdgrp_gid: 0,
     bsdgrp_group: 'test-user',
   },
-  groups: [],
+  groups: [] as number[],
 } as User;
 
 describe('UserDetailsRowComponent', () => {

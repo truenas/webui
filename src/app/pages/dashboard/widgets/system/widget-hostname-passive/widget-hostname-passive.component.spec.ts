@@ -35,7 +35,7 @@ describe('WidgetHostnamePassiveComponent', () => {
       ],
     });
 
-    const widget = spectator.query(WidgetDatapointComponent);
+    const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
     expect(widget.text()).toBe('truenas.com');
   });

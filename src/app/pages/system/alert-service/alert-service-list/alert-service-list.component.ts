@@ -79,13 +79,13 @@ export class AlertServiceListComponent implements OnInit {
       title: this.translate.instant('Type'),
       propertyName: 'type',
       getValue: (service) => this.translate.instant(
-        alertServiceNames.find((alertService) => alertService.value === service.type).label,
+        alertServiceNames.find((alertService) => alertService.value === service.type)?.label,
       ),
     }),
     textColumn({
       title: this.translate.instant('Level'),
       propertyName: 'level',
-      getValue: (service) => this.translate.instant(alertLevelLabels.get(service.level)),
+      getValue: (service) => this.translate.instant(alertLevelLabels.get(service.level) || service.level),
     }),
     textColumn({
       title: this.translate.instant('Enabled'),

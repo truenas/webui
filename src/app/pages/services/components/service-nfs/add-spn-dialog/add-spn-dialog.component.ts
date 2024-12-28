@@ -37,7 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class AddSpnDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
 
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
@@ -53,9 +53,10 @@ export class AddSpnDialogComponent {
   ) { }
 
   onSubmit(): void {
+    const value = this.form.getRawValue();
     const payload = {
-      username: this.form.value.username,
-      password: this.form.value.password,
+      username: value.username,
+      password: value.password,
     };
 
     this.api.call('nfs.add_principal', [payload])

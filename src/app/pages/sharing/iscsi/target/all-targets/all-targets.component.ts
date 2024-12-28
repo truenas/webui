@@ -46,7 +46,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class AllTargetsComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<IscsiTarget>;
-  targets = signal<IscsiTarget[]>(null);
+  targets = signal<IscsiTarget[] | null>(null);
 
   readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,

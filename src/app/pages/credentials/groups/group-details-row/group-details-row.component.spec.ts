@@ -29,7 +29,7 @@ const dummyGroup = {
   group: 'dummy',
   builtin: false,
   smb: true,
-  users: [],
+  users: [] as number[],
 } as Group;
 
 describe('GroupDetailsRowComponent', () => {

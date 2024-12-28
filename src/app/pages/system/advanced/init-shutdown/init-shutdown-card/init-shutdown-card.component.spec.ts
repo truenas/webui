@@ -45,8 +45,7 @@ describe('InitShutdownCardComponent', () => {
       comment: 'Greeting',
       timeout: 20,
       type: InitShutdownScriptType.Command,
-    },
-
+    } as InitShutdownScript,
   ] as InitShutdownScript[];
 
   const createComponent = createComponentFactory({

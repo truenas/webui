@@ -96,7 +96,7 @@ describe('AcmednsFormComponent', () => {
     it('shows values for an existing DNS Authenticator when form is opened for edit', async () => {
       spectator.component.ngOnInit();
 
-      let authenticator: Option[];
+      let authenticator: Option[] = [];
       spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');

@@ -45,7 +45,7 @@ describe('InterfaceFormComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let form: IxFormHarness;
-  let aliasesList: IxListHarness;
+  let aliasesList: IxListHarness | null;
   const existingInterface = {
     id: 'enp0s6',
     name: 'enp0s6',
@@ -152,7 +152,7 @@ describe('InterfaceFormComponent', () => {
       await form.fillForm({
         Type: 'Bridge',
       });
-      await aliasesList.pressAddButton();
+      await aliasesList!.pressAddButton();
 
       await form.fillForm({
         Name: 'br0',
@@ -455,7 +455,7 @@ describe('InterfaceFormComponent', () => {
     it('shows Failover Critical and Failover Group when failover is enabled', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
-      await aliasesList.pressAddButton();
+      await aliasesList!.pressAddButton();
       await form.fillForm({
         Type: 'Bridge',
         Name: 'br0',

@@ -24,7 +24,7 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 
 describe('PoolsViewComponent', () => {
   let spectator: Spectator<PoolsViewComponent>;
-  const selectedSlot = signal<DashboardEnclosureSlot>(null);
+  const selectedSlot = signal<DashboardEnclosureSlot | null>(null);
   const createComponent = createComponentFactory({
     component: PoolsViewComponent,
     imports: [

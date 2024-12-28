@@ -245,34 +245,35 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(): void {
-    if (!this.existing()) {
+    const existing = this.existing();
+    if (!existing) {
       return;
     }
 
-    let specialSmallBlockSize = getFieldValue(this.existing().special_small_block_size, this.parent()) as (number | 'INHERIT');
+    let specialSmallBlockSize = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
     this.form.patchValue({
-      comments: this.existing().comments?.source === ZfsPropertySource.Local ? this.existing().comments.value : '',
-      sync: getFieldValue(this.existing().sync, this.parent()),
-      compression: getFieldValue(this.existing().compression, this.parent()),
-      atime: getFieldValue(this.existing().atime, this.parent()),
-      deduplication: getFieldValue(this.existing().deduplication, this.parent()),
-      checksum: getFieldValue(this.existing().checksum, this.parent()),
-      readonly: getFieldValue(this.existing().readonly, this.parent()),
-      exec: getFieldValue(this.existing().exec, this.parent()),
-      recordsize: getFieldValue(this.existing().recordsize, this.parent()),
-      snapdir: this.existing().snapdir?.value,
-      snapdev: getFieldValue(this.existing().snapdev, this.parent()),
-      copies: this.existing().copies
-        ? Number(this.existing().copies.value)
+      comments: existing.comments?.source === ZfsPropertySource.Local ? existing.comments.value : '',
+      sync: getFieldValue(existing.sync, this.parent()),
+      compression: getFieldValue(existing.compression, this.parent()),
+      atime: getFieldValue(existing.atime, this.parent()),
+      deduplication: getFieldValue(existing.deduplication, this.parent()),
+      checksum: getFieldValue(existing.checksum, this.parent()),
+      readonly: getFieldValue(existing.readonly, this.parent()),
+      exec: getFieldValue(existing.exec, this.parent()),
+      recordsize: getFieldValue(existing.recordsize, this.parent()),
+      snapdir: existing.snapdir?.value,
+      snapdev: getFieldValue(existing.snapdev, this.parent()),
+      copies: existing.copies
+        ? Number(existing.copies.value)
         : null,
-      acltype: getFieldValue(this.existing().acltype, this.parent()) as DatasetAclType,
-      aclmode: getFieldValue(this.existing().aclmode, this.parent()) as AclMode,
-      casesensitivity: this.existing().casesensitivity?.value,
-      special_small_block_size: this.existing().special_small_block_size
+      acltype: getFieldValue(existing.acltype, this.parent()) as DatasetAclType,
+      aclmode: getFieldValue(existing.aclmode, this.parent()) as AclMode,
+      casesensitivity: existing.casesensitivity?.value,
+      special_small_block_size: existing.special_small_block_size
         ? specialSmallBlockSize
         : null,
     });

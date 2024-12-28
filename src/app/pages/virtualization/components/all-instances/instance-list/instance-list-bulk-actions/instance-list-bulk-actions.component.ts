@@ -45,7 +45,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 
 export class InstanceListBulkActionsComponent {
-  readonly checkedInstances = input<VirtualizationInstance[]>();
+  readonly checkedInstances = input.required<VirtualizationInstance[]>();
   readonly resetBulkSelection = output();
 
   protected readonly requiredRoles = [Role.VirtInstanceWrite];

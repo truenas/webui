@@ -40,7 +40,7 @@ const adminUsername = 'truenas_admin';
 export class SetAdminPasswordFormComponent {
   isLoading$ = this.signinStore.isLoading$;
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     username: [adminUsername, Validators.required],
     password: ['', Validators.required],
     password2: ['', [
@@ -66,7 +66,7 @@ export class SetAdminPasswordFormComponent {
   ) { }
 
   onSubmit(): void {
-    const { username, password } = this.form.value;
+    const { username, password } = this.form.getRawValue();
     this.signinStore.setLoadingState(true);
 
     const request$ = this.api.call('user.setup_local_administrator', [username, password]);

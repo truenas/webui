@@ -45,7 +45,7 @@ describe('WidgetSystemUptimeComponent', () => {
     });
 
     it('renders System Uptime for the current system', () => {
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('23 hours 12 minutes as of 10:34');
       expect(widget.label()).toBe('System Uptime');

@@ -48,7 +48,7 @@ describe('SlideInComponent', () => {
 
   it('call \'openSlideIn\' should create a host element in the body of the slide', () => {
     spectator.component.openSlideIn(TestClassComponent, { wide: true, data: 'Component created dynamically' });
-    const dynamicElement: HTMLElement = (spectator.debugElement.nativeElement as Element).querySelector('h1');
+    const dynamicElement = (spectator.debugElement.nativeElement as Element).querySelector('h1');
     spectator.fixture.detectChanges();
 
     expect(dynamicElement).toHaveText('Component created dynamically');
@@ -62,7 +62,7 @@ describe('SlideInComponent', () => {
     spectator.component.closeSlideIn();
 
     spectator.tick(200);
-    const dynamicElement: HTMLElement = (spectator.debugElement.nativeElement as Element).querySelector('.ix-slide-in-body');
+    const dynamicElement = (spectator.debugElement.nativeElement as Element).querySelector('.ix-slide-in-body');
     expect(dynamicElement).toBeEmpty();
   }));
 });

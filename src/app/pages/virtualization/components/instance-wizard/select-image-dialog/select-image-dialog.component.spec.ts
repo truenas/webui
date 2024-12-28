@@ -82,7 +82,7 @@ describe('SelectImageDialogComponent', () => {
 
     it('shows the rows', () => {
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent.trim());
+        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
       });
 
       expect(rows).toEqual([
@@ -98,7 +98,7 @@ describe('SelectImageDialogComponent', () => {
       });
 
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent.trim());
+        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
       });
 
       expect(rows).toEqual([

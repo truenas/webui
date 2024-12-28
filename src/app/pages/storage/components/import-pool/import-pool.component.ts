@@ -61,7 +61,7 @@ export class ImportPoolComponent implements OnInit {
     guid: string;
   }[] = [];
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     guid: ['' as string, Validators.required],
   });
 
@@ -117,7 +117,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()

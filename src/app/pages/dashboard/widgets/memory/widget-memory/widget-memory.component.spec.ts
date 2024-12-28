@@ -76,7 +76,7 @@ describe('WidgetMemoryComponent', () => {
   });
 
   it('shows a chart with memory stats', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     expect(chart).not.toBeNull();
     expect(chart.type).toBe('doughnut');
 

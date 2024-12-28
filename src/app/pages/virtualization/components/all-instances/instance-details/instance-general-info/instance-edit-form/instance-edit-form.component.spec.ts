@@ -32,7 +32,7 @@ describe('InstanceEditFormComponent', () => {
     autostart: false,
     cpu: '1-3',
     memory: 2 * GiB,
-    environment: null,
+    environment: {},
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({

@@ -185,7 +185,7 @@ describe('IxSlideIn2Component', () => {
 
   it('close slide-in when backdrop is clicked', fakeAsync(() => {
     setupComponent();
-    const backdrop = spectator.query('.ix-slide-in2-background');
+    const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
     spectator.detectChanges();
     expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
@@ -203,7 +203,7 @@ describe('IxSlideIn2Component', () => {
 
   it('asks for confirmation when require confirmation method setup', fakeAsync(() => {
     setupComponent();
-    const form = spectator.query(CloudSyncFormComponent);
+    const form = spectator.query(CloudSyncFormComponent)!;
     form.form.markAsDirty();
     spectator.detectChanges();
     const backdrop = spectator.query('.ix-slide-in2-background');
@@ -232,7 +232,7 @@ describe('IxSlideIn2Component', () => {
     await saveButton.click();
     form.form.markAsDirty();
     spectator.detectChanges();
-    const backdrop = spectator.query('.ix-slide-in2-background');
+    const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
 
     expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalledWith({

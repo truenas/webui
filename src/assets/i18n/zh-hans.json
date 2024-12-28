@@ -1,5 +1,6 @@
 {
   "": "",
+  "-": "",
   "...": "",
   "Api Keys": "",
   "Both": "",
@@ -10,6 +11,7 @@
   "Deleted {n, plural, one {# snapshot} other {# snapshots} }": "",
   "Do not connect to a fibre channel port": "",
   "Existing Ports": "",
+  "New Cloud Credential": "",
   "Protocol Options": "",
   "Use an existing port": "",
   "Use current port": "",
@@ -2902,7 +2904,6 @@
   "New Certificate Signing Requests": "新的证书签名请求",
   "New Cloud Backup": "新的云备份",
   "New Cloud Sync Task": "新的云同步任务",
-  "New Could Credential": "新可以凭证",
   "New Credential": "新凭据",
   "New Cron Job": "新的定时任务",
   "New DNS Authenticator": "新的DNS身份验证器",

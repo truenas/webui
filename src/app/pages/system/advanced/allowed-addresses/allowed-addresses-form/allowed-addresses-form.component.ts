@@ -57,7 +57,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   protected readonly helpText = helptextSystemAdvanced;
 
   isFormLoading = true;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     addresses: this.fb.array<string>([]),
   });
 

@@ -35,7 +35,7 @@ import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/u
   ],
 })
 export class CsrImportComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     CSR: ['', Validators.required],
     privatekey: ['', Validators.required],
     passphrase: [''],
@@ -58,7 +58,7 @@ export class CsrImportComponent implements SummaryProvider {
   ) {}
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const csrPreview = getCertificatePreview(values.CSR);
 
     const summary: SummarySection = [

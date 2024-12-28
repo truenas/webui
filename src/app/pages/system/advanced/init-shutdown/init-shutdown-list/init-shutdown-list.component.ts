@@ -71,7 +71,7 @@ export class InitShutdownListComponent implements OnInit {
       title: this.translate.instant('Type'),
       propertyName: 'type',
       getValue: (row) => {
-        const typeLabel = initShutdownScriptTypeLabels.get(row.type);
+        const typeLabel = initShutdownScriptTypeLabels.get(row.type) || row.type;
         return this.translate.instant(typeLabel);
       },
     }),
@@ -83,7 +83,7 @@ export class InitShutdownListComponent implements OnInit {
       title: this.translate.instant('When'),
       propertyName: 'when',
       getValue: (row) => {
-        const whenLabel = initShutdownScriptWhenLabels.get(row.when);
+        const whenLabel = initShutdownScriptWhenLabels.get(row.when) || row.when;
         return this.translate.instant(whenLabel);
       },
     }),

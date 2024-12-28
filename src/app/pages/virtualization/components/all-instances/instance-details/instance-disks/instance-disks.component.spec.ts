@@ -85,7 +85,7 @@ describe('InstanceDisksComponent', () => {
   });
 
   it('opens disk for for edit when actions menu emits (edit)', () => {
-    const actionsMenu = spectator.query(DeviceActionsMenuComponent);
+    const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
     actionsMenu.edit.emit();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(

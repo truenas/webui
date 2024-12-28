@@ -38,7 +38,7 @@ export class ConnectionsCardComponent {
   readonly target = input.required<IscsiTarget>();
 
   isLoading = signal<boolean>(false);
-  sessions = signal<IscsiGlobalSession[]>(null);
+  sessions = signal<IscsiGlobalSession[] | null>(null);
 
   constructor(
     private api: ApiService,

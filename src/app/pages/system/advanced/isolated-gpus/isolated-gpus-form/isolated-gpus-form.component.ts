@@ -51,6 +51,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   formGroup = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
+      nonNullable: true,
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });

@@ -1,6 +1,7 @@
 {
   "": "",
   "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "",
+  "-": "",
   "1m Average": "",
   "<i>This option is experimental in rclone and we recommend you do not use it.  It may not work correctly with long filenames.</i><br><br>  Encrypt (<i>PUSH</i>) or decrypt  (<i>PULL</i>) file names with the rclone  <a href=\"https://rclone.org/crypt/#file-name-encryption-modes\" target=\"_blank\">\"Standard\" file name encryption mode</a>.  The original directory structure is preserved. A filename with the same  name always has the same encrypted filename.<br><br>  <i>PULL</i> tasks that have <b>Filename Encryption</b> enabled and an  incorrect <b>Encryption Password</b> or <b>Encryption Salt</b> will not  transfer any files but still report that the task was successful. To  verify that files were transferred successfully, click the finished  task status to see a list of transferred files.": "",
   "<p>The system will restart to perform this operation!</p> <p><font color=\"red\">All passwords are reset when the  uploaded configuration database file was saved  without the Password Secret Seed. </font></p>": "",
@@ -219,6 +220,7 @@
   "Network Reconnection Issue": "",
   "Network Reset": "",
   "Network size of each docker network which will be cut off from base subnet.": "",
+  "New Cloud Credential": "",
   "No NICs added.": "",
   "No connections": "",
   "No containers are available.": "",
@@ -3077,7 +3079,6 @@
   "New Certificate Signing Requests": "Iarratais Nua ar Shíniú Teastais",
   "New Cloud Backup": "Cúltaca Néal Nua",
   "New Cloud Sync Task": "Tasc Nua Sync Cloud",
-  "New Could Credential": "Dintiúir Níorbh fhéidir Nua",
   "New Credential": "Dintiúir Nua",
   "New Cron Job": "Job Nua Cron",
   "New DNS Authenticator": "Fíordheimhnitheoir DNS nua",

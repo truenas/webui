@@ -1,5 +1,6 @@
 {
   "": "",
+  "-": "",
   "Burst": "",
   "Change Session Timeout in": "",
   "Change from <i>public</i> to increase system security. Can only contain alphanumeric characters, underscores, dashes, periods, and spaces. This can be left empty for <i>SNMPv3</i> networks.": "",
@@ -541,7 +542,7 @@
   "Network interfaces to include in the bridge.": "",
   "Network size of each docker network which will be cut off from base subnet.": "",
   "Networking": "",
-  "New Could Credential": "",
+  "New Cloud Credential": "",
   "Newer Clone": "",
   "Newer Intermediate, Child, and Clone": "",
   "No Communication Warning Time": "",

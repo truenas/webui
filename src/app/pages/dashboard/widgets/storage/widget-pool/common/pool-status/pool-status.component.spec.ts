@@ -15,7 +15,7 @@ describe('PoolStatusComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        pool: null,
+        pool: undefined,
       },
     });
   });

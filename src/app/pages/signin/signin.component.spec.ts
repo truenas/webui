@@ -134,7 +134,7 @@ describe('SigninComponent', () => {
       hasFailover$.next(true);
       spectator.detectChanges();
 
-      const failoverStatus = spectator.query(FailoverStatusComponent);
+      const failoverStatus = spectator.query(FailoverStatusComponent)!;
       expect(failoverStatus).toExist();
       expect(failoverStatus.disabledReasons).toEqual([FailoverDisabledReason.NoPong]);
       expect(failoverStatus.status).toEqual(FailoverStatus.Error);

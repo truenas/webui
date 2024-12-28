@@ -22,7 +22,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 export class WidgetDatapointComponent {
   size = input.required<SlotSize>();
   label = input<string>();
-  text = input<string>();
+  text = input.required<string>();
   subText = input<string>();
 
   get maxFontSize(): number {

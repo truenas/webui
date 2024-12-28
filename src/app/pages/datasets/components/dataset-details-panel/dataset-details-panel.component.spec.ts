@@ -124,23 +124,23 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   it('shows all the cards', () => {
-    const datasetDetailsCard = spectator.query(DatasetDetailsCardComponent);
+    const datasetDetailsCard = spectator.query(DatasetDetailsCardComponent)!;
     expect(datasetDetailsCard).toBeTruthy();
     expect(datasetDetailsCard.dataset).toBe(dataset);
 
-    const dataProtectionCard = spectator.query(DataProtectionCardComponent);
+    const dataProtectionCard = spectator.query(DataProtectionCardComponent)!;
     expect(dataProtectionCard).toBeTruthy();
     expect(dataProtectionCard.dataset).toStrictEqual(datasetDetails);
 
-    const permissionsCard = spectator.query(PermissionsCardComponent);
+    const permissionsCard = spectator.query(PermissionsCardComponent)!;
     expect(permissionsCard).toBeTruthy();
     expect(permissionsCard.dataset).toStrictEqual(datasetDetails);
 
-    const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent);
+    const zfsEncryptionCard = spectator.query(ZfsEncryptionCardComponent)!;
     expect(zfsEncryptionCard).toBeTruthy();
     expect(zfsEncryptionCard.dataset).toStrictEqual(datasetDetails);
 
-    const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent);
+    const datasetCapacityManagementCard = spectator.query(DatasetCapacityManagementCardComponent)!;
     expect(datasetCapacityManagementCard).toBeTruthy();
     expect(datasetCapacityManagementCard.dataset).toStrictEqual(datasetDetails);
   });

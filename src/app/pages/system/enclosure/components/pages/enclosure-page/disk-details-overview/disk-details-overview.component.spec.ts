@@ -60,7 +60,7 @@ describe('DiskDetailsOverviewComponent', () => {
   });
 
   it('shows disk icon component', () => {
-    const diskIcon = spectator.query(DiskIconComponent);
+    const diskIcon = spectator.query(DiskIconComponent)!;
     expect(diskIcon).toExist();
     expect(diskIcon.type).toBe(DiskType.Hdd);
     expect(diskIcon.size).toBe(100 * GiB);
@@ -68,7 +68,7 @@ describe('DiskDetailsOverviewComponent', () => {
   });
 
   it('shows disks overview details', () => {
-    const component = spectator.query(DiskDetailsComponent);
+    const component = spectator.query(DiskDetailsComponent)!;
     expect(component).toExist();
     expect(component.selectedSlot).toBe(initialSelectedSlot);
   });

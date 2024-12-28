@@ -44,10 +44,10 @@ describe('EnclosureSelectorComponent', () => {
     expect(enclosureElements[0]).toHaveText('M40 (1)');
     expect(enclosureElements[1]).toHaveText('ES24N (2)');
 
-    const enclosureSvg1 = spectator.query(EnclosureSideComponent, { parentSelector: '.enclosure:first-of-type' });
+    const enclosureSvg1 = spectator.query(EnclosureSideComponent, { parentSelector: '.enclosure:first-of-type' })!;
     expect(enclosureSvg1.enclosure).toBe(enclosures[0]);
 
-    const enclosureSvg2 = spectator.query(EnclosureSideComponent, { parentSelector: '.enclosure:last-of-type' });
+    const enclosureSvg2 = spectator.query(EnclosureSideComponent, { parentSelector: '.enclosure:last-of-type' })!;
     expect(enclosureSvg2.enclosure).toBe(enclosures[1]);
   });
 

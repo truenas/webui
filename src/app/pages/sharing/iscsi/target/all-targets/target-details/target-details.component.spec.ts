@@ -91,7 +91,7 @@ describe('TargetDetailsComponent', () => {
       target: {
         id: 2,
         mode: 'FC',
-        auth_networks: [],
+        auth_networks: [] as string[],
       } as IscsiTarget,
     });
 

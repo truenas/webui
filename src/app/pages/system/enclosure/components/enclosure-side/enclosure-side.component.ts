@@ -29,7 +29,7 @@ export class EnclosureSideComponent {
   /**
    * When side is not provided will default to showing front or top, depending on what's available.
    */
-  readonly side = input<EnclosureSide>(undefined);
+  readonly side = input<EnclosureSide | undefined>(undefined);
 
   readonly sideSlots = computed(() => {
     return getSlotsOfSide(this.enclosure(), this.shownSide());

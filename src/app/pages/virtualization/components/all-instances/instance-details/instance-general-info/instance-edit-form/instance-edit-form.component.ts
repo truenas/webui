@@ -108,7 +108,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });

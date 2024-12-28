@@ -40,7 +40,7 @@ describe('InitShutdownListComponent', () => {
       enabled: false,
       type: InitShutdownScriptType.Command,
       comment: 'Remove Peter files',
-    },
+    } as InitShutdownScript,
   ] as InitShutdownScript[];
 
   const createComponent = createComponentFactory({

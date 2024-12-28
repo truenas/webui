@@ -24,7 +24,7 @@ export interface EnclosureState {
   selectedEnclosureIndex: number;
   selectedSlotNumber: number | null;
   selectedView: EnclosureView;
-  selectedSide: EnclosureSide;
+  selectedSide: EnclosureSide | undefined;
 }
 
 const initialState: EnclosureState = {

@@ -61,7 +61,7 @@ describe('CpuCoreBarComponent', () => {
   });
 
   it('shows a chart with cpu stats', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     expect(chart).not.toBeNull();
     expect(chart.type).toBe('bar');
 

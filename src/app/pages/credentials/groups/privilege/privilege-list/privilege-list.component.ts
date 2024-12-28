@@ -80,7 +80,7 @@ export class PrivilegeListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Roles'),
       getValue: (row) => row.roles.map((role) => {
-        return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
+        return this.translate.instant(roleNames.get(role) || role);
       }).join(', ') || this.translate.instant('N/A'),
       disableSorting: true,
     }),
@@ -137,8 +137,8 @@ export class PrivilegeListComponent implements OnInit {
 
   private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
     map((roles) => roles.map((key) => ({
-      label: this.translate.instant(roleNames.get(key)),
-      value: `"${this.translate.instant(roleNames.get(key))}"`,
+      label: this.translate.instant(roleNames.get(key) || key),
+      value: `"${this.translate.instant(roleNames.get(key) || key)}"`,
     }))),
   );
 
