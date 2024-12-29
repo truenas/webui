@@ -173,7 +173,7 @@ export class SshConnectionFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<KeychainSshCredentials>,
+    public slideInRef: SlideInRef<KeychainSshCredentials, KeychainCredential | null>,
   ) { }
 
   ngOnInit(): void {

@@ -9,9 +9,9 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { SlideInResponse } from 'app/services/slide-in';
 
 @Component({
   selector: 'ix-cloud-credentials-select',

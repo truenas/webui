@@ -1,45 +1,19 @@
-import { ComponentType } from '@angular/cdk/portal';
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
   Observable, Subject, take, tap, timer,
 } from 'rxjs';
+import {
+  ComponentInSlideIn,
+  ComponentSerialized,
+  IncomingSlideInComponent,
+  SlideInComponent,
+  SlideInResponse,
+  SlideInState,
+} from 'app/modules/slide-ins/slide-in.interface';
 import { FocusService } from 'app/services/focus.service';
-
-export interface IncomingSlideInComponent {
-  component: ComponentType<unknown>;
-  wide: boolean;
-  data: unknown;
-  swapComponentId?: string;
-}
-
-export interface SlideInState {
-  components: Map<string, SlideInComponent>;
-}
-
-export interface SlideInComponent {
-  component: Type<unknown>;
-  close$: Subject<SlideInResponse>;
-  wide: boolean;
-  data: unknown;
-  isComponentAlive?: boolean;
-}
-
-export interface SlideInResponse<T = unknown> {
-  response: T;
-  error: unknown;
-}
-
-export interface ComponentSerialized {
-  id: string;
-  component: Type<unknown>;
-  close$: Subject<SlideInResponse>;
-  data?: unknown;
-  wide?: boolean;
-  isComponentAlive?: boolean;
-}
 
 @UntilDestroy()
 // eslint-disable-next-line angular-file-naming/service-filename-suffix
@@ -83,16 +57,15 @@ export class SlideIn extends ComponentStore<SlideInState> {
     };
   });
 
-  // TODO: Update second argument to options
-  open(
-    component: Type<unknown>,
-    options?: { wide?: boolean; data?: unknown },
-  ): Observable<SlideInResponse> {
-    const close$ = new Subject<SlideInResponse>();
+  open<D, R>(
+    component: ComponentInSlideIn<D, R>,
+    options?: { wide?: boolean; data?: D },
+  ): Observable<SlideInResponse<R>> {
+    const close$ = new Subject<SlideInResponse<R>>();
     this.pushComponentToStore({
       component,
-      wide: options.wide || false,
-      data: options.data,
+      wide: options?.wide || false,
+      data: options?.data,
       close$,
       isComponentAlive: true,
     });

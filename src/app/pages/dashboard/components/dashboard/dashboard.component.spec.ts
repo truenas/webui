@@ -15,6 +15,8 @@ import { NewFeatureIndicatorDirective } from 'app/directives/new-feature-indicat
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
@@ -26,7 +28,6 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
-import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };

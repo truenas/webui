@@ -98,7 +98,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
-    private slideInRef: SlideInRef<SedConfig>,
+    public slideInRef: SlideInRef<SedConfig, boolean>,
   ) {
     this.sedConfig = this.slideInRef.getData();
   }

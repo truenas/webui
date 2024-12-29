@@ -7,10 +7,11 @@ import { Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ComponentSerialized, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { SlideInResponse, ComponentSerialized, SlideIn } from 'app/services/slide-in';
 
 describe('ModalHeader2Component', () => {
   let spectator: Spectator<ModalHeaderComponent>;

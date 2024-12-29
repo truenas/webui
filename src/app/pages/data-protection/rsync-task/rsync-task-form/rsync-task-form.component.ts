@@ -149,7 +149,7 @@ export class RsyncTaskFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
     private validatorsService: IxValidatorsService,
-    private slideInRef: SlideInRef<RsyncTask>,
+    public slideInRef: SlideInRef<RsyncTask | undefined, RsyncTask | false>,
   ) {
     this.editingTask = this.slideInRef.getData();
   }
@@ -206,7 +206,7 @@ export class RsyncTaskFormComponent implements OnInit {
     delete values.sshconnectmode;
 
     this.isLoading = true;
-    let request$: Observable<unknown>;
+    let request$: Observable<RsyncTask>;
     if (this.isNew) {
       request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
     } else {

@@ -6,12 +6,12 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
 import { VirtualizationStateComponent } from 'app/pages/virtualization/components/all-instances/all-instances-header/virtualization-state/virtualization-state.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { SlideIn } from 'app/services/slide-in';
 import { AllInstancesHeaderComponent } from './all-instances-header.component';
 
 describe('AllInstancesHeaderComponent', () => {

@@ -21,7 +21,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
-interface FormOptions {
+interface InstanceDiskFormOptions {
   instanceId: string;
   disk: VirtualizationDisk | undefined;
 }
@@ -65,7 +65,7 @@ export class InstanceDiskFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: SlideInRef<FormOptions>,
+    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystem: FilesystemService,

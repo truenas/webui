@@ -12,10 +12,10 @@ import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AuthService } from 'app/services/auth/auth.service';
-import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
@@ -52,7 +52,7 @@ export class ModalHeaderComponent implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private slideIn: SlideIn,
-    private slideInRef: SlideInRef<unknown>,
+    private slideInRef: SlideInRef<unknown, false>,
     private authService: AuthService,
   ) {}
 

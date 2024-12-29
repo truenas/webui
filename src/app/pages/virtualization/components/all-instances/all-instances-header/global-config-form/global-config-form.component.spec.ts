@@ -86,7 +86,7 @@ describe('GlobalConfigFormComponent', () => {
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: undefined,
+      response: true,
       error: false,
     });
   });

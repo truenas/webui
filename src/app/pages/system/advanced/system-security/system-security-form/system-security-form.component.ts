@@ -56,7 +56,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<SystemSecurityConfig>,
+    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   GlobalConfigFormComponent,
@@ -14,7 +15,6 @@ import {
 import {
   VirtualizationConfigStore,
 } from 'app/pages/virtualization/stores/virtualization-config.store';
-import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
