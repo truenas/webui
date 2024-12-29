@@ -17,10 +17,12 @@ import {
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { makeRequestMessage } from 'app/helpers/api.helper';
+import { isErrorResponse, makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { RequestMessage, IncomingMessage } from 'app/interfaces/api-message.interface';
+import {
+  RequestMessage, IncomingMessage,
+} from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
 
@@ -71,8 +73,6 @@ export class WebSocketHandlerService {
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
 
-  private subscriptionIds: Record<string, number> = {};
-
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -113,7 +113,11 @@ export class WebSocketHandlerService {
     return this.responses$.pipe(
       filter((message) => 'id' in message && message.id === call.id),
       take(1),
-      tap(() => {
+      tap((message) => {
+        // Following `if` block needs to be removed once NAS-131829 is resolved
+        if (isErrorResponse(message)) {
+          console.error('Error: ', message.error);
+        }
         this.activeCalls--;
         this.pendingCalls.delete(call.id);
         this.triggerNextCall$.next();
