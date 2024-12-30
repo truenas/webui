@@ -6,6 +6,8 @@ export const jobsListElements = {
   anchorRouterLink: ['/jobs'],
   synonyms: [T('Jobs History'), T('Completed Jobs'), T('Failed Jobs'), T('Jobs in progress'), T('History')],
   elements: {
-    jobs: {},
+    jobs: {
+      anchor: 'jobs',
+    },
   },
 } satisfies UiSearchableElement;

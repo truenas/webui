@@ -6,6 +6,7 @@ export const replicationListElements = {
   anchorRouterLink: ['/data-protection', 'replication'],
   elements: {
     tasks: {
+      anchor: 'replication-tasks',
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {

@@ -5,6 +5,8 @@ export const networkElements = {
   hierarchy: [T('Network')],
   anchorRouterLink: ['/network'],
   elements: {
-    network: {},
+    network: {
+      anchor: 'network-dashboard',
+    },
   },
 } satisfies UiSearchableElement;
