@@ -11,11 +11,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -44,14 +44,16 @@ export class DataProtectionCardComponent {
   protected readonly searchableElements = dataProtectionCardElements;
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private snackbarService: SnackbarService,
     private translate: TranslateService,
   ) {}
 
   addSnapshot(): void {
-    const slideInRef = this.slideInService.open(SnapshotAddFormComponent, { data: this.dataset().id });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(SnapshotAddFormComponent, { data: this.dataset().id }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Snapshot added successfully.'));
     });
   }

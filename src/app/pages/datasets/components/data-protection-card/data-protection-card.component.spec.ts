@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { DataProtectionCardComponent } from './data-protection-card.component';
 
 describe('DataProtectionComponent', () => {
@@ -17,10 +17,8 @@ describe('DataProtectionComponent', () => {
     component: DataProtectionCardComponent,
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -63,7 +61,7 @@ describe('DataProtectionComponent', () => {
   });
 
   it('opens the snapshot add from when button clicked', async () => {
-    const slideInRef = spectator.inject(OldSlideInService);
+    const slideInRef = spectator.inject(SlideIn);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Snapshot' }));
     await editButton.click();
