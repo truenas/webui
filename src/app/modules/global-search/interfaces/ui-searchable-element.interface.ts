@@ -15,12 +15,12 @@ interface UiSearchableElementBase {
   visibleTokens?: GlobalSearchVisibleToken[];
 }
 
-type UiSearchableElementWithHierarchy = UiSearchableElementBase & {
+export type UiSearchableElementWithHierarchy = UiSearchableElementBase & {
   hierarchy: string[];
   anchor?: string;
 };
 
-type UiSearchableElementWithAnchor = UiSearchableElementBase & {
+export type UiSearchableElementWithAnchor = UiSearchableElementBase & {
   hierarchy?: never;
   anchor: string;
 };
