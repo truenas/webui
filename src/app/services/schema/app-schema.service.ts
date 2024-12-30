@@ -246,7 +246,7 @@ export class AppSchemaService {
   serializeFormValue(
     data: SerializeFormValue,
     appSchema: ChartSchema['schema'],
-    schemaNode: ChartSchemaNode = null,
+    schemaNode: ChartSchemaNode | null = null,
     schemaPathToNode: string = Object.keys(data || {})?.[0],
   ): SerializeFormValue {
     if (data == null) {

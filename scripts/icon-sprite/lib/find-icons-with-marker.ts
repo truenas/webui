@@ -10,7 +10,11 @@ export function findIconsWithMarker(path: string): Set<string> {
     .filter(Boolean)
     .forEach((line) => {
       const [, match] = line.split(':');
-      const value = match.match(/'([^']+)'/)[1];
+      const value = match.match(/'([^']+)'/)?.[1];
+      if (!value) {
+        return;
+      }
+
       icons.add(value);
     });
 

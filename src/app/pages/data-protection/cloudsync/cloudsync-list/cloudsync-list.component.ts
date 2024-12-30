@@ -348,7 +348,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
     this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
       if (task.id === row.id) {
         return {

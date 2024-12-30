@@ -79,7 +79,7 @@ export class AlertServiceListComponent implements OnInit {
       title: this.translate.instant('Type'),
       propertyName: 'type',
       getValue: (service) => this.translate.instant(
-        alertServiceNames.find((alertService) => alertService.value === service.type)?.label,
+        alertServiceNames.find((alertService) => alertService.value === service.type)?.label || '',
       ),
     }),
     textColumn({
@@ -110,7 +110,7 @@ export class AlertServiceListComponent implements OnInit {
     }),
   ], {
     uniqueRowTag: (row) => `disk-${row.name}`,
-    ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
+    ariaLabels: (row) => [row.name || '', this.translate.instant('Disk')],
   });
 
   private alertServices: AlertService[] = [];

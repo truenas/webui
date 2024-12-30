@@ -21,7 +21,7 @@ export class ReplicationService {
     transport: TransportMode;
     sshCredential: number;
   }): TreeNodeProvider {
-    let cachedDatasets: string[] = null;
+    let cachedDatasets: string[] | null = null;
 
     return (node: TreeNode<ExplorerNodeData>) => {
       const searchPath = node.data.path;

@@ -91,8 +91,8 @@ export class SlideIn extends ComponentStore<SlideInState> {
     const close$ = new Subject<SlideInResponse>();
     this.pushComponentToStore({
       component,
-      wide: options.wide || false,
-      data: options.data,
+      wide: options?.wide || false,
+      data: options?.data,
       close$,
       isComponentAlive: true,
     });

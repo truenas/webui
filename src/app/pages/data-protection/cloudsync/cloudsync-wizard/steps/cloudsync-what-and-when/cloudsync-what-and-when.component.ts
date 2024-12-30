@@ -84,14 +84,14 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   readonly save = output();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
     path_destination: [[mntPath], Validators.required],
     path_source: [[mntPath], Validators.required],
 
-    credentials: [null as number],
+    credentials: [null as number | null],
     bucket: [''],
     bucket_input: ['', Validators.required],
     acknowledge_abuse: [false],

@@ -59,7 +59,7 @@ export class InspectVdevsDialogComponent implements OnInit {
   ) {}
 
   getTypeLabel(type: VdevType): string {
-    return vdevTypeLabels.get(type);
+    return vdevTypeLabels.get(type) || type;
   }
 
   ngOnInit(): void {

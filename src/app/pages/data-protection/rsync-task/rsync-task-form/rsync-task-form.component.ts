@@ -88,13 +88,13 @@ export class RsyncTaskFormComponent implements OnInit {
     desc: [''],
     mode: [RsyncMode.Module],
     remotehost: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     ssh_keyscan: [false],
     remoteport: [22, portRangeValidator()],
     remotemodule: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     remotepath: [mntPath],

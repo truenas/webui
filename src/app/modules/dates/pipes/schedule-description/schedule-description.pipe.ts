@@ -28,7 +28,7 @@ export class ScheduleDescriptionPipe implements PipeTransform {
 
       const description = cronstrue.toString(crontab, cronstrueOptions);
 
-      if ('begin' in schedule && 'end' in schedule) {
+      if (schedule.begin && schedule.end) {
         return this.translate.instant('{crontabDescription}, from {startHour} to {endHour}', {
           crontabDescription: description,
           startHour: this.formatTime(schedule.begin),

@@ -42,7 +42,12 @@ export class MiniPageComponent {
   readonly isLoading = this.store.isLoading;
 
   readonly slots = computed(() => {
-    return getSlotsOfSide(this.store.selectedEnclosure(), EnclosureSide.Front);
+    const enclosure = this.store.selectedEnclosure();
+    if (!enclosure) {
+      return [];
+    }
+
+    return getSlotsOfSide(enclosure, EnclosureSide.Front);
   });
 
   constructor(

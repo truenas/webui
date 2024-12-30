@@ -89,7 +89,7 @@ describe('ReviewWizardStepComponent', () => {
   });
 
   function getSummaryItem(name: string): string {
-    return spectator.query(byTextContent(name, { selector: '.summary-item .label' })).nextSibling.textContent.trim();
+    return spectator.query(byTextContent(name, { selector: '.summary-item .label' }))!.nextSibling!.textContent!.trim();
   }
 
   describe('buttons', () => {
@@ -213,11 +213,11 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows list of validation errors from store', () => {
-      const errorItem = spectator.query('.error.summary-item');
+      const errorItem = spectator.query('.error.summary-item')!;
       expect(errorItem).toBeTruthy();
       expect(errorItem.innerHTML).toBe(' Some error #1 ');
 
-      const warningItem = spectator.query('.warning.summary-item');
+      const warningItem = spectator.query('.warning.summary-item')!;
       expect(warningItem).toBeTruthy();
       expect(warningItem.innerHTML).toBe(' Some warning #1 ');
     });
