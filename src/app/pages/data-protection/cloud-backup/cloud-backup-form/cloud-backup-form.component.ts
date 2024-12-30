@@ -146,6 +146,9 @@ export class CloudBackupFormComponent implements OnInit {
     private cloudCredentialService: CloudCredentialService,
     public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 
