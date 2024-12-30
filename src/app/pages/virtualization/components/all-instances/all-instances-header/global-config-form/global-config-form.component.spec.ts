@@ -40,6 +40,7 @@ describe('GlobalConfigFormComponent', () => {
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           pool: 'poolio',
           bridge: 'bridge1',

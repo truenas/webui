@@ -61,6 +61,7 @@ describe('ConsoleFormComponent', () => {
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           consolemenu: true,
           serialconsole: true,

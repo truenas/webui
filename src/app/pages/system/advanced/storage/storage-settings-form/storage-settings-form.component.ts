@@ -81,6 +81,9 @@ export class StorageSettingsFormComponent implements OnInit {
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<StorageSettings, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.storageSettings = this.slideInRef.getData();
   }
 

@@ -7,7 +7,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { of, tap } from 'rxjs';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
@@ -78,6 +78,9 @@ export class WidgetGroupFormComponent {
     public slideInRef: SlideInRef<WidgetGroup | undefined, WidgetGroup | false>,
     private cdr: ChangeDetectorRef,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.layoutControl.dirty);
+    });
     this.setupLayoutUpdates();
     this.setInitialFormValues();
   }

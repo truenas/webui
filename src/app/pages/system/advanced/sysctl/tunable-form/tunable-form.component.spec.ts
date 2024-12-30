@@ -38,6 +38,7 @@ describe('TunableFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
     ],
@@ -78,6 +79,7 @@ describe('TunableFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
             getData: jest.fn(() => ({
               id: 1,
               comment: 'Existing variable',

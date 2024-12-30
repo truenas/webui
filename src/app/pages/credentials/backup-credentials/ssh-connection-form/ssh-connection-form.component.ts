@@ -174,10 +174,14 @@ export class SshConnectionFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<KeychainSshCredentials, KeychainCredential | null>,
-  ) { }
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingConnection = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
-    this.existingConnection = this.slideInRef.getData();
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }

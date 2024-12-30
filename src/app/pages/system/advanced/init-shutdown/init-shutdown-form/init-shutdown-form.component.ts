@@ -110,6 +110,9 @@ export class InitShutdownFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<InitShutdownScript | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingScript = this.slideInRef.getData();
   }
 

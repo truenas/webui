@@ -101,6 +101,10 @@ export class CloudCredentialsFormComponent implements OnInit {
     private cloudCredentialService: CloudCredentialService,
     public slideInRef: SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.commonForm.dirty || this.providerForm.form.dirty);
+    });
+
     const data = this.slideInRef.getData();
     this.existingCredential = data?.existingCredential;
     this.limitProviders = data?.providers;

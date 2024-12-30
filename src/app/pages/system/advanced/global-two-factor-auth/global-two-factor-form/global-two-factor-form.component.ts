@@ -76,6 +76,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     public slideInRef: SlideInRef<GlobalTwoFactorConfig, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.twoFactorConfig = this.slideInRef.getData();
   }
 
