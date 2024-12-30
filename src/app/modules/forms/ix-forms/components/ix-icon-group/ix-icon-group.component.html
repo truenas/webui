@@ -8,23 +8,30 @@
 
 <div class="icon-group" role="radiogroup" [attr.aria-label]="label()">
   @for (option of options(); track option) {
-    <button
-      mat-icon-button
-      role="radio"
-      type="button"
-      [disabled]="isDisabled"
-      [ixTest]="[controlDirective.name, option.label]"
-      [attr.aria-label]="option.label | translate"
-      [attr.data-value]="option.value"
-      [attr.aria-checked]="value === option.value"
-      [class.selected]="value === option.value"
-      [matTooltip]="option.label | translate"
-      [matTooltipDisabled]="!option.label"
-      (click)="onValueChanged(option.value)"
-      (blur)="onTouch()"
-    >
-      <ix-icon [name]="option.icon"></ix-icon>
-    </button>
+    <div>
+      <button
+        mat-icon-button
+        role="radio"
+        type="button"
+        [disabled]="isDisabled"
+        [ixTest]="[controlDirective.name, option.label]"
+        [attr.aria-label]="option.label | translate"
+        [attr.data-value]="option.value"
+        [attr.aria-checked]="value === option.value"
+        [class.selected]="value === option.value"
+        (click)="onValueChanged(option.value)"
+        (blur)="onTouch()"
+      >
+        <ix-icon [name]="option.icon"></ix-icon>
+      </button>
+
+      @if (showLabels()) {
+        <h5 class="title">{{ option.label | translate }}</h5>
+        @if (option.description) {
+          <small class="description">{{ option.description | translate }}</small>
+        }
+      }
+    </div>
   } @empty {
     <span>{{ 'No options are passed' | translate }}</span>
   }

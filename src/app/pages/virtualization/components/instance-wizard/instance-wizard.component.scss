@@ -60,6 +60,7 @@ ngx-skeleton-loader {
 
     .mdc-icon-button__ripple,
     .mat-ripple {
+      border-radius: 0 !important;
       height: 64px !important;
       width: 64px !important;
     }

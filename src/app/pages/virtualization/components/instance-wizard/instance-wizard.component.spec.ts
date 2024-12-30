@@ -1,4 +1,4 @@
-/* eslint-disable sonarjs/no-skipped-test */
+/* eslint-disable sonarjs/no-commented-code */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
@@ -17,7 +17,6 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   VirtualizationDeviceType,
-  VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
@@ -25,6 +24,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -35,7 +35,6 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
-// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
 describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
   let loader: HarnessLoader;
@@ -126,7 +125,7 @@ describe('InstanceWizardComponent', () => {
     });
   });
 
-  it.skip('creates new instance when form is submitted', async () => {
+  it('creates new container instance when form is submitted', async () => {
     await form.fillForm({
       Name: 'new',
       'CPU Configuration': '1-2',
@@ -154,17 +153,20 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
-    const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'xHCI Host Controller (0003)' }));
-    await usbDeviceCheckbox.setValue(true);
+    // TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+    // const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({
+    //   label: 'xHCI Host Controller (0003)'
+    // }));
+    // await usbDeviceCheckbox.setValue(true);
 
     const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
     await useDefaultNetworkCheckbox.setValue(false);
 
-    const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
-    await nicDeviceCheckbox.setValue(true);
+    // const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
+    // await nicDeviceCheckbox.setValue(true);
 
-    const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-    await gpuDeviceCheckbox.setValue(true);
+    // const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    // await gpuDeviceCheckbox.setValue(true);
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
     await createButton.click();
@@ -173,6 +175,7 @@ describe('InstanceWizardComponent', () => {
       name: 'new',
       autostart: true,
       cpu: '1-2',
+      instance_type: VirtualizationType.Container,
       devices: [
         {
           dev_type: VirtualizationDeviceType.Disk,
@@ -186,9 +189,9 @@ describe('InstanceWizardComponent', () => {
           dest_port: 2000,
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
-        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
-        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+        // { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
+        // { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        // { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
@@ -198,6 +201,72 @@ describe('InstanceWizardComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
+  it('creates new vm instance when form is submitted', async () => {
+    await form.fillForm({
+      Name: 'new',
+      'CPU Configuration': '1-2',
+      'Memory Size': '1 GiB',
+    });
+
+    const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+    await instanceType.setValue('VM');
+
+    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+    await browseButton.click();
+
+    const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+    await diskList.pressAddButton();
+    const diskForm = await diskList.getLastListItem();
+    await diskForm.fillForm({
+      Source: '/mnt/source',
+      Destination: 'destination',
+    });
+
+    const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
+    await proxiesList.pressAddButton();
+    const proxyForm = await proxiesList.getLastListItem();
+    await proxyForm.fillForm({
+      'Host Port': 3000,
+      'Host Protocol': 'TCP',
+      'Instance Port': 2000,
+      'Instance Protocol': 'UDP',
+    });
+
+    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+    await useDefaultNetworkCheckbox.setValue(true);
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+    await createButton.click();
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      name: 'new',
+      autostart: true,
+      cpu: '1-2',
+      instance_type: VirtualizationType.Vm,
+      devices: [
+        {
+          dev_type: VirtualizationDeviceType.Disk,
+          source: '/mnt/source',
+          destination: 'destination',
+        },
+        {
+          dev_type: VirtualizationDeviceType.Proxy,
+          source_port: 3000,
+          source_proto: VirtualizationProxyProtocol.Tcp,
+          dest_port: 2000,
+          dest_proto: VirtualizationProxyProtocol.Udp,
+        },
+      ],
+      image: 'almalinux/8/cloud',
+      memory: GiB,
+      environment: {},
+    }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  // TODO: https://ixsystems.atlassian.net/browse/NAS-133118
+  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('sends no NIC devices when default network settings checkbox is set', async () => {
     await form.fillForm({
       Name: 'new',

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -24,7 +23,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     IxErrorsComponent,
     IxIconComponent,
     IxLabelComponent,
-    MatTooltip,
     ReactiveFormsModule,
     TestDirective,
     TranslateModule,

@@ -37,7 +37,6 @@ import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxButtonGroupComponent } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
@@ -73,7 +72,6 @@ import { ApiService } from 'app/services/websocket/api.service';
     IxExplorerComponent,
     IxFormGlossaryComponent,
     IxFormSectionComponent,
-    IxButtonGroupComponent,
     IxInputComponent,
     IxListComponent,
     IxListItemComponent,

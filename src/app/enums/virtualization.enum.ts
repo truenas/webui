@@ -15,12 +15,14 @@ export const virtualizationTypeIcons = [
   {
     value: VirtualizationType.Container,
     icon: iconMarker('mdi-linux'),
-    label: T('Container: Linux Only'),
+    label: T('Container'),
+    description: T('Linux Only'),
   },
   {
     value: VirtualizationType.Vm,
     icon: iconMarker('mdi-laptop'),
-    label: T('VM: Any OS'),
+    label: T('VM'),
+    description: T('Any OS'),
   },
 ];
 
