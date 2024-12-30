@@ -9,13 +9,13 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs/operators';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { DeviceActionsMenuComponent } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({

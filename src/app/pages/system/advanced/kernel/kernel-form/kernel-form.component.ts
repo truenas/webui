@@ -66,7 +66,7 @@ export class KernelFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private slideInRef: SlideInRef<boolean>,
+    public slideInRef: SlideInRef<boolean, boolean>,
   ) {
     if (slideInRef.getData()) {
       this.debugkernel = true;

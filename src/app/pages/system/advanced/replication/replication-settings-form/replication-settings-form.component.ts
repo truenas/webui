@@ -63,7 +63,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<ReplicationConfig>,
+    public slideInRef: SlideInRef<ReplicationConfig, boolean>,
   ) {
     this.replicationConfig = this.slideInRef.getData();
   }

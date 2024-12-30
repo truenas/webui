@@ -23,7 +23,7 @@ describe('CloudSyncWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const slideInRef: SlideInRef<unknown> = {
+  const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(),

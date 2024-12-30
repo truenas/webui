@@ -81,7 +81,7 @@ export class TunableFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<Tunable>,
+    public slideInRef: SlideInRef<Tunable | undefined, boolean>,
   ) {
     this.editingTunable = this.slideInRef.getData();
   }

@@ -25,7 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
 
-interface FormOptions {
+interface InstanceProxyFormOptions {
   instanceId: string;
   proxy: VirtualizationProxy | undefined;
 }
@@ -70,10 +70,10 @@ export class InstanceProxyFormComponent implements OnInit {
   protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   constructor(
+    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: SlideInRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -96,8 +96,8 @@ export class InstanceProxyFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
-            error: false,
             response: true,
+            error: false,
           });
           this.isLoading.set(false);
         },

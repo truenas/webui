@@ -144,7 +144,7 @@ export class CloudBackupFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
     private cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudBackup>,
+    public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
   ) {
     this.editingTask = slideInRef.getData();
   }

@@ -160,7 +160,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: SlideInRef<unknown>,
+    private slideInRef: SlideInRef<unknown, unknown>,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -301,7 +301,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.slideInRef.swap(CloudSyncFormComponent, true);
+      this.slideInRef.swap(CloudSyncFormComponent, { wide: true });
     });
   }
 

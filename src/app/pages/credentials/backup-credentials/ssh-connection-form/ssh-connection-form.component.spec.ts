@@ -66,7 +66,7 @@ describe('SshConnectionFormComponent', () => {
         getData: getNoData,
         swap: jest.fn(),
         requireConfirmationWhen: jest.fn(),
-      } as SlideInRef<KeychainSshCredentials>),
+      } as SlideInRef<KeychainSshCredentials, unknown>),
     ],
   });
 
@@ -79,7 +79,7 @@ describe('SshConnectionFormComponent', () => {
             getData,
             swap: jest.fn(),
             requireConfirmationWhen: jest.fn(),
-          } as SlideInRef<KeychainSshCredentials>),
+          } as SlideInRef<KeychainSshCredentials, unknown>),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

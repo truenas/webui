@@ -65,7 +65,7 @@ describe('ReplicationWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const slideInRef: SlideInRef<ReplicationTask> = {
+  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(() => undefined),

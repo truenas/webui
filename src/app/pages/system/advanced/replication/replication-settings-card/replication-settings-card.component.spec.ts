@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   ReplicationSettingsCardComponent,
@@ -14,7 +15,6 @@ import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('ReplicationSettingsCardComponent', () => {
   let spectator: Spectator<ReplicationSettingsCardComponent>;
