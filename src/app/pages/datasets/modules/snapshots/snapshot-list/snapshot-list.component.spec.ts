@@ -16,11 +16,11 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
@@ -50,7 +50,9 @@ describe('SnapshotListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        open: jest.fn(),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -127,6 +129,6 @@ describe('SnapshotListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
   });
 });
