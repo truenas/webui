@@ -5,7 +5,9 @@ export const idMapElements = {
   hierarchy: [T('Directory Services'), T('Idmap')],
   anchorRouterLink: ['/directoryservice', 'idmap'],
   elements: {
-    idMap: {},
+    idMap: {
+      anchor: 'idmap',
+    },
     add: {
       hierarchy: [T('Add Idmap')],
       anchor: 'add-idmap',

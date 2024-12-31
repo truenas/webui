@@ -6,7 +6,9 @@ export const smbListElements = {
   anchorRouterLink: ['/sharing', 'smb'],
   synonyms: [T('Samba')],
   elements: {
-    smbList: {},
+    smbList: {
+      anchor: 'smb-list',
+    },
     createSmbShare: {
       hierarchy: [T('Add SMB Share')],
       synonyms:

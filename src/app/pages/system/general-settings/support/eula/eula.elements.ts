@@ -5,6 +5,8 @@ export const eulaElements = {
   hierarchy: [T('System'), T('Support'), T('Eula')],
   anchorRouterLink: ['/system', 'support', 'eula'],
   elements: {
-    eula: {},
+    eula: {
+      anchor: 'eula',
+    },
   },
 } satisfies UiSearchableElement;

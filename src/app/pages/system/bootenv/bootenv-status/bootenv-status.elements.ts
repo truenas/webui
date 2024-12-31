@@ -5,6 +5,8 @@ export const bootEnvStatusElements = {
   hierarchy: [T('System'), T('Boot'), T('Boot Pool Status')],
   anchorRouterLink: ['/system', 'boot', 'status'],
   elements: {
-    bootStatus: {},
+    bootStatus: {
+      anchor: 'boot-status',
+    },
   },
 } satisfies UiSearchableElement;

@@ -6,6 +6,8 @@ export const datasetManagementElements = {
   anchorRouterLink: ['/datasets'],
   synonyms: [T('Manage Datasets')],
   elements: {
-    datasets: {},
+    datasets: {
+      anchor: 'datasets',
+    },
   },
 } satisfies UiSearchableElement;

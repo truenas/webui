@@ -5,6 +5,8 @@ export const kmipElements = {
   hierarchy: [T('Credentials'), T('KMIP')],
   anchorRouterLink: ['/credentials', 'kmip'],
   elements: {
-    kmip: {},
+    kmip: {
+      anchor: 'kmip',
+    },
   },
 } satisfies UiSearchableElement;

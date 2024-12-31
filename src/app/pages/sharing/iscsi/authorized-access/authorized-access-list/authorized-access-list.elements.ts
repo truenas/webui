@@ -5,6 +5,8 @@ export const authorizedAccessListElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Authorized Access')],
   anchorRouterLink: ['/sharing', 'iscsi', 'authorized-access'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'authorized-access-list',
+    },
   },
 } satisfies UiSearchableElement;

@@ -5,6 +5,8 @@ export const fibreChannelPortsElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Fibre Channel Ports')],
   anchorRouterLink: ['/sharing', 'iscsi', 'fibre-channel-ports'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'fibre-channel-ports-list',
+    },
   },
 } satisfies UiSearchableElement;

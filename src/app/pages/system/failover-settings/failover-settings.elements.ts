@@ -6,7 +6,9 @@ export const failoverElements = {
   hierarchy: [T('System'), T('Failover')],
   anchorRouterLink: ['/system', 'failover'],
   elements: {
-    failover: {},
+    failover: {
+      anchor: 'failover',
+    },
     syncToPeer: {
       hierarchy: [T('Sync To Peer')],
     },

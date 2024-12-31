@@ -5,7 +5,9 @@ export const dockerImagesListElements = {
   hierarchy: [T('Applications'), T('Manage Container Images')],
   anchorRouterLink: ['/apps', 'manage-container-images'],
   elements: {
-    dockerImagesList: {},
+    dockerImagesList: {
+      anchor: 'docker-images-list',
+    },
     pullImage: {
       hierarchy: [T('Pull Image')],
       synonyms: [T('Add Image')],

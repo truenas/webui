@@ -7,6 +7,7 @@ export const sharesDashboardElements = {
   anchorRouterLink: ['/sharing'],
   elements: {
     sharing: {
+      anchor: 'shares-dashboard',
       synonyms: [
         T('Shares'),
         T('Add Share'),

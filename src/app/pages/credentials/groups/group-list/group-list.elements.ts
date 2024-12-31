@@ -6,6 +6,7 @@ export const groupListElements = {
   anchorRouterLink: ['/credentials', 'groups'],
   elements: {
     list: {
+      anchor: 'groups-list',
       synonyms: [T('Local Groups')],
     },
     add: {

@@ -5,6 +5,8 @@ export const portalListElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Portals')],
   anchorRouterLink: ['/sharing', 'iscsi', 'portals'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'portal-list',
+    },
   },
 } satisfies UiSearchableElement;

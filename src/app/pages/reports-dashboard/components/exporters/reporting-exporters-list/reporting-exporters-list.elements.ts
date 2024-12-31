@@ -5,7 +5,9 @@ export const reportingExportersElements = {
   hierarchy: [T('Reporting'), T('Reporting Exporters')],
   anchorRouterLink: ['/reportsdashboard', 'exporters'],
   elements: {
-    exporters: {},
+    exporters: {
+      anchor: 'exporters',
+    },
     add: {
       hierarchy: [T('Add Reporting Exporter')],
       anchor: 'add-reporting-exporter',

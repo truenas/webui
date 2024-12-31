@@ -5,7 +5,9 @@ export const directoryServicesElements = {
   hierarchy: [T('Credentials'), T('Directory Services')],
   anchorRouterLink: ['/credentials', 'directory-services'],
   elements: {
-    directoryServices: {},
+    directoryServices: {
+      anchor: 'directory-services',
+    },
     configureActiveDirectory: {
       hierarchy: [T('Configure Active Directory')],
       synonyms: [T('Active Directory')],

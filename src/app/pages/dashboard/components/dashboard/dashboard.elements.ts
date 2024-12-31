@@ -6,6 +6,7 @@ export const dashboardElements = {
   anchorRouterLink: ['/dashboard'],
   elements: {
     dashboard: {
+      anchor: 'main-dashboard',
       synonyms: [T('Widgets')],
     },
     configure: {

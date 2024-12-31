@@ -5,7 +5,9 @@ export const twoFactorElements = {
   hierarchy: [T('Credentials'), T('Two-Factor Authentication')],
   anchorRouterLink: ['/credentials', 'two-factor'],
   elements: {
-    twoFactor: {},
+    twoFactor: {
+      anchor: 'two-factor',
+    },
     configure2FaSecret: {
       hierarchy: [T('Configure 2FA Secret')],
       anchor: 'configure-2fa-secret',

@@ -6,6 +6,7 @@ export const snapshotTaskListElements = {
   anchorRouterLink: ['/data-protection', 'snapshot'],
   elements: {
     tasks: {
+      anchor: 'snapshot-tasks',
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {

@@ -234,7 +234,7 @@
       "available"
     ],
     "routerLink": null,
-    "anchor": "applications-discover",
+    "anchor": "available-apps-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -342,7 +342,7 @@
       "audit"
     ],
     "routerLink": null,
-    "anchor": "system-audit",
+    "anchor": "audit-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -359,7 +359,7 @@
       "backup-credentials"
     ],
     "routerLink": null,
-    "anchor": "credentials-backup-credentials",
+    "anchor": "backup-credentials",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -628,7 +628,7 @@
       "certificates"
     ],
     "routerLink": null,
-    "anchor": "credentials-certificates",
+    "anchor": "certificates-dash",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -739,7 +739,7 @@
       "groups"
     ],
     "routerLink": null,
-    "anchor": "credentials-groups",
+    "anchor": "groups-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -784,7 +784,7 @@
       "privileges"
     ],
     "routerLink": null,
-    "anchor": "credentials-groups-privileges",
+    "anchor": "privileges-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -801,7 +801,7 @@
       "kmip"
     ],
     "routerLink": null,
-    "anchor": "credentials-kmip",
+    "anchor": "kmip",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -913,7 +913,7 @@
       "users"
     ],
     "routerLink": null,
-    "anchor": "credentials-users",
+    "anchor": "users-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -952,7 +952,7 @@
       "/dashboard"
     ],
     "routerLink": null,
-    "anchor": "dashboard",
+    "anchor": "main-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -999,7 +999,7 @@
       "cloud-backup"
     ],
     "routerLink": null,
-    "anchor": "data-protection-truecloud-backup-tasks",
+    "anchor": "cloud-backup-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1061,7 +1061,7 @@
       "cloudsync"
     ],
     "routerLink": null,
-    "anchor": "data-protection-cloud-sync-tasks",
+    "anchor": "cloudsync-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1078,7 +1078,7 @@
       "/data-protection"
     ],
     "routerLink": null,
-    "anchor": "data-protection",
+    "anchor": "data-protection-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1122,7 +1122,7 @@
       "replication"
     ],
     "routerLink": null,
-    "anchor": "data-protection-replication-tasks",
+    "anchor": "replication-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1165,7 +1165,7 @@
       "rsync"
     ],
     "routerLink": null,
-    "anchor": "data-protection-rsync-tasks",
+    "anchor": "rsync-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1184,7 +1184,7 @@
       "priority"
     ],
     "routerLink": null,
-    "anchor": "data-protection-scrub-tasks-resilver-priority",
+    "anchor": "scrub-priority",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1227,7 +1227,7 @@
       "scrub"
     ],
     "routerLink": null,
-    "anchor": "data-protection-scrub-tasks",
+    "anchor": "scrub-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1308,7 +1308,7 @@
       "smart"
     ],
     "routerLink": null,
-    "anchor": "data-protection-periodic-s.m.a.r.t.-tests",
+    "anchor": "smart-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1377,7 +1377,7 @@
       "snapshot"
     ],
     "routerLink": null,
-    "anchor": "data-protection-periodic-snapshot-tasks",
+    "anchor": "snapshot-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1394,7 +1394,7 @@
       "vmware-snapshots"
     ],
     "routerLink": null,
-    "anchor": "data-protection-vmware-snapshots",
+    "anchor": "vmware-snapshots",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1752,7 +1752,7 @@
       "idmap"
     ],
     "routerLink": null,
-    "anchor": "directory-services-idmap",
+    "anchor": "idmap",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1793,7 +1793,7 @@
       "kerberoskeytabs"
     ],
     "routerLink": null,
-    "anchor": "directory-services-kerberos-keytabs",
+    "anchor": "kerberoskeytabs",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1834,7 +1834,7 @@
       "kerberosrealms"
     ],
     "routerLink": null,
-    "anchor": "directory-services-kerberos-realms",
+    "anchor": "kerberosrealms",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1893,7 +1893,7 @@
       "directory-services"
     ],
     "routerLink": null,
-    "anchor": "credentials-directory-services",
+    "anchor": "directory-services",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2114,7 +2114,7 @@
       "/network"
     ],
     "routerLink": null,
-    "anchor": "network",
+    "anchor": "network-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2158,7 +2158,7 @@
       "exporters"
     ],
     "routerLink": null,
-    "anchor": "reporting-reporting-exporters",
+    "anchor": "exporters",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2344,7 +2344,7 @@
       "/reportsdashboard"
     ],
     "routerLink": null,
-    "anchor": "reporting",
+    "anchor": "reports-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2523,7 +2523,7 @@
       "services"
     ],
     "routerLink": null,
-    "anchor": "system-services",
+    "anchor": "services",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2567,7 +2567,7 @@
       "/sharing"
     ],
     "routerLink": null,
-    "anchor": "shares",
+    "anchor": "shares-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2586,7 +2586,7 @@
       "authorized-access"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-authorized-access",
+    "anchor": "authorized-access-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2605,7 +2605,7 @@
       "extents"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-extents",
+    "anchor": "extent-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2624,7 +2624,7 @@
       "fibre-channel-ports"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-fibre-channel-ports",
+    "anchor": "fibre-channel-ports-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2643,7 +2643,7 @@
       "fibre-channel-ports"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-fibre-channel-ports",
+    "anchor": "fibre-channel-ports-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2663,7 +2663,7 @@
       "add"
     ],
     "routerLink": null,
-    "anchor": "shares-initiators-add-initiator",
+    "anchor": "add-initiator",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2684,7 +2684,7 @@
       "initiators"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-initiators",
+    "anchor": "initiator-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2723,7 +2723,7 @@
       "portals"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-portals",
+    "anchor": "portal-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2742,7 +2742,7 @@
       "targets"
     ],
     "routerLink": null,
-    "anchor": "shares-iscsi-targets",
+    "anchor": "target-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2786,7 +2786,7 @@
       "nfs"
     ],
     "routerLink": null,
-    "anchor": "shares-nfs",
+    "anchor": "nfs-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2805,7 +2805,7 @@
       "sessions"
     ],
     "routerLink": null,
-    "anchor": "shares-nfs-nfs-sessions",
+    "anchor": "nfs-session-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2852,7 +2852,7 @@
       "smb"
     ],
     "routerLink": null,
-    "anchor": "shares-smb",
+    "anchor": "smb-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2971,7 +2971,7 @@
       "shell"
     ],
     "routerLink": null,
-    "anchor": "system-shell",
+    "anchor": "shell",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3147,7 +3147,7 @@
       "disks"
     ],
     "routerLink": null,
-    "anchor": "storage-disks",
+    "anchor": "disk-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3214,7 +3214,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "storage",
+    "anchor": "storage-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3342,7 +3342,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system-advanced-settings",
+    "anchor": "advanced-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3700,7 +3700,7 @@
       "cron"
     ],
     "routerLink": null,
-    "anchor": "system-cron-jobs",
+    "anchor": "cron",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3849,7 +3849,7 @@
       "initshutdown"
     ],
     "routerLink": null,
-    "anchor": "system-init/shutdown-scripts",
+    "anchor": "init-shutdown",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4259,7 +4259,7 @@
       "tunable"
     ],
     "routerLink": null,
-    "anchor": "system-tunables",
+    "anchor": "tunable",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4418,7 +4418,7 @@
       "services"
     ],
     "routerLink": null,
-    "anchor": "system-alert-settings-alert-services",
+    "anchor": "alert-service-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4510,7 +4510,7 @@
       "boot"
     ],
     "routerLink": null,
-    "anchor": "system-boot-environments",
+    "anchor": "boot-list",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4529,7 +4529,7 @@
       "status"
     ],
     "routerLink": null,
-    "anchor": "system-boot-boot-pool-status",
+    "anchor": "boot-status",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4550,7 +4550,7 @@
       "jbof"
     ],
     "routerLink": null,
-    "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
+    "anchor": "jbof",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4569,7 +4569,7 @@
       "failover"
     ],
     "routerLink": null,
-    "anchor": "system-failover",
+    "anchor": "failover",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4696,7 +4696,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "system-general-settings",
+    "anchor": "general-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5240,7 +5240,7 @@
       "eula"
     ],
     "routerLink": null,
-    "anchor": "system-support-eula",
+    "anchor": "eula",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5257,7 +5257,7 @@
       "support"
     ],
     "routerLink": null,
-    "anchor": "system-support",
+    "anchor": "support",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5324,7 +5324,7 @@
       "manualupdate"
     ],
     "routerLink": null,
-    "anchor": "system-update-manual-update",
+    "anchor": "manual-update",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5390,7 +5390,7 @@
       "two-factor"
     ],
     "routerLink": null,
-    "anchor": "credentials-two-factor-authentication",
+    "anchor": "two-factor",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5455,7 +5455,7 @@
       "/vm"
     ],
     "routerLink": null,
-    "anchor": "virtual-machines",
+    "anchor": "vm-list",
     "triggerAnchor": null,
     "section": "ui"
   }

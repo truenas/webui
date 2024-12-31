@@ -7,7 +7,7 @@
       @if (getElementsBySection(section.value)?.length) {
         <div class="section-content">
           @if (getLimitedSectionResults(section.value); as sectionResults) {
-            @for (result of sectionResults; track trackById(i, result); let i = $index) {
+            @for (result of sectionResults; track result.anchor; let i = $index) {
               <div
                 class="search-result"
                 role="link"

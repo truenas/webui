@@ -6,6 +6,8 @@ export const systemManualUpdateFormElements = {
   anchorRouterLink: ['/system', 'update', 'manualupdate'],
   synonyms: [T('Install Manual Update File'), T('Manual Update'), T('Manual Upgrade'), T('Upload Manual Update File')],
   elements: {
-    manualUpdate: {},
+    manualUpdate: {
+      anchor: 'manual-update',
+    },
   },
 } satisfies UiSearchableElement;

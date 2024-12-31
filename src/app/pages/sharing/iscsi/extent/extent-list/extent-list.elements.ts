@@ -5,6 +5,8 @@ export const extentListElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Extents')],
   anchorRouterLink: ['/sharing', 'iscsi', 'extents'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'extent-list',
+    },
   },
 } satisfies UiSearchableElement;

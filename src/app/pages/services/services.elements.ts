@@ -5,7 +5,9 @@ export const servicesElements = {
   hierarchy: [T('System'), T('Services')],
   anchorRouterLink: ['/system', 'services'],
   elements: {
-    services: {},
+    services: {
+      anchor: 'services',
+    },
   },
   manualRenderElements: {
     smb: {

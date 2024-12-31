@@ -5,6 +5,8 @@ export const cronElements = {
   hierarchy: [T('System'), T('Cron Jobs')],
   anchorRouterLink: ['/system', 'cron'],
   elements: {
-    cron: {},
+    cron: {
+      anchor: 'cron',
+    },
   },
 } satisfies UiSearchableElement;

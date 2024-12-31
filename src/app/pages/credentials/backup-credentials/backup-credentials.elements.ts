@@ -5,6 +5,8 @@ export const backupCredentialsElements = {
   hierarchy: [T('Credentials'), T('Backup Credentials')],
   anchorRouterLink: ['/credentials', 'backup-credentials'],
   elements: {
-    backupCredentials: {},
+    backupCredentials: {
+      anchor: 'backup-credentials',
+    },
   },
 } satisfies UiSearchableElement;

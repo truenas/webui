@@ -6,6 +6,7 @@ export const cloudBackupListElements = {
   anchorRouterLink: ['/data-protection', 'cloud-backup'],
   elements: {
     tasks: {
+      anchor: 'cloud-backup-tasks',
       synonyms: [T('Data Protection'), T('Tasks'), T('Cloud Backup')],
     },
     add: {

@@ -6,6 +6,7 @@ export const diskListElements = {
   anchorRouterLink: ['/storage', 'disks'],
   elements: {
     disks: {
+      anchor: 'disk-list',
       synonyms: [T('Manage Disks')],
     },
   },

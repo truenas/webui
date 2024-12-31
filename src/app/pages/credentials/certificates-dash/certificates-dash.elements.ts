@@ -5,6 +5,8 @@ export const certificatesDashElements = {
   hierarchy: [T('Credentials'), T('Certificates')],
   anchorRouterLink: ['/credentials', 'certificates'],
   elements: {
-    certificatesDash: {},
+    certificatesDash: {
+      anchor: 'certificates-dash',
+    },
   },
 } satisfies UiSearchableElement;

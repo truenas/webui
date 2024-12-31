@@ -5,6 +5,8 @@ export const nfsSessionListElements = {
   hierarchy: [T('Shares'), T('NFS'), T('NFS Sessions')],
   anchorRouterLink: ['/sharing', 'nfs', 'sessions'],
   elements: {
-    nfsSessions: {},
+    nfsSessions: {
+      anchor: 'nfs-session-list',
+    },
   },
 } satisfies UiSearchableElement;

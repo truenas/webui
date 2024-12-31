@@ -6,6 +6,7 @@ export const smartTaskListElements = {
   anchorRouterLink: ['/data-protection', 'smart'],
   elements: {
     tasks: {
+      anchor: 'smart-tasks',
       synonyms: [
         T('Data Protection'),
         T('Tasks'),

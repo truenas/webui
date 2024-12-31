@@ -6,6 +6,7 @@ export const advancedSettingsElements = {
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     advanced: {
+      anchor: 'advanced-settings',
       synonyms: [T('Settings')],
     },
   },

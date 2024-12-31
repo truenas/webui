@@ -7,6 +7,7 @@ export const installedAppsElements = {
   anchorRouterLink: ['/apps', 'installed'],
   elements: {
     installed: {
+      anchor: 'installed-apps-list',
       synonyms: [T('Apps'), T('Applications')],
     },
   },

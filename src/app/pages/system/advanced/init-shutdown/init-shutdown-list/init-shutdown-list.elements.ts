@@ -5,6 +5,8 @@ export const initShudownListElements = {
   hierarchy: [T('System'), T('Init/Shutdown Scripts')],
   anchorRouterLink: ['/system', 'initshutdown'],
   elements: {
-    initShutDown: {},
+    initShutDown: {
+      anchor: 'init-shutdown',
+    },
   },
 } satisfies UiSearchableElement;

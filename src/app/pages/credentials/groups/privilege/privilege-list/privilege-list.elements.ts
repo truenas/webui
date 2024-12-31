@@ -5,7 +5,9 @@ export const privilegesListElements = {
   hierarchy: [T('Credentials'), T('Groups'), T('Privileges')],
   anchorRouterLink: ['/credentials', 'groups', 'privileges'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'privileges-list',
+    },
     add: {
       hierarchy: [T('Add Privilege')],
       synonyms: [T('Add Privilege'), T('New Privilege'), T('Create Privilege'), T('Privilege')],

@@ -5,7 +5,9 @@ export const nfsListElements = {
   hierarchy: [T('Shares'), T('NFS')],
   anchorRouterLink: ['/sharing', 'nfs'],
   elements: {
-    nfs: {},
+    nfs: {
+      anchor: 'nfs-list',
+    },
     createNfsShare: {
       hierarchy: [T('Add NFS Share')],
       synonyms: [

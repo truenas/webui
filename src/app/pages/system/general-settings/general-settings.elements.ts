@@ -6,6 +6,7 @@ export const generalSettingsElements = {
   anchorRouterLink: ['/system', 'general'],
   elements: {
     general: {
+      anchor: 'general-settings',
       synonyms: [T('Settings')],
     },
   },
