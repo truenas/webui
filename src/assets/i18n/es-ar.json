@@ -121,7 +121,7 @@
   "Group Write": "Escritura del grupo",
   "Hide from MSR": "Ocultar de MSR",
   "High usage necessitating a system reset.": "Uso elevado que requiere reiniciar el sistema.",
-  "Highlighted path is {node}. Press 'Space' to {expand}. Press 'Enter' to {select}.": "La ruta resaltada es {node}. Presioná la 'Barra espaciadora' para {expand}. Presioná "Intro" para {select}.",
+  "Highlighted path is {node}. Press 'Space' to {expand}. Press 'Enter' to {select}.": "La ruta resaltada es {node}. Presioná la 'Barra espaciadora' para {expand}. Presioná 'Intro' para {select}.",
   "Hold": "Sostener",
   "Home Widgets": "Widgets del Home",
   "Host Passthrough": "Paso a través del host",
