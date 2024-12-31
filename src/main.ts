@@ -42,6 +42,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -117,16 +118,17 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: ApiService,
-      deps: [WebSocketHandlerService, SubscriptionManagerService, TranslateService],
+      deps: [WebSocketStatusService, WebSocketHandlerService, SubscriptionManagerService, TranslateService],
       useFactory: (
+        wsStatus: WebSocketStatusService,
         connection: WebSocketHandlerService,
         subscriptionManager: SubscriptionManagerService,
         translate: TranslateService,
       ) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(connection, subscriptionManager, translate);
+          return new MockEnclosureApiService(wsStatus, connection, subscriptionManager, translate);
         }
-        return new ApiService(connection, subscriptionManager, translate);
+        return new ApiService(connection, wsStatus, subscriptionManager, translate);
       },
     },
     provideCharts(withDefaultRegisterables()),

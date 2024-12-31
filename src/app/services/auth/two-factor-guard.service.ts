@@ -10,6 +10,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Injectable({
@@ -19,12 +20,13 @@ export class TwoFactorGuardService implements CanActivateChild {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private wsStatus: WebSocketStatusService,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) { }
 
   canActivateChild(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.authService.isAuthenticated$.pipe(
+    return this.wsStatus.isAuthenticated$.pipe(
       take(1),
       switchMap((isAuthenticated) => {
         if (!isAuthenticated) {

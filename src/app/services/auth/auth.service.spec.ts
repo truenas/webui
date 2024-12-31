@@ -21,7 +21,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 const authMeUser = {
   pw_dir: 'dir',
@@ -59,7 +59,7 @@ describe('AuthService', () => {
           },
         } as LoginExResponse),
       ]),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
       }),
       {
@@ -91,10 +91,6 @@ describe('AuthService', () => {
           '(a|)',
           { a: LoginResult.Success },
         );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: true },
-        );
         expectObservable(spectator.service.authToken$).toBe(
           'd',
           { d: 'DUMMY_TOKEN' },
@@ -117,10 +113,6 @@ describe('AuthService', () => {
         expectObservable(obs$).toBe(
           '(a|)',
           { a: LoginResult.Success },
-        );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: true },
         );
         expectObservable(spectator.service.authToken$).toBe(
           'd',
@@ -145,10 +137,6 @@ describe('AuthService', () => {
           {
             a: undefined,
           },
-        );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: false },
         );
         expectObservable(spectator.service.authToken$).toBe(
           '|',

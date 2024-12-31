@@ -25,6 +25,7 @@ import {
 } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 
@@ -35,9 +36,6 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 export class WebSocketHandlerService {
   private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
-
-  private readonly connectionEstablished$ = new BehaviorSubject(false);
-  readonly isConnected$ = this.connectionEstablished$.asObservable();
 
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription;
@@ -74,6 +72,7 @@ export class WebSocketHandlerService {
   private callsInConcurrentCallsError = new Set<string>();
 
   constructor(
+    private wsStatus: WebSocketStatusService,
     private dialogService: DialogService,
     private translate: TranslateService,
     @Inject(WINDOW) protected window: Window,
@@ -90,7 +89,7 @@ export class WebSocketHandlerService {
   private setupScheduledCalls(): void {
     combineLatest([
       this.triggerNextCall$,
-      this.isConnected$,
+      this.wsStatus.isConnected$,
     ]).pipe(
       filter(([, isConnected]) => isConnected),
       tap(() => {
@@ -181,7 +180,7 @@ export class WebSocketHandlerService {
   }
 
   private onClose(event: CloseEvent): void {
-    this.connectionEstablished$.next(false);
+    this.wsStatus.setConnectionStatus(false);
     this.isConnectionLive$.next(false);
     if (this.reconnectTimerSubscription) {
       return;
@@ -206,7 +205,7 @@ export class WebSocketHandlerService {
       return;
     }
     this.shutDownInProgress = false;
-    this.connectionEstablished$.next(true);
+    this.wsStatus.setConnectionStatus(true);
 
     performance.mark('WS Connected');
     performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');

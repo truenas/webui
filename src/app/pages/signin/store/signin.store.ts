@@ -24,6 +24,7 @@ import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
@@ -55,7 +56,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
   });
 
-  canLogin$ = combineLatest([this.wsManager.isConnected$, this.failoverAllowsLogin$]).pipe(
+  canLogin$ = combineLatest([this.wsStatus.isConnected$, this.failoverAllowsLogin$]).pipe(
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
     distinctUntilChanged(),
   );
@@ -89,6 +90,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private authService: AuthService,
     private updateService: UpdateService,
     private actions$: Actions,
+    private wsStatus: WebSocketStatusService,
     private activatedRoute: ActivatedRoute,
     @Inject(WINDOW) private window: Window,
   ) {

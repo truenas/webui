@@ -1,9 +1,9 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { AuthService } from 'app/services/auth/auth.service';
 import { PingService } from 'app/services/websocket/ping.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('PingService', () => {
   let spectator: SpectatorService<PingService>;
@@ -15,9 +15,9 @@ describe('PingService', () => {
     providers: [
       mockProvider(WebSocketHandlerService, {
         scheduleCall: jest.fn(),
-        isConnected$: of(true),
       }),
-      mockProvider(AuthService, {
+      mockProvider(WebSocketStatusService, {
+        isConnected$: of(true),
         isAuthenticated$,
       }),
     ],

@@ -24,7 +24,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class SigninComponent implements OnInit {
   readonly failover$ = this.signinStore.failover$;
   readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
-  readonly isConnected$ = this.wsManager.isConnected$;
+  readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
     switchMap(() => this.isConnected$),
@@ -74,7 +74,7 @@ export class SigninComponent implements OnInit {
   );
 
   constructor(
-    private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,

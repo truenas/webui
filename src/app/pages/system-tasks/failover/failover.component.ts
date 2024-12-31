@@ -14,6 +14,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
@@ -36,6 +37,7 @@ export class FailoverComponent implements OnInit {
     protected api: ApiService,
     private errorHandler: ErrorHandlerService,
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -45,7 +47,7 @@ export class FailoverComponent implements OnInit {
   ) {}
 
   isWsConnected(): void {
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe({
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();

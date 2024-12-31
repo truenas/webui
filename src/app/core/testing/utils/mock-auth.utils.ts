@@ -12,7 +12,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 export const dummyUser = {
   privilege: {
@@ -40,13 +40,14 @@ export function mockAuth(
       provide: AuthService,
       useFactory: () => {
         const mockService = new MockAuthService(
-          createSpyObject(WebSocketHandlerService, {
-            isConnected$: of(true),
-          }),
           createSpyObject(Store),
           createSpyObject(ApiService),
           createSpyObject(TokenLastUsedService),
           createSpyObject(Window),
+          createSpyObject(WebSocketStatusService, {
+            isConnected$: of(true),
+            isAuthenticated$: of(true),
+          }),
         );
 
         mockService.setUser(user as LoggedInUser);

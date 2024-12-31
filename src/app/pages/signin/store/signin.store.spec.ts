@@ -20,6 +20,7 @@ import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
@@ -40,8 +41,10 @@ describe('SigninStore', () => {
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
         mockCall('system.advanced.login_banner', ''),
       ]),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
+      }),
+      mockProvider(WebSocketHandlerService, {
         responses$: of(),
       }),
       mockProvider(TokenLastUsedService, {

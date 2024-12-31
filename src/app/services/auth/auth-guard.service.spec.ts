@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { AuthGuardService } from 'app/services/auth/auth-guard.service';
-import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('AuthGuardService', () => {
   const redirectUrl = 'storage/disks';
@@ -17,7 +17,7 @@ describe('AuthGuardService', () => {
   let spectator: SpectatorService<AuthGuardService>;
   const createService = createServiceFactory({
     service: AuthGuardService,
-    providers: [mockProvider(AuthService, { isAuthenticated$ })],
+    providers: [mockProvider(WebSocketStatusService, { isAuthenticated$ })],
   });
 
   beforeEach(() => {
