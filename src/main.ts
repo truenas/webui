@@ -126,7 +126,7 @@ bootstrapApplication(AppComponent, {
         translate: TranslateService,
       ) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(wsStatus, connection, subscriptionManager, translate);
+          return new MockEnclosureApiService(connection, wsStatus, subscriptionManager, translate);
         }
         return new ApiService(connection, wsStatus, subscriptionManager, translate);
       },

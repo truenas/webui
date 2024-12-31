@@ -20,8 +20,8 @@ export class MockEnclosureApiService extends ApiService {
   private mockStorage = new MockEnclosureGenerator(this.mockConfig);
 
   constructor(
-    wsStatus: WebSocketStatusService,
     wsManager: WebSocketHandlerService,
+    wsStatus: WebSocketStatusService,
     subscriptionManager: SubscriptionManagerService,
     translate: TranslateService,
   ) {

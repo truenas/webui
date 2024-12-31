@@ -1,10 +1,8 @@
 import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 export class EmptyAuthService {
   readonly authToken$ = getMissingInjectionErrorObservable(AuthService.name);
-  readonly isAuthenticated$ = getMissingInjectionErrorObservable(WebSocketStatusService.name);
   readonly user$ = getMissingInjectionErrorObservable(AuthService.name);
   readonly isSysAdmin$ = getMissingInjectionErrorObservable(AuthService.name);
   readonly userTwoFactorConfig$ = getMissingInjectionErrorObservable(AuthService.name);
