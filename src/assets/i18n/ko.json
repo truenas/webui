@@ -254,7 +254,7 @@
   "IP of 1st Redfish management interface.": "",
   "IPMI": "IPMI",
   "IPMI Read": "IPMI 읽기",
-  "IPMI Write": "IPMI Tmrl",
+  "IPMI Write": "IPMI 쓰기",
   "IPs": "IP",
   "IPv4": "IPv4",
   "IPv6": "IPv6",
