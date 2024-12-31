@@ -21,7 +21,7 @@
   "You can select multiple items with the Ctrl and Shift keys.": "你可以使用Ctrl和Shift键选择多项。",
   "{crontabDescription}, from {startHour} to {endHour}": "{crontabDescription}, 从 {startHour} 到 {endHour}",
   "{n, plural, =0 {No keys} =1 {# key} other {# keys}}": "{n, plural, =0 {无密钥} =1 {# 个密钥} other {# 个密钥}}",
-  "{n, plural, one {# Environment Variable} other {# Environment Variables} }": "{n}个环境变量}",
+  "{n, plural, one {# Environment Variable} other {# Environment Variables} }": "{n}个环境变量",
   "{n, plural, one {Failed Disk} other {Failed Disks} }": "错误的磁盘",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
   "{n, plural, one {SAS Expander} other {SAS Expanders} }": "SAS 扩展器",
