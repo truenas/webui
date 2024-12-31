@@ -13,7 +13,7 @@ import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 
 export interface UsersState extends EntityState<User> {
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export const adapter = createEntityAdapter<User>({
@@ -21,7 +21,7 @@ export const adapter = createEntityAdapter<User>({
   sortComparer: (a, b) => a.username.localeCompare(b.username),
 });
 
-export const usersInitialState = adapter.getInitialState({
+export const usersInitialState: UsersState = adapter.getInitialState({
   isLoading: false,
   error: null,
 });

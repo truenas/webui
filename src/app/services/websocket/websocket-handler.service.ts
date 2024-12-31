@@ -38,7 +38,7 @@ export class WebSocketHandlerService {
   readonly isConnected$ = this.connectionEstablished$.asObservable();
 
   private readonly reconnectTimeoutMillis = 5 * 1000;
-  private reconnectTimerSubscription: Subscription;
+  private reconnectTimerSubscription: Subscription | undefined;
   private readonly maxConcurrentCalls = 20;
 
   private shutDownInProgress = false;
@@ -192,7 +192,7 @@ export class WebSocketHandlerService {
   }
 
   private unsubscribeReconnectSubscription(): void {
-    this.reconnectTimerSubscription.unsubscribe();
+    this.reconnectTimerSubscription?.unsubscribe();
     this.reconnectTimerSubscription = undefined;
   }
 

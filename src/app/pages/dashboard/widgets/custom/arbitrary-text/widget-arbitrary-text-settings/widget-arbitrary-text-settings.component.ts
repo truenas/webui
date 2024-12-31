@@ -26,10 +26,10 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
 })
 export class WidgetArbitraryTextSettingsComponent implements
   WidgetSettingsComponent<WidgetArbitraryTextSettings>, OnInit {
-  form = this.fb.group({
-    widgetTitle: [null as string, [Validators.required, Validators.maxLength(20)]],
-    widgetText: [null as string, [Validators.required, Validators.maxLength(130)]],
-    widgetSubText: [null as string, [Validators.maxLength(64)]],
+  form = this.fb.nonNullable.group({
+    widgetTitle: [null as string | null, [Validators.required, Validators.maxLength(20)]],
+    widgetText: [null as string | null, [Validators.required, Validators.maxLength(130)]],
+    widgetSubText: [null as string | null, [Validators.maxLength(64)]],
   });
 
   private readonly formFieldNames = ['widgetTitle', 'widgetText', 'widgetSubText'];

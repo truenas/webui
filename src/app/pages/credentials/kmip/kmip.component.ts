@@ -61,9 +61,9 @@ export class KmipComponent implements OnInit {
 
   form = this.formBuilder.group({
     server: [''],
-    port: [null as number],
-    certificate: [null as number],
-    certificate_authority: [null as number],
+    port: [null as number | null],
+    certificate: [null as number | null],
+    certificate_authority: [null as number | null],
     manage_sed_disks: [false],
     manage_zfs_keys: [false],
     enabled: [false],

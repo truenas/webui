@@ -36,8 +36,9 @@ export class EnclosureSideComponent {
   });
 
   readonly shownSide = computed(() => {
-    if (this.side() !== undefined) {
-      return this.side();
+    const side = this.side();
+    if (side !== undefined) {
+      return side;
     }
 
     return getDefaultSide(this.enclosure());

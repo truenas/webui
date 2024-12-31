@@ -56,7 +56,7 @@ export class TrainCardComponent implements OnInit {
   singleDescription: string;
   trains: Option[] = [];
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     auto_check: [false],
     train: ['', Validators.required],
   });

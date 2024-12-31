@@ -382,12 +382,17 @@ export class LanguageService {
       return of(true);
     }
 
-    if (this.window.localStorage.language) {
-      return this.setLanguage(this.window.localStorage.getItem('language'));
+    const storedLanguage = this.window.localStorage.getItem('language');
+    if (storedLanguage) {
+      return this.setLanguage(storedLanguage);
     }
 
     const browserLang = this.translate.getBrowserLang();
-    return this.setLanguage(browserLang);
+    if (browserLang) {
+      return this.setLanguage(browserLang);
+    }
+
+    return this.setLanguage();
   }
 
   setLanguageFromMiddleware(): Observable<boolean> {
@@ -403,7 +408,7 @@ export class LanguageService {
   /**
    * @return Observable that completes when translations have been loaded.
    */
-  setLanguage(lang: string): Observable<boolean> {
+  setLanguage(lang = 'en'): Observable<boolean> {
     if (find(this.availableLangs, { code: lang })) {
       this.currentLanguage = lang;
     } else {
