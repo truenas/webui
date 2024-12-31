@@ -7,7 +7,6 @@ import {
   providedIn: 'root',
 })
 export class WebSocketStatusService {
-  private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private readonly connectionEstablished$ = new BehaviorSubject(false);
   readonly isConnected$ = this.connectionEstablished$.asObservable();
 
@@ -16,6 +15,7 @@ export class WebSocketStatusService {
     return this.syncIsConnected;
   }
 
+  private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private syncIsAuthenticated = false;
   get isAuthenticated(): boolean {
     return this.syncIsAuthenticated;
