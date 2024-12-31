@@ -36,10 +36,12 @@ export class AppCardLogoComponent {
   protected readonly scroll$: Observable<Event | void>;
 
   constructor() {
-    this.scroll$ = merge(
-      fromEvent(this.scrollTarget, 'scroll'),
-      this.initialEmitter$,
-    );
+    if (this.scrollTarget) {
+      this.scroll$ = merge(
+        fromEvent(this.scrollTarget, 'scroll'),
+        this.initialEmitter$,
+      );
+    }
     toObservable(this.url).pipe(
       untilDestroyed(this),
     ).subscribe({

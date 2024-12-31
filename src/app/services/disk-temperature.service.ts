@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  filter,
-  map, Observable, repeat,
-  switchMap,
-  takeUntil,
+  filter, map, Observable, repeat, switchMap, takeUntil,
 } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -41,8 +38,8 @@ export class DiskTemperatureService {
         map((enclosures) => {
           return enclosures.map((enclosure) => {
             return Object.values(enclosure.elements[EnclosureElementType.ArrayDeviceSlot])
-              .filter((element) => element.dev)
-              .map((element) => element.dev);
+              .map((element) => element.dev)
+              .filter((dev) => !!dev) as string[];
           }).flat();
         }),
         switchMap((disks) => {

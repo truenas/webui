@@ -86,7 +86,7 @@ export class SupportCardComponent implements OnInit {
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
 
-  protected readonly isProductionControl = new FormControl(false);
+  protected readonly isProductionControl = new FormControl(false, { nonNullable: true });
 
   get licenseButtonText(): string {
     return this.hasLicense ? helptext.updateTxt : helptext.enterTxt;

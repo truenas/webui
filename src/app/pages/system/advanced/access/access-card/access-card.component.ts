@@ -218,7 +218,7 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  getUsername(credentialsData: AuthSessionCredentialsData): string {
+  getUsername(credentialsData: AuthSessionCredentialsData | undefined): string {
     if (credentialsData?.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }

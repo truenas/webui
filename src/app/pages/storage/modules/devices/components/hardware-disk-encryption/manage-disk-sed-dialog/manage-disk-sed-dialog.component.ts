@@ -42,7 +42,10 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class ManageDiskSedDialogComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  passwordControl = new FormControl('', [Validators.required]);
+  passwordControl = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
 
   disk: Disk;
 
@@ -80,7 +83,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
       )
       .subscribe((disks) => {
         this.disk = disks[0];
-        this.passwordControl.setValue(this.disk.passwd);
+        this.passwordControl.setValue(this.disk.passwd || '');
       });
   }
 

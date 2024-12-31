@@ -91,7 +91,7 @@ export class DeviceFormComponent implements OnInit {
   existingDevice: VmDevice;
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
-  orderControl = new FormControl(null as number);
+  orderControl = new FormControl(null as number | null);
 
   cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
@@ -99,12 +99,12 @@ export class DeviceFormComponent implements OnInit {
 
   diskForm = this.formBuilder.group({
     path: ['', Validators.required],
-    type: [null as VmDiskMode],
+    type: [null as VmDiskMode | null],
     sectorsize: [0],
   });
 
   nicForm = this.formBuilder.group({
-    type: [null as VmNicType, Validators.required],
+    type: [null as VmNicType | null, Validators.required],
     mac: ['', Validators.pattern(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
@@ -113,8 +113,8 @@ export class DeviceFormComponent implements OnInit {
   rawFileForm = this.formBuilder.group({
     path: ['', Validators.required],
     sectorsize: [0],
-    type: [null as VmDiskMode],
-    size: [null as number],
+    type: [null as VmDiskMode | null],
+    size: [null as number | null],
   });
 
   pciForm = this.formBuilder.nonNullable.group({
@@ -122,7 +122,7 @@ export class DeviceFormComponent implements OnInit {
   });
 
   displayForm = this.formBuilder.group({
-    port: [null as number],
+    port: [null as number | null],
     resolution: [''],
     bind: [''],
     password: [''],

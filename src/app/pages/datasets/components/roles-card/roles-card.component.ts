@@ -53,11 +53,11 @@ export class RolesCardComponent {
   });
 
   readonly appNames = computed(() => {
-    return uniq(this.dataset().apps.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().apps?.map((app) => app.name))?.join(', ');
   });
 
   readonly vmNames = computed(() => {
-    return uniq(this.dataset().vms.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().vms?.map((app) => app.name))?.join(', ');
   });
 
   readonly isSystemDataset = computed(() => {

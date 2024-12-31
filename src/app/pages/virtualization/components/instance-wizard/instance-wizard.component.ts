@@ -124,7 +124,7 @@ export class InstanceWizardComponent {
     name: ['', Validators.required],
     image: ['', Validators.required],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -132,9 +132,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number>;
+      source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number>;
+      dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -181,11 +181,11 @@ export class InstanceWizardComponent {
   }
 
   protected addProxy(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number, Validators.required],
+      source_port: [null as number | null, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number, Validators.required],
+      dest_port: [null as number | null, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -196,7 +196,7 @@ export class InstanceWizardComponent {
   }
 
   protected addDisk(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
@@ -228,7 +228,7 @@ export class InstanceWizardComponent {
   }
 
   addEnvironmentVariable(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
     });

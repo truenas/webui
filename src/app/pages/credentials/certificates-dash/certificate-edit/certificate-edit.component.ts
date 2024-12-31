@@ -64,7 +64,7 @@ export class CertificateEditComponent implements OnInit {
 
   isLoading = false;
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     add_to_trusted_store: [false],
   }) as FormGroup<{

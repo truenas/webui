@@ -32,7 +32,7 @@
           ixTest="select-all-app"
           [checked]="isAllSelected"
           [indeterminate]="!isAllSelected && !!selection.selected.length"
-          [disabled]="filteredInstances()?.length === 0"
+          [disabled]="filteredInstances().length === 0"
           (change)="toggleAllChecked($event.checked)"
         ></mat-checkbox>
       }

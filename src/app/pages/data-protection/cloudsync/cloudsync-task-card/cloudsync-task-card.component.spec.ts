@@ -114,7 +114,7 @@ describe('CloudSyncTaskCardComponent', () => {
             value: [{
               state: JobState.Finished,
               id: 1,
-              time_finished: cloudsyncTasks[0].job.time_finished,
+              time_finished: cloudsyncTasks[0].job!.time_finished,
             } as Job],
           },
           {

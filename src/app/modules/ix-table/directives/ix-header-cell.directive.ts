@@ -13,7 +13,7 @@ import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.inte
 })
 export class IxTableHeaderCellDirective<T> implements AfterViewInit {
   readonly dataProvider = input<DataProvider<T>>();
-  readonly column = input<Column<T, ColumnComponent<T>>>();
+  readonly column = input.required<Column<T, ColumnComponent<T>>>();
 
   constructor(private viewContainer: ViewContainerRef) {}
 
@@ -22,13 +22,9 @@ export class IxTableHeaderCellDirective<T> implements AfterViewInit {
   }
 
   createComponent(): void {
-    if (!this.column().headerType) {
-      this.column().headerType = IxHeaderCellTextComponent;
-    }
+    const headerType = this.column().headerType || IxHeaderCellTextComponent;
     this.viewContainer.clear();
-    const componentRef = this.viewContainer.createComponent(
-      this.column().headerType,
-    );
+    const componentRef = this.viewContainer.createComponent(headerType);
 
     componentRef.instance.dataProvider = this.dataProvider();
     Object.keys(this.column()).forEach((key: ColumnKeys<T>) => {

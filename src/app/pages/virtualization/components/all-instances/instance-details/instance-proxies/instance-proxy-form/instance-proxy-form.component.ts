@@ -58,9 +58,9 @@ export class InstanceProxyFormComponent implements OnInit {
 
   protected form = this.formBuilder.nonNullable.group({
     source_proto: [VirtualizationProxyProtocol.Tcp],
-    source_port: [null as number, Validators.required],
+    source_port: [null as number | null, Validators.required],
     dest_proto: [VirtualizationProxyProtocol.Tcp],
-    dest_port: [null as number, Validators.required],
+    dest_port: [null as number | null, Validators.required],
   });
 
   protected title = computed(() => {
@@ -114,11 +114,12 @@ export class InstanceProxyFormComponent implements OnInit {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Proxy,
     } as VirtualizationProxy;
+    const existingProxy = this.existingProxy();
 
-    return this.existingProxy()
+    return existingProxy
       ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
-        name: this.existingProxy().name,
+        name: existingProxy.name,
       }])
       : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }
