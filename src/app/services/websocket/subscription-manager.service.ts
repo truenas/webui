@@ -6,6 +6,7 @@ import {
 import { isCollectionUpdateMessage, isSuccessfulResponse } from 'app/helpers/api.helper';
 import { ApiEventMethod, ApiEventTyped, CollectionUpdateMessage } from 'app/interfaces/api-message.interface';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type Method = ApiEventMethod | `${ApiEventMethod}:${string}`;
 
@@ -35,6 +36,7 @@ export class SubscriptionManagerService {
   private subscriptionsToClose = new Set<Method>();
 
   constructor(
+    private wsStatus: WebSocketStatusService,
     private wsHandler: WebSocketHandlerService,
   ) {
     this.listenForSubscriptionsToBeEstablished();
@@ -119,11 +121,14 @@ export class SubscriptionManagerService {
 
   private cancelSubscription(method: Method): void {
     const backendSubscriptionId = this.establishedSubscriptions.get(method);
-    this.wsHandler.scheduleCall({
-      id: UUID.UUID(),
-      method: 'core.unsubscribe',
-      params: [backendSubscriptionId],
-    });
+    const isAuthenticated = this.wsStatus.isAuthenticated;
+    if (isAuthenticated) {
+      this.wsHandler.scheduleCall({
+        id: UUID.UUID(),
+        method: 'core.unsubscribe',
+        params: [backendSubscriptionId],
+      });
+    }
 
     this.establishedSubscriptions.delete(method);
     this.openSubscriptions.delete(method);
