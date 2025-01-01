@@ -32,7 +32,9 @@ const initialState: DevicesState = {
   disksWithSmartTestSupport: [],
 };
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DevicesStore extends ComponentStore<DevicesState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
