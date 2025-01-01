@@ -37,7 +37,7 @@ function getByte(data: string): number {
   return -1;
 }
 
-export function prepareBwlimit(bwlimit: string[]): BwLimitUpdate[] {
+export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
   const bwlimtResult: BwLimitUpdate[] = [];
 
   if (!bwlimit?.length) {

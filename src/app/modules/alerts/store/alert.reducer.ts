@@ -17,7 +17,7 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 export interface AlertsState extends EntityState<Alert> {
   isLoading: boolean;
   isPanelOpen: boolean;
-  error: string;
+  error: string | null;
 }
 
 export const adapter = createEntityAdapter<Alert>({
@@ -26,7 +26,7 @@ export const adapter = createEntityAdapter<Alert>({
     || a.datetime.$date - b.datetime.$date,
 });
 
-export const alertsInitialState = adapter.getInitialState({
+export const alertsInitialState: AlertsState = adapter.getInitialState({
   isLoading: false,
   isPanelOpen: false,
   error: null,

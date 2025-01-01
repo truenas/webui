@@ -1,15 +1,11 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
-import { FailoverStatusComponent } from 'app/pages/signin/failover-status/failover-status.component';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
@@ -26,12 +22,6 @@ import { WebSocketHandlerService } from 'app/services/websocket/websocket-handle
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
   const wasAdminSet$ = new BehaviorSubject<boolean>(undefined);
-  const failover$ = new BehaviorSubject<{
-    status: FailoverStatus;
-    ips?: string[];
-    disabledReasons?: FailoverDisabledReason[];
-  }>(null);
-  const hasFailover$ = new BehaviorSubject<boolean>(undefined);
   const canLogin$ = new BehaviorSubject<boolean>(undefined);
   const isConnected$ = new BehaviorSubject<boolean>(undefined);
   const loginBanner$ = new BehaviorSubject<string>(undefined);
@@ -41,21 +31,17 @@ describe('SigninComponent', () => {
   const createComponent = createComponentFactory({
     component: SigninComponent,
     imports: [
-      NgxSkeletonLoaderComponent,
       MockComponents(
         SigninFormComponent,
         DisconnectedMessageComponent,
         SetAdminPasswordFormComponent,
         TrueCommandStatusComponent,
-        FailoverStatusComponent,
         CopyrightLineComponent,
       ),
     ],
     componentProviders: [
       mockProvider(SigninStore, {
         wasAdminSet$,
-        failover$,
-        hasFailover$,
         canLogin$,
         loginBanner$,
         isLoading$: of(false),
@@ -81,8 +67,6 @@ describe('SigninComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     wasAdminSet$.next(true);
-    failover$.next(null);
-    hasFailover$.next(false);
     canLogin$.next(true);
     isConnected$.next(true);
     loginBanner$.next('');
@@ -123,22 +107,6 @@ describe('SigninComponent', () => {
 
     it('shows TrueCommandStatusComponent', () => {
       expect(spectator.query(TrueCommandStatusComponent)).toExist();
-    });
-
-    it('shows FailoverStatusComponent when failover status is loaded and system has failover', () => {
-      failover$.next({
-        status: FailoverStatus.Error,
-        ips: ['123.44.1.22', '123.44.1.34'],
-        disabledReasons: [FailoverDisabledReason.NoPong],
-      });
-      hasFailover$.next(true);
-      spectator.detectChanges();
-
-      const failoverStatus = spectator.query(FailoverStatusComponent)!;
-      expect(failoverStatus).toExist();
-      expect(failoverStatus.disabledReasons).toEqual([FailoverDisabledReason.NoPong]);
-      expect(failoverStatus.status).toEqual(FailoverStatus.Error);
-      expect(failoverStatus.failoverIps).toEqual(['123.44.1.22', '123.44.1.34']);
     });
 
     it('shows the logo when waiting for connection status', () => {

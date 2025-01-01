@@ -32,7 +32,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 export class GeneralSectionComponent implements OnChanges {
   readonly replication = input<ReplicationTask>();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     direction: [Direction.Push],
     transport: [TransportMode.Ssh],

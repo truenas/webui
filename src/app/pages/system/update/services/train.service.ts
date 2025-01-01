@@ -24,7 +24,7 @@ export class TrainService {
   nightlyTrain$ = new BehaviorSubject<boolean | undefined>(undefined);
   currentTrainDescription$ = new BehaviorSubject<string>('');
   trainDescriptionOnPageLoad$ = new BehaviorSubject<string>('');
-  fullTrainList$ = new BehaviorSubject<Record<string, SystemUpdateTrain>>(undefined);
+  fullTrainList$ = new BehaviorSubject<Record<string, SystemUpdateTrain> | undefined>(undefined);
   trainVersion$ = new BehaviorSubject<string | null>(null);
 
   trainValue$ = new BehaviorSubject<string>('');
@@ -56,7 +56,7 @@ export class TrainService {
         }
 
         let warning = '';
-        if (fullTrainList[newTrain]?.description.includes('[nightly]')) {
+        if (fullTrainList?.[newTrain]?.description?.includes('[nightly]')) {
           warning = this.translate.instant('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
         }
 
@@ -78,8 +78,8 @@ export class TrainService {
   setTrainDescription(): void {
     combineLatest([this.fullTrainList$, this.trainValue$])
       .pipe(untilDestroyed(this)).subscribe(([fullTrainList, trainValue]) => {
-        if (fullTrainList[trainValue]) {
-          this.currentTrainDescription$.next(fullTrainList[trainValue].description.toLowerCase());
+        if (fullTrainList?.[trainValue]) {
+          this.currentTrainDescription$.next(fullTrainList?.[trainValue]?.description?.toLowerCase());
         } else {
           this.currentTrainDescription$.next('');
         }

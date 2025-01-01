@@ -37,10 +37,10 @@ const newOption = 'NEW';
 export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     host: ['', Validators.required],
-    port: [null as number],
+    port: [null as number | null],
     user: ['', Validators.required],
     pass: [''],
-    private_key: [null as number | typeof newOption],
+    private_key: [null as number | typeof newOption | null],
   });
 
   privateKeys$: Observable<Option[]>;

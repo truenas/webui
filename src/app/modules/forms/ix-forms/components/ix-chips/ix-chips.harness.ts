@@ -72,6 +72,11 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
 
   async addChips(values: string[]): Promise<void> {
     const input = await (await this.getMatChipListHarness()).getInput();
+    if (!input) {
+      console.error('Input not found');
+      return;
+    }
+
     for (const value of values) {
       await input.setValue(value);
       await input.sendSeparatorKey(TestKey.ENTER);

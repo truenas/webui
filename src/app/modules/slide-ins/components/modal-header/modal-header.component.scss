@@ -28,13 +28,14 @@
 
   // TODO: Remove this when we finish with Slide In Migration
   &::after {
-    color: var(--primary);
-    content: 'NEW Slide In Used';
-    display: block;
-    font-size: 10px;
-    height: 0;
-    margin-top: 5px;
-    width: 100%;
+    background-color: var(--primary);
+    border-radius: 50%;
+    content: '';
+    display: inline-block;
+    height: 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    width: 6px;
   }
 }
 

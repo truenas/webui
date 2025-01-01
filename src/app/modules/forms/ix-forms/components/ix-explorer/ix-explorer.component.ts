@@ -67,7 +67,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
   readonly root = input(mntPath);
-  readonly nodeProvider = input<TreeNodeProvider>();
+  readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
   readonly canCreateDataset = input(false);
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});

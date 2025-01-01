@@ -32,12 +32,9 @@ ix-fieldset {
 }
 
 .protocol-and-port {
-  display: flex;
+  display: grid;
   gap: 12px;
-
-  .protocol {
-    width: 100px;
-  }
+  grid-template-columns: 1fr 1fr;
 }
 
 ngx-skeleton-loader {

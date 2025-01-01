@@ -31,7 +31,7 @@ export interface CloudSyncTask {
   follow_symlinks: boolean;
   id: number;
   include: string[];
-  job: Job;
+  job: Job | null;
   locked: boolean;
   path: string;
   post_script: string;

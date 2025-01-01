@@ -39,7 +39,7 @@ export class IxListComponent implements AfterViewInit {
   readonly itemsSchema = input<ChartSchemaNode[]>();
   readonly isEditMode = input<boolean>();
 
-  readonly add = output<ChartSchemaNode[]>();
+  readonly add = output<ChartSchemaNode[] | undefined>();
 
   isDisabled = false;
 
@@ -48,7 +48,7 @@ export class IxListComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    if (!this.isEditMode() && this.default()?.length > 0) {
+    if (!this.isEditMode() && Number(this.default()?.length) > 0) {
       this.handleListDefaults();
     }
   }

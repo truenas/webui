@@ -72,7 +72,7 @@ export class EmailFormComponent implements OnInit {
     fromemail: ['', [Validators.required, emailValidator()]],
     fromname: [''],
     outgoingserver: [''],
-    port: [null as number, [
+    port: [null as number | null, [
       this.validatorService.validateOnCondition(
         (control) => control.parent && this.isSmtp && this.hasSmtpAuthentication,
         Validators.required,
@@ -153,7 +153,7 @@ export class EmailFormComponent implements OnInit {
   ) {}
 
   get hasSmtpAuthentication(): boolean {
-    return this.form.controls.smtp.value;
+    return Boolean(this.form.controls.smtp.value);
   }
 
   get isSmtp(): boolean {
