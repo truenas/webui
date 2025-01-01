@@ -8,7 +8,7 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, forkJoin, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -21,6 +21,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 @UntilDestroy()
@@ -55,6 +56,7 @@ export class AppSettingsButtonComponent {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     protected dockerStore: DockerStore,
+    protected appsStore: AppsStore,
     private viewContainerRef: ViewContainerRef,
   ) { }
 
@@ -78,6 +80,13 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideIn.open(AppsSettingsComponent);
+    this.ixSlideIn.open(AppsSettingsComponent).pipe(
+      filter((response) => !!response.response),
+      switchMap(() => forkJoin([
+        this.dockerStore.reloadDockerConfig(),
+        this.appsStore.loadCatalog(),
+      ])),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

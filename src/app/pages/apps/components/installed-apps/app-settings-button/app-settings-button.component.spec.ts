@@ -10,6 +10,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 describe('AppSettingsButtonComponent', () => {
@@ -35,6 +36,9 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
         setDockerPool: jest.fn(() => of({})),
+      }),
+      mockProvider(AppsStore, {
+        loadCatalog: jest.fn(() => of({})),
       }),
     ],
   });
