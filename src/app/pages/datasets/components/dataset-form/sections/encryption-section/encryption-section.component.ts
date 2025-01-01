@@ -48,7 +48,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   });
 
   // TODO: Add conditional validators
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     inherit_encryption: [true],
     encryption: [true],
     encryption_type: [DatasetEncryptionType.Default],

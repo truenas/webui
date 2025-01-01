@@ -17,6 +17,6 @@ export class BasicSearchHarness extends ComponentHarness {
   }
 
   async clickSwitchToAdvanced(): Promise<void> {
-    return (await this.getSwitchLink()).click();
+    return (await this.getSwitchLink())?.click();
   }
 }

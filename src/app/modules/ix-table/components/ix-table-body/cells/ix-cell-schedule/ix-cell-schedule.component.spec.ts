@@ -1,7 +1,9 @@
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { IxCellScheduleComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { LanguageService } from 'app/services/language.service';
+import { LocaleService } from 'app/services/locale.service';
 
 interface TestTableData { scheduleField: Schedule }
 
@@ -18,6 +20,15 @@ describe('IxCellScheduleComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellScheduleComponent<TestTableData>,
     detectChanges: false,
+    providers: [
+      mockProvider(LocaleService, {
+        getShortTimeFormat: () => 'HH:mm',
+        getPreferredTimeFormat: () => 'HH:mm:ss',
+      }),
+      mockProvider(LanguageService, {
+        currentLanguage: 'en',
+      }),
+    ],
   });
 
   beforeEach(() => {
@@ -31,6 +42,6 @@ describe('IxCellScheduleComponent', () => {
   it('shows crontab string when schedule is passed', () => {
     spectator.component.setRow({ scheduleField: schedule });
     spectator.fixture.detectChanges();
-    expect(spectator.element.textContent.trim()).toBe('15 10 * 2-5 6');
+    expect(spectator.element.textContent!.trim()).toBe('At 10:15, only on Saturday, February through May');
   });
 });

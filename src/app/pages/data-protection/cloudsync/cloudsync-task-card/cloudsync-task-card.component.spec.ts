@@ -6,6 +6,7 @@ import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,11 +16,16 @@ import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -31,7 +37,6 @@ import {
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { LocaleService } from 'app/services/locale.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -75,8 +80,6 @@ describe('CloudSyncTaskCardComponent', () => {
       },
       locked: false,
       credential: 'Google Drive',
-      cron_schedule: '0 0 * * *',
-      frequency: 'At 00:00, every day',
       next_run_time: '2023-09-19T21:00:00.000Z',
       next_run: 'in about 21 hours',
       state: {
@@ -94,7 +97,13 @@ describe('CloudSyncTaskCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudSyncTaskCardComponent,
-    imports: [
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'Every hour, every day'))] },
+        },
+      ],
     ],
     providers: [
       mockAuth(),
@@ -105,7 +114,7 @@ describe('CloudSyncTaskCardComponent', () => {
             value: [{
               state: JobState.Finished,
               id: 1,
-              time_finished: cloudsyncTasks[0].job.time_finished,
+              time_finished: cloudsyncTasks[0].job!.time_finished,
             } as Job],
           },
           {
@@ -139,7 +148,6 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(LocaleService),
       mockProvider(TaskService, {
         getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
-        getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
       mockProvider(SnackbarService),
     ],
@@ -167,8 +175,10 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
-      true,
-      cloudsyncTasks[0],
+      {
+        wide: true,
+        data: cloudsyncTasks[0],
+      },
     );
   });
 
@@ -178,7 +188,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     );
   });
 

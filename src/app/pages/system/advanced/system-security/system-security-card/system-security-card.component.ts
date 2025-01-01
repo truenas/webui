@@ -15,9 +15,9 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -57,7 +57,7 @@ export class SystemSecurityCardComponent {
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.slideIn.open(SystemSecurityFormComponent, false, config).pipe(
+    this.slideIn.open(SystemSecurityFormComponent, { data: config }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

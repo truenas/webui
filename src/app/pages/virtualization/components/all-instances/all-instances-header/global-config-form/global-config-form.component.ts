@@ -70,7 +70,7 @@ export class GlobalConfigFormComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: SlideInRef<VirtualizationGlobalConfig>,
+    public slideInRef: SlideInRef<VirtualizationGlobalConfig, boolean>,
   ) {
     const currentConfig = this.slideInRef.getData();
 
@@ -106,7 +106,7 @@ export class GlobalConfigFormComponent {
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Virtualization settings updated'));
         this.slideInRef.close({
-          response: undefined,
+          response: true,
           error: false,
         });
       });

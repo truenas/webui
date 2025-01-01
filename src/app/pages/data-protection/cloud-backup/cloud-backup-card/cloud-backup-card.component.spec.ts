@@ -15,13 +15,13 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -114,8 +114,10 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      cloudBackups[0],
+      {
+        wide: true,
+        data: cloudBackups[0],
+      },
     );
   });
 
@@ -125,8 +127,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
-      undefined,
+      { wide: true },
     );
   });
 

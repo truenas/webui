@@ -6,6 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -16,7 +17,6 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('InstanceDisksComponent', () => {
   let spectator: Spectator<InstanceDisksComponent>;
@@ -78,15 +78,19 @@ describe('InstanceDisksComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: undefined, instanceId: 'my-instance' });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceDiskFormComponent,
+      { data: { disk: undefined, instanceId: 'my-instance' } },
+    );
   });
 
   it('opens disk for for edit when actions menu emits (edit)', () => {
-    const actionsMenu = spectator.query(DeviceActionsMenuComponent);
+    const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
     actionsMenu.edit.emit();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceDiskFormComponent, false, { disk: disks[0], instanceId: 'my-instance' });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceDiskFormComponent,
+      { data: { disk: disks[0], instanceId: 'my-instance' } },
+    );
   });
 });

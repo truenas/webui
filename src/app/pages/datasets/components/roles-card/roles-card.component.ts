@@ -12,13 +12,15 @@ import { filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixAppsDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -53,11 +55,11 @@ export class RolesCardComponent {
   });
 
   readonly appNames = computed(() => {
-    return uniq(this.dataset().apps.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().apps?.map((app) => app.name))?.join(', ');
   });
 
   readonly vmNames = computed(() => {
-    return uniq(this.dataset().vms.map((app) => app.name)).join(', ');
+    return uniq(this.dataset().vms?.map((app) => app.name))?.join(', ');
   });
 
   readonly isSystemDataset = computed(() => {
@@ -95,24 +97,28 @@ export class RolesCardComponent {
   });
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private datasetStore: DatasetTreeStore,
   ) {}
 
   createSmbShare(): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent, {
-      data: { defaultSmbShare: { path: this.dataset().mountpoint } },
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(SmbFormComponent, {
+      data: { defaultSmbShare: { path: this.dataset().mountpoint } as SmbShare },
+    }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
   }
 
   createNfsShare(): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent, {
-      data: { defaultNfsShare: { path: this.dataset().mountpoint } },
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(NfsFormComponent, {
+      data: { defaultNfsShare: { path: this.dataset().mountpoint } as NfsShare },
+    }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
   }

@@ -66,13 +66,13 @@ export class GuiFormComponent {
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     usage_collection: [false, [Validators.required]],

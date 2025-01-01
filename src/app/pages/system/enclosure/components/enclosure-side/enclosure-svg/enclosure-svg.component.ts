@@ -266,7 +266,7 @@ export class EnclosureSvgComponent implements OnDestroy {
     this.renderer.setStyle(overlay, 'fill', slotTint);
   }
 
-  private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot {
+  private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot | undefined {
     const slotNumber = Number(tray.id.split('_').pop());
     const traySlot = this.slots().find((slot) => slot.drive_bay_number === slotNumber);
 

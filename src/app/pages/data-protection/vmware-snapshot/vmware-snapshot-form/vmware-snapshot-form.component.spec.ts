@@ -11,9 +11,8 @@ import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmwa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/services/websocket/api.service';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot-form.component';
 
@@ -26,6 +25,12 @@ describe('VmwareSnapshotFormComponent', () => {
     password: 'pleasechange',
     username: 'root',
   } as VmwareSnapshot;
+
+  const slideInRef: SlideInRef<VmwareSnapshot | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   let spectator: Spectator<VmwareSnapshotFormComponent>;
   let loader: HarnessLoader;
@@ -67,13 +72,14 @@ describe('VmwareSnapshotFormComponent', () => {
         mockCall('vmware.create'),
         mockCall('vmware.update'),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -116,7 +122,7 @@ describe('VmwareSnapshotFormComponent', () => {
         filesystem: 'fs01',
         datastore: 'ds01',
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -124,7 +130,7 @@ describe('VmwareSnapshotFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingSnapshot },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingSnapshot }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -171,7 +177,7 @@ describe('VmwareSnapshotFormComponent', () => {
           datastore: 'ds01',
         },
       ]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

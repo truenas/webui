@@ -20,12 +20,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -74,7 +74,7 @@ export class InstanceGeneralInfoComponent {
   ) {}
 
   editInstance(): void {
-    this.slideIn.open(InstanceEditFormComponent, false, this.instance())
+    this.slideIn.open(InstanceEditFormComponent, { data: this.instance() })
       .pipe(map((response) => response.response), filter(Boolean), untilDestroyed(this))
       .subscribe((instance: VirtualizationInstance) => {
         this.instancesStore.instanceUpdated(instance);

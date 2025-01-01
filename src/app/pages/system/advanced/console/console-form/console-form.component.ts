@@ -93,7 +93,7 @@ export class ConsoleFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private slideInRef: SlideInRef<ConsoleConfig>,
+    public slideInRef: SlideInRef<ConsoleConfig, boolean>,
   ) {
     this.consoleConfig = this.slideInRef.getData();
   }

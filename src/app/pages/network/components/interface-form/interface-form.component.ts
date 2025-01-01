@@ -58,6 +58,7 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -175,7 +176,8 @@ export class InterfaceFormComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private networkService: NetworkService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
@@ -292,7 +294,7 @@ export class InterfaceFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
   }
@@ -326,7 +328,10 @@ export class InterfaceFormComponent implements OnInit {
       this.api.call('failover.licensed'),
       this.api.call('failover.node'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(([isHaLicensed, failoverNode]) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {

@@ -45,13 +45,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -125,7 +125,10 @@ export class SnapshotListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.snapshots.find((snapshot) => row.name === snapshot.name).selected = checked;
+        const snapshotToSelect = this.snapshots.find((snapshot) => row.name === snapshot.name);
+        if (snapshotToSelect) {
+          snapshotToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },
@@ -191,7 +194,7 @@ export class SnapshotListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private store$: Store<AppState>,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private route: ActivatedRoute,
   ) {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
@@ -283,7 +286,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideInService.open(SnapshotAddFormComponent);
+    this.slideIn.open(SnapshotAddFormComponent);
   }
 
   doBatchDelete(data: ZfsSnapshotUi[]): void {

@@ -30,13 +30,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -71,7 +71,7 @@ export class InitShutdownListComponent implements OnInit {
       title: this.translate.instant('Type'),
       propertyName: 'type',
       getValue: (row) => {
-        const typeLabel = initShutdownScriptTypeLabels.get(row.type);
+        const typeLabel = initShutdownScriptTypeLabels.get(row.type) || row.type;
         return this.translate.instant(typeLabel);
       },
     }),
@@ -83,7 +83,7 @@ export class InitShutdownListComponent implements OnInit {
       title: this.translate.instant('When'),
       propertyName: 'when',
       getValue: (row) => {
-        const whenLabel = initShutdownScriptWhenLabels.get(row.when);
+        const whenLabel = initShutdownScriptWhenLabels.get(row.when) || row.when;
         return this.translate.instant(whenLabel);
       },
     }),
@@ -138,7 +138,7 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   editScript(script: InitShutdownScript): void {
-    this.slideIn.open(InitShutdownFormComponent, false, script)
+    this.slideIn.open(InitShutdownFormComponent, { data: script })
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

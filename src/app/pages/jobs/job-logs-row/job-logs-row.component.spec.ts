@@ -5,14 +5,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 
-const fakeJob: Job = {
+const fakeJob = {
   abortable: true,
   arguments: [1],
-  description: null,
   transient: false,
   error: '[EFAULT] Transferred:   \t          0 / 0 Byte, -, 0 Byte/s, ETA',
   exc_info: {
-    extra: null,
     type: 'CallError' as JobExceptionType,
   },
   exception: 'Traceback (most recent call last):\n  File "/usr/lib/python3/dist-packages/middlewared/job.py", line 423',
@@ -22,7 +20,6 @@ const fakeJob: Job = {
   method: 'cloudsync.sync',
   progress: {
     description: 'Starting',
-    extra: null,
     percent: 0,
   },
   result: null,
@@ -30,7 +27,7 @@ const fakeJob: Job = {
   time_finished: { $date: 1653721201697 },
   time_started: { $date: 1653721201446 },
   credentials: null,
-};
+} as Job;
 
 describe('JobLogsRowComponent', () => {
   let spectator: SpectatorHost<JobLogsRowComponent>;

@@ -24,27 +24,27 @@ describe('PoolCardIconComponent', () => {
     spectator = createComponent({
       props: { type: PoolCardIconType.Safe },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('check_circle');
+    expect(spectator.query(IxIconComponent)!.name).toBe('check_circle');
   });
 
   it('renders icon when type is warn', () => {
     spectator = createComponent({
       props: { type: PoolCardIconType.Warn },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('error');
+    expect(spectator.query(IxIconComponent)!.name).toBe('error');
   });
 
   it('renders icon when type is faulted', () => {
     spectator = createComponent({
       props: { type: PoolCardIconType.Faulted },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('help');
+    expect(spectator.query(IxIconComponent)!.name).toBe('help');
   });
 
   it('renders icon when type is error', () => {
     spectator = createComponent({
       props: { type: PoolCardIconType.Error },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('cancel');
+    expect(spectator.query(IxIconComponent)!.name).toBe('cancel');
   });
 });

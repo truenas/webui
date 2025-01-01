@@ -60,7 +60,7 @@ describe('VirtualizationDevicesStore', () => {
     spectator.service.selectInstance('instance1');
     spectator.service.loadDevices();
 
-    expect(spectator.service.selectedInstance().id).toEqual(instances[0].id);
+    expect(spectator.service.selectedInstance()!.id).toEqual(instances[0].id);
     expect(spectator.service.loadDevices).toHaveBeenCalled();
   });
 

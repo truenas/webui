@@ -89,7 +89,10 @@ export class DiskListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.disks.find((disk) => row.name === disk.name).selected = checked;
+        const diskToSelect = this.disks.find((disk) => row.name === disk.name);
+        if (diskToSelect) {
+          diskToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },

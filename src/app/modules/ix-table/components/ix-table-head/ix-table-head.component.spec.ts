@@ -49,7 +49,7 @@ describe('IxTableHeadComponent', () => {
   });
 
   it('shows titles', () => {
-    expect(headers.map((header) => header.querySelector('.title').textContent.trim())).toEqual([
+    expect(headers.map((header) => header.querySelector('.title')!.textContent!.trim())).toEqual([
       'Number Field',
       'String Field',
       'Boolean Field',

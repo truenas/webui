@@ -31,7 +31,10 @@ import { defaultPreferences } from 'app/store/preferences/default-preferences.co
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
-import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
+import {
+  waitForAdvancedConfig,
+  waitForGeneralConfig,
+} from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -84,7 +87,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -95,12 +98,12 @@ export class AccessFormComponent implements OnInit {
       }
     });
 
-    this.store$.select(selectGeneralConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.form.controls.ds_auth.setValue(config.ds_auth);
       this.cdr.markForCheck();
     });
 
-    this.store$.select(selectAdvancedConfig).pipe(untilDestroyed(this)).subscribe((config) => {
+    this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe((config) => {
       this.form.controls.login_banner.setValue(config.login_banner);
       this.cdr.markForCheck();
     });

@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
@@ -20,7 +21,6 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -113,8 +113,8 @@ describe('AppInfoCardComponent', () => {
     setupTest(fakeApp);
     const detailsElements = spectator.queryAll('.details-item');
     const details = detailsElements.map((element) => ({
-      label: element.querySelector('.label').textContent,
-      value: element.querySelector('.value').textContent.trim(),
+      label: element.querySelector('.label')!.textContent!,
+      value: element.querySelector('.value')!.textContent!.trim(),
     }));
     expect(details).toEqual([
       {
@@ -197,7 +197,7 @@ describe('AppInfoCardComponent', () => {
   it('opens slide-in form to edit custom app when Edit button is pressed', async () => {
     setupTest({ ...fakeApp, custom_app: true });
 
-    const slideIn = spectator.inject(OldSlideInService);
+    const slideIn = spectator.inject(SlideIn);
     jest.spyOn(slideIn, 'open').mockImplementation();
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

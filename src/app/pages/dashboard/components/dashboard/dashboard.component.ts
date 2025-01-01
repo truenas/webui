@@ -23,6 +23,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
@@ -33,7 +35,6 @@ import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widg
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { WidgetGroupControlsComponent } from './widget-group-controls/widget-group-controls.component';
@@ -125,21 +126,22 @@ export class DashboardComponent implements OnInit {
 
   protected onAddGroup(): void {
     this.slideIn
-      .open(WidgetGroupFormComponent, true)
+      .open(WidgetGroupFormComponent, { wide: true })
       .pipe(untilDestroyed(this))
-      .subscribe((response: SlideInResponse<WidgetGroup>) => {
-        if (!response.response) {
+      .subscribe((response) => {
+        const newGroup = response.response;
+        if (!newGroup) {
           return;
         }
 
-        this.renderedGroups.update((groups) => [...groups, response.response]);
+        this.renderedGroups.update((groups) => [...groups, newGroup]);
       });
   }
 
   protected onEditGroup(i: number): void {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
-      .open(WidgetGroupFormComponent, true, editedGroup)
+      .open(WidgetGroupFormComponent, { wide: true, data: editedGroup })
       .pipe(untilDestroyed(this))
       .subscribe((response: SlideInResponse<WidgetGroup>) => {
         if (!response.response) {

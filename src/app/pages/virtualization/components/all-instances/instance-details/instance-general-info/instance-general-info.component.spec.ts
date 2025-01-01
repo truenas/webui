@@ -17,6 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceEditFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
@@ -25,7 +26,6 @@ import {
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/virtualization-instances.store';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const instance = {
@@ -117,7 +117,7 @@ describe('InstanceGeneralInfoComponent', () => {
       memory: null,
     });
 
-    const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
+    const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
 
     expect(chartExtra[3]).toHaveText('CPU: All Host CPUs');
     expect(chartExtra[4]).toHaveText('Memory: Available Host Memory');
@@ -146,8 +146,10 @@ describe('InstanceGeneralInfoComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(SlideIn).open)
-      .toHaveBeenCalledWith(InstanceEditFormComponent, false, instance);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
+      InstanceEditFormComponent,
+      { data: instance },
+    );
     expect(spectator.inject(VirtualizationInstancesStore).instanceUpdated)
       .toHaveBeenCalledWith({ id: 'updated_instance' });
     expect(spectator.inject(VirtualizationDevicesStore).selectInstance)

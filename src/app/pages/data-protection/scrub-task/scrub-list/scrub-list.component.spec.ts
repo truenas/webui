@@ -2,21 +2,25 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
+  IxCellScheduleComponent,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -64,12 +68,18 @@ describe('ScrubListComponent', () => {
       MockComponent(PageHeaderComponent),
       IxTableColumnsSelectorComponent,
     ],
+    overrideComponents: [
+      [
+        IxCellScheduleComponent, {
+          remove: { imports: [ScheduleDescriptionPipe] },
+          add: { imports: [MockPipe(ScheduleDescriptionPipe, jest.fn(() => 'At 00:00, every day'))] },
+        },
+      ],
+    ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -113,7 +123,6 @@ describe('ScrubListComponent', () => {
         'Pool',
         'Threshold Days',
         'Description',
-        'Schedule',
         'Frequency',
         'Next Run',
         'Enabled',
@@ -123,8 +132,7 @@ describe('ScrubListComponent', () => {
         'Apps',
         '35',
         'My task',
-        '00 00 * * 4',
-        'At 12:00 AM, only on Thursday',
+        'At 00:00, every day',
         'N/A',
         'Yes',
         '',
@@ -133,8 +141,7 @@ describe('ScrubListComponent', () => {
         'enc',
         '35',
         'Second task',
-        '00 00 * * 7',
-        'At 12:00 AM, only on Sunday',
+        'At 00:00, every day',
         'Disabled',
         'No',
         '',
@@ -149,7 +156,7 @@ describe('ScrubListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Apps');
     await editIcon.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: scrubTasks[0],
     });
   });

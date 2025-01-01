@@ -15,7 +15,7 @@ export class IxTableEmptyDirective implements AfterViewInit, OnChanges {
   readonly showEmptyRow = input<boolean>(false, { alias: 'ix-table-empty' });
   readonly emptyConfig = input<EmptyConfig>();
 
-  componentRef: ComponentRef<IxTableEmptyRowComponent> = null;
+  componentRef: ComponentRef<IxTableEmptyRowComponent> | null = null;
   constructor(
     private viewContainerRef: ViewContainerRef,
   ) { }

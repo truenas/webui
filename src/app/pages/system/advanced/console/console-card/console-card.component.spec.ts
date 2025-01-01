@@ -7,10 +7,10 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('ConsoleCardComponent', () => {
@@ -68,13 +68,14 @@ describe('ConsoleCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       ConsoleFormComponent,
-      false,
       {
-        consolemenu: true,
-        motd: 'Welcome back',
-        serialconsole: true,
-        serialport: 'ttyS0',
-        serialspeed: '9600',
+        data: {
+          consolemenu: true,
+          motd: 'Welcome back',
+          serialconsole: true,
+          serialport: 'ttyS0',
+          serialspeed: '9600',
+        },
       },
     );
   });

@@ -16,13 +16,13 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { replicationSettingsCardElements } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.elements';
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -73,8 +73,7 @@ export class ReplicationSettingsCardComponent {
     this.firstTimeWarning.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.slideIn.open(
         ReplicationSettingsFormComponent,
-        false,
-        this.replicationConfig,
+        { data: this.replicationConfig },
       )),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),

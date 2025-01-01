@@ -51,6 +51,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   formGroup = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
+      nonNullable: true,
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
@@ -69,7 +70,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) { }
 
   ngOnInit(): void {

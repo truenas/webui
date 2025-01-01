@@ -1,0 +1,21 @@
+<ix-radio-group
+  [formControl]="isNewControl"
+  [options]="isNewOptions$"
+></ix-radio-group>
+<ng-container [formGroup]="form()">
+  @if(isNewControl.value) {
+    <ix-select
+      formControlName="host_id"
+      [label]="'Choose a new virtual port' | translate"
+      [options]="creatingPortOptions$"
+      [required]="true"
+    ></ix-select>
+  } @else {
+    <ix-select
+      formControlName="port"
+      [label]="'Existing Ports' | translate"
+      [options]="existingPortOptions$"
+      [required]="true"
+    ></ix-select>
+  }
+</ng-container>

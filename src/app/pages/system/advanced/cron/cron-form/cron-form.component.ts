@@ -99,7 +99,7 @@ export class CronFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private slideInRef: SlideInRef<Cronjob>,
+    public slideInRef: SlideInRef<Cronjob | undefined, boolean>,
   ) {
     this.editingCron = this.slideInRef.getData();
   }
@@ -119,8 +119,8 @@ export class CronFormComponent implements OnInit {
 
   onSubmit(): void {
     const values = {
-      ...this.form.value,
-      schedule: crontabToSchedule(this.form.value.schedule),
+      ...this.form.getRawValue(),
+      schedule: crontabToSchedule(this.form.getRawValue().schedule),
     } as CronjobUpdate;
 
     this.isLoading = true;

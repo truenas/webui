@@ -20,6 +20,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
@@ -33,11 +36,11 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -105,10 +108,9 @@ export class SnapshotTaskListComponent implements OnInit {
         });
       },
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
-      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       hidden: true,
@@ -169,7 +171,7 @@ export class SnapshotTaskListComponent implements OnInit {
     private taskService: TaskService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {
@@ -211,13 +213,17 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getSnapshotTasks());
   }
 
   doEdit(row: PeriodicSnapshotTaskUi): void {
-    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotTasks());
+    this.slideIn.open(SnapshotTaskFormComponent, { wide: true, data: row }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getSnapshotTasks());
   }
 
   doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {

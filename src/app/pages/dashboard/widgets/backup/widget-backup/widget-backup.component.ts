@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
   input,
@@ -17,6 +16,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BackupTile } from 'app/interfaces/cloud-backup.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -24,7 +24,6 @@ import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-bac
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { BackupTaskActionsComponent } from './backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from './backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from './backup-task-tile/backup-task-tile.component';
@@ -65,7 +64,6 @@ interface BackupRow {
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     TranslateModule,
-    NgTemplateOutlet,
   ],
 })
 export class WidgetBackupComponent implements OnInit {
@@ -165,7 +163,7 @@ export class WidgetBackupComponent implements OnInit {
   addCloudSyncTask(): void {
     this.slideIn.open(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     ).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -177,16 +175,16 @@ export class WidgetBackupComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.slideIn.open(ReplicationWizardComponent, true);
-    closer$.pipe(
+    this.slideIn.open(ReplicationWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => this.getBackups());
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {

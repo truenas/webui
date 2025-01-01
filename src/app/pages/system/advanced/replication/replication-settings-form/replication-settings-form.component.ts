@@ -46,7 +46,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
 
   isFormLoading = false;
   form = this.fb.group({
-    max_parallel_replication_tasks: [null as number],
+    max_parallel_replication_tasks: [null as number | null],
   });
 
   readonly tooltips = {
@@ -63,7 +63,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<ReplicationConfig>,
+    public slideInRef: SlideInRef<ReplicationConfig, boolean>,
   ) {
     this.replicationConfig = this.slideInRef.getData();
   }

@@ -25,6 +25,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
@@ -40,6 +43,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -47,7 +51,6 @@ import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloud
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -119,10 +122,9 @@ export class CloudSyncListComponent implements OnInit {
       hidden: true,
       getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
-      getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
+      getValue: (task) => task.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
@@ -272,7 +274,7 @@ export class CloudSyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.slideIn.open(CloudSyncFormComponent, true, row).pipe(
+      this.slideIn.open(CloudSyncFormComponent, { data: row, wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -281,7 +283,7 @@ export class CloudSyncListComponent implements OnInit {
         },
       });
     } else {
-      this.slideIn.open(CloudSyncWizardComponent, true).pipe(
+      this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -346,7 +348,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
     this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
       if (task.id === row.id) {
         return {

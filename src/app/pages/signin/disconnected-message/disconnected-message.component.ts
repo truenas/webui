@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -11,6 +11,4 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [TranslateModule],
 })
-export class DisconnectedMessageComponent {
-  readonly hasFailover = input(false);
-}
+export class DisconnectedMessageComponent {}

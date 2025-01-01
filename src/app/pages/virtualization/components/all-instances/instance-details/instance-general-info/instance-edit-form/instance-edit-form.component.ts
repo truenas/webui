@@ -60,7 +60,7 @@ export class InstanceEditFormComponent {
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -72,7 +72,7 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    private slideInRef: SlideInRef<VirtualizationInstance>,
+    public slideInRef: SlideInRef<VirtualizationInstance | undefined, VirtualizationInstance | false>,
   ) {
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
@@ -108,7 +108,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });

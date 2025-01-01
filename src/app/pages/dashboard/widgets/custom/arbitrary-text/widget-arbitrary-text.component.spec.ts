@@ -23,7 +23,7 @@ describe('WidgetArbitraryTextSettings', () => {
   });
 
   it('renders arbitrary text and title', () => {
-    const widget = spectator.query(WidgetDatapointComponent);
+    const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
     expect(widget.label()).toBe('Widget Title');
     expect(widget.text()).toBe('Widget Text');

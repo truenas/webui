@@ -1,4 +1,3 @@
-import { ComponentType } from '@angular/cdk/portal';
 import {
   AfterViewInit, Directive, OnInit, viewChild, inject,
 } from '@angular/core';
@@ -10,7 +9,8 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent, IxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { SlideInResponse, SlideIn } from 'app/services/slide-in';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ComponentInSlideIn, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 export const addNewIxSelectValue = 'ADD_NEW';
 
@@ -19,7 +19,7 @@ export const addNewIxSelectValue = 'ADD_NEW';
 export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   formComponentIsWide = false;
 
-  readonly ixSelect = viewChild(IxSelectComponent);
+  readonly ixSelect = viewChild.required(IxSelectComponent);
 
   private options = new BehaviorSubject<Option[]>([]);
 
@@ -46,7 +46,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   abstract getValueFromSlideInResponse(
     result: SlideInResponse,
   ): IxSelectValue;
-  abstract getFormComponentType(): ComponentType<unknown>;
+  abstract getFormComponentType(): ComponentInSlideIn<unknown, unknown>;
   abstract fetchOptions(): Observable<Option[]>;
   getFormInputData(): Record<string, unknown> {
     return undefined;
@@ -66,8 +66,10 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       switchMap(() => {
         return this.slideIn.open(
           this.getFormComponentType(),
-          this.formComponentIsWide,
-          this.getFormInputData(),
+          {
+            wide: this.formComponentIsWide,
+            data: this.getFormInputData(),
+          },
         );
       }),
       filter((response: SlideInResponse) => !response.error),

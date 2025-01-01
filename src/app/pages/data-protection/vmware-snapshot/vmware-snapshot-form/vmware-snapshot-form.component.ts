@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -20,9 +20,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -35,7 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -70,6 +69,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected editingSnapshot: VmwareSnapshot;
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,
@@ -101,9 +101,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
-    private slideInRef: OldSlideInRef<VmwareSnapshotFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingSnapshot: VmwareSnapshot,
-  ) {}
+    public slideInRef: SlideInRef<VmwareSnapshot | undefined, boolean>,
+  ) {
+    this.editingSnapshot = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.form.controls.datastore.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
@@ -215,7 +216,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

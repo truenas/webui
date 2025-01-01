@@ -12,13 +12,13 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InitShutdownListComponent', () => {
@@ -40,7 +40,7 @@ describe('InitShutdownListComponent', () => {
       enabled: false,
       type: InitShutdownScriptType.Command,
       comment: 'Remove Peter files',
-    },
+    } as InitShutdownScript,
   ] as InitShutdownScript[];
 
   const createComponent = createComponentFactory({
@@ -84,8 +84,7 @@ describe('InitShutdownListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
-      false,
-      expect.objectContaining(scripts[0]),
+      { data: expect.objectContaining(scripts[0]) },
     );
   });
 

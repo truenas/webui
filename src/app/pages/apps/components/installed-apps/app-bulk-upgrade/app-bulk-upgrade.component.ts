@@ -34,6 +34,7 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -83,6 +84,7 @@ export class AppBulkUpgradeComponent {
     private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private apps: App[],
   ) {
     this.apps = this.apps.filter((app) => app.upgrade_available);
@@ -152,7 +154,10 @@ export class AppBulkUpgradeComponent {
 
     this.api
       .job('core.bulk', ['app.upgrade', payload])
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
         this.dialogRef.close();
         this.snackbar.success(

@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Inject, OnInit,
+  Component, OnInit,
 } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
@@ -12,7 +12,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { isObject } from 'lodash-es';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -80,7 +79,6 @@ export class TruecommandButtonComponent implements OnInit {
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {

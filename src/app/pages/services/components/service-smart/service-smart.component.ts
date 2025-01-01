@@ -54,7 +54,7 @@ export class ServiceSmartComponent implements OnInit {
 
   form = this.fb.group({
     interval: [0, [Validators.required]],
-    powermode: [null as SmartPowerMode, Validators.required],
+    powermode: [null as SmartPowerMode | null, Validators.required],
     difference: [0, [Validators.required]],
     informational: [0, [Validators.required]],
     critical: [0, [Validators.required]],

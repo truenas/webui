@@ -40,7 +40,7 @@ export class PageTitleService {
 
   emitTitleFromRoute(): void {
     const breadcrumbs = this.routePartsService.routeParts;
-    if (breadcrumbs.length > 0) {
+    if (breadcrumbs && breadcrumbs.length > 0) {
       this.title$.next(breadcrumbs[breadcrumbs.length - 1].title || '');
       this.hasNewIndicator$.next(breadcrumbs.some((breadcrumb) => breadcrumb.isNew));
     }

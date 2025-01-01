@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,9 +26,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
@@ -48,7 +47,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   providers: [CpuValidatorService],
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -71,23 +70,23 @@ export class VmEditFormComponent implements OnInit {
   form = this.formBuilder.group({
     name: ['', Validators.required],
     description: [''],
-    time: [null as VmTime],
-    bootloader: [null as VmBootloader],
-    shutdown_timeout: [null as number, Validators.min(0)],
+    time: [null as VmTime | null],
+    bootloader: [null as VmBootloader | null],
+    shutdown_timeout: [null as number | null, Validators.min(0)],
     autostart: [false],
     hyperv_enlightenments: [false],
-    vcpus: [null as number, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
-    cores: [null as number, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
-    threads: [null as number, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
+    vcpus: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
+    cores: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
+    threads: [null as number | null, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cpuset: ['', Validators.pattern(vmCpusetPattern)],
     pin_vcpus: [false],
-    cpu_mode: [null as VmCpuMode],
+    cpu_mode: [null as VmCpuMode | null],
     cpu_model: [''],
-    memory: [null as number, this.validators.withMessage(
+    memory: [null as number | null, this.validators.withMessage(
       Validators.min(256 * MiB),
       this.translate.instant(helptextVmWizard.memory_size_err),
     )],
-    min_memory: [null as number],
+    min_memory: [null as number | null],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
     hide_from_msr: [false],
     ensure_display_device: [false],
@@ -104,6 +103,8 @@ export class VmEditFormComponent implements OnInit {
   readonly helptext = helptextVmWizard;
   previouslySetGpuPciIds: string[] = [];
 
+  protected existingVm: VirtualMachine;
+
   constructor(
     private formBuilder: FormBuilder,
     private api: ApiService,
@@ -118,9 +119,13 @@ export class VmEditFormComponent implements OnInit {
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
-    private slideInRef: OldSlideInRef<VmEditFormComponent>,
-    @Inject(SLIDE_IN_DATA) private existingVm: VirtualMachine,
-  ) {}
+    public slideInRef: SlideInRef<VirtualMachine | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingVm = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.listenForFormValueChanges();
@@ -173,7 +178,7 @@ export class VmEditFormComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('VM updated successfully.'));
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

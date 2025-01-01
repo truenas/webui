@@ -14,6 +14,7 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   CloudBackupFormComponent,
@@ -28,7 +29,6 @@ import {
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudBackupFormComponent', () => {
@@ -77,7 +77,7 @@ describe('CloudBackupFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudBackup> = {
+  const slideInRef: SlideInRef<CloudBackup, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),

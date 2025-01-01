@@ -40,6 +40,7 @@ import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -90,7 +91,7 @@ export class DeviceFormComponent implements OnInit {
   existingDevice: VmDevice;
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
-  orderControl = new FormControl(null as number);
+  orderControl = new FormControl(null as number | null);
 
   cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
@@ -98,12 +99,12 @@ export class DeviceFormComponent implements OnInit {
 
   diskForm = this.formBuilder.group({
     path: ['', Validators.required],
-    type: [null as VmDiskMode],
+    type: [null as VmDiskMode | null],
     sectorsize: [0],
   });
 
   nicForm = this.formBuilder.group({
-    type: [null as VmNicType, Validators.required],
+    type: [null as VmNicType | null, Validators.required],
     mac: ['', Validators.pattern(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
@@ -112,8 +113,8 @@ export class DeviceFormComponent implements OnInit {
   rawFileForm = this.formBuilder.group({
     path: ['', Validators.required],
     sectorsize: [0],
-    type: [null as VmDiskMode],
-    size: [null as number],
+    type: [null as VmDiskMode | null],
+    size: [null as number | null],
   });
 
   pciForm = this.formBuilder.nonNullable.group({
@@ -121,7 +122,7 @@ export class DeviceFormComponent implements OnInit {
   });
 
   displayForm = this.formBuilder.group({
-    port: [null as number],
+    port: [null as number | null],
     resolution: [''],
     bind: [''],
     password: [''],
@@ -237,10 +238,11 @@ export class DeviceFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private slideInRef: OldSlideInRef<DeviceFormComponent>,
+    private errorHandler: ErrorHandlerService,
     @Inject(SLIDE_IN_DATA) private slideInData: { virtualMachineId: number; device: VmDevice },
   ) {}
 
@@ -315,7 +317,10 @@ export class DeviceFormComponent implements OnInit {
   }
 
   generateMacAddress(): void {
-    this.api.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
+    this.api.call('vm.random_mac').pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((randomMac) => {
       this.nicForm.patchValue({ mac: randomMac });
     });
   }
@@ -335,17 +340,22 @@ export class DeviceFormComponent implements OnInit {
       forkJoin([
         this.api.call('vm.device.passthrough_device_choices'),
         this.api.call('system.advanced.config'),
-      ]).pipe(untilDestroyed(this)).subscribe(([passthroughDevices, advancedConfig]) => {
-        const dev = this.pciForm.controls.pptdev.value;
-        if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
-          this.dialogService.confirm({
-            title: this.translate.instant('Warning'),
-            message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
-          }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
-        } else {
-          this.onSend();
-        }
-      });
+      ])
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        )
+        .subscribe(([passthroughDevices, advancedConfig]) => {
+          const dev = this.pciForm.controls.pptdev.value;
+          if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
+            this.dialogService.confirm({
+              title: this.translate.instant('Warning'),
+              message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+            }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
+          } else {
+            this.onSend();
+          }
+        });
     } else {
       this.onSend();
     }
@@ -378,7 +388,7 @@ export class DeviceFormComponent implements OnInit {
           this.slideInRef.close(true);
         },
         error: (error: unknown) => {
-          this.errorHandler.handleValidationErrors(error, this.typeSpecificForm);
+          this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);
           this.isLoading = false;
           this.cdr.markForCheck();
         },

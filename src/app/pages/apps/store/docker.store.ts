@@ -14,8 +14,11 @@ import { ApiService } from 'app/services/websocket/api.service';
 
 export interface DockerConfigState {
   isLoading: boolean;
-  dockerConfig: DockerConfig;
-  statusData: DockerStatusData;
+  dockerConfig: DockerConfig | null;
+  statusData: DockerStatusData | {
+    status: null;
+    description: null;
+  };
 }
 
 const initialState: DockerConfigState = {

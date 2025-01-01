@@ -1,6 +1,6 @@
 export interface AppsFiltersValues {
-  sort: AppsFiltersSort;
-  categories: string[];
+  sort: AppsFiltersSort | null;
+  categories: string[] | undefined;
 }
 
 export enum AppsFiltersSort {

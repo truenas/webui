@@ -11,9 +11,7 @@
     @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
       <mat-card>
         <mat-card-content>
-          <ix-disconnected-message
-            [hasFailover]="hasFailover$ | async"
-          ></ix-disconnected-message>
+          <ix-disconnected-message></ix-disconnected-message>
         </mat-card-content>
       </mat-card>
     } @else if (isConnected$ | async) {
@@ -39,17 +37,6 @@
                       <ix-set-admin-password-form></ix-set-admin-password-form>
                     }
                   </div>
-
-                  @if (failover$ | async; as failover) {
-                    @if (hasFailover$ | async) {
-                      <ix-failover-status
-                        class="failover-status"
-                        [status]="failover.status"
-                        [failoverIps]="failover.ips"
-                        [disabledReasons]="failover.disabledReasons"
-                      ></ix-failover-status>
-                    }
-                  }
 
                   <ix-true-command-status></ix-true-command-status>
 

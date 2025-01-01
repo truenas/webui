@@ -138,7 +138,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     @Inject(WINDOW) private window: Window,
   ) { }
 
-  getDisk(node: DeviceNestedDataNode): Disk {
+  getDisk(node: DeviceNestedDataNode): Disk | undefined {
     if (isVdevGroup(node) || !isTopologyDisk(node)) {
       return undefined;
     }

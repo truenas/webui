@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -25,13 +25,13 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/credentials/groups/store/group.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -42,7 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -72,6 +72,7 @@ export class GroupFormComponent implements OnInit {
 
   privilegesList: Privilege[];
   initialGroupRelatedPrivilegesList: Privilege[] = [];
+  protected editingGroup: Group;
 
   form = this.fb.group({
     gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
@@ -99,14 +100,19 @@ export class GroupFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private slideInRef: OldSlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private editingGroup: Group,
-  ) { }
+    public slideInRef: SlideInRef<Group | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingGroup = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -193,12 +199,12 @@ export class GroupFormComponent implements OnInit {
         }
 
         this.isFormLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
-        this.errorHandler.handleValidationErrors(error, this.form);
+        this.formErrorHandler.handleValidationErrors(error, this.form);
         this.cdr.markForCheck();
       },
     });
@@ -246,7 +252,11 @@ export class GroupFormComponent implements OnInit {
 
   private getPrivilegesList(): void {
     this.api.call('privilege.query', [])
-      .pipe(untilDestroyed(this)).subscribe((privileges) => {
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((privileges) => {
         this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
           return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
         });

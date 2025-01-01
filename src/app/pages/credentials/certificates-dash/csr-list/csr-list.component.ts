@@ -31,6 +31,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
@@ -43,7 +44,6 @@ import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -121,7 +121,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private download: DownloadService,
@@ -154,18 +154,22 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CsrAddComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(CsrAddComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCertificates();
     });
   }
 
   doEdit(certificate: Certificate): void {
-    const slideInRef = this.slideInService.open(CertificateEditComponent, {
+    this.slideIn.open(CertificateEditComponent, {
       wide: true,
       data: certificate,
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCertificates();
     });
   }
@@ -249,8 +253,10 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doCreateAcmeCert(csr: Certificate): void {
-    const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: csr });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(CertificateAcmeAddComponent, { data: csr }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.certificateCreated.emit();
       this.getCertificates();
     });

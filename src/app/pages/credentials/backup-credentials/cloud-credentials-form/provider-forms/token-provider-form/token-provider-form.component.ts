@@ -32,7 +32,7 @@ import {
 export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   private readonly oauthComponent = viewChild(OauthProviderComponent);
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     token: ['', Validators.required],
   });
 
@@ -65,8 +65,9 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
       this.form.patchValue(values);
-      if (this.hasOAuth) {
-        this.oauthComponent().form.patchValue(values);
+      const oauthComponent = this.oauthComponent();
+      if (this.hasOAuth && oauthComponent) {
+        oauthComponent.form.patchValue(values);
       }
       this.cdr.detectChanges();
     });

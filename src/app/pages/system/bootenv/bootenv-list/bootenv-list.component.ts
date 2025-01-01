@@ -93,7 +93,10 @@ export class BootEnvironmentListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.bootenvs.find((bootenv) => row.id === bootenv.id).selected = checked;
+        const bootEnvToSelect = this.bootenvs.find((bootenv) => row.id === bootenv.id);
+        if (bootEnvToSelect) {
+          bootEnvToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString());
       },

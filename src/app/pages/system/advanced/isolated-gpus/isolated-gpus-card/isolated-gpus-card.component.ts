@@ -14,6 +14,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
@@ -21,7 +22,6 @@ import {
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({

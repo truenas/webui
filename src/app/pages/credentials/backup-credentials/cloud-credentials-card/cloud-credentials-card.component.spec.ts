@@ -16,10 +16,10 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudCredentialsCardComponent', () => {
@@ -113,7 +113,7 @@ describe('CloudCredentialsCardComponent', () => {
     await editButton.click();
     expect(
       spectator.inject(SlideIn).open,
-    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, false, { existingCredential: credentials[0] });
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, { data: { existingCredential: credentials[0] } });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {

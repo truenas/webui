@@ -44,7 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   readonly profileSelected = output<CertificateProfile>();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validators.withMessage(

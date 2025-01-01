@@ -55,7 +55,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class FeedbackDialogComponent implements OnInit {
   protected isLoading = false;
   protected isLoadingTypes = false;
-  protected typeControl = new FormControl(undefined as FeedbackType);
+  protected typeControl = new FormControl(undefined as FeedbackType | undefined);
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypesLabels, this.translate));
   protected isEnterprise$ = this.systemGeneralService.isEnterprise$;
   protected allowedTypes: FeedbackType[] = [];

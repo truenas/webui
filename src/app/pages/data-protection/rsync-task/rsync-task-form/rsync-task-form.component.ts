@@ -88,13 +88,13 @@ export class RsyncTaskFormComponent implements OnInit {
     desc: [''],
     mode: [RsyncMode.Module],
     remotehost: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     ssh_keyscan: [false],
     remoteport: [22, portRangeValidator()],
     remotemodule: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     remotepath: [mntPath],
@@ -149,7 +149,7 @@ export class RsyncTaskFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
     private validatorsService: IxValidatorsService,
-    private slideInRef: SlideInRef<RsyncTask>,
+    public slideInRef: SlideInRef<RsyncTask | undefined, RsyncTask | false>,
   ) {
     this.editingTask = this.slideInRef.getData();
   }
@@ -206,7 +206,7 @@ export class RsyncTaskFormComponent implements OnInit {
     delete values.sshconnectmode;
 
     this.isLoading = true;
-    let request$: Observable<unknown>;
+    let request$: Observable<RsyncTask>;
     if (this.isNew) {
       request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
     } else {

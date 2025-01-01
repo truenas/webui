@@ -61,7 +61,7 @@ export class CloudSyncWizardComponent {
   existingCredential: CloudSyncCredential;
 
   constructor(
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, CloudSyncTask | false>,
     private api: ApiService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,

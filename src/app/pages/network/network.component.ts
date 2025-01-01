@@ -82,16 +82,16 @@ export class NetworkComponent implements OnInit {
   checkinTimeout = 60;
   checkinTimeoutMinValue = 10;
   checkinTimeoutPattern = '^[0-9]+$';
-  checkinRemaining: number = null;
+  checkinRemaining: number | null = null;
   private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
   checkinInterval: Interval;
 
-  private navigation: Navigation;
+  private navigation: Navigation | null;
   helptext = helptextInterfaces;
 
   get isCheckinTimeoutFieldInvalid(): boolean {
-    return this.checkinTimeoutField()?.invalid;
+    return this.checkinTimeoutField()?.invalid || false;
   }
 
   constructor(
@@ -166,7 +166,7 @@ export class NetworkComponent implements OnInit {
 
     // This handles scenario where user made one change, clicked Test and then made another change.
     // TODO: Backend should be deciding to reset timer.
-    if (hasPendingChanges && checkinWaitingSeconds > 0) {
+    if (hasPendingChanges && Number(checkinWaitingSeconds) > 0) {
       await this.cancelCommit();
       hasPendingChanges = await this.getPendingChanges();
       checkinWaitingSeconds = await this.getCheckInWaitingSeconds();
@@ -187,7 +187,7 @@ export class NetworkComponent implements OnInit {
     });
   }
 
-  private getCheckInWaitingSeconds(): Promise<number> {
+  private getCheckInWaitingSeconds(): Promise<number | null> {
     return lastValueFrom(
       this.api.call('interface.checkin_waiting'),
     );
@@ -205,13 +205,13 @@ export class NetworkComponent implements OnInit {
     );
   }
 
-  private handleWaitingCheckIn(seconds: number, isAfterInterfaceCommit = false): void {
+  private handleWaitingCheckIn(seconds: number | null, isAfterInterfaceCommit = false): void {
     if (seconds !== null) {
       if (seconds > 0 && this.checkinRemaining === null) {
         this.checkinRemaining = Math.round(seconds);
         this.checkinInterval = setInterval(() => {
-          if (this.checkinRemaining > 0) {
-            this.checkinRemaining -= 1;
+          if (Number(this.checkinRemaining) > 0) {
+            this.checkinRemaining = Number(this.checkinRemaining) - 1;
           } else {
             this.checkinRemaining = null;
             this.checkinWaiting = false;
@@ -243,7 +243,10 @@ export class NetworkComponent implements OnInit {
   commitPendingChanges(): void {
     this.api
       .call('interface.services_restarted_on_sync')
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe((services) => {
         if (services.length > 0) {
           const ips: string[] = [];

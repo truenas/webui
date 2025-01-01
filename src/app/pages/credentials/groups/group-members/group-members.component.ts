@@ -79,9 +79,10 @@ export class GroupMembersComponent implements OnInit {
       ])),
       untilDestroyed(this),
     ).subscribe(([groups, users]) => {
-      this.group.set(groups[0]);
+      const group = groups[0];
+      this.group.set(group);
       this.users.set(users);
-      this.selectedMembers = users.filter((user) => this.group().users.includes(user.id));
+      this.selectedMembers = users.filter((user) => group.users.includes(user.id));
       this.isLoading.set(false);
     });
   }

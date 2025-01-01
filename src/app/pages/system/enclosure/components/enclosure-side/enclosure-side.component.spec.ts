@@ -77,7 +77,7 @@ describe('EnclosureSideComponent', () => {
   });
 
   it('renders an svg component with correct svg url and passes input properties', () => {
-    const svg = spectator.query(EnclosureSvgStubComponent);
+    const svg = spectator.query(EnclosureSvgStubComponent)!;
     expect(svg).toExist();
     expect(svg.selectedSlot()).toBe(props.selectedSlot);
     expect(svg.slotTintFn()).toBe(props.slotTintFn);
@@ -90,7 +90,7 @@ describe('EnclosureSideComponent', () => {
   it('automatically selects Front or Top enclosure based on what is available when side is undefined', () => {
     spectator.setInput('side', undefined);
 
-    const svg = spectator.query(EnclosureSvgStubComponent);
+    const svg = spectator.query(EnclosureSvgStubComponent)!;
     expect(svg.svgUrl()).toBe(supportedEnclosures[props.enclosure.model][EnclosureSide.Front]);
   });
 
@@ -100,7 +100,7 @@ describe('EnclosureSideComponent', () => {
       model: 'fake-model',
     });
 
-    const notSupportedModel = spectator.query(NotSupportedModelComponent);
+    const notSupportedModel = spectator.query(NotSupportedModelComponent)!;
     expect(notSupportedModel).toExist();
     expect(notSupportedModel.model).toBe('fake-model');
   });

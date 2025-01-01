@@ -128,7 +128,7 @@ describe.skip('IxExplorerComponent', () => {
 
     it('calls nodeProvider when getChildren from TreeComponent options is called', () => {
       const tree = spectator.query(TreeComponent)!;
-      tree.options.getChildren({ path: mntPath });
+      tree.options.getChildren!({ path: mntPath });
 
       expect(fakeNodeProvider).toHaveBeenCalledWith({ path: mntPath });
     });
@@ -149,7 +149,7 @@ describe.skip('IxExplorerComponent', () => {
       spectator.setHostInput('tooltip', 'Enter the location of the system.');
       spectator.detectComponentChanges();
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select dataset');
       expect(label.required()).toBe(true);

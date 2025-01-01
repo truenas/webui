@@ -142,7 +142,7 @@ export class AlertSettings2Component implements OnInit {
 
       if (option) {
         const path = option.value.toString();
-        const nextElement: HTMLElement = document.getElementById(path);
+        const nextElement = document.getElementById(path);
         nextElement?.scrollIntoView();
       }
     });

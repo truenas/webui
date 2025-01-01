@@ -17,13 +17,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncFormComponent', () => {
@@ -71,8 +71,6 @@ describe('CloudSyncFormComponent', () => {
     locked: false,
     job: null,
     credential: 'test2',
-    cron_schedule: 'Disabled',
-    frequency: 'At 00:00, only on Sunday',
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: JobState.Pending },
@@ -81,7 +79,7 @@ describe('CloudSyncFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudSyncFormComponent>;
   const getData = jest.fn(() => existingTask);
-  const slideInRef: SlideInRef<CloudSyncTaskUi> = {
+  const slideInRef: SlideInRef<CloudSyncTaskUi, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),

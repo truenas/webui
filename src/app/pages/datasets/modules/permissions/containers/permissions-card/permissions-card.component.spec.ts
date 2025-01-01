@@ -86,12 +86,12 @@ describe('PermissionsCardComponent', () => {
   it('shows dataset ownership information', () => {
     const [ownerItem, groupItem] = spectator.queryAll('.details-item');
 
-    expect(ownerItem.textContent.replace(/\s/g, '')).toBe('Owner:john');
-    expect(groupItem.textContent.replace(/\s/g, '')).toBe('Group:johns');
+    expect(ownerItem.textContent!.replace(/\s/g, '')).toBe('Owner:john');
+    expect(groupItem.textContent!.replace(/\s/g, '')).toBe('Group:johns');
   });
 
   it('shows trivial permissions when acl is trivial', () => {
-    const permissionsComponent = spectator.query(ViewTrivialPermissionsComponent);
+    const permissionsComponent = spectator.query(ViewTrivialPermissionsComponent)!;
     expect(permissionsComponent).toExist();
     expect(permissionsComponent.stat).toBe(stat);
   });
@@ -109,7 +109,7 @@ describe('PermissionsCardComponent', () => {
       mountpoint: '/mnt/test/posix',
     });
 
-    const permissionsComponent = spectator.query(ViewPosixPermissionsComponent);
+    const permissionsComponent = spectator.query(ViewPosixPermissionsComponent)!;
     expect(permissionsComponent).toExist();
     expect(permissionsComponent.acl).toBe(acl);
   });
@@ -141,7 +141,7 @@ describe('PermissionsCardComponent', () => {
     spectator.tick();
     spectator.detectChanges();
 
-    const permissionsComponent = spectator.query(ViewNfsPermissionsComponent);
+    const permissionsComponent = spectator.query(ViewNfsPermissionsComponent)!;
     expect(permissionsComponent).toExist();
     expect(permissionsComponent.acl).toBe(acl);
   }));

@@ -36,7 +36,7 @@ describe('SchedulerComponent', () => {
   });
 
   beforeEach(() => {
-    control = new FormControl<string>('0 0 * * *');
+    control = new FormControl<string>('0 0 * * *', { nonNullable: true });
     spectator = createHost(
       `<ix-scheduler
         [formControl]="control"

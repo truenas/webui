@@ -7,9 +7,9 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { SlideIn } from 'app/services/slide-in';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
@@ -51,8 +51,7 @@ describe('SystemSecurityCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
-      false,
-      fakeSystemSecurityConfig,
+      { data: fakeSystemSecurityConfig },
     );
   });
 });

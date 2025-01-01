@@ -29,11 +29,11 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
@@ -76,7 +76,10 @@ export class DockerImagesListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.containerImages.find((image) => row.id === image.id).selected = checked;
+        const imageToSelect = this.containerImages.find((image) => row.id === image.id);
+        if (imageToSelect) {
+          imageToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },
@@ -135,7 +138,7 @@ export class DockerImagesListComponent implements OnInit {
     public formatter: IxFormatterService,
     private api: ApiService,
     private matDialog: MatDialog,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private fileSizePipe: FileSizePipe,
   ) {
@@ -154,9 +157,8 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(PullImageFormComponent);
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.slideIn.open(PullImageFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 

@@ -24,6 +24,7 @@ import { NetworkConfigurationComponent } from 'app/pages/network/components/conf
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -63,6 +64,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private slideInService: OldSlideInService,
     private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -157,7 +159,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
       this.api.call('network.general.summary'),
       this.api.call('network.configuration.config'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(([summary, config]) => {
         this.isLoading = false; // TODO: Add loading indication in UI.
         this.summary = summary;
@@ -166,8 +171,6 @@ export class NetworkConfigurationCardComponent implements OnInit {
 
         this.cdr.markForCheck();
       });
-
-    // TODO: Handle loading error
   }
 
   private handlePendingGlobalSearchElement(): void {

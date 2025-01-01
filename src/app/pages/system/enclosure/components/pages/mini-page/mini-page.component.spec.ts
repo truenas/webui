@@ -94,7 +94,7 @@ describe('MiniPageComponent', () => {
 
   describe('when no slot is selected', () => {
     it('shows disks overview and temperatures components', () => {
-      const disksOverview = spectator.query(MiniDisksOverviewComponent);
+      const disksOverview = spectator.query(MiniDisksOverviewComponent)!;
       expect(disksOverview).toExist();
       expect(disksOverview.slots).toMatchObject(slots);
 
@@ -111,7 +111,7 @@ describe('MiniPageComponent', () => {
       const driveDetails = spectator.query(MiniDriveDetailsComponent);
       expect(driveDetails).toExist();
 
-      const driveStats = spectator.query(MiniDriveStatsComponent);
+      const driveStats = spectator.query(MiniDriveStatsComponent)!;
       expect(driveStats).toExist();
       expect(driveStats.slot).toMatchObject(slots[0]);
     });

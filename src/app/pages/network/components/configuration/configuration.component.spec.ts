@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
-import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
+import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -40,12 +40,12 @@ describe('NetworkConfigurationComponent', () => {
           activity: {
             activities: [],
             type: NetworkActivityType.Deny,
-          },
+          } as NetworkConfigurationActivity,
           domain: 'local',
-          domains: [],
+          domains: [] as string[],
           hostname: 'truenas',
           hostname_local: 'truenas',
-          hosts: [],
+          hosts: [] as string[],
           httpproxy: '',
           id: 1,
           ipv4gateway: '',

@@ -5,7 +5,7 @@ import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { LocaleService } from 'app/services/locale.service';
 
-interface TestTableData { dateField: Date | string }
+interface TestTableData { dateField: Date | string | null }
 
 describe('IxCellDateComponent', () => {
   let spectator: Spectator<IxCellDateComponent<TestTableData>>;
@@ -33,7 +33,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('2023-07-11 23:10:00');
+      expect(spectator.element.textContent!.trim()).toBe('2023-07-11 23:10:00');
     });
   });
 
@@ -47,7 +47,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('Never');
+      expect(spectator.element.textContent!.trim()).toBe('Never');
     });
   });
 
@@ -61,7 +61,7 @@ describe('IxCellDateComponent', () => {
     });
 
     it('shows default format datetime in template', () => {
-      expect(spectator.element.textContent.trim()).toBe('N/A');
+      expect(spectator.element.textContent!.trim()).toBe('N/A');
     });
   });
 });

@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -26,9 +26,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
@@ -43,7 +42,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,6 +75,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected existingPrivilege: Privilege;
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -99,7 +99,7 @@ export class PrivilegeFormComponent implements OnInit {
       });
 
       return sortedRoles.map((role) => ({
-        label: roleNames.has(role.name) ? this.translate.instant(roleNames.get(role.name)) : role.name,
+        label: this.translate.instant(roleNames.get(role.name) || role.name),
         value: role.name,
       }));
     }),
@@ -131,11 +131,15 @@ export class PrivilegeFormComponent implements OnInit {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<PrivilegeFormComponent>,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    @Inject(SLIDE_IN_DATA) private existingPrivilege: Privilege,
-  ) { }
+    public slideInRef: SlideInRef<Privilege | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingPrivilege = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.existingPrivilege) {
@@ -185,7 +189,7 @@ export class PrivilegeFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

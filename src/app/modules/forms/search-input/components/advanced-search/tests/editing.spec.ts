@@ -106,7 +106,7 @@ describe('AdvancedSearchComponent – editing', () => {
       const icon = await loader.getHarness(IxIconHarness.with({ ancestor: '.prefix-icon' }));
       expect(await icon.getName()).toBe('warning');
       // TODO: Refactor not to rely on protected property.
-      expect(spectator.component.errorMessages[0].message).toBe('Syntax error at 11-16');
+      expect(spectator.component.errorMessages![0].message).toBe('Syntax error at 11-16');
     });
   });
 });

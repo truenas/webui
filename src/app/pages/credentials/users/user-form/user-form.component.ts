@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,7 +16,6 @@ import {
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { WarnAboutUnsavedChangesDirective } from 'app/directives/warn-about-unsaved-changes/warn-about-unsaved-changes.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
@@ -44,16 +43,14 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import {
-  OldModalHeaderComponent,
-} from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -70,7 +67,7 @@ const defaultHomePath = '/var/empty';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     ReactiveFormsModule,
     IxFieldsetComponent,
     IxInputComponent,
@@ -89,7 +86,6 @@ const defaultHomePath = '/var/empty';
     MatButton,
     TestDirective,
     TranslateModule,
-    WarnAboutUnsavedChangesDirective,
   ],
 })
 export class UserFormComponent implements OnInit {
@@ -97,6 +93,7 @@ export class UserFormComponent implements OnInit {
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
+  protected editingUser: User | undefined;
 
   get isNewUser(): boolean {
     return !this.editingUser;
@@ -218,21 +215,26 @@ export class UserFormComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
-    private slideInRef: OldSlideInRef<UserFormComponent>,
     private snackbar: SnackbarService,
     private storageService: StorageService,
     private downloadService: DownloadService,
     private store$: Store<AppState>,
     private dialog: DialogService,
     private userService: UserService,
-    @Inject(SLIDE_IN_DATA) private editingUser: User,
+    public slideInRef: SlideInRef<User | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingUser = this.slideInRef.getData();
+
     this.form.controls.smb.errors$.pipe(
       filter((error) => error?.manualValidateErrorMsg),
       switchMap(() => this.form.controls.password.valueChanges),
@@ -289,10 +291,12 @@ export class UserFormComponent implements OnInit {
     );
 
     if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
-      this.storageService.filesystemStat(this.editingUser.home).pipe(untilDestroyed(this)).subscribe((stat) => {
-        this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
-        this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
-      });
+      this.storageService.filesystemStat(this.editingUser.home)
+        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .subscribe((stat) => {
+          this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
+          this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
+        });
     } else {
       this.form.patchValue({ home_mode: '700' });
       this.form.controls.home_mode.disable();
@@ -390,12 +394,12 @@ export class UserFormComponent implements OnInit {
               this.store$.dispatch(userChanged({ user }));
             }
             this.isFormLoading = false;
-            this.slideInRef.close(true);
+            this.slideInRef.close({ response: true, error: null });
             this.cdr.markForCheck();
           },
           error: (error: unknown) => {
             this.isFormLoading = false;
-            this.errorHandler.handleValidationErrors(error, this.form);
+            this.formErrorHandler.handleValidationErrors(error, this.form);
             this.cdr.markForCheck();
           },
         });

@@ -25,12 +25,12 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -125,9 +125,15 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   getProviders(): void {
-    this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
-      providers.forEach((provider) => this.providers.set(provider.name, provider.title));
-    });
+    this.cloudCredentialService
+      .getProviders()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((providers) => {
+        providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+      });
   }
 
   setDefaultSort(): void {
@@ -139,19 +145,21 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const close$ = this.slideIn.open(CloudCredentialsFormComponent);
-    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
-      this.getCredentials();
-    });
+    this.slideIn.open(CloudCredentialsFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
+      .subscribe(() => {
+        this.getCredentials();
+      });
   }
 
   doEdit(credential: CloudSyncCredential): void {
     const close$ = this.slideIn.open(
       CloudCredentialsFormComponent,
-      false,
       {
-        existingCredential: credential,
-      } as CloudCredentialFormInput,
+        data: {
+          existingCredential: credential,
+        } as CloudCredentialFormInput,
+      },
     );
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();

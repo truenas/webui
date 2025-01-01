@@ -35,6 +35,7 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -42,7 +43,6 @@ import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
@@ -140,7 +140,7 @@ export class SmbCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -158,8 +158,10 @@ export class SmbCardComponent implements OnInit {
   }
 
   openForm(row?: SmbShare): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: row } }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.dataProvider.load();
     });
   }
@@ -192,9 +194,10 @@ export class SmbCardComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe({
           next: (shareAcl: SmbSharesec) => {
-            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
-
-            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
+              filter((response) => !!response.response),
+              untilDestroyed(this),
+            ).subscribe(() => {
               this.dataProvider.load();
             });
           },

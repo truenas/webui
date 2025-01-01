@@ -14,9 +14,9 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SshConnectionCardComponent', () => {
@@ -103,19 +103,20 @@ describe('SshConnectionCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SshConnectionFormComponent,
-      false,
       {
-        attributes: {
-          connect_timeout: 10,
-          host: 'fake.host.name',
-          port: 22,
-          private_key: 4,
-          remote_host_key: 'ssh-rsa FAAAKE',
-          username: 'root',
+        data: {
+          attributes: {
+            connect_timeout: 10,
+            host: 'fake.host.name',
+            port: 22,
+            private_key: 4,
+            remote_host_key: 'ssh-rsa FAAAKE',
+            username: 'root',
+          },
+          id: 5,
+          name: 'test-conn-1',
+          type: 'SSH_CREDENTIALS',
         },
-        id: 5,
-        name: 'test-conn-1',
-        type: 'SSH_CREDENTIALS',
       },
     );
   });

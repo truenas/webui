@@ -22,6 +22,9 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
@@ -31,11 +34,11 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -85,15 +88,14 @@ export class SmartTaskListComponent implements OnInit {
       title: this.translate.instant(helptextSmart.smartlist_column_description),
       propertyName: 'desc',
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_frequency),
-      propertyName: 'frequency',
-      getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
+      getValue: (row) => row.schedule,
     }),
     relativeDateColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_next_run),
       propertyName: 'next_run',
-      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
     }),
     actionsColumn({
       actions: [
@@ -118,7 +120,7 @@ export class SmartTaskListComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private storageService: StorageService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private taskService: TaskService,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -149,9 +151,10 @@ export class SmartTaskListComponent implements OnInit {
   }
 
   openForm(row?: SmartTestTaskUi): void {
-    const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(SmartTaskFormComponent, { data: row }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getSmartTasks();
     });
   }
@@ -187,8 +190,6 @@ export class SmartTaskListComponent implements OnInit {
 
   private transformSmartTasks(smartTasks: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return smartTasks.map((test) => {
-      test.cron_schedule = scheduleToCrontab(test.schedule);
-
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptextSmart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {

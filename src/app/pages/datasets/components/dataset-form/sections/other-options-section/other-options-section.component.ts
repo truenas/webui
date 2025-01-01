@@ -245,34 +245,35 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(): void {
-    if (!this.existing()) {
+    const existing = this.existing();
+    if (!existing) {
       return;
     }
 
-    let specialSmallBlockSize = getFieldValue(this.existing().special_small_block_size, this.parent()) as (number | 'INHERIT');
+    let specialSmallBlockSize = getFieldValue(existing.special_small_block_size, this.parent()) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
       specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
     this.form.patchValue({
-      comments: this.existing().comments?.source === ZfsPropertySource.Local ? this.existing().comments.value : '',
-      sync: getFieldValue(this.existing().sync, this.parent()),
-      compression: getFieldValue(this.existing().compression, this.parent()),
-      atime: getFieldValue(this.existing().atime, this.parent()),
-      deduplication: getFieldValue(this.existing().deduplication, this.parent()),
-      checksum: getFieldValue(this.existing().checksum, this.parent()),
-      readonly: getFieldValue(this.existing().readonly, this.parent()),
-      exec: getFieldValue(this.existing().exec, this.parent()),
-      recordsize: getFieldValue(this.existing().recordsize, this.parent()),
-      snapdir: this.existing().snapdir?.value,
-      snapdev: getFieldValue(this.existing().snapdev, this.parent()),
-      copies: this.existing().copies
-        ? Number(this.existing().copies.value)
+      comments: existing.comments?.source === ZfsPropertySource.Local ? existing.comments.value : '',
+      sync: getFieldValue(existing.sync, this.parent()),
+      compression: getFieldValue(existing.compression, this.parent()),
+      atime: getFieldValue(existing.atime, this.parent()),
+      deduplication: getFieldValue(existing.deduplication, this.parent()),
+      checksum: getFieldValue(existing.checksum, this.parent()),
+      readonly: getFieldValue(existing.readonly, this.parent()),
+      exec: getFieldValue(existing.exec, this.parent()),
+      recordsize: getFieldValue(existing.recordsize, this.parent()),
+      snapdir: existing.snapdir?.value,
+      snapdev: getFieldValue(existing.snapdev, this.parent()),
+      copies: existing.copies
+        ? Number(existing.copies.value)
         : null,
-      acltype: getFieldValue(this.existing().acltype, this.parent()) as DatasetAclType,
-      aclmode: getFieldValue(this.existing().aclmode, this.parent()) as AclMode,
-      casesensitivity: this.existing().casesensitivity?.value,
-      special_small_block_size: this.existing().special_small_block_size
+      acltype: getFieldValue(existing.acltype, this.parent()) as DatasetAclType,
+      aclmode: getFieldValue(existing.aclmode, this.parent()) as AclMode,
+      casesensitivity: existing.casesensitivity?.value,
+      special_small_block_size: existing.special_small_block_size
         ? specialSmallBlockSize
         : null,
     });
@@ -319,7 +320,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setSelectOptions(): void {
-    if (!this.parent()) {
+    const parent = this.parent();
+    if (!parent) {
       this.syncOptions$ = this.defaultSyncOptions$;
       this.compressionOptions$ = this.defaultCompressionOptions$;
       this.atimeOptions$ = this.defaultAtimeOptions$;
@@ -335,37 +337,37 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.syncOptions$ = this.defaultSyncOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().sync.value),
+      this.datasetFormService.addInheritOption(parent.sync.value),
     );
     this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().compression.value),
+      this.datasetFormService.addInheritOption(parent.compression.value),
     );
     this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().atime.value),
+      this.datasetFormService.addInheritOption(parent.atime.value),
     );
     this.deduplicationOptions$ = this.defaultDeduplicationOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().deduplication.value),
+      this.datasetFormService.addInheritOption(parent.deduplication.value),
     );
     this.checksumOptions$ = this.defaultChecksumOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().checksum.value),
+      this.datasetFormService.addInheritOption(parent.checksum.value),
     );
     this.readonlyOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().readonly.value),
+      this.datasetFormService.addInheritOption(parent.readonly.value),
     );
     this.execOptions$ = this.onOffOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().exec.value),
+      this.datasetFormService.addInheritOption(parent.exec.value),
     );
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().snapdev.value),
+      this.datasetFormService.addInheritOption(parent.snapdev.value),
     );
 
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
       this.datasetFormService.addInheritOption(
-        buildNormalizedFileSize(this.parent().recordsize.parsed),
+        buildNormalizedFileSize(parent.recordsize.parsed),
       ),
     );
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent().special_small_block_size.value),
+      this.datasetFormService.addInheritOption(parent.special_small_block_size.value),
     );
   }
 
@@ -469,11 +471,12 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setUpRecordsizeWarning(): void {
-    if (!this.parent()) {
+    const parent = this.parent();
+    if (!parent) {
       return;
     }
 
-    const root = this.parent().id.split('/')[0];
+    const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
       this.api.call('pool.dataset.recommended_zvol_blocksize', [root]),

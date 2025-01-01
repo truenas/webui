@@ -57,7 +57,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   protected readonly helpText = helptextSystemAdvanced;
 
   isFormLoading = true;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     addresses: this.fb.array<string>([]),
   });
 
@@ -70,7 +70,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {

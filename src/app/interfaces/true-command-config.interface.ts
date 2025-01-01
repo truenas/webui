@@ -1,7 +1,7 @@
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 
 export interface TrueCommandConfig {
-  api_key: string;
+  api_key: string | null;
   enabled: boolean;
   id: number;
   remote_ip_address: string;
@@ -20,7 +20,7 @@ export interface TrueCommandConnectionState {
 
 export interface UpdateTrueCommand {
   enabled: boolean;
-  api_key?: string;
+  api_key?: string | null;
 }
 
 export interface TrueCommandUpdateResponse extends TrueCommandConnectionState {

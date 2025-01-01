@@ -48,7 +48,7 @@ describe('NetworkChartComponent', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
     spectator.detectChanges();
 
-    const chart = spectator.query(ViewChartAreaMockComponent);
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
     expect(chart).toBeTruthy();
 
     const data = chart.data();

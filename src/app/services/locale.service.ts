@@ -11,13 +11,15 @@ import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
+type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
+
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   t24 = T('(24 Hours)');
-  timezone: string;
+  timezone: string | undefined;
   dateFormat = 'yyyy-MM-dd';
-  timeFormat = 'HH:mm:ss';
+  timeFormat: SupportedTimeFormat = 'HH:mm:ss';
 
   constructor(
     private store$: Store<AppState>,
@@ -34,7 +36,7 @@ export class LocaleService {
       }
 
       if (preferences?.timeFormat) {
-        this.timeFormat = this.formatDateTimeToDateFns(preferences.timeFormat);
+        this.timeFormat = this.formatDateTimeToDateFns(preferences.timeFormat) as SupportedTimeFormat;
       }
     });
   }
@@ -97,7 +99,7 @@ export class LocaleService {
     return this.dateFormat;
   }
 
-  getPreferredTimeFormat(): string {
+  getPreferredTimeFormat(): SupportedTimeFormat {
     return this.timeFormat;
   }
 
@@ -109,6 +111,19 @@ export class LocaleService {
       date = utcToZonedTime(new Date().valueOf(), this.timezone);
     }
     return [format(date, this.dateFormat), format(date, this.timeFormat)];
+  }
+
+  getShortTimeFormat(): string {
+    switch (this.timeFormat) {
+      case 'HH:mm:ss':
+        return 'HH:mm';
+      case 'hh:mm:ss aa':
+        return 'hh:mm aa';
+      case "hh:mm:ss aaaaa'm'":
+        return 'hh:mm aaaaa\'m\'';
+      default:
+        return 'HH:mm';
+    }
   }
 
   formatDateTimeToDateFns(dateTimeFormat: string): string {

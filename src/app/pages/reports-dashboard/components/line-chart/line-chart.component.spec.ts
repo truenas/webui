@@ -11,7 +11,7 @@ import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.ser
 import { ThemeService } from 'app/services/theme/theme.service';
 
 const fakeLegend = {
-  series: [],
+  series: [] as dygraphs.SeriesLegendData[],
 } as dygraphs.LegendData;
 
 describe('LineChartComponent', () => {

@@ -47,7 +47,7 @@ export class LicenseComponent {
   isFormLoading = false;
 
   title = helptext.update_license.license_placeholder;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     license: ['', Validators.required],
   });
 
@@ -68,7 +68,7 @@ export class LicenseComponent {
   onSubmit(): void {
     this.isFormLoading = true;
 
-    const { license } = this.form.value;
+    const { license } = this.form.getRawValue();
     this.api.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;

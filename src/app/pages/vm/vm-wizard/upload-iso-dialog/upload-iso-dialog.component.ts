@@ -43,7 +43,7 @@ import { UploadService } from 'app/services/upload.service';
   ],
 })
 export class UploadIsoDialogComponent {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     path: [mntPath],
     files: [[] as File[]],
   });
@@ -64,7 +64,7 @@ export class UploadIsoDialogComponent {
   ) {}
 
   onSubmit(): void {
-    const { path, files } = this.form.value;
+    const { path, files } = this.form.getRawValue();
     const file = files[0];
     const uploadPath = `${path}/${file.name}`;
 
@@ -82,7 +82,7 @@ export class UploadIsoDialogComponent {
             this.dialogRef.close(uploadPath);
           }
 
-          if (event.type === HttpEventType.UploadProgress) {
+          if (event.type === HttpEventType.UploadProgress && event.total) {
             const percentDone = Math.round(100 * event.loaded / event.total);
             this.loader.setTitle(
               this.translate.instant('{n}% Uploaded', { n: percentDone }),
