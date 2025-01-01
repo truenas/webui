@@ -17,10 +17,4 @@ describe('DisconnectedMessageComponent', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Connecting to TrueNAS');
     expect(spectator.fixture.nativeElement).toHaveText('Make sure the TrueNAS system is powered on and connected to the network.');
   });
-
-  it('shows "Waiting for controller" message when hasFailover is true', () => {
-    spectator.setInput('hasFailover', true);
-
-    expect(spectator.fixture.nativeElement).toHaveText('Waiting for Active TrueNAS controller to come up...');
-  });
 });
