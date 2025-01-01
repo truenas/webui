@@ -34,11 +34,11 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -120,7 +120,7 @@ export class SmartTaskListComponent implements OnInit {
   constructor(
     protected emptyService: EmptyService,
     private storageService: StorageService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private taskService: TaskService,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -151,9 +151,10 @@ export class SmartTaskListComponent implements OnInit {
   }
 
   openForm(row?: SmartTestTaskUi): void {
-    const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(SmartTaskFormComponent, { data: row }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getSmartTasks();
     });
   }
