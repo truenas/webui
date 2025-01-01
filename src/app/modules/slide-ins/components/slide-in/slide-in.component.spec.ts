@@ -25,7 +25,7 @@ import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-describe('IxSlideIn2Component', () => {
+describe('SlideInComponent', () => {
   const existingTask = {
     id: 1,
     description: 'New Cloud Sync Task',

@@ -30,7 +30,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -73,8 +72,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private oldSlideInService: OldSlideInService,
-    private slideInService: SlideIn,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private focusService: FocusService,
     @Inject(DOCUMENT) private document: Document,
@@ -145,8 +143,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    [this.oldSlideInService, this.slideInService].forEach((service) => service.closeAll());
-
+    this.slideIn.closeAll();
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
   }

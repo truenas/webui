@@ -18,11 +18,11 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxCellScheduleComponent,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -79,12 +79,10 @@ describe('ScrubTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -117,7 +115,7 @@ describe('ScrubTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: expect.objectContaining(scrubTasks[0]),
     });
   });
@@ -126,7 +124,7 @@ describe('ScrubTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: undefined,
     });
   });

@@ -14,10 +14,10 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 const authenticators = Array.from({ length: 10 }).map((_, index) => ({
@@ -33,6 +33,12 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: AcmeDnsAuthenticatorListComponent,
     imports: [
@@ -46,15 +52,10 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(true),
-      }),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -74,14 +75,14 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AcmednsFormComponent);
   });
 
   it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AcmednsFormComponent, {
       data: authenticators[0],
     });
   });

@@ -13,12 +13,12 @@ import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { VmService } from 'app/services/vm.service';
 
 @UntilDestroy()
@@ -48,7 +48,7 @@ export class VirtualMachineDetailsRowComponent {
 
   constructor(
     private loader: AppLoaderService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private matDialog: MatDialog,
     private router: Router,
     private errorHandler: ErrorHandlerService,
@@ -90,9 +90,9 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doEdit(): void {
-    this.slideInService
+    this.slideIn
       .open(VmEditFormComponent, { data: this.vm() })
-      .slideInClosed$.pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.vmService.refreshVmList$.next());
   }
 
