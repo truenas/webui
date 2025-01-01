@@ -74,8 +74,8 @@ export class AcmednsFormComponent implements OnInit {
       : this.translate.instant(helptext.edit_title);
   }
 
-  form = this.formBuilder.group({
-    name: [null as string, Validators.required],
+  form = this.formBuilder.nonNullable.group({
+    name: [null as string | null, Validators.required],
     authenticator: [DnsAuthenticatorType.Cloudflare, Validators.required],
     attributes: this.formBuilder.group<Record<string, string>>({}),
   });

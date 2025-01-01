@@ -53,7 +53,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   cronPreview: CronSchedulePreview | null;
 
-  readonly calendar: Signal<MatCalendar<Date>> = viewChild('calendar', { read: MatCalendar });
+  readonly calendar: Signal<MatCalendar<Date>> = viewChild.required('calendar', { read: MatCalendar });
 
   get startDate(): Date {
     if (!this.calendar().activeDate || differenceInCalendarMonths(this.calendar().activeDate, new Date()) < 1) {

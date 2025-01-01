@@ -50,7 +50,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class BootenvStatsDialogComponent implements OnInit {
   form = this.fb.group({
-    interval: [null as number, [Validators.required, Validators.min(1)]],
+    interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
 
   state: PoolInstance;

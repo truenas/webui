@@ -58,7 +58,7 @@ export class FileReviewComponent {
   protected isEnterprise$ = this.systemGeneralService.isEnterprise$;
 
   protected form = this.formBuilder.group({
-    rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
+    rating: [undefined as number | undefined, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: ['', [Validators.maxLength(4067)]],
 
     images: [[] as File[], [], this.imageValidator.getImagesValidator(maxFileSizeBytes)],

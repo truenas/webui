@@ -7,7 +7,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, Observable, switchMap, tap,
+  EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -76,7 +76,11 @@ export class DeviceActionsMenuComponent {
   }
 
   private deleteDevice(): Observable<unknown> {
-    return this.api.call('virt.instance.device_delete', [this.deviceStore.selectedInstance().id, this.device().name])
+    const selectedInstanceId = this.deviceStore.selectedInstance()?.id;
+    if (!selectedInstanceId) {
+      return NEVER;
+    }
+    return this.api.call('virt.instance.device_delete', [selectedInstanceId, this.device().name])
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),

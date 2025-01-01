@@ -5,7 +5,6 @@ import {
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -76,9 +75,9 @@ export class ManualUpdateFormComponent implements OnInit {
   protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     filelocation: ['', Validators.required],
-    updateFile: [null as FileList],
+    updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
   });
 
@@ -92,7 +91,6 @@ export class ManualUpdateFormComponent implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private matDialog: MatDialog,
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
@@ -207,7 +205,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading$.next(true);
-    const value = this.form.value;
+    const value = this.form.getRawValue();
     value.filelocation = value.filelocation === ':temp:' ? null : value.filelocation;
     this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,

@@ -41,7 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class DiskWipeDialogComponent {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
 
@@ -92,7 +92,7 @@ export class DiskWipeDialogComponent {
 
   private wipeDisk(): void {
     this.dialogService.jobDialog(
-      this.api.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
+      this.api.job('disk.wipe', [this.data.diskName, this.form.getRawValue().wipe_method]),
       {
         canMinimize: true,
         description: this.translate.instant('Wiping disk...'),

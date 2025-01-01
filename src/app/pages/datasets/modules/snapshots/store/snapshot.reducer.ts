@@ -10,7 +10,7 @@ import {
 
 export interface SnapshotsState extends EntityState<ZfsSnapshot> {
   isLoading: boolean;
-  error: string;
+  error: string | null;
 }
 
 export const adapter = createEntityAdapter<ZfsSnapshot>({
@@ -18,7 +18,7 @@ export const adapter = createEntityAdapter<ZfsSnapshot>({
   sortComparer: (a, b) => a.snapshot_name.localeCompare(b.snapshot_name),
 });
 
-export const snapshotsInitialState = adapter.getInitialState({
+export const snapshotsInitialState: SnapshotsState = adapter.getInitialState({
   isLoading: false,
   error: null,
 });

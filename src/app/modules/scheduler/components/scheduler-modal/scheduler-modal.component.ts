@@ -148,7 +148,9 @@ export class SchedulerModalComponent implements OnInit {
 
   private setTimezone(): void {
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timezone = timezone;
+      if (timezone) {
+        this.timezone = timezone;
+      }
       this.crontab = this.getCrontabFromForm();
     });
   }

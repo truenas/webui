@@ -47,7 +47,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
 
   isFormLoading = false;
   form = this.fb.group({
-    max_parallel_replication_tasks: [null as number],
+    max_parallel_replication_tasks: [null as number | null],
   });
 
   readonly tooltips = {

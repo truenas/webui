@@ -2,8 +2,7 @@ import { prepareBwlimit } from './bwlimit.utils';
 
 describe('prepareBwlimit', () => {
   it('should return an empty array if bwlimit is undefined', () => {
-    const bwlimit: string[] = undefined;
-    const result = prepareBwlimit(bwlimit);
+    const result = prepareBwlimit(undefined);
     expect(result).toEqual([]);
   });
 

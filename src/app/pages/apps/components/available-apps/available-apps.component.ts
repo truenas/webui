@@ -53,7 +53,7 @@ export class AvailableAppsComponent implements OnInit {
 
   showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
     map((appsFilter) => {
-      return !appsFilter.sort && !appsFilter.categories.length;
+      return !appsFilter.sort && !appsFilter.categories?.length;
     }),
   );
 

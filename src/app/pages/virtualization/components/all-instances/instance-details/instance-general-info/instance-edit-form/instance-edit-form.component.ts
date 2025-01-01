@@ -61,7 +61,7 @@ export class InstanceEditFormComponent {
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 

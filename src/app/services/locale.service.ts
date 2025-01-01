@@ -17,7 +17,7 @@ type SupportedTimeFormat = 'hh:mm:ss aa' | "hh:mm:ss aaaaa'm'" | 'HH:mm:ss';
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   t24 = T('(24 Hours)');
-  timezone: string;
+  timezone: string | undefined;
   dateFormat = 'yyyy-MM-dd';
   timeFormat: SupportedTimeFormat = 'HH:mm:ss';
 

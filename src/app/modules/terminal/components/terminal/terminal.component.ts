@@ -47,7 +47,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class TerminalComponent implements OnInit, OnDestroy {
   readonly conf = input.required<TerminalConfiguration>();
 
-  private readonly container: Signal<ElementRef<HTMLElement>> = viewChild('terminal', { read: ElementRef });
+  private readonly container: Signal<ElementRef<HTMLElement>> = viewChild.required('terminal', { read: ElementRef });
 
   waitParentChanges = 300;
   fontSize = 14;
@@ -87,16 +87,18 @@ export class TerminalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    if (this.conf().preInit) {
-      this.conf().preInit().pipe(untilDestroyed(this)).subscribe(() => {
+    const preInit = this.conf().preInit;
+    if (preInit) {
+      preInit().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
       });
     } else {
       this.initShell();
     }
 
-    if (this.conf().reconnectShell$) {
-      this.conf().reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
+    const reconnectShell$ = this.conf().reconnectShell$;
+    if (reconnectShell$) {
+      reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
         this.reconnect();
       });
     }
