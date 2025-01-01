@@ -102,7 +102,6 @@ export class VmListComponent implements OnInit {
     large: true,
     icon: iconMarker('laptop'),
     title: this.translate.instant('Virtualization is not supported'),
-    button: null,
   };
 
   columns = createTable<VirtualMachine>([

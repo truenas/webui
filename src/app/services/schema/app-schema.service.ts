@@ -199,7 +199,7 @@ export class AppSchemaService {
   }
 
   getControlPath(control: AbstractControl, path: string): string | null {
-    path = this.getControlName(control) + path;
+    path = String(this.getControlName(control)) + path;
 
     if (control.parent && this.getControlName(control.parent)) {
       path = '.' + path;
@@ -239,8 +239,8 @@ export class AppSchemaService {
     return !!(schedule.month && schedule.hour && schedule.minute && schedule.dom && schedule.dow);
   }
 
-  checkIsValidCrontab(crontab: string): boolean {
-    return crontab && !Object.keys(parseString(crontab).errors).length;
+  checkIsValidCrontab(crontab: string | undefined): boolean {
+    return !!crontab && !Object.keys(parseString(crontab).errors).length;
   }
 
   serializeFormValue(
@@ -424,7 +424,7 @@ export class AppSchemaService {
       schema, isNew, formGroup, isParentImmutable, chartSchemaNode,
     } = payload;
 
-    let altDefault: string | boolean | number = '';
+    let altDefault: string | boolean | number | null = '';
     if (schema.type === ChartSchemaType.Int) {
       altDefault = null;
     } else if (schema.type === ChartSchemaType.Boolean) {

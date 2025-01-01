@@ -100,7 +100,8 @@ export class WebSocketHandlerService {
         this.raiseConcurrentCallsError();
       }),
       mergeMap(() => {
-        return this.queuedCalls.length > 0 ? this.processCall(this.queuedCalls.shift()) : of(null);
+        const queuedCall = this.queuedCalls.shift();
+        return queuedCall ? this.processCall(queuedCall) : of(null);
       }, this.maxConcurrentCalls),
     ).subscribe();
   }

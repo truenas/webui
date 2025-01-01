@@ -8,7 +8,7 @@ import {
 export const environment: WebUiEnvironment = {
   environmentVersion,
   remote,
-  buildYear: 2024,
+  buildYear: 2025,
   production: true,
   sentryPublicDsn,
   mockConfig: {

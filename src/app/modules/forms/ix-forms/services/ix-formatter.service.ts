@@ -27,7 +27,7 @@ export class IxFormatterService {
    * @param value The value to be parsed
    * @returns The parsed value
    */
-  memorySizeParsing: (val: string, postfixValue?: string) => number = (value: string, postfix: string) => {
+  memorySizeParsing: (val: string, postfixValue?: string) => number | null = (value: string, postfix: string) => {
     if (!value) {
       return null;
     }
@@ -86,10 +86,10 @@ export class IxFormatterService {
     hstr: string,
     dec = false,
     allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
-  ): number => {
+  ): number | null => {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
 
-    return number === null ? null : Number(number) * this.convertUnitToNum(unit);
+    return number === null || unit === null ? null : Number(number) * this.convertUnitToNum(unit);
   };
 
   /**

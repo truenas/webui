@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { sortBy } from 'lodash-es';
+import { omit, sortBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -176,25 +176,25 @@ export class LocalizationFormComponent implements OnInit {
   }
 
   submit(): void {
-    const body = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     this.isFormLoading = true;
-    this.window.localStorage.setItem('language', body.language);
-    this.window.localStorage.setItem('dateFormat', body.date_format);
-    this.window.localStorage.setItem('timeFormat', body.time_format);
+    this.window.localStorage.setItem('language', values.language);
+    this.window.localStorage.setItem('dateFormat', values.date_format);
+    this.window.localStorage.setItem('timeFormat', values.time_format);
     this.store$.dispatch(localizationFormSubmitted({
-      dateFormat: body.date_format,
-      timeFormat: body.time_format,
+      dateFormat: values.date_format,
+      timeFormat: values.time_format,
     }));
-    delete body.date_format;
-    delete body.time_format;
-    this.api.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
+    const payload = omit(values, ['date_format', 'time_format']);
+
+    this.api.call('system.general.update', [payload]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
         this.slideInRef.close(true);
-        this.setTimeOptions(body.timezone);
-        this.langService.setLanguage(body.language);
+        this.setTimeOptions(payload.timezone);
+        this.langService.setLanguage(payload.language);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

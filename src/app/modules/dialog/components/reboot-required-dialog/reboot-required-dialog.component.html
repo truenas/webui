@@ -3,7 +3,7 @@
 </h3>
 
 <div mat-dialog-content>
-  @if(thisNodeRebootReasons().length) {
+  @if(thisNodeRebootReasons()?.length) {
     <div class="reasons">
       <p class="dialog-message">
         <span>{{ 'The local node must be rebooted because' | translate }}:</span>
@@ -14,7 +14,7 @@
     </div>
   }
 
-  @if(otherNodeRebootReasons().length) {
+  @if(otherNodeRebootReasons()?.length) {
     <div class="reasons">
       <p class="dialog-message">
         <span>{{ 'The remote node must be rebooted because' | translate }}:</span>
@@ -26,7 +26,7 @@
   }
 </div>
 
-@if(thisNodeRebootReasons().length || otherNodeRebootReasons().length) {
+@if(thisNodeRebootReasons()?.length || otherNodeRebootReasons()?.length) {
   <ix-form-actions mat-dialog-actions class="form-actions">
     <ix-checkbox
       class="confirm"
@@ -39,7 +39,7 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    @if(thisNodeRebootReasons().length) {
+    @if(thisNodeRebootReasons()?.length) {
       <button
         mat-button
         color="primary"
@@ -51,7 +51,7 @@
       </button>
     }
 
-    @if(otherNodeRebootReasons().length) {
+    @if(otherNodeRebootReasons()?.length) {
       <button
         mat-button
         color="primary"

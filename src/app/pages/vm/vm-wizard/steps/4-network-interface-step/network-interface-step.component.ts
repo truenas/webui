@@ -68,9 +68,8 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const typeLabel = this.translate.instant(
-      vmNicTypeLabels.get(this.form.value.nic_type) || this.form.value.nic_type,
-    );
+    const nicTypeLabel = this.form.value.nic_type ? vmNicTypeLabels.get(this.form.value.nic_type) || '' : '';
+    const typeLabel = nicTypeLabel ? this.translate.instant(nicTypeLabel) : '';
     return [
       {
         label: this.translate.instant('NIC'),

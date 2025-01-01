@@ -166,10 +166,10 @@ export class GuiFormComponent {
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
     const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
-    const v4AddressesChanged = !(current.ui_address.length === next.ui_address.length
-      && current.ui_address.every((val, index) => val === next.ui_address[index]));
-    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address.length
-      && current.ui_v6address.every((val, index) => val === next.ui_v6address[index]));
+    const v4AddressesChanged = !(current.ui_address.length === next.ui_address?.length
+      && current.ui_address.every((val, index) => val === next.ui_address?.[index]));
+    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address?.length
+      && current.ui_v6address.every((val, index) => val === next.ui_v6address?.[index]));
 
     return [
       uiCertificateChanged,

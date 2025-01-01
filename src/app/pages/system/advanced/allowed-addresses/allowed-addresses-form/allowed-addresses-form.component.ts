@@ -58,7 +58,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   isFormLoading = true;
   form = this.fb.nonNullable.group({
-    addresses: this.fb.array<string>([]),
+    addresses: this.fb.nonNullable.array<string>([]),
   });
 
   constructor(
@@ -93,7 +93,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   addAddress(): void {
     this.form.controls.addresses.push(
-      this.fb.control('', [Validators.required, ipv4or6OptionalCidrValidator()]),
+      this.fb.nonNullable.control('', [Validators.required, ipv4or6OptionalCidrValidator()]),
     );
   }
 
@@ -120,7 +120,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading = true;
-    const addresses = this.form.value.addresses;
+    const addresses = this.form.getRawValue().addresses;
 
     this.api.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
       tap(() => {

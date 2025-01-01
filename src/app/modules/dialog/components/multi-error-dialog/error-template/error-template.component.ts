@@ -29,10 +29,10 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ErrorTemplateComponent {
-  private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild('errorMessageWrapper', { read: ElementRef });
-  private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild('errorMdContent', { read: ElementRef });
-  private readonly errorBtPanel: Signal<ElementRef<HTMLElement>> = viewChild('errorBtPanel', { read: ElementRef });
-  private readonly errorBtText: Signal<ElementRef<HTMLElement>> = viewChild('errorBtText', { read: ElementRef });
+  private readonly errorMessageWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMessageWrapper', { read: ElementRef });
+  private readonly errorMdContent: Signal<ElementRef<HTMLElement>> = viewChild.required('errorMdContent', { read: ElementRef });
+  private readonly errorBtPanel: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtPanel', { read: ElementRef });
+  private readonly errorBtText: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtText', { read: ElementRef });
 
   readonly title = input<string>();
   readonly message = input<string>();
@@ -51,29 +51,34 @@ export class ErrorTemplateComponent {
   toggleOpen(): void {
     const messageWrapper = this.errorMessageWrapper().nativeElement;
     const content = this.errorMdContent().nativeElement;
-    const btPanel = this.errorBtPanel().nativeElement;
-    const txtarea = this.errorBtText().nativeElement;
+    const btPanel = this.errorBtPanel()?.nativeElement;
+    const txtarea = this.errorBtText()?.nativeElement;
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
-      btPanel.setAttribute('style', 'width: 750px; max-height: calc(80vh - 240px)');
+      btPanel?.setAttribute('style', 'width: 750px; max-height: calc(80vh - 240px)');
     } else {
       content.removeAttribute('style');
-      btPanel.removeAttribute('style');
+      btPanel?.removeAttribute('style');
       messageWrapper.removeAttribute('style');
-      txtarea.removeAttribute('style');
+      txtarea?.removeAttribute('style');
     }
   }
 
   downloadLogs(): void {
-    this.api.call('core.job_download_logs', [this.logs().id, `${this.logs().id}.log`])
+    const logsId = this.logs()?.id;
+    if (!logsId) {
+      throw new Error('Missing logs id.');
+    }
+
+    this.api.call('core.job_download_logs', [logsId, `${logsId}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';
-        this.download.streamDownloadFile(url, `${this.logs().id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+        this.download.streamDownloadFile(url, `${logsId}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
-            this.download.downloadBlob(file, `${this.logs().id}.log`);
+            this.download.downloadBlob(file, `${logsId}.log`);
           },
           error: (error: unknown) => {
             this.dialogService.error(this.errorHandler.parseError(error));

@@ -43,7 +43,7 @@ export class TokenLastUsedService {
   ) {
   }
 
-  setupTokenLastUsedValue(user$: Observable<LoggedInUser>): void {
+  setupTokenLastUsedValue(user$: Observable<LoggedInUser | null>): void {
     user$.pipe(
       filter(Boolean),
       tapOnce(() => this.updateTokenLastUsed()),

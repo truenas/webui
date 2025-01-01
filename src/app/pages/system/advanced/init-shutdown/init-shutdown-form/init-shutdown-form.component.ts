@@ -76,7 +76,7 @@ export class InitShutdownFormComponent implements OnInit {
     type: [InitShutdownScriptType.Command],
     command: ['', [Validators.required]],
     script: ['', [Validators.required]],
-    when: [null as InitShutdownScriptWhen, [Validators.required]],
+    when: [null as InitShutdownScriptWhen | null, [Validators.required]],
     enabled: [true],
     timeout: [10],
   });
@@ -98,7 +98,7 @@ export class InitShutdownFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  private editingScript: InitShutdownScript;
+  private editingScript: InitShutdownScript | undefined;
 
   constructor(
     private api: ApiService,
@@ -120,12 +120,8 @@ export class InitShutdownFormComponent implements OnInit {
     );
 
     if (this.editingScript) {
-      this.setScriptForEdit();
+      this.form.patchValue(this.editingScript);
     }
-  }
-
-  setScriptForEdit(): void {
-    this.form.patchValue(this.editingScript);
   }
 
   onSubmit(): void {

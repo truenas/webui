@@ -45,7 +45,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   readonly canChangeLayout = input(false);
   readonly limitLayouts = input<CreateVdevLayout[]>([]);
 
-  readonly layoutControl = new FormControl(null as CreateVdevLayout, Validators.required);
+  readonly layoutControl = new FormControl(null as CreateVdevLayout | null, Validators.required);
 
   protected isDataVdev = computed(() => {
     return this.type() === VdevType.Data;
@@ -75,7 +75,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   }
 
   protected get usesDraidLayout(): boolean {
-    return isDraidLayout(this.layoutControl.value);
+    return !!this.layoutControl.value && isDraidLayout(this.layoutControl.value);
   }
 
   protected isMetadataVdev = computed(() => {
@@ -94,6 +94,9 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
       },
     });
     this.layoutControl.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
+      if (!layout) {
+        return;
+      }
       this.store.setTopologyCategoryLayout(this.type(), layout);
     });
   }

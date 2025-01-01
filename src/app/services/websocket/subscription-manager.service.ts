@@ -52,7 +52,7 @@ export class SubscriptionManagerService {
         filter((message) => {
           return isCollectionUpdateMessage(message) && message.params.collection === method;
         }),
-        map((message: CollectionUpdateMessage) => message.params),
+        map((message: CollectionUpdateMessage) => message.params as ApiEventTyped<K>),
       ).subscribe(subscriber);
 
       return () => {

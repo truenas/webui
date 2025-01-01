@@ -49,7 +49,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class FileTicketComponent {
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();
   readonly dialogRef = input.required<MatDialogRef<FeedbackDialogComponent>>();
-  readonly isLoading = input<boolean>();
+  readonly isLoading = input.required<boolean>();
 
   readonly isLoadingChange = output<boolean>();
 

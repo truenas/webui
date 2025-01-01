@@ -24,7 +24,9 @@ const initialState: VirtualizationInstancesState = {
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly instances = computed(() => this.stateAsSignal().instances?.filter(Boolean));
+  readonly instances = computed(() => {
+    return this.stateAsSignal().instances?.filter((instance) => !!instance) ?? [];
+  });
 
   constructor(
     private api: ApiService,

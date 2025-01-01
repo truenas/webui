@@ -88,7 +88,7 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
       diskType: null,
       vdevsNumber: null,
       treatDiskSizeAsMinimum: false,
-      vdevs: [],
+      vdevs: [] as DetailsDisk[][],
       hasCustomDiskSelection: false,
 
       draidDataDisks: 0,

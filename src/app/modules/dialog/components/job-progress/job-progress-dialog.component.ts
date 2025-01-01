@@ -75,8 +75,8 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
 
   readonly JobState = JobState;
 
-  protected title: string;
-  protected description: string;
+  protected title: string | undefined;
+  protected description: string | undefined;
   private realtimeLogsSubscribed = false;
   protected realtimeLogs = '';
   protected showMinimizeButton = true;
@@ -119,7 +119,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
     this.showMinimizeButton = this.data?.canMinimize || false;
     this.dialogRef.disableClose = !this.showMinimizeButton;
 
-    let logsSubscription: Subscription = null;
+    let logsSubscription: Subscription | null = null;
     this.cdr.markForCheck();
 
     this.data.job$.pipe(
@@ -175,7 +175,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
         }
 
         if (this.realtimeLogsSubscribed) {
-          logsSubscription.unsubscribe();
+          logsSubscription?.unsubscribe();
         }
         this.cdr.markForCheck();
       },
