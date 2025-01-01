@@ -20,7 +20,6 @@ import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -54,9 +53,6 @@ describe('GlobalSearchComponent', () => {
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
         selectionChanged$: of(),
-      }),
-      mockProvider(OldSlideInService, {
-        closeAll: jest.fn(),
       }),
       mockProvider(SidenavService, {
         isMobile: () => false,
@@ -176,13 +172,11 @@ describe('GlobalSearchComponent', () => {
   }));
 
   it('should close all backdrops', () => {
-    const slideInService = spectator.inject(OldSlideInService);
     const sidenavService = spectator.inject(SidenavService);
     const dialogService = spectator.inject(DialogService);
 
     spectator.component.closeAllBackdrops();
 
-    expect(slideInService.closeAll).toHaveBeenCalled();
     expect(sidenavService.closeSecondaryMenu).toHaveBeenCalled();
     expect(dialogService.closeAllDialogs).toHaveBeenCalled();
   });

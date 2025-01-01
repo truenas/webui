@@ -7,14 +7,14 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { CustomAppButtonComponent } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('CustomAppButtonComponent', () => {
   let spectator: SpectatorRouting<CustomAppButtonComponent>;
@@ -32,11 +32,8 @@ describe('CustomAppButtonComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('selected pool'),
       }),
-      mockProvider(OldSlideInService, {
-        onClose$: new Subject<unknown>(),
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -77,6 +74,6 @@ describe('CustomAppButtonComponent', () => {
     const installButton = await menu.getItems({ text: /Install via YAML$/ });
     await installButton[0].click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CustomAppFormComponent, { wide: true });
   });
 });

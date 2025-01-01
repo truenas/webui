@@ -32,6 +32,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
@@ -42,7 +43,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -109,7 +109,7 @@ export class AppInfoCardComponent {
     private translate: TranslateService,
     private router: Router,
     private installedAppsStore: InstalledAppsStore,
-    private slideIn: OldSlideInService,
+    private slideIn: SlideIn,
     @Inject(WINDOW) private window: Window,
   ) {}
 
