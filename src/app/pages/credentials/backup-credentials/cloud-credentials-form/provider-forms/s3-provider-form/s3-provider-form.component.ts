@@ -30,7 +30,7 @@ export class S3ProviderFormComponent extends BaseProviderFormComponent implement
     access_key_id: ['', Validators.required],
     secret_access_key: ['', Validators.required],
 
-    max_upload_parts: [null as number],
+    max_upload_parts: [null as number | null],
     endpoint: [''],
     region: [''],
     skip_region: [false],

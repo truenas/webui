@@ -29,8 +29,8 @@ import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/w
   ],
 })
 export class WidgetAppSettingsComponent implements WidgetSettingsComponent<WidgetAppSettings>, OnInit {
-  form = this.fb.group({
-    appName: [null as string, [Validators.required]],
+  form = this.fb.nonNullable.group({
+    appName: [null as string | null, [Validators.required]],
   });
 
   protected installedApps$ = this.resources.installedApps$.pipe(
@@ -71,6 +71,10 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
     );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
+        if (!settings.appName) {
+          return;
+        }
+
         this.widgetSettingsRef.updateSettings({ appName: settings.appName });
         this.widgetSettingsRef.updateValidity(
           getAllFormErrors(this.form, this.formFieldNames),

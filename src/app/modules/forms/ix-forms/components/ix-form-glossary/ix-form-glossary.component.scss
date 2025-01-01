@@ -2,18 +2,18 @@
 
 :host {
   position: relative;
+
+  @media (max-width: $breakpoint-sm) {
+    display: none;
+  }
 }
 
 .search-container {
   margin-left: 16px;
-  min-width: 250px;
+  max-width: 250px;
   position: sticky;
   top: 0;
-  width: 20%;
-
-  @media (max-width: $breakpoint-xs) {
-    display: none;
-  }
+  width: 100%;
 
   .search-card {
     background-color: var(--bg2);

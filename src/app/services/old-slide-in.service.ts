@@ -71,7 +71,7 @@ export class OldSlideInService {
     }
 
     const lastSlideInRef = Array.from(this.slideInRefMap.values()).pop();
-    lastSlideInRef.close();
+    lastSlideInRef?.close();
   }
 
   closeAll(): void {

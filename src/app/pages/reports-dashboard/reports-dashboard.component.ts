@@ -51,7 +51,7 @@ import { ReportsService } from './reports.service';
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
   readonly searchableElements = reportingElements;
 
-  scrollContainer: HTMLElement;
+  scrollContainer: HTMLElement | null;
 
   allReports: Report[] = [];
   diskReports: Report[] = [];
@@ -69,7 +69,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.scrollContainer = this.layoutService.getContentContainer();
-    this.scrollContainer.style.overflow = 'hidden';
+    if (this.scrollContainer) {
+      this.scrollContainer.style.overflow = 'hidden';
+    }
 
     this.reportsService.getReportGraphs()
       .pipe(untilDestroyed(this))
@@ -97,7 +99,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.scrollContainer.style.overflow = 'auto';
+    if (this.scrollContainer) {
+      this.scrollContainer.style.overflow = 'auto';
+    }
   }
 
   activateTabFromUrl(): void {

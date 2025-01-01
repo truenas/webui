@@ -50,7 +50,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     newOrExisting: [NewOrExistingDisk.New],
     hdd_type: [VmDiskMode.Ahci],
     datastore: [''],
-    volsize: [null as number],
+    volsize: [null as number | null],
     hdd_path: [''],
   }, {
     asyncValidators: [this.freeSpaceValidator.validate],
@@ -102,7 +102,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     let diskDescription: string;
     if (this.isCreatingNewDisk) {
       diskDescription = this.translate.instant('{size} {type} at {location}', {
-        size: buildNormalizedFileSize(values.volsize),
+        size: buildNormalizedFileSize(values.volsize || 0),
         type: values.hdd_type,
         location: values.datastore,
       });

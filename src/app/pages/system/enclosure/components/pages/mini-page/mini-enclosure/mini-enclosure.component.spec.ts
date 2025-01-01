@@ -77,7 +77,7 @@ describe('MiniEnclosureComponent', () => {
     providers: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => enclosure,
-        selectedSlot: () => null as DashboardEnclosureSlot,
+        selectedSlot: () => null as DashboardEnclosureSlot | null,
         poolColors: () => ({ 'pool-1': 'red', 'pool-2': 'blue' }),
         selectSlot: jest.fn(),
       }),

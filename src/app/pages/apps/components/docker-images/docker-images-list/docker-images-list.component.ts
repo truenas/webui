@@ -76,7 +76,10 @@ export class DockerImagesListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.containerImages.find((image) => row.id === image.id).selected = checked;
+        const imageToSelect = this.containerImages.find((image) => row.id === image.id);
+        if (imageToSelect) {
+          imageToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },

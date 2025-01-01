@@ -125,7 +125,10 @@ export class SnapshotListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.snapshots.find((snapshot) => row.name === snapshot.name).selected = checked;
+        const snapshotToSelect = this.snapshots.find((snapshot) => row.name === snapshot.name);
+        if (snapshotToSelect) {
+          snapshotToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },
