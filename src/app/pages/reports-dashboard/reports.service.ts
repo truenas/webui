@@ -107,8 +107,7 @@ export class ReportsService {
         return disks
           .filter((disk) => !disk.devname.includes('multipath'))
           .map((disk) => {
-            const [value] = disk.devname.split(' ');
-            return { label: disk.devname, value };
+            return { label: disk.devname, value: disk.identifier };
           })
           .sort((a, b) => a.label.localeCompare(b.label));
       }),
