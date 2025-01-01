@@ -46,7 +46,7 @@ export function mockAuth(
           createSpyObject(Window),
           createSpyObject(WebSocketStatusService, {
             isConnected$: of(true),
-            isAuthenticated$: of(true),
+            isAuthenticated$: of(false),
           }),
         );
 
