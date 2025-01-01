@@ -329,6 +329,25 @@
   },
   {
     "hierarchy": [
+      "System",
+      "Audit"
+    ],
+    "synonyms": [
+      "Logs"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/system",
+      "audit"
+    ],
+    "routerLink": null,
+    "anchor": "system-audit",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Credentials",
       "Backup Credentials"
     ],

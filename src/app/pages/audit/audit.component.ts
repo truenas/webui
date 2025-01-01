@@ -14,7 +14,7 @@ import {
   filter,
   of,
 } from 'rxjs';
-import { auditEventLabels } from 'app/enums/audit.enum';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -51,6 +51,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     AuditListComponent,
     IxButtonGroupComponent,
     ReactiveFormsModule,
+    UiSearchDirective,
   ],
 })
 export class AuditComponent implements OnInit, OnDestroy {
@@ -62,7 +63,6 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected readonly controllerType = toSignal(this.controllerTypeControl.value$);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly searchableElements = auditElements;
-  protected readonly auditEventLabels = auditEventLabels;
 
   constructor(
     private api: ApiService,
