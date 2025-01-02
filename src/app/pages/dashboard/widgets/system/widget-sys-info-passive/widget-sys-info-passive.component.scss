@@ -1,0 +1,20 @@
+.license-info {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+
+  .title {
+    font-weight: bold;
+    height: 100%;
+  }
+
+  .info {
+    width: 100%;
+  }
+
+  div {
+    span {
+      display: inline-block;
+    }
+  }
+}
