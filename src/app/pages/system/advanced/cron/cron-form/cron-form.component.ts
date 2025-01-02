@@ -26,8 +26,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +89,7 @@ export class CronFormComponent implements OnInit {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
 
-  private editingCron: Cronjob;
+  private editingCron: Cronjob | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -109,15 +109,11 @@ export class CronFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingCron) {
-      this.setCronForEdit();
+      this.form.patchValue({
+        ...this.editingCron,
+        schedule: scheduleToCrontab(this.editingCron.schedule),
+      });
     }
-  }
-
-  setCronForEdit(): void {
-    this.form.patchValue({
-      ...this.editingCron,
-      schedule: scheduleToCrontab(this.editingCron.schedule),
-    });
   }
 
   onSubmit(): void {

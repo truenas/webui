@@ -8,7 +8,7 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-list
         formArrayName="addresses"
-        [formArray]="form.get('addresses')"
+        [formArray]="form.controls.addresses"
         [empty]="form.controls.addresses.controls.length === 0"
         [label]="'Allowed IP Addresses' | translate"
         [tooltip]="helpText.allowed_ip_addresses.tooltip"

@@ -3,8 +3,8 @@ import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-typ
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('StorageService', () => {
   const storageService = new StorageService(

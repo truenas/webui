@@ -17,12 +17,11 @@ import { IxCodeEditorHarness } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeApp = {
   name: 'test-app-one',
@@ -53,6 +52,12 @@ const fakeApp = {
   } as Record<string, ChartFormValue>,
 } as App;
 
+const slideInRef: SlideInRef<App | undefined, unknown> = {
+  close: jest.fn(),
+  requireConfirmationWhen: jest.fn(),
+  getData: jest.fn(() => fakeApp),
+};
+
 describe('CustomAppFormComponent', () => {
   let spectator: Spectator<CustomAppFormComponent>;
   let loader: HarnessLoader;
@@ -78,9 +83,6 @@ describe('CustomAppFormComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockProvider(OldSlideInRef, {
-        close: jest.fn(),
-      }),
       mockApi([
         mockJob('app.create'),
         mockJob('app.update'),
@@ -92,7 +94,10 @@ describe('CustomAppFormComponent', () => {
   function setupTest(app?: App): void {
     spectator = createComponent({
       providers: [
-        { provide: SLIDE_IN_DATA, useValue: app || null },
+        mockProvider(SlideInRef, {
+          ...slideInRef,
+          getData: app ? jest.fn(() => app) : slideInRef.getData,
+        }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -109,7 +114,8 @@ describe('CustomAppFormComponent', () => {
       const configControl = await loader.getHarness(IxCodeEditorHarness);
       await configControl.setValue('config');
       spectator.detectChanges();
-      const button = await loader.getHarness(MatButtonHarness);
+
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await button.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
@@ -128,7 +134,7 @@ describe('CustomAppFormComponent', () => {
       await appNameControl.setValue('test-app-one');
       spectator.detectChanges();
 
-      const button = await loader.getHarness(MatButtonHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(button.isDisabled()).toBeTruthy();
     });
   });
@@ -139,7 +145,7 @@ describe('CustomAppFormComponent', () => {
     });
 
     it('checks save and closes slide in when successfully submitted', async () => {
-      const button = await loader.getHarness(MatButtonHarness);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await button.click();
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [

@@ -4,7 +4,7 @@ import {
 } from 'rxjs';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { nullOption, skipOption } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FibreChannelService {

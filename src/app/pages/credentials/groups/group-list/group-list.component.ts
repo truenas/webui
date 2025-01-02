@@ -34,13 +34,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/credentials/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/credentials/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/credentials/groups/store/group.selectors';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -140,7 +140,7 @@ export class GroupListComponent implements OnInit {
 
   constructor(
     private emptyService: EmptyService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private translate: TranslateService,
@@ -158,7 +158,7 @@ export class GroupListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideInService.open(GroupFormComponent);
+    this.slideIn.open(GroupFormComponent);
   }
 
   onListFiltered(query: string): void {

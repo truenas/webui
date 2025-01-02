@@ -9,11 +9,11 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { ServiceRow } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ServiceStateColumnComponent,
 } from 'app/pages/services/components/service-state-column/service-state-column.component';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceStateColumnComponent', () => {
   let spectator: Spectator<ServiceStateColumnComponent>;

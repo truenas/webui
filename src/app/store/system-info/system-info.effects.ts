@@ -5,7 +5,7 @@ import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,

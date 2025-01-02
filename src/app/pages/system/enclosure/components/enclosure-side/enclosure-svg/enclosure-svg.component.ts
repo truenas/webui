@@ -22,7 +22,7 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | null;
+export type TintingFunction = (slot: DashboardEnclosureSlot) => string | null;
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | 
 })
 export class EnclosureSvgComponent implements OnDestroy {
   readonly svgUrl = input.required<string>();
-  readonly slots = input<DashboardEnclosureSlot[]>();
+  readonly slots = input.required<DashboardEnclosureSlot[]>();
   readonly enableMouseEvents = input(true);
   readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
@@ -90,11 +90,12 @@ export class EnclosureSvgComponent implements OnDestroy {
   });
 
   protected processSvg = effect(() => {
-    if (!this.svgContainer() || !this.svg()) {
+    const svgContainer = this.svgContainer();
+    if (!svgContainer || !this.svg()) {
       return;
     }
 
-    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
+    const driveTrays = svgContainer.nativeElement.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
     this.clearOverlays();
 
     // TODO: Unclear if input change will trigger re-render.
@@ -257,7 +258,7 @@ export class EnclosureSvgComponent implements OnDestroy {
 
     this.renderer.removeClass(overlay, 'tinted');
 
-    const slotTint = this.slotTintFn()(slot);
+    const slotTint = this.slotTintFn()?.(slot);
     if (!slotTint) {
       return;
     }

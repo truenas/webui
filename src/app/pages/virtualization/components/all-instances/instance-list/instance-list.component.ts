@@ -61,7 +61,11 @@ export class InstanceListComponent {
   }
 
   get checkedInstances(): VirtualizationInstance[] {
-    return this.selection.selected.map((id) => this.instances().find((instance) => instance.id === id));
+    return this.selection.selected
+      .map((id) => {
+        return this.instances().find((instance) => instance.id === id);
+      })
+      .filter((instance) => !!instance);
   }
 
   protected readonly filteredInstances = computed(() => {

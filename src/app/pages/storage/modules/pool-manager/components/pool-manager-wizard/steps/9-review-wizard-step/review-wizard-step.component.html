@@ -38,7 +38,7 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
-      <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
+      <div class="value">{{ (totalCapacity$ | async) | ixFileSize }}</div>
     </div>
 
     @if (state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName) {
@@ -57,7 +57,7 @@
   </div>
 </div>
 <div class="summary-row">
-  @if (poolCreationErrors?.length) {
+  @if (poolCreationErrors.length) {
     <div>
       <h4>{{ 'Warnings' | translate }}</h4>
       @for (error of poolCreationErrors; track error.severity + error.text) {

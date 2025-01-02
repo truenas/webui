@@ -39,8 +39,8 @@ export class FormatDateTimePipe implements PipeTransform {
 
   private checkFormatsFromLocalStorage(): void {
     ['dateFormat', 'timeFormat'].forEach((value) => {
-      if (this.window.localStorage[value]) {
-        const storedFormat = this.window.localStorage.getItem(value);
+      const storedFormat = this.window.localStorage.getItem(value);
+      if (storedFormat) {
         try {
           if (format(new Date(), storedFormat)) {
             if (value === 'dateFormat') {

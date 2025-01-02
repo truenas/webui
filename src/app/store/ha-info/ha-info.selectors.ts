@@ -24,7 +24,7 @@ export const selectIsHaEnabled = createSelector(
 export const selectCanFailover = createSelector(
   selectHaInfoState,
   ({ haStatus }) => {
-    if (!haStatus) {
+    if (!haStatus?.reasons) {
       return false;
     }
 

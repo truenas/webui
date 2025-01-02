@@ -13,10 +13,9 @@ import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -24,6 +23,12 @@ describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const fakeDataPrivilege = {
     id: 10,
@@ -61,7 +66,7 @@ describe('PrivilegeFormComponent', () => {
         ] as PrivilegeRole[]),
         mockCall('system.general.update'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -80,7 +85,6 @@ describe('PrivilegeFormComponent', () => {
         ],
       }),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -128,7 +132,7 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: fakeDataPrivilege },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeDataPrivilege }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -173,7 +177,7 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { ...fakeDataPrivilege, builtin_name: 'ADMIN' } },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...fakeDataPrivilege, builtin_name: 'ADMIN' }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

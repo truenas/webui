@@ -34,17 +34,14 @@
   [selectedItem]="selectedApp"
 >
   <ix-installed-apps-list
+    #installedAppsList
     master
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-installed-apps-list>
 
-  <ng-container detail-name>
-    {{ selectedApp?.name }}
-  </ng-container>
-
   <ng-container detail>
-    @if (selectedApp) {
+    @if (selectedApp && (!installedAppsList.filterString || selectedApp.name.toLowerCase().includes(installedAppsList.filterString.toLowerCase()))) {
       <ix-app-details-panel
         [app]="selectedApp"
         (startApp)="start(selectedApp.name)"

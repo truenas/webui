@@ -5,7 +5,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { SpaceManagementChartComponent } from './space-management-chart.component';
 
 describe('SpaceManagementChartComponent', () => {

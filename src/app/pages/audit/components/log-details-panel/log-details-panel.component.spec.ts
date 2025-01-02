@@ -25,11 +25,6 @@ describe('LogDetailsPanelComponent', () => {
     });
   });
 
-  it('checks card title', () => {
-    const title = spectator.query('h2');
-    expect(title).toHaveText('Log Details');
-  });
-
   it('renders Log Details Cards', () => {
     expect(spectator.query(MetadataDetailsCardComponent)).toExist();
     expect(spectator.query(EventDataDetailsCardComponent)).toExist();

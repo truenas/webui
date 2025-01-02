@@ -5,8 +5,8 @@ import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface DatasetTreeState {
   isLoading: boolean;

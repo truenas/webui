@@ -8,10 +8,10 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesService } from 'app/services/services.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
@@ -54,7 +54,9 @@ export class ServicesEffects {
     ofType(checkIfServiceIsEnabled),
     filter(({ serviceName }) => Boolean(serviceName)),
     filterAsync(({ serviceName }) => this.canUserManageService(serviceName)),
-    switchMap(({ serviceName }) => this.store$.select(selectService(serviceName)).pipe(take(1))),
+    switchMap(({ serviceName }) => {
+      return this.store$.select(selectService(serviceName)).pipe(take(1), filter((service) => !!service));
+    }),
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
         return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(

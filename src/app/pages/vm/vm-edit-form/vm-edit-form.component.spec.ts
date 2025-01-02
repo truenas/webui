@@ -13,15 +13,13 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmEditFormComponent', () => {
   let spectator: Spectator<VmEditFormComponent>;
@@ -60,14 +58,19 @@ describe('VmEditFormComponent', () => {
     ] as VmDevice[],
   } as VirtualMachine;
 
+  const slideInRef: SlideInRef<VirtualMachine | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => existingVm),
+  };
+
   const createComponent = createComponentFactory({
     component: VmEditFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
@@ -125,7 +128,6 @@ describe('VmEditFormComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(OldSlideInService),
     ],
     componentProviders: [
       mockProvider(CpuValidatorService, {
@@ -140,11 +142,7 @@ describe('VmEditFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      providers: [
-        { provide: SLIDE_IN_DATA, useValue: existingVm },
-      ],
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
@@ -209,7 +207,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('sends cpu_model as null when CPU Mode is not Custom', async () => {
@@ -246,7 +244,7 @@ describe('VmEditFormComponent', () => {
       time: VmTime.Local,
       vcpus: 1,
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('updates GPU devices when form is edited and saved', async () => {

@@ -31,7 +31,7 @@
     </div>
   </mat-card-actions>
 
-  @if (userTwoFactorAuthConfigured && authService.userTwoFactorConfig$ | async; as qrInfo) {
+  @if (userTwoFactorAuthConfigured && (authService.userTwoFactorConfig$ | async); as qrInfo) {
     <mat-card-actions>
       <ix-qr-viewer
         [qrInfo]="qrInfo?.provisioning_uri"

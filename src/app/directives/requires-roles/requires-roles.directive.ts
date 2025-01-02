@@ -6,7 +6,7 @@ import { isEqual } from 'lodash-es';
 import { take } from 'rxjs';
 import { HasAccessDirective } from 'app/directives/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 
 @UntilDestroy()
 @Directive({

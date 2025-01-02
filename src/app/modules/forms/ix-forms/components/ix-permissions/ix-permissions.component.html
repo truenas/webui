@@ -3,7 +3,7 @@
     [label]="label()"
     [tooltip]="tooltip()"
     [required]="required()"
-    [ixTestOverride]="controlDirective.name"
+    [ixTestOverride]="controlDirective.name || ''"
   ></ix-label>
 }
 
@@ -131,4 +131,7 @@
   </table>
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+@let control = controlDirective.control;
+@if (control) {
+  <ix-errors [control]="control" [label]="label()"></ix-errors>
+}
