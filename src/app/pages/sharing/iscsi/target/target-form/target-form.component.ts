@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -27,15 +27,14 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -132,12 +131,12 @@ export class TargetFormComponent implements OnInit {
   ];
 
   isLoading = false;
+  protected editingTarget: IscsiTarget | undefined = undefined;
 
   form = this.formBuilder.group({
     name: [
       '',
       [Validators.required],
-      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
     ],
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
@@ -158,10 +157,15 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private fcService: FibreChannelService,
-    private slideInRef: OldSlideInRef<TargetFormComponent>,
     private targetNameValidationService: TargetNameValidationService,
-    @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
-  ) {}
+    public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
+  ) {
+    this.editingTarget = slideInRef.getData();
+
+    this.form.controls.name.setAsyncValidators(
+      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
+    );
+  }
 
   ngOnInit(): void {
     if (this.editingTarget) {
@@ -209,7 +213,7 @@ export class TargetFormComponent implements OnInit {
     ).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.slideInRef.close(response);
+        this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

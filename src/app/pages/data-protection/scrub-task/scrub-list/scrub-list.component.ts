@@ -36,13 +36,13 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -123,10 +123,9 @@ export class ScrubListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private crontabExplanation: CrontabExplanationPipe,
     private taskService: TaskService,
     private api: ApiService,
-    private slideIn: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -147,15 +146,13 @@ export class ScrubListComponent implements OnInit {
 
   protected onAdd(): void {
     this.slideIn.open(ScrubTaskFormComponent)
-      .slideInClosed$
-      .pipe(untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private onEdit(row: PoolScrubTask): void {
     this.slideIn.open(ScrubTaskFormComponent, { data: row })
-      .slideInClosed$
-      .pipe(untilDestroyed(this))
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 

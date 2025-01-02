@@ -40,12 +40,16 @@ export class MockEnclosureGenerator {
             platform: `TRUENAS-${this.config.controllerModel}`,
             system_product: `TRUENAS-${this.config.controllerModel}`,
           }
-        : null,
+        : undefined,
     };
   }
 
   private addEnclosure(model: EnclosureModel): void {
     const enclosure = enclosureMocks.find((mock) => mock.model === model);
+
+    if (!enclosure) {
+      throw new Error(`Enclosure model ${model} is not supported`);
+    }
 
     this.enclosures.push(enclosure);
   }

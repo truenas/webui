@@ -8,10 +8,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Disk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { HardwareDiskEncryptionComponent } from './hardware-disk-encryption.component';
 
 describe('HardwareDiskEncryptionComponent', () => {

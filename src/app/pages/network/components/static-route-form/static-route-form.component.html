@@ -1,8 +1,12 @@
-<ix-old-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isFormLoading"></ix-old-modal-header>
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="title"
+  [loading]="isFormLoading"
+></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" warnAboutUnsavedChanges [formGroup]="form" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-input
           formControlName="destination"

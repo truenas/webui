@@ -27,8 +27,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -76,7 +76,7 @@ export class InitShutdownFormComponent implements OnInit {
     type: [InitShutdownScriptType.Command],
     command: ['', [Validators.required]],
     script: ['', [Validators.required]],
-    when: [null as InitShutdownScriptWhen, [Validators.required]],
+    when: [null as InitShutdownScriptWhen | null, [Validators.required]],
     enabled: [true],
     timeout: [10],
   });
@@ -98,7 +98,7 @@ export class InitShutdownFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  private editingScript: InitShutdownScript;
+  private editingScript: InitShutdownScript | undefined;
 
   constructor(
     private api: ApiService,
@@ -110,6 +110,9 @@ export class InitShutdownFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<InitShutdownScript | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingScript = this.slideInRef.getData();
   }
 
@@ -120,12 +123,8 @@ export class InitShutdownFormComponent implements OnInit {
     );
 
     if (this.editingScript) {
-      this.setScriptForEdit();
+      this.form.patchValue(this.editingScript);
     }
-  }
-
-  setScriptForEdit(): void {
-    this.form.patchValue(this.editingScript);
   }
 
   onSubmit(): void {

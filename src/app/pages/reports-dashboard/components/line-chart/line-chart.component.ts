@@ -23,10 +23,10 @@ import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-siz
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
   value: number;

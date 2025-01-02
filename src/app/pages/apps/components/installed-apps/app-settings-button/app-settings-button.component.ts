@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Injector, ViewContainerRef,
+  ChangeDetectionStrategy, Component, ViewContainerRef,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,20 +8,21 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, forkJoin, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -49,14 +50,14 @@ export class AppSettingsButtonComponent {
   protected readonly updateDockerRoles = [Role.DockerWrite];
 
   constructor(
-    private ixSlideInService: OldSlideInService,
+    private ixSlideIn: SlideIn,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     protected dockerStore: DockerStore,
+    protected appsStore: AppsStore,
     private viewContainerRef: ViewContainerRef,
-    private injector: Injector,
   ) { }
 
   onChoosePool(): void {
@@ -79,6 +80,13 @@ export class AppSettingsButtonComponent {
   }
 
   manageCatalog(): void {
-    this.ixSlideInService.open(AppsSettingsComponent, { injector: this.injector });
+    this.ixSlideIn.open(AppsSettingsComponent).pipe(
+      filter((response) => !!response.response),
+      switchMap(() => forkJoin([
+        this.dockerStore.reloadDockerConfig(),
+        this.appsStore.loadCatalog(),
+      ])),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

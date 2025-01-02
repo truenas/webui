@@ -4,11 +4,11 @@ import { dygraphs } from 'dygraphs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 const fakeLegend = {
   series: [] as dygraphs.SeriesLegendData[],

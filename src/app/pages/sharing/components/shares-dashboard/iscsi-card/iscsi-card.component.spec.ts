@@ -19,7 +19,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import {
   ServiceExtraActionsComponent,
@@ -29,7 +30,6 @@ import {
 } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
@@ -55,6 +55,12 @@ describe('IscsiCardComponent', () => {
     },
   ] as IscsiTarget[];
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: IscsiCardComponent,
     imports: [
@@ -75,12 +81,10 @@ describe('IscsiCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -122,7 +126,7 @@ describe('IscsiCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: expect.objectContaining(iscsiShares[0]),
       wide: true,
     });

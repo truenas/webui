@@ -8,9 +8,9 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
 import { DownloadService } from 'app/services/download.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ExportAllKeysDialogComponent', () => {
   let spectator: Spectator<ExportAllKeysDialogComponent>;

@@ -2,9 +2,9 @@ import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/sp
 import { MockDirective } from 'ng-mocks';
 import { of, lastValueFrom } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { AuthService } from 'app/services/auth/auth.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [

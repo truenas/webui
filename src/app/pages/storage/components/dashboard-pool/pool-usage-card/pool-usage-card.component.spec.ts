@@ -9,9 +9,9 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 describe('PoolUsageCardComponent', () => {

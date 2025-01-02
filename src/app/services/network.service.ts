@@ -4,7 +4,7 @@ import { filter, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {

@@ -13,10 +13,10 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialogComponent>;

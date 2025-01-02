@@ -24,4 +24,7 @@
   }
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+@let control = controlDirective.control;
+@if (control) {
+  <ix-errors [control]="control" [label]="label()"></ix-errors>
+}

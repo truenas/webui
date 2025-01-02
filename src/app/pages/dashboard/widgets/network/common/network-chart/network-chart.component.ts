@@ -5,8 +5,8 @@ import {
 import { ChartData, ChartOptions } from 'chart.js';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { fullSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-network-chart',

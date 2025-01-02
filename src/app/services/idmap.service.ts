@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class IdmapService {

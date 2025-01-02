@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,18 +14,37 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { fillControlValues, getControlValues } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetCapacitySettingsComponent', () => {
   let spectator: Spectator<DatasetCapacitySettingsComponent>;
   let loader: HarnessLoader;
+
+  const dataset = {
+    id: 'root/path',
+    name: 'root/path',
+    refquota: { parsed: 50 * GiB },
+    refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
+    refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
+    quota: { parsed: 100 * GiB },
+    quota_warning: { parsed: null, source: ZfsPropertySource.Local },
+    quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
+    refreservation: { parsed: 10 * GiB },
+    reservation: { parsed: 20 * GiB },
+  } as DatasetDetails;
+
+  const slideInRef: SlideInRef<DatasetDetails | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => dataset),
+  };
+
   const createComponent = createComponentFactory({
     component: DatasetCapacitySettingsComponent,
     imports: [
@@ -36,33 +56,16 @@ describe('DatasetCapacitySettingsComponent', () => {
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockProvider(OldSlideInService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      providers: [
-        {
-          provide: SLIDE_IN_DATA,
-          useValue: {
-            id: 'root/path',
-            name: 'root/path',
-            refquota: { parsed: 50 * GiB },
-            refquota_warning: { parsed: 50, source: ZfsPropertySource.Local },
-            refquota_critical: { parsed: 0, source: ZfsPropertySource.Default },
-            quota: { parsed: 100 * GiB },
-            quota_warning: { parsed: null, source: ZfsPropertySource.Local },
-            quota_critical: { parsed: 0, source: ZfsPropertySource.Inherited },
-            refreservation: { parsed: 10 * GiB },
-            reservation: { parsed: 20 * GiB },
-          } as DatasetDetails,
-        },
-      ],
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -169,7 +172,7 @@ describe('DatasetCapacitySettingsComponent', () => {
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('only sends updated properties on form submit', async () => {

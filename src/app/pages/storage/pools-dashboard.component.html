@@ -56,7 +56,7 @@
         class="pool"
         [pool]="pool"
         [disks]="getDisksForPool(pool)"
-        [isLoading]="areDisksLoading$ | async"
+        [isLoading]="!!(areDisksLoading$ | async)"
         [rootDataset]="rootDatasets[pool.name]"
       ></ix-dashboard-pool>
     }

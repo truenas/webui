@@ -24,6 +24,7 @@
 
   @if (selectedSlot()) {
     <ix-widget-group-slot-form
+      #widgetGroupSlotForm
       [slotConfig]="selectedSlot()"
       (validityChange)="updateSlotValidation($event)"
       (settingsChange)="updateSlotSettings($event)"

@@ -10,13 +10,13 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/topbar/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
-import { AuthService } from 'app/services/auth/auth.service';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;

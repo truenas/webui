@@ -7,10 +7,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CreateStorjBucketDialogComponent,
 } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CreateStorjBucketDialogComponent', () => {
   let spectator: Spectator<CreateStorjBucketDialogComponent>;

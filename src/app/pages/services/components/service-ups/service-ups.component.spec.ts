@@ -10,15 +10,21 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createRoutingFactory({
     component: ServiceUpsComponent,
     imports: [
@@ -63,8 +69,7 @@ describe('ServiceUpsComponent', () => {
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });

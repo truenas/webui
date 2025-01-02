@@ -18,13 +18,13 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextSystemUpdate } from 'app/helptext/system/update';
 import { Option } from 'app/interfaces/option.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 

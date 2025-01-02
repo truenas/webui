@@ -4,7 +4,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.component';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 describe('IxLogoComponent', () => {
   let spectator: Spectator<IxLogoComponent>;

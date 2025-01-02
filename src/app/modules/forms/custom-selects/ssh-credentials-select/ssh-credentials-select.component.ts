@@ -31,7 +31,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   readonly label = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
 
   private keychainCredentialsService = inject(KeychainCredentialService);
 

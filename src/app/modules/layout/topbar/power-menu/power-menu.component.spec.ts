@@ -5,10 +5,10 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { RebootOrShutdownDialogComponent } from 'app/modules/layout/topbar/reboot-or-shutdown-dialog/reboot-or-shutdown-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
 
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;

@@ -18,8 +18,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export enum NewOrExistingDisk {
   New = 'new',

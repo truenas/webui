@@ -30,12 +30,12 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
+    [isLoading]="!!(dataProvider.isLoading$ | async)"
   >
     <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
       <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="task">
         <div class="table-details-row-actions">
-          @if (!task.job || task.job?.state !== jobState.Running) {
+          @if (!task.job || task.job.state !== jobState.Running) {
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button

@@ -13,8 +13,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;
@@ -38,6 +38,7 @@ describe('TunableFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
     ],
@@ -78,6 +79,7 @@ describe('TunableFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
             getData: jest.fn(() => ({
               id: 1,
               comment: 'Existing variable',

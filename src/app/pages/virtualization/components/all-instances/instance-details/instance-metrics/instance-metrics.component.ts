@@ -14,9 +14,9 @@ import {
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceMetricsLineChartComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-metrics/instance-metrics-linechart/instance-metrics-linechart.component';
 import { metricsMaxItemsCount } from 'app/pages/virtualization/virtualization.constants';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

@@ -9,7 +9,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FipsService } from 'app/services/fips.service';
 import { AppState } from 'app/store';
 import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
@@ -28,6 +30,8 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
     MatDialogModule,
     IxCheckboxComponent,
     MatButton,
+    TestDirective,
+    FormActionsComponent,
   ],
 })
 export class RebootRequiredDialogComponent {

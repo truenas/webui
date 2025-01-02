@@ -14,10 +14,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AcmednsFormComponent', () => {
   let spectator: Spectator<AcmednsFormComponent>;
@@ -34,18 +33,20 @@ describe('AcmednsFormComponent', () => {
     },
   } as DnsAuthenticator;
 
+  const slideInRef: SlideInRef<DnsAuthenticator | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: AcmednsFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: undefined,
-      },
       mockApi([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
@@ -86,7 +87,7 @@ describe('AcmednsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingAcmedns },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingAcmedns) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -149,7 +150,7 @@ describe('AcmednsFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -179,7 +180,7 @@ describe('AcmednsFormComponent', () => {
           cloudflare_email: 'aaa@aaa.com',
         },
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

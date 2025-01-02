@@ -18,11 +18,11 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';

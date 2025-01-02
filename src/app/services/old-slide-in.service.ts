@@ -56,7 +56,7 @@ export class OldSlideInService {
       if (response === undefined) {
         response = null;
       }
-      this.onClose$.next(null);
+      this.onClose$.next();
     });
 
     this.focusService.captureCurrentFocus();

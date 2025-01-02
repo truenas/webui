@@ -11,7 +11,6 @@
   "(Optional)": "",
   "({n, plural, =1 {# widget} other {# widgets}})": "",
   "+ Add a backup credential": "",
-  "-": "",
   "...": "",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "",
   "1m Average": "",

@@ -17,9 +17,9 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('ConsoleFormComponent', () => {
@@ -61,6 +61,7 @@ describe('ConsoleFormComponent', () => {
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           consolemenu: true,
           serialconsole: true,

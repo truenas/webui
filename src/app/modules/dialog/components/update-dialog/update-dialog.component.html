@@ -9,7 +9,7 @@
 
 @let jobs = selectRunningJobs$ | async;
 <div class="jobs">
-  @if (jobs.length) {
+  @if (jobs?.length) {
     <div>
       @for (job of jobs; track job) {
         <ix-job-item [job]="job"></ix-job-item>

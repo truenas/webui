@@ -14,7 +14,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormComponent } from './disk-form.component';
 
 describe('DiskFormComponent', () => {

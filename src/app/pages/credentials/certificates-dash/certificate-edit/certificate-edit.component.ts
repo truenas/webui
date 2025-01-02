@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule,
@@ -9,7 +9,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -19,10 +19,10 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -33,8 +33,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -81,12 +79,15 @@ export class CertificateEditComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInService: OldSlideInService,
-    private slideInRef: OldSlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
-    @Inject(SLIDE_IN_DATA) private data: Certificate,
-  ) {}
+    public slideInRef: SlideInRef<Certificate | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.certificate = this.slideInRef.getData();
+  }
 
   get isCsr(): boolean {
     return this.certificate?.cert_type_CSR;
@@ -98,7 +99,6 @@ export class CertificateEditComponent implements OnInit {
   }
 
   setCertificate(): void {
-    this.certificate = this.data;
     this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
   }
@@ -130,12 +130,10 @@ export class CertificateEditComponent implements OnInit {
   }
 
   onCreateAcmePressed(): void {
-    this.slideInRef.close(true);
-    const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: this.certificate });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => this.slideInRef.close(true));
+    this.slideInRef.swap(
+      CertificateAcmeAddComponent,
+      { data: this.certificate },
+    );
   }
 
   onSubmit(): void {
@@ -153,7 +151,7 @@ export class CertificateEditComponent implements OnInit {
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

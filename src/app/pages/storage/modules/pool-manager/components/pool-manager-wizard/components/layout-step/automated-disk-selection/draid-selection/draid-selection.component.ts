@@ -47,15 +47,15 @@ const maxDisksInDraidGroup = 255;
   ],
 })
 export class DraidSelectionComponent implements OnInit, OnChanges {
-  readonly type = input<VdevType>();
-  readonly layout = input<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
+  readonly type = input.required<VdevType>();
+  readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
   readonly inventory = input<DetailsDisk[]>();
   readonly isStepActive = input<boolean>();
 
   readonly defaultDataDevicesPerGroup = 8;
 
-  form = this.formBuilder.group({
-    children: [null as number],
+  form = this.formBuilder.nonNullable.group({
+    children: [null as number | null],
     dataDevicesPerGroup: [this.defaultDataDevicesPerGroup],
     spares: [0],
 
@@ -227,7 +227,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   }
 
   private updateVdevsNumberOptions(): void {
-    const width = this.form.controls.children.value;
+    const width = Number(this.form.controls.children.value);
     let maxPossibleVdevs = 0;
     if (width > 0) {
       maxPossibleVdevs = Math.floor(this.selectedDisks.length / width);
