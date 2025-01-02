@@ -11,13 +11,13 @@ import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import {
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-nics/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { getDeviceDescription } from 'app/pages/virtualization/components/common/utils/get-device-description.utils';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

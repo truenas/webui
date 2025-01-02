@@ -6,11 +6,11 @@ import {
   BehaviorSubject,
   Observable, combineLatest, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { GlobalSearchVisibleToken } from 'app/modules/global-search/enums/global-search-visible-token.enum';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
-import { AuthService } from 'app/services/auth/auth.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @Injectable({

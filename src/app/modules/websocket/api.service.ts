@@ -32,8 +32,8 @@ import {
   SuccessfulResponse,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 @Injectable({
   providedIn: 'root',

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Theme } from 'app/interfaces/theme.interface';
-import { LanguageService } from 'app/services/language.service';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { LanguageService } from 'app/modules/language/language.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 @Component({
   selector: 'ix-blank-layout',

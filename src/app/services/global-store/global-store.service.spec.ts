@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { globalStore } from 'app/services/global-store/global-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const poolResponse = [
   { id: 1, name: 'pool_1' },

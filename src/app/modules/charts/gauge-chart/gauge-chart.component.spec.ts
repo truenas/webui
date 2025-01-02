@@ -3,7 +3,7 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { Theme } from 'app/interfaces/theme.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 describe('GaugeChartComponent', () => {
   let spectator: Spectator<GaugeChartComponent>;

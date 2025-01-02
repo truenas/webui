@@ -1,7 +1,7 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 

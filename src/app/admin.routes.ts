@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
-import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
+import { AuthGuardService } from 'app/modules/auth/auth-guard.service';
+import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
+import { TranslationsLoadedGuard } from 'app/modules/language/translations/translations-loaded.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/admin-layout/admin-layout.component';
+import { WebSocketConnectionGuard } from 'app/modules/websocket/websocket-connection.guard';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
 import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
-import { AuthGuardService } from 'app/services/auth/auth-guard.service';
-import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 
 export const adminRoutes: Routes = [
   {

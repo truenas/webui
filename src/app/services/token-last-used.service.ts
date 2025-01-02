@@ -9,7 +9,7 @@ import { oneMinuteMillis } from 'app/constants/time.constant';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Injectable({

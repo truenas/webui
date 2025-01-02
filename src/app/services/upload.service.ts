@@ -8,8 +8,8 @@ import { map, switchMap, take } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { AuthService } from 'app/services/auth/auth.service';
 import { AppState } from 'app/store';
 
 export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {

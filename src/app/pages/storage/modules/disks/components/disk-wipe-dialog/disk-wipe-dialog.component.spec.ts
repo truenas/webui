@@ -10,10 +10,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DiskWipeDialogComponent,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DiskWipeDialogComponent', () => {
   let spectator: Spectator<DiskWipeDialogComponent>;

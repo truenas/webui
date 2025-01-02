@@ -1,8 +1,8 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
 import { Subject } from 'rxjs';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 describe('SubscriptionManagerService', () => {
   let spectator: SpectatorService<SubscriptionManagerService>;

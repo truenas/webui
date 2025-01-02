@@ -16,8 +16,8 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;

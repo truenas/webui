@@ -10,8 +10,8 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { PoolUsageGaugeComponent } from './pool-usage-gauge.component';
 
 describe('PoolUsageGaugeComponent', () => {

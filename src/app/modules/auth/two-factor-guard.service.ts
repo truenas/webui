@@ -8,8 +8,8 @@ import {
   Observable, of, switchMap, take, forkJoin,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Injectable({

@@ -5,7 +5,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverRebootInfo, SystemRebootInfo } from 'app/interfaces/reboot-info.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { rebootInfoLoaded } from 'app/store/reboot-info/reboot-info.actions';
 import { RebootInfoEffects } from 'app/store/reboot-info/reboot-info.effects';
