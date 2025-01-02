@@ -4,17 +4,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -33,6 +33,12 @@ describe('ScrubTaskFormComponent', () => {
       month: '*',
     },
   } as PoolScrubTask;
+
+  const slideInRef: SlideInRef<PoolScrubTask | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   let spectator: Spectator<ScrubTaskFormComponent>;
   let loader: HarnessLoader;
@@ -56,7 +62,9 @@ describe('ScrubTaskFormComponent', () => {
           { id: 2, name: 'My pool' },
         ] as Pool[]),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -65,14 +73,15 @@ describe('ScrubTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
   describe('adds new task', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        providers: [],
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -102,7 +111,7 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 30,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -110,7 +119,7 @@ describe('ScrubTaskFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingScrubTask },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingScrubTask) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -154,7 +163,7 @@ describe('ScrubTaskFormComponent', () => {
         },
         threshold: 20,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

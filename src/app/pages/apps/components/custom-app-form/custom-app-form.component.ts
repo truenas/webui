@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy, Component,
-  Inject,
   OnInit,
   signal,
 } from '@angular/core';
@@ -11,7 +10,7 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
+import { map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
@@ -22,9 +21,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCodeEditorComponent } from 'app/modules/forms/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,7 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   imports: [
     ReactiveFormsModule,
     TranslateModule,
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     IxInputComponent,
@@ -59,6 +57,8 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
+  protected existingApp: App;
+
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
@@ -69,14 +69,18 @@ export class CustomAppFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private appService: ApplicationsService,
-    private dialogRef: OldSlideInRef<CustomAppFormComponent>,
+    public slideInRef: SlideInRef<App | undefined, boolean>,
     private router: Router,
-    @Inject(SLIDE_IN_DATA) public data: App,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingApp = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
-    if (this.data) {
-      this.setAppForEdit(this.data);
+    if (this.existingApp) {
+      this.setAppForEdit(this.existingApp);
     } else {
       this.setNewApp();
     }
@@ -132,11 +136,11 @@ export class CustomAppFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.dialogRef.close();
+        this.slideInRef.close({ response: true, error: null });
         if (this.isNew()) {
           this.router.navigate(['/apps', 'installed']);
         } else {
-          this.router.navigate(['/apps', 'installed', this.data.metadata.train, this.data.name]);
+          this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
         }
       },
       error: (error: unknown) => {

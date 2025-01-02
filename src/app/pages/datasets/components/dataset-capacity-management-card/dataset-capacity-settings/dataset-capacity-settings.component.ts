@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -19,9 +19,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
@@ -35,7 +34,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -91,6 +90,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   });
 
   isLoading = false;
+  protected dataset: DatasetDetails | undefined;
 
   readonly helptext = helptextDatasetForm;
 
@@ -111,9 +111,9 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private validators: IxValidatorsService,
-    private slideInRef: OldSlideInRef<DatasetCapacitySettingsComponent>,
-    @Inject(SLIDE_IN_DATA) public dataset: DatasetDetails,
+    public slideInRef: SlideInRef<DatasetDetails | undefined, boolean>,
   ) {
+    this.dataset = slideInRef.getData();
     this.setFormRelations();
   }
 
@@ -173,7 +173,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

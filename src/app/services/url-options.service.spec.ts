@@ -106,7 +106,7 @@ describe('UrlOptionsService', () => {
     });
 
     it('parses undefined url options', () => {
-      const options = spectator.service.parseUrlOptions(undefined);
+      const options = spectator.service.parseUrlOptions();
       expect(options).toEqual({});
     });
   });

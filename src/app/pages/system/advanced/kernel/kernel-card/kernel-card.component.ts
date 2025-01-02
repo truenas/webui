@@ -15,11 +15,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 

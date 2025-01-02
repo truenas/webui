@@ -92,6 +92,9 @@ export class SubscriptionManagerService {
         }
 
         const pendingSubscription = this.pendingSubscriptions.get(message.id);
+        if (!pendingSubscription) {
+          return;
+        }
         const backendSubscriptionId = message.result as BackendSubscriptionId;
         this.onSubscriptionEstablished(pendingSubscription, backendSubscriptionId);
         this.pendingSubscriptions.delete(message.id);

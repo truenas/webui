@@ -162,7 +162,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    protected slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<unknown, unknown>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -391,7 +391,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   openAdvanced(): void {
     this.slideInRef.swap(
       ReplicationFormComponent,
-      true,
+      { wide: true },
     );
   }
 

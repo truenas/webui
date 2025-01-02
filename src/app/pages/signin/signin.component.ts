@@ -17,7 +17,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { DisconnectedMessageComponent } from 'app/pages/signin/disconnected-message/disconnected-message.component';
-import { FailoverStatusComponent } from 'app/pages/signin/failover-status/failover-status.component';
 import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
@@ -40,7 +39,6 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
     IxIconComponent,
     SigninFormComponent,
     SetAdminPasswordFormComponent,
-    FailoverStatusComponent,
     TrueCommandStatusComponent,
     DisconnectedMessageComponent,
     AsyncPipe,
@@ -54,8 +52,6 @@ export class SigninComponent implements OnInit {
   protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
-  readonly failover$ = this.signinStore.failover$;
-  readonly hasFailover$ = this.signinStore.hasFailover$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(

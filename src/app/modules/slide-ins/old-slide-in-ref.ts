@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
  * @deprecated Use `SlideIn` and `SlideInRef` instead.
  */
 export class OldSlideInRef<T, D = unknown> {
-  readonly slideInClosed$ = new Subject<D>();
+  readonly slideInClosed$ = new Subject<D | undefined>();
   componentRef: ComponentRef<T>;
   id: string;
 

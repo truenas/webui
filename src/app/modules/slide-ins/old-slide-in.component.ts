@@ -32,7 +32,7 @@ import { OldSlideInService } from 'app/services/old-slide-in.service';
 export class OldSlideInComponent implements OnInit, OnDestroy {
   readonly id = input<string>();
 
-  private readonly slideInBody = viewChild('body', { read: ViewContainerRef });
+  private readonly slideInBody = viewChild.required('body', { read: ViewContainerRef });
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();

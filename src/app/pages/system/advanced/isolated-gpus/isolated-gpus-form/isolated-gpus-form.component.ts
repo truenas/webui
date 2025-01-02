@@ -70,7 +70,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) { }
 
   ngOnInit(): void {

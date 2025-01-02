@@ -84,7 +84,7 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const slideInRef: SlideInRef<ReplicationTask> = {
+  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     requireConfirmationWhen: jest.fn(),
     swap: jest.fn(),
@@ -209,7 +209,7 @@ describe('ReplicationFormComponent', () => {
 
       expect(
         slideInRef.swap,
-      ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
+      ).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
     });
 
     it('creates a new replication task', async () => {

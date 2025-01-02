@@ -1,4 +1,4 @@
-import { Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -38,14 +38,18 @@ describe('TwoFactorGuardService', () => {
   });
 
   it('does not allow route to be accessed when user is not authenticated', async () => {
-    expect(await firstValueFrom(spectator.service.canActivateChild(null, null))).toBe(false);
+    expect(
+      await firstValueFrom(spectator.service.canActivateChild({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)),
+    ).toBe(false);
   });
 
   it('allows route access when 2FA is not enabled globally', async () => {
     isAuthenticated$.next(true);
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: false } as GlobalTwoFactorConfig));
 
-    expect(await firstValueFrom(spectator.service.canActivateChild(null, null))).toBe(true);
+    expect(
+      await firstValueFrom(spectator.service.canActivateChild({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)),
+    ).toBe(true);
   });
 
   it('allows route access when 2FA is enabled and user has it configured', async () => {
@@ -53,7 +57,9 @@ describe('TwoFactorGuardService', () => {
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: true } as UserTwoFactorConfig);
 
-    expect(await firstValueFrom(spectator.service.canActivateChild(null, null))).toBe(true);
+    expect(
+      await firstValueFrom(spectator.service.canActivateChild({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot)),
+    ).toBe(true);
   });
 
   it('allows two-factor-auth page access for all authorized users', async () => {
@@ -61,7 +67,9 @@ describe('TwoFactorGuardService', () => {
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
 
-    const isAllowed = await firstValueFrom(spectator.service.canActivateChild(null, { url: '/two-factor-auth' } as RouterStateSnapshot));
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/two-factor-auth' } as RouterStateSnapshot),
+    );
     expect(isAllowed).toBe(true);
   });
 
@@ -71,7 +79,9 @@ describe('TwoFactorGuardService', () => {
     userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
     hasRole$.next(true);
 
-    const isAllowed = await firstValueFrom(spectator.service.canActivateChild(null, { url: '/system/upgrade' } as RouterStateSnapshot));
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/system/upgrade' } as RouterStateSnapshot),
+    );
     expect(isAllowed).toBe(true);
   });
 
@@ -80,7 +90,9 @@ describe('TwoFactorGuardService', () => {
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
 
-    const isAllowed = await firstValueFrom(spectator.service.canActivateChild(null, { url: '/dashboard' } as RouterStateSnapshot));
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
+    );
     expect(isAllowed).toBe(false);
 
     expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();

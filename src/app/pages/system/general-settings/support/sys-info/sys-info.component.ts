@@ -15,5 +15,5 @@ import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/s
 export class SysInfoComponent {
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();
-  readonly systemInfo = input<SystemInfoInSupport>();
+  readonly systemInfo = input.required<SystemInfoInSupport>();
 }

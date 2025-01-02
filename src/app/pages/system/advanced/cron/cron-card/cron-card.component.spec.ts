@@ -16,13 +16,13 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxCellScheduleComponent,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { LocaleService } from 'app/services/locale.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';

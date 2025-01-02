@@ -106,17 +106,8 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private authService: AuthService,
-    private slideInRef: SlideInRef<ReplicationTask>,
+    public slideInRef: SlideInRef<ReplicationTask | undefined, ReplicationTask | false>,
   ) {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(
-        this.generalSection().form.dirty
-        || this.transportSection().form.dirty
-        || this.sourceSection().form.dirty
-        || this.targetSection().form.dirty
-        || this.scheduleSection().form.dirty,
-      );
-    });
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
       return of(
@@ -214,7 +205,7 @@ export class ReplicationFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap(
       ReplicationWizardComponent,
-      true,
+      { wide: true },
     );
   }
 

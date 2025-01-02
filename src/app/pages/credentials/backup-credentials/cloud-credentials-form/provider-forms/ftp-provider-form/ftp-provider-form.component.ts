@@ -26,7 +26,7 @@ import {
 export class FtpProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   form = this.formBuilder.group({
     host: ['', Validators.required],
-    port: [null as number],
+    port: [null as number | null],
     user: ['', Validators.required],
     pass: [''],
   });

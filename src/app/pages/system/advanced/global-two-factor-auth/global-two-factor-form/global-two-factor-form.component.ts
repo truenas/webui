@@ -73,7 +73,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private authService: AuthService,
     private router: Router,
-    private slideInRef: SlideInRef<GlobalTwoFactorConfig>,
+    public slideInRef: SlideInRef<GlobalTwoFactorConfig, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.twoFactorConfig = this.slideInRef.getData();

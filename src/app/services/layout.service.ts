@@ -16,7 +16,7 @@ export class LayoutService {
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  getContentContainer(): HTMLElement {
+  getContentContainer(): HTMLElement | null {
     return this.window.document.querySelector('.rightside-content-hold');
   }
 }

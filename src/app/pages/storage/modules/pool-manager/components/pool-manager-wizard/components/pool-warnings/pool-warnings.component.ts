@@ -41,7 +41,7 @@ import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/p
   ],
 })
 export class PoolWarningsComponent implements OnInit {
-  protected form = this.formBuilder.group({
+  protected form = this.formBuilder.nonNullable.group({
     allowNonUniqueSerialDisks: [false],
     allowExportedPools: [[] as string[]],
   });

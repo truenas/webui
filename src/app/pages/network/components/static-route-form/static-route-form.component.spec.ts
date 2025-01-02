@@ -3,21 +3,35 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('StaticRouteFormComponent', () => {
   let spectator: Spectator<StaticRouteFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
+  const editingRoute = {
+    id: 13,
+    description: 'Existing route',
+    destination: '20.24.12.13/16',
+    gateway: '20.24.12.1',
+  } as StaticRoute;
+
   const createComponent = createComponentFactory({
     component: StaticRouteFormComponent,
     imports: [
@@ -28,11 +42,13 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.create'),
         mockCall('staticroute.update'),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        open: jest.fn(),
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -66,15 +82,7 @@ describe('StaticRouteFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              id: 13,
-              description: 'Existing route',
-              destination: '20.24.12.13/16',
-              gateway: '20.24.12.1',
-            } as StaticRoute,
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => editingRoute }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

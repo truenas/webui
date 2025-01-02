@@ -131,7 +131,9 @@ export class ApiService {
       switchMap(() => {
         performance.mark(`${method} - ${uuid} - start`);
         this.wsHandler.scheduleCall({
-          id: uuid, method, params,
+          id: uuid,
+          method,
+          params: params ?? [],
         });
         return this.wsHandler.responses$.pipe(
           filter((message) => 'id' in message && message.id === uuid),

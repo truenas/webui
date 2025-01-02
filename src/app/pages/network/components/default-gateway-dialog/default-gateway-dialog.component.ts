@@ -50,9 +50,9 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class DefaultGatewayDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     defaultGateway: [
-      null,
+      null as string | null,
       {
         validators: [
           this.validatorsService.withMessage(
@@ -85,7 +85,7 @@ export class DefaultGatewayDialogComponent {
 
   onSubmit(): void {
     this.dialogRef.close();
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     this.api.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
       catchError((error: unknown) => {
         this.dialog.error(this.errorHandler.parseError(error));

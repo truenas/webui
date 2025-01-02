@@ -37,6 +37,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   CertificateAuthorityAddComponent,
@@ -50,7 +51,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -143,7 +143,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   constructor(
     private matDialog: MatDialog,
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private download: DownloadService,
@@ -182,15 +182,19 @@ export class CertificateAuthorityListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CertificateAuthorityAddComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(CertificateAuthorityAddComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCertificates();
     });
   }
 
   doEdit(certificate: CertificateAuthority): void {
-    const slideInRef = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true, data: certificate });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(CertificateAuthorityEditComponent, { wide: true, data: certificate }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCertificates();
     });
   }

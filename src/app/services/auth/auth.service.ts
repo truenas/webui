@@ -50,7 +50,7 @@ export class AuthService {
     return Boolean(this.token) && this.token !== 'null';
   }
 
-  private generateTokenSubscription: Subscription;
+  private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
 

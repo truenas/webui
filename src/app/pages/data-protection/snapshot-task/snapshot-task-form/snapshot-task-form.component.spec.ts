@@ -11,11 +11,10 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { ApiService } from 'app/services/websocket/api.service';
@@ -47,6 +46,12 @@ describe('SnapshotTaskComponent', () => {
     vmware_sync: false,
   } as PeriodicSnapshotTask;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   let spectator: Spectator<SnapshotTaskFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
@@ -65,7 +70,9 @@ describe('SnapshotTaskComponent', () => {
         mockCall('pool.snapshottask.update'),
       ]),
       mockProvider(DialogService),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => of([
           { label: 'test', value: 'test' },
@@ -87,8 +94,7 @@ describe('SnapshotTaskComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -132,7 +138,7 @@ describe('SnapshotTaskComponent', () => {
           month: '*',
         },
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -140,7 +146,7 @@ describe('SnapshotTaskComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { ...existingTask, id: 1 } },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...existingTask, id: 1 }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -194,7 +200,7 @@ describe('SnapshotTaskComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

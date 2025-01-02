@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
+import { signal, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
@@ -24,7 +24,7 @@ describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<WidgetGroup> = {
+  const slideInRef: SlideInRef<WidgetGroup, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
     swap: jest.fn(),
@@ -51,7 +51,7 @@ describe('WidgetGroupFormComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal(null));
+    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal({} as ViewContainerRef));
   });
 
   describe('check layout selector', () => {
@@ -87,7 +87,7 @@ describe('WidgetGroupFormComponent', () => {
               }) as WidgetGroup,
               close: jest.fn(),
               requireConfirmationWhen: () => of(false),
-            } as SlideInRef<WidgetGroup>,
+            } as SlideInRef<WidgetGroup, unknown>,
           },
         ],
       });

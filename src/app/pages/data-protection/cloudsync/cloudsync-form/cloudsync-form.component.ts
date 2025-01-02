@@ -228,7 +228,7 @@ export class CloudSyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudSyncTaskUi>,
+    public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -747,7 +747,7 @@ export class CloudSyncFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     );
   }
 

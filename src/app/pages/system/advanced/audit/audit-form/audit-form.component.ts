@@ -83,7 +83,7 @@ export class AuditFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {

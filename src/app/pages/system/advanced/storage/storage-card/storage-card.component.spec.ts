@@ -7,12 +7,12 @@ import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('StorageCardComponent', () => {
   let spectator: Spectator<StorageCardComponent>;

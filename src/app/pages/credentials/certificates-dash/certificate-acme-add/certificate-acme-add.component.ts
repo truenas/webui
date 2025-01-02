@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -22,9 +24,8 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -38,7 +39,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -55,7 +56,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
   ],
 })
-export class CertificateAcmeAddComponent {
+export class CertificateAcmeAddComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
@@ -73,6 +74,8 @@ export class CertificateAcmeAddComponent {
     domains: this.formBuilder.array<string>([]),
   });
 
+  protected csr: Certificate;
+
   isLoading = false;
   domains: string[] = [];
 
@@ -89,12 +92,20 @@ export class CertificateAcmeAddComponent {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private csr: Certificate,
+    public slideInRef: SlideInRef<Certificate | undefined, boolean>,
   ) {
-    this.loadDomains();
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.csr = this.slideInRef.getData();
+  }
+
+  ngOnInit(): void {
+    if (this.csr) {
+      this.loadDomains();
+    }
   }
 
   onSubmit(): void {
@@ -130,7 +141,7 @@ export class CertificateAcmeAddComponent {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(this.translate.instant('ACME Certificate Created'));
         },
         complete: () => {

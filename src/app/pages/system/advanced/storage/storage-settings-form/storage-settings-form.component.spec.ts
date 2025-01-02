@@ -16,9 +16,9 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('StorageSettingsFormComponent', () => {
