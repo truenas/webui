@@ -158,7 +158,7 @@ export class TargetFormComponent implements OnInit {
     private api: ApiService,
     private fcService: FibreChannelService,
     private targetNameValidationService: TargetNameValidationService,
-    public slideInRef: SlideInRef<IscsiTarget | undefined, boolean>,
+    public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
   ) {
     this.editingTarget = slideInRef.getData();
 
@@ -211,9 +211,9 @@ export class TargetFormComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (response) => {
         this.isLoading = false;
-        this.slideInRef.close({ response: true, error: null });
+        this.slideInRef.close({ response, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

@@ -162,7 +162,7 @@ export class IscsiCardComponent implements OnInit {
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
-    let slideInRef$: Observable<SlideInResponse<boolean>>;
+    let slideInRef$: Observable<SlideInResponse<boolean | IscsiTarget>>;
 
     if (openWizard) {
       slideInRef$ = this.slideIn.open(IscsiWizardComponent, { data: row, wide: true });
