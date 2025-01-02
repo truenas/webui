@@ -23,8 +23,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -39,7 +39,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -110,9 +110,9 @@ export class LdapComponent implements OnInit {
     private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: OldSlideInRef<LdapComponent>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    public slideInRef: SlideInRef<LdapComponent | undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -162,7 +162,7 @@ export class LdapComponent implements OnInit {
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('LDAP configuration updated'));
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         complete: () => {
           this.isLoading = false;

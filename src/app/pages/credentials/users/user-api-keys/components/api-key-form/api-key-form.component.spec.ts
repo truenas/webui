@@ -14,8 +14,7 @@ import {
 } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -24,6 +23,13 @@ describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<ApiKey | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: ApiKeyFormComponent,
     imports: [ReactiveFormsModule],
@@ -36,26 +42,19 @@ describe('ApiKeyFormComponent', () => {
         mockCall('api_key.update', {} as ApiKey),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockProvider(LocaleService, {
         timezone: 'UTC',
         getDateFromString: (date: string) => parseISO(date),
       }),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: undefined,
-      },
     ],
   });
 
   async function setupTest(apiKey?: Partial<ApiKey> | null): Promise<void> {
     spectator = createComponent({
       providers: [
-        {
-          provide: SLIDE_IN_DATA,
-          useValue: apiKey,
-        },
+        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => apiKey) }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -79,7 +78,7 @@ describe('ApiKeyFormComponent', () => {
       username: 'root',
       expires_at: null,
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -123,7 +122,7 @@ describe('ApiKeyFormComponent', () => {
       reset: false,
       expires_at: null,
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
     expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });
@@ -155,7 +154,7 @@ describe('ApiKeyFormComponent', () => {
         $date: parseISO('2024-12-22T00:00:00Z').getTime(),
       },
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(KeyCreatedDialogComponent, {
       data: 'generated-key',
     });

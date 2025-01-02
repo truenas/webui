@@ -11,8 +11,7 @@ import { Schema } from 'app/interfaces/schema.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 
@@ -32,13 +31,19 @@ describe('ReportingExportersFormComponent', () => {
     enabled: true,
   };
 
+  const slideInRef: SlideInRef<ReportingExporter | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: ReportingExportersFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
@@ -62,10 +67,6 @@ describe('ReportingExportersFormComponent', () => {
       ]),
       mockAuth(),
       mockProvider(FormErrorHandlerService),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: undefined,
-      },
     ],
   });
 
@@ -100,7 +101,7 @@ describe('ReportingExportersFormComponent', () => {
           secret_access_key: 'abcd',
         },
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -108,7 +109,7 @@ describe('ReportingExportersFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingExporter },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => existingExporter) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -166,7 +167,7 @@ describe('ReportingExportersFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

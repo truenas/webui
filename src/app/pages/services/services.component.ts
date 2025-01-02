@@ -11,7 +11,6 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, take,
 } from 'rxjs/operators';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -31,6 +30,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -47,7 +47,6 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -144,12 +143,11 @@ export class ServicesComponent implements OnInit {
     private router: Router,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private navigateAndInteract: NavigateAndInteractService,
   ) {}
 
   ngOnInit(): void {
@@ -215,28 +213,28 @@ export class ServicesComponent implements OnInit {
   private configureService(row: Service): void {
     switch (row.service) {
       case ServiceName.Iscsi:
-        this.slideInService.open(GlobalTargetConfigurationComponent);
+        this.slideIn.open(GlobalTargetConfigurationComponent);
         break;
       case ServiceName.Ftp:
-        this.slideInService.open(ServiceFtpComponent, { wide: true });
+        this.slideIn.open(ServiceFtpComponent, { wide: true });
         break;
       case ServiceName.Nfs:
-        this.slideInService.open(ServiceNfsComponent, { wide: true });
+        this.slideIn.open(ServiceNfsComponent, { wide: true });
         break;
       case ServiceName.Snmp:
-        this.slideInService.open(ServiceSnmpComponent, { wide: true });
+        this.slideIn.open(ServiceSnmpComponent, { wide: true });
         break;
       case ServiceName.Ups:
-        this.slideInService.open(ServiceUpsComponent, { wide: true });
+        this.slideIn.open(ServiceUpsComponent, { wide: true });
         break;
       case ServiceName.Ssh:
-        this.slideInService.open(ServiceSshComponent);
+        this.slideIn.open(ServiceSshComponent);
         break;
       case ServiceName.Cifs:
-        this.slideInService.open(ServiceSmbComponent);
+        this.slideIn.open(ServiceSmbComponent);
         break;
       case ServiceName.Smart:
-        this.slideInService.open(ServiceSmartComponent);
+        this.slideIn.open(ServiceSmartComponent);
         break;
       default:
         break;

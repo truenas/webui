@@ -26,10 +26,10 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { targetListElements } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.elements';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +96,7 @@ export class TargetListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) {
@@ -145,11 +145,13 @@ export class TargetListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((target: IscsiTarget) => {
-        this.dataProvider().expandedRow = target;
+    this.slideIn.open(TargetFormComponent, { wide: true })
+      .pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      )
+      .subscribe(({ response }) => {
+        this.dataProvider().expandedRow = response;
         this.dataProvider().load();
       });
   }

@@ -32,6 +32,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
@@ -41,7 +42,6 @@ import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idma
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -110,9 +110,8 @@ export class IdmapListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
-            slideInRef.slideInClosed$.pipe(
-              filter(Boolean),
+            this.slideIn.open(IdmapFormComponent, { data: row }).pipe(
+              filter((response) => !!response.response),
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
@@ -155,7 +154,7 @@ export class IdmapListComponent implements OnInit {
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   ngOnInit(): void {
@@ -214,9 +213,8 @@ export class IdmapListComponent implements OnInit {
       )
       .subscribe((adConfig) => {
         if (adConfig.enable) {
-          const slideInRef = this.slideInService.open(IdmapFormComponent);
-          slideInRef.slideInClosed$.pipe(
-            filter(Boolean),
+          this.slideIn.open(IdmapFormComponent).pipe(
+            filter((response) => !!response.response),
             untilDestroyed(this),
           ).subscribe(() => {
             this.getIdmaps();
@@ -236,8 +234,8 @@ export class IdmapListComponent implements OnInit {
   }
 
   showActiveDirectoryForm(): void {
-    const slideInRef = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
+    this.slideIn.open(ActiveDirectoryComponent, { wide: true }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({ next: () => this.getIdmaps() });
   }

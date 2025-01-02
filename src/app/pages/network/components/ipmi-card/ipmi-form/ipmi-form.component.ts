@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,9 +28,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -47,7 +46,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,6 +75,7 @@ export class IpmiFormComponent implements OnInit {
   isFlashing = false;
 
   queryParams: IpmiQueryParams;
+  protected ipmiId: number;
 
   readonly helptext = helptextIpmi;
 
@@ -122,9 +122,10 @@ export class IpmiFormComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<IpmiFormComponent>,
-    @Inject(SLIDE_IN_DATA) private ipmiId: number,
-  ) { }
+    public slideInRef: SlideInRef<number | undefined, boolean>,
+  ) {
+    this.ipmiId = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.setFormRelations();
@@ -266,7 +267,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

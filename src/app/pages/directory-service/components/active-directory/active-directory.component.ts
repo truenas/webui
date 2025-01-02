@@ -24,8 +24,8 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,7 +43,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -113,8 +113,8 @@ export class ActiveDirectoryComponent implements OnInit {
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInRef: OldSlideInRef<ActiveDirectoryComponent>,
     private snackbarService: SnackbarService,
+    public slideInRef: SlideInRef<ActiveDirectoryComponent | undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -155,7 +155,7 @@ export class ActiveDirectoryComponent implements OnInit {
         return;
       }
 
-      this.slideInRef.close();
+      this.slideInRef.close({ response: true, error: null });
     });
   }
 
@@ -176,7 +176,7 @@ export class ActiveDirectoryComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => this.slideInRef.close(true),
+        next: () => this.slideInRef.close({ response: true, error: null }),
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();

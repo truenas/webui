@@ -21,8 +21,8 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -36,7 +36,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -112,7 +112,7 @@ export class ServiceSnmpComponent implements OnInit {
     private validation: IxValidatorsService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: OldSlideInRef<ServiceSnmpComponent>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -134,7 +134,7 @@ export class ServiceSnmpComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Service configuration saved'));
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

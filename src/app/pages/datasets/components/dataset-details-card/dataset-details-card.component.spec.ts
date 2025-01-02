@@ -13,13 +13,13 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const dataset = {
   id: 'pool/child',
@@ -55,9 +55,8 @@ describe('DatasetDetailsCardComponent', () => {
         selectedParentDataset$: of({ id: 'pool' }),
       }),
       mockProvider(MatSnackBar),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of() })),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -117,7 +116,7 @@ describe('DatasetDetailsCardComponent', () => {
       const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         DatasetFormComponent,
         { wide: true, data: { datasetId: 'pool/child', isNew: false } },
       );
@@ -154,7 +153,7 @@ describe('DatasetDetailsCardComponent', () => {
 
       const editZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Zvol' }));
       await editZvolButton.click();
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
         ZvolFormComponent,
         { data: { isNew: false, parentId: 'pool/child' } },
       );

@@ -16,8 +16,8 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -26,7 +26,6 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('ActiveDirectoryComponent', () => {
@@ -55,6 +54,13 @@ describe('ActiveDirectoryComponent', () => {
     use_default_domain: false,
     verbose_logging: true,
   } as ActiveDirectoryConfig;
+
+  const slideInRef: SlideInRef<ActiveDirectoryComponent | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: ActiveDirectoryComponent,
     imports: [
@@ -87,10 +93,11 @@ describe('ActiveDirectoryComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(OldSlideInService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -203,7 +210,7 @@ describe('ActiveDirectoryComponent', () => {
         netbiosalias: ['alias1', 'alias2'],
       }],
     );
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {

@@ -39,6 +39,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -48,7 +49,6 @@ import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;
@@ -199,7 +199,7 @@ export class DatasetQuotasListComponent implements OnInit {
     protected loader: AppLoaderService,
     protected route: ActivatedRoute,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     private emptyService: EmptyService,
   ) { }
@@ -315,10 +315,12 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+    this.slideIn.open(DatasetQuotaAddFormComponent, {
       data: { quotaType: this.quotaType, datasetId: this.datasetId },
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getQuotas());
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.getQuotas());
   }
 
   private getQuotaType(): void {
@@ -350,10 +352,12 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   private doEdit(row: DatasetQuota): void {
-    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+    this.slideIn.open(DatasetQuotaEditFormComponent, {
       data: { quotaType: this.quotaType, datasetId: this.datasetId, id: row.id },
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getQuotas());
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.getQuotas());
   }
 
   private doDelete(row: DatasetQuota): void {

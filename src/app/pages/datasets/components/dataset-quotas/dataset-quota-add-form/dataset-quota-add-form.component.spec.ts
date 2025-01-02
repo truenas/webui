@@ -10,17 +10,22 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UserService } from 'app/services/user.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: DatasetQuotaAddFormComponent,
@@ -38,10 +43,11 @@ describe('DatasetQuotaAddFormComponent', () => {
         ]),
         groupQueryDsCache: () => of(),
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -50,13 +56,7 @@ describe('DatasetQuotaAddFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              quotaType: DatasetQuotaType.User,
-              datasetId: 'my-dataset',
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ quotaType: DatasetQuotaType.User, datasetId: 'my-dataset' })) }),
         ],
       });
       api = spectator.inject(ApiService);
@@ -84,7 +84,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -92,13 +92,7 @@ describe('DatasetQuotaAddFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              quotaType: DatasetQuotaType.Group,
-              datasetId: 'my-dataset',
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ quotaType: DatasetQuotaType.Group, datasetId: 'my-dataset' })) }),
         ],
       });
       api = spectator.inject(ApiService);
@@ -125,7 +119,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
         ],
       ]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

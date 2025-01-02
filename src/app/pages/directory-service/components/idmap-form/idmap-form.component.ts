@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -30,9 +30,8 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { greaterThanFg, rangeValidator } from 'app/modules/forms/ix-forms/validators/validators';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -51,7 +50,7 @@ const customIdmapName = 'custom';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -80,6 +79,8 @@ export class IdmapFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.existingIdmap;
   }
+
+  protected existingIdmap: Idmap | undefined;
 
   form = this.formBuilder.group({
     idmap_backend: [IdmapBackend.Ad],
@@ -194,9 +195,10 @@ export class IdmapFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideInRef: OldSlideInRef<IdmapFormComponent>,
-    @Inject(SLIDE_IN_DATA) private existingIdmap: Idmap,
-  ) {}
+    public slideInRef: SlideInRef<Idmap | undefined, boolean>,
+  ) {
+    this.existingIdmap = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.loadBackendChoices();
@@ -247,7 +249,7 @@ export class IdmapFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);

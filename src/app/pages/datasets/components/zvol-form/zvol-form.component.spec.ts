@@ -4,6 +4,7 @@ import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
@@ -11,16 +12,22 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('ZvolFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<ZvolFormComponent>;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: ZvolFormComponent,
     imports: [
@@ -108,11 +115,12 @@ describe('ZvolFormComponent', () => {
           'AES-256-GCM': 'AES-256-GCM',
         }),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -120,13 +128,7 @@ describe('ZvolFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              isNew: true,
-              parentId: 'test pool',
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: true, parentId: 'test pool' })) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -180,7 +182,7 @@ describe('ZvolFormComponent', () => {
         },
         type: 'VOLUME',
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     }));
   });
 
@@ -188,13 +190,8 @@ describe('ZvolFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              isNew: false,
-              parentId: 'test pool',
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: false, parentId: 'test pool' })) }),
+
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -222,7 +219,7 @@ describe('ZvolFormComponent', () => {
         volsize: 2147483648,
       }]);
 
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     }));
   });
 });

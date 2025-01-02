@@ -12,7 +12,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  combineLatest, firstValueFrom, lastValueFrom, switchMap,
+  combineLatest, firstValueFrom, lastValueFrom, Observable, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -24,7 +24,8 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -32,7 +33,6 @@ import { InterfaceFormComponent } from 'app/pages/network/components/interface-f
 import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -100,7 +100,7 @@ export class NetworkComponent implements OnInit {
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
@@ -139,8 +139,11 @@ export class NetworkComponent implements OnInit {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: OldSlideInRef<unknown>): void {
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.loadCheckinStatusAfterChange();
     });
@@ -409,8 +412,8 @@ export class NetworkComponent implements OnInit {
           return;
         }
 
-        const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: interfaces[0] });
-        this.handleSlideInClosed(slideInRef);
+        const slideInRef$ = this.slideIn.open(InterfaceFormComponent, { data: interfaces[0] });
+        this.handleSlideInClosed(slideInRef$);
       });
   }
 }

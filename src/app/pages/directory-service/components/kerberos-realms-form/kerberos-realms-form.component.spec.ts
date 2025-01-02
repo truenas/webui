@@ -3,21 +3,36 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('KerberosRealmsFormComponent', () => {
   let spectator: Spectator<KerberosRealmsFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const editingRealm = {
+    id: 13,
+    realm: 'existing',
+    kdc: ['center1', 'center2'],
+    admin_server: ['10.1.12.1', '10.1.12.2'],
+    kpasswd_server: ['10.2.30.1', '10.2.30.2'],
+  } as KerberosRealm;
+
+  const slideInRef: SlideInRef<KerberosRealm | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: KerberosRealmsFormComponent,
     imports: [
@@ -28,11 +43,12 @@ describe('KerberosRealmsFormComponent', () => {
         mockCall('kerberos.realm.create'),
         mockCall('kerberos.realm.update'),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -68,16 +84,7 @@ describe('KerberosRealmsFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              id: 13,
-              realm: 'existing',
-              kdc: ['center1', 'center2'],
-              admin_server: ['10.1.12.1', '10.1.12.2'],
-              kpasswd_server: ['10.2.30.1', '10.2.30.2'],
-            } as KerberosRealm,
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => editingRealm) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
