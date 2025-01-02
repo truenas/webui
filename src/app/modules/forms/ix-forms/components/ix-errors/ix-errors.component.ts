@@ -4,6 +4,7 @@ import {
 import { AbstractControl } from '@angular/forms';
 import { MatError } from '@angular/material/form-field';
 import { MatTooltip } from '@angular/material/tooltip';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -53,14 +54,14 @@ export class IxErrorsComponent implements OnChanges {
     cpu: () => this.translate.instant('Invalid CPU configuration.'),
     minlength: (minLength: number) => this.translate.instant(
       this.label()
-        ? 'The length of {field} should be at least {minLength}'
-        : 'The length of the field should be at least {minLength}',
+        ? T('The length of {field} should be at least {minLength}')
+        : T('The length of the field should be at least {minLength}'),
       { field: this.label(), minLength },
     ),
     maxlength: (maxLength: number) => this.translate.instant(
       this.label()
-        ? 'The length of {field} should be no more than {maxLength}'
-        : 'The length of the field should be no more than {maxLength}',
+        ? T('The length of {field} should be no more than {maxLength}')
+        : T('The length of the field should be no more than {maxLength}'),
       { field: this.label(), maxLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),

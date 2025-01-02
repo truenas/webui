@@ -72,7 +72,7 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    public slideInRef: SlideInRef<VirtualizationInstance | undefined, VirtualizationInstance | false>,
+    public slideInRef: SlideInRef<VirtualizationInstance, VirtualizationInstance | false>,
   ) {
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });

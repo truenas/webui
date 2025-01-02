@@ -76,7 +76,7 @@ export interface DashboardEnclosureSlot {
   /**
    * `drive_bay_number` is not an index and starts from 1
    */
-  drive_bay_number?: number;
+  drive_bay_number: number;
   descriptor: string;
   status: EnclosureStatus;
   dev: string | null;

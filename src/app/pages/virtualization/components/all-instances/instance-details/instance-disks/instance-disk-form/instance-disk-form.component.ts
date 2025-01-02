@@ -75,7 +75,10 @@ export class InstanceDiskFormComponent implements OnInit {
     const disk = this.slideInRef.getData().disk;
     if (disk) {
       this.existingDisk.set(disk);
-      this.form.patchValue(disk);
+      this.form.patchValue({
+        source: disk.source || '',
+        destination: disk.destination || '',
+      });
     }
   }
 
@@ -110,10 +113,11 @@ export class InstanceDiskFormComponent implements OnInit {
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
 
-    return this.existingDisk()
+    const existingDisk = this.existingDisk();
+    return existingDisk
       ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
-        name: this.existingDisk().name,
+        name: existingDisk.name,
       }])
       : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }

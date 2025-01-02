@@ -75,7 +75,7 @@ export class GlobalConfigFormComponent {
     const currentConfig = this.slideInRef.getData();
 
     this.form.setValue({
-      pool: currentConfig.pool,
+      pool: currentConfig.pool || '',
       bridge: !currentConfig.bridge ? this.autoBridge : currentConfig.bridge,
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,

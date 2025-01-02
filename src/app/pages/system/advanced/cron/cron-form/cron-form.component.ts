@@ -89,7 +89,7 @@ export class CronFormComponent implements OnInit {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
 
-  private editingCron: Cronjob;
+  private editingCron: Cronjob | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -106,15 +106,11 @@ export class CronFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingCron) {
-      this.setCronForEdit();
+      this.form.patchValue({
+        ...this.editingCron,
+        schedule: scheduleToCrontab(this.editingCron.schedule),
+      });
     }
-  }
-
-  setCronForEdit(): void {
-    this.form.patchValue({
-      ...this.editingCron,
-      schedule: scheduleToCrontab(this.editingCron.schedule),
-    });
   }
 
   onSubmit(): void {

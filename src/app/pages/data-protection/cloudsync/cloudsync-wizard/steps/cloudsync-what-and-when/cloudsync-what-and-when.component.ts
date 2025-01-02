@@ -80,7 +80,7 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   ],
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
-  readonly credentialId = input.required<number>();
+  readonly credentialId = input<number>();
 
   readonly save = output();
 
@@ -173,7 +173,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes?.credentialId?.currentValue) {
+    const newCredentialId = changes?.credentialId?.currentValue;
+    if (!newCredentialId) {
       return;
     }
     combineLatest([
@@ -181,7 +182,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       this.getCloudCredentials(),
     ]).pipe(
       tap(() => {
-        this.form.controls.credentials.setValue(changes.credentialId.currentValue);
+        this.form.controls.credentials.setValue(newCredentialId);
         this.cdr.markForCheck();
       }),
       catchError((error: unknown) => {
@@ -395,7 +396,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.enableRemoteExplorer();
         const targetCredentials = find(this.credentials, { id: credential });
         const targetProvider = find(this.providers, { name: targetCredentials?.provider?.type });
-        if (targetProvider?.buckets) {
+        if (targetCredentials && targetProvider?.buckets) {
           if (
             [
               CloudSyncProviderName.MicrosoftAzure,
@@ -476,7 +477,14 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   private loadBucketOptions(): void {
-    const credential = find(this.credentials, { id: this.form.controls.credentials.value });
+    const credential = find(
+      this.credentials,
+      { id: this.form.controls.credentials.value },
+    ) as CloudSyncCredential | undefined;
+
+    if (!credential) {
+      throw new Error('Credential not found');
+    }
 
     this.cloudCredentialService.getBuckets(credential.id)
       .pipe(untilDestroyed(this))

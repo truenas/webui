@@ -30,8 +30,8 @@ export function globalStore<
   class GlobalStore implements GlobalStoreMembers<M1, M2, M3> {
     private api = inject(ApiService);
     private callResult$ = new BehaviorSubject<ApiCallResponse<M1>>(undefined);
-    private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2>>(undefined);
-    private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[]>(undefined);
+    private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2> | undefined>(undefined);
+    private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[] | undefined>(undefined);
 
     get call(): Observable<ApiCallResponse<M1>> {
       return this.callResult$.pipe(

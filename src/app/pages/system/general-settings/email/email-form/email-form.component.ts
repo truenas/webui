@@ -66,7 +66,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 export class EmailFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  sendMethodControl = new FormControl(MailSendMethod.Smtp);
+  sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
   form = this.formBuilder.group({
     fromemail: ['', [Validators.required, emailValidator()]],
@@ -74,7 +74,7 @@ export class EmailFormComponent implements OnInit {
     outgoingserver: [''],
     port: [null as number | null, [
       this.validatorService.validateOnCondition(
-        (control) => control.parent && this.isSmtp && this.hasSmtpAuthentication,
+        (control) => !!control.parent && this.isSmtp && this.hasSmtpAuthentication,
         Validators.required,
       ),
       portRangeValidator(),
@@ -161,7 +161,7 @@ export class EmailFormComponent implements OnInit {
   }
 
   get hasOauthAuthorization(): boolean {
-    return this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
+    return !!this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
@@ -269,10 +269,11 @@ export class EmailFormComponent implements OnInit {
       update = {
         fromemail: '',
         fromname: '',
-        oauth: this.oauthCredentials as MailOauthConfig,
+        oauth: {
+          ...this.oauthCredentials as MailOauthConfig,
+          provider: this.sendMethodControl.value,
+        },
       };
-
-      update.oauth.provider = this.sendMethodControl.value;
 
       if (this.sendMethodControl.value === MailSendMethod.Outlook) {
         update.outgoingserver = 'smtp-mail.outlook.com';

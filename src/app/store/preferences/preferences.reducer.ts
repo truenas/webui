@@ -19,9 +19,9 @@ import { snapshotExtraColumnsToggled, dashboardStateLoaded, noDashboardStateFoun
 
 export interface PreferencesState {
   areLoaded: boolean;
-  preferences: Preferences;
-  previewTheme: string;
-  dashboardState: DashConfigItem[];
+  preferences: Preferences | null;
+  previewTheme: string | null;
+  dashboardState: DashConfigItem[] | null;
 }
 
 const initialState: PreferencesState = {
@@ -53,13 +53,13 @@ export const preferencesReducer = createReducer(
   on(lifetimeTokenUpdated, (state, { lifetime }) => updatePreferences(state, { lifetime })),
 
   on(builtinUsersToggled, (state) => updatePreferences(state, {
-    hideBuiltinUsers: !state.preferences.hideBuiltinUsers,
+    hideBuiltinUsers: !state.preferences?.hideBuiltinUsers,
   })),
   on(builtinGroupsToggled, (state) => updatePreferences(state, {
-    hideBuiltinGroups: !state.preferences.hideBuiltinGroups,
+    hideBuiltinGroups: !state.preferences?.hideBuiltinGroups,
   })),
   on(snapshotExtraColumnsToggled, (state) => updatePreferences(state, {
-    showSnapshotExtraColumns: !state.preferences.showSnapshotExtraColumns,
+    showSnapshotExtraColumns: !state.preferences?.showSnapshotExtraColumns,
   })),
   on(guiFormSubmitted, (state, { theme }) => ({
     ...updatePreferences(state, { userTheme: theme }),
@@ -78,7 +78,7 @@ export const preferencesReducer = createReducer(
     ),
   ),
   on(autoRefreshReportsToggled, (state) => updatePreferences(state, {
-    autoRefreshReports: !state.preferences.autoRefreshReports,
+    autoRefreshReports: !state.preferences?.autoRefreshReports,
   })),
 );
 

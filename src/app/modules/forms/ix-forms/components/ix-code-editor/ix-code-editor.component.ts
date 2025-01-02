@@ -56,7 +56,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly language = input<CodeEditorLanguage>();
-  readonly placeholder = input<string>();
+  readonly placeholder = input<string>('');
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -67,7 +67,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected isDisabled$ = new BehaviorSubject<boolean>(false);
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
-  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
+  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild.required('inputArea', { read: ElementRef });
 
   editorView: EditorView;
 

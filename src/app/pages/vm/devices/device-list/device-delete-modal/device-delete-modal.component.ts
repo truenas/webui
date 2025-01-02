@@ -138,6 +138,6 @@ export class DeviceDeleteModalComponent implements OnInit {
   }
 
   private getZvolName(disk: VmDiskDevice): string {
-    return disk.attributes.path.split('/').pop();
+    return disk.attributes.path.split('/').pop() || '';
   }
 }

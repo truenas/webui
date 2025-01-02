@@ -43,7 +43,7 @@ type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
 })
 export class FeedbackService {
   private readonly hostname = 'https://feedback.ui.truenas.com';
-  private isFeedbackAllowed: boolean;
+  private isFeedbackAllowed: boolean | undefined;
 
   constructor(
     private httpClient: HttpClient,
@@ -116,6 +116,11 @@ export class FeedbackService {
         ...options,
       }).then((canvas) => {
         canvas.toBlob((blob) => {
+          if (!blob) {
+            observer.error(new Error('Failed to create a screenshot.'));
+            return;
+          }
+
           const file = new File([blob], filename, { type });
           observer.next(file);
           observer.complete();
@@ -273,7 +278,7 @@ export class FeedbackService {
   }
 
   private prepareTicket(token: string, type: TicketType, data: TicketData): Observable<CreateNewTicket> {
-    return this.addDebugInfoToMessage(data.message).pipe(
+    return this.addDebugInfoToMessage(data.message || '').pipe(
       map((body) => ({
         body,
         token,
@@ -285,7 +290,7 @@ export class FeedbackService {
   }
 
   private prepareTicketLicensed(data: TicketLicensedData): Observable<CreateNewTicket> {
-    return this.addDebugInfoToMessage(data.message).pipe(
+    return this.addDebugInfoToMessage(data.message || '').pipe(
       map((body) => ({
         body,
         name: data.name,
@@ -307,7 +312,7 @@ export class FeedbackService {
     token?: string,
   ): Observable<void> {
     const takeScreenshot = data.take_screenshot;
-    const images = data.images;
+    const images = data.images || [];
 
     // Make requests and map to boolean for successful uploads.
     const requests = images.map((attachment) => {

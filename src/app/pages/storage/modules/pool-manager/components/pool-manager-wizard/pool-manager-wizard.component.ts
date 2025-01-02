@@ -94,7 +94,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   readonly stepChanged = output<PoolCreationWizardStep>();
 
-  private readonly stepper = viewChild('stepper', { read: MatStepper });
+  private readonly stepper = viewChild.required('stepper', { read: MatStepper });
 
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
@@ -153,12 +153,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null {
+  getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
     return this.topLevelWarningsForEachStep?.[step];
   }
 
-  getTopLevelErrorForStep(step: PoolCreationWizardStep): string | null {
-    return this.topLevelErrorsForEachStep?.[step];
+  getTopLevelErrorForStep(step: PoolCreationWizardStep): string {
+    return this.topLevelErrorsForEachStep?.[step] || '';
   }
 
   getWasStepActivated(step: PoolCreationWizardStep): boolean {

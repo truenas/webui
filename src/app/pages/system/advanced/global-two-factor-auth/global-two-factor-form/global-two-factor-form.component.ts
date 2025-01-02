@@ -53,9 +53,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     enabled: [false],
-    window: [null as number, Validators.required],
+    window: [null as number | null, Validators.required],
     ssh: [false],
   });
 
@@ -98,11 +98,11 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       shouldWarn = false;
     }
 
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const payload: GlobalTwoFactorConfigUpdate = {
       enabled: values.enabled,
       services: { ssh: values.ssh },
-      window: values.window,
+      window: Number(values.window),
     };
     const confirmation$ = shouldWarn
       ? this.dialogService.confirm({

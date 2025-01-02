@@ -155,6 +155,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
     return this.authService.user$.pipe(
       take(1),
+      filter((user) => !!user),
       switchMap((user) => this.api.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
       switchMap(() => this.authService.refreshUser()),
       tap(() => {

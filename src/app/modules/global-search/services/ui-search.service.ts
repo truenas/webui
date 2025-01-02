@@ -19,7 +19,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
 
-  private selectedElement$ = new BehaviorSubject<UiSearchableElement>(null);
+  private selectedElement$ = new BehaviorSubject<UiSearchableElement | null>(null);
   selectionChanged$ = this.selectedElement$.asObservable().pipe(
     filter(Boolean),
     tap(() => this.selectedElement$.next(null)),

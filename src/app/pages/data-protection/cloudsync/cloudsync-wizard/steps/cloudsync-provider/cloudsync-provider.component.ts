@@ -51,7 +51,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly loading = output<boolean>();
 
   protected form = this.formBuilder.group({
-    exist_credential: [null as number | typeof newOption],
+    exist_credential: [null as number | typeof newOption | null],
   });
 
   protected isLoading: boolean;
@@ -125,7 +125,7 @@ export class CloudSyncProviderComponent implements OnInit {
         } else {
           this.dialogService.error({
             title: this.translate.instant('Error'),
-            message: response.excerpt,
+            message: response.excerpt || '',
             backtrace: response.error,
           });
         }

@@ -72,7 +72,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
         this.translate.instant(helptextVmWizard.memory_size_err),
       ),
     ]],
-    min_memory: [null as number],
+    min_memory: [null as number | null],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
   });
 
@@ -119,20 +119,22 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
       },
       {
         label: this.translate.instant('CPU Mode'),
-        value: vmCpuModeLabels.get(values.cpu_mode),
+        value: values.cpu_mode
+          ? vmCpuModeLabels.get(values.cpu_mode) || ''
+          : '',
       },
     ];
 
     if (values.cpu_mode === VmCpuMode.Custom) {
       summary.push({
         label: this.translate.instant('CPU Model'),
-        value: values.cpu_model,
+        value: values.cpu_model || '',
       });
     }
 
     summary.push({
       label: this.translate.instant('Memory'),
-      value: buildNormalizedFileSize(values.memory),
+      value: values.memory ? buildNormalizedFileSize(values.memory) : '',
     });
 
     if (values.min_memory) {

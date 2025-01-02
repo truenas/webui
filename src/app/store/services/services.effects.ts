@@ -54,7 +54,9 @@ export class ServicesEffects {
     ofType(checkIfServiceIsEnabled),
     filter(({ serviceName }) => Boolean(serviceName)),
     filterAsync(({ serviceName }) => this.canUserManageService(serviceName)),
-    switchMap(({ serviceName }) => this.store$.select(selectService(serviceName)).pipe(take(1))),
+    switchMap(({ serviceName }) => {
+      return this.store$.select(selectService(serviceName)).pipe(take(1), filter((service) => !!service));
+    }),
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
         return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(

@@ -57,7 +57,12 @@ export class UploadService {
       .pipe(
         filter((event) => event instanceof HttpResponse),
         switchMap((response: HttpResponse<{ job_id: number }>) => {
-          return this.store$.select(selectJob(response.body.job_id))
+          const jobId = response.body?.job_id;
+          if (!jobId) {
+            throw new Error('Job ID not found in response');
+          }
+
+          return this.store$.select(selectJob(jobId))
             .pipe(observeJob()) as Observable<Job<ApiJobResponse<M>>>;
         }),
       );

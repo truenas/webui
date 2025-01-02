@@ -51,7 +51,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class CloudSyncRestoreDialogComponent {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     description: ['', Validators.required],
     transfer_mode: [TransferMode.Copy],
     path: [mntPath, Validators.required],

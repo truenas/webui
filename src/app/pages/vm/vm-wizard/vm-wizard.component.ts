@@ -78,13 +78,13 @@ import { GpuService } from 'app/services/gpu/gpu.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
-  protected readonly osStep = viewChild(OsStepComponent);
+  protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
-  readonly cpuAndMemoryStep = viewChild(CpuAndMemoryStepComponent);
-  readonly diskStep = viewChild(DiskStepComponent);
-  protected readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
-  protected readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
-  protected readonly gpuStep = viewChild(GpuStepComponent);
+  readonly cpuAndMemoryStep = viewChild.required(CpuAndMemoryStepComponent);
+  readonly diskStep = viewChild.required(DiskStepComponent);
+  protected readonly networkInterfaceStep = viewChild.required(NetworkInterfaceStepComponent);
+  protected readonly installationMediaStep = viewChild.required(InstallationMediaStepComponent);
+  protected readonly gpuStep = viewChild.required(GpuStepComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
