@@ -41,12 +41,12 @@ import { TablePagination } from 'app/modules/ix-table/interfaces/table-paginatio
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -161,7 +161,7 @@ export class UserApiKeysComponent implements OnInit {
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
-    private slideIn: OldSlideInService,
+    private slideIn: SlideIn,
     private route: ActivatedRoute,
   ) { }
 
@@ -185,10 +185,10 @@ export class UserApiKeysComponent implements OnInit {
   }
 
   openForm(apiKey?: ApiKey): void {
-    this.slideIn.open(ApiKeyFormComponent, { data: apiKey })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+    this.slideIn.open(ApiKeyFormComponent, { data: apiKey }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   doDelete(apiKey: ApiKey): void {

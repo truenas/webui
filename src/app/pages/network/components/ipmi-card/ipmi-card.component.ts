@@ -21,13 +21,13 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ipmiCardElements } from 'app/pages/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -81,7 +81,7 @@ export class IpmiCardComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private matDialog: MatDialog,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -99,10 +99,11 @@ export class IpmiCardComponent implements OnInit {
   }
 
   onEdit(ipmi: Ipmi): void {
-    this.slideInService.open(IpmiFormComponent, { data: ipmi.id })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.loadIpmiEntries());
+    this.slideIn.open(IpmiFormComponent, { data: ipmi.id })
+      .pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => this.loadIpmiEntries());
   }
 
   onOpen(ipmi: Ipmi): void {

@@ -15,7 +15,7 @@ import {
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import {
@@ -23,7 +23,6 @@ import {
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesState, InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InterfacesCardComponent', () => {
@@ -85,10 +84,8 @@ describe('InterfacesCardComponent', () => {
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => updateSubject$),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(true),
-        } as OldSlideInRef<unknown>)),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of({ response: true })),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -121,7 +118,7 @@ describe('InterfacesCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent);
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
   });
@@ -130,7 +127,7 @@ describe('InterfacesCardComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
       data: interfaces[0],
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();

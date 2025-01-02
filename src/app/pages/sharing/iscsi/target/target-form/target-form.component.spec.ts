@@ -20,11 +20,10 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -54,6 +53,12 @@ describe('TargetFormComponent', () => {
     auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
+  const slideInRef: SlideInRef<IscsiTarget | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: TargetFormComponent,
     imports: [
@@ -74,13 +79,14 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
       mockProvider(FibreChannelService, {
         linkFiberChannelToTarget: jest.fn(() => of(null)),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
         mockCall('fc.fc_host.query', []),
         mockCall('fcport.port_choices', {}),
@@ -187,7 +193,7 @@ describe('TargetFormComponent', () => {
         ],
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -195,7 +201,7 @@ describe('TargetFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingTarget },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -244,7 +250,7 @@ describe('TargetFormComponent', () => {
         skipOption,
         undefined,
       );
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {

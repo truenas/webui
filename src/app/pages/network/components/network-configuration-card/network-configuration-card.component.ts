@@ -19,13 +19,13 @@ import { searchDelayConst } from 'app/modules/global-search/constants/delay.cons
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   networkConfigurationCardElements,
 } from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -61,7 +61,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private api: ApiService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
     private errorHandler: ErrorHandlerService,
@@ -144,9 +144,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    const slideInRef = this.slideInService.open(NetworkConfigurationComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    this.slideIn.open(NetworkConfigurationComponent, { wide: true }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.loadNetworkConfigAndSummary());
   }

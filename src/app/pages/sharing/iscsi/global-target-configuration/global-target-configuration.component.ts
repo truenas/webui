@@ -21,8 +21,8 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -51,7 +51,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     MatButton,
     TestDirective,
     TranslateModule,
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
   ],
 })
 export class GlobalTargetConfigurationComponent implements OnInit {
@@ -83,9 +83,9 @@ export class GlobalTargetConfigurationComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<GlobalTargetConfigurationComponent>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -104,7 +104,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
           this.isLoading.set(false);
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(this.translate.instant('Settings saved.'));
         },
         error: (error: unknown) => {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit,
+  ChangeDetectionStrategy, Component, computed, OnInit,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -26,9 +26,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   KeyCreatedDialogComponent,
@@ -53,7 +52,7 @@ import { ApiService } from 'app/services/websocket/api.service';
     MatButton,
     MatCard,
     MatCardContent,
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     ReactiveFormsModule,
     RequiresRolesDirective,
     TestDirective,
@@ -62,6 +61,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class ApiKeyFormComponent implements OnInit {
   protected readonly minDateToday = new Date();
+  protected readonly editingRow = signal<ApiKey>(null);
   protected readonly isNew = computed(() => !this.editingRow());
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
@@ -104,17 +104,17 @@ export class ApiKeyFormComponent implements OnInit {
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  private readonly editingRow = signal(inject<ApiKey>(SLIDE_IN_DATA));
-
   constructor(
     private fb: FormBuilder,
-    private slideInRef: OldSlideInRef<ApiKeyFormComponent>,
     private matDialog: MatDialog,
     private api: ApiService,
     private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
     private authService: AuthService,
-  ) {}
+    public slideInRef: SlideInRef<ApiKey | undefined, boolean>,
+  ) {
+    this.editingRow.set(slideInRef.getData());
+  }
 
   ngOnInit(): void {
     if (this.isNew()) {
@@ -149,7 +149,7 @@ export class ApiKeyFormComponent implements OnInit {
       .subscribe({
         next: ({ key }) => {
           this.isLoading.set(false);
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
 
           if (key) {
             this.matDialog.open(KeyCreatedDialogComponent, { data: key });

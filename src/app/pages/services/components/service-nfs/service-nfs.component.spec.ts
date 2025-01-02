@@ -15,13 +15,12 @@ import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   AddSpnDialogComponent,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -30,6 +29,13 @@ describe('ServiceNfsComponent', () => {
   let loader: HarnessLoader;
   let api: ApiService;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createRoutingFactory({
     component: ServiceNfsComponent,
     imports: [
@@ -71,7 +77,9 @@ describe('ServiceNfsComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -81,8 +89,7 @@ describe('ServiceNfsComponent', () => {
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });

@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -35,9 +35,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -50,7 +49,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -71,6 +70,8 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
 
+  protected data: { backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined = undefined;
+
   fileNodeProvider: TreeNodeProvider;
   snapshotNodeProvider: TreeNodeProvider;
 
@@ -85,7 +86,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
-    subFolder: [this.data.backup.path],
+    subFolder: [this.data?.backup?.path],
     includedPaths: [[] as string[]],
   });
 
@@ -114,11 +115,16 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<CloudBackupSnapshot>,
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
-    @Inject(SLIDE_IN_DATA) public data: { backup: CloudBackup; snapshot: CloudBackupSnapshot },
-  ) {}
+
+    public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined, boolean>,
+  ) {
+    this.data = this.slideInRef.getData();
+    this.form.patchValue({
+      subFolder: this.data.backup.path,
+    });
+  }
 
   ngOnInit(): void {
     this.setFileNodeProvider();
@@ -145,7 +151,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

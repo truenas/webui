@@ -17,8 +17,8 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
@@ -34,7 +34,6 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -76,6 +75,12 @@ describe('DatasetFormComponent', () => {
     id: 'parent',
   } as Dataset;
 
+  const slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: DatasetFormComponent,
     imports: [
@@ -97,7 +102,9 @@ describe('DatasetFormComponent', () => {
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
         mockCall('filesystem.stat', { acl: true } as FileSystemStat),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -113,9 +120,8 @@ describe('DatasetFormComponent', () => {
         }),
       }),
       mockProvider(Router),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -147,13 +153,7 @@ describe('DatasetFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              datasetId: 'parent/child',
-              isNew: true,
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ datasetId: 'parent/child', isNew: true }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -168,13 +168,7 @@ describe('DatasetFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              datasetId: 'parent',
-              isNew: true,
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ datasetId: 'parent', isNew: true }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -271,13 +265,7 @@ describe('DatasetFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              datasetId: 'parent/child',
-              isNew: false,
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ datasetId: 'parent/child', isNew: false }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -298,13 +286,7 @@ describe('DatasetFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              datasetId: 'parent',
-              isNew: false,
-            },
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ datasetId: 'parent', isNew: false }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

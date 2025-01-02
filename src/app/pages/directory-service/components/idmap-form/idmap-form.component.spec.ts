@@ -20,12 +20,11 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapService } from 'app/services/idmap.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdmapFormComponent', () => {
@@ -46,6 +45,12 @@ describe('IdmapFormComponent', () => {
       unix_nss_info: true,
     } as Record<string, unknown>,
   } as Idmap;
+
+  const slideInRef: SlideInRef<Idmap | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: IdmapFormComponent,
@@ -92,7 +97,9 @@ describe('IdmapFormComponent', () => {
           },
         } as IdmapBackendOptions),
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -101,9 +108,8 @@ describe('IdmapFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -140,7 +146,7 @@ describe('IdmapFormComponent', () => {
           unix_primary_group: true,
         },
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('sets name to TDB and hides it when SMB - Primary Domain is selected', async () => {
@@ -219,7 +225,7 @@ describe('IdmapFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingIdmap },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingIdmap }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

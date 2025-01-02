@@ -15,11 +15,10 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -46,6 +45,12 @@ describe('LdapComponent', () => {
     schema: 'RFC2307',
   } as LdapConfig;
 
+  const slideInRef: SlideInRef<LdapComponent | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: LdapComponent,
     imports: [
@@ -66,7 +71,9 @@ describe('LdapComponent', () => {
           { id: 2, realm: 'Realm 2' },
         ] as KerberosRealm[]),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(SystemGeneralService, {
         refreshDirServicesCache: jest.fn(() => of(null)),
         getCertificates: () => of([
@@ -80,9 +87,8 @@ describe('LdapComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -165,6 +171,6 @@ describe('LdapComponent', () => {
       }],
     );
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });

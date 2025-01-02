@@ -28,11 +28,11 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -82,8 +82,8 @@ export class KerberosKeytabsListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent, { data: row });
-            slideInRef.slideInClosed$.pipe(
+            this.slideIn.open(KerberosKeytabsFormComponent, { data: row }).pipe(
+              filter((response) => !!response.response),
               untilDestroyed(this),
             ).subscribe(() => this.getKerberosKeytabs());
           },
@@ -123,7 +123,7 @@ export class KerberosKeytabsListComponent implements OnInit {
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   ngOnInit(): void {
@@ -152,8 +152,8 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent);
-    slideInRef.slideInClosed$.pipe(
+    this.slideIn.open(KerberosKeytabsFormComponent).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getKerberosKeytabs());
   }

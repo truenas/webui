@@ -8,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
@@ -19,6 +20,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -34,7 +36,6 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -75,7 +76,9 @@ describe('ServicesComponent', () => {
         mockCall('service.stop'),
       ]),
       mockProvider(DialogService),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
+      }),
       mockProvider(IscsiService),
       mockProvider(NavigateAndInteractService),
       provideMockStore({
@@ -115,7 +118,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GlobalTargetConfigurationComponent);
     });
 
     it('should open FTP configuration when edit button is pressed', async () => {
@@ -123,7 +126,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
     });
 
     it('should open NFS configuration when edit button is pressed', async () => {
@@ -131,7 +134,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
     });
 
     it('should open SNMP configuration when edit button is pressed', async () => {
@@ -139,7 +142,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
     });
 
     it('should open UPS configuration when edit button is pressed', async () => {
@@ -147,7 +150,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
     });
 
     it('should open SSH configuration when edit button is pressed', async () => {
@@ -155,7 +158,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSshComponent);
     });
 
     it('should open SMB configuration when edit button is pressed', async () => {
@@ -163,7 +166,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmbComponent);
     });
 
     it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
@@ -171,7 +174,7 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
-      expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
+      expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ServiceSmartComponent);
     });
   });
 

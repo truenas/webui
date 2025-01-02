@@ -19,6 +19,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -26,7 +27,6 @@ import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/dele
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
@@ -61,7 +61,7 @@ export class DatasetDetailsCardComponent {
     private translate: TranslateService,
     private matDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private api: ApiService,
@@ -109,21 +109,19 @@ export class DatasetDetailsCardComponent {
   }
 
   editDataset(): void {
-    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+    this.slideIn.open(DatasetFormComponent, {
       wide: true, data: { datasetId: this.dataset().id, isNew: false },
-    });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editZvol(): void {
-    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+    this.slideIn.open(ZvolFormComponent, {
       data: { isNew: false, parentId: this.dataset().id },
-    });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }

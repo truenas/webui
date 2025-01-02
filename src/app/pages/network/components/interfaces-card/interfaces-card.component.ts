@@ -34,6 +34,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
@@ -43,7 +44,6 @@ import {
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -137,7 +137,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private api: ApiService,
     private loader: AppLoaderService,
@@ -177,25 +177,26 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   onAddNew(): void {
-    this.slideInService.open(InterfaceFormComponent)
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
+    this.slideIn.open(InterfaceFormComponent)
+      .pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => {
         this.interfacesUpdated.emit();
         this.interfacesStore$.loadInterfaces();
       });
   }
 
   onEdit(row: NetworkInterface): void {
-    this.slideInService.open(InterfaceFormComponent, {
+    this.slideIn.open(InterfaceFormComponent, {
       data: row,
-    })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        this.interfacesUpdated.emit();
-        this.interfacesStore$.loadInterfaces();
-      });
+    }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.interfacesUpdated.emit();
+      this.interfacesStore$.loadInterfaces();
+    });
   }
 
   onDelete(row: NetworkInterface): void {
