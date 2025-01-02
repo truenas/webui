@@ -4,8 +4,8 @@ import { Observable, of } from 'rxjs';
 import {
   catchError, map, timeout,
 } from 'rxjs/operators';
-import { LanguageService } from 'app/services/language.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { LanguageService } from 'app/modules/language/language.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 /**
  * Ensures that translations have been loaded.

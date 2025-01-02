@@ -27,10 +27,10 @@ import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
-import { SidenavService } from 'app/services/sidenav.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

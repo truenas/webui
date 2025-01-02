@@ -6,7 +6,7 @@ import { find } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 

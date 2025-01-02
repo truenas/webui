@@ -18,6 +18,7 @@ import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAuthorityAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
@@ -37,7 +38,6 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Consider building a harness for the wizard.
 describe('CertificateAuthorityAddComponent', () => {

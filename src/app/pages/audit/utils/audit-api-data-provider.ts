@@ -5,7 +5,7 @@ import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/api-data-provider';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   lastParams: AuditQueryParams;

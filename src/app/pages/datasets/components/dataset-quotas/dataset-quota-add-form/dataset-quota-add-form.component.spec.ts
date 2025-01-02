@@ -12,10 +12,10 @@ import { IxChipsHarness } from 'app/modules/forms/ix-forms/components/ix-chips/i
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;

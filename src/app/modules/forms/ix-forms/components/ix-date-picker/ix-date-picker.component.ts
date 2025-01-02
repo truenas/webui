@@ -13,9 +13,9 @@ import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { LocaleService } from 'app/services/locale.service';
 
 type OnChangeFn = (value: Date) => void;
 type OnTouchedFn = () => void;

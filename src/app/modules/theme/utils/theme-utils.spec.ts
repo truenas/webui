@@ -1,4 +1,4 @@
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ThemeUtils } from 'app/modules/theme/utils/theme-utils';
 
 describe('ThemeUtils', () => {
   const utils = new ThemeUtils();

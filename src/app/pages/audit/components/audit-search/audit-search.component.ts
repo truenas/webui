@@ -28,9 +28,9 @@ import { SearchProperty } from 'app/modules/forms/search-input/types/search-prop
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { dateProperty, searchProperties, textProperty } from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

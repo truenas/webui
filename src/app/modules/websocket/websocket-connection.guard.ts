@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })

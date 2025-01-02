@@ -8,6 +8,7 @@ import { take } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
 import {
   AuthorizedNetworksCardComponent,
@@ -15,7 +16,6 @@ import {
 import { ConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/connections-card/connections-card.component';
 import { FibreChannelConnectionsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-connections-card/fibre-channel-connections-card.component';
 import { FibreChannelPortCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

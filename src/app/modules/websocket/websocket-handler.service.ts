@@ -22,7 +22,7 @@ import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { RequestMessage, IncomingMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
+import { WebSocketConnection } from 'app/modules/websocket/websocket-connection.class';
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 

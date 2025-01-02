@@ -9,11 +9,11 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { CloudSyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
 describe('CloudSyncRestoreDialogComponent', () => {

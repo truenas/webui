@@ -38,6 +38,7 @@ import {
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
 import { cronValidator } from 'app/modules/forms/ix-forms/validators/cron-validation';
+import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -56,7 +57,6 @@ import {
   transformTextSchemaType,
   transformUriSchemaType,
 } from 'app/services/schema/app-schema.transformer';
-import { UrlValidationService } from 'app/services/url-validation.service';
 
 interface ToggleFieldHiddenOrDisabledValue {
   formField: CustomUntypedFormField;

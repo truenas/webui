@@ -17,6 +17,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import {
   AwsSnsServiceComponent,
@@ -27,7 +28,6 @@ import {
 import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {

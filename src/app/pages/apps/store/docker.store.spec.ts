@@ -3,8 +3,8 @@ import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DockerConfig } from 'app/enums/docker-config.interface';
 import { DockerStatus } from 'app/enums/docker-status.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DockerStore', () => {
   let spectator: SpectatorService<DockerStore>;

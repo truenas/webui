@@ -12,10 +12,10 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceDeleteModalComponent,
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;

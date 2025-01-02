@@ -6,10 +6,10 @@ import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { LayoutService } from 'app/modules/layout/layout.service';
+import { PingService } from 'app/modules/websocket/ping.service';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
-import { LayoutService } from 'app/services/layout.service';
-import { PingService } from 'app/services/websocket/ping.service';
 
 @UntilDestroy()
 @Component({

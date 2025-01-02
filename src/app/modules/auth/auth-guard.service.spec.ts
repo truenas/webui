@@ -5,8 +5,8 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
-import { AuthGuardService } from 'app/services/auth/auth-guard.service';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthGuardService } from 'app/modules/auth/auth-guard.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 
 describe('AuthGuardService', () => {
   const redirectUrl = 'storage/disks';

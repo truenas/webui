@@ -1,8 +1,10 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -15,9 +17,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;

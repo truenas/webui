@@ -14,7 +14,7 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialogComponent<unknown>>;

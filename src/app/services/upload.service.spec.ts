@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { firstValueFrom, of } from 'rxjs';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { UploadService } from 'app/services/upload.service';
 
 describe('UploadService', () => {

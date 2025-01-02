@@ -8,10 +8,10 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import { extractApiError } from 'app/helpers/api.helper';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({

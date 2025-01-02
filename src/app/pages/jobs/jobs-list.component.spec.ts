@@ -14,10 +14,10 @@ import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { JobsListComponent } from 'app/pages/jobs/jobs-list.component';
 import { DownloadService } from 'app/services/download.service';
-import { LocaleService } from 'app/services/locale.service';
 
 const fakeJobDataSource: Job[] = [{
   abortable: true,

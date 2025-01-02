@@ -9,9 +9,9 @@ import { catchError } from 'rxjs/operators';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

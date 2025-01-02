@@ -5,8 +5,8 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject } from 'rxjs';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
-import { WebSocketConnection } from 'app/services/websocket/websocket-connection.class';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketConnection } from 'app/modules/websocket/websocket-connection.class';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 const fakeSocketUrl = 'ws://localhost:1234';
 let fakeSocketConfig: WebSocketSubjectConfig<unknown>;

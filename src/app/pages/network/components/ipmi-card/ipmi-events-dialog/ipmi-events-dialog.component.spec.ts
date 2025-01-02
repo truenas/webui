@@ -9,10 +9,10 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IpmiEventsDialogComponent', () => {
   let spectator: Spectator<IpmiEventsDialogComponent>;

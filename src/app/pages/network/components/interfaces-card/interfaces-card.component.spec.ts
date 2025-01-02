@@ -16,6 +16,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import {
@@ -24,7 +25,6 @@ import {
 import { InterfacesState, InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;

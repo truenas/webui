@@ -3,8 +3,8 @@ import { ChartData } from 'chart.js';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { InstanceMetricsLineChartComponent } from './instance-metrics-linechart.component';
 
 describe('InstanceMetricsLineChartComponent', () => {

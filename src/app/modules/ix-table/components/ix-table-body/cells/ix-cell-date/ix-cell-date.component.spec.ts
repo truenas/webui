@@ -3,7 +3,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 
 interface TestTableData { dateField: Date | string | null }
 

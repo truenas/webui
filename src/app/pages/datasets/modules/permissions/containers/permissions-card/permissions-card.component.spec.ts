@@ -14,6 +14,7 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ViewNfsPermissionsComponent,
 } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
@@ -27,7 +28,6 @@ import {
   PermissionsCardComponent,
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PermissionsCardComponent', () => {
   const stat = {

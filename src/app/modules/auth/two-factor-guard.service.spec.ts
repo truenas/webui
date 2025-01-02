@@ -2,9 +2,9 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/ro
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
-import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 
 describe('TwoFactorGuardService', () => {
   let spectator: SpectatorService<TwoFactorGuardService>;
