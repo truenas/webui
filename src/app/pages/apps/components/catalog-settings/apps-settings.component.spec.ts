@@ -19,7 +19,6 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -56,6 +55,8 @@ describe('AppsSettingsComponent', () => {
           label: 'TrueNAS',
           preferred_trains: ['test'],
         } as CatalogConfig),
+        mockCall('docker.status'),
+        mockCall('docker.config', dockerConfig),
         mockJob('docker.update', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
@@ -63,15 +64,11 @@ describe('AppsSettingsComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockProvider(AppsStore, {
-        loadCatalog: jest.fn(() => of({})),
-      }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
       mockProvider(DockerStore, {
-        dockerConfig$: of(dockerConfig),
-        reloadDockerConfig: jest.fn(() => of({})),
+        initialize: jest.fn(),
       }),
     ],
   });
@@ -115,7 +112,6 @@ describe('AppsSettingsComponent', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
         { preferred_trains: ['stable', 'community'] },
       ]);
-      expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
     });
   });
 
@@ -156,8 +152,6 @@ describe('AppsSettingsComponent', () => {
           },
         ],
       }]);
-
-      expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
     });
 
     describe('other docker settings', () => {
@@ -204,7 +198,6 @@ describe('AppsSettingsComponent', () => {
             { base: '173.17.0.0/12', size: 12 },
           ],
         }]);
-        expect(spectator.inject(DockerStore).reloadDockerConfig).toHaveBeenCalled();
       });
     });
   });

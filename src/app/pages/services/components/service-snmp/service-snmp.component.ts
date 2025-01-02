@@ -77,7 +77,7 @@ export class ServiceSnmpComponent implements OnInit {
 
     options: [''],
     zilstat: [false],
-    loglevel: [null as number],
+    loglevel: [null as number | null],
   });
 
   readonly tooltips = {
@@ -99,7 +99,7 @@ export class ServiceSnmpComponent implements OnInit {
   readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
 
   get isV3SupportEnabled(): boolean {
-    return this.form?.value?.v3;
+    return this.form?.value?.v3 || false;
   }
 
   constructor(

@@ -10,8 +10,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  async,
-  combineLatest, filter, forkJoin, switchMap,
+  combineLatest,
+  filter,
+  forkJoin,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -32,7 +33,6 @@ import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-v
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { ApiService } from 'app/services/websocket/api.service';
 
@@ -61,6 +61,9 @@ import { ApiService } from 'app/services/websocket/api.service';
     TestDirective,
     TranslateModule,
     AsyncPipe,
+  ],
+  providers: [
+    DockerStore,
   ],
 })
 export class AppsSettingsComponent implements OnInit {
@@ -93,8 +96,9 @@ export class AppsSettingsComponent implements OnInit {
     public slideInRef: SlideInRef<undefined, boolean>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
-    private appsStore: AppsStore,
-  ) {}
+  ) {
+    this.dockerStore.initialize();
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -145,13 +149,7 @@ export class AppsSettingsComponent implements OnInit {
         nvidia: values.nvidia,
       }]),
     ])
-      .pipe(
-        switchMap(() => forkJoin([
-          this.dockerStore.reloadDockerConfig(),
-          this.appsStore.loadCatalog(),
-        ])),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
@@ -165,5 +163,4 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   protected readonly helptext = helptextApps;
-  protected readonly async = async;
 }

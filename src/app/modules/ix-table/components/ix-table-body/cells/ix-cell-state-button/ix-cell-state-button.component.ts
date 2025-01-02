@@ -66,11 +66,11 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     this.state.set(job.state);
   });
 
-  getJob: (row: T) => Job;
+  getJob: (row: T) => Job | null;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
-  job = signal<Job>(null);
+  job = signal<Job | null>(null);
   jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
-  state = signal<JobState>(null);
+  state = signal<JobState | null>(null);
 
   ngOnInit(): void {
     if (this.getJob) {

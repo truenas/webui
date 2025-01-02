@@ -94,7 +94,11 @@ export class AddDeviceMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance().id;
+    const instanceId = this.deviceStore.selectedInstance()?.id;
+    if (!instanceId) {
+      return;
+    }
+
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),

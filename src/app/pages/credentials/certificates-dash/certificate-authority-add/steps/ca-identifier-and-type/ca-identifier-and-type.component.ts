@@ -44,7 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   readonly profileSelected = output<CertificateProfile>();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validators.withMessage(
@@ -107,11 +107,11 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const summary = [
       { label: this.translate.instant('Name'), value: values.name },
-      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) },
+      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) || values.create_type },
     ];
 
     if (values.profile) {

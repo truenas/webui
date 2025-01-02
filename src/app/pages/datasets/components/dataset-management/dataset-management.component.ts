@@ -368,8 +368,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         .subscribe({
           next: (scrollLeft: number) => {
             this.window.dispatchEvent(new Event('resize'));
-            this.ixTreeHeader().nativeElement.scrollLeft = scrollLeft;
-            this.ixTree().nativeElement.scrollLeft = scrollLeft;
+            const treeHeader = this.ixTreeHeader();
+            const tree = this.ixTree();
+
+            if (!treeHeader || !tree) {
+              return;
+            }
+
+            treeHeader.nativeElement.scrollLeft = scrollLeft;
+            tree.nativeElement.scrollLeft = scrollLeft;
           },
         }),
     );

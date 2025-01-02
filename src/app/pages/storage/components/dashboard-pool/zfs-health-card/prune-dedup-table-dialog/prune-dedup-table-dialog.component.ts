@@ -56,8 +56,8 @@ export const pruneByLabels = new Map<PruneBy, string>([
 export class PruneDedupTableDialogComponent {
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
-    percentage: [null as number, [Validators.min(1), Validators.max(100)]],
-    days: [null as number],
+    percentage: [null as number | null, [Validators.min(1), Validators.max(100)]],
+    days: [null as number | null],
   });
 
   constructor(

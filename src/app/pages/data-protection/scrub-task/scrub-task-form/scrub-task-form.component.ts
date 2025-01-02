@@ -67,7 +67,7 @@ export class ScrubTaskFormComponent implements OnInit {
   }
 
   form = this.fb.group({
-    pool: [null as number, Validators.required],
+    pool: [null as number | null, Validators.required],
     threshold: [35, [Validators.min(0), Validators.required]],
     description: [''],
     schedule: ['', Validators.required],

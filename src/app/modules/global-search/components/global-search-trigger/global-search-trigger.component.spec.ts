@@ -29,7 +29,7 @@ describe('GlobalSearchTriggerComponent', () => {
       }),
       mockWindow({
         document: {
-          querySelector: () => undefined as HTMLElement,
+          querySelector: () => ({} as HTMLElement),
         },
       }),
     ],

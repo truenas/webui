@@ -93,9 +93,9 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       : helpTextQuotas.groups.obj_quota.tooltip;
   }
 
-  form = this.formBuilder.group({
-    data_quota: [null as number],
-    obj_quota: [null as number],
+  form = this.formBuilder.nonNullable.group({
+    data_quota: [null as number | null],
+    obj_quota: [null as number | null],
     users: [[] as string[]],
     groups: [[] as string[]],
   });

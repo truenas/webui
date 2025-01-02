@@ -61,8 +61,8 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   form = this.fb.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
-    pool_avail_threshold: [null as number],
-    listen_port: [null as number, Validators.required],
+    pool_avail_threshold: [null as number | null],
+    listen_port: [null as number | null, Validators.required],
     alua: [false],
   });
 

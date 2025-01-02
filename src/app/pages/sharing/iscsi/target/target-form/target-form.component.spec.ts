@@ -256,7 +256,7 @@ describe('TargetFormComponent', () => {
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
       let portal;
       let initiator;
-      let auth: Option[];
+      let auth: Option[] = [];
 
       spectator.component.portals$.subscribe((options) => portal = options);
       spectator.component.initiators$.subscribe((options) => initiator = options);
@@ -300,7 +300,7 @@ describe('TargetFormComponent', () => {
         if (method === 'iscsi.target.validate_name') {
           return of('Target with this name already exists');
         }
-        return null;
+        return of(null);
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);

@@ -17,7 +17,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   }
 
   get avoidCountRowsRequest(): boolean {
-    return this.totalRows && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
+    return Boolean(this.totalRows) && !this.isLastOffset && isEqual(this.lastParams, this.params[0]);
   }
 
   constructor(api: ApiService) {

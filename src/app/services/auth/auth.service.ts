@@ -53,7 +53,7 @@ export class AuthService {
 
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
-  private generateTokenSubscription: Subscription;
+  private generateTokenSubscription: Subscription | null;
 
   readonly isAuthenticated$ = combineLatest([
     this.wsManager.isConnected$,

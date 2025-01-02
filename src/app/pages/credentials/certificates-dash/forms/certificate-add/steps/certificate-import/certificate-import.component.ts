@@ -45,9 +45,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateImportComponent implements OnInit, SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     csrExistsOnSystem: [false],
-    csr: [null as number],
+    csr: [null as number | null],
     certificate: [''],
     privatekey: [''],
     passphrase: [''],
@@ -90,7 +90,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const certificatePreview = getCertificatePreview(values.certificate);
 
     const summary: SummarySection = [];
@@ -98,7 +98,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
     if (this.form.value.csrExistsOnSystem) {
       summary.push({
         label: this.translate.instant('Using CSR'),
-        value: this.selectedCsr.name,
+        value: this.selectedCsr?.name || '',
       });
     }
 

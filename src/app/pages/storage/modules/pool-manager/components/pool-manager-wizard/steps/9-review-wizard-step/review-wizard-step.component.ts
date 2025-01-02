@@ -85,7 +85,7 @@ export class ReviewWizardStepComponent implements OnInit {
     });
   }
 
-  get limitToEnclosureName(): string {
+  get limitToEnclosureName(): string | undefined {
     const limitToSingleEnclosure = this.state.enclosureSettings.limitToSingleEnclosure;
     if (limitToSingleEnclosure === null) {
       return undefined;

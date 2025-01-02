@@ -83,12 +83,13 @@ export class WidgetGroupComponent {
       };
     }
 
-    if (definition.visibility) {
+    const visibility = definition.visibility;
+    if (visibility) {
       const deps: WidgetVisibilityDepsType = new Map();
       runInInjectionContext(this.environmentInjector, () => {
-        definition.visibility.deps.forEach((service) => deps.set(service, inject(service)));
+        visibility.deps.forEach((service) => deps.set(service, inject(service)));
       });
-      isVisible$ = definition.visibility.isVisible$(deps);
+      isVisible$ = visibility.isVisible$(deps);
     }
 
     const supportedSizes = definition.supportedSizes;

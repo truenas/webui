@@ -56,9 +56,9 @@ export class KerberosKeytabsFormComponent implements OnInit {
       : this.translate.instant(helptextKerberosKeytabs.title_edit);
   }
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    file: [null as File[], Validators.required],
+    file: [null as File[] | null, Validators.required],
   });
 
   isLoading = false;
@@ -89,10 +89,10 @@ export class KerberosKeytabsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const fReader: FileReader = new FileReader();
-    if (values.file.length) {
+    if (values.file?.length) {
       fReader.readAsBinaryString(values.file[0]);
     }
 
