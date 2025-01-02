@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal,
+  viewChild,
 } from '@angular/core';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
@@ -52,6 +53,9 @@ export class WidgetGroupFormComponent {
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
 
+  readonly widgetGroupSlotForm: Signal<WidgetGroupSlotFormComponent>
+    = viewChild(forwardRef(() => WidgetGroupSlotFormComponent));
+
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,
@@ -79,7 +83,7 @@ export class WidgetGroupFormComponent {
     private cdr: ChangeDetectorRef,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.layoutControl.dirty);
+      return of(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
     });
     this.setupLayoutUpdates();
     this.setInitialFormValues();
