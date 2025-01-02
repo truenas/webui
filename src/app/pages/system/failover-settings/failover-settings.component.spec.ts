@@ -14,7 +14,7 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverSettingsComponent>;
@@ -41,7 +41,7 @@ describe('FailoverComponent', () => {
         }),
       ]),
       mockProvider(SnackbarService),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
       }),
     ],

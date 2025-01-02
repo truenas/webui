@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  BehaviorSubject, combineLatest, of, switchMap,
+  BehaviorSubject, combineLatest,
+  tap,
 } from 'rxjs';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -10,33 +13,32 @@ export class WebSocketStatusService {
   private readonly connectionEstablished$ = new BehaviorSubject(false);
   readonly isConnected$ = this.connectionEstablished$.asObservable();
 
-  private syncIsConnected = false;
   get isConnected(): boolean {
-    return this.syncIsConnected;
+    return this.connectionEstablished$.getValue();
   }
 
   private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
-  private syncIsAuthenticated = false;
+  private readonly authStatus$ = new BehaviorSubject<boolean>(false);
+  readonly isAuthenticated$ = this.authStatus$.asObservable();
   get isAuthenticated(): boolean {
-    return this.syncIsAuthenticated;
+    return this.authStatus$.getValue();
   }
 
-  readonly isAuthenticated$ = combineLatest([
-    this.isConnected$,
-    this.isLoggedIn$.asObservable(),
-  ]).pipe(
-    switchMap(([isConnected, isLoggedIn]) => {
-      this.syncIsAuthenticated = isConnected && isLoggedIn;
-      return of(isConnected && isLoggedIn);
-    }),
-  );
+  constructor() {
+    combineLatest([
+      this.isConnected$,
+      this.isLoggedIn$.asObservable(),
+    ]).pipe(
+      tap(([isConnected, isLoggedIn]) => this.authStatus$.next(isConnected && isLoggedIn)),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
-  setAuthStatus(isLoggedIn: boolean): void {
+  setLoginStatus(isLoggedIn: boolean): void {
     this.isLoggedIn$.next(isLoggedIn);
   }
 
   setConnectionStatus(connected: boolean): void {
-    this.syncIsConnected = connected;
     this.connectionEstablished$.next(connected);
   }
 }

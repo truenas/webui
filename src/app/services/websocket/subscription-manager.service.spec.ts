@@ -1,8 +1,9 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SubscriptionManagerService', () => {
   let spectator: SpectatorService<SubscriptionManagerService>;
@@ -15,6 +16,12 @@ describe('SubscriptionManagerService', () => {
       mockProvider(WebSocketHandlerService, {
         responses$,
         scheduleCall: jest.fn(),
+      }),
+      mockProvider(WebSocketStatusService, {
+        isConnected$: of(true),
+        isAuthenticated$: of(true),
+        isConnected: true,
+        isAuthenticated: true,
       }),
     ],
   });

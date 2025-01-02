@@ -7,7 +7,9 @@ import {
   StorageStrategyStub, withLocalStorage,
 } from 'ngx-webstorage';
 import * as rxjs from 'rxjs';
-import { firstValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject, firstValueFrom,
+} from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -40,9 +42,12 @@ const authMeUser = {
   },
 } as LoggedInUser;
 
+const mockWsStatus = new WebSocketStatusService();
+
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
+  let timer$: BehaviorSubject<0>;
   const createService = createServiceFactory({
     service: AuthService,
     providers: [
@@ -59,9 +64,10 @@ describe('AuthService', () => {
           },
         } as LoginExResponse),
       ]),
-      mockProvider(WebSocketStatusService, {
-        isConnected$: of(true),
-      }),
+      {
+        provide: WebSocketStatusService,
+        useValue: mockWsStatus,
+      },
       {
         provide: STORAGE_STRATEGIES,
         useFactory: () => new StorageStrategyStub(LocalStorageStrategy.strategyName),
@@ -78,11 +84,14 @@ describe('AuthService', () => {
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
     });
+    mockWsStatus.setConnectionStatus(true);
+    timer$ = new BehaviorSubject(0);
+    jest.spyOn(rxjs, 'timer').mockReturnValue(timer$.asObservable());
   });
 
   describe('Login', () => {
     it('initializes auth session with triggers and token with username/password login', () => {
-      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
+      timer$.next(0);
 
       const obs$ = spectator.service.login('dummy', 'dummy');
 
@@ -105,7 +114,7 @@ describe('AuthService', () => {
     });
 
     it('initializes auth session with triggers and token with token login', () => {
-      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
+      timer$.next(0);
 
       const obs$ = spectator.service.loginWithToken();
 

@@ -171,7 +171,7 @@ export class AuthService {
       tap(() => {
         this.clearAuthToken();
         this.api.clearSubscriptions();
-        this.wsStatus.setAuthStatus(false);
+        this.wsStatus.setLoginStatus(false);
       }),
     );
   }
@@ -190,18 +190,18 @@ export class AuthService {
           this.loggedInUser$.next(result.user_info);
 
           if (!result.user_info?.privilege?.webui_access) {
-            this.wsStatus.setAuthStatus(false);
+            this.wsStatus.setLoginStatus(false);
             return of(LoginResult.NoAccess);
           }
 
-          this.wsStatus.setAuthStatus(true);
+          this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           return this.authToken$.pipe(
             take(1),
             map(() => LoginResult.Success),
           );
         }
-        this.wsStatus.setAuthStatus(false);
+        this.wsStatus.setLoginStatus(false);
 
         if (result.response_type === LoginExResponseType.OtpRequired) {
           return of(LoginResult.NoOtp);
@@ -215,7 +215,7 @@ export class AuthService {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
-        filter((isAuthenticated) => isAuthenticated),
+        filter(Boolean),
         switchMap(() => this.api.call('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
       ).subscribe();
@@ -249,7 +249,7 @@ export class AuthService {
 
   private setupWsConnectionUpdate(): void {
     this.wsStatus.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
-      this.wsStatus.setAuthStatus(false);
+      this.wsStatus.setLoginStatus(false);
     });
   }
 
