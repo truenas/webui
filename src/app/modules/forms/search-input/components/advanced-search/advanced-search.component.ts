@@ -65,7 +65,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   protected showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   get editorHasValue(): boolean {
-    return this.editorView.state.doc?.length > 0;
+    return this.editorView?.state?.doc?.length > 0;
   }
 
   constructor(
