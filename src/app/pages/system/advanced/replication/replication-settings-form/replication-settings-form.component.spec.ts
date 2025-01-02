@@ -27,7 +27,11 @@ describe('ReplicationSettingsFormComponent', () => {
       mockApi([
         mockCall('replication.config.update'),
       ]),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => ({ max_parallel_replication_tasks: 1 })) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({ max_parallel_replication_tasks: 1 })),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),

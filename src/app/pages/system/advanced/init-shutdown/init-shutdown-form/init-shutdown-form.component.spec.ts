@@ -47,7 +47,11 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -116,6 +120,7 @@ describe('InitShutdownFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
             getData: jest.fn(() => ({
               id: 13,
               comment: 'Existing script',

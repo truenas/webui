@@ -8,6 +8,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
@@ -74,6 +75,10 @@ export class InstanceEditFormComponent {
     protected formatter: IxFormatterService,
     public slideInRef: SlideInRef<VirtualizationInstance, VirtualizationInstance | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({

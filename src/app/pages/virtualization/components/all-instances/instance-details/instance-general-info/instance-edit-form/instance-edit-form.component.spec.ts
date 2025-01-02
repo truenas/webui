@@ -61,6 +61,7 @@ describe('InstanceEditFormComponent', () => {
       }),
       mockProvider(SlideInRef, {
         getData: () => mockInstance,
+        requireConfirmationWhen: jest.fn(),
         close: jest.fn(),
       }),
     ],

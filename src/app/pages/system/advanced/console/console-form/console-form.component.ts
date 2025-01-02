@@ -95,6 +95,9 @@ export class ConsoleFormComponent implements OnInit {
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<ConsoleConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.consoleConfig = this.slideInRef.getData();
   }
 

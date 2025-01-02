@@ -51,6 +51,7 @@ describe('SystemSecurityFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
       mockProvider(DialogService, {

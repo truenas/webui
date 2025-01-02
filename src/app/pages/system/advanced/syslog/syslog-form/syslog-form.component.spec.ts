@@ -53,6 +53,7 @@ describe('SyslogFormComponent', () => {
       provideMockStore(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
