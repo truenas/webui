@@ -2,8 +2,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CpuValidatorService', () => {
   let spectator: SpectatorService<CpuValidatorService>;

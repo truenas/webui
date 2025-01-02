@@ -322,7 +322,6 @@
   "(TrueNAS Controller 2)": "(Controlador TrueNAS 2)",
   "({n, plural, =1 {# widget} other {# widgets}})": "({n, plural, =1 {# widget} other {# widgets}})",
   "+ Add a backup credential": "+ Agregar una credencial de respaldo",
-  "-": "-",
   "...": "...",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... Asegurate de que el sistema TrueNAS esté prendido y conectado a la red.",
   "0=Disabled, blank=inherit": "0=Deshabilitado, en blanco=heredar",

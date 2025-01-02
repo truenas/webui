@@ -15,11 +15,11 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const shares: Partial<NfsShare>[] = [
   {
@@ -31,6 +31,12 @@ const shares: Partial<NfsShare>[] = [
     path: 'some-path',
   },
 ];
+
+const slideInRef: SlideInRef<NfsShare | undefined, unknown> = {
+  close: jest.fn(),
+  requireConfirmationWhen: jest.fn(),
+  getData: jest.fn(() => undefined),
+};
 
 describe('NfsListComponent', () => {
   let spectator: Spectator<NfsListComponent>;
@@ -52,12 +58,12 @@ describe('NfsListComponent', () => {
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of(true) })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -77,14 +83,14 @@ describe('NfsListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(NfsFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent);
   });
 
   it('opens nfs share form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(NfsFormComponent, {
       data: { existingNfsShare: shares[0] },
     });
   });

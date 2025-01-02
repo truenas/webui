@@ -8,6 +8,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KerberosKeytabsFormComponent,
 } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
@@ -15,7 +16,6 @@ import {
   KerberosKeytabsListComponent,
 } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KerberosKeytabsListComponent', () => {
   let spectator: Spectator<KerberosKeytabsListComponent>;

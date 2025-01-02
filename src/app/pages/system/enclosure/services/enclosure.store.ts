@@ -10,13 +10,13 @@ import { Observable, switchMap, tap } from 'rxjs';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];

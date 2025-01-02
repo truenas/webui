@@ -3,8 +3,8 @@ import { MockComponent } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppNetworkInfoComponent } from './app-network-info.component';
 
 describe('AppNetworkInfoComponent', () => {

@@ -5,8 +5,8 @@ import {
 } from '@ngneat/spectator/jest';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 
 describe('ScheduleDescriptionPipe', () => {
   let spectator: SpectatorService<ScheduleDescriptionPipe>;

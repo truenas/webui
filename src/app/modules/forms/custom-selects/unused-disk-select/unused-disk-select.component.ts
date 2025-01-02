@@ -23,11 +23,11 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * Presents unused disks, shows their size and if there is exported pool on them.

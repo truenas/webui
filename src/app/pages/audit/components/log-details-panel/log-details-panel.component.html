@@ -1,16 +1,3 @@
-<div class="header">
-  <h2 class="title">
-    <div class="mobile-prefix">
-      <ix-mobile-back-button
-        (close)="onCloseMobileDetails()"
-      ></ix-mobile-back-button>
-      {{ 'Log Details' | translate }}
-    </div>
-
-    <span class="prefix">{{ 'Log Details' | translate }}</span>
-  </h2>
-</div>
-
 <div class="cards">
   <div class="scroll-window">
     <ix-metadata-details-card [log]="log()"></ix-metadata-details-card>

@@ -15,11 +15,10 @@ import {
 } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
@@ -33,6 +32,12 @@ describe('SshKeypairFormComponent', () => {
       private_key: 'Existing private key',
     },
   } as KeychainSshKeyPair;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: SshKeypairFormComponent,
@@ -48,12 +53,11 @@ describe('SshKeypairFormComponent', () => {
         mockCall('keychaincredential.create'),
         mockCall('keychaincredential.update'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DownloadService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -140,7 +144,7 @@ describe('SshKeypairFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: fakeSshKeyPair },
+          mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => fakeSshKeyPair) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

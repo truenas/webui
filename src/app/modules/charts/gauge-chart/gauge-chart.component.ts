@@ -5,9 +5,9 @@ import {
 import { TinyColor } from '@ctrl/tinycolor';
 import { ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { Theme } from 'app/interfaces/theme.interface';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ThemeUtils } from 'app/modules/theme/utils/theme-utils';
 import './rounded-doughnut.class';
 
 const defaultHeight = 300;

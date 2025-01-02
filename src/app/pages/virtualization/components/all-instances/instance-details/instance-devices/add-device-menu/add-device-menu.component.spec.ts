@@ -6,11 +6,11 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { AvailableGpu, AvailableUsb, VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddDeviceMenuComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/add-device-menu/add-device-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AddDeviceMenuComponent', () => {
   let spectator: Spectator<AddDeviceMenuComponent>;

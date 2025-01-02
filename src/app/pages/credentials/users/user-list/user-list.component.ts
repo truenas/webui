@@ -32,13 +32,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { userPageEntered, userRemoved } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { userListElements } from 'app/pages/credentials/users/user-list/user-list.elements';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -131,7 +131,7 @@ export class UserListComponent implements OnInit {
   }
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private translate: TranslateService,
@@ -177,7 +177,7 @@ export class UserListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.slideInService.open(UserFormComponent, { wide: true });
+    this.slideIn.open(UserFormComponent, { wide: true });
   }
 
   navigateToApiKeys(): void {

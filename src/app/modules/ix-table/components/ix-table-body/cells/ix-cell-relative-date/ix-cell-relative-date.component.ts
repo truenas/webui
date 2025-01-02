@@ -7,8 +7,8 @@ import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { ColumnComponent, Column } from 'app/modules/ix-table/interfaces/column-component.class';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-cell-relative-date',
