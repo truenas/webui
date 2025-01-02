@@ -23,14 +23,13 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -41,6 +40,12 @@ describe('IscsiWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let store$: Store<AppState>;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -53,7 +58,9 @@ describe('IscsiWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -100,8 +107,7 @@ describe('IscsiWizardComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -183,6 +189,6 @@ describe('IscsiWizardComponent', () => {
 
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   }));
 });

@@ -10,8 +10,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {

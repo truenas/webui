@@ -7,9 +7,9 @@ import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/
 import { MockEnclosureGenerator } from 'app/core/testing/mock-enclosure/mock-enclosure-generator.utils';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { ApiService } from 'app/services/websocket/api.service';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({

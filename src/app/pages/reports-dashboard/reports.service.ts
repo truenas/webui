@@ -6,10 +6,10 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -107,8 +107,7 @@ export class ReportsService {
         return disks
           .filter((disk) => !disk.devname.includes('multipath'))
           .map((disk) => {
-            const [value] = disk.devname.split(' ');
-            return { label: disk.devname, value };
+            return { label: disk.devname, value: disk.identifier };
           })
           .sort((a, b) => a.label.localeCompare(b.label));
       }),

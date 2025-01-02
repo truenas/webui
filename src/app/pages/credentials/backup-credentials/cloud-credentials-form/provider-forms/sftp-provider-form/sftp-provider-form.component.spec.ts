@@ -7,10 +7,10 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SftpProviderFormComponent', () => {
   let spectator: Spectator<SftpProviderFormComponent>;

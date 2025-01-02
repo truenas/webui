@@ -11,7 +11,7 @@ import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { CreateDatasetDialogComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('CreateDatasetDialogComponent', () => {
   let spectator: Spectator<CreateDatasetDialogComponent>;

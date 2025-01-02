@@ -18,13 +18,13 @@ import {
   IxSlideToggleComponent,
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxSlideToggleHarness } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {

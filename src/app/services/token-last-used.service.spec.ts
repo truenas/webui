@@ -5,10 +5,10 @@ import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 
 describe('TokenLastUsedService', () => {
   let spectator: SpectatorService<TokenLastUsedService>;

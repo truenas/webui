@@ -10,10 +10,10 @@ import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('StripAclModalComponent', () => {
   let spectator: Spectator<StripAclModalComponent>;

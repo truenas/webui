@@ -12,8 +12,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('FailoverComponent', () => {

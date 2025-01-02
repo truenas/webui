@@ -10,11 +10,11 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import {
   SourceSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/source-section/source-section.component';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('SourceSectionComponent', () => {

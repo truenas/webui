@@ -13,6 +13,7 @@ import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -21,7 +22,6 @@ import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-passwo
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 

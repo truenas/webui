@@ -14,10 +14,10 @@ import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface'
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -29,6 +29,12 @@ describe('TargetGlobalConfigurationComponent', () => {
   let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: GlobalTargetConfigurationComponent,
@@ -51,7 +57,7 @@ describe('TargetGlobalConfigurationComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [
           {
@@ -117,7 +123,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       listen_port: 3270,
       alua: false,
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('checks if iSCSI service is enabled and does nothing if it is', async () => {

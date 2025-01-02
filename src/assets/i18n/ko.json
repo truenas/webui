@@ -433,7 +433,6 @@
   "(TrueNAS Controller 2)": "(TrueNAS 컨트롤러 2)",
   "({n, plural, =1 {# widget} other {# widgets}})": "{n}위젯",
   "+ Add a backup credential": "+ 백업 자격증명 추가",
-  "-": "-",
   "...": "...",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... TrueNAS 시스템이 켜져있고, 네트워크에 연결되었는지 확인하십시오.",
   "0=Disabled, blank=inherit": "0=비활성화, 비움=상속",

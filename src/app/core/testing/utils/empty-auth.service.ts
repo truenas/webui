@@ -1,5 +1,5 @@
 import { getMissingInjectionErrorFactory, getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 
 export class EmptyAuthService {
   readonly authToken$ = getMissingInjectionErrorObservable(AuthService.name);

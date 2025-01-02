@@ -25,8 +25,9 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     const hierarchyItem = this.config().hierarchy?.[this.config().hierarchy.length - 1] || '';
     const isSingleWord = hierarchyItem.trim().split(/\s+/).length === 1;
 
-    if (isSingleWord && this.config().synonyms?.length > 0) {
-      return this.config().synonyms.reduce((best, synonym) => {
+    const synonyms = this.config().synonyms;
+    if (isSingleWord && synonyms && Number(synonyms?.length) > 0) {
+      return synonyms.reduce((best, synonym) => {
         const synonymWordCount = synonym.trim().split(/\s+/).length;
         const bestWordCount = best.trim().split(/\s+/).length;
         return synonymWordCount > bestWordCount ? synonym : best;
@@ -73,7 +74,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private highlightElementAnchor(elementAnchor: string): void {
     setTimeout(() => {
       const rootNode = this.elementRef.nativeElement.getRootNode() as HTMLElement;
-      const anchorRef: HTMLElement = rootNode?.querySelector(`#${elementAnchor}`);
+      const anchorRef: HTMLElement | null = rootNode?.querySelector(`#${elementAnchor}`);
 
       if (anchorRef) {
         this.highlightAndClickElement(anchorRef);

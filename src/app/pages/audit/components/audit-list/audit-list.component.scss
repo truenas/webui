@@ -1,0 +1,23 @@
+@import 'scss-imports/variables';
+@import 'mixins/layout';
+
+:host ::ng-deep .sticky-header {
+  height: inherit;
+  min-height: 48px;
+  top: 38px;
+
+  @media(max-width: $breakpoint-md) {
+    position: static;
+  }
+
+  >thead {
+    align-items: center;
+    display: flex;
+    width: 100%;
+
+    th {
+      align-items: center;
+      display: flex;
+    }
+  }
+}

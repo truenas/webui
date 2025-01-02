@@ -13,8 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
@@ -53,6 +53,7 @@ describe('SyslogFormComponent', () => {
       provideMockStore(),
       mockProvider(SlideInRef, {
         close: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
         getData: jest.fn(() => ({
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,

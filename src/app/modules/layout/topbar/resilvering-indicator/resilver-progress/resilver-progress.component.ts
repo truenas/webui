@@ -13,7 +13,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({

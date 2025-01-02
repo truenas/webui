@@ -6,8 +6,8 @@ import cronstrue from 'cronstrue/i18n';
 import { invalidDate } from 'app/constants/invalid-date';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
-import { LocaleService } from 'app/services/locale.service';
-import { LanguageService } from './language.service';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {

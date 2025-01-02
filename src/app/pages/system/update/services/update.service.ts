@@ -4,8 +4,8 @@ import {
   BehaviorSubject,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({

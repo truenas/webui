@@ -17,8 +17,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -68,9 +68,8 @@ export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const typeLabel = this.translate.instant(
-      vmNicTypeLabels.get(this.form.value.nic_type) || this.form.value.nic_type,
-    );
+    const nicTypeLabel = this.form.value.nic_type ? vmNicTypeLabels.get(this.form.value.nic_type) || '' : '';
+    const typeLabel = nicTypeLabel ? this.translate.instant(nicTypeLabel) : '';
     return [
       {
         label: this.translate.instant('NIC'),

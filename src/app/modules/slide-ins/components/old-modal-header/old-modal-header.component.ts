@@ -5,10 +5,10 @@ import {
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { TranslateModule } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { AuthService } from 'app/services/auth/auth.service';
 
 /**
  * @deprecated Use SlideIn and ix-modal-header.

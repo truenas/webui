@@ -6,7 +6,7 @@
   </mat-card-header>
 
   <mat-card-content>
-    @if (instance()?.status === virtualizationStatus.Running) {
+    @if (instance().status === virtualizationStatus.Running) {
       <ix-instance-metrics-linechart
         postfix="%"
         [title]="'CPU' | translate"

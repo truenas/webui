@@ -6,8 +6,8 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { VmService } from './vm.service';
 
 describe('VmService', () => {

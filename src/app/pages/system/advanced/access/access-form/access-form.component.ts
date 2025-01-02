@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -22,14 +23,13 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
-import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import {
   waitForAdvancedConfig,
@@ -62,14 +62,14 @@ export class AccessFormComponent implements OnInit {
   readonly requiredRoles = [Role.AuthSessionsWrite];
 
   isLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     token_lifetime: [defaultPreferences.lifetime, [
       Validators.required,
       Validators.min(30), // Min value allowed is 30 seconds.
       Validators.max(2147482), // Max value is 2147482 seconds, or 24 days, 20 hours, 31 minutes, and 22 seconds.
     ]],
     ds_auth: [false],
-    login_banner: [null as string],
+    login_banner: [null as string | null],
   });
 
   get isEnterprise(): boolean {
@@ -91,7 +91,7 @@ export class AccessFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store$.select(selectPreferences).pipe(untilDestroyed(this)).subscribe((preferences) => {
+    this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {
       if (preferences.lifetime) {
         this.form.controls.token_lifetime.setValue(preferences.lifetime);
         this.cdr.markForCheck();
@@ -116,7 +116,7 @@ export class AccessFormComponent implements OnInit {
         take(1),
         untilDestroyed(this),
       ).subscribe(() => {
-        this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
+        this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.getRawValue().token_lifetime }));
 
         const bannerChanged = this.form.controls.login_banner.dirty;
 

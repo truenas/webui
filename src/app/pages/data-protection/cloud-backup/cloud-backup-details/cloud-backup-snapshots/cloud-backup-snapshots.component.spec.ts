@@ -10,12 +10,12 @@ import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -41,6 +41,12 @@ describe('CloudBackupSnapshotsComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: CloudBackupSnapshotsComponent,
     providers: [
@@ -52,15 +58,10 @@ describe('CloudBackupSnapshotsComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(StorageService),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(true),
-      }),
+      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [
           {
@@ -96,7 +97,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   });
 
   it('handles restore functionality', async () => {
-    const slideInService = spectator.inject(OldSlideInService);
+    const slideInService = spectator.inject(SlideIn);
 
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 2);
     await restoreButton.click();

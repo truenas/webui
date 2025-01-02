@@ -10,13 +10,13 @@ import {
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   userPageEntered,
   userRemoved,
   usersLoaded,
   usersNotLoaded,
 } from 'app/pages/credentials/users/store/user.actions';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';

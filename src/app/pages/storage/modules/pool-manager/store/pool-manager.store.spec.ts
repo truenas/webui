@@ -9,6 +9,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -18,7 +19,6 @@ import {
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;

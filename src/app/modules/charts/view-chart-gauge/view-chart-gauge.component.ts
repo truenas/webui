@@ -124,7 +124,11 @@ export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
     // Adjust group to compensate
     const isFirefox: boolean = navigator.userAgent.toLowerCase().includes('firefox');
     const offsetY = isFirefox ? 10 : 0;
-    const bbox = textGroup.node().getBBox();
+    const bbox = textGroup.node()?.getBBox();
+    if (!bbox) {
+      return;
+    }
+
     const top = (height / 2) - (bbox.height / 2);
     text.attr('x', width / 2)
       .attr('y', top + offsetY);

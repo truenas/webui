@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 @Component({
   selector: 'ix-logo',

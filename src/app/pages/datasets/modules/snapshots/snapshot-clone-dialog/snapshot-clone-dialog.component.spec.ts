@@ -8,7 +8,7 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialogComponent } from './snapshot-clone-dialog.component';
 
 describe('SnapshotCloneDialogComponent', () => {

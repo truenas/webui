@@ -1,8 +1,8 @@
-<ix-old-modal-header
+<ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'iSCSI Wizard' | translate"
   [loading]="isLoading"
-></ix-old-modal-header>
+></ix-modal-header>
 
 <mat-card class="card">
   <form [formGroup]="form" (keydown.enter)="$event.preventDefault()" (submit)="onSubmit()">

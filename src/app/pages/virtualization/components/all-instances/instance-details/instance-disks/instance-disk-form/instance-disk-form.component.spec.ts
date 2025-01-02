@@ -7,11 +7,11 @@ import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InstanceDiskFormComponent', () => {
   let spectator: Spectator<InstanceDiskFormComponent>;

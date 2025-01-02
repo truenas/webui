@@ -5,8 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 @Component({
   selector: 'ix-instance-metrics-linechart',

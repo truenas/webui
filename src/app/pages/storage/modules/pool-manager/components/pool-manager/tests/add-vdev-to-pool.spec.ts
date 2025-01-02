@@ -11,6 +11,7 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
@@ -22,7 +23,6 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AddVdevsComponent – Add Vdev to existing pool', () => {
   let spectator: Spectator<AddVdevsComponent>;

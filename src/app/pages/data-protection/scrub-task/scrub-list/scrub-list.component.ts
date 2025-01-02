@@ -38,11 +38,11 @@ import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-expl
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

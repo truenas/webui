@@ -30,13 +30,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -97,8 +97,8 @@ export class KerberosRealmsListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: row });
-            slideInRef.slideInClosed$.pipe(
+            this.slideIn.open(KerberosRealmsFormComponent, { data: row }).pipe(
+              filter((response) => !!response.response),
               untilDestroyed(this),
             ).subscribe(() => this.getKerberosRealms());
           },
@@ -138,7 +138,7 @@ export class KerberosRealmsListComponent implements OnInit {
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   ngOnInit(): void {
@@ -177,8 +177,8 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(KerberosRealmsFormComponent);
-    slideInRef.slideInClosed$.pipe(
+    this.slideIn.open(KerberosRealmsFormComponent).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getKerberosRealms());
   }

@@ -9,8 +9,8 @@ import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;

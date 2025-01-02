@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NativeDateAdapter } from '@angular/material/core';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 
 /**
  * This is to be provided in components when we need to format and parse a date according

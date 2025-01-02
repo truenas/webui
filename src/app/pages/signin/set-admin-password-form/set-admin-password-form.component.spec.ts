@@ -6,14 +6,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetAdminPasswordFormComponent,
 } from 'app/pages/signin/set-admin-password-form/set-admin-password-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;

@@ -4,11 +4,11 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
+import { LayoutService } from 'app/modules/layout/layout.service';
+import { PageTitleService } from 'app/modules/layout/page-title.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { BreadcrumbComponent } from 'app/modules/page-header/breadcrumb/breadcrumb.component';
 import { HeaderBadgeComponent } from 'app/modules/page-header/header-badge/header-badge.component';
-import { LayoutService } from 'app/services/layout.service';
-import { PageTitleService } from 'app/services/page-title.service';
 
 /**
  * Usage:

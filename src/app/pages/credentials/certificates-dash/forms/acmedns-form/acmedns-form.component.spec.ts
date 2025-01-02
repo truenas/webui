@@ -15,8 +15,8 @@ import { Schema } from 'app/interfaces/schema.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AcmednsFormComponent', () => {
   let spectator: Spectator<AcmednsFormComponent>;

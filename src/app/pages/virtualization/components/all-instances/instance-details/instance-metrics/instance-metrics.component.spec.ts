@@ -5,8 +5,8 @@ import { of } from 'rxjs';
 import { VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceMetricsLineChartComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-metrics/instance-metrics-linechart/instance-metrics-linechart.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { InstanceMetricsComponent } from './instance-metrics.component';
 
 describe('InstanceMetricsComponent', () => {

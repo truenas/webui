@@ -11,9 +11,9 @@ import {
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiService } from 'app/services/websocket/api.service';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /**

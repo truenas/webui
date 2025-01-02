@@ -29,6 +29,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -39,7 +40,6 @@ import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 

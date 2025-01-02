@@ -10,9 +10,9 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialogComponent } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ContainerLogsComponent', () => {
   let spectator: Spectator<ContainerLogsComponent>;

@@ -10,7 +10,7 @@ import {
 import {
   ResilveringIndicatorComponent,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilvering-indicator.component';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ResilveringIndicatorComponent', () => {
   let spectator: Spectator<ResilveringIndicatorComponent>;

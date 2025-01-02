@@ -5,9 +5,9 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('CpuCoreBarComponent', () => {

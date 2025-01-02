@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  Validators, ReactiveFormsModule, FormBuilder,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -39,7 +40,7 @@ export class UploadConfigDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
 
   form = this.formBuilder.group({
-    config: [null as File[], Validators.required],
+    config: [null as File[] | null, Validators.required],
   });
 
   readonly helptext = helptext;

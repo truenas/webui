@@ -13,12 +13,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceRowComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-row/instance-row.component';
 import {
   StopOptionsDialogComponent,
   StopOptionsOperation,
 } from 'app/pages/virtualization/components/all-instances/instance-list/stop-options-dialog/stop-options-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const instance = {
   id: 'my-instance',

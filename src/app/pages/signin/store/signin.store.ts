@@ -14,14 +14,14 @@ import {
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 

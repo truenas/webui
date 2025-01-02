@@ -1,7 +1,6 @@
 {
   "": "",
   "\"Power On Hours\" are how many hours have passed while the disk has been powered on. \"Power On Hours Ago\" is how many power on hours have passed since each test.": "",
-  "-": "",
   "<a href=\"https://forums.truenas.com/\" target=\"_blank\"> TrueNAS Forums</a> - Find answers from other users in the forums.": "",
   "<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport Protocol</a> for the remote system log server connection. Choosing Transport Layer Security (TLS) also requires selecting a preconfigured system Certificate.": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",

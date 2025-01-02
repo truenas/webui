@@ -13,6 +13,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -20,7 +21,6 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InitShutdownCardComponent', () => {
   let spectator: Spectator<InitShutdownCardComponent>;

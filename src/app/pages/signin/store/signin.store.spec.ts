@@ -7,14 +7,14 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninStore', () => {
