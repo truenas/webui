@@ -30,12 +30,12 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -120,7 +120,7 @@ export class AlertServiceListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) { }
@@ -138,8 +138,10 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   addAlertService(): void {
-    const slideInRef = this.slideInService.open(AlertServiceComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.getAlertServices());
   }
 
   protected onListFiltered(query: string): void {
@@ -154,8 +156,10 @@ export class AlertServiceListComponent implements OnInit {
   }
 
   private editAlertService(row: AlertService): void {
-    const slideInRef = this.slideInService.open(AlertServiceComponent, { data: row });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getAlertServices());
+    this.slideIn.open(AlertServiceComponent, { data: row }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.getAlertServices());
   }
 
   private confirmDeleteAlertService(alertService: AlertService): void {

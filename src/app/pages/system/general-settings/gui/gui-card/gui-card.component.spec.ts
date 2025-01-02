@@ -6,9 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -45,8 +45,8 @@ describe('GuiCardComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of() })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -78,6 +78,6 @@ describe('GuiCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(GuiFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GuiFormComponent);
   });
 });

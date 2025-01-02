@@ -10,8 +10,8 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class DatasetFormService {
     private dialog: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {
@@ -35,7 +35,7 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooDeepWarning),
           ).pipe(
-            tap(() => this.slideInService.closeLast()),
+            tap(() => this.slideIn.popComponent(undefined)),
             map(() => false),
           );
         }
@@ -44,7 +44,7 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooLongWarning),
           ).pipe(
-            tap(() => this.slideInService.closeLast()),
+            tap(() => this.slideIn.popComponent(undefined)),
             map(() => false),
           );
         }

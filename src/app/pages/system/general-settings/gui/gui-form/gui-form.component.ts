@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import {
-  filter, switchMap, takeUntil, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -26,8 +26,8 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -47,7 +47,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -92,7 +92,6 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private slideInRef: OldSlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
@@ -103,6 +102,7 @@ export class GuiFormComponent {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
+    public slideInRef: SlideInRef<undefined, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.loadCurrentValues();
@@ -194,7 +194,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInRef.close(true)),
+        tap(() => this.slideInRef.close({ response: true, error: null })),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -228,7 +228,7 @@ export class GuiFormComponent {
         });
       });
     } else {
-      this.slideInRef.close(true);
+      this.slideInRef.close({ response: true, error: null });
     }
   }
 
@@ -259,7 +259,6 @@ export class GuiFormComponent {
 
   private setupThemePreview(): void {
     this.formGroup.controls.theme.valueChanges.pipe(
-      takeUntil(this.slideInRef.slideInClosed$),
       untilDestroyed(this),
     ).subscribe((theme) => {
       this.store$.dispatch(themeChangedInGuiForm({ theme }));

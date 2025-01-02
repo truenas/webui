@@ -6,9 +6,9 @@ import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('DatasetFormService', () => {
   let spectator: SpectatorService<DatasetFormService>;
@@ -22,7 +22,10 @@ describe('DatasetFormService', () => {
       mockProvider(DialogService, {
         warn: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+        popComponent: jest.fn(),
+      }),
     ],
   });
 
@@ -37,7 +40,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooLongWarning,
       );
-      expect(spectator.inject(OldSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideIn).popComponent).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
@@ -48,7 +51,7 @@ describe('DatasetFormService', () => {
         helptextDatasetForm.pathWarningTitle,
         helptextDatasetForm.pathIsTooDeepWarning,
       );
-      expect(spectator.inject(OldSlideInService).closeLast).toHaveBeenCalled();
+      expect(spectator.inject(SlideIn).popComponent).toHaveBeenCalled();
     });
   });
 

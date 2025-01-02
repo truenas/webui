@@ -24,12 +24,11 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { VmService } from 'app/services/vm.service';
 
 describe('DeviceFormComponent', () => {
@@ -38,6 +37,13 @@ describe('DeviceFormComponent', () => {
   let form: IxFormHarness;
   let saveButton: MatButtonHarness;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<{ virtualMachineId: number; device: VmDevice } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: DeviceFormComponent,
     imports: [
@@ -94,13 +100,14 @@ describe('DeviceFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FilesystemService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
       }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -119,17 +126,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -150,7 +152,7 @@ describe('DeviceFormComponent', () => {
           order: 1002,
           vm: 45,
         }]);
-        expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+        expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       });
     });
 
@@ -158,18 +160,15 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingCdRom,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingCdRom })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -217,17 +216,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -290,18 +284,18 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({
                 virtualMachineId: 45,
                 device: existingNic,
-              },
-            },
+              })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -336,17 +330,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -381,18 +370,15 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingDisk,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisk })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -449,17 +435,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -495,18 +476,15 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingRawFile,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingRawFile })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -559,17 +537,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -600,18 +573,16 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingPassthrough,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingPassthrough })),
+            }),
+
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -668,18 +639,15 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingDisplay,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingDisplay })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -700,17 +668,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 46,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 46 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -739,17 +702,12 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-              },
-            },
+            mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ virtualMachineId: 45 })) }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
@@ -779,18 +737,15 @@ describe('DeviceFormComponent', () => {
       beforeEach(async () => {
         spectator = createComponent({
           providers: [
-            {
-              provide: SLIDE_IN_DATA,
-              useValue: {
-                virtualMachineId: 45,
-                device: existingUsb,
-              },
-            },
+            mockProvider(SlideInRef, {
+              ...slideInRef,
+              getData: jest.fn(() => ({ virtualMachineId: 45, device: existingUsb })),
+            }),
           ],
         });
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
         form = await loader.getHarness(IxFormHarness);
-        saveButton = await loader.getHarness(MatButtonHarness);
+        saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         api = spectator.inject(ApiService);
       });
 
