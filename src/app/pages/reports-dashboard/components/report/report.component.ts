@@ -277,10 +277,6 @@ export class ReportComponent implements OnInit, OnChanges {
     this.customZoom = true;
   }
 
-  setChartInteractive(value: boolean): void {
-    this.isActive = value;
-  }
-
   timeZoomReset(): void {
     this.zoomLevelIndex = this.zoomLevelMax;
     const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
