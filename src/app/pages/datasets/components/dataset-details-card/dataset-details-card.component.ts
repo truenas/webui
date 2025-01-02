@@ -22,12 +22,12 @@ import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-av
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

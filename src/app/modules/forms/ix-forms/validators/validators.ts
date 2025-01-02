@@ -1,5 +1,5 @@
 import {
-  FormControl, FormGroup, UntypedFormControl, ValidatorFn,
+  FormControl, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
 } from '@angular/forms';
 import { isEmpty, isNumber, toNumber } from 'lodash-es';
 
@@ -8,7 +8,7 @@ export function greaterThanFg(
   comparateControlNames: string[],
   errMsg?: string,
 ): ValidatorFn {
-  return (fg: FormGroup<unknown>) => {
+  return (fg: FormGroup) => {
     if (!fg?.get(controlName)) {
       return null;
     }
@@ -34,19 +34,19 @@ export function greaterThanFg(
       }
     }
     if (errFields.length) {
-      fg.get(controlName).setErrors({
+      fg.get(controlName)?.setErrors({
         greaterThan: errMsg ? { message: errMsg } : true,
       });
       return {
         [controlName]: { greaterThan: errMsg ? { message: errMsg } : true },
       };
     }
-    let prevErrors = { ...fg.get(controlName).errors };
+    let prevErrors: ValidationErrors | null = { ...fg.get(controlName)?.errors };
     delete prevErrors.greaterThan;
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    fg.get(controlName).setErrors(prevErrors);
+    fg.get(controlName)?.setErrors(prevErrors);
     return null;
   };
 }

@@ -23,12 +23,12 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ipmiCardElements } from 'app/pages/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

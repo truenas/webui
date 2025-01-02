@@ -19,10 +19,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeQuotas = [{
   id: 1,

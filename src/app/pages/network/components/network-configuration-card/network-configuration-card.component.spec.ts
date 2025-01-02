@@ -11,9 +11,9 @@ import { NetworkConfiguration } from 'app/interfaces/network-configuration.inter
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;

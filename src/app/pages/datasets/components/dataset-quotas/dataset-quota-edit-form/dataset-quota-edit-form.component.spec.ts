@@ -13,8 +13,8 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DatasetQuotaEditFormComponent', () => {
   let spectator: Spectator<DatasetQuotaEditFormComponent>;

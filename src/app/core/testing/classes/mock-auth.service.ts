@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 
 @Injectable()
 export class MockAuthService extends AuthService {

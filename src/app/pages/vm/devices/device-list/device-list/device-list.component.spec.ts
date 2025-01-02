@@ -15,6 +15,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -22,7 +23,6 @@ import {
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;

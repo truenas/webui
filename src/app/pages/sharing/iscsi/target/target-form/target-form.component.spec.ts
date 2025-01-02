@@ -22,9 +22,9 @@ import {
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('TargetFormComponent', () => {

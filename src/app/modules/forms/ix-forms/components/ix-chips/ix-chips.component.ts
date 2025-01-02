@@ -63,7 +63,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   readonly label = input<string>();
-  readonly placeholder = input<string>();
+  readonly placeholder = input<string>('');
   readonly hint = input<string>();
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
@@ -94,9 +94,9 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private resolvedOptions: Option[] | null = [];
 
-  private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild('chipInput', { read: ElementRef });
+  private readonly chipInput: Signal<ElementRef<HTMLInputElement>> = viewChild.required('chipInput', { read: ElementRef });
 
-  suggestions$: Observable<string[] | null>;
+  suggestions$: Observable<string[]> | null;
   values: string[] = [];
   isDisabled = false;
 
@@ -180,7 +180,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onInputBlur(): void {
     if (!this.allowNewEntries() || this.resolveValue()) {
-      this.chipInput().nativeElement.value = null;
+      this.chipInput().nativeElement.value = '';
       return;
     }
     this.onAdd(this.chipInput().nativeElement.value);

@@ -13,11 +13,11 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { KeyCreatedDialogComponent } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { LocaleService } from 'app/services/locale.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ApiKeyFormComponent', () => {
   let spectator: Spectator<ApiKeyFormComponent>;

@@ -26,6 +26,7 @@ import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
@@ -33,7 +34,6 @@ import { KerberosRealmsListComponent } from 'app/pages/directory-service/compone
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {

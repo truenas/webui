@@ -14,10 +14,10 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceFtpComponent', () => {
   let spectator: Spectator<ServiceFtpComponent>;

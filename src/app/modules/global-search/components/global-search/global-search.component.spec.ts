@@ -20,7 +20,7 @@ import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { SidenavService } from 'app/services/sidenav.service';
+import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 

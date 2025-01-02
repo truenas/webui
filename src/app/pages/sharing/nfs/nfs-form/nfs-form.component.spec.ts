@@ -28,10 +28,10 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';

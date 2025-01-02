@@ -31,12 +31,12 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

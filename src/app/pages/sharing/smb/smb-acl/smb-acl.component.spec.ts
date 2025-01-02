@@ -17,8 +17,8 @@ import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-comb
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SmbAclComponent } from './smb-acl.component';
 
 describe('SmbAclComponent', () => {

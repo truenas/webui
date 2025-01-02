@@ -5,7 +5,7 @@ import {
 } from 'rxjs';
 import { isCollectionUpdateMessage, isSuccessfulResponse } from 'app/helpers/api.helper';
 import { ApiEventMethod, ApiEventTyped, CollectionUpdateMessage } from 'app/interfaces/api-message.interface';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 type Method = ApiEventMethod | `${ApiEventMethod}:${string}`;
 
@@ -52,7 +52,7 @@ export class SubscriptionManagerService {
         filter((message) => {
           return isCollectionUpdateMessage(message) && message.params.collection === method;
         }),
-        map((message: CollectionUpdateMessage) => message.params),
+        map((message: CollectionUpdateMessage) => message.params as ApiEventTyped<K>),
       ).subscribe(subscriber);
 
       return () => {

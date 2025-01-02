@@ -22,9 +22,9 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -32,8 +32,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
   providedIn: 'root',
 })
 export class AuthService {
-  @LocalStorage() private token: string;
-  protected loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
+  @LocalStorage() private token: string | undefined | null;
+  protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -44,7 +44,7 @@ export class AuthService {
 
   private latestTokenGenerated$ = new ReplaySubject<string | null>(1);
   get authToken$(): Observable<string> {
-    return this.latestTokenGenerated$.asObservable().pipe(filter((token) => !!token));
+    return this.latestTokenGenerated$.asObservable().pipe(filter<string>((token) => !!token));
   }
 
   get hasAuthToken(): boolean {
@@ -188,10 +188,10 @@ export class AuthService {
     );
   }
 
-  refreshUser(): Observable<void> {
+  refreshUser(): Observable<undefined> {
     this.loggedInUser$.next(null);
     return this.getLoggedInUserInformation().pipe(
-      map(() => null),
+      map(() => undefined),
     );
   }
 

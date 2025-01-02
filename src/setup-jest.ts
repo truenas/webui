@@ -35,12 +35,12 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import {
   Observable,
 } from 'rxjs';
-import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   IxButtonGroupComponent,
@@ -76,6 +76,7 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
+import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   WithLoadingStateDirective,
@@ -88,9 +89,8 @@ import {
 } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
   return (

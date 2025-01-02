@@ -11,9 +11,9 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakePrivilegeDataSource: Privilege[] = [
   {

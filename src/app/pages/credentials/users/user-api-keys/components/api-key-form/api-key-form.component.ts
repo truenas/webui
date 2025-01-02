@@ -16,6 +16,7 @@ import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -29,11 +30,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialogComponent,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

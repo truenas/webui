@@ -18,13 +18,13 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxCellScheduleComponent,
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {

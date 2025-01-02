@@ -19,6 +19,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateDetailsComponent } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import {
   ViewCertificateDialogData,
@@ -26,7 +27,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

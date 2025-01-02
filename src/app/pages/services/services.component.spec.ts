@@ -21,6 +21,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -36,7 +37,6 @@ import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { initialState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 

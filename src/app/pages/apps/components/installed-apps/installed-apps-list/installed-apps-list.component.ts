@@ -38,6 +38,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
@@ -49,7 +50,6 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState as WebuiAppState } from 'app/store';
 
 enum SortableField {

@@ -20,6 +20,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
   EncryptionSectionComponent,
@@ -34,7 +35,6 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {

@@ -33,9 +33,9 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

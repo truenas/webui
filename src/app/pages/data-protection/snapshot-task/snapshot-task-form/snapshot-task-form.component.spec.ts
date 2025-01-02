@@ -11,13 +11,13 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskComponent', () => {

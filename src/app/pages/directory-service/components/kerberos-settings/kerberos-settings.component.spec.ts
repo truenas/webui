@@ -12,8 +12,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KerberosSettingsComponent', () => {
   let spectator: Spectator<KerberosSettingsComponent>;

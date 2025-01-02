@@ -26,6 +26,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
@@ -36,7 +37,6 @@ import {
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

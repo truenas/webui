@@ -12,10 +12,10 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { usersInitialState, UsersState } from 'app/pages/credentials/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 

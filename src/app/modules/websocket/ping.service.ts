@@ -4,8 +4,8 @@ import { UUID } from 'angular2-uuid';
 import {
   filter, interval, switchMap, tap,
 } from 'rxjs';
-import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 
 @UntilDestroy()
 @Injectable({

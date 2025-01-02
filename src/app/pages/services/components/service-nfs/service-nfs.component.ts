@@ -37,9 +37,9 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 

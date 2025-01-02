@@ -17,11 +17,11 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSpnDialogComponent,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('ServiceNfsComponent', () => {

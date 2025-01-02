@@ -25,6 +25,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -40,7 +41,6 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 

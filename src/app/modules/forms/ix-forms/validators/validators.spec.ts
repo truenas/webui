@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { greaterThanFg } from 'app/services/validators';
+import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 
 describe('ValidationService', () => {
   const value1 = 'value1';

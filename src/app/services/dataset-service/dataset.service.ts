@@ -7,8 +7,8 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {

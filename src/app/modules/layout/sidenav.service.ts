@@ -81,11 +81,11 @@ export class SidenavService {
   }
 
   toggleSecondaryMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    const [state, subItems] = menuInfo || [];
-    if ((this.isOpenSecondaryMenu && !menuInfo) || (this.isOpenSecondaryMenu && state === this.menuName)) {
+    if ((this.isOpenSecondaryMenu && !menuInfo) || (this.isOpenSecondaryMenu && menuInfo?.[0] === this.menuName)) {
       this.isOpenSecondaryMenu = false;
       this.subs = [];
     } else if (menuInfo) {
+      const [state, subItems] = menuInfo;
       this.menuName = state;
       this.subs = subItems;
       this.isOpenSecondaryMenu = true;

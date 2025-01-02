@@ -41,6 +41,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -52,7 +53,6 @@ import {
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

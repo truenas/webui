@@ -27,11 +27,11 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

@@ -28,7 +28,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +72,7 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    public slideInRef: SlideInRef<VirtualizationInstance | undefined, VirtualizationInstance | false>,
+    public slideInRef: SlideInRef<VirtualizationInstance, VirtualizationInstance | false>,
   ) {
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });

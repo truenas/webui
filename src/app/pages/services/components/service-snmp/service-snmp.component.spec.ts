@@ -9,7 +9,7 @@ import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
 describe('ServiceSnmpComponent', () => {

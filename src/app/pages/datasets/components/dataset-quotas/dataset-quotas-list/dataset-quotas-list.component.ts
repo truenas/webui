@@ -41,6 +41,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetQuotaAddFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
@@ -48,7 +49,6 @@ import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface QuotaData {
   quotaType: DatasetQuotaType.User | DatasetQuotaType.Group;

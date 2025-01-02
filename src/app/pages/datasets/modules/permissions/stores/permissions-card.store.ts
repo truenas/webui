@@ -5,11 +5,11 @@ import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const initialState: PermissionsCardState = {
   isLoading: false,

@@ -13,11 +13,11 @@ import {
   DashboardEnclosureElements,
   DashboardEnclosureSlot, EnclosureVdevDisk,
 } from 'app/interfaces/enclosure.interface';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('EnclosureStore', () => {
   let spectator: SpectatorService<EnclosureStore>;

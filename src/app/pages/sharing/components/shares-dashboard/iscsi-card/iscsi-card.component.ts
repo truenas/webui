@@ -34,13 +34,13 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 

@@ -39,6 +39,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAuthorityAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
@@ -51,7 +52,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

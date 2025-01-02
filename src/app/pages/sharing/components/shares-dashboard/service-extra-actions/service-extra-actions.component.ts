@@ -17,6 +17,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
@@ -24,7 +25,6 @@ import {
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

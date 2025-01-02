@@ -22,11 +22,11 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PropertiesOverrideValidatorService,
 } from 'app/pages/data-protection/replication/replication-form/properties-override-validator/properties-override-validator.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @Component({
   selector: 'ix-replication-source-section',

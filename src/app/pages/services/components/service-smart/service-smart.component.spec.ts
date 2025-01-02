@@ -14,7 +14,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmartComponent } from './service-smart.component';
 
 describe('ServiceSmartComponent', () => {

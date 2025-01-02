@@ -36,6 +36,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import {
@@ -44,7 +45,6 @@ import {
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 

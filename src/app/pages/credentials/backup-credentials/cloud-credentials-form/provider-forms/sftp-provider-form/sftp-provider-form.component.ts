@@ -13,10 +13,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const newOption = 'NEW';
 

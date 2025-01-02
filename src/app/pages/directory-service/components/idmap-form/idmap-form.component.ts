@@ -29,15 +29,15 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { greaterThanFg, rangeValidator } from 'app/modules/forms/ix-forms/validators/validators';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { greaterThanFg, rangeValidator } from 'app/services/validators';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;

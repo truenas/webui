@@ -30,11 +30,11 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FcPortsControlsComponent } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-ports-controls/fc-ports-controls.component';
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

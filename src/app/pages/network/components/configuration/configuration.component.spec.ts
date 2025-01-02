@@ -13,12 +13,12 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LanguageService } from 'app/modules/language/language.service';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { LanguageService } from 'app/services/language.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;

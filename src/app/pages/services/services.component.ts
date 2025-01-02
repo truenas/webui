@@ -31,6 +31,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -48,7 +49,6 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';

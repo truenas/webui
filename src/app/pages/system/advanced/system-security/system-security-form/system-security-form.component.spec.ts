@@ -14,9 +14,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 

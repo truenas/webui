@@ -18,9 +18,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('LdapComponent', () => {
   let spectator: Spectator<LdapComponent>;

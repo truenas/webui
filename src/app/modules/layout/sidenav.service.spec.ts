@@ -8,7 +8,7 @@ import {
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
-import { SidenavService } from 'app/services/sidenav.service';
+import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('SidenavService', () => {

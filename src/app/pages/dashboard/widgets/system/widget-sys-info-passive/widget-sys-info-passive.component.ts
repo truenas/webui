@@ -23,13 +23,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
-import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {

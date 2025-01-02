@@ -11,14 +11,14 @@ import {
   filter, map, startWith, tap,
 } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
 import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.definition';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ix-widget-cpu-usage-recent',

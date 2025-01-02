@@ -5,10 +5,10 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetMemoryComponent } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetMemoryComponent', () => {

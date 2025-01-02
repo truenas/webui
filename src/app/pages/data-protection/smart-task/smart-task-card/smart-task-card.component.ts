@@ -35,11 +35,11 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

@@ -14,6 +14,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
@@ -43,11 +44,10 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

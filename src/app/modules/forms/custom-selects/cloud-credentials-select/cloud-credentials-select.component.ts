@@ -30,7 +30,7 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   readonly label = input<string>();
   readonly tooltip = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly filterByProviders = input<CloudSyncProviderName[]>();
 
   private cloudCredentialService = inject(CloudCredentialService);
@@ -38,8 +38,9 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   fetchOptions(): Observable<Option[]> {
     return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       map((options) => {
-        if (this.filterByProviders()) {
-          options = options.filter((option) => this.filterByProviders().includes(option.provider.type));
+        const filterByProviders = this.filterByProviders();
+        if (filterByProviders) {
+          options = options.filter((option) => filterByProviders.includes(option.provider.type));
         }
         return options.map((option) => {
           return { label: `${option.name} (${cloudSyncProviderNameMap.get(option.provider.type)})`, value: option.id };

@@ -39,8 +39,10 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -50,8 +52,6 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
