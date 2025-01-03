@@ -3,7 +3,6 @@ import {
   Component,
   OnInit,
   signal,
-  inject,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -20,9 +19,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -34,7 +32,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -49,11 +47,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class BootEnvironmentFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected currentName = signal(inject<string>(SLIDE_IN_DATA));
   protected formGroup = this.formBuilder.group({
-    source: [this.currentName(), [Validators.required]],
+    source: ['', [Validators.required]],
     target: ['', [Validators.required, Validators.pattern(nameValidatorRegex)]],
   });
+
+  protected currentName: string | undefined;
 
   protected isLoading = signal(false);
   protected tooltips = {
@@ -65,8 +64,10 @@ export class BootEnvironmentFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<BootEnvironmentFormComponent>,
-  ) {}
+    public slideInRef: SlideInRef<string | undefined, boolean>,
+  ) {
+    this.currentName = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.formGroup.controls.source.disable();
@@ -75,14 +76,14 @@ export class BootEnvironmentFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading.set(true);
     const cloneParams: BootenvCloneParams = [{
-      id: this.currentName(),
+      id: this.currentName,
       target: this.formGroup.value.target,
     }];
 
     this.api.call('boot.environment.clone', cloneParams).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading.set(false);

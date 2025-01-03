@@ -6,6 +6,7 @@ import {
   createComponentFactory, mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -13,17 +14,22 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('ProactiveComponent', () => {
   let spectator: Spectator<ProactiveComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: ProactiveComponent,
@@ -49,10 +55,11 @@ describe('ProactiveComponent', () => {
         mockCall('support.is_available_and_enabled', true),
       ]),
       mockProvider(FormErrorHandlerService),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -101,7 +108,7 @@ describe('ProactiveComponent', () => {
       secondary_email: 'test-user@test-user.com',
       secondary_phone: '+999999999',
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('shows a warning when support is not available', async () => {

@@ -24,9 +24,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -44,7 +43,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -64,6 +63,7 @@ export class LocalizationFormComponent implements OnInit {
   isFormLoading = false;
 
   sortLanguagesByName = true;
+  protected localizationSettings: LocalizationSettings | undefined;
 
   formGroup = this.fb.nonNullable.group({
     language: ['', [Validators.required]],
@@ -146,10 +146,11 @@ export class LocalizationFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private slideInRef: OldSlideInRef<LocalizationFormComponent>,
+    public slideInRef: SlideInRef<LocalizationSettings | undefined, boolean>,
     @Inject(WINDOW) private window: Window,
-    @Inject(SLIDE_IN_DATA) private localizationSettings: LocalizationSettings,
-  ) { }
+  ) {
+    this.localizationSettings = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.localizationSettings) {
@@ -192,7 +193,7 @@ export class LocalizationFormComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.setTimeOptions(payload.timezone);
         this.langService.setLanguage(payload.language);
         this.cdr.markForCheck();

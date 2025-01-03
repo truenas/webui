@@ -24,8 +24,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -38,7 +38,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -74,7 +74,6 @@ export class ImportPoolComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: OldSlideInRef<ImportPoolComponent>,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -83,6 +82,7 @@ export class ImportPoolComponent implements OnInit {
     private router: Router,
     private snackbar: SnackbarService,
     private loader: AppLoaderService,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) { }
 
   ngOnInit(): void {
@@ -127,7 +127,7 @@ export class ImportPoolComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(([datasets, shouldTryUnlocking]) => {
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.snackbar.success(this.translate.instant('Pool imported successfully.'));
         if (shouldTryUnlocking) {
           this.router.navigate(['/datasets', datasets[0].id, 'unlock']);

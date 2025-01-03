@@ -17,10 +17,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -67,7 +67,7 @@ export class LocalizationCardComponent {
   constructor(
     public localeService: LocaleService,
     private store$: Store<AppState>,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private sysGeneralService: SystemGeneralService,
   ) {}
 
@@ -77,7 +77,7 @@ export class LocalizationCardComponent {
   }
 
   openSettings(config: SystemGeneralConfig): void {
-    this.slideInService.open(LocalizationFormComponent, {
+    this.slideIn.open(LocalizationFormComponent, {
       data: {
         language: config.language,
         kbdMap: config.kbdmap,

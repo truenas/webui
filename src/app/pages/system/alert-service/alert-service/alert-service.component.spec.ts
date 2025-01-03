@@ -5,8 +5,7 @@ import { Component } from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockProvider } from 'ng-mocks';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -14,8 +13,7 @@ import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -77,6 +75,12 @@ describe('AlertServiceComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const existingService = {
     id: 4,
     name: 'Existing Service',
@@ -93,14 +97,11 @@ describe('AlertServiceComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertServiceComponent,
     providers: [
-      MockProvider(OldSlideInRef, {
-        close: jest.fn(),
-      }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
-      MockProvider(SnackbarService, {
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(SnackbarService, {
         success: jest.fn(),
       }),
-      MockProvider(DialogService, {
+      mockProvider(DialogService, {
         info: jest.fn(),
       }),
       mockApi([
@@ -155,7 +156,7 @@ describe('AlertServiceComponent', () => {
         },
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('sends a test alert when Send Test Alert is pressed and shows validation result', async () => {
@@ -192,7 +193,7 @@ describe('AlertServiceComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingService },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingService }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -237,7 +238,7 @@ describe('AlertServiceComponent', () => {
         },
       ]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

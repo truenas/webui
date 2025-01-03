@@ -1,8 +1,8 @@
-<ix-old-modal-header
+<ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="title | translate"
   [loading]="isLoading"
-></ix-old-modal-header>
+></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
@@ -24,8 +24,8 @@
           (add)="onAdd()"
         >
           @for (item of listen; track item; let i = $index) {
-            <ix-list-item 
-              [label]="'IP Address' | translate" 
+            <ix-list-item
+              [label]="'IP Address' | translate"
               (delete)="onDelete(i)"
             >
               <ix-select

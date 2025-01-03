@@ -3,21 +3,37 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { NtpServerFormComponent } from './ntp-server-form.component';
 
 describe('NtpServerFormComponent', () => {
   let spectator: Spectator<NtpServerFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const editingNtpServer = {
+    id: 1,
+    address: 'mock.ntp.server',
+    burst: false,
+    iburst: true,
+    prefer: false,
+    minpoll: 6,
+    maxpoll: 10,
+  } as NtpServer;
+
+  const slideInRef: SlideInRef<NtpServer | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: NtpServerFormComponent,
@@ -30,9 +46,10 @@ describe('NtpServerFormComponent', () => {
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
       ]),
-      mockProvider(OldSlideInService),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -70,18 +87,7 @@ describe('NtpServerFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              id: 1,
-              address: 'mock.ntp.server',
-              burst: false,
-              iburst: true,
-              prefer: false,
-              minpoll: 6,
-              maxpoll: 10,
-            } as NtpServer,
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => editingNtpServer }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

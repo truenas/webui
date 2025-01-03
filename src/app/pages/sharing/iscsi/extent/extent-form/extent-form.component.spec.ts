@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,17 +12,22 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 describe('ExtentFormComponent', () => {
   let spectator: Spectator<ExtentFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const existingExtent = {
     id: 123,
@@ -49,7 +55,9 @@ describe('ExtentFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(StorageService),
       mockProvider(DialogService),
       mockApi([
@@ -61,8 +69,7 @@ describe('ExtentFormComponent', () => {
           key_device_3: 'value_device_3',
         } as Choices),
       ]),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -124,7 +131,7 @@ describe('ExtentFormComponent', () => {
         type: IscsiExtentType.Disk,
         xen: true,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -132,7 +139,7 @@ describe('ExtentFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingExtent },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingExtent }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -188,7 +195,7 @@ describe('ExtentFormComponent', () => {
           xen: true,
         },
       ]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

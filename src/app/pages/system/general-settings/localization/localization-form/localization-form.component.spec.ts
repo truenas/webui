@@ -14,11 +14,10 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -28,6 +27,21 @@ describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const settings = {
+    dateFormat: 'yyyy-MM-dd',
+    kbdMap: 'us',
+    language: 'en',
+    timeFormat: 'HH:mm:ss',
+    timezone: 'America/Los_Angeles',
+  } as LocalizationSettings;
+
+  const slideInRef: SlideInRef<LocalizationSettings | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => settings),
+  };
+
   const createComponent = createComponentFactory({
     component: LocalizationFormComponent,
     imports: [
@@ -74,7 +88,9 @@ describe('LocalizationFormComponent', () => {
           { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
       provideMockStore({
@@ -92,27 +108,13 @@ describe('LocalizationFormComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      providers: [
-        {
-          provide: SLIDE_IN_DATA,
-          useValue: {
-            dateFormat: 'yyyy-MM-dd',
-            kbdMap: 'us',
-            language: 'en',
-            timeFormat: 'HH:mm:ss',
-            timezone: 'America/Los_Angeles',
-          } as LocalizationSettings,
-        },
-      ],
-    });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     api = spectator.inject(ApiService);
   });
@@ -154,7 +156,7 @@ describe('LocalizationFormComponent', () => {
         kbdmap: 'us',
         timezone: 'America/Los_Angeles',
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

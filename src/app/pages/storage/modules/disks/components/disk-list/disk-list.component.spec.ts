@@ -21,6 +21,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
@@ -29,7 +30,6 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
@@ -89,13 +89,6 @@ describe('DiskListComponent', () => {
     identifier1: 'sda',
   };
 
-  const mockSlideInRef = {
-    componentInstance: {
-      setFormDisk: jest.fn(),
-    },
-    slideInClosed$: of(true),
-  };
-
   const createComponent = createComponentFactory({
     component: DiskListComponent,
     imports: [
@@ -108,8 +101,8 @@ describe('DiskListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(Router),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => mockSlideInRef),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -166,8 +159,7 @@ describe('DiskListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
-    expect(mockSlideInRef.componentInstance.setFormDisk).toHaveBeenCalledWith(fakeDisk);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true, data: fakeDisk });
   });
 
   it('shows manual smart test dialog when Manual Test button is pressed', async () => {

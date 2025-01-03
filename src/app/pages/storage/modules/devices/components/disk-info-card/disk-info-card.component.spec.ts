@@ -16,15 +16,29 @@ import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 
 describe('DiskInfoCardComponent', () => {
   let spectator: Spectator<DiskInfoCardComponent>;
   let loader: HarnessLoader;
+
+  const disk = {
+    description: '',
+    hddstandby: DiskStandby.AlwaysOn,
+    model: 'VMware_Virtual_S',
+    name: 'sda',
+    rotationrate: null,
+    serial: 'ABCD1',
+    size: 10737418240,
+    transfermode: 'Auto',
+    type: DiskType.Hdd,
+    zfs_guid: '11254578662959974657',
+  } as Disk;
+
   const createComponent = createComponentFactory({
     component: DiskInfoCardComponent,
     imports: [
@@ -36,13 +50,8 @@ describe('DiskInfoCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(),
-          componentInstance: {
-            setFormDisk: jest.fn(),
-          },
-        })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { poolId: '1' } },
@@ -59,18 +68,7 @@ describe('DiskInfoCardComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        disk: {
-          description: '',
-          hddstandby: DiskStandby.AlwaysOn,
-          model: 'VMware_Virtual_S',
-          name: 'sda',
-          rotationrate: null,
-          serial: 'ABCD1',
-          size: 10737418240,
-          transfermode: 'Auto',
-          type: DiskType.Hdd,
-          zfs_guid: '11254578662959974657',
-        } as Disk,
+        disk,
         topologyDisk: {
           guid: '11254578662959974657',
         } as TopologyDisk,
@@ -109,7 +107,7 @@ describe('DiskInfoCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DiskFormComponent, { wide: true, data: disk });
   });
 
   it('opens a ReplaceDiskDialogComponent when clicks Replace button', async () => {

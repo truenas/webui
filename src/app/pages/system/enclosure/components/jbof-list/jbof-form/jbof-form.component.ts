@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -15,9 +15,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -28,7 +27,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -45,6 +44,7 @@ export class JbofFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
 
   isFormLoading = false;
+  protected editingJbof: Jbof | undefined;
 
   form = this.fb.group({
     description: ['', [Validators.required]],
@@ -70,9 +70,10 @@ export class JbofFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private slideInRef: OldSlideInRef<JbofFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingJbof: Jbof,
-  ) {}
+    public slideInRef: SlideInRef<Jbof | undefined, boolean>,
+  ) {
+    this.editingJbof = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingJbof) {
@@ -101,7 +102,7 @@ export class JbofFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

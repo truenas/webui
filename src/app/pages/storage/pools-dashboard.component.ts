@@ -20,13 +20,13 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
 import { storageElements } from 'app/pages/storage/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -86,7 +86,7 @@ export class PoolsDashboardComponent implements OnInit {
 
   constructor(
     protected router: Router,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,
     protected translate: TranslateService,
@@ -124,8 +124,10 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   onImportPool(): void {
-    const slideinRef = this.slideInService.open(ImportPoolComponent);
-    slideinRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.store.loadDashboard());
+    this.slideIn.open(ImportPoolComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.store.loadDashboard());
   }
 
   createPool(): void {

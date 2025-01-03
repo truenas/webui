@@ -16,11 +16,11 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const authAccess: IscsiAuthAccess[] = [
   {
@@ -36,6 +36,12 @@ describe('AuthorizedAccessListComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: AuthorizedAccessListComponent,
     imports: [
@@ -50,12 +56,12 @@ describe('AuthorizedAccessListComponent', () => {
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of(true) })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(),
@@ -78,14 +84,14 @@ describe('AuthorizedAccessListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
   });
 
   it('opens authorized access form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
       data: authAccess[0],
     });
   });
