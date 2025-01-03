@@ -40,7 +40,7 @@ import {
 @Component({
   selector: 'ix-widget-sys-info-passive',
   templateUrl: './widget-sys-info-passive.component.html',
-  styleUrls: ['../common/widget-sys-info.scss'],
+  styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
