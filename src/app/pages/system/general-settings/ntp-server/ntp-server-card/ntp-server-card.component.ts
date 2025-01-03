@@ -131,6 +131,7 @@ export class NtpServerCardComponent implements OnInit {
         { address: server.address },
       ),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),

@@ -232,6 +232,8 @@ export class SnapshotTaskListComponent implements OnInit {
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
         value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema}`,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('pool.snapshottask.delete', [snapshotTask.id])),

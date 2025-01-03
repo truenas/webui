@@ -196,7 +196,7 @@ export class UserApiKeysComponent implements OnInit {
       title: this.translate.instant('Delete API Key'),
       message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> API Key?', { name: apiKey.name }),
       buttonText: this.translate.instant('Delete'),
-      cancelText: this.translate.instant('Cancel'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
