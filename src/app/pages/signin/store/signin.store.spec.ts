@@ -15,6 +15,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
@@ -31,8 +32,10 @@ describe('SigninStore', () => {
         mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('system.advanced.login_banner', ''),
       ]),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
+      }),
+      mockProvider(WebSocketHandlerService, {
         responses$: of(),
       }),
       mockProvider(TokenLastUsedService, {

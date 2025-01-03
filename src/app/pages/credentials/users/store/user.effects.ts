@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
+  take,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -24,7 +25,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class UserEffects {
   loadUsers$ = createEffect(() => this.actions$.pipe(
     ofType(userPageEntered, builtinUsersToggled),
-    switchMap(() => this.store$.pipe(waitForPreferences)),
+    switchMap(() => this.store$.pipe(waitForPreferences, take(1))),
     switchMap((preferences) => {
       let params: QueryParams<User> = [];
       if (preferences.hideBuiltinUsers) {

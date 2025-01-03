@@ -10,6 +10,7 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,10 +21,11 @@ export class MockEnclosureApiService extends ApiService {
 
   constructor(
     wsManager: WebSocketHandlerService,
+    wsStatus: WebSocketStatusService,
     subscriptionManager: SubscriptionManagerService,
     translate: TranslateService,
   ) {
-    super(wsManager, subscriptionManager, translate);
+    super(wsManager, wsStatus, subscriptionManager, translate);
 
     console.warn('MockEnclosureApiService is in effect. Some calls will be mocked');
   }

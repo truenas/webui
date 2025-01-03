@@ -22,6 +22,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
@@ -43,7 +44,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   isLoading$ = this.select((state) => state.isLoading);
 
-  canLogin$ = this.wsManager.isConnected$;
+  canLogin$ = this.wsStatus.isConnected$;
 
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
@@ -66,6 +67,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private authService: AuthService,
     private updateService: UpdateService,
     private actions$: Actions,
+    private wsStatus: WebSocketStatusService,
     private activatedRoute: ActivatedRoute,
     @Inject(WINDOW) private window: Window,
   ) {

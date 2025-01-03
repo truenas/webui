@@ -4,7 +4,6 @@ import { BehaviorSubject, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import {
   DisconnectedMessageComponent,
 } from 'app/pages/signin/disconnected-message/disconnected-message.component';
@@ -18,6 +17,7 @@ import {
   TrueCommandStatusComponent,
 } from 'app/pages/signin/true-command-status/true-command-status.component';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
@@ -58,7 +58,7 @@ describe('SigninComponent', () => {
       mockProvider(TokenLastUsedService, {
         isTokenWithinTimeline$,
       }),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$,
       }),
     ],

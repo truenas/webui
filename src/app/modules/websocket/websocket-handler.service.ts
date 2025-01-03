@@ -17,12 +17,15 @@ import {
   timer,
 } from 'rxjs';
 import { webSocket as rxjsWebSocket } from 'rxjs/webSocket';
-import { makeRequestMessage } from 'app/helpers/api.helper';
+import { isErrorResponse, makeRequestMessage } from 'app/helpers/api.helper';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { RequestMessage, IncomingMessage } from 'app/interfaces/api-message.interface';
+import {
+  RequestMessage, IncomingMessage,
+} from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketConnection } from 'app/modules/websocket/websocket-connection.class';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 
@@ -33,9 +36,6 @@ type ApiCall = Required<Pick<RequestMessage, 'id' | 'method' | 'params'>>;
 export class WebSocketHandlerService {
   private readonly wsConnection: WebSocketConnection = new WebSocketConnection(this.webSocket);
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/api/current';
-
-  private readonly connectionEstablished$ = new BehaviorSubject(false);
-  readonly isConnected$ = this.connectionEstablished$.asObservable();
 
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private reconnectTimerSubscription: Subscription | undefined;
@@ -71,9 +71,8 @@ export class WebSocketHandlerService {
   private showingConcurrentCallsError = false;
   private callsInConcurrentCallsError = new Set<string>();
 
-  private subscriptionIds: Record<string, number> = {};
-
   constructor(
+    private wsStatus: WebSocketStatusService,
     private dialogService: DialogService,
     private translate: TranslateService,
     @Inject(WINDOW) protected window: Window,
@@ -90,7 +89,7 @@ export class WebSocketHandlerService {
   private setupScheduledCalls(): void {
     combineLatest([
       this.triggerNextCall$,
-      this.isConnected$,
+      this.wsStatus.isConnected$,
     ]).pipe(
       filter(([, isConnected]) => isConnected),
       tap(() => {
@@ -114,7 +113,11 @@ export class WebSocketHandlerService {
     return this.responses$.pipe(
       filter((message) => 'id' in message && message.id === call.id),
       take(1),
-      tap(() => {
+      tap((message) => {
+        // Following `if` block needs to be removed once NAS-131829 is resolved
+        if (isErrorResponse(message)) {
+          console.error('Error: ', message.error);
+        }
         this.activeCalls--;
         this.pendingCalls.delete(call.id);
         this.triggerNextCall$.next();
@@ -178,7 +181,7 @@ export class WebSocketHandlerService {
   }
 
   private onClose(event: CloseEvent): void {
-    this.connectionEstablished$.next(false);
+    this.wsStatus.setConnectionStatus(false);
     this.isConnectionLive$.next(false);
     if (this.reconnectTimerSubscription) {
       return;
@@ -203,7 +206,7 @@ export class WebSocketHandlerService {
       return;
     }
     this.shutDownInProgress = false;
-    this.connectionEstablished$.next(true);
+    this.wsStatus.setConnectionStatus(true);
 
     performance.mark('WS Connected');
     performance.measure('Establishing WS connection', 'WS Init', 'WS Connected');

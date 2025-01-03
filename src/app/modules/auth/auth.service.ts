@@ -3,7 +3,6 @@ import { Store } from '@ngrx/store';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
-  combineLatest,
   filter,
   map,
   Observable,
@@ -23,8 +22,8 @@ import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/inte
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -51,18 +50,7 @@ export class AuthService {
     return Boolean(this.token) && this.token !== 'null';
   }
 
-  private isLoggedIn$ = new BehaviorSubject<boolean>(false);
-
   private generateTokenSubscription: Subscription | null;
-
-  readonly isAuthenticated$ = combineLatest([
-    this.wsManager.isConnected$,
-    this.isLoggedIn$.asObservable(),
-  ]).pipe(
-    switchMap(([isConnected, isLoggedIn]) => {
-      return of(isConnected && isLoggedIn);
-    }),
-  );
 
   readonly user$ = this.loggedInUser$.asObservable();
 
@@ -82,11 +70,11 @@ export class AuthService {
   private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig | null;
 
   constructor(
-    private wsManager: WebSocketHandlerService,
     private store$: Store<AppState>,
     private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
     @Inject(WINDOW) private window: Window,
+    private wsStatus: WebSocketStatusService,
   ) {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
@@ -183,7 +171,7 @@ export class AuthService {
       tap(() => {
         this.clearAuthToken();
         this.api.clearSubscriptions();
-        this.isLoggedIn$.next(false);
+        this.wsStatus.setLoginStatus(false);
       }),
     );
   }
@@ -202,18 +190,18 @@ export class AuthService {
           this.loggedInUser$.next(result.user_info);
 
           if (!result.user_info?.privilege?.webui_access) {
-            this.isLoggedIn$.next(false);
+            this.wsStatus.setLoginStatus(false);
             return of(LoginResult.NoAccess);
           }
 
-          this.isLoggedIn$.next(true);
+          this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
           return this.authToken$.pipe(
             take(1),
             map(() => LoginResult.Success),
           );
         }
-        this.isLoggedIn$.next(false);
+        this.wsStatus.setLoginStatus(false);
 
         if (result.response_type === LoginExResponseType.OtpRequired) {
           return of(LoginResult.NoOtp);
@@ -226,8 +214,8 @@ export class AuthService {
   private setupPeriodicTokenGeneration(): void {
     if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
-        switchMap(() => this.isAuthenticated$.pipe(take(1))),
-        filter((isAuthenticated) => isAuthenticated),
+        switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
+        filter(Boolean),
         switchMap(() => this.api.call('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
       ).subscribe();
@@ -243,7 +231,7 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.isAuthenticated$.subscribe({
+    this.wsStatus.isAuthenticated$.subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());
@@ -260,8 +248,8 @@ export class AuthService {
   }
 
   private setupWsConnectionUpdate(): void {
-    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
-      this.isLoggedIn$.next(false);
+    this.wsStatus.isConnected$.pipe(filter((isConnected) => !isConnected)).subscribe(() => {
+      this.wsStatus.setLoginStatus(false);
     });
   }
 

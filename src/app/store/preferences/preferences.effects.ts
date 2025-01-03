@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { EMPTY, throwError } from 'rxjs';
+import { isEqual } from 'lodash';
+import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, map, mergeMap, switchMap, withLatestFrom,
+  catchError, filter, map, mergeMap, pairwise, switchMap, take, withLatestFrom,
 } from 'rxjs/operators';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -18,7 +19,7 @@ import {
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
-import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
+import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { sidenavUpdated } from 'app/store/topbar/topbar.actions';
 import {
   snapshotExtraColumnsToggled, dashboardStateLoaded, noPreferencesFound, noDashboardStateFound,
@@ -71,13 +72,10 @@ export class PreferencesEffects {
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
     ),
-    withLatestFrom(this.store$.select(selectPreferencesState)),
-    switchMap(([, state]) => {
-      if (!state.areLoaded) {
-        return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
-      }
-
-      return this.api.call('auth.set_attribute', ['preferences', state.preferences]);
+    withLatestFrom(this.store$.pipe(waitForPreferences, take(1), pairwise())),
+    filter(([, [prevPrefs, newPrefs]]) => !isEqual(prevPrefs, newPrefs)),
+    switchMap(([, preferences]) => {
+      return this.api.call('auth.set_attribute', ['preferences', preferences]);
     }),
   ), { dispatch: false });
 

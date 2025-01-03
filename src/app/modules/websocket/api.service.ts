@@ -34,6 +34,7 @@ import {
 import { Job } from 'app/interfaces/job.interface';
 import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,10 +44,11 @@ export class ApiService {
 
   constructor(
     protected wsHandler: WebSocketHandlerService,
+    protected wsStatus: WebSocketStatusService,
     protected subscriptionManager: SubscriptionManagerService,
     protected translate: TranslateService,
   ) {
-    this.wsHandler.isConnected$?.subscribe((isConnected) => {
+    this.wsStatus.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
       }
