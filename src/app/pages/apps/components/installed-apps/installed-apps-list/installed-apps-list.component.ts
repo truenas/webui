@@ -339,10 +339,11 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   openStatusDialog(name: string): void {
-    if (!this.appJobs.has(name)) {
+    const jobId = this.appJobs.get(name)?.id;
+    if (!jobId) {
       return;
     }
-    const job$ = this.store$.select(selectJob(this.appJobs.get(name).id));
+    const job$ = this.store$.select(selectJob(jobId));
     this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
       .afterClosed()
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))

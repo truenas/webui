@@ -46,7 +46,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class SelectPoolDialogComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     pool: [''],
     migrateApplications: [false],
   });
@@ -72,7 +72,7 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.dockerStore.setDockerPool(this.form.value.pool).pipe(
+    this.dockerStore.setDockerPool(this.form.getRawValue().pool).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbar.success(

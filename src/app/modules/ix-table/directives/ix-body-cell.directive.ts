@@ -14,7 +14,7 @@ import { Column, ColumnComponent, ColumnKeys } from 'app/modules/ix-table/interf
   standalone: true,
 })
 export class IxTableBodyCellDirective<T> implements AfterViewInit, OnChanges {
-  readonly row = input<T>();
+  readonly row = input.required<T>();
   readonly column = input.required<Column<T, ColumnComponent<T>>>();
 
   private componentRef: ComponentRef<ColumnComponent<T>>;

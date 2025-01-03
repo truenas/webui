@@ -146,7 +146,7 @@ export class TargetFormComponent implements OnInit {
 
   fcForm = this.formBuilder.group({
     port: [nullOption as string, [Validators.required]],
-    host_id: [null as number, [Validators.required]],
+    host_id: [null as number | null, [Validators.required]],
   });
 
   constructor(
@@ -187,7 +187,7 @@ export class TargetFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     this.isLoading = true;
     this.cdr.markForCheck();

@@ -58,7 +58,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
   protected isLoading = signal(false);
   isHaSystem = false;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     basename: ['', Validators.required],
     isns_servers: [[] as string[]],
     pool_avail_threshold: [null as number | null],
@@ -139,7 +139,7 @@ export class GlobalTargetConfigurationComponent implements OnInit {
       }
 
       if (isHa && !this.form.controls.alua) {
-        this.form.addControl('alua', new FormControl(false));
+        this.form.addControl('alua', new FormControl(false, { nonNullable: true }));
       }
 
       this.cdr.markForCheck();

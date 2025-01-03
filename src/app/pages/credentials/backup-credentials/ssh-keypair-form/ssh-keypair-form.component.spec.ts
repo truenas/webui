@@ -149,7 +149,6 @@ describe('SshKeypairFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       api = spectator.inject(ApiService);
-      spectator.component.setKeypairForEditing();
     });
 
     it('shows current values when form is being edited', async () => {

@@ -72,10 +72,10 @@ export class GroupFormComponent implements OnInit {
 
   privilegesList: Privilege[];
   initialGroupRelatedPrivilegesList: Privilege[] = [];
-  protected editingGroup: Group;
+  protected editingGroup: Group | undefined;
 
   form = this.fb.group({
-    gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
+    gid: [null as number | null, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo_commands: [[] as string[]],
     sudo_commands_all: [false],

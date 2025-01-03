@@ -78,7 +78,7 @@ import { RedirectService } from 'app/services/redirect.service';
   ],
 })
 export class AppInfoCardComponent {
-  readonly app = input<App>();
+  readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly isCustomApp = computed(() => this.app()?.metadata?.name === customApp);

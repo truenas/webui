@@ -82,24 +82,24 @@ export class SshConnectionFormComponent implements OnInit {
     setup_method: [SshConnectionsSetupMethod.SemiAutomatic],
 
     host: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isManualSetup,
+      (control) => Boolean(control?.parent) && this.isManualSetup,
       Validators.required,
     )],
     port: [22, this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isManualSetup,
+      (control) => Boolean(control?.parent) && this.isManualSetup,
       Validators.required,
     )],
     remote_host_key: [''],
 
     url: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && !this.isManualSetup,
+      (control) => Boolean(control?.parent) && !this.isManualSetup,
       Validators.required,
     )],
 
     username: ['root', Validators.required],
     admin_username: ['root'],
     password: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && !this.isManualSetup,
+      (control) => Boolean(control?.parent) && !this.isManualSetup,
       Validators.required,
     )],
     sudo: [false],
