@@ -1,5 +1,5 @@
 import {
-  FormControl, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
+  FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
 } from '@angular/forms';
 import { isEmpty, isNumber, toNumber } from 'lodash-es';
 
@@ -48,46 +48,5 @@ export function greaterThanFg(
     }
     fg.get(controlName)?.setErrors(prevErrors);
     return null;
-  };
-}
-
-export function rangeValidator(min: number, max?: number): ValidatorFn {
-  let thisControl: FormControl<string>;
-
-  return function rangeValidate(control: FormControl<string>) {
-    let regex;
-    if (min === 0) {
-      regex = /^(0|[1-9]\d*)$/;
-    } else {
-      regex = /^[1-9]\d*$/;
-    }
-
-    if (!control.parent) {
-      return null;
-    }
-
-    // Initializing the validator.
-    if (!thisControl) {
-      thisControl = control;
-    }
-
-    if (!thisControl.value) {
-      return null;
-    }
-
-    if (regex.test(thisControl.value)) {
-      const num = Number(thisControl.value);
-      if (num >= min) {
-        if (max) {
-          if (num <= max) {
-            return null;
-          }
-        } else {
-          return null;
-        }
-      }
-    }
-
-    return { range: true, rangeValue: { min, max } };
   };
 }

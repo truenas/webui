@@ -6,6 +6,7 @@
   "Delete {n} associated {n, plural, one {extent} other {extents}}": "",
   "Do not connect to a fibre channel port": "",
   "Existing Ports": "",
+  "Maximum file size is limited to {maxSize}.": "",
   "New Cloud Credential": "",
   "Protocol Options": "",
   "Use an existing port": "",
