@@ -100,6 +100,9 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private dialogService: DialogService,
     public slideInRef: SlideInRef<SedConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.sedConfig = this.slideInRef.getData();
   }
 

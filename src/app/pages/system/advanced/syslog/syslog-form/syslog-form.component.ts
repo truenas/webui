@@ -108,6 +108,9 @@ export class SyslogFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<SyslogConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.syslogConfig = this.slideInRef.getData();
   }
 

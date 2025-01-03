@@ -151,6 +151,9 @@ export class RsyncTaskFormComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     public slideInRef: SlideInRef<RsyncTask | undefined, RsyncTask | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = this.slideInRef.getData();
   }
 

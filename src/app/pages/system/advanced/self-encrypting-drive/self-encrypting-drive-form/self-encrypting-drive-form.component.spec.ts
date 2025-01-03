@@ -34,6 +34,7 @@ describe('SedFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({ sedPassword: '123', sedUser: SedUser.User })),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
     ],
