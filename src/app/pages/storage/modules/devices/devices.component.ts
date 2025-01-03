@@ -85,9 +85,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     TreeNodeToggleDirective,
     TreeNodeOutletDirective,
   ],
-  providers: [
-    DevicesStore,
-  ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.FullAdmin];
