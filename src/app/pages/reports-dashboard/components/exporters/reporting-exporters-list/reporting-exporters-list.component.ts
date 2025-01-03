@@ -80,7 +80,7 @@ export class ReportingExporterListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Type'),
-      propertyName: 'type',
+      getValue: (row) => row.attributes['exporter_type'],
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -94,7 +94,6 @@ export class ReportingExporterListComponent implements OnInit {
           ),
         );
         const exporter = { ...row };
-        delete exporter.type;
         delete exporter.id;
         this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
           untilDestroyed(this),

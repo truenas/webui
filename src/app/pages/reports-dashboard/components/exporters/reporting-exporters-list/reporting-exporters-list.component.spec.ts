@@ -23,10 +23,10 @@ const exporters: ReportingExporter[] = [
     attributes: {
       secret: 'abcd',
       email: 'testemail',
+      exporter_type: ReportingExporterKey.Graphite,
     },
     enabled: true,
     name: 'test',
-    type: ReportingExporterKey.Graphite,
   },
 ];
 

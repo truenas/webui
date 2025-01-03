@@ -23,8 +23,8 @@ describe('ReportingExportersFormComponent', () => {
   const existingExporter: ReportingExporter = {
     name: 'test',
     id: 123,
-    type: ReportingExporterKey.Graphite,
     attributes: {
+      exporter_type: ReportingExporterKey.Graphite,
       access_key_id: 'access_key_id',
       secret_access_key: 'secret_access_key',
     },
@@ -94,11 +94,11 @@ describe('ReportingExportersFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
-        type: ReportingExporterKey.Graphite,
         enabled: true,
         attributes: {
           access_key_id: 'abcde',
           secret_access_key: 'abcd',
+          exporter_type: ReportingExporterKey.Graphite,
         },
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
@@ -130,7 +130,7 @@ describe('ReportingExportersFormComponent', () => {
 
       expect(values).toEqual({
         Name: existingExporter.name,
-        Type: existingExporter.type,
+        Type: existingExporter.attributes.exporter_type,
         Enable: existingExporter.enabled,
         'Secret Access Key ID': existingExporter.attributes.secret_access_key,
         'Access Key ID': existingExporter.attributes.access_key_id,
@@ -163,6 +163,7 @@ describe('ReportingExportersFormComponent', () => {
             attributes: {
               secret_access_key: existingExporter.attributes.secret_access_key,
               access_key_id: 'efghi',
+              exporter_type: ReportingExporterKey.Graphite,
             },
           },
         ],

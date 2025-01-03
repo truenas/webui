@@ -199,7 +199,7 @@ import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import {
-  CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
+  ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
 } from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
@@ -695,7 +695,7 @@ export interface ApiCallDirectory {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Reporting
-  'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.create': { params: [UpdateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
   'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
   'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
