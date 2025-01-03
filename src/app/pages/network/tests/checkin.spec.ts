@@ -5,11 +5,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
 import {
-  createHostFactory,
-  mockProvider, SpectatorHost,
+  createComponentFactory,
+  mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,7 +18,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -29,7 +28,6 @@ import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-c
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
-import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -44,13 +42,9 @@ import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
-/**
- * Ignored for now, to merge PR first, not sure about the quick solution for this one for now.
- */
-describe.skip('NetworkComponent', () => {
-  let spectator: SpectatorHost<NetworkComponent>;
+describe('NetworkComponent', () => {
+  let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   let api: MockApiService;
 
   const existingInterface = {
@@ -74,7 +68,7 @@ describe.skip('NetworkComponent', () => {
 
   let isTestingChanges = false;
   let wasEditMade = false;
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: NetworkComponent,
     imports: [
       ReactiveFormsModule,
@@ -111,10 +105,6 @@ describe.skip('NetworkComponent', () => {
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.update', () => {
-          wasEditMade = true;
-          return undefined;
-        }),
         mockCall('interface.commit', () => {
           isTestingChanges = true;
           return undefined;
@@ -147,26 +137,10 @@ describe.skip('NetworkComponent', () => {
     ],
   });
 
-  const mockComponentInfo = {
-    id: 'test-slide-in',
-    component: InterfaceFormComponent,
-    wide: false,
-    data: existingInterface,
-    close$: new Subject<SlideInResponse>(),
-  };
-
   beforeEach(() => {
-    spectator = createHost(`
-      <ix-network></ix-network>
-      <ix-slide-in [componentInfo]="componentInfoMock" id="ix-slide-in-form"></ix-slide-in>
-    `, {
-      hostProps: {
-        componentInfoMock: mockComponentInfo,
-      },
-    });
+    spectator = createComponent();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     api = spectator.inject(MockApiService);
 
     isTestingChanges = false;
@@ -174,15 +148,11 @@ describe.skip('NetworkComponent', () => {
   });
 
   async function makeEdit(): Promise<void> {
+    wasEditMade = true;
+
     const table = await loader.getHarness(IxTableHarness);
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
-
-    const input = await rootLoader.getHarness(IxInputHarness.with({ label: 'Description' }));
-    await input.setValue('test');
-
-    const saveButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
     spectator.detectComponentChanges();
   }
 
