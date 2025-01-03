@@ -13,6 +13,7 @@ import {
   combineLatest,
   filter,
   forkJoin,
+  of,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -97,6 +98,9 @@ export class AppsSettingsComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.dockerStore.initialize();
   }
 

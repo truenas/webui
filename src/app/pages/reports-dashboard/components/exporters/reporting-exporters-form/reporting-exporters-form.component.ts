@@ -105,6 +105,9 @@ export class ReportingExportersFormComponent implements OnInit {
     private dialogService: DialogService,
     public slideInRef: SlideInRef<ReportingExporter | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingExporter = this.slideInRef.getData();
   }
 

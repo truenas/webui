@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosKeytabs } from 'app/helptext/directory-service/kerberos-keytabs-form-list';
@@ -73,6 +73,9 @@ export class KerberosKeytabsFormComponent implements OnInit {
     private api: ApiService,
     public slideInRef: SlideInRef<KerberosKeytab | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingKerberosKeytab = slideInRef.getData();
   }
 

@@ -146,6 +146,9 @@ export class NfsFormComponent implements OnInit {
     private store$: Store<ServicesState>,
     public slideInRef: SlideInRef<{ existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare } | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.existingNfsShare = this.slideInRef.getData()?.existingNfsShare;
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }

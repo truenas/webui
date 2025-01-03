@@ -197,6 +197,9 @@ export class IdmapFormComponent implements OnInit {
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<Idmap | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.existingIdmap = slideInRef.getData();
   }
 

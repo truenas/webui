@@ -229,7 +229,11 @@ export class NetworkConfigurationComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading = true;

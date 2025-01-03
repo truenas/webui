@@ -120,6 +120,10 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
     public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.data = this.slideInRef.getData();
     this.form.patchValue({
       subFolder: this.data.backup.path,

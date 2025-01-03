@@ -230,6 +230,10 @@ export class ZvolFormComponent implements OnInit {
     protected snackbar: SnackbarService,
     public slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, Dataset>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.slideInData = slideInRef.getData();
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();

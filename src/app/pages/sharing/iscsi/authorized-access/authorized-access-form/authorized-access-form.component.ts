@@ -141,6 +141,9 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private validatorService: IxValidatorsService,
     public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingAccess = this.slideInRef.getData();
   }
 

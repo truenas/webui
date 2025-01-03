@@ -241,6 +241,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private smbValidationService: SmbValidationService,
     public slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
   }

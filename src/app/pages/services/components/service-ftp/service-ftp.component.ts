@@ -136,7 +136,11 @@ export class ServiceFtpComponent implements OnInit {
     private snackbar: SnackbarService,
     public iecFormatter: IxFormatterService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.loadConfig();

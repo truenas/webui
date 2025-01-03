@@ -131,6 +131,9 @@ export class SnapshotTaskFormComponent implements OnInit {
     protected storageService: StorageService,
     public slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 
