@@ -57,7 +57,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 export class AuditComponent implements OnInit, OnDestroy {
   protected dataProvider: AuditApiDataProvider;
 
-  protected readonly masterDetailView = viewChild(MasterDetailViewComponent);
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
   protected readonly controllerTypeOptions$ = of(mapToOptions(controllerTypeLabels, this.translate));
   protected readonly controllerType = toSignal(this.controllerTypeControl.value$);

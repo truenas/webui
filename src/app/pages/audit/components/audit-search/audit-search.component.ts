@@ -155,8 +155,8 @@ export class AuditSearchComponent implements OnInit {
         'service',
         this.translate.instant('Service'),
         of(Object.values(AuditService).map((key) => ({
-          label: this.translate.instant(auditServiceLabels.get(key)),
-          value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
+          label: this.translate.instant(auditServiceLabels.get(key) || key),
+          value: `"${this.translate.instant(auditServiceLabels.get(key) || key)}"`,
         }))),
         auditServiceLabels,
       ),
@@ -169,8 +169,8 @@ export class AuditSearchComponent implements OnInit {
         'event',
         this.translate.instant('Event'),
         of(Object.values(AuditEvent).map((key) => ({
-          label: this.translate.instant(auditEventLabels.get(key)),
-          value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
+          label: this.translate.instant(auditEventLabels.get(key) || key),
+          value: `"${this.translate.instant(auditEventLabels.get(key) || key)}"`,
         }))),
         auditEventLabels,
       ),
@@ -209,8 +209,8 @@ export class AuditSearchComponent implements OnInit {
         'event_data.credentials.credentials',
         this.translate.instant('Middleware - Credentials'),
         of(Object.values(CredentialType).map((key) => ({
-          label: this.translate.instant(credentialTypeLabels.get(key)),
-          value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
+          label: this.translate.instant(credentialTypeLabels.get(key) || key),
+          value: `"${this.translate.instant(credentialTypeLabels.get(key) || key)}"`,
         }))),
         credentialTypeLabels,
       ),

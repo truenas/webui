@@ -59,7 +59,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CertificateAcmeAddComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validatorsService.withMessage(
@@ -94,7 +94,7 @@ export class CertificateAcmeAddComponent implements OnInit {
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<Certificate | undefined, boolean>,
+    public slideInRef: SlideInRef<Certificate, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -109,7 +109,7 @@ export class CertificateAcmeAddComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
       return {

@@ -28,7 +28,7 @@ export const selectAllNonTransientJobs = createSelector(
  *
  * If you need this behaviour, add extra `observeJob()` operator after `select()`.
  */
-export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
+export const selectJob = (id: number): MemoizedSelector<object, Job | undefined> => createSelector(
   selectJobs,
   (jobs) => jobs.find((job) => job.id === id),
 );

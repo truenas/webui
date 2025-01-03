@@ -34,7 +34,7 @@ export class ErrorTemplateComponent {
   private readonly errorBtPanel: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtPanel', { read: ElementRef });
   private readonly errorBtText: Signal<ElementRef<HTMLElement> | undefined> = viewChild('errorBtText', { read: ElementRef });
 
-  readonly title = input<string>();
+  readonly title = input.required<string>();
   readonly message = input<string>();
   readonly backtrace = input<string>();
   readonly logs = input<Job>();

@@ -29,7 +29,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
+    [isLoading]="!!(dataProvider.isLoading$ | async)"
   >
   </tbody>
 </ix-table>

@@ -197,6 +197,7 @@ describe('AppsSettingsComponent', () => {
             { base: '172.17.0.0/12', size: 12 },
             { base: '173.17.0.0/12', size: 12 },
           ],
+          nvidia: false,
         }]);
       });
     });
