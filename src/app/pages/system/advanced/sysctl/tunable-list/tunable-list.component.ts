@@ -158,6 +158,7 @@ export class TunableListComponent implements OnInit {
         title: this.translate.instant('Delete Sysctl'),
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
+        buttonColor: 'warn',
       })
       .pipe(
         filter(Boolean),

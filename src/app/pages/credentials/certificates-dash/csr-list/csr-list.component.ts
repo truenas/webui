@@ -181,7 +181,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: this.translate.instant('Force'),
-      buttonColor: 'red',
+      buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),

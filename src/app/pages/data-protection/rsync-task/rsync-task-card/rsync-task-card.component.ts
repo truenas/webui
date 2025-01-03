@@ -172,6 +172,8 @@ export class RsyncTaskCardComponent implements OnInit {
       message: this.translate.instant('Delete Rsync Task <b>"{name}"</b>?', {
         name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('rsynctask.delete', [row.id])),

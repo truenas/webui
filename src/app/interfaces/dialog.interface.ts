@@ -7,7 +7,7 @@ export interface ConfirmOptions {
   cancelText?: string;
   disableClose?: boolean;
   confirmationCheckboxText?: string;
-  buttonColor?: 'primary' | 'red';
+  buttonColor?: 'primary' | 'warn';
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {

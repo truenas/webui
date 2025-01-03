@@ -161,6 +161,7 @@ export class ScrubListComponent implements OnInit {
       title: this.translate.instant('Delete Task'),
       message: this.translate.instant('Are you sure you want to delete this task?'),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     })
       .pipe(
         filter(Boolean),

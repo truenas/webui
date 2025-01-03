@@ -141,7 +141,7 @@ export class JbofListComponent implements OnInit {
       secondaryCheckbox: true,
       secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
-      buttonColor: 'red',
+      buttonColor: 'warn',
     }).pipe(
       filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
       switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {

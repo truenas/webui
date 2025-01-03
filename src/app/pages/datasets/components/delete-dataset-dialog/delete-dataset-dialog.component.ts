@@ -129,6 +129,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
       title: this.translate.instant('Device Busy'),
       message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
       buttonText: this.translate.instant('Force Delete'),
+      buttonColor: 'warn',
     });
   }
 

@@ -383,6 +383,7 @@ export class DatasetQuotasListComponent implements OnInit {
       title: this.translate.instant(helpTextQuotas[this.helpTextKey].delete_dialog.title),
       message: this.translate.instant(helpTextQuotas[this.helpTextKey].delete_dialog.message, { name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
       hideCheckbox: true,
     });
   }

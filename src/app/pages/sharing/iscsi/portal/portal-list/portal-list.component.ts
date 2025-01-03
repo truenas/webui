@@ -119,6 +119,7 @@ export class PortalListComponent implements OnInit {
               title: this.translate.instant('Delete'),
               message: this.translate.instant('Are you sure you want to delete this item?'),
               buttonText: this.translate.instant('Delete'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),

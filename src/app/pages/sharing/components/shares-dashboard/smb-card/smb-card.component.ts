@@ -170,6 +170,8 @@ export class SmbCardComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete SMB Share <b>"{name}"</b>?', { name: smb.name }),
+      buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('sharing.smb.delete', [smb.id])),

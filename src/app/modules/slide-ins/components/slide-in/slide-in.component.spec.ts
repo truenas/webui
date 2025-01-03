@@ -215,7 +215,7 @@ describe('SlideInComponent', () => {
       message: 'You have unsaved changes. Are you sure you want to close?',
       cancelText: 'No',
       buttonText: 'Yes',
-      buttonColor: 'red',
+      buttonColor: 'warn',
       hideCheckbox: true,
     });
     discardPeriodicTasks();
@@ -236,14 +236,7 @@ describe('SlideInComponent', () => {
     const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
 
-    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalledWith({
-      title: 'Unsaved Changes',
-      message: 'You have unsaved changes. Are you sure you want to close?',
-      cancelText: 'No',
-      buttonText: 'Yes',
-      buttonColor: 'red',
-      hideCheckbox: true,
-    });
+    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     discardPeriodicTasks();
   }));
 });

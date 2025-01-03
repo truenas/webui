@@ -141,6 +141,8 @@ export class VmwareSnapshotListComponent implements OnInit {
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete this snapshot?'),
       hideCheckbox: true,
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('vmware.delete', [snapshot.id])),

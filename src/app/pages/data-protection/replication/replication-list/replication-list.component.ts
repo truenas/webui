@@ -273,6 +273,8 @@ export class ReplicationListComponent implements OnInit {
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: row.name,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
