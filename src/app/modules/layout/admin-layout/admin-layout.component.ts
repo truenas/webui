@@ -34,7 +34,6 @@ import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
-import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryService } from 'app/services/sentry.service';
@@ -66,7 +65,6 @@ import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/
     ConsoleFooterComponent,
     AlertsPanelComponent,
     SlideInControllerComponent,
-    OldSlideInComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

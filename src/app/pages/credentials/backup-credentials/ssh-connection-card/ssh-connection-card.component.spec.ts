@@ -13,7 +13,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
@@ -69,7 +68,6 @@ describe('SshConnectionCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
