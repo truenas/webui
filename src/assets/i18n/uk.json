@@ -1070,6 +1070,7 @@
   "Max concurrent calls limit reached.\n        There are more than 20 calls queued.\n        See queued calls in the browser's console logs": "",
   "Maximize Dispersal": "",
   "Maximum Passive Port": "",
+  "Maximum file size is limited to {maxSize}.": "",
   "Mega": "",
   "Memory Stats": "",
   "Memory Utilization": "",
