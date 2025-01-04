@@ -6,6 +6,8 @@ export const shellElements = {
   anchorRouterLink: ['/system', 'shell'],
   synonyms: [T('CLI'), T('Terminal'), T('Console'), T('Command Line Interface'), T('Prompt')],
   elements: {
-    shell: {},
+    shell: {
+      anchor: 'shell',
+    },
   },
 } satisfies UiSearchableElement;

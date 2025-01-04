@@ -6,7 +6,9 @@ export const jbofListElements = {
   hierarchy: [T('System'), T('View Enclosure'), T('NVMe-oF Expansion Shelves')],
   anchorRouterLink: ['/system', 'viewenclosure', 'jbof'],
   elements: {
-    jbof: {},
+    jbof: {
+      anchor: 'jbof',
+    },
   },
   visibleTokens: [GlobalSearchVisibleToken.Enclosure],
 } satisfies UiSearchableElement;

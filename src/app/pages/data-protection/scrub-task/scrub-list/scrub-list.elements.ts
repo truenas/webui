@@ -6,6 +6,7 @@ export const scrubListElements = {
   anchorRouterLink: ['/data-protection', 'scrub'],
   elements: {
     tasks: {
+      anchor: 'scrub-tasks',
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
