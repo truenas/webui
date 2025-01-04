@@ -173,7 +173,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
                 },
               });
             },
-            swap: (component: Type<unknown>, options?: { wide?: boolean; incomingComponentData?: unknown }): void => {
+            swap: (component: Type<unknown>, options?: { wide?: boolean; data?: unknown }): void => {
               this.canCloseSlideIn().pipe(
                 filter(Boolean),
                 untilDestroyed(this),
@@ -183,7 +183,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
                     swapComponentId: this.componentInfo().id,
                     component,
                     wide: options?.wide || false,
-                    data: options?.incomingComponentData,
+                    data: options?.data,
                   });
                   this.closeSlideIn();
                 },

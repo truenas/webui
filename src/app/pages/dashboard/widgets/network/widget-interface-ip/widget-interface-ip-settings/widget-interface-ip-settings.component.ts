@@ -31,8 +31,8 @@ import {
   ],
 })
 export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
-  form = this.fb.group({
-    interface: [null as string, [Validators.required]],
+  form = this.fb.nonNullable.group({
+    interface: [null as string | null, [Validators.required]],
   });
 
   protected networkInterfaceOptions$ = this.resources.networkInterfaces$.pipe(

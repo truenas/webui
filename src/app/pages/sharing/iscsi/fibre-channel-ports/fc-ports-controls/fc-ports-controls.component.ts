@@ -9,8 +9,8 @@ import { map, Observable, of } from 'rxjs';
 import { Option, nullOption, skipOption } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

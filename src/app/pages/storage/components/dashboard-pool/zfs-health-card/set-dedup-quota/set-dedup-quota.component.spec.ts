@@ -12,10 +12,10 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetDedupQuotaComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SetDedupQuotaComponent', () => {
   let spectator: Spectator<SetDedupQuotaComponent>;

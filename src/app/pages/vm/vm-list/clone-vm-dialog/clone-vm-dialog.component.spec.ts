@@ -9,8 +9,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloneVmDialogComponent', () => {
   let spectator: Spectator<CloneVmDialogComponent>;

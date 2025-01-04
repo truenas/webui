@@ -11,8 +11,8 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
@@ -22,7 +22,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { CertificateAuthorityEditComponent } from './certificate-authority-edit.component';
 
 describe('CertificateAuthorityEditComponent', () => {
@@ -34,6 +33,13 @@ describe('CertificateAuthorityEditComponent', () => {
     certificate: '--BEGIN CERTIFICATE--',
     privatekey: '--BEGIN RSA PRIVATE KEY--',
   } as CertificateAuthority;
+
+  const slideInRef: SlideInRef<CertificateAuthority | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => certificateAuthority),
+  };
+
   const createComponent = createComponentFactory({
     component: CertificateAuthorityEditComponent,
     imports: [
@@ -44,13 +50,9 @@ describe('CertificateAuthorityEditComponent', () => {
         mockCall('certificateauthority.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockAuth(),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: certificateAuthority,
-      },
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),
@@ -88,7 +90,7 @@ describe('CertificateAuthorityEditComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('certificateauthority.update', [1,
       { name: 'New Name', add_to_trusted_store: true },
     ]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('opens modal for authority certificate when View/Download Certificate is pressed', async () => {

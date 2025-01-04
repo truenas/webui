@@ -25,14 +25,14 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StaticRouteDeleteDialogComponent,
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -96,7 +96,7 @@ export class StaticRoutesCardComponent implements OnInit {
   constructor(
     private matDialog: MatDialog,
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     protected emptyService: EmptyService,
   ) {}
@@ -124,15 +124,19 @@ export class StaticRoutesCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(StaticRouteFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(StaticRouteFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getStaticRoutes();
     });
   }
 
   doEdit(route: StaticRoute): void {
-    const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(StaticRouteFormComponent, { data: route }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getStaticRoutes();
     });
   }

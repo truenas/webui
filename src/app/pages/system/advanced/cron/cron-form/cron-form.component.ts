@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
@@ -26,8 +26,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -89,7 +89,7 @@ export class CronFormComponent implements OnInit {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
 
-  private editingCron: Cronjob;
+  private editingCron: Cronjob | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -101,20 +101,19 @@ export class CronFormComponent implements OnInit {
     private userService: UserService,
     public slideInRef: SlideInRef<Cronjob | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingCron = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
     if (this.editingCron) {
-      this.setCronForEdit();
+      this.form.patchValue({
+        ...this.editingCron,
+        schedule: scheduleToCrontab(this.editingCron.schedule),
+      });
     }
-  }
-
-  setCronForEdit(): void {
-    this.form.patchValue({
-      ...this.editingCron,
-      schedule: scheduleToCrontab(this.editingCron.schedule),
-    });
   }
 
   onSubmit(): void {

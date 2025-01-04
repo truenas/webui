@@ -9,7 +9,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,8 +18,8 @@ import { IxSlideToggleComponent } from 'app/modules/forms/ix-forms/components/ix
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -131,7 +131,10 @@ export class StartServiceDialogComponent implements OnInit {
 
   private getService(): void {
     this.store$.select(selectService(this.serviceName))
-      .pipe(untilDestroyed(this))
+      .pipe(
+        filter((service) => !!service),
+        untilDestroyed(this),
+      )
       .subscribe((service) => {
         this.service = service;
         this.cdr.markForCheck();

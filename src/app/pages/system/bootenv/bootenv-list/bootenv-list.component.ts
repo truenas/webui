@@ -41,13 +41,13 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootEnvironmentUi extends BootEnvironment {
@@ -93,7 +93,10 @@ export class BootEnvironmentListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.bootenvs.find((bootenv) => row.id === bootenv.id).selected = checked;
+        const bootEnvToSelect = this.bootenvs.find((bootenv) => row.id === bootenv.id);
+        if (bootEnvToSelect) {
+          bootEnvToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString());
       },

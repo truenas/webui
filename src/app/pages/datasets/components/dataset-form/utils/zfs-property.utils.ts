@@ -3,7 +3,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
-export function getFieldValue<T>(property: ZfsProperty<T>, parent?: Dataset): T | typeof inherit {
+export function getFieldValue<T>(property: ZfsProperty<T>, parent?: Dataset): T | typeof inherit | undefined {
   if (parent) {
     return valueOrInherit(property);
   }
@@ -11,7 +11,7 @@ export function getFieldValue<T>(property: ZfsProperty<T>, parent?: Dataset): T 
   return property.value;
 }
 
-export function valueOrInherit<T>(property: ZfsProperty<T>): T | typeof inherit {
+export function valueOrInherit<T>(property: ZfsProperty<T>): T | typeof inherit | undefined {
   if (!property) {
     return undefined;
   }

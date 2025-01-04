@@ -6,9 +6,9 @@ import { Role } from 'app/enums/role.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable()
 export class ReplicationService {
@@ -21,7 +21,7 @@ export class ReplicationService {
     transport: TransportMode;
     sshCredential: number;
   }): TreeNodeProvider {
-    let cachedDatasets: string[] = null;
+    let cachedDatasets: string[] | null = null;
 
     return (node: TreeNode<ExplorerNodeData>) => {
       const searchPath = node.data.path;

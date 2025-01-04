@@ -14,8 +14,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface JobProgressDialogConfig<Result> {
   job$: Observable<Job<Result>>;
@@ -75,8 +75,8 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
 
   readonly JobState = JobState;
 
-  protected title: string;
-  protected description: string;
+  protected title: string | undefined;
+  protected description: string | undefined;
   private realtimeLogsSubscribed = false;
   protected realtimeLogs = '';
   protected showMinimizeButton = true;
@@ -119,7 +119,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
     this.showMinimizeButton = this.data?.canMinimize || false;
     this.dialogRef.disableClose = !this.showMinimizeButton;
 
-    let logsSubscription: Subscription = null;
+    let logsSubscription: Subscription | null = null;
     this.cdr.markForCheck();
 
     this.data.job$.pipe(
@@ -175,7 +175,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
         }
 
         if (this.realtimeLogsSubscribed) {
-          logsSubscription.unsubscribe();
+          logsSubscription?.unsubscribe();
         }
         this.cdr.markForCheck();
       },

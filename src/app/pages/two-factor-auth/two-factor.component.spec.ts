@@ -9,13 +9,13 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;

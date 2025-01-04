@@ -25,13 +25,12 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -71,6 +70,12 @@ describe('SmbFormComponent', () => {
       ignore_list: [],
     },
   } as SmbShare;
+
+  const slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const formLabels: Record<string, string> = {
     path: 'Path',
@@ -158,7 +163,9 @@ describe('SmbFormComponent', () => {
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(Router),
       mockProvider(AppLoaderService),
       mockProvider(FilesystemService),
@@ -172,7 +179,7 @@ describe('SmbFormComponent', () => {
         info: jest.fn(() => of(true)),
       }),
       mockProvider(SnackbarService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       provideMockStore({
         selectors: [{
           selector: selectServices,
@@ -182,7 +189,6 @@ describe('SmbFormComponent', () => {
       mockProvider(FormErrorHandlerService, {
         handleValidationErrors: jest.fn(),
       }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -190,7 +196,7 @@ describe('SmbFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { existingSmbShare: existingShare } },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ existingSmbShare: { ...existingShare } }) }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

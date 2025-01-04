@@ -23,10 +23,10 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -61,9 +61,9 @@ export class KmipComponent implements OnInit {
 
   form = this.formBuilder.group({
     server: [''],
-    port: [null as number],
-    certificate: [null as number],
-    certificate_authority: [null as number],
+    port: [null as number | null],
+    certificate: [null as number | null],
+    certificate_authority: [null as number | null],
     manage_sed_disks: [false],
     manage_zfs_keys: [false],
     enabled: [false],

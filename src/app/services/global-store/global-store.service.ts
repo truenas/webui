@@ -5,7 +5,7 @@ import {
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import { ApiCallMethod, ApiCallParams, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventMethod, ApiEventTyped } from 'app/interfaces/api-message.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface GlobalStoreMembers<
   M1 extends ApiCallMethod,
@@ -30,8 +30,8 @@ export function globalStore<
   class GlobalStore implements GlobalStoreMembers<M1, M2, M3> {
     private api = inject(ApiService);
     private callResult$ = new BehaviorSubject<ApiCallResponse<M1>>(undefined);
-    private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2>>(undefined);
-    private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[]>(undefined);
+    private subscribeResult$ = new BehaviorSubject<ApiEventTyped<M2> | undefined>(undefined);
+    private callAndSubscribeResult$ = new BehaviorSubject<ApiCallAndSubscribeResponse<M3>[] | undefined>(undefined);
 
     get call(): Observable<ApiCallResponse<M1>> {
       return this.callResult$.pipe(

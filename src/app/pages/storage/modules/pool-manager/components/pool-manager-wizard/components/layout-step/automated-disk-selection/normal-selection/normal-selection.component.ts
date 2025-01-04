@@ -48,8 +48,8 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   readonly inventory = input.required<DetailsDisk[]>();
 
   form = this.formBuilder.group({
-    width: [{ value: null as number, disabled: true }, Validators.required],
-    vdevsNumber: [{ value: null as number, disabled: true }, Validators.required],
+    width: [{ value: null as number | null, disabled: true }, Validators.required],
+    vdevsNumber: [{ value: null as number | null, disabled: true }, Validators.required],
   });
 
   protected widthOptions$ = of<SelectOption[]>([]);

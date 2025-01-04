@@ -23,6 +23,7 @@ import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
@@ -35,7 +36,6 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ZfsHealthCardComponent', () => {
   let spectator: Spectator<ZfsHealthCardComponent>;

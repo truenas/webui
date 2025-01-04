@@ -36,9 +36,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -88,13 +88,13 @@ export class RsyncTaskFormComponent implements OnInit {
     desc: [''],
     mode: [RsyncMode.Module],
     remotehost: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     ssh_keyscan: [false],
     remoteport: [22, portRangeValidator()],
     remotemodule: ['', this.validatorsService.validateOnCondition(
-      (control) => control.parent && this.isModuleMode,
+      (control) => Boolean(control.parent) && this.isModuleMode,
       Validators.required,
     )],
     remotepath: [mntPath],
@@ -151,6 +151,9 @@ export class RsyncTaskFormComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     public slideInRef: SlideInRef<RsyncTask | undefined, RsyncTask | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = this.slideInRef.getData();
   }
 

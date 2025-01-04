@@ -6,26 +6,22 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import {
   filter, repeat, tap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TargetDetailsComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/target-details.component';
 import { TargetListComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-list/target-list.component';
 import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -56,13 +52,8 @@ export class AllTargetsComponent implements OnInit {
 
   constructor(
     private iscsiService: IscsiService,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    private api: ApiService,
-    private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
     private matDialog: MatDialog,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -93,15 +84,16 @@ export class AllTargetsComponent implements OnInit {
   }
 
   editTarget(target: IscsiTarget): void {
-    const slideInRef = this.slideInService.open(
+    const slideInRef$ = this.slideIn.open(
       TargetFormComponent,
       { data: target, wide: true },
     );
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((response) => {
-        this.dataProvider.load();
-        this.dataProvider.expandedRow = response;
-      });
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(({ response }) => {
+      this.dataProvider.load();
+      this.dataProvider.expandedRow = response;
+    });
   }
 }

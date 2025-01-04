@@ -46,13 +46,13 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -348,7 +348,7 @@ export class CloudSyncListComponent implements OnInit {
     });
   }
 
-  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
     this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
       if (task.id === row.id) {
         return {

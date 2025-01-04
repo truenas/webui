@@ -5,8 +5,8 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { slice } from 'lodash-es';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-scheduler-date-examples',

@@ -3,9 +3,9 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;

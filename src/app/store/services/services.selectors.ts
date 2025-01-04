@@ -17,7 +17,7 @@ export const selectServices = createSelector(
 
 export const waitForServices = selectNotNull(selectServices);
 
-export const selectService = (name: ServiceName): MemoizedSelector<object, Service> => createSelector(
+export const selectService = (name: ServiceName): MemoizedSelector<object, Service | undefined> => createSelector(
   selectServices,
   (services) => services.find((service) => service.service === name),
 );

@@ -24,12 +24,12 @@ import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-t
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
 
 @UntilDestroy()
@@ -94,7 +94,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   constructor(
     protected translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     protected emptyService: EmptyService,
     private api: ApiService,
     private dialogService: DialogService,
@@ -123,14 +123,15 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotsData());
+    this.slideIn.open(VmwareSnapshotFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getSnapshotsData());
   }
 
   doEdit(snapshot: VmwareSnapshot): void {
-    const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent, { data: snapshot });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    this.slideIn.open(VmwareSnapshotFormComponent, { data: snapshot }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }

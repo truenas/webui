@@ -147,7 +147,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   protected isSectionValid(section: IxFormSectionComponent): boolean {
-    return this.sectionsValidity.get(section);
+    return !!this.sectionsValidity.get(section);
   }
 
   ngOnInit(): void {

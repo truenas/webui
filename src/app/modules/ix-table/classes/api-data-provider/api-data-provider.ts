@@ -9,7 +9,7 @@ import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provide
 import { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;

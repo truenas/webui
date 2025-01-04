@@ -13,12 +13,12 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -45,13 +45,13 @@ export class GroupDetailsRowComponent {
   protected readonly Role = Role;
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private router: Router,
     private matDialog: MatDialog,
   ) {}
 
   doEdit(group: Group): void {
-    this.slideInService.open(GroupFormComponent, { data: group });
+    this.slideIn.open(GroupFormComponent, { data: group });
   }
 
   openGroupMembersForm(): void {

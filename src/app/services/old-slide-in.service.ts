@@ -56,7 +56,7 @@ export class OldSlideInService {
       if (response === undefined) {
         response = null;
       }
-      this.onClose$.next(null);
+      this.onClose$.next();
     });
 
     this.focusService.captureCurrentFocus();
@@ -71,7 +71,7 @@ export class OldSlideInService {
     }
 
     const lastSlideInRef = Array.from(this.slideInRefMap.values()).pop();
-    lastSlideInRef.close();
+    lastSlideInRef?.close();
   }
 
   closeAll(): void {

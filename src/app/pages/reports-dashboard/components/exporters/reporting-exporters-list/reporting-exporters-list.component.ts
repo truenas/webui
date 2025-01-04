@@ -32,12 +32,12 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -150,7 +150,7 @@ export class ReportingExporterListComponent implements OnInit {
     private translate: TranslateService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,
@@ -162,8 +162,10 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(ReportingExportersFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => this.getExporters(),
     });
   }
@@ -207,8 +209,10 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private doEdit(exporter: ReportingExporter): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, { data: exporter });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(ReportingExportersFormComponent, { data: exporter }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => this.getExporters(),
     });
   }

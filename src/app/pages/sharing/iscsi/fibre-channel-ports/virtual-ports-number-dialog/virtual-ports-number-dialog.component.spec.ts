@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost } from 'app/interfaces/fibre-channel.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   VirtualPortsNumberDialogComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/virtual-ports-number-dialog/virtual-ports-number-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VirtualPortsNumberDialogComponent', () => {
   let spectator: Spectator<VirtualPortsNumberDialogComponent>;

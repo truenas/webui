@@ -50,15 +50,15 @@ import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wizard-step.component';
@@ -71,7 +71,7 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     ReactiveFormsModule,
     MatStepper,
@@ -94,12 +94,12 @@ export class IscsiWizardComponent implements OnInit {
   toStop = false;
   namesInUse: string[] = [];
 
-  createdZvol: Dataset;
-  createdExtent: IscsiExtent;
-  createdPortal: IscsiPortal;
-  createdInitiator: IscsiInitiatorGroup;
-  createdTarget: IscsiTarget;
-  createdTargetExtent: IscsiTargetExtent;
+  createdZvol: Dataset | undefined;
+  createdExtent: IscsiExtent | undefined;
+  createdPortal: IscsiPortal | undefined;
+  createdInitiator: IscsiInitiatorGroup | undefined;
+  createdTarget: IscsiTarget | undefined;
+  createdTargetExtent: IscsiTargetExtent | undefined;
 
   form = this.fb.group({
     target: this.fb.group({
@@ -115,18 +115,18 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as string, [Validators.required]],
+      disk: [null as string | null, [Validators.required]],
       dataset: ['', [Validators.required]],
-      volsize: [null as number, [Validators.required]],
+      volsize: [null as number | null, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
     }),
     options: this.fb.group({
-      portal: [null as typeof newOption | number, [Validators.required]],
+      portal: [null as typeof newOption | number | null, [Validators.required]],
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
       fcport: this.fb.group({
         port: [nullOption as string, [Validators.required]],
-        host_id: [null as number, [Validators.required]],
+        host_id: [null as number | null, [Validators.required]],
       }),
     }),
   }, {
@@ -220,7 +220,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get targetPayload(): IscsiTargetUpdate {
-    const value = this.form.value;
+    const value = this.form.getRawValue();
 
     return {
       name: value.extent.name,
@@ -247,7 +247,6 @@ export class IscsiWizardComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: OldSlideInRef<IscsiWizardComponent>,
     private iscsiService: IscsiService,
     private fcService: FibreChannelService,
     private api: ApiService,
@@ -257,6 +256,7 @@ export class IscsiWizardComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private store$: Store<ServicesState>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -465,6 +465,6 @@ export class IscsiWizardComponent implements OnInit {
 
     this.isLoading = false;
     this.cdr.markForCheck();
-    this.slideInRef.close(true);
+    this.slideInRef.close({ response: true, error: null });
   }
 }

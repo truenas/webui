@@ -1,4 +1,6 @@
-<h1 mat-dialog-title>{{ (title | translate) || ('Loading' | translate) }}</h1>
+<h1 mat-dialog-title>
+  {{ title ? (title | translate) : ('Loading' | translate) }}
+</h1>
 <mat-dialog-content class="job-dialog">
   @if (showRealtimeLogs && realtimeLogs) {
     <div class="logs-container">

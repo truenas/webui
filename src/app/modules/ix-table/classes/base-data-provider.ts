@@ -28,7 +28,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   currentPage$ = new BehaviorSubject<T[]>([]);
-  expandedRow$ = new BehaviorSubject<T>(null);
+  expandedRow$ = new BehaviorSubject<T | null>(null);
   expandedRow: T;
   totalRows = 0;
 

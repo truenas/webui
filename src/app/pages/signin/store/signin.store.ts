@@ -1,46 +1,38 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
 import { tapResponse } from '@ngrx/operators';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
+  EMPTY, forkJoin, Observable, of, from,
 } from 'rxjs';
 import {
-  catchError, distinctUntilChanged, filter, map, switchMap, take, tap,
+  catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { UpdateService } from 'app/services/update.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 
 interface SigninState {
   isLoading: boolean;
   wasAdminSet: boolean;
-  failover: {
-    status: FailoverStatus;
-    ips?: string[];
-    disabledReasons?: FailoverDisabledReason[];
-  } | null;
   loginBanner: string | null;
 }
 
 const initialState: SigninState = {
   isLoading: false,
   wasAdminSet: true,
-  failover: null,
   loginBanner: null,
 };
 
@@ -49,24 +41,9 @@ const initialState: SigninState = {
 export class SigninStore extends ComponentStore<SigninState> {
   loginBanner$ = this.select((state) => state.loginBanner);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
-  failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
-  failoverAllowsLogin$ = this.select((state) => {
-    return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
-  });
 
-  canLogin$ = combineLatest([this.wsManager.isConnected$, this.failoverAllowsLogin$]).pipe(
-    map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
-    distinctUntilChanged(),
-  );
-
-  hasFailover$ = this.select((state) => {
-    // Do not simplify to optional chaining.
-    return state.failover && state.failover.status !== FailoverStatus.Single;
-  });
-
-  private failoverStatusSubscription: Subscription | null = null;
-  private disabledReasonsSubscription: Subscription | null = null;
+  canLogin$ = this.wsManager.isConnected$;
 
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
@@ -102,7 +79,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => forkJoin([
       this.checkIfAdminPasswordSet(),
       this.checkForLoginBanner(),
-      this.loadFailoverStatus(),
       this.updateService.hardRefreshIfNeeded(),
     ])),
     tap(() => this.setLoadingState(false)),
@@ -128,16 +104,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       return this.systemGeneralService.loadProductType();
     }),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
-    tap(() => {
-      if (this.failoverStatusSubscription && !this.failoverStatusSubscription.closed) {
-        this.failoverStatusSubscription.unsubscribe();
-        this.failoverStatusSubscription = null;
-      }
-      if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
-        this.disabledReasonsSubscription.unsubscribe();
-        this.disabledReasonsSubscription = null;
-      }
-    }),
     catchError((error: unknown) => {
       this.setLoadingState(false);
       this.dialogService.error(this.errorHandler.parseError(error));
@@ -152,30 +118,6 @@ export class SigninStore extends ComponentStore<SigninState> {
       { duration: 4000, verticalPosition: 'bottom' },
     );
   }
-
-  private setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
-    ...state,
-    failover: {
-      ...state.failover,
-      disabledReasons,
-    },
-  }));
-
-  private setFailoverStatus = this.updater((state, failover: FailoverStatus) => ({
-    ...state,
-    failover: {
-      ...(state.failover || {}),
-      status: failover,
-    },
-  }));
-
-  private setFailoverIps = this.updater((state, ips: string[]) => ({
-    ...state,
-    failover: {
-      ...state.failover,
-      ips,
-    },
-  }));
 
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
@@ -209,50 +151,6 @@ export class SigninStore extends ComponentStore<SigninState> {
         return of(initialState.wasAdminSet);
       }),
     );
-  }
-
-  private loadFailoverStatus(): Observable<unknown> {
-    return this.api.call('failover.status').pipe(
-      switchMap((status) => {
-        this.setFailoverStatus(status);
-
-        if (status === FailoverStatus.Single) {
-          return of(null);
-        }
-
-        this.subscribeToFailoverUpdates();
-        return this.loadAdditionalFailoverInfo();
-      }),
-      catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        return of(undefined);
-      }),
-    );
-  }
-
-  private loadAdditionalFailoverInfo(): Observable<unknown> {
-    return forkJoin([
-      this.api.call('failover.get_ips'),
-      this.api.call('failover.disabled.reasons'),
-    ])
-      .pipe(
-        tap(
-          ([ips, reasons]: [string[], FailoverDisabledReason[]]) => {
-            this.setFailoverDisabledReasons(reasons);
-            this.setFailoverIps(ips);
-          },
-        ),
-      );
-  }
-
-  private subscribeToFailoverUpdates(): void {
-    this.failoverStatusSubscription = this.api.subscribe('failover.status')
-      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe(({ status }) => this.setFailoverStatus(status));
-
-    this.disabledReasonsSubscription = this.api.subscribe('failover.disabled.reasons')
-      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }
 
   private handleLoginWithQueryToken(token: string): Observable<LoginResult> {

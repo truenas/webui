@@ -112,7 +112,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private parseApiError(error: ApiError): ErrorReport {
     const title = apiErrorNames.has(error.errname)
-      ? this.translate.instant(apiErrorNames.get(error.errname))
+      ? this.translate.instant(apiErrorNames.get(error.errname) || error.errname)
       : error.trace?.class || this.translate.instant('Error');
 
     return {

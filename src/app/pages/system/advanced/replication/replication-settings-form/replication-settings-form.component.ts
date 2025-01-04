@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
@@ -18,8 +19,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +47,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
 
   isFormLoading = false;
   form = this.fb.group({
-    max_parallel_replication_tasks: [null as number],
+    max_parallel_replication_tasks: [null as number | null],
   });
 
   readonly tooltips = {
@@ -65,6 +66,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private translate: TranslateService,
     public slideInRef: SlideInRef<ReplicationConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.replicationConfig = this.slideInRef.getData();
   }
 

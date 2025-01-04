@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>{{ 'Logs' | translate }}</h1>
 
-@if (job?.logs_excerpt) {
+@if (job.logs_excerpt) {
   <div class="logs">
     <pre><code>{{ job.logs_excerpt }}</code></pre>
     <ix-copy-button [text]="job.logs_excerpt"></ix-copy-button>

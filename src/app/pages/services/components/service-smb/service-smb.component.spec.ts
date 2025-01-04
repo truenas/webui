@@ -14,18 +14,23 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createRoutingFactory({
     component: ServiceSmbComponent,
@@ -76,7 +81,9 @@ describe('ServiceSmbComponent', () => {
           ] as User[],
         ),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(Router),
       mockProvider(DialogService),
@@ -89,8 +96,7 @@ describe('ServiceSmbComponent', () => {
           username: 'test-username',
         }])),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });

@@ -19,8 +19,8 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class DockerImageDeleteDialogComponent {
   protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
    containers and should be used cautiously.';
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     confirm: [false, [Validators.requiredTrue]],
     force: [false],
   });
@@ -85,7 +85,7 @@ export class DockerImageDeleteDialogComponent {
 
   onSubmit(): void {
     const deleteParams: DeleteContainerImageParams[] = this.images.map((image) => {
-      return [image.id, { force: this.form.value.force }];
+      return [image.id, { force: this.form.getRawValue().force }];
     });
 
     this.images.forEach((image) => {

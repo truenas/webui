@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -42,11 +42,11 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -61,7 +61,6 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
@@ -74,7 +73,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -96,6 +95,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 })
 export class InterfaceFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
+  protected existingInterface: NetworkInterface | undefined;
 
   readonly defaultMtu = 1500;
 
@@ -183,10 +183,11 @@ export class InterfaceFormComponent implements OnInit {
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: OldSlideInRef<InterfaceFormComponent>,
     private store$: Store<AppState>,
-    @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
-  ) {}
+    public slideInRef: SlideInRef<NetworkInterface | undefined, boolean>,
+  ) {
+    this.existingInterface = slideInRef.getData();
+  }
 
   get isNew(): boolean {
     return !this.existingInterface;
@@ -284,7 +285,7 @@ export class InterfaceFormComponent implements OnInit {
             });
           }
 
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Network interface updated'));
         });

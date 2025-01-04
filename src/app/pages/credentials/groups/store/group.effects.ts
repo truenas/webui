@@ -9,13 +9,13 @@ import {
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   groupPageEntered,
   groupRemoved,
   groupsLoaded,
   groupsNotLoaded,
 } from 'app/pages/credentials/groups/store/group.actions';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';

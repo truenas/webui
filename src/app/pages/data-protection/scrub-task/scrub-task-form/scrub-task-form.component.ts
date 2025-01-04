@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -23,12 +23,11 @@ import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -55,6 +54,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class ScrubTaskFormComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected editingTask: PoolScrubTask | undefined;
 
   get isNew(): boolean {
     return !this.editingTask;
@@ -67,7 +67,7 @@ export class ScrubTaskFormComponent implements OnInit {
   }
 
   form = this.fb.group({
-    pool: [null as number, Validators.required],
+    pool: [null as number | null, Validators.required],
     threshold: [35, [Validators.min(0), Validators.required]],
     description: [''],
     schedule: ['', Validators.required],
@@ -97,9 +97,13 @@ export class ScrubTaskFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<ScrubTaskFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingTask: PoolScrubTask,
-  ) {}
+    public slideInRef: SlideInRef<PoolScrubTask | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingTask = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingTask) {
@@ -139,7 +143,7 @@ export class ScrubTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

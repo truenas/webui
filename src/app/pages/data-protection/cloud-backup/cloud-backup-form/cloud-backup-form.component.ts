@@ -39,9 +39,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 type FormValue = CloudBackupFormComponent['form']['value'];
 
@@ -146,6 +146,9 @@ export class CloudBackupFormComponent implements OnInit {
     private cloudCredentialService: CloudCredentialService,
     public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 

@@ -24,7 +24,9 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
@@ -32,8 +34,6 @@ import { KerberosRealmsListComponent } from 'app/pages/directory-service/compone
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 interface DataCard {
@@ -92,7 +92,7 @@ export class DirectoryServicesComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -197,18 +197,21 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   openActiveDirectoryForm(): void {
-    const slideInRef = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
+    this.slideIn.open(ActiveDirectoryComponent, { wide: true }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.refreshCards());
   }
 
   openLdapForm(): void {
-    const slideInRef = this.slideInService.open(LdapComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
+    this.slideIn.open(LdapComponent, { wide: true }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.refreshCards());
   }
 
   openKerberosSettingsForm(): void {
-    const slideInRef = this.slideInService.open(KerberosSettingsComponent);
-    slideInRef.slideInClosed$.pipe(
+    this.slideIn.open(KerberosSettingsComponent).pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.refreshCards());

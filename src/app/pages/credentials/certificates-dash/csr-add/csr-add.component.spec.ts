@@ -17,8 +17,9 @@ import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -35,7 +36,6 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { CsrAddComponent } from './csr-add.component';
 
 describe('CsrAddComponent', () => {
@@ -43,6 +43,12 @@ describe('CsrAddComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const profile = {
     lifetime: 3650,
@@ -83,7 +89,7 @@ describe('CsrAddComponent', () => {
         }),
         mockJob('certificate.create', fakeSuccessfulJob()),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
@@ -185,7 +191,7 @@ describe('CsrAddComponent', () => {
         },
       },
     ]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('imports a certificate when Type = Import CSR and form is submitted', async () => {

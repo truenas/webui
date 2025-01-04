@@ -9,8 +9,9 @@
  *
  * Example of creating a new searchable element:
  *
- * It's required to add anchor to the element where you do not specify hierarchy implicitly
+ * !! It's required to add anchor to the element where you do not specify hierarchy explicitly !!
  * You will get TS error if it's not provided correctly
+ *
 
   export const customSearchableElements = {
     hierarchy: [T('System'), T('Advanced Settings'), T('Access')],

@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ManageConfigurationMenuComponent,
@@ -15,7 +16,6 @@ import {
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
 
 describe('ManageConfigurationMenuComponent', () => {
   let spectator: Spectator<ManageConfigurationMenuComponent>;

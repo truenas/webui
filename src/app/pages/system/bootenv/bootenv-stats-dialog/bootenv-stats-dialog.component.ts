@@ -20,8 +20,8 @@ import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -50,7 +50,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class BootenvStatsDialogComponent implements OnInit {
   form = this.fb.group({
-    interval: [null as number, [Validators.required, Validators.min(1)]],
+    interval: [null as number | null, [Validators.required, Validators.min(1)]],
   });
 
   state: PoolInstance;

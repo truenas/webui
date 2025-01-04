@@ -73,7 +73,7 @@ export class PoolManagerValidationService {
       }),
     );
 
-  private parseNameErrors(nameErrors: ValidationErrors): PoolCreationError[] {
+  private parseNameErrors(nameErrors: ValidationErrors | null): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
 
     if (nameErrors?.required) {
@@ -130,7 +130,7 @@ export class PoolManagerValidationService {
   }
 
   private validateMinVdevsLimit(
-    existingPool: Pool,
+    existingPool: Pool | null,
     topology: PoolManagerTopology,
   ): PoolCreationError[] {
     const errors: PoolCreationError[] = [];

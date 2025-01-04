@@ -10,10 +10,10 @@ import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ResilverConfigComponent } from './resilver-config.component';
 
 describe('ResilverConfigComponent', () => {

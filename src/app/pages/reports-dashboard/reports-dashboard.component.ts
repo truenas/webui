@@ -13,13 +13,11 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Option } from 'app/interfaces/option.interface';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { reportingElements } from 'app/pages/reports-dashboard/reports-dashboard.elements';
-import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
-import { LayoutService } from 'app/services/layout.service';
 import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
@@ -41,17 +39,11 @@ import { ReportsService } from './reports.service';
     ReportComponent,
     MatCard,
   ],
-  providers: [
-    {
-      provide: PlotterService,
-      useClass: SmoothPlotterService,
-    },
-  ],
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
   readonly searchableElements = reportingElements;
 
-  scrollContainer: HTMLElement;
+  scrollContainer: HTMLElement | null;
 
   allReports: Report[] = [];
   diskReports: Report[] = [];
@@ -69,7 +61,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.scrollContainer = this.layoutService.getContentContainer();
-    this.scrollContainer.style.overflow = 'hidden';
+    if (this.scrollContainer) {
+      this.scrollContainer.style.overflow = 'hidden';
+    }
 
     this.reportsService.getReportGraphs()
       .pipe(untilDestroyed(this))
@@ -88,8 +82,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
-        this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
+        this.diskReports = this.allReports.filter((report) => report.name === ReportingGraphName.Disk);
+        this.otherReports = this.allReports.filter((report) => report.name !== ReportingGraphName.Disk);
 
         this.activateTabFromUrl();
         this.cdr.markForCheck();
@@ -97,7 +91,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.scrollContainer.style.overflow = 'auto';
+    if (this.scrollContainer) {
+      this.scrollContainer.style.overflow = 'auto';
+    }
   }
 
   activateTabFromUrl(): void {
@@ -236,7 +232,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = devices.includes(item.identifiers[0]);
+      const [,, identifier] = item.identifiers[0].split(' | ');
+      const deviceMatch = devices.includes(identifier);
       const metricMatch = metrics.includes(item.name);
       const condition = deviceMatch && metricMatch;
       if (condition) {

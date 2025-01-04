@@ -35,7 +35,7 @@ import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/u
   ],
 })
 export class CaImportComponent implements SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     certificate: ['', Validators.required],
     privatekey: [''],
     passphrase: [''],
@@ -58,7 +58,7 @@ export class CaImportComponent implements SummaryProvider {
   ) {}
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const certificatePreview = getCertificatePreview(values.certificate);
 
     const summary: SummarySection = [

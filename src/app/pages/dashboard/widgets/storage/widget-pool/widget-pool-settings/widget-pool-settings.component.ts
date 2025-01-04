@@ -28,8 +28,8 @@ import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-p
   ],
 })
 export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<WidgetPoolSettings>, OnInit {
-  form = this.fb.group({
-    poolId: [null as string, [Validators.required]],
+  form = this.fb.nonNullable.group({
+    poolId: [null as string | null, [Validators.required]],
   });
 
   protected poolOptions$ = this.resources.pools$.pipe(

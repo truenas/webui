@@ -1,6 +1,6 @@
 <ix-page-header
   [pageTitle]="pageTitle$ | async | titlecase | translate"
-  [loading]="isLoading$ | async"
+  [loading]="!!(isLoading$ | async)"
 >
   <ix-custom-app-button></ix-custom-app-button>
 </ix-page-header>

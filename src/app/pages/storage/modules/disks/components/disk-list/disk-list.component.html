@@ -1,4 +1,4 @@
-<ix-page-header>
+<ix-page-header [loading]="!!(dataProvider.isLoading$ | async)">
   <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 </ix-page-header>
@@ -37,7 +37,7 @@
 <ix-table
   class="table"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  [emptyConfig]="emptyConfig"
 >
   <thead
     ix-table-head
@@ -49,7 +49,7 @@
     detailsRowIdentifier="identifier"
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
+    [isLoading]="!!(dataProvider.isLoading$ | async)"
   >
     <ng-template let-disk ix-table-details-row [dataProvider]="dataProvider">
       <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="disk">

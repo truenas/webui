@@ -45,7 +45,7 @@ export class UrlOptionsService {
     return `${url}/${JSON.stringify(options)}`;
   }
 
-  parseUrlOptions<T>(options: string): UrlOptions<T> {
+  parseUrlOptions<T>(options?: string): UrlOptions<T> {
     return JSON.parse(options || '{}');
   }
 }

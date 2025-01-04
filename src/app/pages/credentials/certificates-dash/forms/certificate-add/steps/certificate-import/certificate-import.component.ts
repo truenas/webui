@@ -20,9 +20,9 @@ import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-te
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -45,9 +45,9 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CertificateImportComponent implements OnInit, SummaryProvider {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     csrExistsOnSystem: [false],
-    csr: [null as number],
+    csr: [null as number | null],
     certificate: [''],
     privatekey: [''],
     passphrase: [''],
@@ -90,7 +90,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const certificatePreview = getCertificatePreview(values.certificate);
 
     const summary: SummarySection = [];
@@ -98,7 +98,7 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
     if (this.form.value.csrExistsOnSystem) {
       summary.push({
         label: this.translate.instant('Using CSR'),
-        value: this.selectedCsr.name,
+        value: this.selectedCsr?.name || '',
       });
     }
 

@@ -15,11 +15,10 @@ import { User as TnUser } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SmbAclComponent } from './smb-acl.component';
 
 describe('SmbAclComponent', () => {
@@ -59,6 +58,12 @@ describe('SmbAclComponent', () => {
     smb: true,
   };
 
+  const slideInRef: SlideInRef<string | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: SmbAclComponent,
     imports: [
@@ -74,9 +79,11 @@ describe('SmbAclComponent', () => {
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as Group[]),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(UserService, {
         smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
@@ -87,14 +94,13 @@ describe('SmbAclComponent', () => {
           { group: 'vip' },
         ]),
       }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent({
       providers: [
-        { provide: SLIDE_IN_DATA, useValue: 'myshare' },
+        mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => 'myshare') }),
       ],
     });
     spectator.detectChanges();
@@ -103,7 +109,7 @@ describe('SmbAclComponent', () => {
   });
 
   it('shows name of the share in the title', () => {
-    const title = spectator.query('ix-old-modal-header');
+    const title = spectator.query('ix-modal-header');
     expect(title).toHaveText('Share ACL for myshare');
   });
 
@@ -239,6 +245,6 @@ describe('SmbAclComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });
