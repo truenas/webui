@@ -70,7 +70,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
 
-  protected data: { backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined = undefined;
+  protected data: { backup: CloudBackup; snapshot: CloudBackupSnapshot };
 
   fileNodeProvider: TreeNodeProvider;
   snapshotNodeProvider: TreeNodeProvider;
@@ -82,11 +82,11 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   form = this.fb.group({
-    target: [null as string, Validators.required],
+    target: [null as string | null, Validators.required],
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
-    subFolder: [this.data?.backup?.path],
+    subFolder: [''],
     includedPaths: [[] as string[]],
   });
 
@@ -118,7 +118,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private dialogService: DialogService,
 
-    public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined, boolean>,
+    public slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot }, boolean>,
   ) {
     this.data = this.slideInRef.getData();
     this.form.patchValue({

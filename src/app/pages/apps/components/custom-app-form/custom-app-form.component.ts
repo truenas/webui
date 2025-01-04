@@ -137,10 +137,10 @@ export class CustomAppFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true, error: null });
-        if (this.isNew()) {
-          this.router.navigate(['/apps', 'installed']);
-        } else {
+        if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
+        } else {
+          this.router.navigate(['/apps', 'installed']);
         }
       },
       error: (error: unknown) => {

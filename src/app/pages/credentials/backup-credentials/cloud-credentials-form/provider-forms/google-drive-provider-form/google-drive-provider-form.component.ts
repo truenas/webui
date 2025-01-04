@@ -29,7 +29,7 @@ import {
   ],
 })
 export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
-  private readonly oauthComponent = viewChild(OauthProviderComponent);
+  private readonly oauthComponent = viewChild.required(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
