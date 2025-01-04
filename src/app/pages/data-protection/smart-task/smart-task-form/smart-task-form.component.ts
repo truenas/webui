@@ -110,15 +110,11 @@ export class SmartTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTest) {
-      this.setTestForEdit();
+      this.form.patchValue({
+        ...this.editingTest,
+        schedule: scheduleToCrontab(this.editingTest.schedule),
+      });
     }
-  }
-
-  setTestForEdit(): void {
-    this.form.patchValue({
-      ...this.editingTest,
-      schedule: scheduleToCrontab(this.editingTest.schedule),
-    });
   }
 
   onSubmit(): void {
@@ -130,13 +126,13 @@ export class SmartTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('smart.test.create', [values]);
-    } else {
+    if (this.editingTest) {
       request$ = this.api.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('smart.test.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

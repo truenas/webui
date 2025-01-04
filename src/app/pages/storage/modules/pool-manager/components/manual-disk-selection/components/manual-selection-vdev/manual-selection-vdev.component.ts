@@ -134,11 +134,12 @@ export class ManualSelectionVdevComponent implements OnChanges {
   private groupDisksByEnclosure(): void {
     this.enclosuresDisks = new Map();
     this.nonEnclosureDisks = [];
-    if (!this.vdev()?.disks) {
+    const disks = this.vdev()?.disks;
+    if (!disks) {
       return;
     }
 
-    for (const disk of this.vdev().disks) {
+    for (const disk of disks) {
       if (disk.enclosure?.id) {
         let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.id);
         if (!enclosureDisks) {

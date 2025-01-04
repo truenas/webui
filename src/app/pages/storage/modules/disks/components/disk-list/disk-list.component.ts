@@ -50,7 +50,7 @@ import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
-  selected: boolean;
+  selected?: boolean;
 }
 
 @UntilDestroy()

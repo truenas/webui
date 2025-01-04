@@ -1,14 +1,14 @@
 @if (!isLoading()) {
   <div>
     <div class="pool-header">
-      <h2 class="pool-name">{{ pool().name }}</h2>
+      <h2 class="pool-name">{{ pool()?.name }}</h2>
       <div class="pool-actions">
-        @if (!pool().is_upgraded) {
+        @if (!pool()?.is_upgraded) {
           <button
             *ixRequiresRoles="requiredRoles"
             mat-button
             color="primary"
-            [ixTest]="['upgrade-pool', pool().name]"
+            [ixTest]="['upgrade-pool', pool()?.name]"
             (click)="onUpgrade()"
           >
             {{ 'Upgrade' | translate }}
@@ -18,7 +18,7 @@
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="['export', pool().name]"
+          [ixTest]="['export', pool()?.name]"
           [ixUiSearch]="searchableElements.elements.exportDisconnect"
           (click)="onExport()"
         >
@@ -28,7 +28,7 @@
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
-          [ixTest]="['expand', pool().name]"
+          [ixTest]="['expand', pool()?.name]"
           [ixUiSearch]="searchableElements.elements.expand"
           (click)="onExpand()"
         >

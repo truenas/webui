@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { MatMiniFabButton } from '@angular/material/button';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -29,7 +32,7 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   ],
 })
 export class DiskDetailsOverviewComponent {
-  readonly selectedSlot = this.store.selectedSlot;
+  readonly selectedSlot = input<DashboardEnclosureSlot>();
 
   readonly diskName = computed(() => {
     return this.selectedSlot().dev

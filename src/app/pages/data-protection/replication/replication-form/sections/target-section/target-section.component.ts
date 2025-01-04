@@ -45,8 +45,8 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   readonly allowsCustomRetentionPolicy = input(false);
   readonly nodeProvider = input<TreeNodeProvider>();
 
-  form = this.formBuilder.group({
-    target_dataset: [null as string, Validators.required],
+  form = this.formBuilder.nonNullable.group({
+    target_dataset: [null as string | null, Validators.required],
     readonly: [ReadOnlyMode.Require],
     encryption: [false],
     encryption_inherit: [false],
@@ -58,7 +58,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     encryption_key_location: [''],
     allow_from_scratch: [false],
     retention_policy: [RetentionPolicy.None],
-    lifetime_value: [null as number, [Validators.required]],
+    lifetime_value: [null as number | null, [Validators.required]],
     lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
   });
 
@@ -81,11 +81,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   ) {}
 
   get hasEncryption(): boolean {
-    return this.form.value.encryption;
+    return Boolean(this.form.value.encryption);
   }
 
   get hasEncryptionInherit(): boolean {
-    return this.form.value.encryption_inherit;
+    return Boolean(this.form.value.encryption_inherit);
   }
 
   get isHex(): boolean {
@@ -93,8 +93,9 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.replication()) {
-      this.setFormValues();
+    const replication = this.replication();
+    if (replication) {
+      this.setFormValues(replication);
     }
 
     if (this.nodeProvider()) {
@@ -176,24 +177,24 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     return payload;
   }
 
-  private setFormValues(): void {
-    const usesTruenasKeyDb = this.replication().encryption_key_location === truenasDbKeyLocation;
+  private setFormValues(replication: ReplicationTask): void {
+    const usesTruenasKeyDb = replication.encryption_key_location === truenasDbKeyLocation;
 
     this.form.patchValue({
-      ...this.replication(),
-      encryption_key_location_truenasdb: usesTruenasKeyDb || !this.replication().encryption,
-      encryption_key_location: usesTruenasKeyDb ? '' : (this.replication().encryption_key_location || ''),
+      ...replication,
+      encryption_key_location_truenasdb: usesTruenasKeyDb || !replication.encryption,
+      encryption_key_location: usesTruenasKeyDb ? '' : (replication.encryption_key_location || ''),
     });
 
     if (this.isHex) {
       this.form.patchValue({
         encryption_key_passphrase: '',
-        encryption_key_hex: this.replication().encryption_key || '',
+        encryption_key_hex: replication.encryption_key || '',
         encryption_key_generate: false,
       });
     } else {
       this.form.patchValue({
-        encryption_key_passphrase: this.replication().encryption_key || '',
+        encryption_key_passphrase: replication.encryption_key || '',
         encryption_key_hex: '',
       });
     }

@@ -93,10 +93,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly hasMoreThanOneSide = computed(() => {
     return [
-      this.selectedEnclosure().front_loaded,
-      this.selectedEnclosure().top_loaded,
-      this.selectedEnclosure().rear_slots > 0,
-      this.selectedEnclosure().internal_slots > 0,
+      this.selectedEnclosure()?.front_loaded,
+      this.selectedEnclosure()?.top_loaded,
+      Number(this.selectedEnclosure()?.rear_slots) > 0,
+      Number(this.selectedEnclosure()?.internal_slots) > 0,
     ].filter(Boolean).length > 1;
   });
 
@@ -222,6 +222,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }) => {
     return produce(state, (draft) => {
       const enclosureToUpdate = draft.enclosures.find((enclosure) => enclosure.id === options.enclosureId);
+      if (!enclosureToUpdate) {
+        return;
+      }
+
       const driveBay = enclosureToUpdate.elements[EnclosureElementType.ArrayDeviceSlot][options.driveBayNumber];
       driveBay.drive_bay_light_status = options.status;
     });

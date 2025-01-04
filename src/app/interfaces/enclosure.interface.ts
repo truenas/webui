@@ -80,17 +80,17 @@ export interface DashboardEnclosureSlot {
   descriptor: string;
   status: EnclosureStatus;
   dev: string | null;
-  supports_identify_light?: boolean;
+  supports_identify_light: boolean;
   drive_bay_light_status: DriveBayLightStatus | null;
-  size?: number | null;
-  model?: string | null;
+  size: number | null;
+  model: string | null;
   is_top: boolean;
   is_front: boolean;
   is_rear: boolean;
   is_internal: boolean;
-  serial?: string | null;
-  type?: DiskType | null;
-  rotationrate?: number | null;
+  serial: string | null;
+  type: DiskType | null;
+  rotationrate: number | null;
   pool_info: EnclosureSlotPoolInfo | null;
 }
 

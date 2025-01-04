@@ -123,9 +123,9 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
   getLayoutSupportedWidgets: Signal<SimpleWidget[]>;
 
-  form = this.fb.group({
-    category: [null as WidgetCategory, [Validators.required]],
-    type: [null as WidgetType, [Validators.required]],
+  form = this.fb.nonNullable.group({
+    category: [null as WidgetCategory | null, [Validators.required]],
+    type: [null as WidgetType | null, [Validators.required]],
   });
 
   private environmentInjector = inject(EnvironmentInjector);
@@ -177,7 +177,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     });
   }
 
-  private updateSelectedCategory(category: WidgetCategory): void {
+  private updateSelectedCategory(category: WidgetCategory | null): void {
     if (!this.selectedCategory) {
       this.selectedCategory = signal<WidgetCategory>(category);
     } else {

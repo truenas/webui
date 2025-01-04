@@ -6,7 +6,7 @@ import {
   OnInit,
   output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -97,7 +97,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     checksum: [inherit as WithInherit<DatasetChecksum>],
     readonly: [inherit as WithInherit<OnOff>],
     exec: [inherit as WithInherit<OnOff>],
-    snapdir: [null as WithInherit<DatasetSnapdir>],
+    snapdir: [null as WithInherit<DatasetSnapdir> | null],
     snapdev: [inherit as WithInherit<DatasetSnapdev>],
     copies: [1],
     recordsize: [inherit as string],
@@ -153,7 +153,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly helptext = helptextDatasetForm;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
@@ -487,8 +487,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
-        this.hasRecordsizeWarning = (recordsize
-          && recommended
+        this.hasRecordsizeWarning = Boolean(recordsize
+          && !!recommended
           && recordsizeAsString !== inherit
           && recordsize < recommended);
 

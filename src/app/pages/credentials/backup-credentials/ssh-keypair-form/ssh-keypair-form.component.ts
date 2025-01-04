@@ -156,16 +156,16 @@ export class SshKeypairFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('keychaincredential.create', [{
-        ...commonBody,
-        type: KeychainCredentialType.SshKeyPair,
-      }]);
-    } else {
+    if (this.editingKeypair) {
       request$ = this.api.call('keychaincredential.update', [
         this.editingKeypair.id,
         commonBody,
       ]);
+    } else {
+      request$ = this.api.call('keychaincredential.create', [{
+        ...commonBody,
+        type: KeychainCredentialType.SshKeyPair,
+      }]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

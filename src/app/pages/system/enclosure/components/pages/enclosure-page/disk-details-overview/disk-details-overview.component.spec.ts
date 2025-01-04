@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { GiB } from 'app/constants/bytes.constant';
@@ -24,7 +23,6 @@ describe('DiskDetailsOverviewComponent', () => {
     dev: 'sda',
     supports_identify_light: true,
   } as DashboardEnclosureSlot;
-  const selectedSlot = signal(initialSelectedSlot);
 
   const createComponent = createComponentFactory({
     component: DiskDetailsOverviewComponent,
@@ -40,20 +38,21 @@ describe('DiskDetailsOverviewComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedSlot,
-        selectedEnclosure: () => ({ id: 1 }),
         selectSlot: jest.fn(),
       }),
     ],
   });
 
   beforeEach(() => {
-    selectedSlot.set(initialSelectedSlot);
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        selectedSlot: initialSelectedSlot,
+      },
+    });
   });
 
   it('shows Slot is empty when there is no drive in the slot', () => {
-    selectedSlot.set({ drive_bay_number: 4 } as DashboardEnclosureSlot);
+    spectator.setInput('selectedSlot', { drive_bay_number: 4 } as DashboardEnclosureSlot);
     spectator.detectChanges();
 
     expect(spectator.fixture.nativeElement).toHaveText('Slot 4 is empty.');

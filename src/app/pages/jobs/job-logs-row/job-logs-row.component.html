@@ -1,9 +1,9 @@
 <div class="list-item">
   <h4>{{ 'Arguments' | translate }}</h4>
-  @if (job()?.arguments?.length > 0) {
+  @if (job().arguments.length > 0) {
     <div class="logs">
       <pre><code>{{ job().arguments | json }}</code></pre>
-      @if (job()?.arguments?.length > 0) {
+      @if (job().arguments.length > 0) {
         <ix-copy-button [text]="job().arguments | json"></ix-copy-button>
       }
     </div>

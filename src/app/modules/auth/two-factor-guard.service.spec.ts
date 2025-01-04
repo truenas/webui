@@ -10,8 +10,8 @@ describe('TwoFactorGuardService', () => {
   let spectator: SpectatorService<TwoFactorGuardService>;
 
   const isAuthenticated$ = new BehaviorSubject(false);
-  const userTwoFactorConfig$ = new BehaviorSubject(null as UserTwoFactorConfig);
-  const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig));
+  const userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig | null>(null);
+  const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({

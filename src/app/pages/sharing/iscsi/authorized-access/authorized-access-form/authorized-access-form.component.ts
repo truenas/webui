@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -64,7 +64,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   form = this.formBuilder.group({
-    tag: [null as number, [Validators.required, Validators.min(0)]],
+    tag: [null as number | null, [Validators.required, Validators.min(0)]],
     user: ['', Validators.required],
     secret: ['', [
       Validators.minLength(12),
@@ -134,7 +134,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
@@ -187,7 +187,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const payload = {
       tag: values.tag,
       user: values.user,

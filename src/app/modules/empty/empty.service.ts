@@ -9,7 +9,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 export class EmptyService {
   constructor(private translate: TranslateService) { }
 
-  defaultEmptyConfig(type: EmptyType): EmptyConfig {
+  defaultEmptyConfig(type?: EmptyType | null): EmptyConfig {
     switch (type) {
       case EmptyType.Loading:
         return {

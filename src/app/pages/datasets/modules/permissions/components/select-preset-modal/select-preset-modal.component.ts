@@ -122,6 +122,9 @@ export class SelectPresetModalComponent implements OnInit {
     }
 
     const selectedPreset = this.presets.find((preset) => preset.name === presetName);
+    if (!selectedPreset) {
+      throw new Error(`Preset ${presetName} not found`);
+    }
 
     this.aclEditorStore.usePreset(selectedPreset);
     this.dialogRef.close();

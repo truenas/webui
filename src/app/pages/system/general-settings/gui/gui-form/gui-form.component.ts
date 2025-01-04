@@ -119,7 +119,7 @@ export class GuiFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     const params = {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),

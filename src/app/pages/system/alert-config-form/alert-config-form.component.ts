@@ -146,6 +146,10 @@ export class AlertConfigFormComponent implements OnInit {
       .forEach(([className, classControl]: [string, FormGroup<ControlsOf<AlertClassSettings>>]) => {
         const levelControl = classControl.controls.level;
         const policyControl = classControl.controls.policy;
+        if (!levelControl || !policyControl) {
+          return;
+        }
+
         if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
           payload.classes[className] = {};
           if (levelControl.value !== levelControl.defaultValue) {

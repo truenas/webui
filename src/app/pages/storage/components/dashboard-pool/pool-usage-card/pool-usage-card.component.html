@@ -23,7 +23,7 @@
           [colorBlank]="chartBlankColor"
           [width]="150"
           [height]="150"
-          [label]="usedPercentage() / 100 | percent: '1.0-1'"
+          [label]="(usedPercentage() / 100 | percent: '1.0-1') || ''"
           [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
           [style]="isLowCapacity() ? 'color: var(--red);' : ''"
         ></ix-gauge-chart>

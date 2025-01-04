@@ -216,13 +216,13 @@ export class AcmednsFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('acme.dns.authenticator.create', [values]);
-    } else {
+    if (this.editingAcmedns) {
       request$ = this.api.call('acme.dns.authenticator.update', [
         this.editingAcmedns.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('acme.dns.authenticator.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

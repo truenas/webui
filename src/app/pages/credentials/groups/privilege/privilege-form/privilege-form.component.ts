@@ -75,7 +75,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected existingPrivilege: Privilege;
+  protected existingPrivilege: Privilege | undefined;
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -143,7 +143,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.existingPrivilege) {
-      this.setPrivilegeForEdit();
+      this.setPrivilegeForEdit(this.existingPrivilege);
       if (this.existingPrivilege.builtin_name) {
         this.form.controls.name.disable();
         this.form.controls.roles.disable();
@@ -151,13 +151,13 @@ export class PrivilegeFormComponent implements OnInit {
     }
   }
 
-  setPrivilegeForEdit(): void {
+  setPrivilegeForEdit(existingPrivilege: Privilege): void {
     this.form.patchValue({
-      ...this.existingPrivilege,
-      local_groups: this.existingPrivilege.local_groups.map(
+      ...existingPrivilege,
+      local_groups: existingPrivilege.local_groups.map(
         (group) => group.group || this.translate.instant('Missing group - {gid}', { gid: group.gid }),
       ),
-      ds_groups: this.existingPrivilege.ds_groups.map((group) => group.group),
+      ds_groups: existingPrivilege.ds_groups.map((group) => group.group),
     });
     this.cdr.markForCheck();
   }
@@ -171,10 +171,10 @@ export class PrivilegeFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<Privilege>;
-    if (this.isNew) {
-      request$ = this.api.call('privilege.create', [values]);
-    } else {
+    if (this.existingPrivilege) {
       request$ = this.api.call('privilege.update', [this.existingPrivilege.id, values]);
+    } else {
+      request$ = this.api.call('privilege.create', [values]);
     }
 
     request$.pipe(

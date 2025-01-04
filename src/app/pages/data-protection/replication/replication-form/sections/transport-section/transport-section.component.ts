@@ -41,15 +41,15 @@ export class TransportSectionComponent implements OnChanges {
   readonly replication = input<ReplicationTask>();
   readonly transport = input<TransportMode>();
 
-  form = this.formBuilder.group({
-    ssh_credentials: [null as number | typeof newOption],
+  form = this.formBuilder.nonNullable.group({
+    ssh_credentials: [null as number | typeof newOption | null],
     netcat_active_side: [NetcatMode.Local],
-    netcat_active_side_listen_address: [null as string],
-    netcat_active_side_port_min: [null as number],
-    netcat_active_side_port_max: [null as number],
-    netcat_passive_side_connect_address: [null as string],
+    netcat_active_side_listen_address: [null as string | null],
+    netcat_active_side_port_min: [null as number | null],
+    netcat_active_side_port_max: [null as number | null],
+    netcat_passive_side_connect_address: [null as string | null],
     compression: [CompressionType.Disabled],
-    speed_limit: [null as number],
+    speed_limit: [null as number | null],
     large_block: [true],
     compressed: [true],
   });
@@ -68,8 +68,9 @@ export class TransportSectionComponent implements OnChanges {
   ) { }
 
   ngOnChanges(): void {
-    if (this.replication()) {
-      this.setFormValues(this.replication());
+    const replication = this.replication();
+    if (replication) {
+      this.setFormValues(replication);
     }
 
     if (this.isLocal()) {

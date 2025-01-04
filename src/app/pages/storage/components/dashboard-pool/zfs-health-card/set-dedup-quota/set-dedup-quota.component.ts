@@ -53,8 +53,8 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
 })
 export class SetDedupQuotaComponent {
   protected form = this.formBuilder.group({
-    quotaType: [null as QuotaType],
-    quotaValue: [null as number, Validators.min(0)],
+    quotaType: [null as QuotaType | null],
+    quotaValue: [null as number | null, Validators.min(0)],
   });
 
   protected quotaTypeOptions$ = of(mapToOptions(quotaTypeLabels, this.translate));

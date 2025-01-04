@@ -132,7 +132,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     protected dialogService: DialogService,
-    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string; id: number } | undefined, boolean>,
+    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string; id: number }, boolean>,
   ) {
     this.datasetId = slideInRef.getData().datasetId;
     this.quotaType = slideInRef.getData().quotaType;

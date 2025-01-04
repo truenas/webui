@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -63,25 +63,25 @@ export class ServiceUpsComponent implements OnInit {
   isMasterMode = true;
 
   form = this.fb.group({
-    identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
-    mode: [null as UpsMode],
-    remotehost: [null as string, Validators.required],
-    remoteport: [null as number, Validators.required],
-    driver: [null as string, Validators.required],
-    port: [null as string, Validators.required],
-    monuser: [null as string, Validators.required],
-    monpwd: [null as string, Validators.pattern(/^((?![#|\s]).)*$/)],
-    extrausers: [null as string],
+    identifier: [null as string | null, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
+    mode: [null as UpsMode | null],
+    remotehost: [null as string | null, Validators.required],
+    remoteport: [null as number | null, Validators.required],
+    driver: [null as string | null, Validators.required],
+    port: [null as string | null, Validators.required],
+    monuser: [null as string | null, Validators.required],
+    monpwd: [null as string | null, Validators.pattern(/^((?![#|\s]).)*$/)],
+    extrausers: [null as string | null],
     rmonitor: [false],
-    shutdown: [null as string],
-    shutdowntimer: [null as number],
-    shutdowncmd: [null as string],
+    shutdown: [null as string | null],
+    shutdowntimer: [null as number | null],
+    shutdowncmd: [null as string | null],
     powerdown: [false],
     nocommwarntime: [300],
     hostsync: [15],
-    description: [null as string],
-    options: [null as string],
-    optionsupsd: [null as string],
+    description: [null as string | null],
+    options: [null as string | null],
+    optionsupsd: [null as string | null],
   });
 
   readonly helptext = helptextServiceUps;
@@ -150,7 +150,7 @@ export class ServiceUpsComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,

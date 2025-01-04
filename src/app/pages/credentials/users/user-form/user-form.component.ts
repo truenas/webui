@@ -104,7 +104,7 @@ export class UserFormComponent implements OnInit {
   }
 
   get isEditingBuiltinUser(): boolean {
-    return !this.isNewUser && this.editingUser.builtin;
+    return !this.isNewUser && Boolean(this.editingUser?.builtin);
   }
 
   form = this.fb.group({
@@ -186,14 +186,7 @@ export class UserFormComponent implements OnInit {
     const homeCreate = this.form.value.home_create;
     const home = this.form.value.home;
     const homeMode = this.form.value.home_mode;
-    if (this.isNewUser) {
-      if (!homeCreate && home !== defaultHomePath) {
-        return this.translate.instant(
-          'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
-          { path: '\'' + this.form.value.home + '\'' },
-        );
-      }
-    } else {
+    if (this.editingUser) {
       if (this.editingUser.immutable || home === defaultHomePath) {
         return '';
       }
@@ -209,6 +202,11 @@ export class UserFormComponent implements OnInit {
           { path: '\'' + this.form.value.home + '\'' },
         );
       }
+    } else if (!homeCreate && home !== defaultHomePath) {
+      return this.translate.instant(
+        'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
+        { path: '\'' + this.form.value.home + '\'' },
+      );
     }
     return '';
   }
@@ -310,10 +308,10 @@ export class UserFormComponent implements OnInit {
       this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$),
     );
 
-    if (this.isNewUser) {
-      this.setupNewUserForm();
-    } else {
+    if (this.editingUser) {
       this.setupEditUserForm(this.editingUser);
+    } else {
+      this.setupNewUserForm();
     }
   }
 
@@ -356,14 +354,7 @@ export class UserFormComponent implements OnInit {
 
         let request$: Observable<number>;
         let nextRequest$: Observable<number>;
-        if (this.isNewUser) {
-          request$ = this.api.call('user.create', [{
-            ...body,
-            group_create: values.group_create,
-            password: values.password,
-            uid: values.uid,
-          }]);
-        } else {
+        if (this.editingUser) {
           const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
           if (passwordNotEmpty && !values.password_disabled) {
             body.password = values.password;
@@ -376,6 +367,13 @@ export class UserFormComponent implements OnInit {
           } else {
             request$ = this.api.call('user.update', [this.editingUser.id, body]);
           }
+        } else {
+          request$ = this.api.call('user.create', [{
+            ...body,
+            group_create: values.group_create,
+            password: values.password,
+            uid: values.uid,
+          }]);
         }
 
         request$.pipe(

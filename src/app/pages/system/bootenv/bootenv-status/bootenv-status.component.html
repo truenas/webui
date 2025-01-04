@@ -1,6 +1,6 @@
 <ix-fake-progress-bar
   class="loader-bar"
-  [loading]="isLoading$ | async"
+  [loading]="!!(isLoading$ | async)"
 ></ix-fake-progress-bar>
 
 <div class="tree-wrapper" [ixUiSearch]="searchableElements.elements.bootStatus">

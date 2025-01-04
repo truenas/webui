@@ -90,7 +90,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   private readonly lineChart = viewChild(LineChartComponent);
 
-  updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
+  updateReport$ = new BehaviorSubject<IxSimpleChanges<this> | null>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams | null>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
@@ -130,7 +130,8 @@ export class ReportComponent implements OnInit, OnChanges {
 
   get reportTitle(): string {
     const trimmed = this.report().title.replace(/[()]/g, '');
-    return this.identifier() ? trimmed.replace(/{identifier}/, this.identifier()) : this.report().title;
+    const identifier = this.identifier();
+    return identifier ? trimmed.replace(/{identifier}/, identifier) : this.report().title;
   }
 
   get currentZoomLevel(): ReportZoomLevel {

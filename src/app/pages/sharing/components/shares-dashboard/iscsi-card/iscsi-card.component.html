@@ -10,7 +10,7 @@
 
       <ix-service-state-button
         [service]="service$ | async"
-        [count]="dataProvider.currentPageCount$ | async"
+        [count]="+(dataProvider.currentPageCount$ | async)"
       ></ix-service-state-button>
     </div>
 
@@ -20,7 +20,7 @@
         mat-button
         [ixTest]="['iscsi-share', 'wizard']"
         [ixUiSearch]="searchableElements.elements.wizard"
-        (click)="openForm(null, true)"
+        (click)="openForm(undefined, true)"
       >
         {{ 'Wizard' | translate }}
       </button>

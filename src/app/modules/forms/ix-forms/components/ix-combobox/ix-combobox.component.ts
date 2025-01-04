@@ -74,7 +74,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   });
 
   private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
-  private readonly autoCompleteRef = viewChild('auto', { read: MatAutocomplete });
+  private readonly autoCompleteRef = viewChild.required('auto', { read: MatAutocomplete });
   private readonly autocompleteTrigger = viewChild(MatAutocompleteTrigger);
 
   options: Option[] = [];

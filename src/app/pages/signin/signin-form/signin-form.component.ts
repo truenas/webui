@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormBuilder, Validators, FormsModule, ReactiveFormsModule,
+  Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -62,7 +62,7 @@ export class SigninFormComponent implements OnInit {
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
     private translate: TranslateService,
@@ -114,7 +114,7 @@ export class SigninFormComponent implements OnInit {
     performance.mark('Login Start');
     this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
       untilDestroyed(this),
@@ -179,7 +179,7 @@ export class SigninFormComponent implements OnInit {
 
   protected loginWithOtp(): void {
     this.signinStore.setLoadingState(true);
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       untilDestroyed(this),
     ).subscribe({
