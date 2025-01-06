@@ -56,6 +56,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
@@ -63,7 +64,6 @@ import { TransferModeExplanationComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const customOptionValue = -1;
 
@@ -213,7 +213,7 @@ export class CloudSyncFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
-  private editingTask: CloudSyncTaskUi;
+  private editingTask: CloudSyncTaskUi | null;
 
   constructor(
     private translate: TranslateService,
@@ -228,7 +228,7 @@ export class CloudSyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudSyncTaskUi>,
+    public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -747,7 +747,7 @@ export class CloudSyncFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     );
   }
 

@@ -7,23 +7,26 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
-  const viewContainerRef: ViewContainerRef = null;
+  const viewContainerRef: ViewContainerRef | null = null;
 
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
       mockProvider(MatDialog),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
         jobDialog: jest.fn(() => ({
@@ -33,6 +36,9 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
         setDockerPool: jest.fn(() => of({})),
+      }),
+      mockProvider(AppsStore, {
+        loadCatalog: jest.fn(() => of({})),
       }),
     ],
   });

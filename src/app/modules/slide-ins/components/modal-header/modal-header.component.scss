@@ -25,6 +25,18 @@
 .ix-form-title {
   color: var(--fg1);
   word-break: break-all;
+
+  // TODO: Remove this when we finish with Slide In Migration
+  &::after {
+    background-color: var(--primary);
+    border-radius: 50%;
+    content: '';
+    display: inline-block;
+    height: 6px;
+    margin-left: 6px;
+    vertical-align: middle;
+    width: 6px;
+  }
 }
 
 #ix-close-icon {

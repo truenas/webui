@@ -29,7 +29,7 @@ describe('IxSelectComponent', () => {
 
   describe('ix-select', () => {
     beforeEach(() => {
-      control = new FormControl('');
+      control = new FormControl('', { nonNullable: true });
       options$ = of([
         { label: 'GBR', value: 'Great Britain' },
         { label: 'GRL', value: 'Greenland' },
@@ -184,7 +184,7 @@ describe('IxSelectComponent', () => {
         { label: 'GRL', value: 'Greenland' },
         { label: 'FRA', value: 'France' },
       ]);
-      control = new FormControl('');
+      control = new FormControl('', { nonNullable: true });
       spectator = createHost(
         '<ix-select [formControl]="control" [multiple]="true" [options]="options$"></ix-select>',
         { hostProps: { control, options$ } },

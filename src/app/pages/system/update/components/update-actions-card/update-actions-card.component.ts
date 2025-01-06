@@ -29,6 +29,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -39,7 +40,6 @@ import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -187,7 +187,7 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   startUpdate(): void {
-    this.updateService.error$.next(null);
+    this.updateService.error$.next(false);
     this.api.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
         this.updateService.status$.next(update.status);
@@ -343,7 +343,7 @@ export class UpdateActionsCardComponent implements OnInit {
     }
   }
 
-  private saveConfigurationIfNecessary(): Observable<void> {
+  private saveConfigurationIfNecessary(): Observable<unknown> {
     if (this.wasConfigurationSaved) {
       return of(null);
     }

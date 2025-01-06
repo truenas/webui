@@ -61,7 +61,7 @@ export class IxSlideToggleComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
   }

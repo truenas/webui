@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   });
 
   // TODO: Add conditional validators
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     inherit_encryption: [true],
     encryption: [true],
     encryption_type: [DatasetEncryptionType.Default],

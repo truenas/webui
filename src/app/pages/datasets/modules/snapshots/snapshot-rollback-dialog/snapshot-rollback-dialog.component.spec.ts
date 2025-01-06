@@ -9,9 +9,9 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialogComponent>;

@@ -24,7 +24,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   requiredRoles: Role[];
   onRowToggle: (row: T, checked: boolean, toggle: MatSlideToggle) => void;
-  dynamicRequiredRoles: (row: T) => Observable<Role[]>;
+  dynamicRequiredRoles?: (row: T) => Observable<Role[]>;
 
   get checked(): boolean {
     return this.value as boolean;

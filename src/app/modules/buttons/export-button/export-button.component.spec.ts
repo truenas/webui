@@ -11,8 +11,8 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('ExportButtonComponent', () => {

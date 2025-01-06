@@ -13,7 +13,7 @@ export class InterfaceNameValidatorService {
     private validatorsService: IxValidatorsService,
   ) {}
 
-  validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors => {
+  validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors | null => {
     if (!control.parent) {
       return null;
     }
@@ -40,7 +40,7 @@ export class InterfaceNameValidatorService {
 
   getNameFormatMessage(type: NetworkInterfaceType): string {
     const prefix = this.getNamePrefix(type);
-    let interfaceName: string;
+    let interfaceName = '';
     switch (type) {
       case NetworkInterfaceType.Bridge:
         interfaceName = this.translate.instant('Bridge interface');

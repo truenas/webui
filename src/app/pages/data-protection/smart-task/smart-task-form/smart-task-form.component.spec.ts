@@ -4,18 +4,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('SmartTaskFormComponent', () => {
@@ -36,6 +36,13 @@ describe('SmartTaskFormComponent', () => {
   let spectator: Spectator<SmartTaskFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: SmartTaskFormComponent,
     imports: [
@@ -56,7 +63,9 @@ describe('SmartTaskFormComponent', () => {
           sdc: 'sdc',
         }),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
       provideMockStore({
         selectors: [
@@ -66,8 +75,7 @@ describe('SmartTaskFormComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -101,7 +109,7 @@ describe('SmartTaskFormComponent', () => {
         },
         type: SmartTestType.Long,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -109,7 +117,7 @@ describe('SmartTaskFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingSmartTask },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingSmartTask }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -151,7 +159,7 @@ describe('SmartTaskFormComponent', () => {
         },
         type: SmartTestType.Offline,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

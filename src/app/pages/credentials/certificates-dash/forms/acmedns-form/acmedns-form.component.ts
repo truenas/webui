@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntypedFormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -27,12 +27,11 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface DnsAuthenticatorList {
   key: DnsAuthenticatorType;
@@ -46,7 +45,7 @@ interface DnsAuthenticatorList {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -74,8 +73,8 @@ export class AcmednsFormComponent implements OnInit {
       : this.translate.instant(helptext.edit_title);
   }
 
-  form = this.formBuilder.group({
-    name: [null as string, Validators.required],
+  form = this.formBuilder.nonNullable.group({
+    name: [null as string | null, Validators.required],
     authenticator: [DnsAuthenticatorType.Cloudflare, Validators.required],
     attributes: this.formBuilder.group<Record<string, string>>({}),
   });
@@ -96,25 +95,25 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   authenticatorOptions$: Observable<Option[]>;
-  private editingAcmedns: DnsAuthenticator;
+  private editingAcmedns: DnsAuthenticator | undefined;
 
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInRef: OldSlideInRef<AcmednsFormComponent>,
     private errorHandler: ErrorHandlerService,
     private formErrorHandlerService: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private changeDetectorRef: ChangeDetectorRef,
-    @Inject(SLIDE_IN_DATA) private acmedns: DnsAuthenticator,
-  ) {}
+    public slideInRef: SlideInRef<DnsAuthenticator | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingAcmedns = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
-    if (this.acmedns) {
-      this.editingAcmedns = this.acmedns;
-    }
-
     this.loadSchemas();
   }
 
@@ -229,7 +228,7 @@ export class AcmednsFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

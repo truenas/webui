@@ -12,19 +12,19 @@ export function forbiddenValues(arrayOfValues: string[], caseInsensitive?: boole
       return null;
     }
 
-    return forbiddenValuesError(arrayOfValues, caseInsensitive, control);
+    return forbiddenValuesError(arrayOfValues, caseInsensitive || false, control);
   };
 }
 
 export function forbiddenAsyncValues(
   arrayOfValues$: Observable<string[]>,
-  caseInsensitive?: boolean,
+  caseInsensitive = false,
 ): AsyncValidatorFn {
   const request$ = arrayOfValues$.pipe(
     shareReplay({ refCount: false, bufferSize: 1 }),
     catchError((error: unknown) => {
       console.error(error);
-      return of(null);
+      return of([]);
     }),
   );
 

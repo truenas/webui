@@ -51,7 +51,7 @@ export class GpuStepComponent implements SummaryProvider {
   ) {}
 
   getSummary(): SummarySection {
-    const gpusSelected = this.form.value.gpus.length;
+    const gpusSelected = this.form.getRawValue().gpus.length;
     if (gpusSelected === 0) {
       return [];
     }

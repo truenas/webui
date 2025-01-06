@@ -18,11 +18,11 @@ import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -78,10 +78,8 @@ describe('ScrubListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -158,7 +156,7 @@ describe('ScrubListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Apps');
     await editIcon.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ScrubTaskFormComponent, {
       data: scrubTasks[0],
     });
   });

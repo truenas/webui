@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -33,15 +33,14 @@ import {
   forbiddenValues,
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface ZvolFormData {
   name?: string;
@@ -82,7 +81,7 @@ interface ZvolFormData {
   providers: [CloudCredentialService],
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     IxFieldsetComponent,
@@ -113,7 +112,8 @@ export class ZvolFormComponent implements OnInit {
   isLoading = false;
   inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
-  volBlockSizeWarning: string;
+  volBlockSizeWarning: string | null;
+  protected slideInData: { isNew: boolean; parentId: string } | null = null;
 
   protected encryptedParent = false;
   protected encryptionAlgorithm: string;
@@ -228,9 +228,9 @@ export class ZvolFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     protected snackbar: SnackbarService,
-    private slideInRef: OldSlideInRef<ZvolFormComponent>,
-    @Inject(SLIDE_IN_DATA) private slideInData: { isNew: boolean; parentId: string },
+    public slideInRef: SlideInRef<{ isNew: boolean; parentId: string } | undefined, Dataset>,
   ) {
+    this.slideInData = slideInRef.getData();
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
     this.form.controls.confirm_passphrase.disable();
@@ -700,7 +700,7 @@ export class ZvolFormComponent implements OnInit {
             title: helptextZvol.zvol_save_errDialog.title,
             message: helptextZvol.zvol_save_errDialog.msg,
           });
-          this.slideInRef.close(false);
+          this.slideInRef.close({ response: undefined, error: null });
         }
       },
       error: (error: unknown): void => {
@@ -767,7 +767,7 @@ export class ZvolFormComponent implements OnInit {
 
   private handleZvolCreateUpdate(dataset: Dataset): void {
     this.isLoading = false;
-    this.slideInRef.close(dataset);
+    this.slideInRef.close({ response: dataset, error: null });
 
     this.snackbar.success(
       this.isNew

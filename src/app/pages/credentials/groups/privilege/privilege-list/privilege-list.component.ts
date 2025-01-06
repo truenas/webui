@@ -34,12 +34,12 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/groups/privilege/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class PrivilegeListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Roles'),
       getValue: (row) => row.roles.map((role) => {
-        return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
+        return this.translate.instant(roleNames.get(role) || role);
       }).join(', ') || this.translate.instant('N/A'),
       disableSorting: true,
     }),
@@ -137,13 +137,13 @@ export class PrivilegeListComponent implements OnInit {
 
   private readonly rolesSuggestions$ = of(Object.values(Role)).pipe(
     map((roles) => roles.map((key) => ({
-      label: this.translate.instant(roleNames.get(key)),
-      value: `"${this.translate.instant(roleNames.get(key))}"`,
+      label: this.translate.instant(roleNames.get(key) || key),
+      value: `"${this.translate.instant(roleNames.get(key) || key)}"`,
     }))),
   );
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private api: ApiService,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -161,8 +161,10 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   openForm(privilege?: Privilege): void {
-    const slideInRef = this.slideInService.open(PrivilegeFormComponent, { data: privilege });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(PrivilegeFormComponent, { data: privilege }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getPrivileges();
     });
   }

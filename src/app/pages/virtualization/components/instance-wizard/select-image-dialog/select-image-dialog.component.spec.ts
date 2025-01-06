@@ -15,8 +15,8 @@ import {
 import { VirtualizationRemote } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SelectImageDialogComponent } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const imageChoices: Record<string, VirtualizationImage> = {
   'almalinux/8/cloud': {
@@ -82,7 +82,7 @@ describe('SelectImageDialogComponent', () => {
 
     it('shows the rows', () => {
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent.trim());
+        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
       });
 
       expect(rows).toEqual([
@@ -98,7 +98,7 @@ describe('SelectImageDialogComponent', () => {
       });
 
       const rows = spectator.queryAll('tr').slice(1).map((row) => {
-        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent.trim());
+        return Array.from(row.querySelectorAll('td')).map((item) => item.textContent!.trim());
       });
 
       expect(rows).toEqual([

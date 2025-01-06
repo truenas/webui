@@ -464,7 +464,7 @@ export interface ApiCallDirectory {
   'fc.capable': { params: []; response: boolean };
 
   // Fibre Channel Host
-  'fc.fc_host.query': { params: []; response: FibreChannelHost[] };
+  'fc.fc_host.query': { params: QueryParams<FibreChannelHost>; response: FibreChannelHost[] };
   'fc.fc_host.update': { params: [id: number, changes: Partial<FibreChannelHost>]; response: void };
 
   // Fibre Channel Port
@@ -510,7 +510,7 @@ export interface ApiCallDirectory {
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
 
   // Interface
-  'interface.bridge_members_choices': { params: [id: string]; response: Choices };
+  'interface.bridge_members_choices': { params: [id?: string]; response: Choices };
   'interface.cancel_rollback': { params: void; response: void };
   'interface.checkin': { params: void; response: void };
   'interface.checkin_waiting': { params: void; response: number | null };
@@ -520,7 +520,7 @@ export interface ApiCallDirectory {
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
-  'interface.lag_ports_choices': { params: [id: string]; response: Choices };
+  'interface.lag_ports_choices': { params: [id?: string]; response: Choices };
   'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.rollback': { params: void; response: void };

@@ -1,5 +1,5 @@
 <mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="!!(dataProvider.isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Authorized Access' | translate }}</h3>
     <div class="actions action-icon">
@@ -26,7 +26,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="dataProvider.isLoading$ | async"
+        [isLoading]="!!(dataProvider.isLoading$ | async)"
       ></tbody>
     </ix-table>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

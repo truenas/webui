@@ -68,7 +68,7 @@ describe('IxTableBodyComponent', () => {
     spectator = createComponent({
       props: { columns, dataProvider },
     });
-    spectator.component.dataProvider().setRows(testTableData);
+    spectator.component.dataProvider()!.setRows(testTableData);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.fixture.detectChanges();
   });
@@ -79,7 +79,7 @@ describe('IxTableBodyComponent', () => {
     expect(
       spectator.queryAll('.row').map((row) => {
         const values: string[] = [];
-        row.querySelectorAll('td').forEach((td) => values.push(td.textContent.trim()));
+        row.querySelectorAll('td').forEach((td) => values.push(td.textContent!.trim()));
         return values;
       }),
     ).toEqual([

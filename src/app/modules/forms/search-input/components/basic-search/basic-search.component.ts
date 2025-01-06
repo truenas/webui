@@ -31,7 +31,7 @@ export class BasicSearchComponent implements AfterViewInit {
   readonly queryChange = output<string>();
   readonly runSearch = output();
 
-  private readonly searchControl: Signal<ElementRef<HTMLElement>> = viewChild('searchControl', { read: ElementRef });
+  private readonly searchControl: Signal<ElementRef<HTMLElement>> = viewChild.required('searchControl', { read: ElementRef });
 
   ngAfterViewInit(): void {
     this.focusInput();

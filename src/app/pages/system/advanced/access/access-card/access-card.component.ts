@@ -35,15 +35,15 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -218,7 +218,7 @@ export class AccessCardComponent implements OnInit {
     });
   }
 
-  getUsername(credentialsData: AuthSessionCredentialsData): string {
+  getUsername(credentialsData: AuthSessionCredentialsData | undefined): string {
     if (credentialsData?.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }

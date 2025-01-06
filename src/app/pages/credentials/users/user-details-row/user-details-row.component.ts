@@ -13,16 +13,16 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { AuthService } from 'app/services/auth/auth.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -50,7 +50,7 @@ export class UserDetailsRowComponent {
 
   constructor(
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
     private urlOptions: UrlOptionsService,
@@ -107,7 +107,7 @@ export class UserDetailsRowComponent {
   }
 
   doEdit(user: User): void {
-    this.slideInService.open(UserFormComponent, { wide: true, data: user });
+    this.slideIn.open(UserFormComponent, { wide: true, data: user });
   }
 
   doDelete(user: User): void {

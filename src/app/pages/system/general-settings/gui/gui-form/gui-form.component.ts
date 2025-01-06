@@ -29,11 +29,12 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -66,13 +67,13 @@ export class GuiFormComponent {
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     usage_collection: [false, [Validators.required]],
@@ -97,6 +98,7 @@ export class GuiFormComponent {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -110,7 +112,7 @@ export class GuiFormComponent {
   }
 
   replaceHrefWhenWsConnected(href: string): void {
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
         this.window.location.replace(href);
@@ -166,10 +168,10 @@ export class GuiFormComponent {
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
     const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
-    const v4AddressesChanged = !(current.ui_address.length === next.ui_address.length
-      && current.ui_address.every((val, index) => val === next.ui_address[index]));
-    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address.length
-      && current.ui_v6address.every((val, index) => val === next.ui_v6address[index]));
+    const v4AddressesChanged = !(current.ui_address.length === next.ui_address?.length
+      && current.ui_address.every((val, index) => val === next.ui_address?.[index]));
+    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address?.length
+      && current.ui_v6address.every((val, index) => val === next.ui_v6address?.[index]));
 
     return [
       uiCertificateChanged,

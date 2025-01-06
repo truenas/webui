@@ -18,13 +18,14 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { SlideInResponse, SlideIn } from 'app/services/slide-in';
 
-describe('IxSlideIn2Component', () => {
+describe('SlideInComponent', () => {
   const existingTask = {
     id: 1,
     description: 'New Cloud Sync Task',
@@ -185,7 +186,7 @@ describe('IxSlideIn2Component', () => {
 
   it('close slide-in when backdrop is clicked', fakeAsync(() => {
     setupComponent();
-    const backdrop = spectator.query('.ix-slide-in2-background');
+    const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
     spectator.detectChanges();
     expect(close$.next).toHaveBeenCalledWith({ response: false, error: null });
@@ -203,7 +204,7 @@ describe('IxSlideIn2Component', () => {
 
   it('asks for confirmation when require confirmation method setup', fakeAsync(() => {
     setupComponent();
-    const form = spectator.query(CloudSyncFormComponent);
+    const form = spectator.query(CloudSyncFormComponent)!;
     form.form.markAsDirty();
     spectator.detectChanges();
     const backdrop = spectator.query('.ix-slide-in2-background');
@@ -232,7 +233,7 @@ describe('IxSlideIn2Component', () => {
     await saveButton.click();
     form.form.markAsDirty();
     spectator.detectChanges();
-    const backdrop = spectator.query('.ix-slide-in2-background');
+    const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
 
     expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalledWith({

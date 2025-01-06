@@ -5,6 +5,8 @@ export const tunableListElements = {
   hierarchy: [T('System'), T('Tunables')],
   anchorRouterLink: ['/system', 'tunable'],
   elements: {
-    tunables: {},
+    tunables: {
+      anchor: 'tunable',
+    },
   },
 } satisfies UiSearchableElement;

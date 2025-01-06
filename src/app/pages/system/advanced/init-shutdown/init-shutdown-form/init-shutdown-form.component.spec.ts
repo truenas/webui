@@ -13,10 +13,10 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('InitShutdownFormComponent', () => {
@@ -47,7 +47,11 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -116,6 +120,7 @@ describe('InitShutdownFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
             getData: jest.fn(() => ({
               id: 13,
               comment: 'Existing script',

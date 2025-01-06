@@ -8,6 +8,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
@@ -28,7 +29,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +61,7 @@ export class InstanceEditFormComponent {
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -72,8 +73,12 @@ export class InstanceEditFormComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
-    private slideInRef: SlideInRef<VirtualizationInstance>,
+    public slideInRef: SlideInRef<VirtualizationInstance, VirtualizationInstance | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
@@ -108,7 +113,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });

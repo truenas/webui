@@ -17,8 +17,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,10 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class ManageDiskSedDialogComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  passwordControl = new FormControl('', [Validators.required]);
+  passwordControl = new FormControl('', {
+    nonNullable: true,
+    validators: [Validators.required],
+  });
 
   disk: Disk;
 
@@ -80,7 +83,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
       )
       .subscribe((disks) => {
         this.disk = disks[0];
-        this.passwordControl.setValue(this.disk.passwd);
+        this.passwordControl.setValue(this.disk.passwd || '');
       });
   }
 

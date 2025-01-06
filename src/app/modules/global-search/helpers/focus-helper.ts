@@ -1,5 +1,10 @@
 export function moveToNextFocusableElement(): void {
+  // TODO: Refactor to use WINDOW injection token.
   const container = document.querySelector('.search-box-wrapper');
+
+  if (!container) {
+    return;
+  }
 
   const focusableElements = Array.from(
     container.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),
@@ -16,6 +21,10 @@ export function moveToNextFocusableElement(): void {
 
 export function moveToPreviousFocusableElement(): void {
   const container = document.querySelector('.search-box-wrapper');
+
+  if (!container) {
+    return;
+  }
 
   const focusableElements = Array.from(
     container.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),

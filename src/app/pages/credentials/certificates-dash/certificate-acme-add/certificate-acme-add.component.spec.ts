@@ -10,20 +10,27 @@ import {
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CertificateAcmeAddComponent', () => {
   let spectator: Spectator<CertificateAcmeAddComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
+  const slideInRef: SlideInRef<Certificate | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => ({ id: 2 } as Certificate)),
+  };
+
   const createComponent = createComponentFactory({
     component: CertificateAcmeAddComponent,
     imports: [
@@ -48,17 +55,13 @@ describe('CertificateAcmeAddComponent', () => {
         mockJob('certificate.create', fakeSuccessfulJob()),
         mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
       }),
       mockAuth(),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: { id: 2 },
-      },
     ],
   });
 
@@ -105,7 +108,7 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 
   it('allows custom ACME Server Directory URI', async () => {
@@ -139,6 +142,6 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });

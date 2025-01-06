@@ -28,8 +28,8 @@ import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-mo
 import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +61,7 @@ export class ImportPoolComponent implements OnInit {
     guid: string;
   }[] = [];
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     guid: ['' as string, Validators.required],
   });
 
@@ -117,7 +117,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
+      this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()

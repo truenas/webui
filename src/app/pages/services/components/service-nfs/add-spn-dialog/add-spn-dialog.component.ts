@@ -12,9 +12,9 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +37,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class AddSpnDialogComponent {
   readonly requiredRoles = [Role.FullAdmin];
 
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
@@ -53,9 +53,10 @@ export class AddSpnDialogComponent {
   ) { }
 
   onSubmit(): void {
+    const value = this.form.getRawValue();
     const payload = {
-      username: this.form.value.username,
-      password: this.form.value.password,
+      username: value.username,
+      password: value.password,
     };
 
     this.api.call('nfs.add_principal', [payload])

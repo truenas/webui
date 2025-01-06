@@ -8,11 +8,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReplicationSettingsFormComponent', () => {
   let spectator: Spectator<ReplicationSettingsFormComponent>;
@@ -27,7 +27,11 @@ describe('ReplicationSettingsFormComponent', () => {
       mockApi([
         mockCall('replication.config.update'),
       ]),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => ({ max_parallel_replication_tasks: 1 })) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({ max_parallel_replication_tasks: 1 })),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),

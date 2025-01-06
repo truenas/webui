@@ -18,10 +18,10 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
-interface FormOptions {
+interface InstanceDiskFormOptions {
   instanceId: string;
   disk: VirtualizationDisk | undefined;
 }
@@ -65,7 +65,7 @@ export class InstanceDiskFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: SlideInRef<FormOptions>,
+    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystem: FilesystemService,
@@ -75,7 +75,10 @@ export class InstanceDiskFormComponent implements OnInit {
     const disk = this.slideInRef.getData().disk;
     if (disk) {
       this.existingDisk.set(disk);
-      this.form.patchValue(disk);
+      this.form.patchValue({
+        source: disk.source || '',
+        destination: disk.destination || '',
+      });
     }
   }
 
@@ -110,10 +113,11 @@ export class InstanceDiskFormComponent implements OnInit {
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
 
-    return this.existingDisk()
+    const existingDisk = this.existingDisk();
+    return existingDisk
       ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
-        name: this.existingDisk().name,
+        name: existingDisk.name,
       }])
       : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }

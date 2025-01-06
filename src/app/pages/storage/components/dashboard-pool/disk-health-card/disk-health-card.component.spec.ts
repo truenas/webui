@@ -84,29 +84,29 @@ describe('DiskHealthCardComponent', () => {
 
   describe('Temperatures', () => {
     it('shows disks temperature related alerts', () => {
-      const detailsItem = spectator.query(byText('Disks temperature related alerts:')).parentElement;
+      const detailsItem = spectator.query(byText('Disks temperature related alerts:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('0');
     });
 
     it('shows highest temperature', () => {
-      const detailsItem = spectator.query(byText('Highest Temperature:')).parentElement;
+      const detailsItem = spectator.query(byText('Highest Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('50 °C');
     });
 
     it('shows lowest temperature', () => {
-      const detailsItem = spectator.query(byText('Lowest Temperature:')).parentElement;
+      const detailsItem = spectator.query(byText('Lowest Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('10 °C');
     });
 
     it('shows average temperature', () => {
-      const detailsItem = spectator.query(byText('Average Disk Temperature:')).parentElement;
+      const detailsItem = spectator.query(byText('Average Disk Temperature:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('30 °C');
     });
   });
 
   describe('Smart Tests', () => {
     it('shows failed smart tests', () => {
-      const detailsItem = spectator.query(byText('Failed S.M.A.R.T. Tests:')).parentElement;
+      const detailsItem = spectator.query(byText('Failed S.M.A.R.T. Tests:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('0');
     });
   });

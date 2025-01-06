@@ -1,9 +1,5 @@
 <div class="report" ngClass.xs="double-height xs">
-  <div
-    class="card-container"
-    (mouseenter)="setChartInteractive(true)"
-    (mouseleave)="setChartInteractive(false)"
-  >
+  <div class="card-container">
     <mat-card class="card" [class.loading]="!isReady">
       @if (isReady) {
         <mat-toolbar-row class="mat-card-toolbar toolbar">

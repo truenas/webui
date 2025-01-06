@@ -16,14 +16,14 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -79,9 +79,10 @@ export class GroupMembersComponent implements OnInit {
       ])),
       untilDestroyed(this),
     ).subscribe(([groups, users]) => {
-      this.group.set(groups[0]);
+      const group = groups[0];
+      this.group.set(group);
       this.users.set(users);
-      this.selectedMembers = users.filter((user) => this.group().users.includes(user.id));
+      this.selectedMembers = users.filter((user) => group.users.includes(user.id));
       this.isLoading.set(false);
     });
   }

@@ -12,16 +12,16 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  const componentRef: SlideInRef<unknown> = {
+  const componentRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     getData: jest.fn(),
     requireConfirmationWhen: jest.fn(),

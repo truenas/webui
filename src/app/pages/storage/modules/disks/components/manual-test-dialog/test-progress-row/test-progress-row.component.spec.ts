@@ -47,7 +47,7 @@ describe('IxTestProgressRowComponent', () => {
     });
 
     it('shows disk name', () => {
-      const h4 = spectator.query('h4');
+      const h4 = spectator.query('h4')!;
       expect(h4.textContent).toBe('sdd (serial)');
     });
 
@@ -82,7 +82,7 @@ describe('IxTestProgressRowComponent', () => {
     });
 
     it('shows disk name', () => {
-      const h4 = spectator.query('h4');
+      const h4 = spectator.query('h4')!;
       expect(h4.textContent).toBe('sdd (serial)');
     });
 
@@ -114,7 +114,7 @@ describe('IxTestProgressRowComponent', () => {
 
       spectator.detectChanges();
 
-      const progressBar = spectator.query(MatProgressBar);
+      const progressBar = spectator.query(MatProgressBar)!;
       expect(progressBar.value).toBe(15);
     });
 
@@ -167,13 +167,13 @@ describe('IxTestProgressRowComponent', () => {
       expect(icons).toHaveLength(1);
       expect(icons[0].name()).toBe('error');
 
-      const link = spectator.query('a');
+      const link = spectator.query('a')!;
       expect(link).toBeTruthy();
       expect(link.textContent).toBe(' View logs ');
     });
 
     it('shows dialog info with error log', () => {
-      const link = spectator.query('a');
+      const link = spectator.query('a')!;
       link.dispatchEvent(new Event('click'));
 
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(

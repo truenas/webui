@@ -40,15 +40,15 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()
@@ -207,7 +207,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, true).pipe(
+    this.slideIn.open(CloudSyncWizardComponent, { wide: true }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
@@ -218,8 +218,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const closer$ = this.slideIn.open(CloudSyncFormComponent, true, row);
-    closer$.pipe(
+    this.slideIn.open(CloudSyncFormComponent, { wide: true, data: row }).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
@@ -352,7 +351,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       });
   }
 
-  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job | null): void {
     this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
       if (task.id === row.id) {
         return {

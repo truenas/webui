@@ -21,8 +21,8 @@ import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';

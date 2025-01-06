@@ -73,10 +73,10 @@ describe('ViewNfsPermissionsComponent', () => {
   it('allows to click on one of the aces to see more details for basic permissions', () => {
     spectator.click(byText('User - John'));
 
-    const permissions = spectator.query(byText('Permissions Basic'))
-      .parentElement.querySelectorAll('.details-item');
-    const flags = spectator.query(byText('Flags Basic'))
-      .parentElement.querySelectorAll('.details-item');
+    const permissions = spectator.query(byText('Permissions Basic'))!
+      .parentElement!.querySelectorAll('.details-item');
+    const flags = spectator.query(byText('Flags Basic'))!
+      .parentElement!.querySelectorAll('.details-item');
 
     expect(permissions).toHaveLength(1);
     expect(flags).toHaveLength(1);
@@ -87,10 +87,10 @@ describe('ViewNfsPermissionsComponent', () => {
   it('allows to click on one of the aces to see more details for advanced permissions', () => {
     spectator.click(byText('User - Sarah'));
 
-    const permissions = spectator.query(byText('Permissions Advanced'))
-      .parentElement.querySelectorAll('.details-item');
-    const flags = spectator.query(byText('Flags Advanced'))
-      .parentElement.querySelectorAll('.details-item');
+    const permissions = spectator.query(byText('Permissions Advanced'))!
+      .parentElement!.querySelectorAll('.details-item');
+    const flags = spectator.query(byText('Flags Advanced'))!
+      .parentElement!.querySelectorAll('.details-item');
 
     expect(permissions).toHaveLength(3);
     expect(flags).toHaveLength(2);

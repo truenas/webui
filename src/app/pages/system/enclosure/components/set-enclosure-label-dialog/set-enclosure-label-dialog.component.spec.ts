@@ -8,10 +8,10 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SetEnclosureLabelDialogComponent', () => {
   let spectator: Spectator<SetEnclosureLabelDialogComponent>;

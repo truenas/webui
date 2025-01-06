@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('KernelCardComponent', () => {
@@ -59,8 +59,7 @@ describe('KernelCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       KernelFormComponent,
-      false,
-      true,
+      { data: true },
     );
   });
 });

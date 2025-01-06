@@ -22,10 +22,10 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const existingTask: ReplicationTask = {
   name: 'dataset',
@@ -65,7 +65,7 @@ describe('ReplicationWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const slideInRef: SlideInRef<ReplicationTask> = {
+  const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     getData: jest.fn(() => undefined),

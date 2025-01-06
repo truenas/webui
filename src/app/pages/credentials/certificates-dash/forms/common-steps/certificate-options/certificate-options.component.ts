@@ -22,9 +22,9 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -102,7 +102,10 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     }
 
     summary.push(
-      { label: this.translate.instant('Key Type'), value: certificateKeyTypeLabels.get(values.key_type) },
+      {
+        label: this.translate.instant('Key Type'),
+        value: certificateKeyTypeLabels.get(values.key_type) || values.key_type,
+      },
       this.isRsa
         ? { label: this.translate.instant('Key Length'), value: String(values.key_length) }
         : { label: this.translate.instant('EC Curve'), value: String(values.ec_curve) },

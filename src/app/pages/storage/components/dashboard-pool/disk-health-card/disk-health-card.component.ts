@@ -51,7 +51,7 @@ interface DiskState {
   ],
 })
 export class DiskHealthCardComponent implements OnInit, OnChanges {
-  readonly poolState = input<Pool>();
+  readonly poolState = input.required<Pool>();
   readonly disks = input<StorageDashboardDisk[]>([]);
 
   protected readonly searchableElements = diskHealthCardElements;

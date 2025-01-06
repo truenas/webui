@@ -11,14 +11,13 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import { filter, Observable, tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -32,16 +31,16 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialogComponent } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -124,11 +123,9 @@ export class IscsiCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
-    private errorHandler: ErrorHandlerService,
     private api: ApiService,
-    private dialogService: DialogService,
     protected emptyService: EmptyService,
     private store$: Store<ServicesState>,
     private matDialog: MatDialog,
@@ -165,15 +162,18 @@ export class IscsiCardComponent implements OnInit {
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
-    let slideInRef;
+    let slideInRef$: Observable<SlideInResponse<boolean | IscsiTarget>>;
 
     if (openWizard) {
-      slideInRef = this.slideInService.open(IscsiWizardComponent, { data: row, wide: true });
+      slideInRef$ = this.slideIn.open(IscsiWizardComponent, { data: row, wide: true });
     } else {
-      slideInRef = this.slideInService.open(TargetFormComponent, { data: row, wide: true });
+      slideInRef$ = this.slideIn.open(TargetFormComponent, { data: row, wide: true });
     }
 
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.dataProvider.load();
     });
   }

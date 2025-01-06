@@ -12,7 +12,7 @@ import {
   DatasetDetails, DiskSpace, DiskSpaceKey, SwatchColors,
 } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 @UntilDestroy()
 @Component({

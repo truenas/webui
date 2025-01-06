@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
   AbstractControl, FormBuilder, ReactiveFormsModule, Validators,
@@ -21,6 +21,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -30,16 +31,14 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/forms/ix-forms/validators/required-empty-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   snapshotExcludeBootQueryFilter,
 } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { AuthService } from 'app/services/auth/auth.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +47,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -69,13 +68,15 @@ export class SnapshotAddFormComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotWrite];
 
   isFormLoading = true;
-  form = this.fb.group({
+  protected datasetId: string | undefined;
+
+  form = this.fb.nonNullable.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
       atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
-      (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
+      (control: AbstractControl) => control.value && control.parent?.get('naming_schema')?.value,
       this.validatorsService.withMessage(
         requiredEmpty(),
         this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
@@ -101,9 +102,10 @@ export class SnapshotAddFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
-    private slideInRef: OldSlideInRef<SnapshotAddFormComponent>,
-    @Inject(SLIDE_IN_DATA) private datasetId: string,
-  ) {}
+    public slideInRef: SlideInRef<string | undefined, boolean>,
+  ) {
+    this.datasetId = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     combineLatest([
@@ -163,7 +165,7 @@ export class SnapshotAddFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },

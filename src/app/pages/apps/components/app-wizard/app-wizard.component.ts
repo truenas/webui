@@ -47,6 +47,7 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import {
@@ -61,14 +62,13 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -107,7 +107,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
-  form = this.formBuilder.group<ChartFormValues>({
+  form = this.formBuilder.nonNullable.group<ChartFormValues>({
     release_name: '',
   });
 
@@ -174,8 +174,11 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   onSectionClick(sectionName: string): void {
     const nextElement = document.getElementById(sectionName);
+    if (!nextElement) {
+      return;
+    }
 
-    nextElement?.scrollIntoView({ block: 'center' });
+    nextElement.scrollIntoView({ block: 'center' });
     nextElement.classList.add('highlighted');
 
     timer(999)
@@ -352,8 +355,14 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.form.addControl('version', new FormControl(catalogApp.latest_version, [Validators.required]));
-    this.form.addControl('release_name', new FormControl('', [Validators.required]));
+    this.form.addControl(
+      'version',
+      new FormControl(catalogApp.latest_version, { nonNullable: true, validators: [Validators.required] }),
+    );
+    this.form.addControl(
+      'release_name',
+      new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    );
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z]([a-z0-9-]*[a-z0-9])?$'),
@@ -561,7 +570,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   private getDockerHubRateLimitInfo(): void {
     this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
-      if (info.remaining_pull_limit < 5) {
+      if (Number(info.remaining_pull_limit) < 5) {
         this.matDialog.open(DockerHubRateInfoDialogComponent, {
           data: info,
         });

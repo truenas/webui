@@ -44,14 +44,14 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -246,14 +246,14 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 
   private edit(row: RsyncTask): void {
-    const closer$ = this.slideIn.open(RsyncTaskFormComponent, true, row);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true, data: row })
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.refresh());
   }
 

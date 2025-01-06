@@ -19,8 +19,8 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -100,7 +100,7 @@ describe('JobsPanelComponent', () => {
       }),
       mockApi([
         mockCall('core.get_jobs', (query) => {
-          if (query[0][0][2] === JobState.Success) {
+          if (query[0]?.[0][2] === JobState.Success) {
             return [];
           }
           return [runningJob, waitingJob, failedJob, transientRunningJob];

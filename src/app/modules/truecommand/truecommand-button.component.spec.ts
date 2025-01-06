@@ -124,7 +124,7 @@ describe('TruecommandButtonComponent', () => {
       });
 
       it(`shows status modal when user clicks on the ${expectedButtonId} button`, () => {
-        spectator.click(spectator.query(expectedButtonId));
+        spectator.click(spectator.query(expectedButtonId)!);
 
         if (expectedDialogType === 'status') {
           expect(matDialogMock.open).toHaveBeenCalledWith(

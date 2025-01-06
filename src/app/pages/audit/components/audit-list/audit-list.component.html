@@ -1,0 +1,55 @@
+<ix-audit-search
+  [dataProvider]="dataProvider()"
+  [isMobileView]="isMobileView()"
+></ix-audit-search>
+
+@if (!isMobileView()) {
+  <ng-container [ngTemplateOutlet]="thead"></ng-container>
+}
+
+<ix-table
+  [ixUiSearch]="searchableElements.elements.audit"
+  [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
+>
+  @if (isMobileView()) {
+    <ng-container [ngTemplateOutlet]="thead"></ng-container>
+  }
+  <tbody
+    ix-table-body
+    detailsRowIdentifier="audit_id"
+    [columns]="columns"
+    [dataProvider]="dataProvider()"
+    [isLoading]="!!(dataProvider().isLoading$ | async)"
+    (expanded)="expanded($event)"
+  >
+    <ng-template
+      let-audit
+      ix-table-cell
+      [columnIndex]="1"
+      [dataProvider]="dataProvider()"
+    >
+      <div class="user-avatar" [matTooltip]="audit.username">
+        <div [innerHTML]="getUserAvatarForLog(audit)"></div>
+        <span>{{ audit.username }}</span>
+      </div>
+    </ng-template>
+  </tbody>
+</ix-table>
+
+<ix-table-pager
+  [dataProvider]="dataProvider()"
+  [pageSize]="dataProvider().pagination.pageSize"
+  [currentPage]="dataProvider().pagination.pageNumber"
+></ix-table-pager>
+
+<ng-template #thead>
+  <div class="sticky-header">
+    <thead
+      class="audit-header-row"
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider()"
+    ></thead>
+  </div>
+</ng-template>

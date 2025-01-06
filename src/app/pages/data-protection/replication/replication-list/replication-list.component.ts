@@ -41,8 +41,10 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -55,8 +57,6 @@ import {
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -249,7 +249,7 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.slideIn.open(ReplicationFormComponent, true, row)
+      this.slideIn.open(ReplicationFormComponent, { data: row, wide: true })
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),
@@ -259,7 +259,7 @@ export class ReplicationListComponent implements OnInit {
           },
         });
     } else {
-      this.slideIn.open(ReplicationWizardComponent, true)
+      this.slideIn.open(ReplicationWizardComponent, { wide: true })
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),

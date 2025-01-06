@@ -49,7 +49,7 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [hint]="containersHelptext.cpuHint"
+        [hint]="containersHelptext.cpuHint | translate"
       ></ix-input>
 
       <ix-input
@@ -57,7 +57,7 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [hint]="containersHelptext.memoryHint"
+        [hint]="containersHelptext.memoryHint | translate"
       ></ix-input>
     </ix-form-section>
 
@@ -203,7 +203,7 @@
         } @else {
           @if ((bridgedNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
-              <p>{{ bridgedNicTypeLabel | translate }}</p>
+              <p>{{ bridgedNicTypeLabel ? (bridgedNicTypeLabel | translate) : '' }}</p>
 
               <ix-checkbox-list
                 formControlName="bridged_nics"
@@ -217,7 +217,7 @@
 
           @if ((macVlanNicDevices$ | async); as devices) {
             @if (devices.length > 0) {
-              <p>{{ macVlanNicTypeLabel | translate }}</p>
+              <p>{{ macVlanNicTypeLabel ? (macVlanNicTypeLabel | translate) : '' }}</p>
 
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"

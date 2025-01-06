@@ -12,59 +12,59 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { usersInitialState, UsersState } from 'app/pages/credentials/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/credentials/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/credentials/users/user-details-row/user-details-row.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
-const fakeUserDataSource: User[] = [{
-  id: 1,
-  uid: 0,
-  username: 'root',
-  smbhash: '',
-  home: '/root',
-  shell: '/usr/bin/zsh',
-  full_name: 'root',
-  builtin: true,
-  smb: false,
-  password_disabled: false,
-  locked: false,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
-  email: 'root@root.root',
-  group: {
-    id: 41,
-    bsdgrp_gid: 0,
-    bsdgrp_group: 'root',
+const fakeUserDataSource: User[] = [
+  {
+    id: 1,
+    uid: 0,
+    username: 'root',
+    smbhash: '',
+    home: '/root',
+    shell: '/usr/bin/zsh',
+    full_name: 'root',
+    builtin: true,
+    smb: false,
+    password_disabled: false,
+    locked: false,
+    sudo_commands: [],
+    sudo_commands_nopasswd: [],
+    email: 'root@root.root',
+    group: {
+      id: 41,
+      bsdgrp_gid: 0,
+      bsdgrp_group: 'root',
+    },
+    groups: [],
+    roles: [Role.FullAdmin, Role.HasAllowList],
   },
-  groups: [],
-  roles: [Role.FullAdmin, Role.HasAllowList],
-}, {
-  id: 69,
-  uid: 1004,
-  username: 'test',
-  home: '/home/test',
-  shell: '/usr/bin/bash',
-  full_name: 'test',
-  builtin: false,
-  smb: true,
-  password_disabled: false,
-  locked: false,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
-  email: null,
-  group: {
-    id: 101,
-    bsdgrp_gid: 1004,
-    bsdgrp_group: 'test',
-  },
-  groups: [
-    94,
-  ],
-  roles: [],
-}] as User[];
+  {
+    id: 69,
+    uid: 1004,
+    username: 'test',
+    home: '/home/test',
+    shell: '/usr/bin/bash',
+    full_name: 'test',
+    builtin: false,
+    smb: true,
+    password_disabled: false,
+    locked: false,
+    group: {
+      id: 101,
+      bsdgrp_gid: 1004,
+      bsdgrp_group: 'test',
+    },
+    groups: [
+      94,
+    ],
+    roles: [] as Role[],
+  } as User,
+] as User[];
 
 describe('UserListComponent', () => {
   let spectator: Spectator<UserListComponent>;

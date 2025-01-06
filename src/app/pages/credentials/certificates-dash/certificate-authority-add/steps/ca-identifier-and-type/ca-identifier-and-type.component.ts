@@ -20,8 +20,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,7 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   readonly profileSelected = output<CertificateProfile>();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validators.withMessage(
@@ -107,11 +107,11 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const summary = [
       { label: this.translate.instant('Name'), value: values.name },
-      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) },
+      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) || values.create_type },
     ];
 
     if (values.profile) {

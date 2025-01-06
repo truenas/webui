@@ -28,7 +28,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="dataProvider.isLoading$ | async"
+        [isLoading]="!!(dataProvider.isLoading$ | async)"
       >
         <ng-template let-lock ix-table-details-row [dataProvider]="dataProvider">
           <ix-smb-open-files [lock]="lock"></ix-smb-open-files>

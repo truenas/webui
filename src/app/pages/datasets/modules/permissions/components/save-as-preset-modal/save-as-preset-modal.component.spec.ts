@@ -7,14 +7,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
-import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
+import { Acl, AclTemplateByPath, PosixAclItem } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('SaveAsPresetModalComponent', () => {
   let spectator: Spectator<SaveAsPresetModalComponent>;
@@ -44,7 +44,7 @@ describe('SaveAsPresetModalComponent', () => {
             id: 4, name: 'a', acltype: AclType.Nfs4, acl: [],
           },
           {
-            id: 5, name: 'b', acltype: AclType.Posix1e, acl: [],
+            id: 5, name: 'b', acltype: AclType.Posix1e, acl: [] as PosixAclItem[],
           },
           {
             id: 6, name: 'f', acltype: AclType.Nfs4, acl: [],

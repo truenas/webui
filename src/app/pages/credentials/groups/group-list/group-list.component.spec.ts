@@ -12,11 +12,11 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/credentials/groups/group-list/group-list.component';
 import { groupsInitialState, GroupsState } from 'app/pages/credentials/groups/store/group.reducer';
 import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/credentials/groups/store/group.selectors';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const fakeGroupDataSource: Group[] = [{

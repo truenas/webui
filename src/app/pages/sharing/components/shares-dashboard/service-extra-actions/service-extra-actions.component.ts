@@ -6,7 +6,6 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AuditService } from 'app/enums/audit.enum';
 import { Role } from 'app/enums/role.enum';
@@ -15,17 +14,17 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import {
   GlobalTargetConfigurationComponent,
 } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -65,12 +64,11 @@ export class ServiceExtraActionsComponent {
     private translate: TranslateService,
     private api: ApiService,
     private router: Router,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
-    private navigateAndInteract: NavigateAndInteractService,
   ) {}
 
   changeServiceState(service: Service): void {
@@ -84,13 +82,13 @@ export class ServiceExtraActionsComponent {
   configureService(service: Service): void {
     switch (service.service) {
       case ServiceName.Iscsi:
-        this.slideInService.open(GlobalTargetConfigurationComponent);
+        this.slideIn.open(GlobalTargetConfigurationComponent);
         break;
       case ServiceName.Nfs:
-        this.slideInService.open(ServiceNfsComponent, { wide: true });
+        this.slideIn.open(ServiceNfsComponent, { wide: true });
         break;
       case ServiceName.Cifs:
-        this.slideInService.open(ServiceSmbComponent);
+        this.slideIn.open(ServiceSmbComponent);
         break;
       default:
         break;

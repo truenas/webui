@@ -18,8 +18,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -51,6 +51,7 @@ export class IsolatedGpusFormComponent implements OnInit {
 
   formGroup = new FormGroup({
     isolated_gpu_pci_ids: new FormControl<string[]>([], {
+      nonNullable: true,
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
@@ -69,7 +70,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private store$: Store<AppState>,
     private gpuValidator: IsolatedGpuValidatorService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) { }
 
   ngOnInit(): void {

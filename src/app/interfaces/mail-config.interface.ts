@@ -25,7 +25,7 @@ export interface MailConfigUpdate {
   smtp?: boolean;
   fromemail: string;
   fromname: string;
-  oauth: MailOauthConfig;
+  oauth: MailOauthConfig | null;
   outgoingserver?: string;
   pass?: string;
   port?: number;

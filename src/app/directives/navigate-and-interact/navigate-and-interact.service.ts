@@ -9,8 +9,10 @@ import { WINDOW } from 'app/helpers/window.helper';
   providedIn: 'root',
 })
 export class NavigateAndInteractService {
-  private prevHighlightDiv: HTMLDivElement | null;
-  private prevSubscription: Subscription | null;
+  private prevHighlightDiv: HTMLDivElement | null = null;
+  private prevSubscription: Subscription | null = null;
+  private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
+
   constructor(
     private router: Router,
     @Inject(WINDOW) private window: Window,
@@ -30,20 +32,12 @@ export class NavigateAndInteractService {
   scrollIntoView(htmlElement: HTMLElement): void {
     htmlElement.scrollIntoView({ block: 'center' });
     this.createOverlay(htmlElement);
-    htmlElement.click();
   }
 
   createOverlay(targetElement: HTMLElement): void {
     if (!targetElement) return;
 
-    if (this.prevHighlightDiv) {
-      this.removeOverlay(this.prevHighlightDiv);
-      this.prevHighlightDiv = null;
-      if (this.prevSubscription) {
-        this.prevSubscription.unsubscribe();
-        this.prevSubscription = null;
-      }
-    }
+    this.cleanupPreviousHighlight();
 
     this.prevHighlightDiv = this.window.document.createElement('div');
 
@@ -58,27 +52,31 @@ export class NavigateAndInteractService {
     this.prevHighlightDiv.style.zIndex = '1000';
 
     this.window.document.body.appendChild(this.prevHighlightDiv);
-    this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
 
-    this.window.addEventListener('scroll', () => {
-      this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
-    }, true);
+    const updatePosition = (): void => this.updateOverlayPosition(targetElement, this.prevHighlightDiv);
+    this.window.addEventListener('scroll', updatePosition, true);
 
-    this.prevSubscription = timer(2150).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.removeOverlay(this.prevHighlightDiv);
-        this.prevHighlightDiv = null;
-        this.prevSubscription?.unsubscribe();
-        this.prevSubscription = null;
-      },
+    this.prevSubscription = timer(2150).pipe(untilDestroyed(this)).subscribe(() => {
+      this.cleanupPreviousHighlight();
+      this.window.removeEventListener('scroll', updatePosition, true);
     });
+
+    targetElement.addEventListener(
+      'click',
+      () => {
+        this.cleanupPreviousHighlight();
+        this.window.removeEventListener('scroll', updatePosition, true);
+      },
+      { once: true },
+    );
+
+    this.addClickOutsideListener(targetElement);
   }
 
   private updateOverlayPosition(targetElement: HTMLElement, overlay: HTMLDivElement | null): void {
     if (!targetElement || !overlay) return;
 
     const rect = targetElement.getBoundingClientRect();
-
     const scrollTop = this.window.pageYOffset || this.window.document.documentElement.scrollTop;
     const scrollLeft = this.window.pageXOffset || this.window.document.documentElement.scrollLeft;
 
@@ -88,10 +86,30 @@ export class NavigateAndInteractService {
     overlay.style.height = `${rect.height}px`;
   }
 
-  removeOverlay(overlay: HTMLDivElement | null): void {
-    if (overlay) {
-      overlay.remove();
-      overlay = null;
+  private addClickOutsideListener(targetElement: HTMLElement): void {
+    this.clickOutsideListener = (event: MouseEvent) => {
+      if (!targetElement.contains(event.target as Node)) {
+        this.cleanupPreviousHighlight();
+      }
+    };
+
+    this.window.document.addEventListener('click', this.clickOutsideListener, true);
+  }
+
+  private cleanupPreviousHighlight(): void {
+    if (this.prevHighlightDiv) {
+      this.prevHighlightDiv.remove();
+      this.prevHighlightDiv = null;
+    }
+
+    if (this.prevSubscription) {
+      this.prevSubscription.unsubscribe();
+      this.prevSubscription = null;
+    }
+
+    if (this.clickOutsideListener) {
+      this.window.document.removeEventListener('click', this.clickOutsideListener, true);
+      this.clickOutsideListener = null;
     }
   }
 }

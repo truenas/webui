@@ -2,10 +2,10 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
-import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerDateExamplesComponent } from './scheduler-date-examples.component';
 
@@ -44,7 +44,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent.trim());
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent!.trim());
     expect(examples).toEqual([
       '2022-02-23 00:00:00',
       '2022-02-24 00:00:00',

@@ -19,6 +19,7 @@ import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
@@ -38,7 +39,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
@@ -201,7 +201,7 @@ describe('VmWizardComponent', () => {
   it('shows summary on the last step of the wizard', async () => {
     await fillWizard();
 
-    const summary = spectator.query(SummaryComponent);
+    const summary = spectator.query(SummaryComponent)!;
     expect(summary.summary).toEqual([
       [
         { label: 'Name', value: 'test' },

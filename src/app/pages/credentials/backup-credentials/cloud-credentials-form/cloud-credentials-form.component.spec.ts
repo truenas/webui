@@ -19,6 +19,7 @@ import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -31,7 +32,6 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
 
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
@@ -96,6 +96,7 @@ describe('CloudCredentialsFormComponent', () => {
   const slideInRef = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
+    requireConfirmationWhen: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -135,7 +136,7 @@ describe('CloudCredentialsFormComponent', () => {
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       await providersSelect.setValue('Amazon S3');
 
-      const providerForm = spectator.query(S3ProviderFormComponent);
+      const providerForm = spectator.query(S3ProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
       expect(providerForm.provider).toBe(s3Provider);
     });
@@ -144,7 +145,7 @@ describe('CloudCredentialsFormComponent', () => {
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       await providersSelect.setValue('Storj iX');
 
-      const providerForm = spectator.query(StorjProviderFormComponent);
+      const providerForm = spectator.query(StorjProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
       expect(providerForm.provider).toBe(storjProvider);
       expect(spectator.query(CloudSyncProviderDescriptionComponent)).toBeTruthy();
@@ -154,7 +155,7 @@ describe('CloudCredentialsFormComponent', () => {
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
       await providersSelect.setValue('Box');
 
-      const providerForm = spectator.query(TokenProviderFormComponent);
+      const providerForm = spectator.query(TokenProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
       expect(providerForm.provider).toBe(boxProvider);
     });
@@ -184,7 +185,7 @@ describe('CloudCredentialsFormComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
         await saveButton.click();
 
-        const providerForm = spectator.query(S3ProviderFormComponent);
+        const providerForm = spectator.query(S3ProviderFormComponent)!;
         expect(providerForm.beforeSubmit).toHaveBeenCalled();
       });
 
@@ -222,7 +223,7 @@ describe('CloudCredentialsFormComponent', () => {
         const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
         await saveButton.click();
 
-        const providerForm = spectator.query(S3ProviderFormComponent);
+        const providerForm = spectator.query(S3ProviderFormComponent)!;
         expect(providerForm.beforeSubmit).toHaveBeenCalled();
       });
 
@@ -299,7 +300,7 @@ describe('CloudCredentialsFormComponent', () => {
         Provider: 'Amazon S3',
       });
 
-      const providerForm = spectator.query(S3ProviderFormComponent);
+      const providerForm = spectator.query(S3ProviderFormComponent)!;
       expect(providerForm).toBeTruthy();
       expect(providerForm.getFormSetter$().next).toHaveBeenCalledWith({
         type: CloudSyncProviderName.AmazonS3,

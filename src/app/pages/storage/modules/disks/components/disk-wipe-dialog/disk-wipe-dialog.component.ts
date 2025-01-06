@@ -17,8 +17,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +41,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class DiskWipeDialogComponent {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     wipe_method: [DiskWipeMethod.Quick, [Validators.required]],
   });
 
@@ -92,7 +92,7 @@ export class DiskWipeDialogComponent {
 
   private wipeDisk(): void {
     this.dialogService.jobDialog(
-      this.api.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
+      this.api.job('disk.wipe', [this.data.diskName, this.form.getRawValue().wipe_method]),
       {
         canMinimize: true,
         description: this.translate.instant('Wiping disk...'),

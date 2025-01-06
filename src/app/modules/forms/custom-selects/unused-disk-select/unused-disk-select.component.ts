@@ -23,11 +23,11 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 /**
  * Presents unused disks, shows their size and if there is exported pool on them.
@@ -60,7 +60,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
    */
   readonly diskFilteringFn = input<(disk: DetailsDisk) => boolean>();
   readonly label = input<string>();
-  readonly required = input<boolean>();
+  readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   // TODO: It may be better to allow for object to be written as value.
   readonly valueField = input<keyof DetailsDisk>('name');
@@ -82,7 +82,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  protected allowDuplicateSerials = new FormControl(false);
+  protected allowDuplicateSerials = new FormControl(false, { nonNullable: true });
 
   protected shownOptions$ = combineLatest([
     this.unusedDisks$,
@@ -99,7 +99,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
 
   protected disksProvider = new SimpleAsyncComboboxProvider(this.shownOptions$);
 
-  private readonly combobox = viewChild(IxComboboxComponent);
+  private readonly combobox = viewChild.required(IxComboboxComponent);
 
   constructor(
     private dialogService: DialogService,
@@ -142,7 +142,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
       filteringFn,
     }: {
       allowDuplicateSerials: boolean;
-      filteringFn: (disk: DetailsDisk) => boolean;
+      filteringFn: ((disk: DetailsDisk) => boolean) | undefined;
     },
   ): DetailsDisk[] {
     return unusedDisks.filter((disk) => {

@@ -11,7 +11,9 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -19,8 +21,6 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InitShutdownCardComponent', () => {
   let spectator: Spectator<InitShutdownCardComponent>;
@@ -45,8 +45,7 @@ describe('InitShutdownCardComponent', () => {
       comment: 'Greeting',
       timeout: 20,
       type: InitShutdownScriptType.Command,
-    },
-
+    } as InitShutdownScript,
   ] as InitShutdownScript[];
 
   const createComponent = createComponentFactory({
@@ -109,8 +108,7 @@ describe('InitShutdownCardComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
-      false,
-      expect.objectContaining(scripts[0]),
+      { data: expect.objectContaining(scripts[0]) },
     );
   });
 

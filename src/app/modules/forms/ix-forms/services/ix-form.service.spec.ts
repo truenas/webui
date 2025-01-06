@@ -41,7 +41,7 @@ describe.skip('IxFormService', () => {
   beforeEach(() => {
     spectator = createService();
     fakeComponents.forEach((component) => {
-      spectator.service.registerControl(component.control.name.toString(), component.element);
+      spectator.service.registerControl(component.control.name!.toString(), component.element);
     });
   });
 

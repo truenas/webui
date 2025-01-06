@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,11 +16,10 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +28,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -45,6 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class KerberosKeytabsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected editingKerberosKeytab: KerberosKeytab | undefined;
 
   get isNew(): boolean {
     return !this.editingKerberosKeytab;
@@ -56,9 +56,9 @@ export class KerberosKeytabsFormComponent implements OnInit {
       : this.translate.instant(helptextKerberosKeytabs.title_edit);
   }
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    file: [null as File[], Validators.required],
+    file: [null as File[] | null, Validators.required],
   });
 
   isLoading = false;
@@ -71,9 +71,10 @@ export class KerberosKeytabsFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
-    private slideInRef: OldSlideInRef<KerberosKeytabsFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingKerberosKeytab: KerberosKeytab,
-  ) {}
+    public slideInRef: SlideInRef<KerberosKeytab | undefined, boolean>,
+  ) {
+    this.editingKerberosKeytab = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingKerberosKeytab) {
@@ -88,10 +89,10 @@ export class KerberosKeytabsFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const fReader: FileReader = new FileReader();
-    if (values.file.length) {
+    if (values.file?.length) {
       fReader.readAsBinaryString(values.file[0]);
     }
 
@@ -115,7 +116,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

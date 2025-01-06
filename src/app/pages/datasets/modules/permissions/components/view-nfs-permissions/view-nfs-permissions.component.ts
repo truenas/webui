@@ -70,13 +70,15 @@ export class ViewNfsPermissionsComponent implements OnChanges {
 
     if (areNfsPermissionsBasic(ace.perms)) {
       arePermissionsBasic = true;
-      permissions = [this.translate.instant(nfsBasicPermissionLabels.get(ace.perms.BASIC))];
+      permissions = [this.translate.instant(nfsBasicPermissionLabels.get(ace.perms.BASIC) || ace.perms.BASIC)];
     } else {
       arePermissionsBasic = false;
       permissions = Object.entries(ace.perms)
         .filter(([, isOn]) => isOn)
         .map(([permission]) => {
-          return this.translate.instant(nfsAdvancedPermissionLabels.get(permission as NfsAdvancedPermission));
+          return this.translate.instant(
+            nfsAdvancedPermissionLabels.get(permission as NfsAdvancedPermission) || permission,
+          );
         });
     }
 
@@ -86,13 +88,13 @@ export class ViewNfsPermissionsComponent implements OnChanges {
 
     if (areNfsFlagsBasic(ace.flags)) {
       areFlagsBasic = true;
-      flags = [this.translate.instant(nfsBasicFlagLabels.get(ace.flags.BASIC))];
+      flags = [this.translate.instant(nfsBasicFlagLabels.get(ace.flags.BASIC) || ace.flags.BASIC)];
     } else {
       areFlagsBasic = false;
       flags = Object.entries(ace.flags)
         .filter(([, isOn]) => isOn)
         .map(([flag]) => {
-          return this.translate.instant(nfsAdvancedFlagLabels.get(flag as NfsAdvancedFlag));
+          return this.translate.instant(nfsAdvancedFlagLabels.get(flag as NfsAdvancedFlag) || flag);
         });
     }
 

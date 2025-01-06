@@ -25,13 +25,13 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -121,13 +121,15 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const closer$ = this.slideIn.open(SshConnectionFormComponent);
-    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    this.slideIn.open(SshConnectionFormComponent)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const closer$ = this.slideIn.open(SshConnectionFormComponent, false, credential);
-    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    this.slideIn.open(SshConnectionFormComponent, { data: credential })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getCredentials());
   }
 
   doDelete(credential: KeychainSshCredentials): void {

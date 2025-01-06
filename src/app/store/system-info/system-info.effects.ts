@@ -4,7 +4,8 @@ import { EMPTY, of } from 'rxjs';
 import {
   catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ProductType } from 'app/enums/product-type.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
@@ -49,7 +50,7 @@ export class SystemInfoEffects {
         map((productType) => productTypeLoaded({ productType })),
         catchError((error: unknown) => {
           console.error(error);
-          return of(productTypeLoaded({ productType: null }));
+          return of(productTypeLoaded({ productType: ProductType.Scale }));
         }),
       );
     }),

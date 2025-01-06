@@ -27,11 +27,10 @@ import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SidenavService } from 'app/modules/layout/sidenav.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { FocusService } from 'app/services/focus.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { SidenavService } from 'app/services/sidenav.service';
-import { SlideIn } from 'app/services/slide-in';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -53,8 +52,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
-  searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild('searchInput', { read: ElementRef });
-  searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild('searchBoxWrapper', { read: ElementRef });
+  searchInput: Signal<ElementRef<HTMLInputElement>> = viewChild.required('searchInput', { read: ElementRef });
+  searchBoxWrapper: Signal<ElementRef<HTMLElement>> = viewChild.required('searchBoxWrapper', { read: ElementRef });
 
   searchControl = new FormControl<string>('', { nonNullable: true });
   searchResults: UiSearchableElement[];
@@ -73,8 +72,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private oldSlideInService: OldSlideInService,
-    private slideInService: SlideIn,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     private focusService: FocusService,
     @Inject(DOCUMENT) private document: Document,
@@ -145,8 +143,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   closeAllBackdrops(): void {
-    [this.oldSlideInService, this.slideInService].forEach((service) => service.closeAll());
-
+    this.slideIn.closeAll();
     this.sidenavService.closeSecondaryMenu();
     this.dialogService.closeAllDialogs();
   }

@@ -50,19 +50,19 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class ReportsGlobalControlsComponent implements OnInit {
   readonly diskOptionsChanged = output<{ devices: string[]; metrics: string[] }>();
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     autoRefresh: [false],
     devices: [[] as string[]],
     metrics: [[] as string[]],
   });
 
-  activeTab: ReportTab;
-  allTabs: ReportTab[];
-  diskDevices$ = this.reportsService.getDiskDevices();
-  diskMetrics$ = this.reportsService.getDiskMetrics();
+  protected activeTab: ReportTab;
+  protected allTabs: ReportTab[];
+  protected diskDevices$ = this.reportsService.getDiskDevices();
+  protected diskMetrics$ = this.reportsService.getDiskMetrics();
 
-  readonly ReportType = ReportType;
-  readonly searchableElements = reportingGlobalControlsElements;
+  protected readonly ReportType = ReportType;
+  protected readonly searchableElements = reportingGlobalControlsElements;
 
   constructor(
     private fb: FormBuilder,
@@ -78,11 +78,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.setupDisksTab();
   }
 
-  isActiveTab(tab: ReportTab): boolean {
+  protected isActiveTab(tab: ReportTab): boolean {
     return this.activeTab?.value === tab.value;
   }
 
-  typeTab(tab: ReportTab): ReportTab {
+  protected typeTab(tab: ReportTab): ReportTab {
     return tab;
   }
 

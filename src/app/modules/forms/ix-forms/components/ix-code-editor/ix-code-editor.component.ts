@@ -12,7 +12,7 @@ import {
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatHint } from '@angular/material/form-field';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { Compartment } from '@codemirror/state';
+import { Compartment, Extension } from '@codemirror/state';
 import {
   EditorView, EditorViewConfig, keymap, lineNumbers, placeholder,
 } from '@codemirror/view';
@@ -56,7 +56,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   readonly required = input<boolean>(false);
   readonly tooltip = input<string>();
   readonly language = input<CodeEditorLanguage>();
-  readonly placeholder = input<string>();
+  readonly placeholder = input<string>('');
 
   afterViewInit$ = new BehaviorSubject<boolean>(false);
 
@@ -67,7 +67,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected isDisabled$ = new BehaviorSubject<boolean>(false);
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
-  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
+  readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild.required('inputArea', { read: ElementRef });
 
   editorView: EditorView;
 
@@ -142,19 +142,25 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
       this.onChange(update.state.doc.toString());
     });
 
+    const extensions: Extension[] = [
+      basicSetup,
+      updateListener,
+      lineNumbers(),
+      history(),
+      keymap.of([...defaultKeymap as unknown[], ...historyKeymap]),
+      material,
+      this.editableCompartment.of(EditorView.editable.of(true)),
+      placeholder(this.placeholder()),
+    ];
+
+    const language = this.language();
+    if (language) {
+      extensions.push(languageFunctionsMap[language]());
+    }
+
     const config: EditorViewConfig = {
+      extensions,
       doc: this.controlDirective.control?.value as string || '',
-      extensions: [
-        basicSetup,
-        updateListener,
-        languageFunctionsMap[this.language()](),
-        lineNumbers(),
-        history(),
-        keymap.of([...defaultKeymap as unknown[], ...historyKeymap]),
-        material,
-        this.editableCompartment.of(EditorView.editable.of(true)),
-        placeholder(this.placeholder()),
-      ],
       parent: this.inputArea().nativeElement,
     };
     this.editorView = new EditorView(config);
@@ -190,7 +196,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     this.onTouch = onTouched;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.isDisabled$.next(isDisabled);
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();

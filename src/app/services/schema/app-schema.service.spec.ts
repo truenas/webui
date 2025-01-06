@@ -14,9 +14,9 @@ import {
   DynamicWizardSchema,
   DynamicFormSchemaEnum,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
-import { UrlValidationService } from 'app/services/url-validation.service';
 
 const beforeIntString = [{
   variable: 'variable_dict',

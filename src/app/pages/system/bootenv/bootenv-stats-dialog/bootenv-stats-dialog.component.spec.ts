@@ -17,7 +17,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { BootenvStatsDialogComponent } from './bootenv-stats-dialog.component';
 
@@ -74,8 +74,8 @@ describe('BootenvStatsDialogComponent', () => {
 
   function getStatusItems(): Record<string, string> {
     return spectator.queryAll('.status-item').reduce((allItems, element) => {
-      const label = element.querySelector('.status-name').textContent.trim();
-      const value = element.querySelector('.status-value').textContent.trim();
+      const label = element.querySelector('.status-name')!.textContent!.trim();
+      const value = element.querySelector('.status-value')!.textContent!.trim();
       return {
         ...allItems,
         [label]: value,

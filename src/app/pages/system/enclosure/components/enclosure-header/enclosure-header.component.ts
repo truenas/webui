@@ -40,6 +40,10 @@ export class EnclosureHeaderComponent {
 
   onEditLabel(): void {
     const enclosure = this.enclosureStore.selectedEnclosure();
+    if (!enclosure) {
+      return;
+    }
+
     const dialogConfig: SetEnclosureLabelDialogData = {
       currentLabel: this.enclosureStore.enclosureLabel(),
       defaultLabel: enclosure.name,

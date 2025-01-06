@@ -10,10 +10,10 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
-import { SlideIn } from 'app/services/slide-in';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SyslogCardComponent', () => {
@@ -75,15 +75,16 @@ describe('SyslogCardComponent', () => {
     expect(spectator.inject(FirstTimeWarningService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       SyslogFormComponent,
-      false,
       {
-        fqdn_syslog: true,
-        syslog_audit: false,
-        syslog_tls_certificate: undefined,
-        syslog_tls_certificate_authority: undefined,
-        syslog_transport: 'TCP',
-        sysloglevel: 'F_ALERT',
-        syslogserver: '127.1.2.3',
+        data: {
+          fqdn_syslog: true,
+          syslog_audit: false,
+          syslog_tls_certificate: undefined,
+          syslog_tls_certificate_authority: undefined,
+          syslog_transport: 'TCP',
+          sysloglevel: 'F_ALERT',
+          syslogserver: '127.1.2.3',
+        },
       },
     );
   });

@@ -19,14 +19,13 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { UserFormComponent } from './user-form.component';
 
 describe('UserFormComponent', () => {
@@ -64,6 +63,13 @@ describe('UserFormComponent', () => {
   let spectator: Spectator<UserFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: UserFormComponent,
     imports: [
@@ -86,7 +92,7 @@ describe('UserFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({ mode: 16832 })),
       }),
@@ -107,7 +113,6 @@ describe('UserFormComponent', () => {
         }],
       }),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -181,7 +186,7 @@ describe('UserFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: mockUser },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => mockUser }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -308,7 +313,7 @@ describe('UserFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: builtinUser },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => builtinUser }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

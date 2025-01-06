@@ -9,13 +9,13 @@ import {
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
   snapshotAdded, snapshotChanged,
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 

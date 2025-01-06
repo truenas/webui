@@ -22,17 +22,17 @@ import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const slideInRef: SlideInRef<unknown> = {
+  const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
     requireConfirmationWhen: jest.fn(),
@@ -207,6 +207,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await advancedButton.click();
     expect(
       slideInRef.swap,
-    ).toHaveBeenCalledWith(ReplicationFormComponent, true);
+    ).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
   });
 });

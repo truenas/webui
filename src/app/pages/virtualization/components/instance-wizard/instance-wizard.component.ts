@@ -38,6 +38,7 @@ import {
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
 } from 'app/interfaces/virtualization.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
@@ -56,12 +57,11 @@ import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validati
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -131,7 +131,7 @@ export class InstanceWizardComponent {
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -139,9 +139,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number>;
+      source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number>;
+      dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -185,11 +185,11 @@ export class InstanceWizardComponent {
   }
 
   protected addProxy(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number, Validators.required],
+      source_port: [null as number | null, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number, Validators.required],
+      dest_port: [null as number | null, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -200,7 +200,7 @@ export class InstanceWizardComponent {
   }
 
   protected addDisk(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
@@ -232,7 +232,7 @@ export class InstanceWizardComponent {
   }
 
   addEnvironmentVariable(): void {
-    const control = this.formBuilder.group({
+    const control = this.formBuilder.nonNullable.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
     });

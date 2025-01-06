@@ -12,7 +12,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { Option, skipOption } from 'app/interfaces/option.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
@@ -20,11 +20,11 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { FibreChannelService } from 'app/services/fibre-channel.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('TargetFormComponent', () => {
@@ -53,6 +53,12 @@ describe('TargetFormComponent', () => {
     auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
   } as IscsiTarget;
 
+  const slideInRef: SlideInRef<IscsiTarget | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: TargetFormComponent,
     imports: [
@@ -73,13 +79,19 @@ describe('TargetFormComponent', () => {
           },
         ],
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(FibreChannelService, {
+        linkFiberChannelToTarget: jest.fn(() => of(null)),
+      }),
+      mockProvider(SlideInRef, slideInRef),
       mockApi([
+        mockCall('fc.fc_host.query', []),
+        mockCall('fcport.port_choices', {}),
         mockCall('iscsi.target.create'),
-        mockCall('iscsi.target.update'),
+        mockCall('iscsi.target.update', { id: 123 } as IscsiTarget),
         mockCall('iscsi.target.validate_name', null),
         mockCall('fc.capable', true),
         mockCall('iscsi.portal.query', [{
@@ -181,7 +193,7 @@ describe('TargetFormComponent', () => {
         ],
         auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -189,7 +201,7 @@ describe('TargetFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingTarget },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingTarget }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -233,13 +245,18 @@ describe('TargetFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(FibreChannelService).linkFiberChannelToTarget).toHaveBeenCalledWith(
+        123,
+        skipOption,
+        undefined,
+      );
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
       let portal;
       let initiator;
-      let auth: Option[];
+      let auth: Option[] = [];
 
       spectator.component.portals$.subscribe((options) => portal = options);
       spectator.component.initiators$.subscribe((options) => initiator = options);
@@ -283,7 +300,7 @@ describe('TargetFormComponent', () => {
         if (method === 'iscsi.target.validate_name') {
           return of('Target with this name already exists');
         }
-        return null;
+        return of(null);
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);

@@ -14,8 +14,8 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 
 describe('SshConnectionFormComponent', () => {
@@ -66,7 +66,7 @@ describe('SshConnectionFormComponent', () => {
         getData: getNoData,
         swap: jest.fn(),
         requireConfirmationWhen: jest.fn(),
-      } as SlideInRef<KeychainSshCredentials>),
+      } as SlideInRef<KeychainSshCredentials, unknown>),
     ],
   });
 
@@ -79,7 +79,7 @@ describe('SshConnectionFormComponent', () => {
             getData,
             swap: jest.fn(),
             requireConfirmationWhen: jest.fn(),
-          } as SlideInRef<KeychainSshCredentials>),
+          } as SlideInRef<KeychainSshCredentials, unknown>),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

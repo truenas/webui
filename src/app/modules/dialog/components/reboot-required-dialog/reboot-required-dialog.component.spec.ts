@@ -49,7 +49,7 @@ describe('RebootRequiredDialogComponent', () => {
 
   it('shows reasons', () => {
     expect(
-      spectator.queryAll('.reasons li').map((item) => item.textContent.trim()),
+      spectator.queryAll('.reasons li').map((item) => item.textContent!.trim()),
     ).toEqual([
       'Test Reason 1',
       'Test Reason 2',

@@ -13,10 +13,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const newOption = 'NEW';
 
@@ -37,10 +37,10 @@ const newOption = 'NEW';
 export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     host: ['', Validators.required],
-    port: [null as number],
+    port: [null as number | null],
     user: ['', Validators.required],
     pass: [''],
-    private_key: [null as number | typeof newOption],
+    private_key: [null as number | typeof newOption | null],
   });
 
   privateKeys$: Observable<Option[]>;

@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -9,7 +9,7 @@ import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -24,14 +24,13 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { atLeastOne } from 'app/modules/forms/ix-forms/validators/at-least-one-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -70,6 +69,8 @@ export class SshKeypairFormComponent implements OnInit {
 
   isFormLoading = false;
 
+  protected editingKeypair: KeychainSshKeyPair | undefined;
+
   form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
@@ -90,7 +91,6 @@ export class SshKeypairFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private api: ApiService,
-    private slideInRef: OldSlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -98,20 +98,26 @@ export class SshKeypairFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
     private download: DownloadService,
-    @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
-  ) { }
+    public slideInRef: SlideInRef<KeychainSshKeyPair | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingKeypair = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
-    if (this.editingKeypair) {
-      this.setKeypairForEditing();
+    const keypair = this.editingKeypair;
+    if (keypair) {
+      this.setKeypairForEditing(keypair);
     }
   }
 
-  setKeypairForEditing(): void {
+  private setKeypairForEditing(keypair: KeychainSshKeyPair): void {
     this.form.patchValue({
-      name: this.editingKeypair.name,
-      private_key: this.editingKeypair.attributes.private_key,
-      public_key: this.editingKeypair.attributes.public_key,
+      name: keypair.name,
+      private_key: keypair.attributes.private_key,
+      public_key: keypair.attributes.public_key,
     });
   }
 
@@ -172,7 +178,7 @@ export class SshKeypairFormComponent implements OnInit {
 
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

@@ -9,13 +9,13 @@ import { parseISO } from 'date-fns';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { IxDatepickerComponent } from './ix-date-picker.component';
 
 describe('IxDatePickerComponent', () => {
   let spectator: SpectatorHost<IxDatepickerComponent>;
   let loader: HarnessLoader;
-  const formControl = new FormControl<Date>(null);
+  const formControl = new FormControl<Date | null>(null);
 
   const createHost = createHostFactory({
     component: IxDatepickerComponent,
@@ -57,7 +57,7 @@ describe('IxDatePickerComponent', () => {
         },
       });
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Label');
       expect(label.tooltip()).toBe('Tooltip');

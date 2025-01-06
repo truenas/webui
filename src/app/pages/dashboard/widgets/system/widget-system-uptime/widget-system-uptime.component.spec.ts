@@ -2,11 +2,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { BehaviorSubject, of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { WidgetSystemUptimeComponent } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.component';
-import { LocaleService } from 'app/services/locale.service';
 
 describe('WidgetSystemUptimeComponent', () => {
   let spectator: Spectator<WidgetSystemUptimeComponent>;
@@ -45,7 +45,7 @@ describe('WidgetSystemUptimeComponent', () => {
     });
 
     it('renders System Uptime for the current system', () => {
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('23 hours 12 minutes as of 10:34');
       expect(widget.label()).toBe('System Uptime');

@@ -37,7 +37,7 @@ describe('EnclosurePageComponent', () => {
   let spectator: Spectator<EnclosurePageComponent>;
   const selectedView = signal(EnclosureView.Expanders);
   const selectedEnclosure = signal({ id: '123' } as DashboardEnclosure);
-  const selectedSlot = signal({} as DashboardEnclosureSlot);
+  const selectedSlot = signal({} as DashboardEnclosureSlot | null);
   const isLoading = signal(true);
   const enclosures = signal([{ id: '123' } as DashboardEnclosure]);
   const createComponent = createComponentFactory({

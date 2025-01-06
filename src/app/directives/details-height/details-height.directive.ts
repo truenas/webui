@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { headerHeight, footerHeight } from 'app/modules/layout/admin-layout/admin-layout.component.const';
-import { LayoutService } from 'app/services/layout.service';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 

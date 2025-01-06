@@ -62,7 +62,7 @@ describe('WidgetDisksWithZfsErrorsComponent', () => {
     });
 
     it('should render "Pool does not exist" message', () => {
-      const component = spectator.query(WidgetDatapointComponent);
+      const component = spectator.query(WidgetDatapointComponent)!;
       expect(component.label()).toBe('Disks w/ZFS Errors');
       expect(component.text()).toBe('Pool does not exist');
     });

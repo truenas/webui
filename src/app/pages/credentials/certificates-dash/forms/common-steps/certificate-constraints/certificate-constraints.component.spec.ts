@@ -250,7 +250,7 @@ describe('CertificateConstraintsComponent', () => {
 
     it('has empty object for Authority Key Identifier in getPayload()', () => {
       const payload = spectator.component.getPayload();
-      expect(payload.cert_extensions.AuthorityKeyIdentifier).toMatchObject({});
+      expect(payload.cert_extensions!.AuthorityKeyIdentifier).toMatchObject({});
     });
 
     it('does not show Authority Key Identifier in getSummary()', () => {

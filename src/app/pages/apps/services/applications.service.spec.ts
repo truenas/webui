@@ -5,8 +5,8 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ApplicationsService', () => {
   let spectator: SpectatorService<ApplicationsService>;

@@ -14,7 +14,7 @@ import {
   IscsiTarget,
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

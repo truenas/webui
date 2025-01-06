@@ -33,15 +33,16 @@ import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-comp
 import { provideNgxWebstorage, withLocalStorage } from 'ngx-webstorage';
 import { AppComponent } from 'app/app.component';
 import { rootRoutes } from 'app/app.routes';
-import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
-import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { MockEnclosureApiService } from 'app/core/testing/mock-enclosure/mock-enclosure-api.service';
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
+import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
+import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 
@@ -117,16 +118,17 @@ bootstrapApplication(AppComponent, {
     },
     {
       provide: ApiService,
-      deps: [WebSocketHandlerService, SubscriptionManagerService, TranslateService],
+      deps: [WebSocketStatusService, WebSocketHandlerService, SubscriptionManagerService, TranslateService],
       useFactory: (
+        wsStatus: WebSocketStatusService,
         connection: WebSocketHandlerService,
         subscriptionManager: SubscriptionManagerService,
         translate: TranslateService,
       ) => {
         if (environment.mockConfig.enabled) {
-          return new MockEnclosureApiService(connection, subscriptionManager, translate);
+          return new MockEnclosureApiService(connection, wsStatus, subscriptionManager, translate);
         }
-        return new ApiService(connection, subscriptionManager, translate);
+        return new ApiService(connection, wsStatus, subscriptionManager, translate);
       },
     },
     provideCharts(withDefaultRegisterables()),

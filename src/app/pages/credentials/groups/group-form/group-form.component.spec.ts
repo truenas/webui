@@ -15,10 +15,9 @@ import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
@@ -47,12 +46,18 @@ describe('GroupFormComponent', () => {
   const fakeDataGroup = {
     id: 13,
     gid: 1111,
-    sudo_commands: [],
+    sudo_commands: [] as string[],
     name: 'Group A',
     sudo_commands_nopasswd: [allCommands],
     smb: false,
     group: 'editing',
   } as Group;
+
+  const slideInRef: SlideInRef<Group | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: GroupFormComponent,
@@ -68,11 +73,10 @@ describe('GroupFormComponent', () => {
         mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -125,7 +129,7 @@ describe('GroupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: fakeDataGroup },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeDataGroup }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

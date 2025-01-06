@@ -73,8 +73,8 @@ describe('SearchInputComponent', () => {
     jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
 
     expect(spectator.queryAll(BasicSearchComponent)).toHaveLength(1);
-    spectator.query(BasicSearchComponent).queryChange.emit('query string');
-    spectator.query(BasicSearchComponent).runSearch.emit();
+    spectator.query(BasicSearchComponent)!.queryChange.emit('query string');
+    spectator.query(BasicSearchComponent)!.runSearch.emit();
 
     expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
       isBasicQuery: true,

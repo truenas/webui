@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
@@ -33,7 +33,7 @@ describe('IpAddressesCellComponent', () => {
   it('shows NICs state aliases for interfaces with DHCP', () => {
     spectator.component.setRow({
       ipv4_dhcp: true,
-      aliases: [],
+      aliases: [] as NetworkInterfaceAlias[],
       state: {
         aliases: [
           { address: '56.23.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
@@ -51,7 +51,7 @@ describe('IpAddressesCellComponent', () => {
 
   it('shows failover aliases', () => {
     spectator.component.setRow({
-      aliases: [],
+      aliases: [] as NetworkInterfaceAlias[],
       failover_aliases: [
         { address: '33.12.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.12.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
@@ -67,7 +67,7 @@ describe('IpAddressesCellComponent', () => {
 
   it('shows virtual addresses if any', () => {
     spectator.component.setRow({
-      aliases: [],
+      aliases: [] as NetworkInterfaceAlias[],
       failover_virtual_aliases: [
         { address: '33.10.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
         { address: '33.10.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },

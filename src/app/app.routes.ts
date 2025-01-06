@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
-import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
+import { TranslationsLoadedGuard } from 'app/modules/language/translations/translations-loaded.guard';
 import { BlankLayoutComponent } from 'app/modules/layout/blank-layout/blank-layout.component';
+import { WebSocketConnectionGuard } from 'app/modules/websocket/websocket-connection.guard';
 import { SigninComponent } from 'app/pages/signin/signin.component';
 
 export const rootRoutes: Routes = [

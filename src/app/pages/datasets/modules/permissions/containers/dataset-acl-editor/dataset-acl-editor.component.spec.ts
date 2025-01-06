@@ -170,7 +170,7 @@ describe('DatasetAclEditorComponent', () => {
     });
 
     it('shows form for appropriate ace selected', () => {
-      const form = spectator.query(EditNfsAceComponent);
+      const form = spectator.query(EditNfsAceComponent)!;
 
       expect(form).toExist();
       expect(form.ace).toBe(acl.acl[0]);

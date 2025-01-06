@@ -1,13 +1,13 @@
-@if (!selectedSlot()?.dev) {
+@if (!selectedSlot().dev) {
   <div>{{ 'Empty drive cage' | translate }}</div>
 }
 
-@if (selectedSlot()?.dev && !selectedSlot()?.pool_info) {
+@if (selectedSlot().dev && !selectedSlot().pool_info) {
   <div>{{ 'No vdev info for this disk' | translate }}</div>
 }
 
-@if (selectedSlot()?.pool_info?.vdev_disks?.length) {
-    @for (disk of selectedSlot()?.pool_info.vdev_disks; track disk.dev) {
+@if (selectedSlot().pool_info?.vdev_disks?.length) {
+    @for (disk of selectedSlot().pool_info.vdev_disks; track disk.dev) {
       <a
         class="disk-name"
         [ixTest]="['select-disk', disk.dev]"

@@ -18,9 +18,9 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class DeleteTargetDialogComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
-  protected warningMessage: string = null;
+  protected warningMessage = '';
 
   form = this.formBuilder.group({
     delete_extents: [false],

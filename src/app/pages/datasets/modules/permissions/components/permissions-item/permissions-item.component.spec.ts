@@ -28,7 +28,7 @@ describe('PermissionsItemComponent', () => {
       },
     });
 
-    expect(spectator.query(IxIconComponent).name).toBe('people');
+    expect(spectator.query(IxIconComponent)!.name).toBe('people');
     expect(spectator.query('.name')).toHaveExactText('Group – johns');
     expect(spectator.query('.permissions')).toHaveExactText('Read | Execute');
   });
