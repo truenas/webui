@@ -5,6 +5,8 @@ export const vmwareSnapshotListElements = {
   hierarchy: [T('Data Protection'), T('VMware Snapshots')],
   anchorRouterLink: ['/data-protection', 'vmware-snapshots'],
   elements: {
-    vmwareSnapshots: {},
+    vmwareSnapshots: {
+      anchor: 'vmware-snapshots',
+    },
   },
 } satisfies UiSearchableElement;

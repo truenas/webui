@@ -1,7 +1,7 @@
 <div class="header-card item-search">
   <ix-fake-progress-bar
     class="loader-bar"
-    [loading]="dataProvider().isLoading$ | async"
+    [loading]="!!(dataProvider().isLoading$ | async)"
   ></ix-fake-progress-bar>
 
   <div class="actions-bar">

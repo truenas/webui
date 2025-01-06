@@ -99,11 +99,11 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const summary = [
       { label: this.translate.instant('Name'), value: values.name },
-      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) },
+      { label: this.translate.instant('Type'), value: this.createTypes.get(values.create_type) || values.create_type },
     ];
 
     if (values.profile) {

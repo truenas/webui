@@ -15,6 +15,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
@@ -22,7 +23,6 @@ import {
 } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DeviceDetailsComponent } from 'app/pages/vm/devices/device-list/device-details/device-details.component';
 import { DeviceListComponent } from 'app/pages/vm/devices/device-list/device-list/device-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;
@@ -63,10 +63,8 @@ describe('DeviceListComponent', () => {
         mockCall('vm.device.query', devices),
       ]),
       mockAuth(),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -102,7 +100,7 @@ describe('DeviceListComponent', () => {
     const menu = await loader.getHarness(MatMenuHarness);
     await menu.clickItem({ text: 'Edit' });
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(DeviceFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DeviceFormComponent, {
       data: {
         device: devices[0],
         virtualMachineId: 76,

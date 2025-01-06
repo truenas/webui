@@ -47,7 +47,7 @@ export class DockerImageDeleteDialogComponent {
   protected readonly forceCheckboxTooltip = 'When set will force delete the image regardless of the state of\
    containers and should be used cautiously.';
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     confirm: [false, [Validators.requiredTrue]],
     force: [false],
   });
@@ -85,7 +85,7 @@ export class DockerImageDeleteDialogComponent {
 
   onSubmit(): void {
     const deleteParams: DeleteContainerImageParams[] = this.images.map((image) => {
-      return [image.id, { force: this.form.value.force }];
+      return [image.id, { force: this.form.getRawValue().force }];
     });
 
     this.images.forEach((image) => {

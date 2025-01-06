@@ -7,7 +7,9 @@ import {
   StorageStrategyStub, withLocalStorage,
 } from 'ngx-webstorage';
 import * as rxjs from 'rxjs';
-import { firstValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject, firstValueFrom,
+} from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -21,7 +23,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 const authMeUser = {
   pw_dir: 'dir',
@@ -40,9 +42,12 @@ const authMeUser = {
   },
 } as LoggedInUser;
 
+const mockWsStatus = new WebSocketStatusService();
+
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;
   let testScheduler: TestScheduler;
+  let timer$: BehaviorSubject<0>;
   const createService = createServiceFactory({
     service: AuthService,
     providers: [
@@ -59,9 +64,10 @@ describe('AuthService', () => {
           },
         } as LoginExResponse),
       ]),
-      mockProvider(WebSocketHandlerService, {
-        isConnected$: of(true),
-      }),
+      {
+        provide: WebSocketStatusService,
+        useValue: mockWsStatus,
+      },
       {
         provide: STORAGE_STRATEGIES,
         useFactory: () => new StorageStrategyStub(LocalStorageStrategy.strategyName),
@@ -78,11 +84,14 @@ describe('AuthService', () => {
     testScheduler = new TestScheduler((actual, expected) => {
       expect(actual).toEqual(expected);
     });
+    mockWsStatus.setConnectionStatus(true);
+    timer$ = new BehaviorSubject(0);
+    jest.spyOn(rxjs, 'timer').mockReturnValue(timer$.asObservable());
   });
 
   describe('Login', () => {
     it('initializes auth session with triggers and token with username/password login', () => {
-      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
+      timer$.next(0);
 
       const obs$ = spectator.service.login('dummy', 'dummy');
 
@@ -90,10 +99,6 @@ describe('AuthService', () => {
         expectObservable(obs$).toBe(
           '(a|)',
           { a: LoginResult.Success },
-        );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: true },
         );
         expectObservable(spectator.service.authToken$).toBe(
           'd',
@@ -109,7 +114,7 @@ describe('AuthService', () => {
     });
 
     it('initializes auth session with triggers and token with token login', () => {
-      jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
+      timer$.next(0);
 
       const obs$ = spectator.service.loginWithToken();
 
@@ -117,10 +122,6 @@ describe('AuthService', () => {
         expectObservable(obs$).toBe(
           '(a|)',
           { a: LoginResult.Success },
-        );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: true },
         );
         expectObservable(spectator.service.authToken$).toBe(
           'd',
@@ -145,10 +146,6 @@ describe('AuthService', () => {
           {
             a: undefined,
           },
-        );
-        expectObservable(spectator.service.isAuthenticated$).toBe(
-          'c',
-          { c: false },
         );
         expectObservable(spectator.service.authToken$).toBe(
           '|',

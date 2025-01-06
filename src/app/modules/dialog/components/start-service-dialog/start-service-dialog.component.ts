@@ -9,7 +9,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, filter } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -131,7 +131,10 @@ export class StartServiceDialogComponent implements OnInit {
 
   private getService(): void {
     this.store$.select(selectService(this.serviceName))
-      .pipe(untilDestroyed(this))
+      .pipe(
+        filter((service) => !!service),
+        untilDestroyed(this),
+      )
       .subscribe((service) => {
         this.service = service;
         this.cdr.markForCheck();

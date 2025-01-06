@@ -23,7 +23,7 @@ export class ToolbarSliderComponent {
   readonly label = input<number>(1);
   readonly name = input<number>(1);
 
-  readonly value = model<number>();
+  readonly value = model.required<number>();
 
   onChange(updatedValue: string): void {
     this.value.set(Number(updatedValue));

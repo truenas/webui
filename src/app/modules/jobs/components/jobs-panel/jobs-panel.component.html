@@ -37,7 +37,7 @@
     </div>
   } @else {
     @let jobs = availableJobs$ | async;
-    @if (jobs.length) {
+    @if (jobs?.length) {
       <div class="jobs-list">
         @for (job of jobs; track job.id) {
           <ix-job-item

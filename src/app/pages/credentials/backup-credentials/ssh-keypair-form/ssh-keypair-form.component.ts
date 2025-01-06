@@ -69,7 +69,7 @@ export class SshKeypairFormComponent implements OnInit {
 
   isFormLoading = false;
 
-  protected editingKeypair: KeychainSshKeyPair;
+  protected editingKeypair: KeychainSshKeyPair | undefined;
 
   form = this.fb.group({
     name: ['', Validators.required],
@@ -107,16 +107,17 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.editingKeypair) {
-      this.setKeypairForEditing();
+    const keypair = this.editingKeypair;
+    if (keypair) {
+      this.setKeypairForEditing(keypair);
     }
   }
 
-  setKeypairForEditing(): void {
+  private setKeypairForEditing(keypair: KeychainSshKeyPair): void {
     this.form.patchValue({
-      name: this.editingKeypair.name,
-      private_key: this.editingKeypair.attributes.private_key,
-      public_key: this.editingKeypair.attributes.public_key,
+      name: keypair.name,
+      private_key: keypair.attributes.private_key,
+      public_key: keypair.attributes.public_key,
     });
   }
 

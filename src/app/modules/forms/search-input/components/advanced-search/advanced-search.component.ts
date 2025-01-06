@@ -55,7 +55,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   readonly switchToBasic = output();
   readonly runSearch = output();
 
-  private readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild('inputArea', { read: ElementRef });
+  private readonly inputArea: Signal<ElementRef<HTMLElement>> = viewChild.required('inputArea', { read: ElementRef });
 
   protected hasQueryErrors = false;
   protected queryInputValue: string;

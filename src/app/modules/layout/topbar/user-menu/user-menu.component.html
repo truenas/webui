@@ -22,7 +22,7 @@
     </button>
 
     <mat-menu #userMenu="matMenu">
-      @if (user?.account_attributes.includes(AccountAttribute.Local)) {
+      @if (user?.account_attributes?.includes(AccountAttribute.Local)) {
         <button
           name="settings-change-password"
           mat-menu-item

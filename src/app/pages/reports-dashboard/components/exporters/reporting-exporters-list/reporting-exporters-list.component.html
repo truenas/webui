@@ -31,7 +31,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="isLoading$ | async"
+        [isLoading]="!!(isLoading$ | async)"
       ></tbody>
     </ix-table>
     <ix-table-pager

@@ -18,8 +18,7 @@ import { User } from 'app/interfaces/user.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -44,6 +43,12 @@ describe('EmailFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<MailConfig | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => fakeEmailConfig),
+  };
 
   const createComponent = createComponentFactory({
     component: EmailFormComponent,
@@ -93,8 +98,7 @@ describe('EmailFormComponent', () => {
         }),
         removeEventListener: jest.fn(),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: fakeEmailConfig },
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
     ],
   });
@@ -410,7 +414,7 @@ describe('EmailFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: fakeGmailEmailConfig },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeGmailEmailConfig }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -442,7 +446,7 @@ describe('EmailFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: fakeOutlookEmailConfig },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => fakeOutlookEmailConfig }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
