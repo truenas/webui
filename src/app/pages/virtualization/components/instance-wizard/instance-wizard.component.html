@@ -232,16 +232,19 @@
       }
     </ix-form-section>
 
-    <ix-form-section
-      [label]="'USB Devices' | translate"
-      [help]="'USB Devices' | translate"
-    >
-      <ix-checkbox-list
-        formControlName="usb_devices"
+    @let usbDevices = usbDevices$ | async;
+    @if (usbDevices.length > 0) {
+      <ix-form-section
         [label]="'USB Devices' | translate"
-        [options]="usbDevices$"
-      ></ix-checkbox-list>
-    </ix-form-section>
+        [help]="'USB Devices' | translate"
+      >
+        <ix-checkbox-list
+          formControlName="usb_devices"
+          [label]="'USB Devices' | translate"
+          [options]="usbDevices$"
+        ></ix-checkbox-list>
+      </ix-form-section>
+    }
 
     @let gpuDevices = gpuDevices$ | async;
     @if (gpuDevices.length > 0) {
