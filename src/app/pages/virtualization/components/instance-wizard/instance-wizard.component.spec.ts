@@ -1,7 +1,7 @@
-/* eslint-disable sonarjs/no-commented-code */
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
@@ -17,6 +17,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   VirtualizationDeviceType,
+  VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
@@ -153,20 +154,22 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
-    // TODO: https://ixsystems.atlassian.net/browse/NAS-133118
-    // const usbDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({
-    //   label: 'xHCI Host Controller (0003)'
-    // }));
-    // await usbDeviceCheckbox.setValue(true);
+    // TODO: Fix this to use IxCheckboxHarness
+    const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      label: 'xHCI Host Controller (0003)',
+    }));
+    await usbDeviceCheckbox.check();
 
     const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-    await useDefaultNetworkCheckbox.setValue(true);
+    await useDefaultNetworkCheckbox.setValue(false);
 
-    // const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
-    // await nicDeviceCheckbox.setValue(true);
+    // TODO: Fix this to use IxCheckboxHarness
+    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+    await nicDeviceCheckbox.check();
 
-    // const gpuDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-    // await gpuDeviceCheckbox.setValue(true);
+    // TODO: Fix this to use IxCheckboxHarness
+    const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    await gpuDeviceCheckbox.check();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
     await createButton.click();
@@ -189,9 +192,9 @@ describe('InstanceWizardComponent', () => {
           dest_port: 2000,
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
-        // { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
-        // { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        // { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
+        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
@@ -232,8 +235,22 @@ describe('InstanceWizardComponent', () => {
       'Instance Protocol': 'UDP',
     });
 
+    // TODO: Fix this to use IxCheckboxHarness
+    const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+      label: 'xHCI Host Controller (0003)',
+    }));
+    await usbDeviceCheckbox.check();
+
     const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-    await useDefaultNetworkCheckbox.setValue(true);
+    await useDefaultNetworkCheckbox.setValue(false);
+
+    // TODO: Fix this to use IxCheckboxHarness
+    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+    await nicDeviceCheckbox.check();
+
+    // TODO: Fix this to use IxCheckboxHarness
+    const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+    await gpuDeviceCheckbox.check();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
     await createButton.click();
@@ -256,6 +273,9 @@ describe('InstanceWizardComponent', () => {
           dest_port: 2000,
           dest_proto: VirtualizationProxyProtocol.Udp,
         },
+        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
+        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
@@ -265,9 +285,7 @@ describe('InstanceWizardComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
-  // TODO: https://ixsystems.atlassian.net/browse/NAS-133118
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('sends no NIC devices when default network settings checkbox is set', async () => {
+  it('sends no NIC devices when default network settings checkbox is set', async () => {
     await form.fillForm({
       Name: 'new',
       'CPU Configuration': '1-2',
@@ -280,10 +298,12 @@ describe('InstanceWizardComponent', () => {
     const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
     await useDefaultNetworkCheckbox.setValue(false);
 
-    const nicDeviceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'nic1' }));
-    await nicDeviceCheckbox.setValue(true);
+    // TODO: Fix this to use IxCheckboxHarness
+    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+    await nicDeviceCheckbox.check();
 
     await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
+    spectator.detectChanges();
 
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
     await createButton.click();
@@ -296,6 +316,7 @@ describe('InstanceWizardComponent', () => {
       image: 'almalinux/8/cloud',
       memory: GiB,
       environment: {},
+      instance_type: 'CONTAINER',
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

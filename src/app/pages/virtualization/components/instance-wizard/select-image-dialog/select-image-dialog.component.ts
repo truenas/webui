@@ -120,7 +120,7 @@ export class SelectImageDialogComponent implements OnInit {
     const releaseSet = new Set<string>();
 
     const imageArray = Object.entries(images)
-      .filter(([_, image]) => image.instance_types.includes(this.data.type))
+      .filter(([_, image]) => image?.instance_types?.includes(this.data.type))
       .map(([id, image]) => ({ ...image, id }));
 
     this.images.set(imageArray);

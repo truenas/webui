@@ -131,7 +131,7 @@ export class InstanceWizardComponent {
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number | null],
+    memory: [null as number],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -139,9 +139,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number | null>;
+      source_port: FormControl<number>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number | null>;
+      dest_port: FormControl<number>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -185,11 +185,11 @@ export class InstanceWizardComponent {
   }
 
   protected addProxy(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number | null, Validators.required],
+      source_port: [null as number, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number | null, Validators.required],
+      dest_port: [null as number, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -200,7 +200,7 @@ export class InstanceWizardComponent {
   }
 
   protected addDisk(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
@@ -232,7 +232,7 @@ export class InstanceWizardComponent {
   }
 
   addEnvironmentVariable(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
     });
@@ -302,23 +302,26 @@ export class InstanceWizardComponent {
         dev_type: VirtualizationDeviceType.Gpu,
       });
     }
-
     const macVlanNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
-    for (const parent of this.form.controls.mac_vlan_nics.value) {
-      macVlanNics.push({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Macvlan,
-      });
+    if (!this.form.controls.use_default_network.value) {
+      for (const parent of this.form.controls.mac_vlan_nics.value) {
+        macVlanNics.push({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Macvlan,
+        });
+      }
     }
 
     const bridgedNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
-    for (const parent of this.form.controls.bridged_nics.value) {
-      bridgedNics.push({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Bridged,
-      });
+    if (!this.form.controls.use_default_network.value) {
+      for (const parent of this.form.controls.bridged_nics.value) {
+        bridgedNics.push({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Bridged,
+        });
+      }
     }
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({
