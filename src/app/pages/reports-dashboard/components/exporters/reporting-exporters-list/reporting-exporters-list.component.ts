@@ -98,7 +98,10 @@ export class ReportingExporterListComponent implements OnInit {
         this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
-          complete: () => this.appLoader.close(),
+          complete: () => {
+            this.appLoader.close();
+            this.getExporters();
+          },
           error: (error: unknown) => this.errorCaught(error),
         });
       },
