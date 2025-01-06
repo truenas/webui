@@ -6,6 +6,8 @@ export const initiatorListElements = {
   synonyms: [T('Initiator Group')],
   anchorRouterLink: ['/sharing', 'iscsi', 'initiators'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'initiator-list',
+    },
   },
 } satisfies UiSearchableElement;

@@ -6,7 +6,9 @@ export const bootListElements = {
   anchorRouterLink: ['/system', 'boot'],
   synonyms: [T('Create boot environment')],
   elements: {
-    boot: {},
+    boot: {
+      anchor: 'boot-list',
+    },
     stats: {
       hierarchy: [T('Stats/Settings')],
     },
