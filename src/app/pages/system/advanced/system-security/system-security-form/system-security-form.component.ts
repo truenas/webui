@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -46,9 +47,10 @@ export class SystemSecurityFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     enable_fips: [false],
+    enable_gpos_stig: [false],
   });
 
-  private isHaLicensed$ = this.store$.select(selectIsHaLicensed);
+  protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
 
   private systemSecurityConfig: SystemSecurityConfig;
 
@@ -57,11 +59,11 @@ export class SystemSecurityFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -76,8 +78,14 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const payload = { ...this.form.value };
+
+    if (!this.isHaLicensed()) {
+      delete payload.enable_gpos_stig;
+    }
+
     this.dialogService.jobDialog(
-      this.api.job('system.security.update', [this.form.value as SystemSecurityConfig]),
+      this.api.job('system.security.update', [payload as SystemSecurityConfig]),
       {
         title: this.translate.instant('Saving settings'),
       },

@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatList, MatListItem } from '@angular/material/list';
 import { MatToolbarRow } from '@angular/material/toolbar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   Subject, filter, shareReplay, startWith, switchMap,
@@ -19,6 +21,8 @@ import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -51,9 +55,12 @@ export class SystemSecurityCardComponent {
     }),
   );
 
+  protected isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+
   constructor(
     private slideIn: SlideIn,
     private api: ApiService,
+    private store$: Store<AppState>,
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {

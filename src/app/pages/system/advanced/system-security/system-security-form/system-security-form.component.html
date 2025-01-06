@@ -13,8 +13,17 @@
         [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
       ></ix-slide-toggle>
 
-      <p>
-        {{ 'Restart is required after changing this setting.' | translate }}
+      @if (isHaLicensed()) {
+        <ix-slide-toggle
+          formControlName="enable_gpos_stig"
+          color="primary"
+          [label]="'Enable General Purpose OS STIG compatibility mode' | translate"
+          [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
+        ></ix-slide-toggle>
+      }
+
+      <p class="hint">
+        {{ 'Restart is required after changing these settings.' | translate }}
       </p>
 
       <div class="form-actions">
