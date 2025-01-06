@@ -30,6 +30,7 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
@@ -38,7 +39,6 @@ import {
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -100,10 +100,11 @@ export class AuthorizedAccessListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent, { data: row });
-            slideInRef.slideInClosed$
-              .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.refresh());
+            this.slideIn.open(AuthorizedAccessFormComponent, { data: row })
+              .pipe(
+                filter((response) => !!response.response),
+                untilDestroyed(this),
+              ).subscribe(() => this.refresh());
           },
         },
         {
@@ -141,7 +142,7 @@ export class AuthorizedAccessListComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,
@@ -162,8 +163,10 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
+    this.slideIn.open(AuthorizedAccessFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {

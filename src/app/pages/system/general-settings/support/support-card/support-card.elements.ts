@@ -5,7 +5,9 @@ export const supportCardElements = {
   hierarchy: [T('System'), T('Support')],
   anchorRouterLink: ['/system', 'support'],
   elements: {
-    support: {},
+    support: {
+      anchor: 'support',
+    },
     updateLicense: {
       hierarchy: [T('License')],
       synonyms: [

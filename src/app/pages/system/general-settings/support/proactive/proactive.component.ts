@@ -22,8 +22,8 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +37,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,10 +76,10 @@ export class ProactiveComponent implements OnInit {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<ProactiveComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    public slideInRef: SlideInRef<undefined, boolean>,
   ) {}
 
   ngOnInit(): void {
@@ -96,7 +96,7 @@ export class ProactiveComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
 
           this.snackbar.success(
             this.translate.instant(helptext.proactive.dialog_message),

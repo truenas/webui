@@ -3,21 +3,37 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('JbofFormComponent', () => {
   let spectator: Spectator<JbofFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const existingJbof = {
+    id: 131,
+    description: 'editing description',
+    mgmt_ip1: '13.13.13.13',
+    mgmt_ip2: '14.14.14.14',
+    mgmt_username: 'user',
+    mgmt_password: '12345678',
+  } as Jbof;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: JbofFormComponent,
     imports: [
@@ -28,11 +44,12 @@ describe('JbofFormComponent', () => {
         mockCall('jbof.create'),
         mockCall('jbof.update'),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -64,7 +81,7 @@ describe('JbofFormComponent', () => {
         mgmt_password: 'qwerty',
       }]);
 
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -72,17 +89,7 @@ describe('JbofFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              id: 131,
-              description: 'editing description',
-              mgmt_ip1: '13.13.13.13',
-              mgmt_ip2: '14.14.14.14',
-              mgmt_username: 'user',
-              mgmt_password: '12345678',
-            } as Jbof,
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingJbof }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

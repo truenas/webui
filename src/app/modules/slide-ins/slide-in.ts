@@ -82,6 +82,16 @@ export class SlideIn extends ComponentStore<SlideInState> {
     };
   });
 
+  closeLast = this.updater((state) => {
+    const newMap = new Map(state.components);
+    const { id } = this.getAliveComponents(newMap).pop();
+    newMap.set(id, { ...newMap.get(id), isComponentAlive: false });
+    this.focusOnTheCloseButton();
+    return {
+      components: newMap,
+    };
+  });
+
   closeAll = this.updater(() => {
     this.focusOnTheCloseButton();
     return {

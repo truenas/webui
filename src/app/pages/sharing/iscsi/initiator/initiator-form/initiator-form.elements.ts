@@ -6,6 +6,7 @@ export const initiatorFormElements = {
   anchorRouterLink: ['/sharing', 'iscsi', 'initiators', 'add'],
   elements: {
     addInitiator: {
+      anchor: 'add-initiator',
       synonyms: [T('Initiators')],
     },
   },
