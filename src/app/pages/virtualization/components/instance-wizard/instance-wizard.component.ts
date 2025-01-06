@@ -14,6 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
+  filter,
   map, Observable, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -24,6 +25,7 @@ import {
   virtualizationNicTypeLabels,
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
+  VirtualizationRemote,
   VirtualizationType,
   virtualizationTypeIcons,
   virtualizationTypeLabels,
@@ -171,16 +173,13 @@ export class InstanceWizardComponent {
       .open(SelectImageDialogComponent, {
         minWidth: '90vw',
         data: {
-          remote: this.form.controls.instance_type.value,
+          remote: VirtualizationRemote.LinuxContainers,
+          type: this.form.controls.instance_type.value,
         },
       })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((image: VirtualizationImageWithId) => {
-        if (!image) {
-          return;
-        }
-
         this.form.controls.image.setValue(image.id);
       });
   }

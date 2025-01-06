@@ -4,6 +4,7 @@
   "Delete Target \"{name}\"": "",
   "Delete {n} associated {n, plural, one {extent} other {extents}}": "",
   "Linux Only": "",
+  "Virtualization (Old)": "",
   "Virtualization Method": "",
   "Warning: iSCSI Target is currently in use.</font><br>": "",
   "You are about to delete the target \"{name}\".": "",

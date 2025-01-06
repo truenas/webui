@@ -39,7 +39,6 @@ export const virtualizationStatusLabels = new Map<VirtualizationStatus, string>(
 ]);
 
 export enum VirtualizationRemote {
-  Vm = 'VM',
   LinuxContainers = 'LINUX_CONTAINERS',
 }
 

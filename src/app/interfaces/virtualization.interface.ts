@@ -158,6 +158,7 @@ export interface VirtualizationImage {
   os: string;
   release: string;
   variant: string;
+  instance_types: VirtualizationType[];
 }
 
 export interface VirtualizationStopParams {

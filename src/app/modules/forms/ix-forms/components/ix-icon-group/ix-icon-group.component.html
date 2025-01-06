@@ -6,7 +6,12 @@
   ></ix-label>
 }
 
-<div class="icon-group" role="radiogroup" [attr.aria-label]="label()">
+<div
+  class="icon-group"
+  role="radiogroup"
+  [attr.aria-label]="label()"
+  [class.with-labels]="showLabels()"
+>
   @for (option of options(); track option) {
     <div>
       <button

@@ -49,24 +49,3 @@ ngx-skeleton-loader {
 .glossary {
   width: 25%;
 }
-
-:host ::ng-deep ix-icon-group {
-  .mdc-icon-button {
-    border: 2px solid var(--lines);
-    border-radius: 0;
-    height: 64px !important;
-    line-height: 64px;
-    width: 64px !important;
-
-    .mdc-icon-button__ripple,
-    .mat-ripple {
-      border-radius: 0 !important;
-      height: 64px !important;
-      width: 64px !important;
-    }
-
-    &.selected {
-      border-color: var(--primary);
-    }
-  }
-}

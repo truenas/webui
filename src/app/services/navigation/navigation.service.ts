@@ -90,9 +90,15 @@ export class NavigationService {
       name: T('Virtualization'),
       type: MenuItemType.Link,
       tooltip: T('Virtualization'),
-      icon: iconMarker('computer'),
+      icon: iconMarker('mdi-laptop'),
       state: 'virtualization',
-      isVisible$: this.hasApps$,
+    },
+    {
+      name: T('Virtualization (Old)'),
+      type: MenuItemType.Link,
+      tooltip: T('Virtualization (Old)'),
+      icon: iconMarker('mdi-laptop'),
+      state: 'vm',
     },
     {
       name: T('Apps'),
