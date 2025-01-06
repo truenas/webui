@@ -359,7 +359,8 @@ describe.skip('IxExplorerComponent', () => {
       expect(spectator.query('.tree-container')).toHaveClass('disabled');
     });
 
-    // TODO: Add test when overall tests for the component are working, after the following issue is solved
+    // TODO: Add test 'disables input when readonly is set to true on ix-explorer'
+    // when overall tests for the component are working, after the following issue is solved
     // https://github.com/help-me-mom/ng-mocks/issues/10503
   });
 });
