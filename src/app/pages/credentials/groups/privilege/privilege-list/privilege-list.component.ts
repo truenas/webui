@@ -176,6 +176,7 @@ export class PrivilegeListComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: privilege.name,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

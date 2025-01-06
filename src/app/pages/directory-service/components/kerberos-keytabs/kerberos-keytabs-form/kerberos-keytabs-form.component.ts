@@ -110,13 +110,13 @@ export class KerberosKeytabsFormComponent implements OnInit {
       };
       this.isLoading = true;
       let request$: Observable<unknown>;
-      if (this.isNew) {
-        request$ = this.api.call('kerberos.keytab.create', [payload]);
-      } else {
+      if (this.editingKerberosKeytab) {
         request$ = this.api.call('kerberos.keytab.update', [
           this.editingKerberosKeytab.id,
           payload,
         ]);
+      } else {
+        request$ = this.api.call('kerberos.keytab.create', [payload]);
       }
 
       request$.pipe(untilDestroyed(this)).subscribe({

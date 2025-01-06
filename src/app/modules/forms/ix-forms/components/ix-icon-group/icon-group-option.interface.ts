@@ -4,4 +4,5 @@ export interface IconGroupOption {
   icon: MarkedIcon;
   label: string;
   value: string;
+  description?: string;
 }

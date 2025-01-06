@@ -45,7 +45,7 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
     map(() => {
       return Math.floor((Date.now() - this.startTime) / 1000);
     }),
-  ));
+  ), { requireSync: true });
 
   uptime = computed(() => {
     return this.loadedSystemInfo().uptime_seconds + this.realElapsedSeconds();

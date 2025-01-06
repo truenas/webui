@@ -50,7 +50,7 @@ import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/sto
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
-  selected: boolean;
+  selected?: boolean;
 }
 
 @UntilDestroy()

@@ -79,7 +79,7 @@ export class IscsiCardComponent implements OnInit {
     Role.SharingWrite,
   ];
 
-  targets = signal<IscsiTarget[]>(null);
+  targets = signal<IscsiTarget[] | null>(null);
 
   protected readonly searchableElements = iscsiCardElements;
 
@@ -98,9 +98,7 @@ export class IscsiCardComponent implements OnInit {
       title: this.translate.instant('Mode'),
       propertyName: 'mode',
       hidden: true,
-      getValue: (row) => (iscsiTargetModeNames.has(row.mode)
-        ? this.translate.instant(iscsiTargetModeNames.get(row.mode))
-        : row.mode || '-'),
+      getValue: (row) => this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-',
     }),
     actionsColumn({
       actions: [

@@ -182,6 +182,8 @@ export class ReplicationTaskCardComponent implements OnInit {
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
         name: replicationTask.name,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('replication.delete', [replicationTask.id])),

@@ -191,6 +191,8 @@ describe('ReplicationTaskCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Replication Task <b>"APPS/test2 - APPS/test3"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);
