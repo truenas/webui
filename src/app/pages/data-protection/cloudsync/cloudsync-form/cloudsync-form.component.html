@@ -42,6 +42,7 @@
               [label]="helptext.path_placeholder | translate"
               [tooltip]="helptext.path_tooltip | translate"
               [required]="true"
+              [readonly]="!hasRequiredRoles()"
               [nodeProvider]="fileNodeProvider"
             ></ix-explorer>
           }
@@ -50,6 +51,7 @@
               formControlName="path_source"
               [label]="helptext.path_placeholder | translate"
               [tooltip]="helptext.path_tooltip | translate"
+              [readonly]="!hasRequiredRoles()"
               [required]="true"
               [multiple]="true"
               [nodeProvider]="fileNodeProvider"

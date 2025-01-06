@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, input,
+  Component, computed, input,
   OnChanges,
-  OnInit, viewChild,
+  OnInit, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -16,7 +16,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -63,6 +63,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
   readonly label = input<string>();
   readonly hint = input<string>();
+  readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
@@ -110,13 +111,18 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     },
   };
 
-  treeOptions: ITreeOptions = {
-    idField: 'path',
-    displayField: 'name',
-    getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
-    actionMapping: this.actionMapping,
-    useTriState: false,
-  };
+  treeOptions: Signal<ITreeOptions> = computed<ITreeOptions>(() => {
+    const readonly = this.readonly();
+
+    return {
+      idField: 'path',
+      displayField: 'name',
+      getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
+      actionMapping: readonly ? {} : this.actionMapping,
+      useTriState: false,
+      useCheckbox: this.multiple(),
+    };
+  });
 
   constructor(
     public controlDirective: NgControl,
@@ -129,10 +135,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('multiple' in changes) {
-      this.treeOptions.useCheckbox = this.multiple();
-    }
-
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
       this.cdr.markForCheck();
@@ -159,7 +161,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
+    this.isDisabled = isDisabled || this.readonly();
     this.cdr.markForCheck();
   }
 
@@ -267,7 +269,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
       {
         path: this.root(),
         name: this.root(),
-        hasChildren: true,
+        hasChildren: !this.readonly(),
         type: ExplorerNodeType.Directory,
         isMountpoint: true,
       },
@@ -279,6 +281,9 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
+    if (this.readonly()) {
+      return;
+    }
     const treeState = {
       ...this.tree().treeModel.getState(),
       selectedLeafNodeIds: nodeIds.reduce((acc, nodeId) => ({ ...acc, [nodeId]: true }), {}),
@@ -288,6 +293,9 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
+    if (this.readonly()) {
+      return of([]);
+    }
     this.loadingError = null;
     this.cdr.markForCheck();
 
@@ -296,6 +304,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     return this.nodeProvider()(node).pipe(
+      map((childNodes) => childNodes.map((data) => {
+        data.hasChildren = !this.readonly() && data.hasChildren;
+        return data;
+      })),
       catchError((error: unknown) => {
         this.loadingError = this.errorHandler.getFirstErrorMessage(error);
         this.cdr.markForCheck();

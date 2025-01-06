@@ -212,7 +212,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   bucketOptions$ = of<SelectOption[]>([]);
 
-  private hasRequiredRoles = toSignal(this.authService.hasRole(this.requiredRoles));
+  protected readonly hasRequiredRoles = toSignal(this.authService.hasRole(this.requiredRoles));
 
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
