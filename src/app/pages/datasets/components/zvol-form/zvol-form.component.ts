@@ -112,7 +112,7 @@ export class ZvolFormComponent implements OnInit {
   isLoading = false;
   inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
-  volBlockSizeWarning: string;
+  volBlockSizeWarning: string | null;
   protected slideInData: { isNew: boolean; parentId: string } | null = null;
 
   protected encryptedParent = false;

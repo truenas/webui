@@ -185,7 +185,7 @@ export class IxFormatterService {
       }
       return unitStr.charAt(0).toUpperCase() + 'iB';
     }
-    return undefined;
+    return '';
   };
 
   /**

@@ -29,7 +29,7 @@ import {
   ],
 })
 export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     service_account_credentials: ['', Validators.required],
     upload_credentials: [[] as File[]],
   });
@@ -65,7 +65,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
 
   override getSubmitAttributes(): SomeProviderAttributes {
     return {
-      service_account_credentials: this.form.value.service_account_credentials,
+      service_account_credentials: this.form.getRawValue().service_account_credentials,
     };
   }
 }

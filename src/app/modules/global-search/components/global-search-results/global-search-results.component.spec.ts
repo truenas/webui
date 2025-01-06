@@ -128,6 +128,7 @@ describe('GlobalSearchResultsComponent', () => {
     const mockResults: UiSearchableElement[] = [
       ...['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'].map((adjustment) => ({
         ...mockedUiElement,
+        anchor: adjustment,
         hierarchy: [...mockedUiElement.hierarchy, adjustment],
       })),
     ];

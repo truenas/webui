@@ -107,7 +107,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
-  form = this.formBuilder.group<ChartFormValues>({
+  form = this.formBuilder.nonNullable.group<ChartFormValues>({
     release_name: '',
   });
 
@@ -174,8 +174,11 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   onSectionClick(sectionName: string): void {
     const nextElement = document.getElementById(sectionName);
+    if (!nextElement) {
+      return;
+    }
 
-    nextElement?.scrollIntoView({ block: 'center' });
+    nextElement.scrollIntoView({ block: 'center' });
     nextElement.classList.add('highlighted');
 
     timer(999)
@@ -352,8 +355,14 @@ export class AppWizardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.form.addControl('version', new FormControl(catalogApp.latest_version, [Validators.required]));
-    this.form.addControl('release_name', new FormControl('', [Validators.required]));
+    this.form.addControl(
+      'version',
+      new FormControl(catalogApp.latest_version, { nonNullable: true, validators: [Validators.required] }),
+    );
+    this.form.addControl(
+      'release_name',
+      new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    );
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
         Validators.pattern('^[a-z]([a-z0-9-]*[a-z0-9])?$'),
@@ -561,7 +570,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   private getDockerHubRateLimitInfo(): void {
     this.api.call('app.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
-      if (info.remaining_pull_limit < 5) {
+      if (Number(info.remaining_pull_limit) < 5) {
         this.matDialog.open(DockerHubRateInfoDialogComponent, {
           data: info,
         });

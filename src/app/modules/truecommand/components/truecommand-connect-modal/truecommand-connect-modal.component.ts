@@ -81,7 +81,10 @@ export class TruecommandConnectModalComponent implements OnInit {
       : helptextTopbar.updateDialog.connect_btn;
 
     if (this.data.isConnected) {
-      this.form.patchValue(this.data.config);
+      this.form.patchValue({
+        ...this.data.config,
+        api_key: this.data.config.api_key || '',
+      });
       this.cdr.markForCheck();
     }
   }

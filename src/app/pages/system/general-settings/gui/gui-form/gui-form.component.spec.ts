@@ -23,6 +23,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -73,6 +74,7 @@ describe('GuiFormComponent', () => {
       ]),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(WebSocketHandlerService),
+      mockProvider(WebSocketStatusService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -170,8 +172,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const websocketManager = spectator.inject(WebSocketHandlerService);
-    Object.defineProperty(websocketManager, 'isConnected$', {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
 
@@ -190,8 +192,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const websocketManager = spectator.inject(WebSocketHandlerService);
-    Object.defineProperty(websocketManager, 'isConnected$', {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
 

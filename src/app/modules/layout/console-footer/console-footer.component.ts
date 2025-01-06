@@ -17,7 +17,7 @@ import { ConsolePanelDialogComponent } from 'app/modules/layout/console-footer/c
   imports: [AsyncPipe],
 })
 export class ConsoleFooterComponent implements OnInit {
-  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild('messageContainer', { read: ElementRef });
+  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
 
   lastThreeLogLines$ = this.messagesStore.lastThreeLogLines$;
 

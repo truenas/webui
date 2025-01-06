@@ -6,6 +6,7 @@ export const storageElements = {
   hierarchy: [T('Storage')],
   elements: {
     storageDashboard: {
+      anchor: 'storage-dashboard',
       synonyms: [
         T('Pools'),
         T('Storage Dashboard'),

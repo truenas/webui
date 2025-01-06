@@ -8,8 +8,13 @@ import {
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
-import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+
+export interface SessionExpiringDialogOptions {
+  title: string;
+  message: string;
+  buttonText: string;
+}
 
 @Component({
   selector: 'ix-session-expiring-dialog',
@@ -28,11 +33,11 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class SessionExpiringDialogComponent {
-  options: ConfirmOptionsWithSecondaryCheckbox;
+  options: SessionExpiringDialogOptions;
 
   constructor(
     private dialogRef: MatDialogRef<SessionExpiringDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,
+    @Inject(MAT_DIALOG_DATA) options: SessionExpiringDialogOptions,
   ) {
     this.options = { ...options };
   }

@@ -213,7 +213,7 @@ export class CloudSyncFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
-  private editingTask: CloudSyncTaskUi;
+  private editingTask: CloudSyncTaskUi | null;
 
   constructor(
     private translate: TranslateService,

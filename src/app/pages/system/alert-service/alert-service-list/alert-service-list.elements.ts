@@ -6,7 +6,9 @@ export const alertServiceListElements = {
   anchorRouterLink: ['/system', 'alert-settings', 'services'],
   synonyms: [T('Alerts'), T('Configure Notifications'), T('Configure Alerts')],
   elements: {
-    alertServiceList: {},
+    alertServiceList: {
+      anchor: 'alert-service-list',
+    },
     add: {
       hierarchy: [T('Add Alert')],
       anchor: 'add-alert-service',

@@ -95,7 +95,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   authenticatorOptions$: Observable<Option[]>;
-  private editingAcmedns: DnsAuthenticator;
+  private editingAcmedns: DnsAuthenticator | undefined;
 
   constructor(
     private translate: TranslateService,

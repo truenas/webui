@@ -31,7 +31,7 @@ import {
 export class PcloudProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   private readonly oauthComponent = viewChild(OauthProviderComponent);
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     token: ['', Validators.required],
     hostname: [''],
   });

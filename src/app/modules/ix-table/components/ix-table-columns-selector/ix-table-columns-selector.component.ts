@@ -30,7 +30,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
-  readonly columns = model<Column<T, ColumnComponent<T>>[]>();
+  readonly columns = model.required<Column<T, ColumnComponent<T>>[]>();
 
   readonly columnsChange = output<Column<T, ColumnComponent<T>>[]>();
 

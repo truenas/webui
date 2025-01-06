@@ -84,9 +84,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   private filterChanged$ = new Subject<string>();
 
-  value: string | number = '';
+  value: string | number | null = '';
   isDisabled = false;
-  filterValue: string;
+  filterValue: string | null;
   selectedOption: Option | null = null;
   textContent = '';
 

@@ -102,7 +102,10 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     }
 
     summary.push(
-      { label: this.translate.instant('Key Type'), value: certificateKeyTypeLabels.get(values.key_type) },
+      {
+        label: this.translate.instant('Key Type'),
+        value: certificateKeyTypeLabels.get(values.key_type) || values.key_type,
+      },
       this.isRsa
         ? { label: this.translate.instant('Key Length'), value: String(values.key_length) }
         : { label: this.translate.instant('EC Curve'), value: String(values.ec_curve) },
