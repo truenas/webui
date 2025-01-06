@@ -93,9 +93,7 @@ export class ReportingExporterListComponent implements OnInit {
             { name: row.name, checked: checked ? 'Enabling' : 'Disabling' },
           ),
         );
-        const exporter = { ...row };
-        delete exporter.id;
-        this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
+        this.api.call('reporting.exporters.update', [row.id, { enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
           complete: () => {

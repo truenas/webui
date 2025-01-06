@@ -21,4 +21,4 @@ export interface ReportingExporter {
   attributes: Record<string, unknown>;
 }
 
-export type UpdateReportingExporter = Omit<ReportingExporter, 'id'>;
+export type UpdateReportingExporter = Partial<Omit<ReportingExporter, 'id'>>;
