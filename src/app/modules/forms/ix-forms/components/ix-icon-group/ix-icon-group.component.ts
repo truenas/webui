@@ -20,13 +20,13 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    IxLabelComponent,
-    MatIconButton,
-    IxIconComponent,
     IxErrorsComponent,
+    IxIconComponent,
+    IxLabelComponent,
     ReactiveFormsModule,
-    TranslateModule,
     TestDirective,
+    TranslateModule,
+    MatIconButton,
   ],
   hostDirectives: [
     { ...registeredDirectiveConfig },
@@ -37,6 +37,7 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   readonly label = input<string>();
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
+  readonly showLabels = input<boolean>(false);
 
   protected isDisabled = false;
   protected value: IconGroupOption['value'];

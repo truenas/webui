@@ -20,3 +20,51 @@
 .selected {
   color: var(--primary);
 }
+
+.title,
+.description {
+  display: block;
+  margin: 0;
+  text-align: center;
+}
+
+.title {
+  font-size: 14px;
+  margin-bottom: 2px;
+  margin-top: 8px;
+}
+
+.description {
+  color: var(--fg2);
+}
+
+.with-labels {
+  gap: 16px;
+
+  ::ng-deep .mdc-icon-button {
+    border: 2px solid var(--lines);
+    border-radius: 0;
+    height: 100px !important;
+    line-height: 100px;
+    width: 100px !important;
+
+    .mdc-icon-button__ripple,
+    .mat-ripple {
+      border-radius: 0 !important;
+      height: 100px !important;
+      width: 100px !important;
+    }
+
+    .ix-icon,
+    .ix-icon svg {
+      font-size: 40px;
+      height: 40px;
+      line-height: 1;
+      width: 40px;
+    }
+
+    &.selected {
+      border-color: var(--primary);
+    }
+  }
+}
