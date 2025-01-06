@@ -3,7 +3,7 @@
     <div class="tile-content">
       <ul class="caption">
         <span class="title">{{ tile.title | translate }}</span>
-        @if (hasSendTasks && !tile.totalSend) {
+        @if (hasSendTasks() && !tile.totalSend) {
           <div class="backup-actions">
             <ng-template *ngTemplateOutlet="backupActions()"></ng-template>
           </div>

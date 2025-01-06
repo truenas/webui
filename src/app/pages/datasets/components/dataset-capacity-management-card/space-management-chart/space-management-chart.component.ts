@@ -31,8 +31,8 @@ import { ThemeService } from 'app/modules/theme/theme.service';
 export class SpaceManagementChartComponent {
   readonly dataset = input.required<DatasetDetails>();
 
-  swatchColors: SwatchColors;
-  chartOptions: ChartOptions<'doughnut'> = {
+  protected swatchColors?: SwatchColors;
+  protected chartOptions: ChartOptions<'doughnut'> = {
     plugins: {
       tooltip: {
         enabled: false,

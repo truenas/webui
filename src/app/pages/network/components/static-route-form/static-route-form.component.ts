@@ -98,13 +98,13 @@ export class StaticRouteFormComponent implements OnInit {
     const values = this.form.value as UpdateStaticRoute;
 
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('staticroute.create', [values]);
-    } else {
+    if (this.editingRoute) {
       request$ = this.api.call('staticroute.update', [
         this.editingRoute.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('staticroute.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
