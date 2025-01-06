@@ -71,7 +71,7 @@ describe('DatasetRolesCellComponent', () => {
   it('shows "VM" icon when dataset has VMs', async () => {
     await setupTest({ name: 'root', vms: [{}] } as DatasetDetails, false);
 
-    expect(await ixIcon.getName()).toBe('computer');
+    expect(await ixIcon.getName()).toBe('mdi-laptop');
   });
 
   it('shows "SMB Share" icon for dataset', async () => {
