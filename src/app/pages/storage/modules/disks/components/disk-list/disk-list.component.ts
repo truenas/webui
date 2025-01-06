@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, take,
+  filter, forkJoin, map, Observable, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -38,7 +38,8 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -46,7 +47,6 @@ import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/di
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -232,7 +232,7 @@ export class DiskListComponent implements OnInit {
     private router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -279,18 +279,16 @@ export class DiskListComponent implements OnInit {
 
   edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef: OldSlideInRef<DiskBulkEditComponent | DiskFormComponent>;
+    let slideInRef$: Observable<SlideInResponse<boolean>>;
 
     if (preparedDisks.length > 1) {
-      slideInRef = this.slideInService.open(DiskBulkEditComponent);
-      (slideInRef as OldSlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
+      slideInRef$ = this.slideIn.open(DiskBulkEditComponent);
     } else {
-      slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
-      (slideInRef as OldSlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
+      slideInRef$ = this.slideIn.open(DiskFormComponent, { wide: true, data: preparedDisks[0] });
     }
 
-    slideInRef.slideInClosed$.pipe(
-      filter((response) => Boolean(response)),
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.dataProvider.load());
   }

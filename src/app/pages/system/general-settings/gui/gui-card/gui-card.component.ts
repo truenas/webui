@@ -15,10 +15,10 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { guiFormClosedWithoutSaving } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -62,13 +62,12 @@ export class GuiCardComponent {
 
   constructor(
     private store$: Store<AppState>,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   openSettings(): void {
-    const slideInRef = this.slideInService.open(GuiFormComponent);
-    slideInRef.slideInClosed$.pipe(
-      filter((response) => !response),
+    this.slideIn.open(GuiFormComponent).pipe(
+      filter((response) => !response.response),
       untilDestroyed(this),
     ).subscribe(() => this.store$.dispatch(guiFormClosedWithoutSaving()));
   }

@@ -13,7 +13,7 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
@@ -31,6 +31,7 @@ describe('DiskBulkEditComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let api: ApiService;
+
   const dataDisk1 = {
     name: 'sda',
     identifier: '{serial}VB76b9dd9d-4e5d8cf2',
@@ -47,6 +48,13 @@ describe('DiskBulkEditComponent', () => {
     togglesmart: true,
     smartoptions: '/dev/hd[at], /dev/sd[az]',
   } as Disk;
+
+  const slideInRef: SlideInRef<Disk[] | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => [dataDisk1, dataDisk2]),
+  };
+
   const createComponent = createComponentFactory({
     component: DiskBulkEditComponent,
     imports: [
@@ -54,7 +62,7 @@ describe('DiskBulkEditComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockApi([
@@ -71,7 +79,6 @@ describe('DiskBulkEditComponent', () => {
   });
 
   it('sets disks settings when form is opened', async () => {
-    spectator.component.setFormDiskBulk([dataDisk1, dataDisk2]);
     const formValue = await form.getValues();
     const diskIds = spectator.component.diskIds;
     expect(formValue).toEqual({
@@ -124,7 +131,7 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(api.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });
