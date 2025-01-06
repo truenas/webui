@@ -100,7 +100,7 @@ describe('JbofListComponent', () => {
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',
       buttonText: 'Delete',
-      buttonColor: 'red',
+      buttonColor: 'warn',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);

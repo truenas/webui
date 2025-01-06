@@ -222,6 +222,7 @@ export class ReportingExporterListComponent implements OnInit {
       title: this.translate.instant('Delete Reporting Exporter'),
       message: this.translate.instant('Are you sure you want to delete <b>{name}</b> Reporting Exporter?', { name: exporter.name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),

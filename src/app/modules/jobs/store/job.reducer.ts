@@ -11,7 +11,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 export interface JobsState extends EntityState<Job> {
   isLoading: boolean;
   isPanelOpen: boolean;
-  error: string;
+  error: string | null;
 }
 
 export const adapter = createEntityAdapter<Job>({
@@ -19,7 +19,7 @@ export const adapter = createEntityAdapter<Job>({
   sortComparer: (a, b) => b.time_started.$date - a.time_started.$date,
 });
 
-export const jobsInitialState = adapter.getInitialState({
+export const jobsInitialState: JobsState = adapter.getInitialState({
   isLoading: false,
   isPanelOpen: false,
   error: null,

@@ -75,7 +75,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   readonly format = input<(value: string | number) => string>();
-  readonly parse = input<(value: string | number) => string | number>();
+  readonly parse = input<(value: string | number) => string | number | null>();
 
   readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 

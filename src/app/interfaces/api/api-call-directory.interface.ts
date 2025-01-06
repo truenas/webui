@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationNicType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationGpuType, VirtualizationNicType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -864,7 +864,7 @@ export interface ApiCallDirectory {
 
   'virt.device.disk_choices': { params: []; response: Choices };
   'virt.device.gpu_choices': {
-    params: [instanceType: VirtualizationType, gpuType: VirtualizationGpuType];
+    params: [gpuType: VirtualizationGpuType];
     response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };

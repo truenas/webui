@@ -12,7 +12,7 @@ import {
   mockCall,
   mockApi,
 } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationRemote } from 'app/enums/virtualization.enum';
+import { VirtualizationRemote, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationImage } from 'app/interfaces/virtualization.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -25,6 +25,7 @@ const imageChoices: Record<string, VirtualizationImage> = {
     release: '8',
     archs: ['arm64'],
     variant: 'cloud',
+    instance_types: [VirtualizationType.Container],
   } as VirtualizationImage,
   'alpine/3.18/default': {
     label: 'Alpine 3.18 (armhf, default)',
@@ -32,6 +33,7 @@ const imageChoices: Record<string, VirtualizationImage> = {
     release: '3.18',
     archs: ['armhf'],
     variant: 'default',
+    instance_types: [VirtualizationType.Container],
   } as VirtualizationImage,
 } as Record<string, VirtualizationImage>;
 
@@ -47,7 +49,10 @@ describe('SelectImageDialogComponent', () => {
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: { remote: VirtualizationRemote.LinuxContainers },
+        useValue: {
+          remote: VirtualizationRemote.LinuxContainers,
+          type: VirtualizationType.Container,
+        },
       },
     ],
   });

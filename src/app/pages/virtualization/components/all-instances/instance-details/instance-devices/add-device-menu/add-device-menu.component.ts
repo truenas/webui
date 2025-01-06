@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType, VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationGpuType } from 'app/enums/virtualization.enum';
 import {
   AvailableUsb,
   VirtualizationDevice,
@@ -42,7 +42,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class AddDeviceMenuComponent {
   private readonly usbChoices = toSignal(this.api.call('virt.device.usb_choices'), { initialValue: {} });
   // TODO: Stop hardcoding params
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationType.Container, VirtualizationGpuType.Physical]), { initialValue: {} });
+  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
