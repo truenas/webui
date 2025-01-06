@@ -16,7 +16,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -112,13 +112,11 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   };
 
   treeOptions: Signal<ITreeOptions> = computed<ITreeOptions>(() => {
-    const readonly = this.readonly();
-
     return {
       idField: 'path',
       displayField: 'name',
       getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
-      actionMapping: readonly ? {} : this.actionMapping,
+      actionMapping: this.actionMapping,
       useTriState: false,
       useCheckbox: this.multiple(),
     };
@@ -269,7 +267,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
       {
         path: this.root(),
         name: this.root(),
-        hasChildren: !this.readonly(),
+        hasChildren: true,
         type: ExplorerNodeType.Directory,
         isMountpoint: true,
       },
@@ -281,9 +279,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
-    if (this.readonly()) {
-      return;
-    }
     const treeState = {
       ...this.tree().treeModel.getState(),
       selectedLeafNodeIds: nodeIds.reduce((acc, nodeId) => ({ ...acc, [nodeId]: true }), {}),
@@ -293,9 +288,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private loadChildren(node: TreeNode<ExplorerNodeData>): Observable<ExplorerNodeData[]> {
-    if (this.readonly()) {
-      return of([]);
-    }
     this.loadingError = null;
     this.cdr.markForCheck();
 
@@ -304,10 +296,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     return this.nodeProvider()(node).pipe(
-      map((childNodes) => childNodes.map((data) => {
-        data.hasChildren = !this.readonly() && data.hasChildren;
-        return data;
-      })),
       catchError((error: unknown) => {
         this.loadingError = this.errorHandler.getFirstErrorMessage(error);
         this.cdr.markForCheck();

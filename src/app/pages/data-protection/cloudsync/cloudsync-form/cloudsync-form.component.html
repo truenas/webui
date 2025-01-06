@@ -42,7 +42,6 @@
               [label]="helptext.path_placeholder | translate"
               [tooltip]="helptext.path_tooltip | translate"
               [required]="true"
-              [readonly]="!hasRequiredRoles()"
               [nodeProvider]="fileNodeProvider"
             ></ix-explorer>
           }
@@ -51,7 +50,6 @@
               formControlName="path_source"
               [label]="helptext.path_placeholder | translate"
               [tooltip]="helptext.path_tooltip | translate"
-              [readonly]="!hasRequiredRoles()"
               [required]="true"
               [multiple]="true"
               [nodeProvider]="fileNodeProvider"
@@ -99,6 +97,7 @@
             <ix-explorer
               formControlName="folder_destination"
               root="/"
+              [readonly]="!hasRequiredRoles()"
               [label]="helptext.folder_placeholder | translate"
               [tooltip]="helptext.folder_tooltip | translate"
               [nodeProvider]="bucketNodeProvider"
@@ -108,6 +107,7 @@
             <ix-explorer
               formControlName="folder_source"
               root="/"
+              [readonly]="!hasRequiredRoles()"
               [label]="helptext.folder_placeholder | translate"
               [tooltip]="helptext.folder_tooltip | translate"
               [multiple]="true"
