@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, map, of, switchMap,
+  filter, map, Observable, of, switchMap,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,7 +38,8 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -47,7 +48,6 @@ import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-f
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootEnvironmentUi extends BootEnvironment {
@@ -199,7 +199,7 @@ export class BootEnvironmentListComponent implements OnInit {
     private api: ApiService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -225,9 +225,9 @@ export class BootEnvironmentListComponent implements OnInit {
     });
   }
 
-  handleSlideInClosed(slideInRef: OldSlideInRef<unknown>): void {
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<boolean>>): void {
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.refresh());
   }
@@ -237,10 +237,10 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   doClone(bootenv: BootEnvironment): void {
-    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
+    const slideInRef$ = this.slideIn.open(BootEnvironmentFormComponent, {
       data: bootenv.id,
     });
-    this.handleSlideInClosed(slideInRef);
+    this.handleSlideInClosed(slideInRef$);
   }
 
   doScrub(): void {

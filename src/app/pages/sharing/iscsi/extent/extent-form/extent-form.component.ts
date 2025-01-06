@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,9 +28,8 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -44,7 +43,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -98,6 +97,7 @@ export class ExtentFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected editingExtent: IscsiExtent | undefined;
 
   private extentDiskBeingEdited$ = new BehaviorSubject<Option>(undefined);
 
@@ -137,9 +137,10 @@ export class ExtentFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private filesystemService: FilesystemService,
-    private slideInRef: OldSlideInRef<ExtentFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingExtent: IscsiExtent,
-  ) {}
+    public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
+  ) {
+    this.editingExtent = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
@@ -195,7 +196,7 @@ export class ExtentFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

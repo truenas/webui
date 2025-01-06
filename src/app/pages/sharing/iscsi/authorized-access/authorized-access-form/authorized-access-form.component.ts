@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -25,9 +25,8 @@ import {
   doesNotEqualFgValidator,
   matchOthersFgValidator,
 } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -38,7 +37,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -105,6 +104,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
 
   isLoading = false;
   discoveryAuthOptions$: Observable<Option<IscsiAuthMethod>[]>;
+  protected editingAccess: IscsiAuthAccess | undefined;
 
   readonly defaultDiscoveryAuthOptions = [
     {
@@ -139,9 +139,10 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private validatorService: IxValidatorsService,
-    private slideInRef: OldSlideInRef<AuthorizedAccessFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingAccess: IscsiAuthAccess,
-  ) {}
+    public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
+  ) {
+    this.editingAccess = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.discoveryAuthOptions$ = of(this.defaultDiscoveryAuthOptions);
@@ -205,7 +206,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;
