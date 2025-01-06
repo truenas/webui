@@ -28,6 +28,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -43,7 +44,6 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -96,7 +96,7 @@ export class SupportCardComponent implements OnInit {
     protected api: ApiService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -153,7 +153,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   updateLicense(): void {
-    this.slideInService.open(LicenseComponent);
+    this.slideIn.open(LicenseComponent);
   }
 
   feedbackDialog(): void {
@@ -161,7 +161,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   openProactive(): void {
-    this.slideInService.open(ProactiveComponent, { wide: true });
+    this.slideIn.open(ProactiveComponent, { wide: true });
   }
 
   updateProductionStatus(newStatus: boolean): void {

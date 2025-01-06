@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
   Component, OnInit, output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatMenuTrigger, MatMenu, MatMenuItem } from '@angular/material/menu';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -56,7 +56,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     metrics: [[] as string[]],
   });
 
-  protected activeTab: ReportTab;
+  protected activeTab: ReportTab | undefined;
   protected allTabs: ReportTab[];
   protected diskDevices$ = this.reportsService.getDiskDevices();
   protected diskMetrics$ = this.reportsService.getDiskMetrics();
@@ -65,7 +65,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   protected readonly searchableElements = reportingGlobalControlsElements;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
     private reportsService: ReportsService,

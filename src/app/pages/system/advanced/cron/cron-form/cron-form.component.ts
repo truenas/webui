@@ -124,13 +124,13 @@ export class CronFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('cronjob.create', [values]);
-    } else {
+    if (this.editingCron) {
       request$ = this.api.call('cronjob.update', [
         this.editingCron.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('cronjob.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

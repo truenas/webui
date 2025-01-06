@@ -25,19 +25,19 @@ export function matchOthersFgValidator(
       }
     }
     if (errFields.length) {
-      fg.get(controlName).setErrors({
+      subjectControl.setErrors({
         matchOther: errMsg ? { message: errMsg } : true,
       });
       return {
         [controlName]: { matchOther: errMsg ? { message: errMsg } : true },
       };
     }
-    let prevErrors = { ...fg.get(controlName).errors };
+    let prevErrors = { ...subjectControl.errors };
     delete prevErrors.matchOther;
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    fg.get(controlName).setErrors(prevErrors);
+    subjectControl.setErrors(prevErrors);
     return null;
   };
 }
@@ -66,19 +66,19 @@ export function doesNotEqualFgValidator(
       }
     }
     if (errFields.length) {
-      fg.get(controlName).setErrors({
+      subjectControl.setErrors({
         matchesOther: errMsg ? { message: errMsg } : true,
       });
       return {
         [controlName]: { matchesOther: errMsg ? { message: errMsg } : true },
       };
     }
-    let prevErrors = { ...fg.get(controlName).errors };
+    let prevErrors = { ...subjectControl.errors };
     delete prevErrors.matchesOther;
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    fg.get(controlName).setErrors(prevErrors);
+    subjectControl.setErrors(prevErrors);
     return null;
   };
 }

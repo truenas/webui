@@ -16,14 +16,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const appVersion121 = {
   healthy: true,
@@ -270,6 +269,12 @@ describe('AppWizardComponent', () => {
     },
   } as App;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: AppWizardComponent,
     imports: [
@@ -281,7 +286,7 @@ describe('AppWizardComponent', () => {
       mockProvider(MatDialog),
     ],
     providers: [
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
@@ -308,10 +313,9 @@ describe('AppWizardComponent', () => {
       mockProvider(DockerStore, {
         selectedPool$: of('pool set'),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(Router),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

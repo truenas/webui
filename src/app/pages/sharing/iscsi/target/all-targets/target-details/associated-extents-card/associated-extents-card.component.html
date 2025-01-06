@@ -9,13 +9,13 @@
     } @else {
       <div
         class="actions"
-        [matTooltip]="unassociatedExtents()?.length > 0 ? null : ('No unassociated extents available.' | translate)"
+        [matTooltip]="unassociatedExtents().length > 0 ? null : ('No unassociated extents available.' | translate)"
       >
         <button
           *ixRequiresRoles="requiredRoles"
           color="default"
           mat-button
-          [disabled]="!unassociatedExtents()?.length"
+          [disabled]="!unassociatedExtents().length"
           [ixTest]="[target()?.name, 'associate-target']"
           (click)="associateTarget()"
         >

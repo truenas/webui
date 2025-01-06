@@ -1,7 +1,7 @@
 <div class="ix-slidein-title-bar">
   <h3 class="ix-formtitle">
     {{ title() | translate }}
-    @if (requiredRoles()?.length && !(hasRequiredRoles() | async)) {
+    @if (requiredRoles().length && !(hasRequiredRoles() | async)) {
       <ix-readonly-badge></ix-readonly-badge>
     }
   </h3>

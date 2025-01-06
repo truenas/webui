@@ -93,16 +93,16 @@ export class WidgetStorageComponent {
   ) {}
 
   get isTwoTilesInRow(): boolean {
-    return this.pools()?.length > 2;
+    return Number(this.pools()?.length) > 2;
   }
 
   get isThreeTilesInColumn(): boolean {
-    return this.pools()?.length > 4;
+    return Number(this.pools()?.length) > 4;
   }
 
   get showCreatePool(): boolean {
-    return this.pools()?.length < 6
-      && (this.pools().length % 2 === 1 || this.pools()?.length === 0);
+    return Number(this.pools()?.length) < 6
+      && (Number(this.pools()?.length) % 2 === 1 || this.pools()?.length === 0);
   }
 
   getColumnsInTile(poolName: string): number {

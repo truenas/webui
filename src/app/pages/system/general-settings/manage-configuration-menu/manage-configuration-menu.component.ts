@@ -62,11 +62,12 @@ export class ManageConfigurationMenuComponent {
     this.matDialog.open(UploadConfigDialogComponent);
   }
 
-  onResetDefaults(): void {
+  onResetToDefaults(): void {
     this.dialogService.confirm({
       title: helptext.reset_config_form.title,
       message: helptext.reset_config_form.message,
       buttonText: helptext.reset_config_form.button_text,
+      buttonColor: 'warn',
     })
       .pipe(
         filter(Boolean),

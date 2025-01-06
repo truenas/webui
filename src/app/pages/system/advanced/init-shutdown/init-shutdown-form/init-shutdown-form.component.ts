@@ -132,13 +132,13 @@ export class InitShutdownFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('initshutdownscript.create', [values]);
-    } else {
+    if (this.editingScript) {
       request$ = this.api.call('initshutdownscript.update', [
         this.editingScript.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('initshutdownscript.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

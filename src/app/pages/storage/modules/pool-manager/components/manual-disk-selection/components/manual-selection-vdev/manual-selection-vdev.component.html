@@ -9,7 +9,7 @@
       <div class="outer-container">
         <div class="type-container">
           <h3>{{ layout() }}</h3>
-          @if (minDisks[layout()] <= vdev().disks?.length) {
+          @if (minDisks[layout()] <= vdev()?.disks?.length) {
             <p>
               {{ sizeEstimation | ixFileSize }}{{ ' Est. Usable Raw Capacity' | translate }}
             </p>

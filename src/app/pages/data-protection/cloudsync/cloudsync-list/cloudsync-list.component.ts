@@ -300,6 +300,8 @@ export class CloudSyncListComponent implements OnInit {
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: row.description,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloudsync.delete', [row.id])),

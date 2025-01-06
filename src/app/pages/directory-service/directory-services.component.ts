@@ -79,9 +79,9 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  private readonly idmapListComponent = viewChild(IdmapListComponent);
-  private readonly kerberosKeytabsListComponent = viewChild(KerberosKeytabsListComponent);
-  private readonly kerberosRealmsListComponent = viewChild(KerberosRealmsListComponent);
+  private readonly idmapListComponent = viewChild.required(IdmapListComponent);
+  private readonly kerberosKeytabsListComponent = viewChild.required(KerberosKeytabsListComponent);
+  private readonly kerberosRealmsListComponent = viewChild.required(KerberosRealmsListComponent);
 
   readonly noDirectoryServicesConfig: EmptyConfig = {
     title: this.translate.instant('Active Directory and LDAP are disabled.'),

@@ -141,6 +141,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {

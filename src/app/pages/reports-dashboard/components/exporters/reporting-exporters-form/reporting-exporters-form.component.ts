@@ -230,13 +230,13 @@ export class ReportingExportersFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('reporting.exporters.create', [values]);
-    } else {
+    if (this.editingExporter) {
       request$ = this.api.call('reporting.exporters.update', [
         this.editingExporter.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('reporting.exporters.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

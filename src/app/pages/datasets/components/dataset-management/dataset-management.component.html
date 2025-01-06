@@ -1,4 +1,4 @@
-@if (!isLoading && dataSource?.data.length === 0) {
+@if (!isLoading && dataSource?.data?.length === 0) {
   <div class="empty-wrapper">
     <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
   </div>
@@ -8,7 +8,7 @@
       @if (!showMobileDetails) {
         <ix-fake-progress-bar
           class="loader-bar"
-          [loading]="isLoading$ | async"
+          [loading]="!!(isLoading$ | async)"
         ></ix-fake-progress-bar>
       }
       <div class="item-search">
@@ -116,7 +116,7 @@
         @if (showMobileDetails) {
           <ix-fake-progress-bar
             class="loader-bar"
-            [loading]="isLoading$ | async"
+            [loading]="!!(isLoading$ | async)"
           ></ix-fake-progress-bar>
         }
         <ix-dataset-details-panel
