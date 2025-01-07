@@ -26,7 +26,7 @@
       </div>
 
       @if (selectedSlot()) {
-        <ix-disk-details-overview></ix-disk-details-overview>
+        <ix-disk-details-overview [selectedSlot]="selectedSlot()"></ix-disk-details-overview>
       } @else {
         <ix-disks-overview></ix-disks-overview>
       }

@@ -138,17 +138,15 @@ export class SigninFormComponent implements OnInit {
   private handleFailedLogin(loginResult: LoginResult): void {
     this.isLastLoginAttemptFailed = true;
 
-    switch (loginResult) {
-      case LoginResult.NoAccess:
-        this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
-        break;
-      case LoginResult.NoOtp:
-        this.hasTwoFactor = true;
-        this.lastLoginError = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
-        break;
-      default:
-        this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
-        break;
+    if (loginResult === LoginResult.NoOtp) {
+      this.hasTwoFactor = true;
+      return;
+    }
+
+    if (loginResult === LoginResult.NoAccess) {
+      this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
+    } else {
+      this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
     }
 
     this.cdr.markForCheck();

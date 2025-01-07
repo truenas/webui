@@ -5046,7 +5046,7 @@
   "Warning": "警告",
   "Warning!": "警告！",
   "Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.": "警告：调试可能包含带有个人信息的日志文件，例如用户名或有关您的系统的其他识别信息。请在与其他人分享日志之前编辑任何敏感信息。",
-  "Warning: iSCSI Target is currently in use.</font><br>": "警告：iSCSI目标当前正被使用。</font><br>",
+  "Warning: iSCSI Target is currently in use.": "警告：iSCSI目标当前正被使用。",
   "Warning: {n} of {total} boot environments could not be deleted.": "警告: {n} 个启动环境无法被删除，共处理 {total} 个启动环境。",
   "Warning: {n} of {total} docker images could not be deleted.": "警告：{n} 个 docker 镜像无法被删除，共处理 {total} 个 docker 镜像。",
   "Warning: {n} of {total} snapshots could not be deleted.": "警告：{n} 个快照无法被删除，共处理 {total} 个快照。",
