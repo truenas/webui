@@ -1,7 +1,7 @@
 <ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'iSCSI Wizard' | translate"
-  [loading]="isLoading"
+  [loading]="isLoading()"
 ></ix-modal-header>
 
 <mat-card class="card">
@@ -50,7 +50,7 @@
               color="primary"
               type="submit"
               ixTest="save"
-              [disabled]="form.invalid || isLoading"
+              [disabled]="form.invalid || isLoading()"
             >{{ 'Save' | translate }}</button>
           }
         </div>
@@ -77,7 +77,7 @@
               color="primary"
               type="submit"
               ixTest="save"
-              [disabled]="form.invalid || isLoading"
+              [disabled]="form.invalid || isLoading()"
             >{{ 'Save' | translate }}</button>
           </div>
         </mat-step>

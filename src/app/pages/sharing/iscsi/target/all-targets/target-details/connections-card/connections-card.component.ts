@@ -25,13 +25,13 @@ import { ApiService } from 'app/modules/websocket/api.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CardExpandCollapseComponent,
     MatCard,
+    MatCardContent,
     MatCardHeader,
     MatCardTitle,
     NgxSkeletonLoaderModule,
     TranslateModule,
-    MatCardContent,
-    CardExpandCollapseComponent,
   ],
 })
 export class ConnectionsCardComponent {
