@@ -47,7 +47,7 @@ export class DeleteTargetDialogComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingIscsiTargetWrite];
 
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
-  protected warningMessage = '';
+  protected warningMessage = signal<string>('');
 
   form = this.formBuilder.group({
     delete_extents: [false],
@@ -73,11 +73,11 @@ export class DeleteTargetDialogComponent implements OnInit {
       (sessions) => {
         sessions.forEach((session) => {
           if (Number(session.target.split(':')[1]) === this.target.id) {
-            this.warningMessage = `<font color="orange">${this.translate.instant('Warning: iSCSI Target is currently in use.</font><br>')}`;
+            this.warningMessage.set(`<font color="orange">${
+              this.translate.instant('Warning: iSCSI Target is currently in use.')
+            }</font><br>`);
           }
         });
-
-        this.cdr.markForCheck();
       },
     );
   }
