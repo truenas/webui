@@ -146,6 +146,7 @@ export class InitShutdownCardComponent implements OnInit {
       message: this.translate.instant('Delete Init/Shutdown Script {script}?', {
         script: row.command,
       }),
+      buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(

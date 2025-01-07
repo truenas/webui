@@ -48,8 +48,8 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   hasSignedBy = input(false);
   hasLifetime = input(false);
 
-  form = this.formBuilder.group({
-    signedby: [null as number],
+  form = this.formBuilder.nonNullable.group({
+    signedby: [null as number | null],
     key_type: [CertificateKeyType.Rsa],
     key_length: [2048],
     ec_curve: ['BrainpoolP384R1'],
@@ -90,7 +90,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const signingAuthority = this.signingAuthorities.find((option) => option.value === values.signedby);
 
     const summary: SummarySection = [];

@@ -15,6 +15,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
 
   constructor(
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     protected router: Router,
     protected loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
@@ -47,7 +49,7 @@ export class ConfigResetComponent implements OnInit, OnDestroy {
 
   isWsConnected(): void {
     // TODO: isConnected$ doesn't work correctly.
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
+    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe({
       next: (isConnected) => {
         if (isConnected) {
           this.loader.close();

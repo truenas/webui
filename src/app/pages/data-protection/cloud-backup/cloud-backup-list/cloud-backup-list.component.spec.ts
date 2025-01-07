@@ -19,7 +19,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
@@ -74,7 +73,6 @@ describe('CloudBackupListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInRef),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
           response: true,
@@ -154,6 +152,8 @@ describe('CloudBackupListComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Backup <b>"UA"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);

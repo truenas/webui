@@ -192,10 +192,10 @@ export class TargetFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
     let request$: Observable<IscsiTarget>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.target.create', [values]);
-    } else {
+    if (this.editingTarget) {
       request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
+    } else {
+      request$ = this.api.call('iscsi.target.create', [values]);
     }
 
     request$.pipe(

@@ -13,8 +13,8 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('FailoverComponent', () => {
   let spectator: Spectator<FailoverSettingsComponent>;
@@ -41,7 +41,7 @@ describe('FailoverComponent', () => {
         }),
       ]),
       mockProvider(SnackbarService),
-      mockProvider(WebSocketHandlerService, {
+      mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
       }),
     ],

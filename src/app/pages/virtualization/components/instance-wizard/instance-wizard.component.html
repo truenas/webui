@@ -16,6 +16,14 @@
         [required]="true"
       ></ix-input>
 
+      <ix-icon-group
+        formControlName="instance_type"
+        [label]="'Virtualization Method' | translate"
+        [required]="true"
+        [options]="virtualizationTypeIcons"
+        [showLabels]="true"
+      ></ix-icon-group>
+
       <div class="image-field">
         <ix-input
           class="input"
@@ -41,7 +49,7 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [hint]="containersHelptext.cpuHint"
+        [hint]="containersHelptext.cpuHint | translate"
       ></ix-input>
 
       <ix-input
@@ -49,7 +57,7 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [hint]="containersHelptext.memoryHint"
+        [hint]="containersHelptext.memoryHint | translate"
       ></ix-input>
     </ix-form-section>
 
@@ -224,34 +232,32 @@
       }
     </ix-form-section>
 
-    @if ((usbDevices$ | async); as usbDevices) {
-      @if (usbDevices.length > 0) {
-        <ix-form-section
+    @let usbDevices = usbDevices$ | async;
+    @if (usbDevices?.length > 0) {
+      <ix-form-section
+        [label]="'USB Devices' | translate"
+        [help]="'USB Devices' | translate"
+      >
+        <ix-checkbox-list
+          formControlName="usb_devices"
           [label]="'USB Devices' | translate"
-          [help]="'USB Devices' | translate"
-        >
-          <ix-checkbox-list
-            [formControlName]="'usb_devices'"
-            [label]="'USB Devices' | translate"
-            [options]="usbDevices$"
-          ></ix-checkbox-list>
-        </ix-form-section>
-      }
+          [options]="usbDevices$"
+        ></ix-checkbox-list>
+      </ix-form-section>
     }
 
-    @if ((gpuDevices$ | async); as gpuDevices) {
-      @if (gpuDevices.length > 0) {
-        <ix-form-section
+    @let gpuDevices = gpuDevices$ | async;
+    @if (gpuDevices?.length > 0) {
+      <ix-form-section
+        [label]="'GPU Devices' | translate"
+        [help]="'GPU Devices' | translate"
+      >
+        <ix-checkbox-list
+          formControlName="gpu_devices"
           [label]="'GPU Devices' | translate"
-          [help]="'GPU Devices' | translate"
-        >
-          <ix-checkbox-list
-            formControlName="gpu_devices"
-            [label]="'GPU Devices' | translate"
-            [options]="gpuDevices$"
-          ></ix-checkbox-list>
-        </ix-form-section>
-      }
+          [options]="gpuDevices$"
+        ></ix-checkbox-list>
+      </ix-form-section>
     }
 
     <div class="actions">

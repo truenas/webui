@@ -17,9 +17,9 @@ import {
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { VmListComponent } from 'app/pages/vm/vm-list.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 
@@ -74,11 +74,8 @@ describe('VmListComponent', () => {
         getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -104,6 +101,6 @@ describe('VmListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(VmWizardComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(VmWizardComponent);
   });
 });

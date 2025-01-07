@@ -6,6 +6,7 @@ export const auditElements = {
   anchorRouterLink: ['/system', 'audit'],
   elements: {
     audit: {
+      anchor: 'audit-list',
       synonyms: [T('Logs')],
     },
   },

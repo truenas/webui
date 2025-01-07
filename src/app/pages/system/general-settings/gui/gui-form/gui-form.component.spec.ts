@@ -17,12 +17,13 @@ import {
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -53,6 +54,12 @@ describe('GuiFormComponent', () => {
     } as Certificate,
   } as SystemGeneralConfig;
 
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: GuiFormComponent,
     imports: [
@@ -65,10 +72,9 @@ describe('GuiFormComponent', () => {
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart'),
       ]),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(),
-      }),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(WebSocketHandlerService),
+      mockProvider(WebSocketStatusService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -166,8 +172,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if HTTPS redirect is enabled', async () => {
-    const websocketManager = spectator.inject(WebSocketHandlerService);
-    Object.defineProperty(websocketManager, 'isConnected$', {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
 
@@ -186,8 +192,8 @@ describe('GuiFormComponent', () => {
   });
 
   it('shows confirm dialog if service restart is needed and restarts it', async () => {
-    const websocketManager = spectator.inject(WebSocketHandlerService);
-    Object.defineProperty(websocketManager, 'isConnected$', {
+    const wsStatus = spectator.inject(WebSocketStatusService);
+    Object.defineProperty(wsStatus, 'isConnected$', {
       get: jest.fn(() => new BehaviorSubject(true)),
     });
 

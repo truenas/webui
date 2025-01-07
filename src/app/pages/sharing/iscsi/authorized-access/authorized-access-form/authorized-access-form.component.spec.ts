@@ -3,18 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AuthorizedAccessFormComponent,
 } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('AuthorizedAccessFormComponent', () => {
   let spectator: Spectator<AuthorizedAccessFormComponent>;
@@ -30,6 +30,12 @@ describe('AuthorizedAccessFormComponent', () => {
     peersecret: 'peer123456789012',
   } as IscsiAuthAccess;
 
+  const slideInRef: SlideInRef<IscsiAuthAccess | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: AuthorizedAccessFormComponent,
     imports: [
@@ -37,14 +43,15 @@ describe('AuthorizedAccessFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
       mockApi([
         mockCall('iscsi.auth.create'),
         mockCall('iscsi.auth.update'),
       ]),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -77,7 +84,7 @@ describe('AuthorizedAccessFormComponent', () => {
         peersecret: 'peer123456789012',
         discovery_auth: 'NONE',
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 
@@ -85,7 +92,7 @@ describe('AuthorizedAccessFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingAuthorizedAccess },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingAuthorizedAccess }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -135,7 +142,7 @@ describe('AuthorizedAccessFormComponent', () => {
           },
         ],
       );
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
   });
 });

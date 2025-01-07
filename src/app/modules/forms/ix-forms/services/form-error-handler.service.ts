@@ -72,6 +72,10 @@ export class FormErrorHandlerService {
     const extra = (error as ApiError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
+      if (!field) {
+        return;
+      }
+
       const errorMessage = extraItem[1];
 
       const control = this.getFormField(formGroup, field, fieldsMap);

@@ -211,6 +211,8 @@ export class CloudBackupCardComponent implements OnInit {
       message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
         name: row.description,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),

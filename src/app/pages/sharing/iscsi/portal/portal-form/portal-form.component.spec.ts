@@ -4,22 +4,36 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { PortalFormComponent } from './portal-form.component';
 
 describe('PortalFormComponent', () => {
   let spectator: Spectator<PortalFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
+
+  const slideInRef: SlideInRef<IscsiPortal | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
+  const editingPortal = {
+    comment: 'test',
+    listen: [{ ip: '0.0.0.0' }],
+    id: 1,
+    tag: 1,
+  } as IscsiPortal;
+
   const createComponent = createComponentFactory({
     component: PortalFormComponent,
     imports: [
@@ -44,11 +58,12 @@ describe('PortalFormComponent', () => {
         mockCall('iscsi.portal.create'),
         mockCall('iscsi.portal.update'),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(DialogService),
       provideMockStore(),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -85,15 +100,7 @@ describe('PortalFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
-              comment: 'test',
-              listen: [{ ip: '0.0.0.0' }],
-              id: 1,
-              tag: 1,
-            } as IscsiPortal,
-          },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => editingPortal }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

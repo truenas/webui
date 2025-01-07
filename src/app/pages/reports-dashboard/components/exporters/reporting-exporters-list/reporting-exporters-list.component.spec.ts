@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -23,10 +24,10 @@ const exporters: ReportingExporter[] = [
     attributes: {
       secret: 'abcd',
       email: 'testemail',
+      exporter_type: ReportingExporterKey.Graphite,
     },
     enabled: true,
     name: 'test',
-    type: ReportingExporterKey.Graphite,
   },
 ];
 
@@ -96,6 +97,16 @@ describe('ReportingExportersListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
+  });
+
+  it('updates a reporting exporter when Enabled checkbox is toggled', async () => {
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+    await toggle.toggle();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
+      1,
+      { enabled: false },
+    ]);
   });
 
   it('should show table rows', async () => {

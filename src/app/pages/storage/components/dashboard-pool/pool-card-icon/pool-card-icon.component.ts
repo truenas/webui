@@ -22,7 +22,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 })
 export class PoolCardIconComponent {
   readonly type = input.required<PoolCardIconType>();
-  readonly tooltip = input<string>();
+  readonly tooltip = input.required<string>();
 
   readonly poolCardIconType = PoolCardIconType;
 }

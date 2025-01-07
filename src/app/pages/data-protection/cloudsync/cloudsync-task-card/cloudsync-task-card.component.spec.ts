@@ -25,7 +25,6 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,7 +36,6 @@ import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -134,11 +132,8 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(),
-        })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -237,6 +232,8 @@ describe('CloudSyncTaskCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>"custom-cloudsync"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
