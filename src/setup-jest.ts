@@ -84,9 +84,6 @@ import {
 import {
   ModalHeaderComponent,
 } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
-import {
-  OldModalHeaderComponent,
-} from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -130,7 +127,6 @@ defineGlobalsInjections({
     IxRadioGroupComponent,
     IxSelectComponent,
     IxFieldsetComponent,
-    OldModalHeaderComponent,
     ModalHeaderComponent,
     IxFormSectionComponent,
     RegisteredControlDirective,
