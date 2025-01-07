@@ -111,6 +111,7 @@ describe('CertificateAuthorityListComponent', () => {
 
     expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
+      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>certificate-authority-0</b> certificate authority?',
       title: 'Delete Certificate Authority',
     });

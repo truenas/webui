@@ -178,6 +178,7 @@ export class SmbListComponent implements OnInit {
               title: this.translate.instant('Unshare {name}', { name: row.name }),
               message: shared.delete_share_message,
               buttonText: this.translate.instant('Unshare'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               untilDestroyed(this),

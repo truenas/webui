@@ -200,7 +200,7 @@ export class CertificateListComponent implements OnInit {
       message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
       hideCheckbox: true,
       secondaryCheckbox: true,
-      buttonColor: 'red',
+      buttonColor: 'warn',
       secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
     }).pipe(

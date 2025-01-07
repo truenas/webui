@@ -185,6 +185,7 @@ describe('TunableListComponent', () => {
       buttonText: 'Delete',
       message: 'Are you sure you want to delete "kernel.hostname"?',
       title: 'Delete Sysctl',
+      buttonColor: 'warn',
     });
 
     expect(dialogService.jobDialog).toHaveBeenCalled();

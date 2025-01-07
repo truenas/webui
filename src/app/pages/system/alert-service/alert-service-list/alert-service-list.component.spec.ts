@@ -14,10 +14,10 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import {
   IxTableColumnsSelectorComponent,
 } from 'app/modules/ix-table/components/ix-table-columns-selector/ix-table-columns-selector.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('AlertServiceListComponent', () => {
   let spectator: Spectator<AlertServiceListComponent>;
@@ -53,10 +53,8 @@ describe('AlertServiceListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(),
-        })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -81,7 +79,7 @@ describe('AlertServiceListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AlertServiceComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AlertServiceComponent, {
       data: alertServices[0],
     });
   });
@@ -90,7 +88,7 @@ describe('AlertServiceListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(AlertServiceComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(AlertServiceComponent);
   });
 
   it('deletes Alert Service with confirmation when Delete button is pressed', async () => {

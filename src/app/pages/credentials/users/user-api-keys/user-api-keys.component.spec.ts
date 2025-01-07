@@ -139,7 +139,7 @@ describe('UserApiKeysComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete API Key',
       buttonText: 'Delete',
-      cancelText: 'Cancel',
+      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
     });
 

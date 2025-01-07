@@ -119,7 +119,7 @@ export class VmEditFormComponent implements OnInit {
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<VirtualMachine | undefined, boolean>,
+    public slideInRef: SlideInRef<VirtualMachine, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);

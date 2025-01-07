@@ -176,6 +176,8 @@ export class SmartTaskListComponent implements OnInit {
       message: this.translate.instant('Delete S.M.A.R.T. Test <b>"{name}"</b>?', {
         name: `${smartTask.type} - ${smartTask.desc}`,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('smart.test.delete', [smartTask.id])),

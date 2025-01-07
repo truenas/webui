@@ -218,7 +218,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
       message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
       cancelText: this.translate.instant('No'),
       buttonText: this.translate.instant('Yes'),
-      buttonColor: 'red',
+      buttonColor: 'warn',
       hideCheckbox: true,
     });
   }

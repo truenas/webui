@@ -191,7 +191,6 @@ describe('ZvolFormComponent', () => {
       spectator = createComponent({
         providers: [
           mockProvider(SlideInRef, { ...slideInRef, getData: jest.fn(() => ({ isNew: false, parentId: 'test pool' })) }),
-
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

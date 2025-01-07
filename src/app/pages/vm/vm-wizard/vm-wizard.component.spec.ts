@@ -15,8 +15,8 @@ import {
 } from 'app/enums/vm.enum';
 import { VirtualMachine, VmPortWizardResult } from 'app/interfaces/virtual-machine.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -38,13 +38,18 @@ import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('VmWizardComponent', () => {
   let spectator: Spectator<VmWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: VmWizardComponent,
@@ -63,7 +68,9 @@ describe('VmWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
@@ -122,8 +129,7 @@ describe('VmWizardComponent', () => {
       mockProvider(VmGpuService, {
         updateVmGpus: jest.fn(() => of(undefined)),
       }),
-      mockProvider(OldSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -333,6 +339,6 @@ describe('VmWizardComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   });
 });
