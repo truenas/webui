@@ -6,6 +6,7 @@ export const rsyncTaskListElements = {
   anchorRouterLink: ['/data-protection', 'rsync'],
   elements: {
     tasks: {
+      anchor: 'rsync-tasks',
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {

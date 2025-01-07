@@ -7,10 +7,10 @@
     <div [class]="['container', size()]">
       <ix-product-image
         [systemProduct]="systemInfo()?.platform"
-        [hasEnclosureSupport]="hasEnclosureSupport()"
-        [isHaLicensed]="isHaLicensed()"
-        [isEnterprise]="isEnterprise()"
-        [isIxHardware]="isIxHardware()"
+        [hasEnclosureSupport]="!!hasEnclosureSupport()"
+        [isHaLicensed]="!!isHaLicensed()"
+        [isEnterprise]="!!isEnterprise()"
+        [isIxHardware]="!!isIxHardware()"
         [showProductImageText]="false"
       ></ix-product-image>
     </div>

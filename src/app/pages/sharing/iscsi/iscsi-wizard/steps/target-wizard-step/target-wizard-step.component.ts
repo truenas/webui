@@ -28,7 +28,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class TargetWizardStepComponent {
-  form = input<IscsiWizardComponent['form']['controls']['target']>();
+  form = input.required<IscsiWizardComponent['form']['controls']['target']>();
 
   readonly helptextSharingIscsi = helptextSharingIscsi;
 

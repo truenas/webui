@@ -6,10 +6,10 @@ import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, tap } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { LayoutService } from 'app/modules/layout/layout.service';
 import { PingService } from 'app/modules/websocket/ping.service';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Component({
@@ -24,13 +24,13 @@ export class AppComponent implements OnInit {
   constructor(
     public title: Title,
     private router: Router,
-    private authService: AuthService,
+    private wsStatus: WebSocketStatusService,
     private detectBrowser: DetectBrowserService,
     private layoutService: LayoutService,
     private pingService: PingService,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
+    this.wsStatus.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
       this.isAuthenticated = isAuthenticated;
     });
     this.title.setTitle('TrueNAS - ' + this.window.location.hostname);

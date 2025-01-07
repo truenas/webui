@@ -55,7 +55,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
-    refquota: [null as number, this.validators.withMessage(
+    refquota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -70,7 +70,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     ]],
     refquota_critical_inherit: [false],
 
-    quota: [null as number, this.validators.withMessage(
+    quota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -85,8 +85,8 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     ]],
     quota_critical_inherit: [false],
 
-    refreservation: [null as number],
-    reservation: [null as number],
+    refreservation: [null as number | null],
+    reservation: [null as number | null],
   });
 
   isLoading = false;
@@ -119,7 +119,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.dataset) {
-      this.setDatasetForEdit();
+      this.setDatasetForEdit(this.dataset);
     }
   }
 
@@ -138,23 +138,23 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   get isRoot(): boolean {
-    return isRootDataset(this.dataset);
+    return Boolean(this.dataset) && isRootDataset(this.dataset);
   }
 
-  setDatasetForEdit(): void {
+  setDatasetForEdit(dataset: DatasetDetails): void {
     this.oldValues = {
-      refquota: this.dataset.refquota.parsed,
-      refquota_warning: this.dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
-      refquota_warning_inherit: isPropertyInherited(this.dataset.refquota_warning),
-      refquota_critical: this.dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
-      refquota_critical_inherit: isPropertyInherited(this.dataset.refquota_critical),
-      quota: this.dataset.quota.parsed,
-      quota_warning: this.dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
-      quota_warning_inherit: isPropertyInherited(this.dataset.quota_warning),
-      quota_critical: this.dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
-      quota_critical_inherit: isPropertyInherited(this.dataset.quota_critical),
-      refreservation: this.dataset.refreservation.parsed,
-      reservation: this.dataset.reservation.parsed,
+      refquota: dataset.refquota.parsed,
+      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
+      refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
+      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
+      refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
+      quota: dataset.quota.parsed,
+      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
+      quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
+      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
+      quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
+      refreservation: dataset.refreservation.parsed,
+      reservation: dataset.reservation.parsed,
     };
     this.form.patchValue(this.oldValues);
     this.cdr.markForCheck();

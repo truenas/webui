@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -22,9 +22,8 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -37,7 +36,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -86,6 +85,8 @@ export class PortalFormComponent implements OnInit {
 
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
+  protected editingIscsiPortal: IscsiPortal | undefined;
+
   readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
@@ -99,9 +100,10 @@ export class PortalFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     protected iscsiService: IscsiService,
-    private slideInRef: OldSlideInRef<PortalFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingIscsiPortal: IscsiPortal,
-  ) {}
+    public slideInRef: SlideInRef<IscsiPortal | undefined, boolean>,
+  ) {
+    this.editingIscsiPortal = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingIscsiPortal) {
@@ -152,7 +154,7 @@ export class PortalFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

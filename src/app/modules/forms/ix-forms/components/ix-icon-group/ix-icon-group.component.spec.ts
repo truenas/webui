@@ -28,6 +28,7 @@ describe('IxIconGroupComponent', () => {
         [tooltip]="tooltip"
         [required]="required"
         [formControl]="formControl"
+        [showLabels]="true"
       ></ix-icon-group>`,
       {
         hostProps: {
@@ -84,6 +85,14 @@ describe('IxIconGroupComponent', () => {
     it('highlights button with selected value', async () => {
       formControl.setValue('edit');
       expect(await iconGroupHarness.getValue()).toBe('edit');
+    });
+    it('shows labels when `showLabels` is set to true', async () => {
+      const icons = await iconGroupHarness.getIcons();
+      expect(icons).toHaveLength(2);
+
+      const labels = spectator.queryAll('h5.title').map((el) => el.textContent);
+      expect(labels[0]).toBe('Edit');
+      expect(labels[1]).toBe('Delete');
     });
   });
 

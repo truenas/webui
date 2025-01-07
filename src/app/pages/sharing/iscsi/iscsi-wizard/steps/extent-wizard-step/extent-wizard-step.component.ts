@@ -33,7 +33,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ExtentWizardStepComponent implements OnInit {
-  readonly form = input<IscsiWizardComponent['form']['controls']['extent']>();
+  readonly form = input.required<IscsiWizardComponent['form']['controls']['extent']>();
 
   readonly helptextSharingIscsi = helptextSharingIscsi;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();

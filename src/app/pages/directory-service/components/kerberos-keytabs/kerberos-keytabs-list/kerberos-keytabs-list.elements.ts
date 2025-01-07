@@ -5,7 +5,9 @@ export const kerberosKeytabsListElements = {
   hierarchy: [T('Directory Services'), T('Kerberos Keytabs')],
   anchorRouterLink: ['/directoryservice', 'kerberoskeytabs'],
   elements: {
-    kerberosKeytabs: {},
+    kerberosKeytabs: {
+      anchor: 'kerberoskeytabs',
+    },
     add: {
       hierarchy: [T('Add Kerberos Keytab')],
       anchor: 'add-kerberos-keytab',

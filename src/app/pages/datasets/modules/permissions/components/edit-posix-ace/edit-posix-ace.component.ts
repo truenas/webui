@@ -41,10 +41,10 @@ import { UserService } from 'app/services/user.service';
 export class EditPosixAceComponent implements OnInit, OnChanges {
   readonly ace = input<PosixAclItem>();
 
-  form = this.formBuilder.group({
-    tag: [null as PosixAclTag],
-    user: [null as string],
-    group: [null as string],
+  form = this.formBuilder.nonNullable.group({
+    tag: [null as PosixAclTag | null],
+    user: [null as string | null],
+    group: [null as string | null],
     permissions: [[] as PosixPermission[]],
     default: [false],
   });
@@ -106,7 +106,7 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   }
 
   private formValuesToAce(): PosixAclItem {
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
 
     const ace = {
       tag: formValues.tag,

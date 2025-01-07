@@ -30,13 +30,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { portalListElements } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -105,10 +105,10 @@ export class PortalListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
-            const slideInRef = this.slideInService.open(PortalFormComponent, { data: row });
-            slideInRef.slideInClosed$
-              .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.refresh());
+            this.slideIn.open(PortalFormComponent, { data: row }).pipe(
+              filter((response) => !!response.response),
+              untilDestroyed(this),
+            ).subscribe(() => this.refresh());
           },
         },
         {
@@ -119,6 +119,7 @@ export class PortalListComponent implements OnInit {
               title: this.translate.instant('Delete'),
               message: this.translate.instant('Are you sure you want to delete this item?'),
               buttonText: this.translate.instant('Delete'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
@@ -145,7 +146,7 @@ export class PortalListComponent implements OnInit {
     private dialogService: DialogService,
     private api: ApiService,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,
@@ -168,8 +169,10 @@ export class PortalListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(PortalFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
+    this.slideIn.open(PortalFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
