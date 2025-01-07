@@ -437,7 +437,6 @@
     "./src/app/modules/forms/ix-forms/components/ix-select/ix-select.harness.ts",
     "./src/app/modules/forms/ix-forms/components/ix-select/option.harness.ts",
     "./src/app/modules/forms/ix-forms/components/ix-select/select.harness.ts",
-    "./src/app/modules/slide-ins/slide-in.token.ts",
     "./src/app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component.ts",
     "./src/app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness.ts",
     "./src/app/modules/forms/ix-forms/components/ix-star-rating/ix-star-rating.component.ts",

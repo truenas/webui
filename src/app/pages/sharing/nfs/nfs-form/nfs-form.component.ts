@@ -74,8 +74,8 @@ import { ServicesState } from 'app/store/services/services.reducer';
   ],
 })
 export class NfsFormComponent implements OnInit {
-  existingNfsShare: NfsShare;
-  defaultNfsShare: NfsShare;
+  existingNfsShare: NfsShare | undefined;
+  defaultNfsShare: NfsShare | undefined;
 
   isLoading = false;
   isAdvancedMode = false;
@@ -150,10 +150,10 @@ export class NfsFormComponent implements OnInit {
     this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  setNfsShareForEdit(): void {
-    this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
-    this.existingNfsShare.hosts.forEach(() => this.addHostControl());
-    this.form.patchValue(this.existingNfsShare);
+  setNfsShareForEdit(share: NfsShare): void {
+    share.networks.forEach(() => this.addNetworkControl());
+    share.hosts.forEach(() => this.addHostControl());
+    this.form.patchValue(share);
   }
 
   ngOnInit(): void {
@@ -164,7 +164,7 @@ export class NfsFormComponent implements OnInit {
     }
 
     if (this.existingNfsShare) {
-      this.setNfsShareForEdit();
+      this.setNfsShareForEdit(this.existingNfsShare);
     }
   }
 
@@ -191,10 +191,10 @@ export class NfsFormComponent implements OnInit {
   onSubmit(): void {
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
-    } else {
+    if (this.existingNfsShare) {
       request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
+    } else {
+      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(

@@ -7,13 +7,13 @@ import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registe
 
 @Injectable({ providedIn: 'root' })
 export class IxFormService {
-  private controls = new Map<string, HTMLElement>();
-  private sections = new Map<IxFormSectionComponent, (NgControl | null)[]>();
+  private readonly controls = new Map<string, HTMLElement>();
+  private readonly sections = new Map<IxFormSectionComponent, (NgControl | null)[]>();
   private readonly controlNamesWithlabels = new BehaviorSubject<ControlNameWithLabel[]>([]);
   private readonly controlSections = new BehaviorSubject<SectionWithControls[]>([]);
 
-  controlNamesWithLabels$: Observable<ControlNameWithLabel[]> = this.controlNamesWithlabels.asObservable();
-  controlSections$: Observable<SectionWithControls[]> = this.controlSections.asObservable();
+  readonly controlNamesWithLabels$: Observable<ControlNameWithLabel[]> = this.controlNamesWithlabels.asObservable();
+  readonly controlSections$: Observable<SectionWithControls[]> = this.controlSections.asObservable();
 
   getControlNames(): (string | number | null)[] {
     return [...this.controls.keys()];
