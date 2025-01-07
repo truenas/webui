@@ -92,7 +92,7 @@ export class ReplicationFormComponent implements OnInit {
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  protected existingReplication: ReplicationTask;
+  protected existingReplication: ReplicationTask | undefined;
 
   constructor(
     private api: ApiService,

@@ -71,7 +71,7 @@ export interface CloudCredentialFormInput {
 export class CloudCredentialsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  commonForm = this.formBuilder.group({
+  commonForm = this.formBuilder.nonNullable.group({
     name: ['Storj', Validators.required],
     type: [CloudSyncProviderName.Storj],
   });

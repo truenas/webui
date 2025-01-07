@@ -11,7 +11,7 @@ import {
  */
 export class NestedTreeDataSource<T extends { children?: T[] }> extends DataSource<T> {
   filterPredicate: (data: T[], query: string) => T[];
-  sortComparer: (a: T, b: T) => number;
+  sortComparer?: (a: T, b: T) => number;
   private filterValue: string;
   private readonly filterChanged$ = new BehaviorSubject<string>('');
   private readonly _data = new BehaviorSubject<T[]>([]);

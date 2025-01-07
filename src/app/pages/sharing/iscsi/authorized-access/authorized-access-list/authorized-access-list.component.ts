@@ -115,6 +115,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               title: this.translate.instant('Delete'),
               message: this.translate.instant('Are you sure you want to delete this item?'),
               buttonText: this.translate.instant('Delete'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               switchMap(() => this.api.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),

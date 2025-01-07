@@ -129,8 +129,8 @@
       *ixRequiresRoles="[Role.FullAdmin]"
       type="submit"
       mat-button
-      color="primary"
       ixTest="disconnect"
+      [color]="form.value.destroy ? 'warn' : 'primary'"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Export/Disconnect' | translate }}

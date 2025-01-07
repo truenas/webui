@@ -5,6 +5,8 @@ export const targetListElements = {
   hierarchy: [T('Shares'), T('iSCSI'), T('Targets')],
   anchorRouterLink: ['/sharing', 'iscsi', 'targets'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'target-list',
+    },
   },
 } satisfies UiSearchableElement;

@@ -90,8 +90,8 @@ export class ReportComponent implements OnInit, OnChanges {
 
   private readonly lineChart = viewChild(LineChartComponent);
 
-  updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
-  fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
+  updateReport$ = new BehaviorSubject<IxSimpleChanges<this> | null>(null);
+  fetchReport$ = new BehaviorSubject<FetchReportParams | null>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
   isReady = false;
@@ -105,11 +105,11 @@ export class ReportComponent implements OnInit, OnChanges {
   stepBackDisabled = false;
   timezone: string;
   lastEndDateForCurrentZoomLevel = {
-    '60m': null as number,
-    '24h': null as number,
-    '7d': null as number,
-    '1M': null as number,
-    '6M': null as number,
+    '60m': null as number | null,
+    '24h': null as number | null,
+    '7d': null as number | null,
+    '1M': null as number | null,
+    '6M': null as number | null,
   };
 
   currentStartDate: number;
@@ -130,7 +130,8 @@ export class ReportComponent implements OnInit, OnChanges {
 
   get reportTitle(): string {
     const trimmed = this.report().title.replace(/[()]/g, '');
-    return this.identifier() ? trimmed.replace(/{identifier}/, this.identifier()) : this.report().title;
+    const identifier = this.identifier();
+    return identifier ? trimmed.replace(/{identifier}/, identifier) : this.report().title;
   }
 
   get currentZoomLevel(): ReportZoomLevel {
@@ -275,10 +276,6 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = startDate;
     this.currentEndDate = endDate;
     this.customZoom = true;
-  }
-
-  setChartInteractive(value: boolean): void {
-    this.isActive = value;
   }
 
   timeZoomReset(): void {

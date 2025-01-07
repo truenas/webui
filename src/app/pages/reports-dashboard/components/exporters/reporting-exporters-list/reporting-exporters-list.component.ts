@@ -80,7 +80,7 @@ export class ReportingExporterListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Type'),
-      propertyName: 'type',
+      getValue: (row) => row.attributes['exporter_type'],
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -93,13 +93,13 @@ export class ReportingExporterListComponent implements OnInit {
             { name: row.name, checked: checked ? 'Enabling' : 'Disabling' },
           ),
         );
-        const exporter = { ...row };
-        delete exporter.type;
-        delete exporter.id;
-        this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
+        this.api.call('reporting.exporters.update', [row.id, { enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
-          complete: () => this.appLoader.close(),
+          complete: () => {
+            this.appLoader.close();
+            this.getExporters();
+          },
           error: (error: unknown) => this.errorCaught(error),
         });
       },
@@ -222,6 +222,7 @@ export class ReportingExporterListComponent implements OnInit {
       title: this.translate.instant('Delete Reporting Exporter'),
       message: this.translate.instant('Are you sure you want to delete <b>{name}</b> Reporting Exporter?', { name: exporter.name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),

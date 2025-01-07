@@ -20,7 +20,7 @@
               <td>{{ package.name }}</td>
             </tr>
           }
-          @if ((updateService.packages$ | async).length === 0) {
+          @if ((updateService.packages$ | async)?.length === 0) {
             <tr ixTest="no-update-found">
               <td>{{ 'No update found.' | translate }}</td>
             </tr>

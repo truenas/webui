@@ -60,22 +60,22 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
   hasAuthorityKeyIdentifier = input(false);
 
-  form = this.formBuilder.group({
-    BasicConstraints: this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
+    BasicConstraints: this.formBuilder.nonNullable.group({
       enabled: [false],
-      path_length: [null as number],
+      path_length: [null as number | null],
       BasicConstraints: [[] as BasicConstraint[]],
     }),
-    AuthorityKeyIdentifier: this.formBuilder.group({
+    AuthorityKeyIdentifier: this.formBuilder.nonNullable.group({
       enabled: [false],
       AuthorityKeyIdentifier: [[] as AuthorityKeyIdentifier[]],
     }),
-    ExtendedKeyUsage: this.formBuilder.group({
+    ExtendedKeyUsage: this.formBuilder.nonNullable.group({
       enabled: [false],
       usages: [[] as ExtendedKeyUsageFlag[]],
       extension_critical: [false],
     }),
-    KeyUsage: this.formBuilder.group({
+    KeyUsage: this.formBuilder.nonNullable.group({
       enabled: [false],
       KeyUsage: [[] as string[]],
     }),

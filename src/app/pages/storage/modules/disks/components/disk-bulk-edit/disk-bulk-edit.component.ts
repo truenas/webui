@@ -56,9 +56,9 @@ export class DiskBulkEditComponent {
   diskIds: string[] = [];
   isLoading = false;
   form = this.fb.group({
-    disknames: [null as string[]],
-    hddstandby: [null as DiskStandby],
-    advpowermgmt: [null as DiskPowerLevel],
+    disknames: [null as string[] | null],
+    hddstandby: [null as DiskStandby | null],
+    advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
     smartoptions: [''],
   });

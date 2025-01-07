@@ -1,9 +1,5 @@
 <div class="report" ngClass.xs="double-height xs">
-  <div
-    class="card-container"
-    (mouseenter)="setChartInteractive(true)"
-    (mouseleave)="setChartInteractive(false)"
-  >
+  <div class="card-container">
     <mat-card class="card" [class.loading]="!isReady">
       @if (isReady) {
         <mat-toolbar-row class="mat-card-toolbar toolbar">
@@ -12,7 +8,7 @@
           </mat-card-title>
           <!-- Controls/Tools -->
           <div class="line-chart-tools-wrapper">
-            @if (localControls() && !report()?.errorConf) {
+            @if (localControls() && !report().errorConf) {
               <div class="line-chart-tools">
                 <div class="steps-group" aria-label="Steps">
                   <button
@@ -73,7 +69,7 @@
           </mat-toolbar-row>
         }
 
-      @if (isReady && !report()?.errorConf) {
+      @if (isReady && !report().errorConf) {
         <mat-card-content class="card-content">
           <div class="chart-wrapper-outer">
             <div class="chart-wrapper">

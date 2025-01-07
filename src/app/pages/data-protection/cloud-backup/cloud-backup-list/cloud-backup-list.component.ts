@@ -224,6 +224,8 @@ export class CloudBackupListComponent implements OnInit {
   doDelete(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
       message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
         name: row.description,
       }),

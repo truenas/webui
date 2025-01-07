@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -112,7 +112,7 @@ export class ZvolFormComponent implements OnInit {
   isLoading = false;
   inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
-  volBlockSizeWarning: string;
+  volBlockSizeWarning: string | null;
   protected slideInData: { isNew: boolean; parentId: string } | null = null;
 
   protected encryptedParent = false;
@@ -130,12 +130,12 @@ export class ZvolFormComponent implements OnInit {
     comments: [''],
     volsize: ['', Validators.required],
     force_size: [false],
-    sync: [null as string, Validators.required],
-    compression: [null as string, Validators.required],
-    deduplication: [null as string, Validators.required],
+    sync: [null as string | null, Validators.required],
+    compression: [null as string | null, Validators.required],
+    deduplication: [null as string | null, Validators.required],
     sparse: [false],
-    readonly: [null as string, Validators.required],
-    volblocksize: [null as string, Validators.required],
+    readonly: [null as string | null, Validators.required],
+    volblocksize: [null as string | null, Validators.required],
     snapdev: [DatasetSnapdev.Hidden as string],
     inherit_encryption: [true],
     encryption: [true],
@@ -221,7 +221,7 @@ export class ZvolFormComponent implements OnInit {
   constructor(
     public formatter: IxFormatterService,
     private translate: TranslateService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,

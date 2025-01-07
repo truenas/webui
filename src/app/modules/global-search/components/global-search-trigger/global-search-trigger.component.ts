@@ -36,7 +36,7 @@ import { FocusService } from 'app/services/focus.service';
   ],
 })
 export class GlobalSearchTriggerComponent implements AfterViewInit {
-  protected overlayRef: OverlayRef;
+  protected overlayRef: OverlayRef | undefined;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -64,7 +64,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
   }
 
   protected showOverlay(): void {
-    if (this.overlayRef.hasAttached()) {
+    if (!this.overlayRef || this.overlayRef.hasAttached()) {
       return;
     }
 
@@ -86,7 +86,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
   }
 
   private detachOverlay(): void {
-    if (!this.overlayRef.hasAttached()) {
+    if (!this.overlayRef?.hasAttached()) {
       return;
     }
     this.overlayRef.detach();

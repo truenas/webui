@@ -106,7 +106,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.identifierAndType()?.form?.dirty);
+      return of(Boolean(this.identifierAndType()?.form?.dirty));
     });
   }
 

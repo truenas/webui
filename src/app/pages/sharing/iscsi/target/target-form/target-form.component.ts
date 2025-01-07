@@ -146,7 +146,7 @@ export class TargetFormComponent implements OnInit {
 
   fcForm = this.formBuilder.group({
     port: [nullOption as string, [Validators.required]],
-    host_id: [null as number, [Validators.required]],
+    host_id: [null as number | null, [Validators.required]],
   });
 
   constructor(
@@ -187,15 +187,15 @@ export class TargetFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     this.isLoading = true;
     this.cdr.markForCheck();
     let request$: Observable<IscsiTarget>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.target.create', [values]);
-    } else {
+    if (this.editingTarget) {
       request$ = this.api.call('iscsi.target.update', [this.editingTarget.id, values]);
+    } else {
+      request$ = this.api.call('iscsi.target.create', [values]);
     }
 
     request$.pipe(

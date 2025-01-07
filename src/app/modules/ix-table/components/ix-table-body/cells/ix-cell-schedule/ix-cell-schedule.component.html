@@ -1,4 +1,4 @@
 <span
   [matTooltip]="value | scheduleDescription"
   [ixTest]="[title, uniqueRowTag(row()), 'row-schedule']"
->{{ value | scheduleDescription }}</span>
+>{{ value | cast | scheduleDescription }}</span>

@@ -67,6 +67,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     public slideInRef: SlideInRef<string | undefined, boolean>,
   ) {
     this.currentName = this.slideInRef.getData();
+    this.formGroup.controls.source.setValue(this.currentName);
   }
 
   ngOnInit(): void {

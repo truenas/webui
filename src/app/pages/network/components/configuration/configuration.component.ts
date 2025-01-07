@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -66,8 +66,8 @@ export class NetworkConfigurationComponent implements OnInit {
 
   form = this.fb.group({
     hostname: ['', Validators.required],
-    hostname_b: [null as string],
-    hostname_virtual: [null as string],
+    hostname_b: [null as string | null],
+    hostname_virtual: [null as string | null],
     inherit_dhcp: [false],
     domain: [''],
     domains: [[] as string[]],
@@ -224,7 +224,7 @@ export class NetworkConfigurationComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
