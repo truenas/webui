@@ -5044,7 +5044,7 @@
   "Warning": "위험",
   "Warning!": "위험!",
   "Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.": "위험: 디버그에는 사용자 이름과 같은 개인정보가 담긴 기록 파일이나 시스템을 식별하기 위한 정보가 포함될 수 있습니다. 외부로 공유하기 전에 디버그를 검토하여 민감한 정보는 삭제하시기 바랍니다.",
-  "Warning: iSCSI Target is currently in use.</font><br>": "위험: iSCSI 대상이 현재 사용중입니다.</font><br>",
+  "Warning: iSCSI Target is currently in use.": "위험: iSCSI 대상이 현재 사용중입니다.",
   "Warning: {n} of {total} boot environments could not be deleted.": "위험: 부트환경 {total}개 중 {n}개를 삭제할 수 없습니다.",
   "Warning: {n} of {total} docker images could not be deleted.": "위험: 도커 이미지 {total}개 중 {n}개를 삭제할 수 없습니다.",
   "Warning: {n} of {total} snapshots could not be deleted.": "위험: 스냅샷 {total}개 중 {n}개를 삭제할 수 없습니다.",

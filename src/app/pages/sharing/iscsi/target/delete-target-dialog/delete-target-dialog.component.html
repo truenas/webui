@@ -1,8 +1,8 @@
 <h1 mat-dialog-title>{{ 'Delete Target "{name}"' | translate:{ name: target.name } }}</h1>
 
 <div mat-dialog-content>
-  @if (warningMessage) {
-    <p [innerHTML]="warningMessage"></p>
+  @if (warningMessage()) {
+    <p [innerHTML]="warningMessage()"></p>
   }
 
   <p>

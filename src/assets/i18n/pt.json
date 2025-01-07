@@ -3231,7 +3231,7 @@
   "Wait to start VM until SPICE client connects.": "",
   "Waiting for standby controller": "",
   "Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.": "",
-  "Warning: iSCSI Target is currently in use.</font><br>": "",
+  "Warning: iSCSI Target is currently in use.": "",
   "Warning: {n} of {total} boot environments could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",
   "Warning: {n} of {total} snapshots could not be deleted.": "",
