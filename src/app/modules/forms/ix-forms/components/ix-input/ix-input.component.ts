@@ -118,6 +118,10 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   set value(val: string | number) {
     if (this.type() === 'number') {
       this._value = (val || val === 0) ? Number(val) : null;
+
+      if (this._value === null) {
+        this.lastKnownValue = val;
+      }
       return;
     }
     this._value = val;
@@ -153,9 +157,12 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = (val) => {
-      this.lastKnownValue = val;
-      onChange(val);
+    this.onChange = (changedValue) => {
+      if (this.lastKnownValue !== changedValue) {
+        onChange(changedValue);
+      }
+
+      this.lastKnownValue = changedValue;
     };
   }
 
