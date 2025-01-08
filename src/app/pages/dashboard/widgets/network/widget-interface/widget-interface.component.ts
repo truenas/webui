@@ -59,6 +59,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
       throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
     )),
+    filter(Boolean),
     tap((realtimeUpdate) => {
       this.cachedNetworkStats.update((cachedStats) => {
         return [
