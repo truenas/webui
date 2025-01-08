@@ -162,6 +162,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
         onChange(changedValue);
       }
 
+      this.controlDirective.control.markAsTouched();
+      this.controlDirective.control.updateValueAndValidity();
+
       this.lastKnownValue = changedValue;
     };
   }
