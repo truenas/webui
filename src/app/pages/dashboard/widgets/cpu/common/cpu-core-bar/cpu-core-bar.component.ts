@@ -5,15 +5,12 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
-import { Store } from '@ngrx/store';
 import { ChartData, ChartOptions } from 'chart.js';
 import { map } from 'rxjs';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Component({
   selector: 'ix-cpu-core-bar',
@@ -24,15 +21,18 @@ export class CpuCoreBarComponent {
   hideTemperature = input<boolean>(false);
   hideUsage = input<boolean>(false);
 
-  protected sysInfo = toSignal(this.store$.pipe(waitForSystemInfo));
-
   protected cpuData = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.cpu),
   ));
 
-  protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
-  protected coreCount = computed(() => this.sysInfo().physical_cores);
-  protected hyperthread = computed(() => this.sysInfo().cores !== this.sysInfo().physical_cores);
+  protected isLoading = computed(() => !this.cpuData());
+  protected coreCount = computed(() => {
+    const cpus = Object.keys(this.cpuData())
+      .map(Number)
+      .filter((key) => !Number.isNaN(key));
+
+    return Math.max(...cpus) + 1;
+  });
 
   stats = computed(() => {
     const data = this.parseCpuData(this.cpuData());
@@ -105,7 +105,6 @@ export class CpuCoreBarComponent {
   });
 
   constructor(
-    private store$: Store<AppState>,
     private resources: WidgetResourcesService,
     private theme: ThemeService,
   ) {}
@@ -115,17 +114,11 @@ export class CpuCoreBarComponent {
     const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.coreCount(); i++) {
-      const usageIndex = this.hyperthread() ? i * 2 : i;
+      const usage = parseInt(cpuData[i]?.usage?.toFixed(1) || '0');
+      const temperature = parseInt(cpuData.temperature_celsius?.[i]?.toFixed(0) || '0');
 
-      const usageCore = this.hyperthread()
-        ? (cpuData[usageIndex].usage + cpuData[usageIndex + 1].usage).toFixed(1)
-        : cpuData[usageIndex].usage.toFixed(1);
-
-      usageColumn.push(parseInt(usageCore));
-
-      if (cpuData.temperature_celsius) {
-        temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
-      }
+      usageColumn.push(usage);
+      temperatureColumn.push(temperature);
     }
 
     return [
