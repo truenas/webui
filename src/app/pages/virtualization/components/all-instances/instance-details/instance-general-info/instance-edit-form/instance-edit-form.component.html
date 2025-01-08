@@ -7,6 +7,14 @@
         formControlName="autostart"
         [label]="'Autostart' | translate"
       ></ix-checkbox>
+
+      @if (isVmInstanceType && editingInstance.enable_vnc) {
+        <ix-input
+          formControlName="vnc_port"
+          type="number"
+          [label]="'VNC Port' | translate"
+        ></ix-input>
+      }
     </ix-fieldset>
 
     <ix-fieldset [title]="'CPU & Memory' | translate">

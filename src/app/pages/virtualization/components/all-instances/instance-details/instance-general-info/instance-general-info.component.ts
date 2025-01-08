@@ -1,6 +1,6 @@
 import { KeyValuePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, computed, Inject, input,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
@@ -14,7 +14,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { virtualizationStatusLabels } from 'app/enums/virtualization.enum';
+import { virtualizationStatusLabels, VirtualizationType } from 'app/enums/virtualization.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -61,6 +62,14 @@ export class InstanceGeneralInfoComponent {
     return Object.entries(this.instance().environment).map(([key, value]) => `${key} = ${value}`).join('\n');
   });
 
+  protected readonly isVmInstanceType = computed(() => {
+    return this.instance().type === VirtualizationType.Vm;
+  });
+
+  protected readonly vncLink = computed(() => {
+    return `vnc://${this.window.location.hostname}:${this.instance().vnc_port}`;
+  });
+
   constructor(
     protected formatter: IxFormatterService,
     private dialogService: DialogService,
@@ -71,6 +80,7 @@ export class InstanceGeneralInfoComponent {
     private slideIn: SlideIn,
     private instancesStore: VirtualizationInstancesStore,
     private deviceStore: VirtualizationDevicesStore,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   editInstance(): void {

@@ -29,6 +29,12 @@
           {{ '{n, plural, one {# Environment Variable} other {# Environment Variables} }' | translate: { n: (instance.environment | keyvalue)?.length } }}
         </span>
       }
+
+      @if (isVmInstanceType() && instance.enable_vnc && instance.vnc_port) {
+        <p>{{ 'VNC' | translate }}:
+          <a ixTest="vnc-link" target="_blank" [href]="vncLink()">{{ vncLink() }}</a>
+        </p>
+      }
     }
   </mat-card-content>
 

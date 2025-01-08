@@ -130,6 +130,8 @@ export class InstanceWizardComponent {
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    enable_vnc: [false],
+    vnc_port: [null as number, [Validators.min(5900), Validators.max(65535)]],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
     use_default_network: [true],
@@ -152,6 +154,10 @@ export class InstanceWizardComponent {
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
+  }
+
+  get isVmInstanceType(): boolean {
+    return this.form.value.instance_type === VirtualizationType.Vm;
   }
 
   constructor(
@@ -251,6 +257,8 @@ export class InstanceWizardComponent {
       devices,
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
+      enable_vnc: this.isVmInstanceType ? this.form.value.enable_vnc : false,
+      vnc_port: this.isVmInstanceType ? this.form.value.vnc_port : null,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,

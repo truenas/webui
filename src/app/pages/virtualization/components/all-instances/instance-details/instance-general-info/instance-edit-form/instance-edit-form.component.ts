@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -58,10 +59,15 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
+  get isVmInstanceType(): boolean {
+    return this.editingInstance.type === VirtualizationType.Vm;
+  }
+
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    vnc_port: [null as number | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -85,6 +91,7 @@ export class InstanceEditFormComponent {
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
       memory: this.editingInstance.memory,
+      vnc_port: this.editingInstance.vnc_port,
     });
 
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
@@ -133,6 +140,7 @@ export class InstanceEditFormComponent {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
+      vnc_port: values.vnc_port,
     } as UpdateVirtualizationInstance;
   }
 

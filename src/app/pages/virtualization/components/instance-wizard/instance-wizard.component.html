@@ -40,6 +40,21 @@
           (click)="onBrowseImages()"
         >{{ 'Browse Catalog' | translate }}</button>
       </div>
+
+      @if (isVmInstanceType) {
+        <ix-checkbox
+          formControlName="enable_vnc"
+          [label]="'Enable VNC' | translate"
+        ></ix-checkbox>
+
+        @if (form.value.enable_vnc) {
+          <ix-input
+            formControlName="vnc_port"
+            type="number"
+            [label]="'VNC Port' | translate"
+          ></ix-input>
+        }
+      }
     </ix-form-section>
 
     <ix-form-section
