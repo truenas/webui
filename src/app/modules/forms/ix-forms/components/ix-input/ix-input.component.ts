@@ -86,7 +86,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   showPassword = false;
   invalid = false;
   filteredOptions: Option[];
-  private lastKnownValue: string | number = this._value;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -118,10 +117,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   set value(val: string | number) {
     if (this.type() === 'number') {
       this._value = (val || val === 0) ? Number(val) : null;
-
-      if (this._value === null) {
-        this.lastKnownValue = val;
-      }
       return;
     }
     this._value = val;
@@ -156,17 +151,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     });
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = (changedValue) => {
-      if (this.lastKnownValue !== changedValue) {
-        onChange(changedValue);
-      }
-
-      this.controlDirective.control.markAsTouched();
-      this.controlDirective.control.updateValueAndValidity();
-
-      this.lastKnownValue = changedValue;
-    };
+  registerOnChange(onChanged: () => void): void {
+    this.onChange = onChanged;
   }
 
   registerOnTouched(onTouched: () => void): void {
@@ -232,11 +218,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       if (format) {
         this.formatted = format(this.value);
       }
-    }
-
-    if (this.value !== this.lastKnownValue) {
-      this.lastKnownValue = this.value;
-      this.onChange(this.value);
     }
 
     if (this.autocompleteOptions() && !this.findExistingOption(this.value)) {
