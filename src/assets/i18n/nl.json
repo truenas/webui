@@ -8,6 +8,7 @@
   "Do not connect to a fibre channel port": "",
   "Existing Ports": "",
   "Linux Only": "",
+  "Maximum file size is limited to {maxSize}.": "",
   "New Cloud Credential": "",
   "Protocol Options": "",
   "Use an existing port": "",

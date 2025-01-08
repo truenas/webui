@@ -4,6 +4,7 @@
   "Any OS": "",
   "Both": "",
   "Linux Only": "",
+  "Maximum file size is limited to {maxSize}.": "",
   "Virtualization (Old)": "",
   "Virtualization Method": "",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
