@@ -29,7 +29,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { greaterThanFg, rangeValidator } from 'app/modules/forms/ix-forms/validators/validators';
+import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

@@ -4,8 +4,8 @@ import { UUID } from 'angular2-uuid';
 import {
   filter, interval, switchMap, tap,
 } from 'rxjs';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Injectable({
@@ -16,14 +16,14 @@ export class PingService {
 
   constructor(
     private wsHandler: WebSocketHandlerService,
-    private authService: AuthService,
+    private wsStatus: WebSocketStatusService,
   ) {}
 
   setupPing(): void {
     interval(this.pingTimeoutMillis).pipe(
-      switchMap(() => this.wsHandler.isConnected$),
+      switchMap(() => this.wsStatus.isConnected$),
       filter(Boolean),
-      switchMap(() => this.authService.isAuthenticated$),
+      switchMap(() => this.wsStatus.isAuthenticated$),
       filter(Boolean),
       tap(() => this.wsHandler.scheduleCall({
         id: UUID.UUID(),

@@ -20,7 +20,7 @@
 
   <ix-search-input1
     [value]="filterString"
-    [disabled]="isLoading$ | async"
+    [disabled]="!!(isLoading$ | async)"
     (search)="onListFiltered($event)"
   ></ix-search-input1>
 </ix-page-header>
@@ -39,7 +39,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="isLoading$ | async"
+    [isLoading]="!!(isLoading$ | async)"
   >
     <ng-template
       let-job

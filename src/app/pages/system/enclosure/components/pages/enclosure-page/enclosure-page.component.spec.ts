@@ -109,6 +109,7 @@ describe('EnclosurePageComponent', () => {
 
   it('shows disk details overview is selected', () => {
     expect(spectator.query(DiskDetailsOverviewComponent)).toExist();
+    expect(spectator.query(DiskDetailsOverviewComponent).selectedSlot).toEqual(selectedSlot());
   });
 
   it('redirects to a separate MINI page when selected enclosure is a MINI', () => {

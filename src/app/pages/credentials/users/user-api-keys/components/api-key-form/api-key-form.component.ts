@@ -3,13 +3,13 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
@@ -61,7 +61,7 @@ import {
 })
 export class ApiKeyFormComponent implements OnInit {
   protected readonly minDateToday = new Date();
-  protected readonly editingRow = signal<ApiKey>(null);
+  protected readonly editingRow = signal<ApiKey | undefined>(undefined);
   protected readonly isNew = computed(() => !this.editingRow());
   protected readonly isLoading = signal(false);
   protected readonly requiredRoles = [Role.ApiKeyWrite, Role.SharingAdmin, Role.ReadonlyAdmin];
@@ -70,7 +70,11 @@ export class ApiKeyFormComponent implements OnInit {
     () => this.username() === this.form.value.username || this.isFullAdmin(),
   );
 
-  protected readonly currentUsername$ = this.authService.user$.pipe(map((user) => user.pw_name));
+  protected readonly currentUsername$ = this.authService.user$.pipe(
+    filter((user) => !!user),
+    map((user) => user.pw_name),
+  );
+
   protected readonly username = toSignal(this.currentUsername$);
   protected readonly tooltips = {
     name: helptextApiKeys.name.tooltip,
@@ -83,7 +87,7 @@ export class ApiKeyFormComponent implements OnInit {
   protected readonly form = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     username: ['', [Validators.required]],
-    expires_at: [null as Date],
+    expires_at: [null as Date | null],
     nonExpiring: [true],
     reset: [false],
   });
@@ -105,7 +109,7 @@ export class ApiKeyFormComponent implements OnInit {
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private matDialog: MatDialog,
     private api: ApiService,
     private loader: AppLoaderService,
@@ -120,17 +124,18 @@ export class ApiKeyFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isNew()) {
+    const editingRow = this.editingRow();
+    if (editingRow) {
+      this.form.patchValue({
+        ...editingRow,
+        expires_at: editingRow.expires_at?.$date
+          ? new Date(editingRow.expires_at.$date)
+          : null,
+        nonExpiring: !editingRow.expires_at?.$date,
+      });
+    } else {
       this.addForbiddenNamesValidator();
       this.setCurrentUsername();
-    } else {
-      this.form.patchValue({
-        ...this.editingRow(),
-        expires_at: this.editingRow().expires_at?.$date
-          ? new Date(this.editingRow().expires_at.$date)
-          : null,
-        nonExpiring: !this.editingRow()?.expires_at?.$date,
-      });
     }
     this.handleNonExpiringChanges();
   }
@@ -139,7 +144,7 @@ export class ApiKeyFormComponent implements OnInit {
     this.isLoading.set(true);
     const {
       name, username, reset, nonExpiring,
-    } = this.form.value;
+    } = this.form.getRawValue();
 
     const expiresAt = nonExpiring ? null : { $date: this.form.value.expires_at.getTime() };
 

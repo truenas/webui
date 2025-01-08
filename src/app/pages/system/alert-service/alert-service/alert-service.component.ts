@@ -107,7 +107,7 @@ export class AlertServiceComponent implements OnInit {
   isLoading = false;
   protected readonly existingAlertService: AlertService | undefined;
 
-  private readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
+  private readonly alertServiceContainer = viewChild.required('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
 

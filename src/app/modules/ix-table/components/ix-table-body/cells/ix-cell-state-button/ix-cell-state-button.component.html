@@ -10,7 +10,7 @@
     (click)="$event.stopPropagation(); onButtonClick()"
   >
     {{ state() }}
-    @if (warnings?.length > 0) {
+    @if (warnings.length > 0) {
       <div class="label-warning-icon">
         <ix-icon name="mdi-alert"></ix-icon>
       </div>

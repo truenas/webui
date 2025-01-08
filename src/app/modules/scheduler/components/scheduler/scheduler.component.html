@@ -11,7 +11,7 @@
     <mat-select
       [required]="required()"
       [disabled]="isDisabled"
-      [aria-label]="label()"
+      [aria-label]="label() || ''"
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"

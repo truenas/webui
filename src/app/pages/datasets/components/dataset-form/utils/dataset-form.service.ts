@@ -35,7 +35,7 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooDeepWarning),
           ).pipe(
-            tap(() => this.slideIn.popComponent(undefined)),
+            tap(() => this.slideIn.closeLast()),
             map(() => false),
           );
         }
@@ -44,7 +44,7 @@ export class DatasetFormService {
             this.translate.instant(helptextDatasetForm.pathWarningTitle),
             this.translate.instant(helptextDatasetForm.pathIsTooLongWarning),
           ).pipe(
-            tap(() => this.slideIn.popComponent(undefined)),
+            tap(() => this.slideIn.closeLast()),
             map(() => false),
           );
         }

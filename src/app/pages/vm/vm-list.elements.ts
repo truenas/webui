@@ -7,6 +7,7 @@ export const vmListElements = {
   anchorRouterLink: ['/vm'],
   elements: {
     vm: {
+      anchor: 'vm-list',
       synonyms: [T('VM'), T('Virtualization')],
     },
     add: {

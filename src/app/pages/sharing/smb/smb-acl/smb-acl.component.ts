@@ -127,7 +127,7 @@ export class SmbAclComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private userService: UserService,
-    public slideInRef: SlideInRef<string | undefined, boolean>,
+    public slideInRef: SlideInRef<string, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -153,8 +153,8 @@ export class SmbAclComponent implements OnInit {
         both: [null as never],
         user: [null as never],
         group: [null as never],
-        ae_perm: [null as SmbSharesecPermission],
-        ae_type: [null as SmbSharesecType],
+        ae_perm: [null as SmbSharesecPermission | null],
+        ae_type: [null as SmbSharesecType | null],
       }),
     );
   }

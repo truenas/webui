@@ -59,9 +59,10 @@ export class AuditListComponent {
     textColumn({
       title: this.translate.instant('Service'),
       propertyName: 'service',
-      getValue: (row) => (auditServiceLabels.has(row.service)
-        ? this.translate.instant(auditServiceLabels.get(row.service))
-        : row.service || '-'),
+      getValue: (row) => {
+        const service = auditServiceLabels.get(row.service);
+        return service ? this.translate.instant(service) : row.service || '-';
+      },
     }),
     textColumn({
       title: this.translate.instant('User'),
@@ -75,9 +76,10 @@ export class AuditListComponent {
     textColumn({
       title: this.translate.instant('Event'),
       propertyName: 'event',
-      getValue: (row) => (auditEventLabels.has(row.event)
-        ? this.translate.instant(auditEventLabels.get(row.event))
-        : row.event || '-'),
+      getValue: (row) => {
+        const event = auditEventLabels.get(row.event);
+        return event ? this.translate.instant(event) : row.event || '-';
+      },
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -101,7 +103,7 @@ export class AuditListComponent {
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
     // eslint-disable-next-line sonarjs/no-angular-bypass-sanitization
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView ? 15 : 35));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView() ? 15 : 35));
   }
 
   expanded(row: AuditEntry): void {

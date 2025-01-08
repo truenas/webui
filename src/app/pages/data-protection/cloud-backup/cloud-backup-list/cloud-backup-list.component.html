@@ -32,7 +32,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="dataProvider.isLoading$ | async"
+        [isLoading]="!!(dataProvider.isLoading$ | async)"
         (expanded)="expanded($event)"
       ></tbody>
     </ix-table>

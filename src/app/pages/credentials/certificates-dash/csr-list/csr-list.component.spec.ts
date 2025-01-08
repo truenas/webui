@@ -120,7 +120,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',
-      buttonColor: 'red',
+      buttonColor: 'warn',
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

@@ -20,7 +20,7 @@
     detailsRowIdentifier="audit_id"
     [columns]="columns"
     [dataProvider]="dataProvider()"
-    [isLoading]="dataProvider().isLoading$ | async"
+    [isLoading]="!!(dataProvider().isLoading$ | async)"
     (expanded)="expanded($event)"
   >
     <ng-template

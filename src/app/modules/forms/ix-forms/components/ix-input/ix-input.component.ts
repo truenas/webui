@@ -67,7 +67,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
   readonly readonly = input<boolean>();
-  readonly type = input<string>();
+  readonly type = input<string>('text');
   readonly autocomplete = input('off');
   readonly autocompleteOptions = input<Option[]>();
   readonly maxLength = input(524288);
@@ -75,9 +75,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   readonly format = input<(value: string | number) => string>();
-  readonly parse = input<(value: string | number) => string | number>();
+  readonly parse = input<(value: string | number) => string | number | null>();
 
-  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
+  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 
   private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
@@ -212,12 +212,15 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.onTouch();
 
     if (this.formatted) {
-      if (this.parse()) {
-        this.value = this.parse()(this.formatted);
+      const parse = this.parse();
+      if (parse) {
+        this.value = parse(this.formatted);
         this.formatted = this.value;
       }
-      if (this.format()) {
-        this.formatted = this.format()(this.value);
+
+      const format = this.format();
+      if (format) {
+        this.formatted = format(this.value);
       }
     }
 

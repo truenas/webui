@@ -34,6 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -96,6 +97,7 @@ export class GuiFormComponent {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -114,7 +116,7 @@ export class GuiFormComponent {
   }
 
   replaceHrefWhenWsConnected(href: string): void {
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
         this.window.location.replace(href);
@@ -123,7 +125,7 @@ export class GuiFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     const params = {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),

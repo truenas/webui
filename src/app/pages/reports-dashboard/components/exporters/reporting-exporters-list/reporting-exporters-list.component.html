@@ -1,5 +1,5 @@
 <mat-card>
-  <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="!!(isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Reporting Exporters' | translate }}</h3>
     <div class="actions action-icon">
@@ -31,7 +31,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="isLoading$ | async"
+        [isLoading]="!!(isLoading$ | async)"
       ></tbody>
     </ix-table>
     <ix-table-pager

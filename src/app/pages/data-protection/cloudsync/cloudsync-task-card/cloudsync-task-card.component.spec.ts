@@ -232,6 +232,8 @@ describe('CloudSyncTaskCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>"custom-cloudsync"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);

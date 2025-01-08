@@ -85,9 +85,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(): void {
-    if (this.parent()) {
-      this.form.controls.parent.setValue(this.parent().name);
-      this.addNameValidators();
+    const parent = this.parent();
+    if (parent) {
+      this.form.controls.parent.setValue(parent.name);
+      this.addNameValidators(parent);
     }
 
     this.setFormValues();
@@ -119,12 +120,13 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   }
 
   private setFormValues(): void {
-    if (!this.existing()) {
+    const existing = this.existing();
+    if (!existing) {
       return;
     }
 
     this.form.patchValue({
-      name: this.existing().name,
+      name: existing.name,
     });
   }
 
@@ -136,9 +138,9 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     }
   }
 
-  private addNameValidators(): void {
-    const isNameCaseSensitive = this.parent().casesensitivity.value === DatasetCaseSensitivity.Sensitive;
-    const namesInUse = this.parent().children.map((child) => {
+  private addNameValidators(parent: Dataset): void {
+    const isNameCaseSensitive = parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
+    const namesInUse = parent.children.map((child) => {
       const childName = /[^/]*$/.exec(child.name)[0];
       if (isNameCaseSensitive) {
         return childName.toLowerCase();
@@ -148,7 +150,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.name.addValidators([
-      datasetNameTooLong(this.parent().name),
+      datasetNameTooLong(parent.name),
       forbiddenValues(namesInUse, isNameCaseSensitive),
     ]);
   }

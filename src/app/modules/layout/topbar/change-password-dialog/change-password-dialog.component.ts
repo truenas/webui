@@ -40,7 +40,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
   ],
 })
 export class ChangePasswordDialogComponent {
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     old_password: [''],
     new_password: ['', [Validators.required]],
     passwordConfirmation: ['', [Validators.required]],
@@ -81,8 +81,8 @@ export class ChangePasswordDialogComponent {
 
   onSubmit(): void {
     this.api.call('user.set_password', [{
-      old_password: this.form.value.old_password,
-      new_password: this.form.value.new_password,
+      old_password: this.form.getRawValue().old_password,
+      new_password: this.form.getRawValue().new_password,
       username: this.loggedInUser.pw_name,
     }]).pipe(
       this.loader.withLoader(),

@@ -95,12 +95,12 @@ export class IscsiWizardComponent implements OnInit {
   toStop = false;
   namesInUse: string[] = [];
 
-  createdZvol: Dataset;
-  createdExtent: IscsiExtent;
-  createdPortal: IscsiPortal;
-  createdInitiator: IscsiInitiatorGroup;
-  createdTarget: IscsiTarget;
-  createdTargetExtent: IscsiTargetExtent;
+  createdZvol: Dataset | undefined;
+  createdExtent: IscsiExtent | undefined;
+  createdPortal: IscsiPortal | undefined;
+  createdInitiator: IscsiInitiatorGroup | undefined;
+  createdTarget: IscsiTarget | undefined;
+  createdTargetExtent: IscsiTargetExtent | undefined;
 
   form = this.fb.group({
     target: this.fb.group({
@@ -116,18 +116,18 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as string, [Validators.required]],
+      disk: [null as string | null, [Validators.required]],
       dataset: ['', [Validators.required]],
-      volsize: [null as number, [Validators.required]],
+      volsize: [null as number | null, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
     }),
     options: this.fb.group({
-      portal: [null as typeof newOption | number, [Validators.required]],
+      portal: [null as typeof newOption | number | null, [Validators.required]],
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
       fcport: this.fb.group({
         port: [nullOption as string, [Validators.required]],
-        host_id: [null as number, [Validators.required]],
+        host_id: [null as number | null, [Validators.required]],
       }),
     }),
   }, {
@@ -221,7 +221,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get targetPayload(): IscsiTargetUpdate {
-    const value = this.form.value;
+    const value = this.form.getRawValue();
 
     return {
       name: value.extent.name,

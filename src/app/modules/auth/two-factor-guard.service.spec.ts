@@ -5,21 +5,24 @@ import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-f
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TwoFactorGuardService', () => {
   let spectator: SpectatorService<TwoFactorGuardService>;
 
   const isAuthenticated$ = new BehaviorSubject(false);
-  const userTwoFactorConfig$ = new BehaviorSubject(null as UserTwoFactorConfig);
-  const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig));
+  const userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig | null>(null);
+  const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
     providers: [
       mockProvider(Router),
-      mockProvider(AuthService, {
+      mockProvider(WebSocketStatusService, {
         isAuthenticated$,
+      }),
+      mockProvider(AuthService, {
         userTwoFactorConfig$,
         getGlobalTwoFactorConfig,
         hasRole: jest.fn(() => hasRole$),

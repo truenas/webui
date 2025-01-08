@@ -37,8 +37,8 @@ const critical = 95;
 export class QuotasSectionComponent implements OnInit {
   readonly formValidityChange = output<boolean>();
 
-  readonly form = this.formBuilder.group({
-    refquota: [null as number, this.validators.withMessage(
+  readonly form = this.formBuilder.nonNullable.group({
+    refquota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -46,8 +46,8 @@ export class QuotasSectionComponent implements OnInit {
     refquota_warning_inherit: [true],
     refquota_critical: [critical, [Validators.min(0), Validators.max(100)]],
     refquota_critical_inherit: [true],
-    refreservation: [null as number],
-    quota: [null as number, this.validators.withMessage(
+    refreservation: [null as number | null],
+    quota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -55,7 +55,7 @@ export class QuotasSectionComponent implements OnInit {
     quota_warning_inherit: [true],
     quota_critical: [critical, [Validators.min(0), Validators.max(100)]],
     quota_critical_inherit: [true],
-    reservation: [null as number],
+    reservation: [null as number | null],
   });
 
   readonly helptext = helptextDatasetForm;

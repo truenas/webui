@@ -8,6 +8,7 @@ import {
   VirtualizationNicType,
   VirtualizationProxyProtocol,
   VirtualizationRemote,
+  VirtualizationSource,
   VirtualizationStatus,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
@@ -49,11 +50,20 @@ export interface CreateVirtualizationInstance {
   image: string;
   remote: VirtualizationRemote;
   instance_type: VirtualizationType;
+  source_type?: VirtualizationSource;
   environment?: Record<string, string>;
   autostart?: boolean;
   cpu: string;
+  /**
+   * Value must be greater or equal to 33554432
+   */
   memory: number;
   devices: VirtualizationDevice[];
+  enable_vnc?: boolean;
+  /**
+   * Value must be greater or equal to 5900 and lesser or equal to 65535
+   */
+  vnc_port?: number | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -148,6 +158,7 @@ export interface VirtualizationImage {
   os: string;
   release: string;
   variant: string;
+  instance_types: VirtualizationType[];
 }
 
 export interface VirtualizationStopParams {

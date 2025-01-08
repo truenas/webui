@@ -8,7 +8,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   combineLatest,
   filter,
@@ -33,6 +33,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -72,13 +73,13 @@ export class AppsSettingsComponent implements OnInit {
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  protected form = this.fb.group({
+  protected form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
-    nvidia: [null as boolean],
+    nvidia: [null as boolean | null],
     enable_image_updates: [true],
     address_pools: new FormArray<FormGroup<{
       base: FormControl<string>;
-      size: FormControl<number>;
+      size: FormControl<number | null>;
     }>>([]),
   });
 
@@ -97,6 +98,8 @@ export class AppsSettingsComponent implements OnInit {
     public slideInRef: SlideInRef<undefined, boolean>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -129,9 +132,9 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   addAddressPool(): void {
-    const control = this.fb.group({
+    const control = this.fb.nonNullable.group({
       base: ['', [Validators.required, ipv4or6cidrValidator()]],
-      size: [null as number, [Validators.required]],
+      size: [null as number | null, [Validators.required]],
     });
 
     this.form.controls.address_pools.push(control);
@@ -150,13 +153,14 @@ export class AppsSettingsComponent implements OnInit {
       this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
-        nvidia: values.nvidia,
+        nvidia: Boolean(values.nvidia),
       }]),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
+          this.snackbar.success(this.translate.instant('Settings saved'));
           this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {

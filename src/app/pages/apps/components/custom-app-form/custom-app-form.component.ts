@@ -57,7 +57,7 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
-  protected existingApp: App;
+  protected existingApp: App | undefined;
 
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
@@ -137,10 +137,10 @@ export class CustomAppFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true, error: null });
-        if (this.isNew()) {
-          this.router.navigate(['/apps', 'installed']);
-        } else {
+        if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
+        } else {
+          this.router.navigate(['/apps', 'installed']);
         }
       },
       error: (error: unknown) => {

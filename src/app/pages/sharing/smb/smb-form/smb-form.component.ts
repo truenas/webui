@@ -5,7 +5,9 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {
+  Validators, ReactiveFormsModule, NonNullableFormBuilder,
+} from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -88,8 +90,8 @@ import { selectService } from 'app/store/services/services.selectors';
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
-  private existingSmbShare: SmbShare | null;
-  defaultSmbShare: SmbShare;
+  private existingSmbShare: SmbShare | undefined;
+  defaultSmbShare: SmbShare | undefined;
 
   isLoading = false;
   isAdvancedMode = false;
@@ -193,7 +195,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   form = this.formBuilder.group({
     path: ['', Validators.required],
     name: ['', Validators.required],
-    purpose: [null as SmbPresetType],
+    purpose: [null as SmbPresetType | null],
     comment: [''],
     enabled: [true],
     acl: [false],
@@ -205,7 +207,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     hostsdeny: [[] as string[]],
     home: [false],
     timemachine: [false],
-    timemachine_quota: [null as number],
+    timemachine_quota: [null as number | null],
     afp: [false],
     shadowcopy: [false],
     recyclebin: [false],
@@ -225,7 +227,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   constructor(
     public formatter: IxFormatterService,
     private cdr: ChangeDetectorRef,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -379,9 +381,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   /**
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
-  setupAndApplyPurposePresets(): Observable<void> {
+  setupAndApplyPurposePresets(): Observable<SmbPresets> {
     return this.api.call('sharing.smb.presets').pipe(
-      switchMap((presets) => {
+      tap((presets) => {
         const nonClusterPresets = Object.entries(presets).reduce(
           (acc, [presetName, preset]) => {
             if (!preset.cluster) {
@@ -400,10 +402,9 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.form.controls.purpose.setValue(
           this.isNew
             ? SmbPresetType.DefaultShareParameters
-            : this.existingSmbShare?.purpose,
+            : (this.existingSmbShare?.purpose || null),
         );
         this.cdr.markForCheck();
-        return of(null);
       }),
     );
   }
@@ -468,10 +469,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     let request$: Observable<SmbShare>;
 
-    if (this.isNew) {
-      request$ = this.api.call('sharing.smb.create', [smbShare]);
-    } else {
+    if (this.existingSmbShare) {
       request$ = this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
+    } else {
+      request$ = this.api.call('sharing.smb.create', [smbShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -544,6 +545,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   promptIfRestartRequired(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
+      filter((service) => !!service),
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {

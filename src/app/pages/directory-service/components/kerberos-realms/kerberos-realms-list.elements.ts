@@ -5,7 +5,9 @@ export const kerberosRealmsListElements = {
   hierarchy: [T('Directory Services'), T('Kerberos Realms')],
   anchorRouterLink: ['/directoryservice', 'kerberosrealms'],
   elements: {
-    kerberosRealms: {},
+    kerberosRealms: {
+      anchor: 'kerberosrealms',
+    },
     add: {
       hierarchy: [T('Add Kerberos Realm')],
       anchor: 'add-kerberos-realm',

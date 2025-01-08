@@ -81,7 +81,7 @@ export class CertificateEditComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
-    public slideInRef: SlideInRef<Certificate | undefined, boolean>,
+    public slideInRef: SlideInRef<Certificate, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);

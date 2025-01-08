@@ -134,7 +134,10 @@ export class ReportingExportersFormComponent implements OnInit {
         this.createExporterControls(schemas);
 
         if (!this.isNew) {
-          this.form.patchValue(this.editingExporter);
+          this.form.patchValue({
+            ...this.editingExporter,
+            type: this.editingExporter.attributes['exporter_type'] as string,
+          });
         }
 
         this.isLoading = false;
@@ -165,7 +168,7 @@ export class ReportingExportersFormComponent implements OnInit {
       for (const input of schema.schema) {
         this.form.controls.attributes.addControl(
           input._name_,
-          new FormControl('', input._required_ ? [Validators.required] : []),
+          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
         );
       }
     }
@@ -183,7 +186,9 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
+    return schema.schema
+      .filter((input) => !input.const)
+      .map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
@@ -220,9 +225,8 @@ export class ReportingExportersFormComponent implements OnInit {
       ...this.form.value,
     };
 
-    if (!this.isNew) {
-      delete values.type;
-    }
+    values.attributes['exporter_type'] = values.type;
+    delete values.type;
 
     for (const [key, value] of Object.entries(values.attributes)) {
       if (value == null || value === '') {
@@ -233,13 +237,13 @@ export class ReportingExportersFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('reporting.exporters.create', [values]);
-    } else {
+    if (this.editingExporter) {
       request$ = this.api.call('reporting.exporters.update', [
         this.editingExporter.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('reporting.exporters.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

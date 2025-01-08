@@ -71,6 +71,7 @@ export class BootEnvironmentFormComponent implements OnInit {
       return of(this.formGroup.dirty);
     });
     this.currentName = this.slideInRef.getData();
+    this.formGroup.controls.source.setValue(this.currentName);
   }
 
   ngOnInit(): void {

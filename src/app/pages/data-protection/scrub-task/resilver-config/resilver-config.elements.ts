@@ -6,6 +6,8 @@ export const resilverConfigElements = {
   synonyms: [T('Data Protection'), T('Scrub Tasks')],
   anchorRouterLink: ['/data-protection', 'scrub', 'priority'],
   elements: {
-    priority: {},
+    priority: {
+      anchor: 'scrub-priority',
+    },
   },
 } satisfies UiSearchableElement;
