@@ -78,15 +78,17 @@ describe('CertificateSubjectComponent', () => {
         },
         {
           label: 'Subject',
-          value: 'Virus Research Dept, Umbrella Corp, Racoon City, Pennsylvania, US',
+          value: 'virus.umbrella.com, Virus Research Dept, Umbrella Corp, Racoon City, Pennsylvania, US',
         },
       ]);
     });
 
     it('skips some of the fields when they are missing', async () => {
       await form.fillForm({
+        State: '',
+        Locality: '',
         'Organizational Unit': '',
-        'Common Name': '',
+        Email: '',
       });
 
       expect(spectator.component.getSummary()).toEqual([
@@ -95,14 +97,57 @@ describe('CertificateSubjectComponent', () => {
           value: 'jobs.umbrella.com, security.umbrella.com',
         },
         {
-          label: 'Email',
-          value: 'no-reply@umbrella.com',
+          label: 'Common Name',
+          value: 'virus.umbrella.com',
         },
         {
           label: 'Subject',
-          value: 'Umbrella Corp, Racoon City, Pennsylvania, US',
+          value: 'virus.umbrella.com, Umbrella Corp, US',
         },
       ]);
+    });
+
+    it('allows creating Lets Encrypt-compatible subject', async () => {
+      await form.fillForm({
+        Country: '',
+        State: '',
+        Locality: '',
+        Organization: '',
+        'Organizational Unit': '',
+        Email: '',
+        'Common Name': 'umbrella.com',
+        'Subject Alternative Name': ['*.umbrella.com', 'umbrella.com'],
+      });
+
+      expect(spectator.component.form.value).toEqual({
+        country: '',
+        state: '',
+        city: '',
+        organization: '',
+        organizational_unit: '',
+        email: '',
+        common: 'umbrella.com',
+        san: ['*.umbrella.com', 'umbrella.com'],
+      });
+    });
+
+    it('allows creating subject for CA without SANs', async () => {
+      await form.fillForm({
+        'Common Name': 'CA Root',
+        Email: '',
+        'Subject Alternative Name': [],
+      });
+
+      expect(spectator.component.form.value).toEqual({
+        country: 'US',
+        state: 'Pennsylvania',
+        city: 'Racoon City',
+        organization: 'Umbrella Corp',
+        organizational_unit: 'Virus Research Dept',
+        email: '',
+        common: 'CA Root',
+        san: [],
+      });
     });
   });
 });

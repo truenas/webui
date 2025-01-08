@@ -35,14 +35,14 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 })
 export class CertificateSubjectComponent implements SummaryProvider {
   form = this.formBuilder.nonNullable.group({
-    country: ['US', Validators.required],
-    state: ['', Validators.required],
-    city: ['', Validators.required],
-    organization: ['', Validators.required],
+    country: ['US'],
+    state: [''],
+    city: [''],
+    organization: [''],
     organizational_unit: [''],
-    email: ['', [Validators.required, emailValidator()]],
-    common: [''],
-    san: [[] as string[], Validators.required],
+    email: ['', [emailValidator()]],
+    common: ['', Validators.required],
+    san: [[] as string[]],
   });
 
   readonly helptext = helptextSystemCertificates;
@@ -65,14 +65,15 @@ export class CertificateSubjectComponent implements SummaryProvider {
       },
     ];
 
-    if (values.common) {
-      summary.push({ label: this.translate.instant('Common Name'), value: values.common });
+    summary.push({ label: this.translate.instant('Common Name'), value: values.common || '' });
+
+    if (values.email) {
+      summary.push({ label: this.translate.instant('Email'), value: values.email });
     }
 
-    summary.push({ label: this.translate.instant('Email'), value: values.email || '' });
-
-    // Dept of Connections, Cisco, New York, NY, Unites States
+    // www.example.com, Dept of Connections, Cisco, New York, NY, Unites States
     const subjectFields = [
+      'common',
       'organizational_unit',
       'organization',
       'city',
