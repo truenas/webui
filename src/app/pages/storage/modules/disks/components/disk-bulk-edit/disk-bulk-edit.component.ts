@@ -77,6 +77,9 @@ export class DiskBulkEditComponent {
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<Disk[] | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.setFormDiskBulk(this.slideInRef.getData());
   }
 

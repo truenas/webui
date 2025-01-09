@@ -64,7 +64,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      mockProvider(SlideInRef, { close: jest.fn() }),
+      mockProvider(SlideInRef, { close: jest.fn(), requireConfirmationWhen: jest.fn() }),
       mockAuth(),
     ],
   });

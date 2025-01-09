@@ -129,6 +129,9 @@ export class SmbAclComponent implements OnInit {
     private userService: UserService,
     public slideInRef: SlideInRef<string, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.shareName = slideInRef.getData();
   }
 

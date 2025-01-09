@@ -10,6 +10,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -66,6 +67,9 @@ export class BootEnvironmentFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<string | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
     this.currentName = this.slideInRef.getData();
     this.formGroup.controls.source.setValue(this.currentName);
   }

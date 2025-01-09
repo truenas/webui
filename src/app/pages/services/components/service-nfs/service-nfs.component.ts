@@ -137,7 +137,11 @@ export class ServiceNfsComponent implements OnInit {
     private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading.set(true);

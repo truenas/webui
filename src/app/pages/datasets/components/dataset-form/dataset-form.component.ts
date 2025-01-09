@@ -140,6 +140,15 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, Dataset>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(
+        this.form.dirty
+        || this.nameAndOptionsSection().form.dirty
+        || this.encryptionSection().form.dirty
+        || this.otherOptionsSection().form.dirty
+        || this.quotasSection()?.form.dirty,
+      );
+    });
     this.slideInData = slideInRef.getData();
   }
 

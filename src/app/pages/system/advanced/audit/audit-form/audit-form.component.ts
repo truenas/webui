@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
+  of,
 } from 'rxjs';
 import {
   catchError, tap,
@@ -83,7 +84,11 @@ export class AuditFormComponent implements OnInit {
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.loadForm();

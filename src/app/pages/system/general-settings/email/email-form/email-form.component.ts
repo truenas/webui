@@ -150,6 +150,9 @@ export class EmailFormComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     public slideInRef: SlideInRef<MailConfig | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.emailConfig = this.slideInRef.getData();
   }
 
