@@ -22,6 +22,7 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
+  enable_gpos_stig: false,
 };
 
 describe('SystemSecurityFormComponent', () => {
@@ -38,7 +39,7 @@ describe('SystemSecurityFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
-          { selector: selectIsHaLicensed, value: false },
+          { selector: selectIsHaLicensed, value: true },
         ],
       }),
       mockProvider(DialogService, {
@@ -75,6 +76,7 @@ describe('SystemSecurityFormComponent', () => {
     it('saves FIPS config when form is filled and Save is pressed', async () => {
       await form.fillForm({
         'Enable FIPS': true,
+        'Enable General Purpose OS STIG compatibility mode': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -82,6 +84,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
+        enable_gpos_stig: true,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
@@ -93,6 +96,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(values).toEqual({
         'Enable FIPS': false,
+        'Enable General Purpose OS STIG compatibility mode': false,
       });
     });
   });

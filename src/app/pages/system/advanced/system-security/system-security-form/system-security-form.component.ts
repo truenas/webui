@@ -20,7 +20,6 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -46,9 +45,8 @@ export class SystemSecurityFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     enable_fips: [false],
+    enable_gpos_stig: [false],
   });
-
-  private isHaLicensed$ = this.store$.select(selectIsHaLicensed);
 
   private systemSecurityConfig: SystemSecurityConfig;
 
