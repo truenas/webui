@@ -2,11 +2,7 @@
   <div class="header">
     <div class="header-overlay">
       <div class="logo-wrapper">
-        <ix-icon
-          name="ix-truenas-logo"
-          class="logo"
-          [fullSize]="true"
-        ></ix-icon>
+        <ix-truenas-logo color="white" [fullSize]="true"></ix-truenas-logo>
       </div>
     </div>
   </div>
@@ -30,7 +26,7 @@
         [innerHtml]="helptext.forums | translate"
       ></div>
     </div>
-    
+
     @if (!isEnterprise()) {
     <div
       id="open-source"

@@ -39,9 +39,9 @@ export const selectBuildYear = createSelector(
 );
 
 export const selectCopyrightText = createSelector(
-  selectIsEnterprise,
+  selectProductType,
   selectBuildYear,
-  (isEnterprise, buildYear) => getCopyrightText(isEnterprise, buildYear),
+  (productType, buildYear) => getCopyrightText(productType, buildYear),
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);

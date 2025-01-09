@@ -4,11 +4,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TranslateModule } from '@ngx-translate/core';
 import { MockComponent } from 'ng-mocks';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/topbar/about-dialog/about-dialog.component';
+import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -19,9 +19,7 @@ describe('AboutDialogComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AboutDialogComponent,
-    imports: [
-      TranslateModule.forRoot(),
-    ],
+    imports: [],
     providers: [
       provideMockStore({
         selectors: [
@@ -40,7 +38,10 @@ describe('AboutDialogComponent', () => {
       mockProvider(ApiService),
       mockProvider(MatDialogRef),
     ],
-    declarations: [MockComponent(IxIconComponent)],
+    declarations: [
+      MockComponent(IxIconComponent),
+      MockComponent(TruenasLogoComponent),
+    ],
   });
 
   beforeEach(() => {
@@ -76,6 +77,6 @@ describe('AboutDialogComponent', () => {
 
   it('should display product-specific open source text', () => {
     const openSourceElement = spectator.query('#open-source');
-    expect(openSourceElement).toHaveText('TrueNAS is Free and  Open Source software, which is provided as-is with no warranty.');
+    expect(openSourceElement).toHaveText('TrueNAS Community Edition is Free and  Open Source software, which is provided as-is with no warranty.');
   });
 });

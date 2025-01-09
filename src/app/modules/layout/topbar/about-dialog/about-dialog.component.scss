@@ -34,11 +34,11 @@
   display: flex;
   margin: 20px 10px;
 
-  > *:first-child {
+  >*:first-child {
     flex: 1 1 10%;
   }
 
-  > *:last-child {
+  >*:last-child {
     flex: 1 1 90%;
   }
 }
@@ -46,7 +46,8 @@
 .bullet-icon {
   font-size: 36px;
   height: 36px;
-  width: 36px;;
+  width: 36px;
+  ;
 }
 
 #ix-img {
@@ -115,6 +116,6 @@
   .bullet-icon {
     font-size: 24px;
     height: 24px;
-    width: 24px;;
+    width: 24px;
   }
 }
