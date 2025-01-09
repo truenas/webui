@@ -35,7 +35,7 @@ export class CpuCoreBarComponent {
       .filter((key) => key.startsWith('core'))
       .map((key) => {
         const splitCoreTitle = key.split('_')[0];
-        return Number(splitCoreTitle[splitCoreTitle.length - 1]);
+        return Number(splitCoreTitle.replace('core', ''));
       })
       .filter((key) => !Number.isNaN(key));
 
