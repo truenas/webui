@@ -131,6 +131,9 @@ export class SnapshotTaskFormComponent implements OnInit {
     protected storageService: StorageService,
     public slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 
@@ -171,13 +174,13 @@ export class SnapshotTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);
+    } else {
+      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

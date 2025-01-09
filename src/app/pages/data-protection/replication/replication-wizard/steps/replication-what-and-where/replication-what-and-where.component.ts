@@ -162,7 +162,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    public slideInRef: SlideInRef<unknown, unknown>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -174,7 +173,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-  ) {}
+    public slideInRef: SlideInRef<unknown, unknown>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.disableSource();

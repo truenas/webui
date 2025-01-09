@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -69,15 +69,15 @@ export class ServiceSshComponent implements OnInit {
   };
 
   form = this.fb.group({
-    tcpport: [null as number],
-    password_login_groups: [null as string[]],
+    tcpport: [null as number | null],
+    password_login_groups: [null as string[] | null],
     passwordauth: [false],
     kerberosauth: [false],
     tcpfwd: [false],
     bindiface: [[] as string[]],
     compression: [false],
-    sftp_log_level: [null as SshSftpLogLevel],
-    sftp_log_facility: [null as SshSftpLogFacility],
+    sftp_log_level: [null as SshSftpLogLevel | null],
+    sftp_log_facility: [null as SshSftpLogFacility | null],
     weak_ciphers: [[] as SshWeakCipher[]],
     options: [''],
   });
@@ -106,13 +106,17 @@ export class ServiceSshComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialogService: DialogService,
     private userService: UserService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading = true;

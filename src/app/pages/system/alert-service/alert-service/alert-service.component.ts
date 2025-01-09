@@ -107,7 +107,7 @@ export class AlertServiceComponent implements OnInit {
   isLoading = false;
   protected readonly existingAlertService: AlertService | undefined;
 
-  private readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
+  private readonly alertServiceContainer = viewChild.required('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
 
@@ -123,6 +123,9 @@ export class AlertServiceComponent implements OnInit {
     private dialogService: DialogService,
     public slideInRef: SlideInRef<AlertService | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.commonForm.dirty || this.alertServiceForm?.form.dirty);
+    });
     this.existingAlertService = this.slideInRef.getData();
     this.setFormEvents();
   }

@@ -13,7 +13,6 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -92,7 +91,6 @@ describe('ReplicationTaskCardComponent', () => {
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -191,6 +189,8 @@ describe('ReplicationTaskCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Replication Task <b>"APPS/test2 - APPS/test3"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.delete', [1]);

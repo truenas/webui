@@ -30,7 +30,11 @@ describe('KernelFormComponent', () => {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
+      }),
       provideMockStore(),
       mockAuth(),
     ],
@@ -39,7 +43,11 @@ describe('KernelFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       providers: [
-        mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => true) }),
+        mockProvider(SlideInRef, {
+          close: jest.fn(),
+          getData: jest.fn(() => true),
+          requireConfirmationWhen: jest.fn(),
+        }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

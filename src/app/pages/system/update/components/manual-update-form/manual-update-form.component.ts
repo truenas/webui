@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
@@ -75,7 +75,7 @@ export class ManualUpdateFormComponent implements OnInit {
   protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);
-  form = this.formBuilder.nonNullable.group({
+  form = this.formBuilder.group({
     filelocation: ['', Validators.required],
     updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
@@ -93,7 +93,7 @@ export class ManualUpdateFormComponent implements OnInit {
     private dialogService: DialogService,
     protected router: Router,
     public systemService: SystemGeneralService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,

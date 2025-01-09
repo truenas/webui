@@ -215,6 +215,7 @@ export class CertificateAuthorityListComponent implements OnInit {
           message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> certificate authority?', {
             name: authority.name,
           }),
+          buttonColor: 'warn',
           buttonText: this.translate.instant('Delete'),
         })
         .pipe(

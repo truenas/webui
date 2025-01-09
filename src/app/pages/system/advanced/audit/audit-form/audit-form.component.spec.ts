@@ -41,7 +41,11 @@ describe('AuditFormComponent', () => {
       }),
       mockProvider(DialogService),
       provideMockStore(),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn() }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockAuth(),
     ],
   });

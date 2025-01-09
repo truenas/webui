@@ -13,7 +13,6 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { ResilverConfigComponent } from './resilver-config.component';
 
 describe('ResilverConfigComponent', () => {
@@ -36,7 +35,6 @@ describe('ResilverConfigComponent', () => {
         } as ResilverConfig),
         mockCall('pool.resilver.update'),
       ]),
-      mockProvider(OldSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),

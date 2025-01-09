@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -136,8 +136,12 @@ export class DatasetQuotaAddFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
-    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string } | undefined, boolean>,
+    public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string }, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.quotaType = slideInRef.getData().quotaType;
     this.datasetId = slideInRef.getData().datasetId;
   }
@@ -173,41 +177,41 @@ export class DatasetQuotaAddFormComponent implements OnInit {
 
   private getQuotas(): SetDatasetQuota[] {
     const quotas: SetDatasetQuota[] = [];
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
 
     switch (this.quotaType) {
       case DatasetQuotaType.User:
         formValues.users.forEach((user) => {
-          if (formValues.data_quota > 0) {
+          if (Number(formValues.data_quota) > 0) {
             quotas.push({
               id: String(user),
               quota_type: DatasetQuotaType.User,
-              quota_value: formValues.data_quota,
+              quota_value: Number(formValues.data_quota),
             });
           }
-          if (formValues.obj_quota > 0) {
+          if (Number(formValues.obj_quota) > 0) {
             quotas.push({
               id: String(user),
               quota_type: DatasetQuotaType.UserObj,
-              quota_value: formValues.obj_quota,
+              quota_value: Number(formValues.obj_quota),
             });
           }
         });
         break;
       case DatasetQuotaType.Group:
         formValues.groups.forEach((group) => {
-          if (formValues.data_quota > 0) {
+          if (Number(formValues.data_quota) > 0) {
             quotas.push({
               id: String(group),
               quota_type: DatasetQuotaType.Group,
-              quota_value: formValues.data_quota,
+              quota_value: Number(formValues.data_quota),
             });
           }
-          if (formValues.obj_quota > 0) {
+          if (Number(formValues.obj_quota) > 0) {
             quotas.push({
               id: String(group),
               quota_type: DatasetQuotaType.GroupObj,
-              quota_value: formValues.obj_quota,
+              quota_value: Number(formValues.obj_quota),
             });
           }
         });

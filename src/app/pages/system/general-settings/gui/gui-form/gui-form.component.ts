@@ -107,6 +107,10 @@ export class GuiFormComponent {
     public slideInRef: SlideInRef<undefined, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+
     this.loadCurrentValues();
     this.setupThemePreview();
   }
@@ -121,7 +125,7 @@ export class GuiFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     const params = {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),

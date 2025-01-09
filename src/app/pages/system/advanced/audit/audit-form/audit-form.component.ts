@@ -1,15 +1,15 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   EMPTY,
+  of,
 } from 'rxjs';
 import {
   catchError, tap,
@@ -58,11 +58,11 @@ export class AuditFormComponent implements OnInit {
   isFormLoading = false;
 
   readonly form = this.fb.group({
-    retention: [null as number, [Validators.required, Validators.min(1), Validators.max(30)]],
-    reservation: [null as number, [Validators.required, Validators.min(0), Validators.max(100)]],
-    quota: [null as number, [Validators.required, Validators.min(0), Validators.max(100)]],
-    quota_fill_warning: [null as number, [Validators.required, Validators.min(5), Validators.max(80)]],
-    quota_fill_critical: [null as number, [Validators.required, Validators.min(50), Validators.max(95)]],
+    retention: [null as number | null, [Validators.required, Validators.min(1), Validators.max(30)]],
+    reservation: [null as number | null, [Validators.required, Validators.min(0), Validators.max(100)]],
+    quota: [null as number | null, [Validators.required, Validators.min(0), Validators.max(100)]],
+    quota_fill_warning: [null as number | null, [Validators.required, Validators.min(5), Validators.max(80)]],
+    quota_fill_critical: [null as number | null, [Validators.required, Validators.min(50), Validators.max(95)]],
   });
 
   readonly tooltips = {
@@ -74,7 +74,7 @@ export class AuditFormComponent implements OnInit {
   };
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private api: ApiService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
@@ -84,7 +84,11 @@ export class AuditFormComponent implements OnInit {
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.loadForm();

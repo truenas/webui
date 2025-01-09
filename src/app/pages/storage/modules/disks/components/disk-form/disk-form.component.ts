@@ -60,11 +60,11 @@ export class DiskFormComponent implements OnInit {
     name: [''],
     serial: [''],
     description: [''],
-    critical: [null as number, [Validators.min(0)]],
-    difference: [null as number, [Validators.min(0)]],
-    informational: [null as number, [Validators.min(0)]],
-    hddstandby: [null as DiskStandby],
-    advpowermgmt: [null as DiskPowerLevel],
+    critical: [null as number | null, [Validators.min(0)]],
+    difference: [null as number | null, [Validators.min(0)]],
+    informational: [null as number | null, [Validators.min(0)]],
+    hddstandby: [null as DiskStandby | null],
+    advpowermgmt: [null as DiskPowerLevel | null],
     togglesmart: [false],
     smartoptions: [''],
     passwd: [''],
@@ -87,6 +87,9 @@ export class DiskFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     public slideInRef: SlideInRef<Disk | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.setFormDisk(this.slideInRef.getData());
   }
 

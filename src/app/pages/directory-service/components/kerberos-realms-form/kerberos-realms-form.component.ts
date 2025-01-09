@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
@@ -80,6 +80,9 @@ export class KerberosRealmsFormComponent implements OnInit {
     private translate: TranslateService,
     public slideInRef: SlideInRef<KerberosRealm | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingRealm = slideInRef.getData();
   }
 
@@ -100,13 +103,13 @@ export class KerberosRealmsFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
-    } else {
+    if (this.editingRealm) {
       request$ = this.api.call('kerberos.realm.update', [
         this.editingRealm.id,
         values as KerberosRealmUpdate,
       ]);
+    } else {
+      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

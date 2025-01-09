@@ -126,7 +126,7 @@ export class TunableFormComponent implements OnInit {
   }
 
   private updateTunable(): Observable<Job<Tunable>> {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     return this.api.job('tunable.update', [
       this.editingTunable.id,
       {

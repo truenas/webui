@@ -35,7 +35,6 @@ import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
-import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
@@ -65,7 +64,6 @@ import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/
     ConsoleFooterComponent,
     AlertsPanelComponent,
     SlideInControllerComponent,
-    OldSlideInComponent,
     AsyncPipe,
     TranslateModule,
     TruenasLogoComponent,

@@ -192,6 +192,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
       message: this.translate.instant('Delete Cloud Sync Task <b>"{name}"</b>?', {
         name: cloudsyncTask.description,
       }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('cloudsync.delete', [cloudsyncTask.id])),

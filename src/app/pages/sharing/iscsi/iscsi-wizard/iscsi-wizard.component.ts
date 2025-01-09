@@ -14,6 +14,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   lastValueFrom, forkJoin,
+  of,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -258,6 +259,10 @@ export class IscsiWizardComponent implements OnInit {
     private store$: Store<ServicesState>,
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.set(extents.map((extent) => extent.name));
     });

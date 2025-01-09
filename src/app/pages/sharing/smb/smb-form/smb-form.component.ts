@@ -243,6 +243,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private smbValidationService: SmbValidationService,
     public slideInRef: SlideInRef<{ existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare } | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.existingSmbShare = this.slideInRef.getData()?.existingSmbShare;
     this.defaultSmbShare = this.slideInRef.getData()?.defaultSmbShare;
   }
@@ -398,7 +402,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.form.controls.purpose.setValue(
           this.isNew
             ? SmbPresetType.DefaultShareParameters
-            : this.existingSmbShare?.purpose,
+            : (this.existingSmbShare?.purpose || null),
         );
         this.cdr.markForCheck();
       }),
@@ -465,10 +469,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
     let request$: Observable<SmbShare>;
 
-    if (this.isNew) {
-      request$ = this.api.call('sharing.smb.create', [smbShare]);
-    } else {
+    if (this.existingSmbShare) {
       request$ = this.api.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
+    } else {
+      request$ = this.api.call('sharing.smb.create', [smbShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -541,6 +545,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   promptIfRestartRequired(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
+      filter((service) => !!service),
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {

@@ -14,6 +14,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
+  filter,
   map, Observable, of,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -26,6 +27,8 @@ import {
   virtualizationProxyProtocolLabels,
   VirtualizationRemote,
   VirtualizationType,
+  virtualizationTypeIcons,
+  virtualizationTypeLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
@@ -42,6 +45,7 @@ import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/i
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
+import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
@@ -64,23 +68,24 @@ import { FilesystemService } from 'app/services/filesystem.service';
   selector: 'ix-instance-wizard',
   standalone: true,
   imports: [
-    PageHeaderComponent,
-    IxInputComponent,
-    ReactiveFormsModule,
-    TranslateModule,
-    IxCheckboxComponent,
-    MatButton,
-    TestDirective,
-    ReadOnlyComponent,
     AsyncPipe,
-    IxListComponent,
+    IxCheckboxComponent,
+    IxCheckboxListComponent,
+    IxExplorerComponent,
     IxFormGlossaryComponent,
     IxFormSectionComponent,
-    IxCheckboxListComponent,
+    IxInputComponent,
+    IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
-    IxExplorerComponent,
+    MatButton,
     NgxSkeletonLoaderModule,
+    PageHeaderComponent,
+    ReactiveFormsModule,
+    ReadOnlyComponent,
+    TestDirective,
+    TranslateModule,
+    IxIconGroupComponent,
   ],
   templateUrl: './instance-wizard.component.html',
   styleUrls: ['./instance-wizard.component.scss'],
@@ -90,6 +95,8 @@ export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
   protected readonly VirtualizationNicType = VirtualizationNicType;
+  protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
+  protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
 
@@ -109,10 +116,9 @@ export class InstanceWizardComponent {
     }))),
   );
 
-  // TODO: MV supports only [Container, Physical] for now (based on the response)
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
-    [VirtualizationType.Container, VirtualizationGpuType.Physical],
+    [VirtualizationGpuType.Physical],
   ).pipe(
     map((choices) => Object.entries(choices).map(([pci, gpu]) => ({
       label: gpu.description,
@@ -121,10 +127,11 @@ export class InstanceWizardComponent {
   );
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    name: ['', Validators.required],
-    image: ['', Validators.required],
+    name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    instance_type: [VirtualizationType.Container, Validators.required],
+    image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number | null],
+    memory: [null as number],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -132,9 +139,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number | null>;
+      source_port: FormControl<number>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number | null>;
+      dest_port: FormControl<number>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -167,25 +174,22 @@ export class InstanceWizardComponent {
         minWidth: '90vw',
         data: {
           remote: VirtualizationRemote.LinuxContainers,
+          type: this.form.controls.instance_type.value,
         },
       })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((image: VirtualizationImageWithId) => {
-        if (!image) {
-          return;
-        }
-
         this.form.controls.image.setValue(image.id);
       });
   }
 
   protected addProxy(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number | null, Validators.required],
+      source_port: [null as number, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number | null, Validators.required],
+      dest_port: [null as number, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -196,7 +200,7 @@ export class InstanceWizardComponent {
   }
 
   protected addDisk(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
@@ -228,7 +232,7 @@ export class InstanceWizardComponent {
   }
 
   addEnvironmentVariable(): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
     });
@@ -246,6 +250,7 @@ export class InstanceWizardComponent {
     return {
       devices,
       autostart: true,
+      instance_type: this.form.controls.instance_type.value,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
@@ -297,23 +302,26 @@ export class InstanceWizardComponent {
         dev_type: VirtualizationDeviceType.Gpu,
       });
     }
-
     const macVlanNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
-    for (const parent of this.form.controls.mac_vlan_nics.value) {
-      macVlanNics.push({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Macvlan,
-      });
+    if (!this.form.controls.use_default_network.value) {
+      for (const parent of this.form.controls.mac_vlan_nics.value) {
+        macVlanNics.push({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Macvlan,
+        });
+      }
     }
 
     const bridgedNics: { parent: string; dev_type: VirtualizationDeviceType; nic_type: VirtualizationNicType }[] = [];
-    for (const parent of this.form.controls.bridged_nics.value) {
-      bridgedNics.push({
-        parent,
-        dev_type: VirtualizationDeviceType.Nic,
-        nic_type: VirtualizationNicType.Bridged,
-      });
+    if (!this.form.controls.use_default_network.value) {
+      for (const parent of this.form.controls.bridged_nics.value) {
+        bridgedNics.push({
+          parent,
+          dev_type: VirtualizationDeviceType.Nic,
+          nic_type: VirtualizationNicType.Bridged,
+        });
+      }
     }
 
     const proxies = this.form.controls.proxies.value.map((proxy) => ({

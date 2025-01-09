@@ -9,10 +9,10 @@
         <ix-product-image
           class="product-image"
           [systemProduct]="systemInfo()?.platform"
-          [hasEnclosureSupport]="hasEnclosureSupport()"
-          [isHaLicensed]="isHaLicensed()"
-          [isEnterprise]="isEnterprise()"
-          [isIxHardware]="isIxHardware()"
+          [hasEnclosureSupport]="!!hasEnclosureSupport()"
+          [isHaLicensed]="!!isHaLicensed()"
+          [isEnterprise]="!!isEnterprise()"
+          [isIxHardware]="!!isIxHardware()"
         >
           <span>{{ 'Active' | translate }}</span>
         </ix-product-image>

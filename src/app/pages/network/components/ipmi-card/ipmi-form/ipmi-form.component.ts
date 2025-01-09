@@ -80,7 +80,7 @@ export class IpmiFormComponent implements OnInit {
   readonly helptext = helptextIpmi;
 
   form = this.fb.group({
-    apply_remote: [null as boolean],
+    apply_remote: [null as boolean | null],
     dhcp: [false],
     ipaddress: ['', [
       this.validatorsService.withMessage(
@@ -100,7 +100,7 @@ export class IpmiFormComponent implements OnInit {
         this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
-    vlan: [null as number],
+    vlan: [null as number | null],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -122,8 +122,11 @@ export class IpmiFormComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    public slideInRef: SlideInRef<number | undefined, boolean>,
+    public slideInRef: SlideInRef<number, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.ipmiId = this.slideInRef.getData();
   }
 
@@ -219,7 +222,7 @@ export class IpmiFormComponent implements OnInit {
       .pipe(
         switchMap((controlState) => {
           this.isLoading = true;
-          isUsingRemote = controlState;
+          isUsingRemote = !!controlState;
           if (this.queryParams?.length && controlState) {
             this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
           }

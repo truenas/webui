@@ -75,7 +75,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   readonly format = input<(value: string | number) => string>();
-  readonly parse = input<(value: string | number) => string | number>();
+  readonly parse = input<(value: string | number) => string | number | null>();
 
   readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 
@@ -86,7 +86,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   showPassword = false;
   invalid = false;
   filteredOptions: Option[];
-  private lastKnownValue: string | number = this._value;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -152,11 +151,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     });
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = (val) => {
-      this.lastKnownValue = val;
-      onChange(val);
-    };
+  registerOnChange(onChanged: () => void): void {
+    this.onChange = onChanged;
   }
 
   registerOnTouched(onTouched: () => void): void {
@@ -222,11 +218,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       if (format) {
         this.formatted = format(this.value);
       }
-    }
-
-    if (this.value !== this.lastKnownValue) {
-      this.lastKnownValue = this.value;
-      this.onChange(this.value);
     }
 
     if (this.autocompleteOptions() && !this.findExistingOption(this.value)) {

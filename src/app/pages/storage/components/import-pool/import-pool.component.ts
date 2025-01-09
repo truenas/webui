@@ -83,7 +83,11 @@ export class ImportPoolComponent implements OnInit {
     private snackbar: SnackbarService,
     private loader: AppLoaderService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) { }
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
