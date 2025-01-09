@@ -125,7 +125,19 @@ export class VmWizardComponent implements OnInit {
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(
+        this.osStep().form.dirty
+        || this.cpuAndMemoryStep().form.dirty
+        || this.diskStep().form.dirty
+        || this.networkInterfaceStep().form.dirty
+        || this.installationMediaStep().form.dirty
+        || this.installationMediaStep().form.dirty
+        || this.gpuStep().form.dirty,
+      );
+    });
+  }
 
   ngOnInit(): void {
     this.setDefaultsFromOs();

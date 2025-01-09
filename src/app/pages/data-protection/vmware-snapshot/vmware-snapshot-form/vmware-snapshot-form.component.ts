@@ -103,6 +103,9 @@ export class VmwareSnapshotFormComponent implements OnInit {
     protected dialogService: DialogService,
     public slideInRef: SlideInRef<VmwareSnapshot | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingSnapshot = slideInRef.getData();
   }
 

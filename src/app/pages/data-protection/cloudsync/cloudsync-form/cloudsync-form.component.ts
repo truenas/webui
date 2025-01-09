@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -35,6 +36,7 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -210,6 +212,8 @@ export class CloudSyncFormComponent implements OnInit {
 
   bucketOptions$ = of<SelectOption[]>([]);
 
+  protected readonly hasRequiredRoles = toSignal(this.authService.hasRole(this.requiredRoles));
+
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
@@ -229,6 +233,7 @@ export class CloudSyncFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
     public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
+    private authService: AuthService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -388,6 +393,17 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   loadBucketOptions(): void {
+    if (!this.hasRequiredRoles()) {
+      this.isLoading = false;
+      const bucket = this.editingTask.attributes.bucket as string;
+      if (bucket) {
+        this.form.controls.bucket.enable();
+        this.bucketOptions$ = of([{ label: bucket, value: bucket }]);
+        this.form.controls.bucket.setValue(bucket);
+      }
+      this.cdr.markForCheck();
+      return;
+    }
     const targetCredentials = find(this.credentialsList, { id: this.form.controls.credentials.value });
     if (!targetCredentials) {
       return;

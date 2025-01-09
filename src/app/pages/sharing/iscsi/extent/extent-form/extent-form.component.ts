@@ -139,6 +139,9 @@ export class ExtentFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingExtent = this.slideInRef.getData();
   }
 

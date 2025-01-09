@@ -112,7 +112,11 @@ export class ServiceSshComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading = true;

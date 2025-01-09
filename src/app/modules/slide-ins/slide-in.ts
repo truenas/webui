@@ -73,7 +73,7 @@ export class SlideIn extends ComponentStore<SlideInState> {
     return close$.asObservable().pipe(tap(() => this.focusService.restoreFocus()));
   }
 
-  popComponent = this.updater((state, id: string | undefined) => {
+  popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
     newMap.set(id, { ...newMap.get(id), isComponentAlive: false });
     this.focusOnTheCloseButton();

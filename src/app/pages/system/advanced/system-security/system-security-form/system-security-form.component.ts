@@ -57,11 +57,11 @@ export class SystemSecurityFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);

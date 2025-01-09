@@ -106,6 +106,9 @@ export class RaidzExtendDialogComponent {
 
     const minimumSize = this.data.vdev.children.reduce((acc, topologyDisk) => {
       const disk = diskDictionary[topologyDisk.disk];
+      if (!disk) {
+        return acc;
+      }
       return disk.size < acc ? disk.size : acc;
     }, Number.MAX_SAFE_INTEGER);
 

@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { combineLatest, map } from 'rxjs';
+import { combineLatest, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -138,6 +138,10 @@ export class DatasetQuotaAddFormComponent implements OnInit {
     private userService: UserService,
     public slideInRef: SlideInRef<{ quotaType: DatasetQuotaType; datasetId: string }, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.quotaType = slideInRef.getData().quotaType;
     this.datasetId = slideInRef.getData().datasetId;
   }
