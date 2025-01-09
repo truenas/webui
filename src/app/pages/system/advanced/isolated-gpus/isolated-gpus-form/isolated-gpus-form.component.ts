@@ -7,7 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, take } from 'rxjs';
+import { map, of, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -71,7 +71,11 @@ export class IsolatedGpusFormComponent implements OnInit {
     private gpuValidator: IsolatedGpuValidatorService,
     private snackbar: SnackbarService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) { }
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.store$.pipe(

@@ -123,6 +123,9 @@ export class AlertServiceComponent implements OnInit {
     private dialogService: DialogService,
     public slideInRef: SlideInRef<AlertService | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.commonForm.dirty || this.alertServiceForm?.form.dirty);
+    });
     this.existingAlertService = this.slideInRef.getData();
     this.setFormEvents();
   }

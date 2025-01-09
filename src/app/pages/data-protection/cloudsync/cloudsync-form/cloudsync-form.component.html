@@ -97,6 +97,7 @@
             <ix-explorer
               formControlName="folder_destination"
               root="/"
+              [readonly]="!hasRequiredRoles()"
               [label]="helptext.folder_placeholder | translate"
               [tooltip]="helptext.folder_tooltip | translate"
               [nodeProvider]="bucketNodeProvider"
@@ -106,6 +107,7 @@
             <ix-explorer
               formControlName="folder_source"
               root="/"
+              [readonly]="!hasRequiredRoles()"
               [label]="helptext.folder_placeholder | translate"
               [tooltip]="helptext.folder_tooltip | translate"
               [multiple]="true"

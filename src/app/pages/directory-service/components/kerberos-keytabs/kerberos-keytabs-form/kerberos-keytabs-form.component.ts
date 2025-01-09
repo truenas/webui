@@ -6,7 +6,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { KiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosKeytabs } from 'app/helptext/directory-service/kerberos-keytabs-form-list';
@@ -16,6 +17,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -58,7 +60,10 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
   form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    file: [null as File[] | null, Validators.required],
+    file: [null as File[] | null, Validators.compose([
+      Validators.required,
+      this.fileValidator.maxSize(40 * KiB),
+    ])],
   });
 
   isLoading = false;
@@ -72,7 +77,11 @@ export class KerberosKeytabsFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     public slideInRef: SlideInRef<KerberosKeytab | undefined, boolean>,
+    private fileValidator: FileValidatorService,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingKerberosKeytab = slideInRef.getData();
   }
 

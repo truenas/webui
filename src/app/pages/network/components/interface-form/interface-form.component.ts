@@ -186,6 +186,9 @@ export class InterfaceFormComponent implements OnInit {
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<NetworkInterface | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.existingInterface = slideInRef.getData();
   }
 

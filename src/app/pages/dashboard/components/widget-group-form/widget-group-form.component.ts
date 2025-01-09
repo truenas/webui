@@ -85,6 +85,7 @@ export class WidgetGroupFormComponent {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
     });
+
     this.setupLayoutUpdates();
     this.setInitialFormValues();
   }

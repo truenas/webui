@@ -10,6 +10,7 @@
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",
   "Existing Ports": "",
   "Linux Only": "",
+  "Maximum file size is limited to {maxSize}.": "",
   "New Cloud Credential": "",
   "Protocol Options": "",
   "Restart is required after changing these settings.": "",
