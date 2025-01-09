@@ -86,7 +86,7 @@ export class WidgetSysInfoPassiveComponent {
     map(() => {
       return Math.floor((Date.now() - this.startTime) / 1000);
     }),
-  ), { requireSync: true });
+  ));
 
   isWaitingForEnabledHa = computed(() => !this.systemInfo() && !this.canFailover() && !this.isHaEnabled());
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));

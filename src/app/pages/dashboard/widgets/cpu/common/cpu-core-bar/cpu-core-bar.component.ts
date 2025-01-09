@@ -32,7 +32,11 @@ export class CpuCoreBarComponent {
   protected isLoading = computed(() => !this.cpuData());
   protected coreCount = computed(() => {
     const cpus = Object.keys(this.cpuData())
-      .map(Number)
+      .filter((key) => key.includes('core'))
+      .map((key) => {
+        const splitCoreTitle = key.split('_')[0];
+        return Number(splitCoreTitle[splitCoreTitle.length - 1]);
+      })
       .filter((key) => !Number.isNaN(key));
 
     return Math.max(...cpus) + 1;
@@ -118,7 +122,7 @@ export class CpuCoreBarComponent {
     const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.coreCount(); i++) {
-      const usage = parseInt(cpuData[i]?.usage?.toFixed(1) || '0');
+      const usage = parseInt(cpuData[`core${i}_usage`]?.toFixed(1) || '0');
       const temperature = parseInt(cpuData.temperature_celsius?.[i]?.toFixed(0) || '0');
 
       usageColumn.push(usage);

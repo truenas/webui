@@ -76,7 +76,7 @@ export class WidgetSysInfoActiveComponent {
     map(() => {
       return Math.floor((Date.now() - this.startTime) / 1000);
     }),
-  ), { requireSync: true });
+  ));
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());

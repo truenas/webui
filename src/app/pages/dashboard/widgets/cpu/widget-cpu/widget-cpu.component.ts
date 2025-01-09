@@ -112,7 +112,7 @@ export class WidgetCpuComponent {
     const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.threadCount(); i++) {
-      usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
+      usageColumn.push(parseInt(cpuData[`core${i}_usage`].toFixed(1)));
     }
 
     if (cpuData.temperature_celsius) {
