@@ -32,7 +32,7 @@ export class CpuCoreBarComponent {
   protected isLoading = computed(() => !this.cpuData());
   protected coreCount = computed(() => {
     const cpus = Object.keys(this.cpuData())
-      .filter((key) => key.includes('core'))
+      .filter((key) => key.startsWith('core'))
       .map((key) => {
         const splitCoreTitle = key.split('_')[0];
         return Number(splitCoreTitle[splitCoreTitle.length - 1]);

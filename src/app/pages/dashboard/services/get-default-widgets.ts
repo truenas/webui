@@ -18,7 +18,6 @@ const defaultWidgets: WidgetGroup[] = [
     layout: WidgetGroupLayout.Halves,
     slots: [
       { type: WidgetType.CpuUsageBar },
-      { type: WidgetType.CpuTemperatureBar },
     ],
   },
   {
