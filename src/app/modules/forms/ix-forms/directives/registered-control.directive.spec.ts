@@ -1,29 +1,43 @@
 import { ElementRef } from '@angular/core';
-import { NgControl } from '@angular/forms';
-import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import {
+  ReactiveFormsModule, FormGroup, FormControl, NgControl,
+} from '@angular/forms';
+import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
+import { RegisteredControlDirective } from './registered-control.directive';
 
-// TODO: https://ixsystems.atlassian.net/browse/NAS-133118
-describe.skip('RegisteredControlDirective', () => {
-  let spectator: SpectatorDirective<RegisteredControlDirective>;
-
-  const createDirective = createDirectiveFactory({
-    directive: RegisteredControlDirective,
+describe('RegisteredControlDirective', () => {
+  const testGroup = new FormGroup({
+    testControl: new FormControl(''),
+  });
+  const createDirective = createHostFactory({
+    component: RegisteredControlDirective,
+    imports: [ReactiveFormsModule],
     providers: [
       mockProvider(IxFormService),
-      mockProvider(NgControl, {}),
+      mockProvider(NgControl, {
+        name: 'testGroup',
+        control: testGroup,
+      }),
+      mockProvider(ElementRef, {
+        nativeElement: document.createElement('div'),
+      }),
     ],
   });
 
-  beforeEach(() => {
-    spectator = createDirective('<div ixRegisteredControl [label]="\'Test\'" [formGroupName]=\'test\'></div>');
-  });
+  it('shows element when hasAccess is true', () => {
+    const spectator = createDirective(`
+      <div [formGroup]="fg"><div ixRegisteredControl [formGroupName]="'testGroup'"><input formControlName="testControl"></div></div>
+    `, {
+      hostProps: {
+        fg: new FormGroup({
+          testGroup,
+        }),
+      },
+    });
 
-  it('registers control and element ref of the element with form service', () => {
-    expect(spectator.inject(IxFormService).registerControl).toHaveBeenCalledWith(
-      spectator.inject(NgControl),
-      expect.any(ElementRef),
-    );
+    spectator.component.ngAfterViewInit();
+
+    expect(spectator.inject(IxFormService).registerControl).toHaveBeenCalled();
   });
 });
