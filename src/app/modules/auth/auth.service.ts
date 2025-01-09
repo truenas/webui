@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import { LocalStorage } from 'ngx-webstorage';
 import {
   BehaviorSubject,
+  catchError,
   filter,
   map,
   Observable,
@@ -21,7 +22,9 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
@@ -73,8 +76,10 @@ export class AuthService {
     private store$: Store<AppState>,
     private api: ApiService,
     private tokenLastUsedService: TokenLastUsedService,
-    @Inject(WINDOW) private window: Window,
     private wsStatus: WebSocketStatusService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
@@ -138,6 +143,10 @@ export class AuthService {
       token: this.token,
     }]).pipe(
       switchMap((loginResult) => this.processLoginResult(loginResult)),
+      catchError((error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
+        return of(LoginResult.NoAccess);
+      }),
     );
   }
 
