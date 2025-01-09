@@ -82,8 +82,8 @@
         </g>
       </g>
       <g>
-        <circle cx="326.53" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="326.53" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.53" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.53" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="326.53" cy="49" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M324.08,41.54v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M334.37,49c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -153,8 +153,8 @@
         </g>
       </g>
       <g>
-        <circle cx="645.52" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="645.52" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="645.52" cy="49" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M643.07,41.54v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M653.36,49c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -224,8 +224,8 @@
         </g>
       </g>
       <g>
-        <circle cx="964.08" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="964.08" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="964.08" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="964.08" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="964.08" cy="49" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M961.64,41.54v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M971.93,49c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -295,8 +295,8 @@
         </g>
       </g>
       <g>
-        <circle cx="1282.86" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="1282.86" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1282.86" cy="49" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1282.86" cy="49" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="1282.86" cy="49" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1280.41,41.54v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1290.7,49c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -366,8 +366,8 @@
         </g>
       </g>
       <g>
-        <circle cx="326.74" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="326.74" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.74" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.74" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="326.74" cy="129.91" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M324.3,122.45v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M334.59,129.91c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -437,8 +437,8 @@
         </g>
       </g>
       <g>
-        <circle cx="645.52" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="645.52" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="645.52" cy="129.91" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M643.07,122.45v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M653.36,129.91c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -508,8 +508,8 @@
         </g>
       </g>
       <g>
-        <circle cx="964.3" cy="129.9" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="964.3" cy="129.9" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="964.3" cy="129.9" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="964.3" cy="129.9" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="964.3" cy="129.9" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M961.85,122.45v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M972.14,129.91c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -579,8 +579,8 @@
         </g>
       </g>
       <g>
-        <circle cx="1283.07" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="1283.07" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1283.07" cy="129.91" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1283.07" cy="129.91" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="1283.07" cy="129.91" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1280.63,122.45v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1290.92,129.91c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -650,8 +650,8 @@
         </g>
       </g>
       <g>
-        <circle cx="326.31" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="326.31" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.31" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="326.31" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="326.31" cy="210.81" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M323.87,203.35v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M334.16,210.81c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -721,8 +721,8 @@
         </g>
       </g>
       <g>
-        <circle cx="645.52" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="645.52" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="645.52" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="645.52" cy="210.81" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M643.07,203.35v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M653.36,210.81c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -792,8 +792,8 @@
         </g>
       </g>
       <g>
-        <circle cx="963.87" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="963.87" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="963.87" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="963.87" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="963.87" cy="210.81" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M961.42,203.35v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M971.71,210.81c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
@@ -863,8 +863,8 @@
         </g>
       </g>
       <g>
-        <circle cx="1282.64" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
-        <circle cx="1282.64" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1282.64" cy="210.81" r="24.48" style="fill: #3a3b3a; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
+        <circle class="tint-target" cx="1282.64" cy="210.81" r="22.32" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <circle cx="1282.64" cy="210.81" r="8.57" style="stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1280.2,203.35v14.92c-3.14-1.03-5.4-3.98-5.4-7.46s2.26-6.44,5.4-7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
         <path d="M1290.49,210.81c0,3.48-2.26,6.43-5.4,7.46v-14.92c3.14,1.03,5.4,3.98,5.4,7.46Z" style="fill: #353535; stroke: #000; stroke-linecap: round; stroke-linejoin: round; stroke-width: .25px;"/>
