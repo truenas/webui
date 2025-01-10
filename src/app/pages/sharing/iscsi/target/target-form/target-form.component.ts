@@ -160,6 +160,10 @@ export class TargetFormComponent implements OnInit {
     private targetNameValidationService: TargetNameValidationService,
     public slideInRef: SlideInRef<IscsiTarget | undefined, IscsiTarget>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     this.editingTarget = slideInRef.getData();
 
     this.form.controls.name.setAsyncValidators(

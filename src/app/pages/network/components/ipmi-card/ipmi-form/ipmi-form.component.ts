@@ -124,6 +124,9 @@ export class IpmiFormComponent implements OnInit {
     private dialogService: DialogService,
     public slideInRef: SlideInRef<number, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.ipmiId = this.slideInRef.getData();
   }
 

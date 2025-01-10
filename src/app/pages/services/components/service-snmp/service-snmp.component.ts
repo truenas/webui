@@ -113,7 +113,11 @@ export class ServiceSnmpComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.loadCurrentSettings();

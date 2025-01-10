@@ -244,6 +244,9 @@ export class DeviceFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     public slideInRef: SlideInRef<{ virtualMachineId?: number; device?: VmDevice } | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.typeSpecificForm.dirty);
+    });
     this.slideInData = slideInRef.getData();
   }
 

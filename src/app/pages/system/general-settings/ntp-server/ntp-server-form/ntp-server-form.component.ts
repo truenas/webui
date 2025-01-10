@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
@@ -85,6 +85,9 @@ export class NtpServerFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<NtpServer | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
     this.editingServer = this.slideInRef.getData();
   }
 

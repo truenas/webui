@@ -149,6 +149,10 @@ export class LocalizationFormComponent implements OnInit {
     public slideInRef: SlideInRef<LocalizationSettings, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+
     this.localizationSettings = this.slideInRef.getData();
   }
 

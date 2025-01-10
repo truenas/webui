@@ -37,6 +37,7 @@ describe('InstanceDiskFormComponent', () => {
               instanceId: 'my-instance',
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });
@@ -85,6 +86,7 @@ describe('InstanceDiskFormComponent', () => {
               },
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });

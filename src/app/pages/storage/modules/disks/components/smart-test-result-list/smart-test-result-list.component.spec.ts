@@ -42,7 +42,7 @@ describe('SmartTestResultListComponent', () => {
       lifetime: 15929,
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
-      remaining: 50,
+      remaining: 0.5,
       power_on_hours_ago: 25,
     },
     {
@@ -77,7 +77,7 @@ describe('SmartTestResultListComponent', () => {
       lifetime: 15929,
       lba_of_first_error: null,
       status: SmartTestResultStatus.Success,
-      remaining: 0.5,
+      remaining: 0.005,
       power_on_hours_ago: 25,
     },
     {

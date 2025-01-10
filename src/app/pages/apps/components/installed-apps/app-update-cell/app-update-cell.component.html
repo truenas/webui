@@ -4,7 +4,7 @@
       class="icon"
       matTooltipPosition="above"
       name="mdi-alert-circle"
-      [matTooltip]="'{version} is available!' | translate: { version: app().latest_version | appVersion }"
+      [matTooltip]="getVersionMsg(app().latest_version)"
     ></ix-icon>
   } @else {
     <ix-icon

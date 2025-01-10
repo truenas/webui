@@ -107,6 +107,10 @@ export class GuiFormComponent {
     public slideInRef: SlideInRef<undefined, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+
     this.loadCurrentValues();
     this.setupThemePreview();
   }

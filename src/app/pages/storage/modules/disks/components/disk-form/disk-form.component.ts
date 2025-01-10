@@ -87,6 +87,9 @@ export class DiskFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     public slideInRef: SlideInRef<Disk, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.setFormDisk(this.slideInRef.getData());
   }
 

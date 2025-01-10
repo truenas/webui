@@ -35,6 +35,7 @@ describe('InstanceProxyFormComponent', () => {
               instanceId: 'my-instance',
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });
@@ -89,6 +90,7 @@ describe('InstanceProxyFormComponent', () => {
               },
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });
