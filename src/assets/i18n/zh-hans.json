@@ -8,6 +8,7 @@
   "Linux Only": "",
   "Maximum file size is limited to {maxSize}.": "",
   "Restart is required after changing these settings.": "",
+  "Update completed successfully. The system will reboot shortly": "",
   "Virtualization (Old)": "",
   "Virtualization Method": "",
   "{n, plural, one {Pool in Enclosure} other {Pools in Enclosure} }": "",
