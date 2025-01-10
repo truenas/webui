@@ -24,22 +24,40 @@
         [showLabels]="true"
       ></ix-icon-group>
 
-      <div class="image-field">
-        <ix-input
-          class="input"
-          formControlName="image"
-          [readonly]="true"
-          [label]="'Image' | translate"
-          [required]="true"
-        ></ix-input>
+      <ix-radio-group
+        formControlName="image_type"
+        [label]="'VM Image Options' | translate"
+        [required]="true"
+        [options]="imageOptions$"
+      ></ix-radio-group>
 
-        <button
-          mat-button
-          ixTest="browse-images"
-          type="button"
-          (click)="onBrowseImages()"
-        >{{ 'Browse Catalog' | translate }}</button>
-      </div>
+      @if (form.value.image_type === SelectImageType.Choose) {
+        <div class="image-field">
+          <ix-input
+            class="input"
+            formControlName="image"
+            [readonly]="true"
+            [label]="'Image' | translate"
+            [required]="true"
+          ></ix-input>
+
+          <button
+            mat-button
+            ixTest="browse-images"
+            type="button"
+            (click)="onBrowseImages()"
+          >{{ 'Browse Catalog' | translate }}</button>
+        </div>
+      } @else {
+        <ix-file-input
+          formControlName="image_file"
+          acceptedFiles=".img,.iso"
+          [label]="'Image' | translate"
+          [multiple]="false"
+          [required]="true"
+        ></ix-file-input>
+      }
+
     </ix-form-section>
 
     <ix-form-section
