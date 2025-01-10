@@ -85,7 +85,7 @@
       }
 
       .chassis {
-        opacity: 0.1;
+        opacity: 0.15;
       }
 
       /*#Controller_1_Indicators,

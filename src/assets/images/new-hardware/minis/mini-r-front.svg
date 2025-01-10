@@ -16,6 +16,9 @@
       <feComposite in="SourceGraphic"/>
     </filter>
     <style>
+      #MINI_R_CHASSIS {
+        opacity: 0.75;
+      }
     </style>
   </defs>
   <g id="MINI_R_CHASSIS">
