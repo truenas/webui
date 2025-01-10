@@ -94,7 +94,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly VirtualizationNicType = VirtualizationNicType;
   protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
@@ -104,7 +103,9 @@ export class InstanceWizardComponent {
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
+  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({
+    zvolsOnly: true,
+  });
 
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
   macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
@@ -130,8 +131,8 @@ export class InstanceWizardComponent {
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    cpu: ['', [Validators.required, cpuValidator()]],
+    memory: [Validators.required, null as number],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -145,7 +146,6 @@ export class InstanceWizardComponent {
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
-      destination: FormControl<string>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -202,7 +202,6 @@ export class InstanceWizardComponent {
   protected addDisk(): void {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
-      destination: ['', Validators.required],
     });
 
     this.form.controls.disks.push(control);
@@ -284,7 +283,6 @@ export class InstanceWizardComponent {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
-      destination: proxy.destination,
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
