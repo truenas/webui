@@ -126,6 +126,7 @@ describe('EmailCardComponent with Outlook OAuth', () => {
 
     expect(itemTexts).toEqual([
       'Send Mail Method: Outlook OAuth',
+      'From: Test root@truenas.local via google.com',
     ]);
   });
 });
