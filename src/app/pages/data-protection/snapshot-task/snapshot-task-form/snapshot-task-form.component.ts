@@ -136,7 +136,7 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
     }
   }
 
@@ -144,12 +144,12 @@ export class SnapshotTaskFormComponent implements OnInit {
     return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(task: PeriodicSnapshotTask): void {
     this.form.patchValue({
-      ...this.editingTask,
-      begin: this.editingTask.schedule.begin,
-      end: this.editingTask.schedule.end,
-      schedule: scheduleToCrontab(this.editingTask.schedule),
+      ...task,
+      begin: task.schedule.begin,
+      end: task.schedule.end,
+      schedule: scheduleToCrontab(task.schedule),
     });
   }
 

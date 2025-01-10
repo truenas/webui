@@ -8,8 +8,8 @@
     class="search-input"
     [placeholder]="'Search UI' | translate"
     (click)="showOverlay()"
-    (focus)="overlayRef.detach(); searchInput.blur(); showOverlay()"
-    (blur)="overlayRef.detach()"
+    (focus)="overlayRef?.detach(); searchInput.blur(); showOverlay()"
+    (blur)="overlayRef?.detach()"
   />
 
   <ix-keyboard-shortcut

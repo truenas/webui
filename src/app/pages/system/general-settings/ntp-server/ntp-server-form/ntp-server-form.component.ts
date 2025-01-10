@@ -90,21 +90,21 @@ export class NtpServerFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingServer) {
-      this.setupForm();
+      this.setupForm(this.editingServer);
     }
   }
 
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(): void {
+  setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
-      address: this.editingServer.address,
-      burst: this.editingServer.burst,
-      iburst: this.editingServer.iburst,
-      prefer: this.editingServer.prefer,
-      minpoll: this.editingServer.minpoll,
-      maxpoll: this.editingServer.maxpoll,
+      address: server.address,
+      burst: server.burst,
+      iburst: server.iburst,
+      prefer: server.prefer,
+      minpoll: server.minpoll,
+      maxpoll: server.maxpoll,
     });
   }
 

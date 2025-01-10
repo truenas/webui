@@ -75,7 +75,7 @@ export class DiskBulkEditComponent {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<Disk[] | undefined, boolean>,
+    public slideInRef: SlideInRef<Disk[], boolean>,
   ) {
     this.setFormDiskBulk(this.slideInRef.getData());
   }

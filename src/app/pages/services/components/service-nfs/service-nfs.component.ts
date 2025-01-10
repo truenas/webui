@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -78,16 +77,16 @@ export class ServiceNfsComponent implements OnInit {
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
-    servers: [null as number, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
+    servers: [null as number | null, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
       (control) => !control.parent?.get('servers_auto')?.value,
       Validators.required,
     )]],
     protocols: [[NfsProtocol.V3], Validators.required],
     v4_domain: [''],
     v4_krb: [false],
-    mountd_port: [null as number, portRangeValidator()],
-    rpcstatd_port: [null as number, portRangeValidator()],
-    rpclockd_port: [null as number, portRangeValidator()],
+    mountd_port: [null as number | null, portRangeValidator()],
+    rpcstatd_port: [null as number | null, portRangeValidator()],
+    rpclockd_port: [null as number | null, portRangeValidator()],
     userd_manage_gids: [false],
     rdma: [false],
   });
@@ -129,7 +128,7 @@ export class ServiceNfsComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private store$: Store<AppState>,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -242,7 +241,7 @@ export class ServiceNfsComponent implements OnInit {
 
   get isAddSpnVisible(): boolean {
     return !this.hasNfsStatus()
-      && this.form.value.v4_krb
+      && this.form.getRawValue().v4_krb
       && this.activeDirectoryState() === DirectoryServiceState.Healthy;
   }
 

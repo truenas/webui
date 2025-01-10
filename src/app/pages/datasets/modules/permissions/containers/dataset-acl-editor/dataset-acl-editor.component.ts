@@ -14,7 +14,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -104,7 +103,6 @@ export class DatasetAclEditorComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private dialogService: DialogService,
     private matDialog: MatDialog,
     private userService: UserService,
     private formBuilder: FormBuilder,

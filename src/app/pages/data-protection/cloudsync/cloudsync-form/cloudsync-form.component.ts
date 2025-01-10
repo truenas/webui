@@ -494,7 +494,7 @@ export class CloudSyncFormComponent implements OnInit {
       this.enableRemoteExplorer();
       const targetCredentials = find(this.credentialsList, { id: credentials });
       const targetProvider = find(this.providersList, { name: targetCredentials?.provider.type });
-      if (targetProvider?.buckets) {
+      if (targetCredentials && targetProvider?.buckets) {
         this.isLoading = true;
         if (targetCredentials.provider.type === CloudSyncProviderName.MicrosoftAzure
           || targetCredentials.provider.type === CloudSyncProviderName.Hubic

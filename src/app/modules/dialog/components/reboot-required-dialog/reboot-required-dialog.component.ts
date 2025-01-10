@@ -1,10 +1,8 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,7 +22,6 @@ import { selectOtherNodeRebootInfo, selectThisNodeRebootInfo } from 'app/store/r
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    CdkScrollable,
     TranslateModule,
     ReactiveFormsModule,
     MatDialogModule,
@@ -50,7 +47,7 @@ export class RebootRequiredDialogComponent {
   constructor(
     private store$: Store<AppState>,
     private fips: FipsService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
   ) {}
 
   rebootLocalNode(): void {

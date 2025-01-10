@@ -85,12 +85,6 @@ export class KerberosRealmsFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingRealm) {
-      this.setRealmForEdit();
-    }
-  }
-
-  setRealmForEdit(): void {
-    if (!this.isNew) {
       this.form.patchValue(this.editingRealm);
     }
   }
