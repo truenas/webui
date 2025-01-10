@@ -85,7 +85,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   isDisabled = false;
   showPassword = false;
   invalid = false;
-  filteredOptions: Option[];
+  filteredOptions: Option[] | undefined;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -245,14 +245,15 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   filterOptions(customFilterValue?: string): void {
     const filterValue = (customFilterValue ?? this.value) || '';
-    if (this.autocompleteOptions()) {
-      this.filteredOptions = this.autocompleteOptions().filter((option) => {
+    const autocompleteOptions = this.autocompleteOptions();
+    if (autocompleteOptions) {
+      this.filteredOptions = autocompleteOptions.filter((option) => {
         return option.label.toString().toLowerCase().includes(filterValue.toString().toLowerCase());
       }).slice(0, 50);
     }
   }
 
-  private findExistingOption(value: string | number): Option {
+  private findExistingOption(value: string | number): Option | undefined {
     return this.autocompleteOptions()?.find((option) => (option.label === value) || (option.value === value));
   }
 

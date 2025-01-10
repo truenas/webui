@@ -15,7 +15,7 @@ import { QueryComparator } from 'app/interfaces/query-api.interface';
 export interface QueryParsingResult {
   hasErrors: boolean;
   errors: QueryParsingError[];
-  tree: ConditionGroup | Condition;
+  tree: ConditionGroup | Condition | null;
 }
 
 export interface QueryParsingError {
@@ -52,7 +52,7 @@ export enum ConnectorType {
   Or = 'OR',
 }
 
-export function isConditionGroup(node: ConditionGroup | Condition): node is ConditionGroup {
+export function isConditionGroup(node: ConditionGroup | Condition | null): node is ConditionGroup {
   return (node as ConditionGroup)?.connector !== undefined;
 }
 

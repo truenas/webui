@@ -54,7 +54,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   readonly snapshot = input.required<ZfsSnapshotUi>();
 
   isLoading = true;
-  snapshotInfo: ZfsSnapshotUi;
+  snapshotInfo: ZfsSnapshotUi | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.FullAdmin];

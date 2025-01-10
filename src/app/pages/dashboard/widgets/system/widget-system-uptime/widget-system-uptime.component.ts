@@ -35,8 +35,8 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   systemInfo$ = this.resources.systemInfo$;
 
   loadedSystemInfo = toSignal(this.systemInfo$.pipe(
-    filter((state) => !state.isLoading),
     map((state) => state.value),
+    filter((value) => !!value),
   ));
 
   startTime = Date.now();
