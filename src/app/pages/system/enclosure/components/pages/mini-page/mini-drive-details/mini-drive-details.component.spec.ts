@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -24,7 +23,6 @@ describe('MiniDriveDetailsComponent', () => {
     },
   } as DashboardEnclosureSlot;
 
-  const selectedSlotSignal = signal(slot);
   let getItemValue: (name: string) => string;
 
   const createComponent = createComponentFactory({
@@ -37,15 +35,17 @@ describe('MiniDriveDetailsComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedSlot: selectedSlotSignal,
         selectSlot: jest.fn(),
       }),
     ],
   });
 
   beforeEach(() => {
-    selectedSlotSignal.set(slot);
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        slot,
+      },
+    });
     getItemValue = getItemValueFactory(spectator);
   });
 
@@ -78,7 +78,7 @@ describe('MiniDriveDetailsComponent', () => {
   // TODO: Test case for VDEV
 
   it('shows "Disk not attached to any pools" when this is the case', () => {
-    selectedSlotSignal.set({
+    spectator.setInput('slot', {
       pool_info: null,
     } as DashboardEnclosureSlot);
     spectator.detectChanges();

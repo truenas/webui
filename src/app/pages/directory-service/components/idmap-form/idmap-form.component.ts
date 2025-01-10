@@ -209,12 +209,12 @@ export class IdmapFormComponent implements OnInit {
     this.setFormDependencies();
 
     if (this.existingIdmap) {
-      this.setIdmapForEdit();
+      this.setIdmapForEdit(this.existingIdmap);
     }
   }
 
-  setIdmapForEdit(): void {
-    this.setEditingIdmapFormValues();
+  setIdmapForEdit(idmap: Idmap): void {
+    this.setEditingIdmapFormValues(idmap);
     this.form.controls.name.disable();
   }
 
@@ -319,22 +319,22 @@ export class IdmapFormComponent implements OnInit {
     });
   }
 
-  private setEditingIdmapFormValues(): void {
-    const hasCustomName = !requiredIdmapDomains.includes(this.existingIdmap.name as IdmapName);
+  private setEditingIdmapFormValues(idmap: Idmap): void {
+    const hasCustomName = !requiredIdmapDomains.includes(idmap.name as IdmapName);
 
     this.form.patchValue({
-      ...this.existingIdmap,
-      name: hasCustomName ? customIdmapName : this.existingIdmap.name as IdmapName,
-      certificate: this.existingIdmap.certificate?.id,
+      ...idmap,
+      name: hasCustomName ? customIdmapName : idmap.name as IdmapName,
+      certificate: idmap.certificate?.id,
     });
 
     if (hasCustomName) {
       this.form.patchValue({
-        custom_name: this.existingIdmap.name,
+        custom_name: idmap.name,
       });
     }
 
-    Object.entries(this.existingIdmap.options).forEach(([option, value]) => {
+    Object.entries(idmap.options).forEach(([option, value]) => {
       this.form.patchValue({
         [option]: value,
       });

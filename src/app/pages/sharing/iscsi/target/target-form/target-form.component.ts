@@ -173,16 +173,16 @@ export class TargetFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTarget) {
-      this.setTargetForEdit();
+      this.setTargetForEdit(this.editingTarget);
     }
   }
 
-  setTargetForEdit(): void {
-    Object.values(this.editingTarget.groups).forEach(() => this.addGroup());
-    Object.values(this.editingTarget.auth_networks).forEach(() => this.addNetwork());
+  setTargetForEdit(target: IscsiTarget): void {
+    Object.values(target.groups).forEach(() => this.addGroup());
+    Object.values(target.auth_networks).forEach(() => this.addNetwork());
 
     this.form.patchValue({
-      ...this.editingTarget,
+      ...target,
     });
 
     this.fcForm.patchValue({

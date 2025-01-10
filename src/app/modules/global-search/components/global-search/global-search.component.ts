@@ -201,7 +201,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(([config]) => {
       this.resetInput();
       this.searchDirectives.setPendingUiHighlightElement(null);
-      this.searchDirectives.get(config).highlight(config);
+      this.searchDirectives.get(config)?.highlight(config);
       this.closeAllBackdrops();
     });
   }
