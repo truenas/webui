@@ -161,7 +161,7 @@ export const helptextSharingSmb = {
   placeholder_fsrvp: T('Enable FSRVP'),
   tooltip_fsrvp: T(
     'Enable support for the File Server Remote VSS Protocol \
- (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSVRP</a>). \
+ (<a href="https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp" target="_blank">FSRVP</a>). \
  This protocol allows RPC clients to manage snapshots for a specific SMB share. \
  The share path must be a dataset mountpoint. Snapshots have the prefix \
  <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have \
