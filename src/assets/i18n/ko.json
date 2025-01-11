@@ -1,6 +1,5 @@
 {
   "": "",
-  "Update completed successfully. The system will reboot shortly": "갱신을 성공적으로 완료했습니다. 잠시 후 시스템을 재시작합니다.",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "세션의 비활성화 시간이 {lifetime}초를 넘었습니다.<br />보안을 위해 {time}에 로그아웃 되었습니다.",
   " Est. Usable Raw Capacity": " 사용 가능한 원시 용량 추정",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " <b>UPS 모드</b>가 <i>슬레이브</i>일 때, <i>마스터</i> UPS 시스템의 네트워크 포트 번호를 입력합니다. 기본 포트는 <i>3493</i>입니다.",
@@ -1619,7 +1618,7 @@
   "Enable server support for NFSv3 or NFSv4 or both NFSv3 and NFSv4 clients.": "NFSv3 또는 NFSv4 각각 혹은 모두에 대한 지원을 활성화합니다.",
   "Enable server-side management of group memberships.  This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client.  This can support more than 16 groups and provide more accurate group memberships.": "서버측 그룹 구성원 관리를 활성화합니다. 이 선택사항은 서버가 NFS 클라이언트가 제공한 정보에만 의존하지 않고 서버측 조회를 통해 그룹 ID를 결정할 수 있도록 합니다. 이 기능은 16개 이상의 그룹을 지원하고 더 정교한 구성원 관리를 제공합니다.",
   "Enable service": "서비스 활성화",
-  "Enable support for the File Server Remote VSS Protocol  (<a href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp\" target=\"_blank\">FSVRP</a>).  This protocol allows RPC clients to manage snapshots for a specific SMB share.  The share path must be a dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have  this prefix for an RPC user to delete it.": "파일 서버 원격 VSS 프로토콜(<a href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp\" target=\"_blank\">FSRVP</a>)에 대한 지원을 활성화합니다. 이 프로토콜은 RPC 클라이언트를 통해 특정 SMB 공유의 스냅샷을 관리할 수 있도록 합니다. 공유의 경로는 데이터셋의 탑재 지점이어야 합니다. 스냅샷은 <code>fss-</code> 접두사에 스냅샷이 생성된 시각이 뒤따릅니다. RPC 사용자가 삭제하려면 스냅샷이 반드시 이 접두사를 가져야 합니다.",
+  "Enable support for the File Server Remote VSS Protocol  (<a href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp\" target=\"_blank\">FSRVP</a>).  This protocol allows RPC clients to manage snapshots for a specific SMB share.  The share path must be a dataset mountpoint. Snapshots have the prefix  <code>fss-</code> followed by a snapshot creation timestamp. A snapshot must have  this prefix for an RPC user to delete it.": "파일 서버 원격 VSS 프로토콜(<a href=\"https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-fsrvp\" target=\"_blank\">FSRVP</a>)에 대한 지원을 활성화합니다. 이 프로토콜은 RPC 클라이언트를 통해 특정 SMB 공유의 스냅샷을 관리할 수 있도록 합니다. 공유의 경로는 데이터셋의 탑재 지점이어야 합니다. 스냅샷은 <code>fss-</code> 접두사에 스냅샷이 생성된 시각이 뒤따릅니다. RPC 사용자가 삭제하려면 스냅샷이 반드시 이 접두사를 가져야 합니다.",
   "Enable the Active Directory service. The first time this option is set, the Domain Account Password must be entered.": "액티브 디렉터리 서비스를 활성화합니다. 처음 이 선택사항을 설정하면 반드시 도메인 계정 비밀번호를 입력해야 합니다.",
   "Enable the SNMPv3 security model.": "SNMPv3 보안 모델을 활성화합니다.",
   "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without deleting it.": "이 클라우드 동기화 작업을 활성화합니다. 설정하지 않으면 이 클라우드 동기화 작업을 삭제하지 않고 비활성화합니다.",
@@ -4807,6 +4806,7 @@
   "Update System": "시스템 갱신",
   "Update TrueCommand Settings": "TrueCommand 설정 갱신",
   "Update available": "갱신 가능",
+  "Update completed successfully. The system will reboot shortly": "갱신을 성공적으로 완료했습니다. 잠시 후 시스템을 재시작합니다.",
   "Update in Progress": "갱신하는 중",
   "Update successful. Please restart for the update to take effect. Restart now?": "갱신에 성공했습니다. 적용을 위해서 재시작하시기 바랍니다. 지금 재시작하시겠습니까?",
   "Updated 'Use as Home Share'": "'홈 공유 사용' 갱신",
