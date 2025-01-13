@@ -19,6 +19,7 @@
     @if (dataProvider.expandedRow; as target) {
       <div class="detail-actions">
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="edit-target"
           (click)="editTarget(target)"

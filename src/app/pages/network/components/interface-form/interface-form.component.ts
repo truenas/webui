@@ -186,6 +186,9 @@ export class InterfaceFormComponent implements OnInit {
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<NetworkInterface | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.existingInterface = slideInRef.getData();
   }
 
@@ -226,16 +229,16 @@ export class InterfaceFormComponent implements OnInit {
     this.validateNameOnTypeChange();
 
     if (this.existingInterface) {
-      this.setInterfaceForEdit();
+      this.setInterfaceForEdit(this.existingInterface);
     }
   }
 
-  setInterfaceForEdit(): void {
-    this.existingInterface.aliases.forEach(() => this.addAlias());
+  setInterfaceForEdit(nic: NetworkInterface): void {
+    nic.aliases.forEach(() => this.addAlias());
     this.form.patchValue({
-      ...this.existingInterface,
-      mtu: this.existingInterface.mtu || this.defaultMtu,
-      aliases: interfaceAliasesToFormAliases(this.existingInterface),
+      ...nic,
+      mtu: nic.mtu || this.defaultMtu,
+      aliases: interfaceAliasesToFormAliases(nic),
     });
 
     this.setOptionsForEdit();
@@ -270,9 +273,9 @@ export class InterfaceFormComponent implements OnInit {
     this.isLoading = true;
     const params = this.prepareSubmitParams();
 
-    const request$ = this.isNew
-      ? this.api.call('interface.create', [params])
-      : this.api.call('interface.update', [this.existingInterface.id, params]);
+    const request$ = this.existingInterface
+      ? this.api.call('interface.update', [this.existingInterface.id, params])
+      : this.api.call('interface.create', [params]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {

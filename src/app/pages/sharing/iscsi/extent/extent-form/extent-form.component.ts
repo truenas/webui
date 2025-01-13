@@ -99,7 +99,7 @@ export class ExtentFormComponent implements OnInit {
   isLoading = false;
   protected editingExtent: IscsiExtent | undefined;
 
-  private extentDiskBeingEdited$ = new BehaviorSubject<Option>(undefined);
+  private extentDiskBeingEdited$ = new BehaviorSubject<Option | undefined>(undefined);
 
   readonly helptext = helptextSharingIscsi;
 
@@ -139,6 +139,9 @@ export class ExtentFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     public slideInRef: SlideInRef<IscsiExtent | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingExtent = this.slideInRef.getData();
   }
 
@@ -157,15 +160,15 @@ export class ExtentFormComponent implements OnInit {
     });
 
     if (this.editingExtent) {
-      this.setExtentForEdit();
+      this.setExtentForEdit(this.editingExtent);
     }
   }
 
-  setExtentForEdit(): void {
-    this.form.patchValue(this.editingExtent);
+  setExtentForEdit(extent: IscsiExtent): void {
+    this.form.patchValue(extent);
 
-    if (this.editingExtent.type === IscsiExtentType.Disk) {
-      this.setExtentDisk();
+    if (extent.type === IscsiExtentType.Disk) {
+      this.setExtentDisk(extent);
     }
   }
 
@@ -206,18 +209,18 @@ export class ExtentFormComponent implements OnInit {
     });
   }
 
-  private setExtentDisk(): void {
-    if (!startsWith(this.editingExtent.path, 'zvol')) {
+  private setExtentDisk(extent: IscsiExtent): void {
+    if (!startsWith(extent.path, 'zvol')) {
       return;
     }
 
-    const extentDiskBeingEdited = this.editingExtent.path.slice('zvol'.length + 1);
+    const extentDiskBeingEdited = extent.path.slice('zvol'.length + 1);
     this.extentDiskBeingEdited$.next({
       label: extentDiskBeingEdited,
-      value: this.editingExtent.path,
+      value: extent.path,
     });
     this.form.patchValue({
-      disk: this.editingExtent.path,
+      disk: extent.path,
     });
   }
 }

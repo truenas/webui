@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, input,
+  Component, computed, input,
   OnChanges,
-  OnInit, viewChild,
+  OnInit, Signal, viewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -63,6 +63,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAccessor {
   readonly label = input<string>();
   readonly hint = input<string>();
+  readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
@@ -110,13 +111,16 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     },
   };
 
-  treeOptions: ITreeOptions = {
-    idField: 'path',
-    displayField: 'name',
-    getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
-    actionMapping: this.actionMapping,
-    useTriState: false,
-  };
+  treeOptions: Signal<ITreeOptions> = computed<ITreeOptions>(() => {
+    return {
+      idField: 'path',
+      displayField: 'name',
+      getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
+      actionMapping: this.actionMapping,
+      useTriState: false,
+      useCheckbox: this.multiple(),
+    };
+  });
 
   constructor(
     public controlDirective: NgControl,
@@ -129,10 +133,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if ('multiple' in changes) {
-      this.treeOptions.useCheckbox = this.multiple();
-    }
-
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
       this.cdr.markForCheck();
@@ -159,7 +159,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
+    this.isDisabled = isDisabled || this.readonly();
     this.cdr.markForCheck();
   }
 

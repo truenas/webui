@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -19,6 +20,7 @@ describe('InstanceDiskFormComponent', () => {
   const createComponent = createComponentFactory({
     component: InstanceDiskFormComponent,
     providers: [
+      mockAuth(),
       mockApi([
         mockCall('virt.instance.device_add'),
         mockCall('virt.instance.device_update'),
@@ -37,6 +39,7 @@ describe('InstanceDiskFormComponent', () => {
               instanceId: 'my-instance',
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });
@@ -85,6 +88,7 @@ describe('InstanceDiskFormComponent', () => {
               },
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });

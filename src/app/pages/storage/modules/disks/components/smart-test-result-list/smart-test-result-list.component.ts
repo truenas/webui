@@ -76,7 +76,7 @@ export class SmartTestResultListComponent implements OnInit {
       propertyName: 'remaining',
       getValue: (row) => {
         if (typeof row.remaining === 'number' && row.remaining >= 0) {
-          return `${row.remaining}%`;
+          return `${row.remaining * 100}%`;
         }
 
         return row.status_verbose ? this.translate.instant(row.status_verbose) : '0%';

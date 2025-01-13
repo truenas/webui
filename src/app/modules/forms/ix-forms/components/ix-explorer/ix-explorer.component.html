@@ -42,7 +42,7 @@
   <tree-root
     #tree
     [nodes]="nodes"
-    [options]="treeOptions"
+    [options]="treeOptions()"
     (select)="onNodeSelect($event)"
     (deselect)="onNodeDeselect($event)"
   >
@@ -78,6 +78,7 @@
     </ng-template>
   </tree-root>
 </div>
+
 
 @if (loadingError) {
   <mat-error class="loading-error">

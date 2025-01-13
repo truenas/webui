@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
@@ -64,7 +65,11 @@ export class KerberosSettingsComponent implements OnInit {
     private fb: FormBuilder,
     private dialogService: DialogService,
     public slideInRef: SlideInRef<KerberosSettingsComponent | undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading = true;

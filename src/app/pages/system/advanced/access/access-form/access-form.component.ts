@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, finalize, forkJoin, Observable, take,
+  filter, finalize, forkJoin, Observable, of, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -88,7 +88,11 @@ export class AccessFormComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
     public slideInRef: SlideInRef<undefined, boolean>,
-  ) {}
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.store$.pipe(waitForPreferences, untilDestroyed(this)).subscribe((preferences) => {

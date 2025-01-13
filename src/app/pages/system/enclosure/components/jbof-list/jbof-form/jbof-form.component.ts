@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
@@ -72,17 +72,14 @@ export class JbofFormComponent implements OnInit {
     private translate: TranslateService,
     public slideInRef: SlideInRef<Jbof | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingJbof = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
     if (this.editingJbof) {
-      this.setJbofForEdit();
-    }
-  }
-
-  setJbofForEdit(): void {
-    if (!this.isNew) {
       this.form.patchValue(this.editingJbof);
     }
   }

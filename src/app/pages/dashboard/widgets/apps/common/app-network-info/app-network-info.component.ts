@@ -43,11 +43,11 @@ export class AppNetworkInfoComponent {
   });
 
   readonly incomingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0;
   });
 
   readonly outgoingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0;
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {

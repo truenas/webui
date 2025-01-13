@@ -141,6 +141,9 @@ export class AuthorizedAccessFormComponent implements OnInit {
     private validatorService: IxValidatorsService,
     public slideInRef: SlideInRef<IscsiAuthAccess | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingAccess = this.slideInRef.getData();
   }
 
@@ -171,7 +174,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     });
 
     if (this.editingAccess) {
-      this.setAccessForEdit();
+      this.setAccessForEdit(this.editingAccess);
     }
   }
 
@@ -179,11 +182,11 @@ export class AuthorizedAccessFormComponent implements OnInit {
     return Boolean(this.form?.value?.peeruser);
   }
 
-  setAccessForEdit(): void {
+  setAccessForEdit(access: IscsiAuthAccess): void {
     this.form.patchValue({
-      ...this.editingAccess,
-      secret_confirm: this.editingAccess.secret,
-      peersecret_confirm: this.editingAccess.peersecret,
+      ...access,
+      secret_confirm: access.secret,
+      peersecret_confirm: access.peersecret,
     });
   }
 

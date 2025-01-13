@@ -13,7 +13,7 @@
             formControlName="hostname"
             [label]="'Hostname' | translate"
             [tooltip]="helptext.ldap_hostname_tooltip | translate"
-            [required]="isEnabled$ | async"
+            [required]="!!(isEnabled$ | async)"
           ></ix-chips>
 
           <ix-input
