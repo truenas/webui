@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -9,6 +9,9 @@ import { Role } from 'app/enums/role.enum';
 import { TruecommandSignupModalComponent } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
 import { TruenasConnectSignupModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-signup-modal/truenas-connect-signup-modal.component';
+import { TruenasConnectStatus, TruenasConnectStatusKey } from 'app/enums/truenas-connect-status.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 
 @UntilDestroy()
 @Component({
@@ -19,28 +22,22 @@ import { TruenasConnectSignupModalComponent } from 'app/modules/truenas-connect/
   styleUrl: './truenas-connect-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TruenasConnectButtonComponent {
-  status = 'disconnected'
-  constructor(private matDialog: MatDialog) {
+export class TruenasConnectButtonComponent implements OnInit {
+  status = TruenasConnectStatus
+  statusKey: TruenasConnectStatusKey
+  config: TruenasConnectConfig;
 
+  constructor(private matDialog: MatDialog, private api: ApiService) {
   }
 
-  openSignupDialog() {
-      // this.matDialog.open(TruecommandSignupModalComponent, {
-      //   width: '350px'
-      // })
-      //   .afterClosed()
-      //   .pipe(untilDestroyed(this))
-      //   .subscribe((shouldConnect) => {
-      //     if (!shouldConnect) {
-      //       return;
-      //     }
-  
-          this.connect();
-        // });
+  ngOnInit(): void {
+    this.api.call('tn_connect.config' as any, [])
+      .subscribe(config => {
+        this.config = config
+      })
   }
 
-  connect() {
+  openConnect() {
     this.matDialog
       .open(TruenasConnectModalComponent, {
         width: '456px'
@@ -48,14 +45,13 @@ export class TruenasConnectButtonComponent {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe()
-  }
+  } 
 
   start() {
     console.log('start truenas connect')
   }
   
   showStatus() {
-    console.log('stop truenas connect')
     this.matDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
@@ -63,6 +59,7 @@ export class TruenasConnectButtonComponent {
         top: '48px',
         right: '0px',
       },
+      data: this.config
     });
   }
 }

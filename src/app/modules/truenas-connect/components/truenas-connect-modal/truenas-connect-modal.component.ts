@@ -9,8 +9,8 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { TruenasConnectRegistration } from 'app/interfaces/truenas-connect.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { of } from 'rxjs';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'ix-truenas-connect-modal',
@@ -24,21 +24,30 @@ export class TruenasConnectModalComponent {
   readonly helptext = helptextTopbar;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
 
-  constructor(@Inject(WINDOW) private window: Window, private ws: WebSocketService, private loader: AppLoaderService) {}
-
+  constructor(@Inject(WINDOW) private window: Window, private api: ApiService, private loader: AppLoaderService) {}
 
   connect() {
     this.loader.open()
-    // TODO: send websocket call
-    const response: TruenasConnectRegistration = {
-      version: '24.10.0',
-      model: EnclosureModel.M40,
-      token: 'bbc164c0-ee7f-4a36-861b-7cf4c05ca411' + Math.floor(Math.random() * 101),
-      system_id: 'c4a1f58a-ec7e-45e0-8753-d9d5c7b4812d' + Math.floor(Math.random() * 101)
-    }
-    of(response).subscribe(() => {
-      this.window.open(`https://truenas.connect.dev.ixsystems.net/en/system/register?version=${response.version}&model=${response.model}&system_id=${response.system_id}&token=${response.token}`)
-    })
-    this.loader.close()
+    this.api.call('tn_connect.ip_choices' as any, [])
+      .pipe(
+        switchMap(res => {
+          const ips = Object.values(res)
+          return this.api.call('tn_connect.update' as any, [{
+              enabled: true,
+              ips
+            }])
+        }),
+        switchMap(() => {
+          return this.api.call('tn_connect.generate_claim_token' as any, [])
+        }),
+        // TODO: need status to be REGISTRATION_FINALIZATION_WAITING
+        // switchMap(() => {
+        //   return this.api.call('tn_connect.get_registration_uri' as any, [])
+        // })
+      )
+      .subscribe(url => {
+        console.log('url', url)
+        // this.window.open(url)
+      })
   }
 }

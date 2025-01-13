@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatDivider } from '@angular/material/divider';
 import {
@@ -7,6 +7,7 @@ import {
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MatButton } from '@angular/material/button';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 
 
 @Component({
@@ -18,8 +19,7 @@ import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TruenasConnectStatusModalComponent {
-  status = TruenasConnectStatus.Disabled
-  reason = 'Truenas Connect service is disabled.'
   readonly TruenasConnectStatus = TruenasConnectStatus;
 
+  constructor(@Inject(MAT_DIALOG_DATA) public config: TruenasConnectConfig) {}
 }

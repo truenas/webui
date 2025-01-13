@@ -2,29 +2,29 @@
 <mat-divider></mat-divider>
 <mat-dialog-content>
     <div>
-        @if (status === TruenasConnectStatus.Connected) {
+        @if (config.status_reason === TruenasConnectStatus.CONFIGURED) {
             <ix-icon
               class="status-connected"
               name="check_circle"
             ></ix-icon>
           }
-          @if (status === TruenasConnectStatus.Failed) {
-            <ix-icon
-              class="status-failed"
-              name="cancel"
-            ></ix-icon>
-          }
-          @if (status === TruenasConnectStatus.Disabled) {
+          @else if (config.status_reason === TruenasConnectStatus.DISABLED) {
             <ix-icon
               class="status-disabled"
               name="pause_circle_filled"
             ></ix-icon>
           }
-          <span>{{ status | translate }}</span>
+          @else {
+            <ix-icon
+              class="status-failed"
+              name="cancel"
+            ></ix-icon>
+          }
+          <span>{{ config.status }}</span>
     </div>
 
       <div id="error">
-      {{ reason | translate }}
+      {{ config.status_reason }}
     </div>
 </mat-dialog-content>
 <div mat-dialog-actions>

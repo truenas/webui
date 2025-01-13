@@ -12,3 +12,10 @@
         color: var(--primary); 
     }
 }
+
+mat-dialog-content {
+    text-align: center;
+    h3 {
+        padding-bottom: 8px;
+    }
+}
