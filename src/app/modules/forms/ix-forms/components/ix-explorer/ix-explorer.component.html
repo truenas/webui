@@ -59,6 +59,8 @@
         >
           @if (node.data.type === ExplorerNodeType.File) {
             <ix-icon name="insert_drive_file"></ix-icon>
+          } @else if (node.data.type === ExplorerNodeType.Symlink) {
+            <ix-icon [name]="'mdi-database'"></ix-icon>
           } @else {
             @if (node.data.isLock) {
               <ix-icon name="mdi-folder-lock"></ix-icon>
