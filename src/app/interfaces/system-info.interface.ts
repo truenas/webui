@@ -48,12 +48,24 @@ export enum ContractType {
   Gold = 'GOLD',
   Best = 'BEST',
   SilverInternational = 'SILVERINTERNATIONAL',
+  Legacy = 'LEGACY',
+  Standard = 'STANDARD',
+  Bronze = 'BRONZE',
+  Silver = 'SILVER',
+  FreeNasCertified = 'FREENASCERTIFIED',
+  FreeNasMini = 'FREENASMINI',
 }
 
 export function getLabelForContractType(contractType: ContractType): string {
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
     [ContractType.Best]: 'Best',
+    [ContractType.Legacy]: 'Legacy',
+    [ContractType.Standard]: 'Standard',
+    [ContractType.Bronze]: 'Bronze',
+    [ContractType.Silver]: 'Silver',
+    [ContractType.FreeNasCertified]: 'Free NAS Certified',
+    [ContractType.FreeNasMini]: 'Free NAS Mini',
     [ContractType.SilverInternational]: 'Silver International',
   };
   return contractTypeToLabelsMap[contractType] || contractType;
