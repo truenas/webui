@@ -60,21 +60,22 @@ export class WidgetMemoryComponent {
 
   stats = computed(() => {
     const colors = [0, 1, 2].map((i) => this.theme.getRgbBackgroundColorByIndex(i));
-    let services: number | undefined;
-    if (!this.isLoading()) {
-      services = this.memory().physical_memory_total - this.memory().physical_memory_available - this.arcSize();
+    let services = 0;
+    const memory = this.memory();
+    if (memory) {
+      services = memory.physical_memory_total - memory.physical_memory_available - this.arcSize();
     }
 
     return [
       {
         name: this.translate.instant('Free'),
         color: colors[0],
-        value: this.memory()?.physical_memory_available,
+        value: this.memory()?.physical_memory_available || 0,
       },
       {
         name: this.translate.instant('ZFS Cache'),
         color: colors[1],
-        value: this.arcSize(),
+        value: this.arcSize() || 0,
       },
       {
         name: this.translate.instant('Services'),

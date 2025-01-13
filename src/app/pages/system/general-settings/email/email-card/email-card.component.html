@@ -28,7 +28,7 @@
       </mat-list-item>
 
       <ng-container *ixWithLoadingState="emailConfig$ as emailConfig">
-        @if (!emailConfig?.oauth?.client_id) {
+        @if (emailConfig?.fromemail || emailConfig?.fromname) {
           <mat-list-item>
             <span class="label">{{ 'From' | translate }}:</span>
             <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">

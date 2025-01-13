@@ -27,7 +27,7 @@ export class QueryToApiService<T> {
     return this.builder.getFilters();
   }
 
-  private addNode(paramsGroup: ParamsBuilderGroup<T>, node: Condition | ConditionGroup): void {
+  private addNode(paramsGroup: ParamsBuilderGroup<T>, node: Condition | ConditionGroup | null): void {
     if (isConditionGroup(node)) {
       this.buildGroup(paramsGroup, node);
       return;
@@ -81,7 +81,7 @@ export class QueryToApiService<T> {
   }
 
   private mapValueByPropertyType(
-    property: SearchProperty<T>,
+    property: SearchProperty<T> | undefined,
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
@@ -99,7 +99,7 @@ export class QueryToApiService<T> {
     return value;
   }
 
-  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): number | number[] {
+  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): (number | null) | (number | null)[] {
     const convertDate = (dateValue: LiteralValue): number | null => {
       const date = parseISO(dateValue as string);
       if (Number.isNaN(date.getTime())) {

@@ -117,6 +117,7 @@
               [label]="'Source' | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider"
+              [canCreateDataset]="true"
             ></ix-explorer>
 
             <ix-input
@@ -233,7 +234,7 @@
     </ix-form-section>
 
     @let usbDevices = usbDevices$ | async;
-    @if (usbDevices?.length > 0) {
+    @if (usbDevices && usbDevices.length > 0) {
       <ix-form-section
         [label]="'USB Devices' | translate"
         [help]="'USB Devices' | translate"
@@ -247,7 +248,7 @@
     }
 
     @let gpuDevices = gpuDevices$ | async;
-    @if (gpuDevices?.length > 0) {
+    @if (gpuDevices && gpuDevices.length > 0) {
       <ix-form-section
         [label]="'GPU Devices' | translate"
         [help]="'GPU Devices' | translate"

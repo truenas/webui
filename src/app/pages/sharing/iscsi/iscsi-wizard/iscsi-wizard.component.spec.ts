@@ -42,7 +42,7 @@ describe('IscsiWizardComponent', () => {
   let store$: Store<AppState>;
 
   const slideInRef: SlideInRef<undefined, unknown> = {
-    close: jest.fn(),
+    close: jest.fn(() => true),
     requireConfirmationWhen: jest.fn(),
     getData: jest.fn(() => undefined),
   };
@@ -120,7 +120,7 @@ describe('IscsiWizardComponent', () => {
     jest.spyOn(store$, 'dispatch');
   });
 
-  it('creates objects when wizard is submitted', fakeAsync(async () => {
+  it('iSCSI: creates objects when wizard is submitted', fakeAsync(async () => {
     spectator.tick(100);
 
     await form.fillForm({
@@ -191,4 +191,73 @@ describe('IscsiWizardComponent', () => {
 
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
   }));
+
+  it('fibre channel: creates objects when wizard is submitted', async () => {
+    await form.fillForm({
+      Name: 'test-name',
+      Device: 'Create New',
+      'Pool/Dataset': '/mnt/new_pool',
+      Size: 1024,
+      Portal: 'Create New',
+      Initiators: ['initiator1', 'initiator2'],
+    });
+
+    const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
+    await addIpAddressButton.pressAddButton();
+
+    await form.fillForm(
+      {
+        'IP Address': '::',
+      },
+    );
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(8, 'pool.dataset.create', [{
+      name: 'new_pool/test-name',
+      type: 'VOLUME',
+      volsize: 1073741824,
+    }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(9, 'iscsi.extent.create', [{
+      blocksize: 512,
+      disk: 'zvol/my+pool/test_zvol',
+      insecure_tpc: true,
+      name: 'test-name',
+      rpm: 'SSD',
+      type: 'DISK',
+      xen: false,
+    }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(10, 'iscsi.portal.create', [{
+      comment: 'test-name',
+      listen: [{ ip: '::' }],
+    }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(11, 'iscsi.initiator.create', [{
+      comment: 'test-name',
+      initiators: ['initiator1', 'initiator2'],
+    }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(12, 'iscsi.target.create', [{
+      name: 'test-name',
+      mode: 'ISCSI',
+      groups: [{
+        auth: null,
+        authmethod: 'NONE',
+        initiator: 14,
+        portal: 13,
+      }],
+    }]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenNthCalledWith(13, 'iscsi.targetextent.create', [{
+      extent: 11,
+      target: 15,
+    }]);
+
+    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
+
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+  });
 });

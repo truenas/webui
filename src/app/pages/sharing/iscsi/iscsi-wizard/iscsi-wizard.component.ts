@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -91,9 +92,9 @@ import { ExtentWizardStepComponent } from './steps/extent-wizard-step/extent-wiz
   ],
 })
 export class IscsiWizardComponent implements OnInit {
-  isLoading = false;
-  toStop = false;
-  namesInUse: string[] = [];
+  isLoading = signal<boolean>(false);
+  toStop = signal<boolean>(false);
+  namesInUse = signal<string[]>([]);
 
   createdZvol: Dataset | undefined;
   createdExtent: IscsiExtent | undefined;
@@ -110,7 +111,7 @@ export class IscsiWizardComponent implements OnInit {
     extent: this.fb.group({
       name: ['', [
         Validators.required,
-        forbiddenValues(this.namesInUse),
+        forbiddenValues(this.namesInUse()),
         Validators.pattern(patterns.targetDeviceName),
       ]],
       type: [IscsiExtentType.Disk, [Validators.required]],
@@ -253,7 +254,6 @@ export class IscsiWizardComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private loader: AppLoaderService,
     private store$: Store<ServicesState>,
@@ -264,10 +264,10 @@ export class IscsiWizardComponent implements OnInit {
     });
 
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
-      this.namesInUse.push(...extents.map((extent) => extent.name));
+      this.namesInUse.set(extents.map((extent) => extent.name));
     });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      this.namesInUse.push(...targets.map((target) => target.name));
+      this.namesInUse.set(targets.map((target) => target.name));
     });
   }
 
@@ -331,8 +331,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   rollBack(): void {
-    this.isLoading = false;
-    this.cdr.markForCheck();
+    this.isLoading.set(false);
 
     const requests = [];
 
@@ -370,13 +369,13 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   handleError(err: unknown): void {
-    this.toStop = true;
+    this.toStop.set(true);
     this.dialogService.error(this.errorHandler.parseError(err));
   }
 
   async onSubmit(): Promise<void> {
-    this.isLoading = true;
-    this.toStop = false;
+    this.isLoading.set(true);
+    this.toStop.set(false);
 
     this.createdZvol = undefined;
     this.createdExtent = undefined;
@@ -392,7 +391,7 @@ export class IscsiWizardComponent implements OnInit {
       );
     }
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -402,7 +401,7 @@ export class IscsiWizardComponent implements OnInit {
       (err: unknown) => this.handleError(err),
     );
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -414,7 +413,7 @@ export class IscsiWizardComponent implements OnInit {
       );
     }
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -426,7 +425,7 @@ export class IscsiWizardComponent implements OnInit {
       );
     }
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -438,7 +437,7 @@ export class IscsiWizardComponent implements OnInit {
       );
     }
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -448,7 +447,7 @@ export class IscsiWizardComponent implements OnInit {
       (err: unknown) => this.handleError(err),
     );
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
@@ -461,15 +460,14 @@ export class IscsiWizardComponent implements OnInit {
       ).then(() => {}, (err: unknown) => this.handleError(err));
     }
 
-    if (this.toStop) {
+    if (this.toStop()) {
       this.rollBack();
       return;
     }
 
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
-    this.isLoading = false;
-    this.cdr.markForCheck();
+    this.isLoading.set(false);
     this.slideInRef.close({ response: true, error: null });
   }
 }

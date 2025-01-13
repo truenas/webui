@@ -50,7 +50,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   readonly type = input.required<VdevType>();
   readonly layout = input.required<CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3>();
   readonly inventory = input<DetailsDisk[]>();
-  readonly isStepActive = input<boolean>();
+  readonly isStepActive = input<boolean>(false);
 
   readonly defaultDataDevicesPerGroup = 8;
 

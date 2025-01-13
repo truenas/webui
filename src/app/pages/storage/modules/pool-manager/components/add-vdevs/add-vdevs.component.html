@@ -8,8 +8,8 @@
     <div class="details-container">
       @if (hasConfigurationPreview && !!existingPool) {
         <ix-existing-configuration-preview
-          [name]="existingPool?.name"
-          [topology]="existingPool?.topology"
+          [name]="existingPool.name"
+          [topology]="existingPool.topology"
           [disks]="poolDisks"
           [size]="existingPool?.size"
         ></ix-existing-configuration-preview>

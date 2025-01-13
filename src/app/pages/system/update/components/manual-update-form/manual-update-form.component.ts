@@ -273,7 +273,7 @@ export class ManualUpdateFormComponent implements OnInit {
       hideCheckbox: true,
       buttonText: helptext.ha_update.complete_action,
       hideCancel: true,
-    }).pipe(untilDestroyed(this)).subscribe(() => {});
+    }).pipe(untilDestroyed(this)).subscribe();
   }
 
   handleUpdateSuccess(): void {
