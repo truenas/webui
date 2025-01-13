@@ -141,7 +141,6 @@ describe('InstanceWizardComponent', () => {
     const diskForm = await diskList.getLastListItem();
     await diskForm.fillForm({
       Source: '/mnt/source',
-      Destination: 'destination',
     });
 
     const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
@@ -183,7 +182,6 @@ describe('InstanceWizardComponent', () => {
         {
           dev_type: VirtualizationDeviceType.Disk,
           source: '/mnt/source',
-          destination: 'destination',
         },
         {
           dev_type: VirtualizationDeviceType.Proxy,
@@ -198,7 +196,6 @@ describe('InstanceWizardComponent', () => {
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
-      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -222,7 +219,6 @@ describe('InstanceWizardComponent', () => {
     const diskForm = await diskList.getLastListItem();
     await diskForm.fillForm({
       Source: '/mnt/source',
-      Destination: 'destination',
     });
 
     const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
@@ -264,7 +260,6 @@ describe('InstanceWizardComponent', () => {
         {
           dev_type: VirtualizationDeviceType.Disk,
           source: '/mnt/source',
-          destination: 'destination',
         },
         {
           dev_type: VirtualizationDeviceType.Proxy,
@@ -279,7 +274,6 @@ describe('InstanceWizardComponent', () => {
       ],
       image: 'almalinux/8/cloud',
       memory: GiB,
-      environment: {},
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -315,7 +309,6 @@ describe('InstanceWizardComponent', () => {
       devices: [],
       image: 'almalinux/8/cloud',
       memory: GiB,
-      environment: {},
       instance_type: 'CONTAINER',
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

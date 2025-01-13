@@ -254,7 +254,6 @@ export class InstanceWizardComponent {
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
-      environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
   }
 
