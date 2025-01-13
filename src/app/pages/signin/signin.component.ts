@@ -13,6 +13,7 @@ import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
@@ -21,9 +22,8 @@ import { SetAdminPasswordFormComponent } from 'app/pages/signin/set-admin-passwo
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { TrueCommandStatusComponent } from 'app/pages/signin/true-command-status/true-command-status.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
 @Component({
@@ -53,7 +53,7 @@ export class SigninComponent implements OnInit {
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly canLogin$ = this.signinStore.canLogin$;
-  readonly isConnected$ = this.wsManager.isConnected$;
+  readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
     switchMap(() => this.isConnected$),
@@ -70,7 +70,7 @@ export class SigninComponent implements OnInit {
   );
 
   constructor(
-    private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     private signinStore: SigninStore,
     private dialog: DialogService,
     private authService: AuthService,

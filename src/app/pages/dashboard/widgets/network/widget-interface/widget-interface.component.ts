@@ -29,6 +29,7 @@ import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -36,7 +37,6 @@ import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/commo
 import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.const';
 import { DashboardNetworkInterface, getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -86,6 +86,7 @@ export class WidgetInterfaceComponent implements WidgetComponent<WidgetInterface
       throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
     )),
+    filter(Boolean),
     tap((realtimeUpdate) => {
       this.cachedNetworkStats.update((cachedStats) => {
         return [

@@ -29,8 +29,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class UnusedDiskCardComponent {
-  readonly title = input<string>();
-  readonly disks = input<DetailsDisk[]>();
+  readonly title = input<string>('');
+  readonly disks = input.required<DetailsDisk[]>();
 
   readonly addToStorage = output();
 

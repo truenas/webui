@@ -22,9 +22,9 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,8 +48,8 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   hasSignedBy = input(false);
   hasLifetime = input(false);
 
-  form = this.formBuilder.group({
-    signedby: [null as number],
+  form = this.formBuilder.nonNullable.group({
+    signedby: [null as number | null],
     key_type: [CertificateKeyType.Rsa],
     key_length: [2048],
     ec_curve: ['BrainpoolP384R1'],
@@ -90,7 +90,7 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const signingAuthority = this.signingAuthorities.find((option) => option.value === values.signedby);
 
     const summary: SummarySection = [];
@@ -102,7 +102,10 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     }
 
     summary.push(
-      { label: this.translate.instant('Key Type'), value: certificateKeyTypeLabels.get(values.key_type) },
+      {
+        label: this.translate.instant('Key Type'),
+        value: certificateKeyTypeLabels.get(values.key_type) || values.key_type,
+      },
       this.isRsa
         ? { label: this.translate.instant('Key Length'), value: String(values.key_length) }
         : { label: this.translate.instant('EC Curve'), value: String(values.ec_curve) },

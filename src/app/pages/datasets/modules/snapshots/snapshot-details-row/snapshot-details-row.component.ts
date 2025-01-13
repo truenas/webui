@@ -23,11 +23,11 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   readonly snapshot = input.required<ZfsSnapshotUi>();
 
   isLoading = true;
-  snapshotInfo: ZfsSnapshotUi;
+  snapshotInfo: ZfsSnapshotUi | undefined;
   holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -141,6 +141,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => {

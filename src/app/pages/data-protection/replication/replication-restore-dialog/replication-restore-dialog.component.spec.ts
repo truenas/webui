@@ -8,11 +8,11 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReplicationRestoreDialogComponent', () => {
   let spectator: Spectator<ReplicationRestoreDialogComponent>;

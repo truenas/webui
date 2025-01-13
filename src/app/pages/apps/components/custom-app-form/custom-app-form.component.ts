@@ -24,9 +24,9 @@ import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forb
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class CustomAppFormComponent implements OnInit {
     custom_compose_config_string: ['\n\n', Validators.required],
   });
 
-  protected existingApp: App;
+  protected existingApp: App | undefined;
 
   protected isLoading = signal(false);
   protected forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
@@ -137,10 +137,10 @@ export class CustomAppFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.slideInRef.close({ response: true, error: null });
-        if (this.isNew()) {
-          this.router.navigate(['/apps', 'installed']);
-        } else {
+        if (this.existingApp) {
           this.router.navigate(['/apps', 'installed', this.existingApp.metadata.train, this.existingApp.name]);
+        } else {
+          this.router.navigate(['/apps', 'installed']);
         }
       },
       error: (error: unknown) => {

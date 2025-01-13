@@ -21,7 +21,7 @@
           class="address-pools"
           [empty]="form.controls.address_pools.controls.length === 0"
           [label]="'Address Pools' | translate"
-          [formArray]="form.get('address_pools')"
+          [formArray]="form.controls.address_pools"
           (add)="addAddressPool()"
         >
           @for (network of form.controls.address_pools.controls; track network; let i = $index) {

@@ -64,6 +64,7 @@ describe('StorageSettingsFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => ({ swapSize: 5, systemDsPool: 'current-pool' })),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
     ],

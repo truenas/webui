@@ -7,14 +7,15 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, take } from 'rxjs';
+import { filter, Observable, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
@@ -28,7 +29,6 @@ import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryptio
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -67,7 +67,7 @@ export class DatasetDetailsPanelComponent {
   constructor(
     private datasetStore: DatasetTreeStore,
     private router: Router,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   protected readonly hasRoles = computed(() => {
@@ -86,34 +86,35 @@ export class DatasetDetailsPanelComponent {
 
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  handleSlideInClosed(slideInRef: OldSlideInRef<unknown>, modalType: unknown): void {
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this))
-      .subscribe((value: { id: string }) => {
-        this.datasetStore.datasetUpdated();
+  handleSlideInClosed(slideInRef$: Observable<SlideInResponse<Dataset>>): void {
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(({ response }) => {
+      this.datasetStore.datasetUpdated();
 
-        if ((modalType !== DatasetFormComponent && modalType !== ZvolFormComponent) || !value?.id) {
-          return;
-        }
-
-        this.datasetStore.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this))
-          .subscribe(() => {
-            this.router.navigate(['/datasets', value.id]);
-          });
+      this.datasetStore.isLoading$.pipe(
+        filter((isLoading) => !isLoading),
+        take(1),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.router.navigate(['/datasets', response.id]);
       });
+    });
   }
 
   onAddDataset(): void {
-    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+    const slideInRef$ = this.slideIn.open(DatasetFormComponent, {
       wide: true, data: { isNew: true, datasetId: this.dataset().id },
     });
-    this.handleSlideInClosed(slideInRef, DatasetFormComponent);
+    this.handleSlideInClosed(slideInRef$);
   }
 
   onAddZvol(): void {
-    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+    const slideInRef$ = this.slideIn.open(ZvolFormComponent, {
       data: { isNew: true, parentId: this.dataset().id },
     });
-    this.handleSlideInClosed(slideInRef, ZvolFormComponent);
+    this.handleSlideInClosed(slideInRef$);
   }
 
   onCloseMobileDetails(): void {

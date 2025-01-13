@@ -25,11 +25,11 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { auditElements } from 'app/pages/audit/audit.elements';
 import { AuditListComponent } from 'app/pages/audit/components/audit-list/audit-list.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { AuditApiDataProvider } from 'app/pages/audit/utils/audit-api-data-provider';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -57,7 +57,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 export class AuditComponent implements OnInit, OnDestroy {
   protected dataProvider: AuditApiDataProvider;
 
-  protected readonly masterDetailView = viewChild(MasterDetailViewComponent);
+  protected readonly masterDetailView = viewChild.required(MasterDetailViewComponent);
   protected readonly controllerTypeControl = new FormControl<ControllerType>(ControllerType.Active);
   protected readonly controllerTypeOptions$ = of(mapToOptions(controllerTypeLabels, this.translate));
   protected readonly controllerType = toSignal(this.controllerTypeControl.value$);

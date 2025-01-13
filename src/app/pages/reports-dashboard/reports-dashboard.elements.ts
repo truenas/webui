@@ -6,6 +6,8 @@ export const reportingElements = {
   synonyms: [T('Stats')],
   anchorRouterLink: ['/reportsdashboard'],
   elements: {
-    reporting: {},
+    reporting: {
+      anchor: 'reports-dashboard',
+    },
   },
 } satisfies UiSearchableElement;

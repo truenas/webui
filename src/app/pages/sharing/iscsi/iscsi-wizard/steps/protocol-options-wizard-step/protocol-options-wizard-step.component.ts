@@ -35,7 +35,7 @@ import { IscsiService } from 'app/services/iscsi.service';
   ],
 })
 export class ProtocolOptionsWizardStepComponent implements OnInit {
-  form = input<IscsiWizardComponent['form']['controls']['options']>();
+  form = input.required<IscsiWizardComponent['form']['controls']['options']>();
   isFibreChannelMode = input(false);
 
   readonly helptextSharingIscsi = helptextSharingIscsi;

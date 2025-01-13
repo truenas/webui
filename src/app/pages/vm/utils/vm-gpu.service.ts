@@ -7,9 +7,9 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device, PciDevice } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',

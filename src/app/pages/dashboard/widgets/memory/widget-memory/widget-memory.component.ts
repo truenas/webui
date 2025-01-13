@@ -17,9 +17,9 @@ import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -60,21 +60,22 @@ export class WidgetMemoryComponent {
 
   stats = computed(() => {
     const colors = [0, 1, 2].map((i) => this.theme.getRgbBackgroundColorByIndex(i));
-    let services: number | undefined;
-    if (!this.isLoading()) {
-      services = this.memory().total - this.memory().free - this.arcSize();
+    let services = 0;
+    const memory = this.memory();
+    if (memory) {
+      services = memory.total - memory.free - (this.arcSize() || 0);
     }
 
     return [
       {
         name: this.translate.instant('Free'),
         color: colors[0],
-        value: this.memory()?.free,
+        value: this.memory()?.free || 0,
       },
       {
         name: this.translate.instant('ZFS Cache'),
         color: colors[1],
-        value: this.arcSize(),
+        value: this.arcSize() || 0,
       },
       {
         name: this.translate.instant('Services'),

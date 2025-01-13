@@ -4,7 +4,7 @@ import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, startWith, switchMap, take, throttleTime, timer,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer, startWith,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -16,9 +16,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { poolStore } from 'app/services/global-store/stores.constant';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

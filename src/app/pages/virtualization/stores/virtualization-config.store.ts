@@ -7,8 +7,8 @@ import {
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { VirtualizationGlobalConfig } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationConfigState {
   isLoading: boolean;

@@ -28,9 +28,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -69,7 +69,7 @@ export class SshKeypairFormComponent implements OnInit {
 
   isFormLoading = false;
 
-  protected editingKeypair: KeychainSshKeyPair;
+  protected editingKeypair: KeychainSshKeyPair | undefined;
 
   form = this.fb.group({
     name: ['', Validators.required],
@@ -107,16 +107,17 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.editingKeypair) {
-      this.setKeypairForEditing();
+    const keypair = this.editingKeypair;
+    if (keypair) {
+      this.setKeypairForEditing(keypair);
     }
   }
 
-  setKeypairForEditing(): void {
+  private setKeypairForEditing(keypair: KeychainSshKeyPair): void {
     this.form.patchValue({
-      name: this.editingKeypair.name,
-      private_key: this.editingKeypair.attributes.private_key,
-      public_key: this.editingKeypair.attributes.public_key,
+      name: keypair.name,
+      private_key: keypair.attributes.private_key,
+      public_key: keypair.attributes.public_key,
     });
   }
 
@@ -155,16 +156,16 @@ export class SshKeypairFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('keychaincredential.create', [{
-        ...commonBody,
-        type: KeychainCredentialType.SshKeyPair,
-      }]);
-    } else {
+    if (this.editingKeypair) {
       request$ = this.api.call('keychaincredential.update', [
         this.editingKeypair.id,
         commonBody,
       ]);
+    } else {
+      request$ = this.api.call('keychaincredential.create', [{
+        ...commonBody,
+        type: KeychainCredentialType.SshKeyPair,
+      }]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

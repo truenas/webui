@@ -30,9 +30,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -131,12 +131,15 @@ export class SnapshotTaskFormComponent implements OnInit {
     protected storageService: StorageService,
     public slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 
   ngOnInit(): void {
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
     }
   }
 
@@ -144,12 +147,12 @@ export class SnapshotTaskFormComponent implements OnInit {
     return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(task: PeriodicSnapshotTask): void {
     this.form.patchValue({
-      ...this.editingTask,
-      begin: this.editingTask.schedule.begin,
-      end: this.editingTask.schedule.end,
-      schedule: scheduleToCrontab(this.editingTask.schedule),
+      ...task,
+      begin: task.schedule.begin,
+      end: task.schedule.end,
+      schedule: scheduleToCrontab(task.schedule),
     });
   }
 
@@ -171,13 +174,13 @@ export class SnapshotTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);
+    } else {
+      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

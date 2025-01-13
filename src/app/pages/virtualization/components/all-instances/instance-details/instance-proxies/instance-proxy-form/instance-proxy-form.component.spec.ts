@@ -7,10 +7,10 @@ import { VirtualizationDeviceType, VirtualizationProxyProtocol } from 'app/enums
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InstanceProxyFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-proxies/instance-proxy-form/instance-proxy-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('InstanceProxyFormComponent', () => {
   let spectator: Spectator<InstanceProxyFormComponent>;
@@ -35,6 +35,7 @@ describe('InstanceProxyFormComponent', () => {
               instanceId: 'my-instance',
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });
@@ -89,6 +90,7 @@ describe('InstanceProxyFormComponent', () => {
               },
             }),
             close: jest.fn(),
+            requireConfirmationWhen: jest.fn(),
           }),
         ],
       });

@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
@@ -18,7 +19,6 @@ import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/wid
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
@@ -43,7 +43,9 @@ describe('WidgetGroupFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
     ],

@@ -4,7 +4,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -20,8 +20,8 @@ import {
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -72,10 +72,14 @@ export class GlobalConfigFormComponent {
     private errorHandler: ErrorHandlerService,
     public slideInRef: SlideInRef<VirtualizationGlobalConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
     const currentConfig = this.slideInRef.getData();
 
     this.form.setValue({
-      pool: currentConfig.pool,
+      pool: currentConfig.pool || '',
       bridge: !currentConfig.bridge ? this.autoBridge : currentConfig.bridge,
       v4_network: currentConfig.v4_network,
       v6_network: currentConfig.v6_network,

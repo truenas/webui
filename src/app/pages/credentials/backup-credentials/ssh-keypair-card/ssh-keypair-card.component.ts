@@ -27,6 +27,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { sshKeypairsCardElements } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.elements';
 import {
   SshKeypairFormComponent,
@@ -34,7 +35,6 @@ import {
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -154,6 +154,7 @@ export class SshKeypairCardComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: credential.name,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

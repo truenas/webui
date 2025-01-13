@@ -14,15 +14,15 @@ import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ShellService } from 'app/services/shell.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -87,9 +87,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    const preInit = this.conf().preInit;
-    if (preInit) {
-      preInit().pipe(untilDestroyed(this)).subscribe(() => {
+    if (this.conf().preInit) {
+      this.conf().preInit().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
       });
     } else {

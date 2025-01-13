@@ -27,7 +27,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -66,7 +66,7 @@ export class ScrubTaskFormComponent implements OnInit {
       : this.translate.instant('Edit Scrub Task');
   }
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     pool: [null as number | null, Validators.required],
     threshold: [35, [Validators.min(0), Validators.required]],
     description: [''],
@@ -126,13 +126,13 @@ export class ScrubTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('pool.scrub.create', [values as CreatePoolScrubTask]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('pool.scrub.update', [
         this.editingTask.id,
         values as CreatePoolScrubTask,
       ]);
+    } else {
+      request$ = this.api.call('pool.scrub.create', [values as CreatePoolScrubTask]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

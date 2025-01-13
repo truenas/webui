@@ -46,13 +46,12 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class SelectPoolDialogComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     pool: [''],
     migrateApplications: [false],
   });
 
   pools$: Observable<Option[]>;
-  selectedPool: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,7 +71,7 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.dockerStore.setDockerPool(this.form.value.pool).pipe(
+    this.dockerStore.setDockerPool(this.form.getRawValue().pool).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbar.success(
@@ -90,9 +89,8 @@ export class SelectPoolDialogComponent implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {
-          this.selectedPool = selectedPool;
           this.form.patchValue({
-            pool: this.selectedPool,
+            pool: selectedPool || '',
           });
 
           const poolOptions = pools.map((pool) => ({

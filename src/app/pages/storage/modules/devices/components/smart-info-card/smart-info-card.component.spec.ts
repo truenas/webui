@@ -12,10 +12,10 @@ import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SmartInfoCardComponent } from './smart-info-card.component';
 
 describe('SmartInfoCardComponent', () => {

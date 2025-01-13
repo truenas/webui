@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
@@ -16,11 +16,10 @@ import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +28,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -45,6 +44,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class KerberosRealmsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected editingRealm: KerberosRealm | undefined;
 
   get isNew(): boolean {
     return !this.editingRealm;
@@ -78,18 +78,16 @@ export class KerberosRealmsFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private slideInRef: OldSlideInRef<KerberosRealmsFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingRealm: KerberosRealm,
-  ) {}
+    public slideInRef: SlideInRef<KerberosRealm | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingRealm = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingRealm) {
-      this.setRealmForEdit();
-    }
-  }
-
-  setRealmForEdit(): void {
-    if (!this.isNew) {
       this.form.patchValue(this.editingRealm);
     }
   }
@@ -99,20 +97,20 @@ export class KerberosRealmsFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
-    } else {
+    if (this.editingRealm) {
       request$ = this.api.call('kerberos.realm.update', [
         this.editingRealm.id,
         values as KerberosRealmUpdate,
       ]);
+    } else {
+      request$ = this.api.call('kerberos.realm.create', [values as KerberosRealmUpdate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

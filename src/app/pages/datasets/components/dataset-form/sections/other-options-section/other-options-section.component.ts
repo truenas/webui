@@ -6,7 +6,7 @@ import {
   OnInit,
   output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -48,13 +48,13 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -97,7 +97,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     checksum: [inherit as WithInherit<DatasetChecksum>],
     readonly: [inherit as WithInherit<OnOff>],
     exec: [inherit as WithInherit<OnOff>],
-    snapdir: [null as WithInherit<DatasetSnapdir>],
+    snapdir: [null as WithInherit<DatasetSnapdir> | null],
     snapdev: [inherit as WithInherit<DatasetSnapdev>],
     copies: [1],
     recordsize: [inherit as string],
@@ -153,7 +153,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   readonly helptext = helptextDatasetForm;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
@@ -487,8 +487,8 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         const recordsize = this.formatter.memorySizeParsing(recordsizeAsString);
         const recommended = this.formatter.memorySizeParsing(recommendedAsString);
 
-        this.hasRecordsizeWarning = (recordsize
-          && recommended
+        this.hasRecordsizeWarning = Boolean(recordsize
+          && !!recommended
           && recordsizeAsString !== inherit
           && recordsize < recommended);
 

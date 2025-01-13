@@ -1,8 +1,8 @@
-<ix-old-modal-header
+<ix-modal-header
   [requiredRoles]="requiredRoles"
   [title]="'LDAP' | translate"
   [loading]="isLoading"
-></ix-old-modal-header>
+></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
@@ -13,7 +13,7 @@
             formControlName="hostname"
             [label]="'Hostname' | translate"
             [tooltip]="helptext.ldap_hostname_tooltip | translate"
-            [required]="isEnabled$ | async"
+            [required]="!!(isEnabled$ | async)"
           ></ix-chips>
 
           <ix-input

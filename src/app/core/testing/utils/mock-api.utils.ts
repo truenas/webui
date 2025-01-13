@@ -11,9 +11,10 @@ import {
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { ApiService } from 'app/services/websocket/api.service';
-import { SubscriptionManagerService } from 'app/services/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 /**
  * This is a sugar syntax for creating simple api mocks.
@@ -49,11 +50,12 @@ export function mockApi(
     {
       provide: ApiService,
       useFactory: (
+        wsStatus: WebSocketStatusService,
         wsHandler: WebSocketHandlerService,
         translate: TranslateService,
       ) => {
         const subscriptionManager = {} as SubscriptionManagerService;
-        const mockApiService = new MockApiService(wsHandler, subscriptionManager, translate);
+        const mockApiService = new MockApiService(wsHandler, wsStatus, subscriptionManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockApiResponseType.Call) {
             mockApiService.mockCall(mockResponse.method, mockResponse.response);
@@ -66,7 +68,11 @@ export function mockApi(
         });
         return mockApiService;
       },
-      deps: [WebSocketHandlerService, TranslateService],
+      deps: [WebSocketStatusService, WebSocketHandlerService, TranslateService],
+    },
+    {
+      provide: WebSocketStatusService,
+      useValue: ({} as WebSocketStatusService),
     },
     {
       provide: MockApiService,

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -28,15 +28,14 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -47,7 +46,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,11 +75,12 @@ export class IpmiFormComponent implements OnInit {
   isFlashing = false;
 
   queryParams: IpmiQueryParams;
+  protected ipmiId: number;
 
   readonly helptext = helptextIpmi;
 
   form = this.fb.group({
-    apply_remote: [null as boolean],
+    apply_remote: [null as boolean | null],
     dhcp: [false],
     ipaddress: ['', [
       this.validatorsService.withMessage(
@@ -100,7 +100,7 @@ export class IpmiFormComponent implements OnInit {
         this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
-    vlan: [null as number],
+    vlan: [null as number | null],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -122,9 +122,13 @@ export class IpmiFormComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<IpmiFormComponent>,
-    @Inject(SLIDE_IN_DATA) private ipmiId: number,
-  ) { }
+    public slideInRef: SlideInRef<number, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.ipmiId = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.setFormRelations();
@@ -218,7 +222,7 @@ export class IpmiFormComponent implements OnInit {
       .pipe(
         switchMap((controlState) => {
           this.isLoading = true;
-          isUsingRemote = controlState;
+          isUsingRemote = !!controlState;
           if (this.queryParams?.length && controlState) {
             this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
           }
@@ -266,7 +270,7 @@ export class IpmiFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(
             this.translate.instant('Successfully saved IPMI settings.'),
           );

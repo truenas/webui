@@ -94,7 +94,7 @@ export class SchedulerComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onCustomOptionSelected(previousValue: string): void {
+  onCustomOptionSelected(previousValue: string | undefined): void {
     this.matDialog.open(SchedulerModalComponent, {
       data: {
         startTime: this.startTime(),

@@ -34,6 +34,7 @@ import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { OrNotAvailablePipe } from 'app/modules/pipes/or-not-available/or-not-available.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
@@ -44,7 +45,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -78,7 +78,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class AppInfoCardComponent {
-  readonly app = input<App>();
+  readonly app = input.required<App>();
   readonly startApp = output();
   readonly stopApp = output();
   protected readonly isCustomApp = computed(() => this.app()?.metadata?.name === customApp);

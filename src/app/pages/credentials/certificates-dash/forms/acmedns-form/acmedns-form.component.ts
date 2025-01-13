@@ -30,8 +30,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface DnsAuthenticatorList {
   key: DnsAuthenticatorType;
@@ -95,7 +95,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   authenticatorOptions$: Observable<Option[]>;
-  private editingAcmedns: DnsAuthenticator;
+  private editingAcmedns: DnsAuthenticator | undefined;
 
   constructor(
     private translate: TranslateService,
@@ -216,13 +216,13 @@ export class AcmednsFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('acme.dns.authenticator.create', [values]);
-    } else {
+    if (this.editingAcmedns) {
       request$ = this.api.call('acme.dns.authenticator.update', [
         this.editingAcmedns.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('acme.dns.authenticator.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

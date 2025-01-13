@@ -23,7 +23,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 interface InstanceProxyFormOptions {
   instanceId: string;
@@ -70,13 +70,17 @@ export class InstanceProxyFormComponent implements OnInit {
   protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   constructor(
-    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-  ) {}
+    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     const proxy = this.slideInRef.getData().proxy;

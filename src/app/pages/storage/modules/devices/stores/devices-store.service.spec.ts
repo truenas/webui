@@ -5,8 +5,8 @@ import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DevicesStore', () => {
   let spectator: SpectatorService<DevicesStore>;

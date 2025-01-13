@@ -22,7 +22,7 @@ import { AppWorkloadsCardComponent } from 'app/pages/apps/components/installed-a
   ],
 })
 export class AppDetailsPanelComponent {
-  readonly app = input<App>();
+  readonly app = input.required<App>();
 
   readonly startApp = output();
   readonly stopApp = output();

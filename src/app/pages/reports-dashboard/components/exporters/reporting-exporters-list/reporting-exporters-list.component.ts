@@ -32,12 +32,12 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +80,7 @@ export class ReportingExporterListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Type'),
-      propertyName: 'type',
+      getValue: (row) => row.attributes['exporter_type'],
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -93,13 +93,13 @@ export class ReportingExporterListComponent implements OnInit {
             { name: row.name, checked: checked ? 'Enabling' : 'Disabling' },
           ),
         );
-        const exporter = { ...row };
-        delete exporter.type;
-        delete exporter.id;
-        this.api.call('reporting.exporters.update', [row.id, { ...exporter, enabled: checked }]).pipe(
+        this.api.call('reporting.exporters.update', [row.id, { enabled: checked }]).pipe(
           untilDestroyed(this),
         ).subscribe({
-          complete: () => this.appLoader.close(),
+          complete: () => {
+            this.appLoader.close();
+            this.getExporters();
+          },
           error: (error: unknown) => this.errorCaught(error),
         });
       },
@@ -150,7 +150,7 @@ export class ReportingExporterListComponent implements OnInit {
     private translate: TranslateService,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,
@@ -162,8 +162,10 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(ReportingExportersFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => this.getExporters(),
     });
   }
@@ -207,8 +209,10 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private doEdit(exporter: ReportingExporter): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, { data: exporter });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(ReportingExportersFormComponent, { data: exporter }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => this.getExporters(),
     });
   }
@@ -218,6 +222,7 @@ export class ReportingExporterListComponent implements OnInit {
       title: this.translate.instant('Delete Reporting Exporter'),
       message: this.translate.instant('Are you sure you want to delete <b>{name}</b> Reporting Exporter?', { name: exporter.name }),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       tap(() => this.appLoader.open(this.translate.instant('Deleting exporter'))),

@@ -52,4 +52,4 @@ export interface Widget {
   settings?: SomeWidgetSettings;
 }
 
-export type SomeWidgetSettings = object;
+export type SomeWidgetSettings = object | null;

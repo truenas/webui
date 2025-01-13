@@ -9,11 +9,11 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AclEditorSaveControlsComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/acl-editor-save-controls/acl-editor-save-controls.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AclEditorSaveControlsComponent', () => {
   let spectator: Spectator<AclEditorSaveControlsComponent>;

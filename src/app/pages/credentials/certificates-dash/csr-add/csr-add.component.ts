@@ -25,6 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -41,7 +42,6 @@ import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +74,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class CsrAddComponent {
-  protected readonly identifierAndType = viewChild(CsrIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
   protected readonly options = viewChild(CertificateOptionsComponent);
@@ -99,7 +99,7 @@ export class CsrAddComponent {
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.identifierAndType()?.form?.dirty);
+      return of(Boolean(this.identifierAndType()?.form?.dirty));
     });
   }
 

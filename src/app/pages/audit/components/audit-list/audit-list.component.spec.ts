@@ -6,9 +6,9 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { AuditSearchComponent } from 'app/pages/audit/components/audit-search/audit-search.component';
 import { mockAuditApiDataProvider } from 'app/pages/audit/testing/mock-audit-api-data-provider';
-import { LocaleService } from 'app/services/locale.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AuditListComponent } from './audit-list.component';
 

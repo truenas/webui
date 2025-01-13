@@ -31,11 +31,11 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -97,7 +97,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
   constructor(
     protected emptyService: EmptyService,
-    private slideIn: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private api: ApiService,
     private dialog: DialogService,
@@ -124,15 +124,13 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   }
 
   private restore(row: CloudBackupSnapshot): void {
-    const slideInRef = this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
+    this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
       data: {
         snapshot: row,
         backup: this.backup(),
       },
-    });
-
-    slideInRef.slideInClosed$.pipe(
-      filter((response) => !!response),
+    }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -148,6 +146,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: row.hostname,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -17,13 +17,12 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeQuotas = [{
   id: 1,
@@ -42,6 +41,12 @@ const fakeQuotas = [{
   quota_type: DatasetQuotaType.User,
   used_percent: 0,
 }] as DatasetQuota[];
+
+const slideInRef: SlideInRef<undefined, unknown> = {
+  close: jest.fn(),
+  requireConfirmationWhen: jest.fn(),
+  getData: jest.fn(() => undefined),
+};
 
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
@@ -77,19 +82,15 @@ describe('DatasetQuotasListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        onClose$: new Subject<unknown>(),
-        open: jest.fn(() => ({
-          slideInClosed$: of(undefined),
-        })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockApi([
         mockCall('pool.dataset.get_quota', fakeQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -149,7 +150,7 @@ describe('DatasetQuotasListComponent', () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 2, 8);
     await editIcon.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       DatasetQuotaEditFormComponent,
       { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
     );
@@ -159,7 +160,7 @@ describe('DatasetQuotasListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       DatasetQuotaAddFormComponent,
       { data: { datasetId: 'Test', quotaType: 'USER' } },
     );

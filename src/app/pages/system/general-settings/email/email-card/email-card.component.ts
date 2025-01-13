@@ -13,12 +13,12 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +46,7 @@ export class EmailCardComponent {
   emailConfig$: Observable<LoadingState<MailConfig>> = this.api.call('mail.config').pipe(toLoadingState());
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -59,9 +59,10 @@ export class EmailCardComponent {
         untilDestroyed(this),
       )
       .subscribe((config) => {
-        const slideInRef = this.slideInService.open(EmailFormComponent, { data: config });
-
-        slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.slideIn.open(EmailFormComponent, { data: config }).pipe(
+          filter((response) => !!response.response),
+          untilDestroyed(this),
+        ).subscribe(() => {
           this.api.call('mail.config').pipe(untilDestroyed(this)).subscribe((result) => {
             this.emailConfig$ = of(result).pipe(toLoadingState());
             this.cdr.markForCheck();

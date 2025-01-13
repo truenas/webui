@@ -26,6 +26,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';
@@ -36,7 +37,6 @@ import {
   keyUsageOptions,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions.constants';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -60,22 +60,22 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class CertificateConstraintsComponent implements OnInit, SummaryProvider {
   hasAuthorityKeyIdentifier = input(false);
 
-  form = this.formBuilder.group({
-    BasicConstraints: this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
+    BasicConstraints: this.formBuilder.nonNullable.group({
       enabled: [false],
-      path_length: [null as number],
+      path_length: [null as number | null],
       BasicConstraints: [[] as BasicConstraint[]],
     }),
-    AuthorityKeyIdentifier: this.formBuilder.group({
+    AuthorityKeyIdentifier: this.formBuilder.nonNullable.group({
       enabled: [false],
       AuthorityKeyIdentifier: [[] as AuthorityKeyIdentifier[]],
     }),
-    ExtendedKeyUsage: this.formBuilder.group({
+    ExtendedKeyUsage: this.formBuilder.nonNullable.group({
       enabled: [false],
       usages: [[] as ExtendedKeyUsageFlag[]],
       extension_critical: [false],
     }),
-    KeyUsage: this.formBuilder.group({
+    KeyUsage: this.formBuilder.nonNullable.group({
       enabled: [false],
       KeyUsage: [[] as string[]],
     }),

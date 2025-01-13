@@ -20,7 +20,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -85,12 +85,8 @@ export class StaticRouteFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingRoute) {
-      this.setEditingStaticRoute();
+      this.form.patchValue(this.editingRoute);
     }
-  }
-
-  setEditingStaticRoute(): void {
-    this.form.patchValue(this.editingRoute);
   }
 
   onSubmit(): void {
@@ -98,13 +94,13 @@ export class StaticRouteFormComponent implements OnInit {
     const values = this.form.value as UpdateStaticRoute;
 
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('staticroute.create', [values]);
-    } else {
+    if (this.editingRoute) {
       request$ = this.api.call('staticroute.update', [
         this.editingRoute.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('staticroute.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

@@ -8,9 +8,9 @@ import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('IdentifyLightComponent', () => {
   let spectator: Spectator<IdentifyLightComponent>;

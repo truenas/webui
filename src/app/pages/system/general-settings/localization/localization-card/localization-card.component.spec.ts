@@ -8,10 +8,10 @@ import { Observable, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -51,7 +51,9 @@ describe('LocalizationCardComponent', () => {
           return ['2023-03-31', '05:17:49'];
         },
       }),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
     ],
   });
 
@@ -77,7 +79,7 @@ describe('LocalizationCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(LocalizationFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(LocalizationFormComponent, {
       data: {
         dateFormat: undefined, kbdMap: 'us', language: 'en', timeFormat: undefined, timezone: 'America/New_York',
       },

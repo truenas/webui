@@ -19,9 +19,9 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface RaidzExtendDialogParams {
   poolId: number;
@@ -106,6 +106,9 @@ export class RaidzExtendDialogComponent {
 
     const minimumSize = this.data.vdev.children.reduce((acc, topologyDisk) => {
       const disk = diskDictionary[topologyDisk.disk];
+      if (!disk) {
+        return acc;
+      }
       return disk.size < acc ? disk.size : acc;
     }, Number.MAX_SAFE_INTEGER);
 

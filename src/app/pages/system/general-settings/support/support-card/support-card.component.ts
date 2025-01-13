@@ -28,8 +28,10 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getProductImageSrc } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
@@ -42,8 +44,6 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -80,8 +80,8 @@ export class SupportCardComponent implements OnInit {
   extraMargin = true;
   systemInfo: SystemInfoInSupport;
   hasLicense = false;
-  productImageSrc = signal<string>(null);
-  licenseInfo: LicenseInfoInSupport = null;
+  productImageSrc = signal<string | null>(null);
+  licenseInfo: LicenseInfoInSupport | null = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
@@ -96,7 +96,7 @@ export class SupportCardComponent implements OnInit {
     protected api: ApiService,
     private loader: AppLoaderService,
     private matDialog: MatDialog,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -114,7 +114,7 @@ export class SupportCardComponent implements OnInit {
       if (systemInfo.license) {
         this.hasLicense = true;
         this.licenseInfo = { ...systemInfo.license };
-        this.parseLicenseInfo();
+        this.parseLicenseInfo(this.licenseInfo);
       }
       this.cdr.markForCheck();
     });
@@ -126,26 +126,26 @@ export class SupportCardComponent implements OnInit {
   private setupProductImage(systemInfo: SystemInfo): void {
     const productImageUrl = getProductImageSrc(systemInfo.system_product, true);
     this.productImageSrc.set(productImageUrl);
-    this.extraMargin = !productImageUrl.includes('ix-original');
+    this.extraMargin = !productImageUrl?.includes('ix-original');
   }
 
-  parseLicenseInfo(): void {
-    if (this.licenseInfo.features.length === 0) {
-      this.licenseInfo.featuresString = 'NONE';
+  parseLicenseInfo(licenseInfo: LicenseInfoInSupport): void {
+    if (licenseInfo.features.length === 0) {
+      licenseInfo.featuresString = 'NONE';
     } else {
-      this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+      licenseInfo.featuresString = licenseInfo.features.join(', ');
     }
-    const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
-    this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
+    const expDateConverted = new Date(licenseInfo.contract_end.$value);
+    licenseInfo.expiration_date = licenseInfo.contract_end.$value;
 
-    if (this.licenseInfo.addhw_detail.length === 0) {
-      this.licenseInfo.add_hardware = 'NONE';
+    if (licenseInfo.addhw_detail.length === 0) {
+      licenseInfo.add_hardware = 'NONE';
     } else {
-      this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
+      licenseInfo.add_hardware = licenseInfo.addhw_detail.join(', ');
     }
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
-    this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
+    licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
   daysTillExpiration(now: Date, then: Date): number {
@@ -153,7 +153,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   updateLicense(): void {
-    this.slideInService.open(LicenseComponent);
+    this.slideIn.open(LicenseComponent);
   }
 
   feedbackDialog(): void {
@@ -161,7 +161,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   openProactive(): void {
-    this.slideInService.open(ProactiveComponent, { wide: true });
+    this.slideIn.open(ProactiveComponent, { wide: true });
   }
 
   updateProductionStatus(newStatus: boolean): void {

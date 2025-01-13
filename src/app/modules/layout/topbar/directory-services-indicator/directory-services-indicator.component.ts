@@ -6,17 +6,19 @@ import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialo
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription, switchMap } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/layout/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -44,6 +46,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
     private api: ApiService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private auth: AuthService,
   ) { }
 
   get isServicesMonitorOpen(): boolean {
@@ -72,12 +75,20 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
 
   private loadDirectoryServicesStatus(): void {
     // TODO: Sync endpoints
-    this.api.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
-      this.updateIconVisibility(state);
-    });
-    this.statusSubscription = this.api.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((event) => {
-      this.updateIconVisibility(event.fields);
-    });
+    this.api.call('directoryservices.get_state')
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.updateIconVisibility(state);
+      });
+    this.statusSubscription = this.auth.hasRole(Role.DirectoryServiceRead)
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.api.subscribe('directoryservices.status')),
+        untilDestroyed(this),
+      )
+      .subscribe((event) => {
+        this.updateIconVisibility(event.fields);
+      });
   }
 
   updateIconVisibility(servicesState: DirectoryServicesState): void {

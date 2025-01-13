@@ -64,7 +64,7 @@
     detailsRowIdentifier="name"
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="isLoading$ | async"
+    [isLoading]="!!(isLoading$ | async)"
   >
     <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
       <ix-snapshot-details-row [snapshot]="snapshot"></ix-snapshot-details-row>

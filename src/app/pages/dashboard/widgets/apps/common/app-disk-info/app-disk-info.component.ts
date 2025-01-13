@@ -10,8 +10,8 @@ import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ix-app-disk-info',

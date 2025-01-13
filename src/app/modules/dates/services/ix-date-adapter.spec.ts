@@ -1,7 +1,7 @@
 import { NativeDateAdapter } from '@angular/material/core';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { IxDateAdapter } from './ix-date-adapter';
 
 describe('IxDateAdapter', () => {

@@ -6,6 +6,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AssociatedExtentsCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
@@ -15,7 +16,6 @@ import {
 import {
   FibreChannelPortCardComponent,
 } from 'app/pages/sharing/iscsi/target/all-targets/target-details/fibre-channel-port-card/fibre-channel-port-card.component';
-import { ApiService } from 'app/services/websocket/api.service';
 import { TargetDetailsComponent } from './target-details.component';
 
 describe('TargetDetailsComponent', () => {

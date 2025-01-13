@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { sortBy } from 'lodash-es';
+import { omit, sortBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -22,14 +22,13 @@ import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-co
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -44,7 +43,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -64,6 +63,7 @@ export class LocalizationFormComponent implements OnInit {
   isFormLoading = false;
 
   sortLanguagesByName = true;
+  protected localizationSettings: LocalizationSettings;
 
   formGroup = this.fb.nonNullable.group({
     language: ['', [Validators.required]],
@@ -146,10 +146,15 @@ export class LocalizationFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private slideInRef: OldSlideInRef<LocalizationFormComponent>,
+    public slideInRef: SlideInRef<LocalizationSettings, boolean>,
     @Inject(WINDOW) private window: Window,
-    @Inject(SLIDE_IN_DATA) private localizationSettings: LocalizationSettings,
-  ) { }
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+
+    this.localizationSettings = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.localizationSettings) {
@@ -176,25 +181,25 @@ export class LocalizationFormComponent implements OnInit {
   }
 
   submit(): void {
-    const body = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     this.isFormLoading = true;
-    this.window.localStorage.setItem('language', body.language);
-    this.window.localStorage.setItem('dateFormat', body.date_format);
-    this.window.localStorage.setItem('timeFormat', body.time_format);
+    this.window.localStorage.setItem('language', values.language);
+    this.window.localStorage.setItem('dateFormat', values.date_format);
+    this.window.localStorage.setItem('timeFormat', values.time_format);
     this.store$.dispatch(localizationFormSubmitted({
-      dateFormat: body.date_format,
-      timeFormat: body.time_format,
+      dateFormat: values.date_format,
+      timeFormat: values.time_format,
     }));
-    delete body.date_format;
-    delete body.time_format;
-    this.api.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe({
+    const payload = omit(values, ['date_format', 'time_format']);
+
+    this.api.call('system.general.update', [payload]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.store$.dispatch(systemInfoUpdated());
         this.isFormLoading = false;
-        this.slideInRef.close(true);
-        this.setTimeOptions(body.timezone);
-        this.langService.setLanguage(body.language);
+        this.slideInRef.close({ response: true, error: null });
+        this.setTimeOptions(payload.timezone);
+        this.langService.setLanguage(payload.language);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

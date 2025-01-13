@@ -9,10 +9,12 @@ import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 export const dummyUser = {
   privilege: {
@@ -40,12 +42,15 @@ export function mockAuth(
       provide: AuthService,
       useFactory: () => {
         const mockService = new MockAuthService(
-          createSpyObject(WebSocketHandlerService, {
-            isConnected$: of(true),
-          }),
           createSpyObject(Store),
           createSpyObject(ApiService),
           createSpyObject(TokenLastUsedService),
+          createSpyObject(WebSocketStatusService, {
+            isConnected$: of(true),
+            isAuthenticated$: of(false),
+          }),
+          createSpyObject(DialogService),
+          createSpyObject(ErrorHandlerService),
           createSpyObject(Window),
         );
 

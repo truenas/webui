@@ -26,16 +26,15 @@ import {
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { NetworkService } from 'app/services/network.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -46,6 +45,7 @@ describe('InterfaceFormComponent', () => {
   let api: ApiService;
   let form: IxFormHarness;
   let aliasesList: IxListHarness | null;
+
   const existingInterface = {
     id: 'enp0s6',
     name: 'enp0s6',
@@ -60,6 +60,12 @@ describe('InterfaceFormComponent', () => {
     ipv6_auto: false,
     mtu: 1500,
   } as NetworkInterface;
+
+  const slideInRef: SlideInRef<NetworkInterface | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: InterfaceFormComponent,
@@ -127,13 +133,14 @@ describe('InterfaceFormComponent', () => {
         ],
       }),
       mockProvider(DialogService),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -180,7 +187,7 @@ describe('InterfaceFormComponent', () => {
         }],
         mtu: 1500,
       }]);
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
 
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
@@ -231,7 +238,7 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
-      expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
       expect(api.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
@@ -302,7 +309,7 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingInterface },
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => existingInterface }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -328,14 +335,14 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
               ...existingInterface,
               id: 'vlan1',
               type: NetworkInterfaceType.Vlan,
-            } as NetworkInterface,
-          },
+            } as NetworkInterface),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -354,15 +361,15 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
               ...existingInterface,
               id: 'br7',
               enable_learning: false,
               type: NetworkInterfaceType.Bridge,
-            },
-          },
+            }),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -385,14 +392,14 @@ describe('InterfaceFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
               ...existingInterface,
               id: 'bond9',
               type: NetworkInterfaceType.LinkAggregation,
-            },
-          },
+            }),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

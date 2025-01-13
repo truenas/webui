@@ -9,7 +9,7 @@ import { parseISO } from 'date-fns';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateAdapter } from 'app/modules/dates/services/ix-date-adapter';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
-import { LocaleService } from 'app/services/locale.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { IxDatepickerComponent } from './ix-date-picker.component';
 
 describe('IxDatePickerComponent', () => {

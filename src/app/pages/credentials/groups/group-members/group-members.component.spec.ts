@@ -12,8 +12,8 @@ import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeGroupDataSource = [{
   id: 1,

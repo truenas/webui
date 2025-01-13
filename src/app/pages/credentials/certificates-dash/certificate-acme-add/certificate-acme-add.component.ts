@@ -28,8 +28,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +59,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class CertificateAcmeAddComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', [
       Validators.required,
       this.validatorsService.withMessage(
@@ -94,7 +94,7 @@ export class CertificateAcmeAddComponent implements OnInit {
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    public slideInRef: SlideInRef<Certificate | undefined, boolean>,
+    public slideInRef: SlideInRef<Certificate, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -109,7 +109,7 @@ export class CertificateAcmeAddComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
 
     const dnsMapping = this.domains.reduce((mapping, domain, i) => {
       return {

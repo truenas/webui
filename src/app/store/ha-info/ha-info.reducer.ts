@@ -7,7 +7,7 @@ import {
 } from 'app/store/ha-info/ha-info.actions';
 
 export interface HaInfoState {
-  haStatus: HaStatus;
+  haStatus: HaStatus | null;
   isHaLicensed: boolean;
 }
 

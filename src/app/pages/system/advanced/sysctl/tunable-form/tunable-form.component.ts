@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TunableType } from 'app/enums/tunable-type.enum';
@@ -22,7 +22,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -83,7 +83,14 @@ export class TunableFormComponent implements OnInit {
     private translate: TranslateService,
     public slideInRef: SlideInRef<Tunable | undefined, boolean>,
   ) {
-    this.editingTunable = this.slideInRef.getData();
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+
+    const tunable = this.slideInRef.getData();
+    if (tunable) {
+      this.editingTunable = tunable;
+    }
   }
 
   ngOnInit(): void {
@@ -123,7 +130,7 @@ export class TunableFormComponent implements OnInit {
   }
 
   private updateTunable(): Observable<Job<Tunable>> {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     return this.api.job('tunable.update', [
       this.editingTunable.id,
       {

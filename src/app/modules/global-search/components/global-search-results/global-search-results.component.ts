@@ -10,15 +10,14 @@ import { findIndex, isEqual } from 'lodash-es';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
-import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +45,6 @@ export class GlobalSearchResultsComponent implements OnChanges {
   readonly GlobalSearchSection = GlobalSearchSection;
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
   readonly trackBySection: TrackByFunction<Option<GlobalSearchSection>> = (_, section) => section.value;
-  readonly trackById: TrackByFunction<UiSearchableElement> = (_, item) => generateIdFromHierarchy(item.hierarchy);
 
   processHierarchy = processHierarchy;
 

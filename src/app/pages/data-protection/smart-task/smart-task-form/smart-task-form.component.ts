@@ -31,7 +31,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -110,15 +110,11 @@ export class SmartTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTest) {
-      this.setTestForEdit();
+      this.form.patchValue({
+        ...this.editingTest,
+        schedule: scheduleToCrontab(this.editingTest.schedule),
+      });
     }
-  }
-
-  setTestForEdit(): void {
-    this.form.patchValue({
-      ...this.editingTest,
-      schedule: scheduleToCrontab(this.editingTest.schedule),
-    });
   }
 
   onSubmit(): void {
@@ -130,13 +126,13 @@ export class SmartTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('smart.test.create', [values]);
-    } else {
+    if (this.editingTest) {
       request$ = this.api.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('smart.test.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

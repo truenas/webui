@@ -12,6 +12,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { extractApiError } from 'app/helpers/api.helper';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
+import { Option } from 'app/interfaces/option.interface';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
@@ -23,8 +24,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -90,8 +91,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
   private datastoreList: VmwareDatastore[];
   private filesystemList: VmwareFilesystem[];
 
-  filesystemOptions$ = of([]);
-  datastoreOptions$ = of([]);
+  filesystemOptions$ = of<Option[]>([]);
+  datastoreOptions$ = of<Option[]>([]);
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -103,7 +104,13 @@ export class VmwareSnapshotFormComponent implements OnInit {
     protected dialogService: DialogService,
     public slideInRef: SlideInRef<VmwareSnapshot | undefined, boolean>,
   ) {
-    this.editingSnapshot = slideInRef.getData();
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    const snapshot = slideInRef.getData();
+    if (snapshot) {
+      this.editingSnapshot = snapshot;
+    }
   }
 
   ngOnInit(): void {
@@ -164,7 +171,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
       },
       error: (error: unknown) => {
         this.isLoading = false;
-        this.datastoreOptions$ = of([]);
+        this.datastoreOptions$ = of<Option[]>([]);
         const apiError = extractApiError(error);
         if (apiError?.reason?.includes('[ETIMEDOUT]')) {
           this.dialogService.error({

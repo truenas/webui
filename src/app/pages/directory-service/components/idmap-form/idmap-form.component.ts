@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -29,16 +29,16 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { greaterThanFg, rangeValidator } from 'app/services/validators';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
@@ -51,7 +51,7 @@ const customIdmapName = 'custom';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -80,6 +80,8 @@ export class IdmapFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.existingIdmap;
   }
+
+  protected existingIdmap: Idmap | undefined;
 
   form = this.formBuilder.group({
     idmap_backend: [IdmapBackend.Ad],
@@ -194,21 +196,25 @@ export class IdmapFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    private slideInRef: OldSlideInRef<IdmapFormComponent>,
-    @Inject(SLIDE_IN_DATA) private existingIdmap: Idmap,
-  ) {}
+    public slideInRef: SlideInRef<Idmap | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingIdmap = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.loadBackendChoices();
     this.setFormDependencies();
 
     if (this.existingIdmap) {
-      this.setIdmapForEdit();
+      this.setIdmapForEdit(this.existingIdmap);
     }
   }
 
-  setIdmapForEdit(): void {
-    this.setEditingIdmapFormValues();
+  setIdmapForEdit(idmap: Idmap): void {
+    this.setEditingIdmapFormValues(idmap);
     this.form.controls.name.disable();
   }
 
@@ -247,7 +253,7 @@ export class IdmapFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.form);
@@ -313,22 +319,22 @@ export class IdmapFormComponent implements OnInit {
     });
   }
 
-  private setEditingIdmapFormValues(): void {
-    const hasCustomName = !requiredIdmapDomains.includes(this.existingIdmap.name as IdmapName);
+  private setEditingIdmapFormValues(idmap: Idmap): void {
+    const hasCustomName = !requiredIdmapDomains.includes(idmap.name as IdmapName);
 
     this.form.patchValue({
-      ...this.existingIdmap,
-      name: hasCustomName ? customIdmapName : this.existingIdmap.name as IdmapName,
-      certificate: this.existingIdmap.certificate?.id,
+      ...idmap,
+      name: hasCustomName ? customIdmapName : idmap.name as IdmapName,
+      certificate: idmap.certificate?.id,
     });
 
     if (hasCustomName) {
       this.form.patchValue({
-        custom_name: this.existingIdmap.name,
+        custom_name: idmap.name,
       });
     }
 
-    Object.entries(this.existingIdmap.options).forEach(([option, value]) => {
+    Object.entries(idmap.options).forEach(([option, value]) => {
       this.form.patchValue({
         [option]: value,
       });

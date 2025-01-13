@@ -23,10 +23,10 @@ import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-siz
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
   value: number;
@@ -52,7 +52,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly stacked = input(false);
   readonly labelY = input('Label Y');
 
-  private readonly el: Signal<ElementRef<HTMLElement>> = viewChild('wrapper', { read: ElementRef });
+  private readonly el: Signal<ElementRef<HTMLElement> | undefined> = viewChild('wrapper', { read: ElementRef });
 
   lastMinDate: number;
   lastMaxDate: number;
@@ -201,7 +201,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
     const day = 60 * 60 * 24;
-    let result: Conversion;
     if (!fixed) {
       fixed = -1;
     }
@@ -211,41 +210,43 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     switch (units.toLowerCase()) {
       case 'seconds':
-        result = { value: value / day, shortName: ' days' };
-        break;
-      case 'kilobits':
-        result = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
+        return { value: value / day, shortName: ' days' };
+      case 'kilobits': {
+        const result = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
         if (axis) {
           result.value = this.getValueForAxis(value * 1000, result.prefix);
         }
-        break;
-      case 'mebibytes':
-        result = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
+
+        return result;
+      }
+      case 'mebibytes': {
+        const result = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
         if (axis) {
           result.value = this.getValueForAxis(value * 1000 * 1000, result.prefix);
         }
-        break;
-      case 'kibibytes':
-        result = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
+
+        return result;
+      }
+      case 'kibibytes': {
+        const result = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
         if (axis) {
           result.value = this.getValueForAxis(value * 1000, result.prefix);
         }
-        break;
+
+        return result;
+      }
       case 'bits':
-      case 'bytes':
-        result = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
+      case 'bytes': {
+        const result = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
         if (axis) {
           result.value = this.getValueForAxis(value, result.prefix);
         }
-        break;
-      case '%':
-      case '°':
-      default:
-        result = this.convertByKilo(value);
-        break;
-    }
 
-    return result;
+        return result;
+      }
+      default:
+        return this.convertByKilo(value);
+    }
   }
 
   convertByKilo(value: number): Conversion {
@@ -384,7 +385,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.zoomChange.emit([startDate, endDate]);
   };
 
-  getValueForAxis(value: number, prefix: string): number {
+  getValueForAxis(value: number, prefix: string | undefined): number {
     if (prefix === 'Tebi') return value / 1000 ** 4;
     if (prefix === 'Gibi') return value / 1000 ** 3;
     if (prefix === 'Mebi') return value / 1000 ** 2;

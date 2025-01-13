@@ -10,8 +10,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('KernelFormComponent', () => {
   let spectator: Spectator<KernelFormComponent>;
@@ -30,7 +30,11 @@ describe('KernelFormComponent', () => {
         open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => undefined),
+        requireConfirmationWhen: jest.fn(),
+      }),
       provideMockStore(),
       mockAuth(),
     ],
@@ -39,7 +43,11 @@ describe('KernelFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       providers: [
-        mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn(() => true) }),
+        mockProvider(SlideInRef, {
+          close: jest.fn(),
+          getData: jest.fn(() => true),
+          requireConfirmationWhen: jest.fn(),
+        }),
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

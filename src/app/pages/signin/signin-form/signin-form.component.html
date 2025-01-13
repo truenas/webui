@@ -39,7 +39,12 @@
     }
   }
   @if (hasTwoFactor) {
+    <p>
+      {{ '2FA has been configured for this account. Enter the OTP to continue.' | translate }}
+    </p>
+
     <ix-input
+      ixAutofocus
       formControlName="otp"
       autocomplete="one-time-code"
       [prefixIcon]="iconMarker('phonelink')"

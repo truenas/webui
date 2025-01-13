@@ -15,6 +15,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -24,9 +25,8 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -53,9 +53,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     enabled: [false],
-    window: [null as number, Validators.required],
+    window: [null as number | null, Validators.required],
     ssh: [false],
   });
 
@@ -76,6 +76,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     public slideInRef: SlideInRef<GlobalTwoFactorConfig, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.twoFactorConfig = this.slideInRef.getData();
   }
 
@@ -98,11 +101,11 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       shouldWarn = false;
     }
 
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const payload: GlobalTwoFactorConfigUpdate = {
       enabled: values.enabled,
       services: { ssh: values.ssh },
-      window: values.window,
+      window: Number(values.window),
     };
     const confirmation$ = shouldWarn
       ? this.dialogService.confirm({

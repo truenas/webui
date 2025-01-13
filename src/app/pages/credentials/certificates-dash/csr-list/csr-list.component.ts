@@ -34,6 +34,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -44,7 +45,6 @@ import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -181,7 +181,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: this.translate.instant('Force'),
-      buttonColor: 'red',
+      buttonColor: 'warn',
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),

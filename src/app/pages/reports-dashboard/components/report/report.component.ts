@@ -39,8 +39,10 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -50,8 +52,6 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -90,8 +90,8 @@ export class ReportComponent implements OnInit, OnChanges {
 
   private readonly lineChart = viewChild(LineChartComponent);
 
-  updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
-  fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
+  updateReport$ = new BehaviorSubject<IxSimpleChanges<this> | null>(null);
+  fetchReport$ = new BehaviorSubject<FetchReportParams | null>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
   isReady = false;
@@ -105,15 +105,15 @@ export class ReportComponent implements OnInit, OnChanges {
   stepBackDisabled = false;
   timezone: string;
   lastEndDateForCurrentZoomLevel = {
-    '60m': null as number,
-    '24h': null as number,
-    '7d': null as number,
-    '1M': null as number,
-    '6M': null as number,
+    '60m': null as number | null,
+    '24h': null as number | null,
+    '7d': null as number | null,
+    '1M': null as number | null,
+    '6M': null as number | null,
   };
 
   currentStartDate: number;
-  currentEndDate: number;
+  currentEndDate: number | undefined;
   customZoom = false;
   zoomLevelMax = Object.keys(ReportZoomLevel).length - 1;
   zoomLevelMin = 0;
@@ -130,7 +130,8 @@ export class ReportComponent implements OnInit, OnChanges {
 
   get reportTitle(): string {
     const trimmed = this.report().title.replace(/[()]/g, '');
-    return this.identifier() ? trimmed.replace(/{identifier}/, this.identifier()) : this.report().title;
+    const identifier = this.identifier();
+    return identifier ? trimmed.replace(/{identifier}/, identifier) : this.report().title;
   }
 
   get currentZoomLevel(): ReportZoomLevel {
@@ -154,7 +155,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   get shouldShowLegendValue(): boolean {
-    return this.chartId === this.legendData?.chartId;
+    return this.chartId === this.legendData.chartId;
   }
 
   constructor(
@@ -275,10 +276,6 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = startDate;
     this.currentEndDate = endDate;
     this.customZoom = true;
-  }
-
-  setChartInteractive(value: boolean): void {
-    this.isActive = value;
   }
 
   timeZoomReset(): void {

@@ -4,8 +4,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { sortBy } from 'lodash-es';
 import { Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface DiskState {
   usedDisks: DetailsDisk[];

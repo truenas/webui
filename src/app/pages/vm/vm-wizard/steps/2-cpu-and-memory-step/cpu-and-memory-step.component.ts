@@ -21,10 +21,10 @@ import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-forma
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +72,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
         this.translate.instant(helptextVmWizard.memory_size_err),
       ),
     ]],
-    min_memory: [null as number],
+    min_memory: [null as number | null],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
   });
 
@@ -119,20 +119,22 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
       },
       {
         label: this.translate.instant('CPU Mode'),
-        value: vmCpuModeLabels.get(values.cpu_mode),
+        value: values.cpu_mode
+          ? vmCpuModeLabels.get(values.cpu_mode) || ''
+          : '',
       },
     ];
 
     if (values.cpu_mode === VmCpuMode.Custom) {
       summary.push({
         label: this.translate.instant('CPU Model'),
-        value: values.cpu_model,
+        value: values.cpu_model || '',
       });
     }
 
     summary.push({
       label: this.translate.instant('Memory'),
-      value: buildNormalizedFileSize(values.memory),
+      value: values.memory ? buildNormalizedFileSize(values.memory) : '',
     });
 
     if (values.min_memory) {

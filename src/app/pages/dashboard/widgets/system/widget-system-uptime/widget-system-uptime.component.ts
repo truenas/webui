@@ -4,6 +4,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -13,7 +14,6 @@ import {
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.definition';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-widget-system-uptime',
@@ -35,8 +35,8 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
   systemInfo$ = this.resources.systemInfo$;
 
   loadedSystemInfo = toSignal(this.systemInfo$.pipe(
-    filter((state) => !state.isLoading),
     map((state) => state.value),
+    filter((value) => !!value),
   ));
 
   startTime = Date.now();
@@ -45,7 +45,7 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
     map(() => {
       return Math.floor((Date.now() - this.startTime) / 1000);
     }),
-  ));
+  ), { requireSync: true });
 
   uptime = computed(() => {
     return this.loadedSystemInfo().uptime_seconds + this.realElapsedSeconds();

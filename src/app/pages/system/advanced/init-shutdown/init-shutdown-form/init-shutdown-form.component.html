@@ -32,9 +32,9 @@
             [required]="true"
             [tooltip]="tooltips.script | translate"
             [nodeProvider]="treeNodeProvider"
+            [canCreateDataset]="isNew"
           ></ix-explorer>
         }
-
 
         <ix-select
           formControlName="when"

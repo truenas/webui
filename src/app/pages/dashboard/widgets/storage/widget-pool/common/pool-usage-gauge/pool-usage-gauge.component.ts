@@ -16,9 +16,9 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { StorageService } from 'app/services/storage.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 const maxPct = 80;
 

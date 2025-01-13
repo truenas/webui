@@ -1,4 +1,4 @@
-<ix-page-header [loading]="dataProvider.isLoading$ | async">
+<ix-page-header [loading]="!!(dataProvider.isLoading$ | async)">
   <ix-search-input1
     [value]="filterString()"
     (search)="onListFiltered($event)"
@@ -68,7 +68,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
+    [isLoading]="!!(dataProvider.isLoading$ | async)"
   >
   </tbody>
 </ix-table>

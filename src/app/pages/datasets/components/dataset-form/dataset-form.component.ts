@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, viewChild,
 } from '@angular/core';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -21,11 +21,11 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -41,7 +41,6 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -52,7 +51,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -68,12 +67,13 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
-  private nameAndOptionsSection = viewChild(NameAndOptionsSectionComponent);
+  private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
   private quotasSection = viewChild(QuotasSectionComponent);
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
 
   readonly requiredRoles = [Role.DatasetWrite];
+  protected slideInData: { datasetId: string; isNew?: boolean } | null = null;
 
   isNameAndOptionsValid = true;
   isQuotaValid = true;
@@ -137,10 +137,24 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private slideInRef: OldSlideInRef<DatasetFormComponent>,
     private store$: Store<AppState>,
-    @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
-  ) {}
+    public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, Dataset>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(
+        this.form.dirty
+        || this.nameAndOptionsSection().form.dirty
+        || this.encryptionSection().form.dirty
+        || this.otherOptionsSection().form.dirty
+        || this.quotasSection()?.form.dirty,
+      );
+    });
+
+    const slideInData = slideInRef.getData();
+    if (slideInData) {
+      this.slideInData = slideInData;
+    }
+  }
 
   ngOnInit(): void {
     if (this.slideInData?.datasetId && !this.slideInData?.isNew) {
@@ -246,7 +260,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(createdDataset);
+        this.slideInRef.close({ response: createdDataset, error: null });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
             queryParams: { path: createdDataset.mountpoint },

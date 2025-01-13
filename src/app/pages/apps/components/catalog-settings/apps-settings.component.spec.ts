@@ -18,9 +18,9 @@ import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppsSettingsComponent', () => {
   let spectator: Spectator<AppsSettingsComponent>;
@@ -197,6 +197,7 @@ describe('AppsSettingsComponent', () => {
             { base: '172.17.0.0/12', size: 12 },
             { base: '173.17.0.0/12', size: 12 },
           ],
+          nvidia: false,
         }]);
       });
     });

@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective, LazyLoadImageModule } from 'ng-lazyload-image';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
-import { LayoutService } from 'app/services/layout.service';
 
 describe('AppCardLogoComponent', () => {
   let spectator: Spectator<AppCardLogoComponent>;

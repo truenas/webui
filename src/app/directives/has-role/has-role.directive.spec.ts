@@ -4,7 +4,7 @@ import {
 import { BehaviorSubject } from 'rxjs';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Role } from 'app/enums/role.enum';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 
 describe('HasRolesDirective', () => {
   let spectator: SpectatorHost<HasRoleDirective>;

@@ -1,7 +1,7 @@
 <div class="table-header">
   <h2>{{ 'Instances' | translate }}</h2>
 
-  @if (checkedInstances?.length > 0) {
+  @if (checkedInstances.length > 0) {
     <ix-instance-list-bulk-actions
       [checkedInstances]="checkedInstances"
       (resetBulkSelection)="resetSelection()"
@@ -17,7 +17,7 @@
 
   <ix-search-input1
     [maxLength]="100"
-    [disabled]="!instances()?.length"
+    [disabled]="!instances().length"
     [value]="searchQuery()"
     (search)="onSearch($event)"
   ></ix-search-input1>
@@ -26,7 +26,7 @@
 <div class="instances">
   <div class="instances-header-row">
     <div class="cell checkbox">
-      @if (instances()?.length) {
+      @if (instances().length) {
         <mat-checkbox
           color="primary"
           ixTest="select-all-app"

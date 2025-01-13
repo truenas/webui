@@ -19,10 +19,10 @@ import {
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { StorageService } from 'app/services/storage.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { CertificateListComponent } from './certificate-list.component';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
@@ -134,7 +134,7 @@ describe('CertificateListComponent', () => {
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',
-      buttonColor: 'red',
+      buttonColor: 'warn',
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

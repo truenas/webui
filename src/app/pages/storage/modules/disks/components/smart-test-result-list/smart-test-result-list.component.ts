@@ -27,7 +27,7 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -76,7 +76,7 @@ export class SmartTestResultListComponent implements OnInit {
       propertyName: 'remaining',
       getValue: (row) => {
         if (typeof row.remaining === 'number' && row.remaining >= 0) {
-          return `${row.remaining}%`;
+          return `${row.remaining * 100}%`;
         }
 
         return row.status_verbose ? this.translate.instant(row.status_verbose) : '0%';

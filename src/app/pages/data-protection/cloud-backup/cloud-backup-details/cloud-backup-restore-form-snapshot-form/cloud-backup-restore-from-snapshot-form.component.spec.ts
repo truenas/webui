@@ -6,18 +6,30 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
   let loader: HarnessLoader;
   let spectator: Spectator<CloudBackupRestoreFromSnapshotFormComponent>;
+
+  const data = {
+    backup: { id: 1, path: '/mnt/dozer' } as CloudBackup,
+    snapshot: { id: 1 } as unknown as CloudBackupSnapshot,
+  };
+
+  const slideInRef: SlideInRef<{ backup: CloudBackup; snapshot: CloudBackupSnapshot } | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => data),
+  };
+
   const createComponent = createComponentFactory({
     component: CloudBackupRestoreFromSnapshotFormComponent,
     imports: [
@@ -33,21 +45,12 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       mockApi([
         mockJob('cloud_backup.restore'),
       ]),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
+        components$: of([]),
       }),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(FilesystemService),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: {
-          snapshot: { id: 1 },
-          backup: { id: 1, path: '/mnt/dozer' },
-        },
-      },
     ],
   });
 
