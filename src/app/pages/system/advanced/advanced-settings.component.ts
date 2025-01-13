@@ -1,16 +1,17 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component,
+  computed,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import {
-  Observable,
-} from 'rxjs';
+import { Store } from '@ngrx/store';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { advancedSettingsElements } from 'app/pages/system/advanced/advanced-settings.elements';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { AccessCardComponent } from './access/access-card/access-card.component';
 import { AllowedAddressesCardComponent } from './allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AuditCardComponent } from './audit/audit-card/audit-card.component';
@@ -54,13 +55,20 @@ import { SystemSecurityCardComponent } from './system-security/system-security-c
     IsolatedGpusCardComponent,
     GlobalTwoFactorAuthCardComponent,
     SystemSecurityCardComponent,
-    AsyncPipe,
   ],
 })
 export class AdvancedSettingsComponent {
-  isSystemLicensed$: Observable<boolean> = this.api.call('system.security.info.fips_available');
+  protected readonly isSystemLicensed = toSignal(this.api.call('system.security.info.fips_available'));
   protected readonly Role = Role;
   protected readonly searchableElements = advancedSettingsElements;
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
+  protected readonly showSedCard = computed(() => {
+    return this.isEnterprise() || this.hasGlobalEncryption();
+  });
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private store$: Store<AppState>,
+  ) {}
 }

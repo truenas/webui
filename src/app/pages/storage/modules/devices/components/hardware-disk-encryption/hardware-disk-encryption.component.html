@@ -6,34 +6,42 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'SED Password' | translate }}:</div>
-      <ng-container *ixWithLoadingState="hasDiskEncryption$ as hasDiskEncryption">
-        <div class="value">
-          {{ hasDiskEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
-        </div>
-      </ng-container>
-      <a
-        *ixHasRole="[Role.FullAdmin]"
-        ixTest="manage-sed-password"
-        (click)="onManageSedPassword()"
-      >
-        {{ 'Manage SED Password' | translate }}
-      </a>
+      <div class="value">
+        {{ hasDiskEncryption()
+          ? ('Password is set' | translate)
+          : ('Password is not set' | translate)
+        }}
+      </div>
+
+      @if (hasDiskEncryption() || isEnterprise()) {
+        <a
+          *ixHasRole="[Role.FullAdmin]"
+          ixTest="manage-sed-password"
+          (click)="onManageSedPassword()"
+        >
+          {{ 'Manage SED Password' | translate }}
+        </a>
+      }
     </div>
 
     <div class="details-item">
       <div class="label">{{ 'Global SED Password' | translate }}:</div>
-      <ng-container *ixWithLoadingState="hasGlobalEncryption$ as hasGlobalEncryption">
         <div class="value">
-          {{ hasGlobalEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+          {{ hasGlobalEncryption()
+            ? ('Password is set' | translate)
+            : ('Password is not set' | translate)
+          }}
         </div>
-      </ng-container>
-      <a
-        *ixHasRole="[Role.FullAdmin]"
-        ixTest="manage-global-sed-password"
-        [routerLink]="['/system/advanced']"
-      >
-        {{ 'Manage Global SED Password' | translate }}
-      </a>
+
+        @if (hasGlobalEncryption() || isEnterprise()) {
+          <a
+            *ixHasRole="[Role.FullAdmin]"
+            ixTest="manage-global-sed-password"
+            [routerLink]="['/system/advanced']"
+          >
+            {{ 'Manage Global SED Password' | translate }}
+          </a>
+        }
     </div>
   </mat-card-content>
 </mat-card>
