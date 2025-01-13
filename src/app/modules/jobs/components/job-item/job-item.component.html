@@ -28,7 +28,7 @@
     <div>
       @switch (job().state) {
         @case (JobState.Running) {
-          @if (job()?.progress?.description) {
+          @if (job().progress.description) {
             <div class="job-progress-description">
               {{ job().progress.description }}
             </div>

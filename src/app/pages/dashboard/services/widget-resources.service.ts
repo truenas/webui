@@ -4,7 +4,7 @@ import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer,
+  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer, startWith,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -36,7 +36,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   readonly realtimeUpdates$ = this.api.subscribe('reporting.realtime');
 
-  readonly refreshInterval$ = timer(0, 5000);
+  readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([

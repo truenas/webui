@@ -70,7 +70,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    public slideInRef: SlideInRef<CertificateAuthority | undefined, boolean>,
+    public slideInRef: SlideInRef<CertificateAuthority, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);

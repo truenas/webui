@@ -76,8 +76,8 @@ export class WidgetSysInfoPassiveComponent {
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(
-    filter((state) => !state.isLoading),
-    map((state) => state.value.remote_info),
+    map((state) => state.value?.remote_info),
+    filter((value) => !!value),
   ));
 
   startTime = Date.now();

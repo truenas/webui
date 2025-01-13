@@ -142,15 +142,15 @@ export class AlertServiceComponent implements OnInit {
     this.renderAlertServiceForm();
 
     if (this.existingAlertService) {
-      this.setAlertServiceForEdit();
+      this.setAlertServiceForEdit(this.existingAlertService);
     }
   }
 
-  setAlertServiceForEdit(): void {
-    this.commonForm.patchValue(this.existingAlertService);
+  setAlertServiceForEdit(alertService: AlertService): void {
+    this.commonForm.patchValue(alertService);
 
     setTimeout(() => {
-      this.alertServiceForm.setValues(this.existingAlertService.attributes);
+      this.alertServiceForm.setValues(alertService.attributes);
     });
   }
 

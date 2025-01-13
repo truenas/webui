@@ -287,8 +287,18 @@ export class UpdateActionsCardComponent implements OnInit {
     return this.dialogService.confirm({
       title: helptext.ha_update.complete_title,
       message: helptext.ha_update.complete_msg,
-      hideCheckbox: true,
       buttonText: helptext.ha_update.complete_action,
+      hideCheckbox: true,
+      hideCancel: true,
+    });
+  }
+
+  private finishNonHaUpdate(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: helptext.ha_update.complete_title,
+      message: this.translate.instant('Update completed successfully. The system will reboot shortly'),
+      buttonText: helptext.ha_update.complete_action,
+      hideCheckbox: true,
       hideCancel: true,
     });
   }
@@ -318,7 +328,7 @@ export class UpdateActionsCardComponent implements OnInit {
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
           this.cdr.markForCheck();
-          return this.isHaLicensed ? this.finishHaUpdate() : of(null);
+          return this.isHaLicensed ? this.finishHaUpdate() : this.finishNonHaUpdate();
         }),
         this.errorHandler.catchError(),
         untilDestroyed(this),

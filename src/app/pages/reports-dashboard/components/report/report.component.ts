@@ -113,7 +113,7 @@ export class ReportComponent implements OnInit, OnChanges {
   };
 
   currentStartDate: number;
-  currentEndDate: number;
+  currentEndDate: number | undefined;
   customZoom = false;
   zoomLevelMax = Object.keys(ReportZoomLevel).length - 1;
   zoomLevelMin = 0;
@@ -155,7 +155,7 @@ export class ReportComponent implements OnInit, OnChanges {
   }
 
   get shouldShowLegendValue(): boolean {
-    return this.chartId === this.legendData?.chartId;
+    return this.chartId === this.legendData.chartId;
   }
 
   constructor(
