@@ -15,12 +15,6 @@ const defaultWidgets: WidgetGroup[] = [
     ],
   },
   {
-    layout: WidgetGroupLayout.Halves,
-    slots: [
-      { type: WidgetType.CpuUsageBar },
-    ],
-  },
-  {
     layout: WidgetGroupLayout.QuartersAndHalf,
     slots: [
       { type: WidgetType.CpuUsageGauge },
