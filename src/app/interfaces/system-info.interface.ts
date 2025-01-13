@@ -46,12 +46,14 @@ export interface SystemLicense {
 
 export enum ContractType {
   Gold = 'GOLD',
+  Best = 'BEST',
   SilverInternational = 'SILVERINTERNATIONAL',
 }
 
 export function getLabelForContractType(contractType: ContractType): string {
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
+    [ContractType.Best]: 'Best',
     [ContractType.SilverInternational]: 'Silver International',
   };
   return contractTypeToLabelsMap[contractType] || contractType;
