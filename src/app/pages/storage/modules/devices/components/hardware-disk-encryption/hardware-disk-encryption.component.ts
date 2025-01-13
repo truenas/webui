@@ -45,7 +45,7 @@ export class HardwareDiskEncryptionComponent {
 
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
-  protected readonly Role = Role;
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   protected readonly hasDiskEncryption = toSignal(
     toObservable(this.topologyDisk).pipe(
