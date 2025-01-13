@@ -12,7 +12,7 @@
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Contract Type' | translate }}:</span>
-      <span class="value">{{ licenseInfo().contract_type }}</span>
+      <span class="value">{{ getLabelForContractType(licenseInfo().contract_type) }}</span>
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Expiration Date' | translate }}:</span>
