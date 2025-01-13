@@ -120,7 +120,7 @@
                     {{
                       '{license} Contract,' | translate:
                       {
-                        license: systemInfo().license.contract_type | titlecase,
+                        license: getLabelForContractType(systemInfo().license.contract_type),
                       }
                     }}
                   </div>
