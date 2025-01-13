@@ -49,27 +49,27 @@ export class WidgetMemoryComponent {
   protected ecc$ = this.store$.pipe(waitForSystemInfo, map((sysInfo) => sysInfo.ecc_memory));
 
   protected memory = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.virtual_memory),
+    map((update) => update.fields.memory),
   ));
 
   protected isLoading = computed(() => !this.memory());
 
   protected arcSize = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.zfs?.arc_size),
+    map((update) => update.fields.memory?.arc_size),
   ));
 
   stats = computed(() => {
     const colors = [0, 1, 2].map((i) => this.theme.getRgbBackgroundColorByIndex(i));
     let services: number | undefined;
     if (!this.isLoading()) {
-      services = this.memory().total - this.memory().free - this.arcSize();
+      services = this.memory().physical_memory_total - this.memory().physical_memory_available - this.arcSize();
     }
 
     return [
       {
         name: this.translate.instant('Free'),
         color: colors[0],
-        value: this.memory()?.free,
+        value: this.memory()?.physical_memory_available,
       },
       {
         name: this.translate.instant('ZFS Cache'),

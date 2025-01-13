@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component,
   computed,
-  input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
@@ -22,9 +21,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   imports: [NgxSkeletonLoaderModule, BaseChartDirective],
 })
 export class CpuCoreBarComponent {
-  hideTemperature = input<boolean>(false);
-  hideUsage = input<boolean>(false);
-
   protected cpuData = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.cpu),
   ));
@@ -119,19 +115,13 @@ export class CpuCoreBarComponent {
 
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];
-    const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.coreCount(); i++) {
       const usage = parseInt(cpuData[`core${i}_usage`]?.toFixed(1) || '0');
-      const temperature = parseInt(cpuData.temperature_celsius?.[i]?.toFixed(0) || '0');
 
       usageColumn.push(usage);
-      temperatureColumn.push(temperature);
     }
 
-    return [
-      this.hideUsage() ? [] : usageColumn,
-      this.hideTemperature() ? [] : temperatureColumn,
-    ];
+    return [usageColumn];
   }
 }

@@ -28,7 +28,6 @@ describe('CpuChartGaugeComponent', () => {
                 2: { usage: 70 },
                 3: { usage: 9 },
                 average: { usage: 75 },
-                temperature_celsius: [31, 83],
               },
             },
           }),
