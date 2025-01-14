@@ -52,7 +52,6 @@ export class SelectPoolDialogComponent implements OnInit {
   });
 
   pools$: Observable<Option[]>;
-  selectedPool: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -90,9 +89,8 @@ export class SelectPoolDialogComponent implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([selectedPool, pools]) => {
-          this.selectedPool = selectedPool;
           this.form.patchValue({
-            pool: this.selectedPool,
+            pool: selectedPool || '',
           });
 
           const poolOptions = pools.map((pool) => ({

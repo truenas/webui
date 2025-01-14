@@ -81,7 +81,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CertificateAuthorityAddComponent implements AfterViewInit {
-  protected readonly identifierAndType = viewChild(CaIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild.required(CaIdentifierAndTypeComponent);
 
   // Adding new
   protected readonly options = viewChild(CertificateOptionsComponent);

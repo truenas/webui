@@ -68,7 +68,7 @@ export class EmailFormComponent implements OnInit {
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
   form = this.formBuilder.group({
-    fromemail: ['', [Validators.required, emailValidator()]],
+    fromemail: ['', [emailValidator()]],
     fromname: [''],
     outgoingserver: [''],
     port: [null as number | null, [
@@ -271,8 +271,8 @@ export class EmailFormComponent implements OnInit {
       }
     } else {
       update = {
-        fromemail: '',
-        fromname: '',
+        fromemail: this.form.value.fromemail,
+        fromname: this.form.value.fromname,
         oauth: {
           ...this.oauthCredentials as MailOauthConfig,
           provider: this.sendMethodControl.value,

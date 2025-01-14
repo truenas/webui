@@ -50,7 +50,7 @@ import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/di
   ],
 })
 export class DiskInfoCardComponent {
-  readonly topologyDisk = input<TopologyDisk>();
+  readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
 
   readonly requiredRoles = [Role.FullAdmin];
