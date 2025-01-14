@@ -80,7 +80,6 @@
     "@lezer/common": "~1.2.1",
     "@lezer/generator": "~1.7.1",
     "@lezer/lr": "~1.4.2",
-    "@marijn/find-cluster-break": "~1.0.2",
     "@material-design-icons/svg": "~0.14.13",
     "@mdi/svg": "~7.4.47",
     "@messageformat/core": "~3.3.0",
