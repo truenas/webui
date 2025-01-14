@@ -1,24 +1,33 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
+import { MatButton } from '@angular/material/button';
+import {
+  MatDialogActions, MatDialogContent, MatDialogTitle,
+} from '@angular/material/dialog';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { TruenasConnectRegistration } from 'app/interfaces/truenas-connect.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'ix-truenas-connect-modal',
   standalone: true,
-  imports: [TranslateModule, MatDialogTitle, MatDialogContent, MatDialogActions,IxIconComponent, TranslateModule, MatButton],
+  imports: [
+    TranslateModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatDialogActions,
+    IxIconComponent,
+    TranslateModule,
+    MatButton,
+  ],
   templateUrl: './truenas-connect-modal.component.html',
   styleUrl: './truenas-connect-modal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruenasConnectModalComponent {
   readonly helptext = helptextTopbar;
@@ -26,28 +35,28 @@ export class TruenasConnectModalComponent {
 
   constructor(@Inject(WINDOW) private window: Window, private api: ApiService, private loader: AppLoaderService) {}
 
-  connect() {
-    this.loader.open()
-    this.api.call('tn_connect.ip_choices' as any, [])
+  connect(): void {
+    this.loader.open();
+    this.api.call('tn_connect.ip_choices')
       .pipe(
-        switchMap(res => {
-          const ips = Object.values(res)
-          return this.api.call('tn_connect.update' as any, [{
-              enabled: true,
-              ips
-            }])
+        switchMap((ipsRes) => {
+          const ips = Object.values(ipsRes);
+          return this.api.call('tn_connect.update', [{
+            enabled: true,
+            ips,
+          }]);
         }),
         switchMap(() => {
-          return this.api.call('tn_connect.generate_claim_token' as any, [])
+          return this.api.call('tn_connect.generate_claim_token');
         }),
         // TODO: need status to be REGISTRATION_FINALIZATION_WAITING
         // switchMap(() => {
         //   return this.api.call('tn_connect.get_registration_uri' as any, [])
         // })
+        untilDestroyed(this),
       )
-      .subscribe(url => {
-        console.log('url', url)
+      .subscribe(() => {
         // this.window.open(url)
-      })
+      });
   }
 }

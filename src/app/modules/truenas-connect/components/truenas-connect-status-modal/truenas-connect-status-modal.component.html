@@ -2,13 +2,13 @@
 <mat-divider></mat-divider>
 <mat-dialog-content>
     <div>
-        @if (config.status_reason === TruenasConnectStatus.CONFIGURED) {
+        @if (config.status === TruenasConnectStatus.Configured) {
             <ix-icon
               class="status-connected"
               name="check_circle"
             ></ix-icon>
           }
-          @else if (config.status_reason === TruenasConnectStatus.DISABLED) {
+          @else if (config.status === TruenasConnectStatus.Disabled) {
             <ix-icon
               class="status-disabled"
               name="pause_circle_filled"
@@ -29,6 +29,7 @@
 </mat-dialog-content>
 <div mat-dialog-actions>
   <button
+    ixTest="tnc-open"
     mat-button
     color="primary"
   >

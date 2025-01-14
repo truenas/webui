@@ -40,13 +40,13 @@ import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
+import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
-import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +77,7 @@ import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truen
     UiSearchDirective,
     TestDirective,
     TruecommandButtonComponent,
-    TruenasConnectButtonComponent
+    TruenasConnectButtonComponent,
   ],
 })
 export class TopbarComponent implements OnInit {

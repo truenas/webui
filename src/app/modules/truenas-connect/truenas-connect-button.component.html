@@ -1,9 +1,9 @@
-@if (config.status_reason === status.DISABLED) {
-    <button mat-icon-button (click)="openConnect()">
+@if (config.status === TruenasConnectStatus.Disabled) {
+    <button mat-icon-button ixTest="tnc-open-connect" (click)="openConnect()">
         <ix-icon name="ix-truenas-connect"></ix-icon>
     </button>
 } @else {
-    <button mat-icon-button matBadge="&#8288;" matBadgeSize="small" (click)="showStatus()">
+    <button ixTest="tnc-show-status" mat-icon-button matBadge="&#8288;" matBadgeSize="small" (click)="showStatus()">
         <ix-icon name="ix-truenas-connect"></ix-icon>
     </button>
 }
