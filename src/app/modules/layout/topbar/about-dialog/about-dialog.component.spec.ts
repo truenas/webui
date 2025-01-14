@@ -77,6 +77,6 @@ describe('AboutDialogComponent', () => {
 
   it('should display product-specific open source text', () => {
     const openSourceElement = spectator.query('#open-source');
-    expect(openSourceElement).toHaveText('TrueNAS Community Edition is Free and  Open Source software, which is provided as-is with no warranty.');
+    expect(openSourceElement).toHaveText('TrueNAS is Free and Open Source software, which is provided as-is with no warranty.');
   });
 });

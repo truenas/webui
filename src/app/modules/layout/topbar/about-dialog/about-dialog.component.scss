@@ -15,9 +15,16 @@
 
 .header-overlay {
   background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--fg1);
   padding: 30px 10px;
   text-align: center;
+}
+
+.logo-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 200px;
 }
 
 #title {
@@ -94,8 +101,9 @@
   text-align: right;
 }
 
-.logo-wrapper .logo {
+.logo-wrapper ix-truenas-logo {
   height: auto;
+  margin: auto;
   position: relative;
   width: 256px;
   z-index: 2;

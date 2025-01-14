@@ -10,7 +10,7 @@
       [name]="fullSizeIcon()"
     ></ix-icon>
   } @else {
-    <div class="logo">
+    <div class="logo" [class.text-hidden]="hideText()">
       <ix-icon
         class="app-logo"
         [fullSize]="true"

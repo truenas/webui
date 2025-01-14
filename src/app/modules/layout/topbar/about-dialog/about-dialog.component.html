@@ -27,12 +27,10 @@
       ></div>
     </div>
 
-    @if (!isEnterprise()) {
     <div
       id="open-source"
       [innerHtml]="helptext.opensource | translate"
-      ></div>
-    }
+    ></div>
 
     <div id="system-version">
       {{ ('System Version' | translate) + ': ' +  (systemVersion$ | async) }}
