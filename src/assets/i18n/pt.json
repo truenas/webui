@@ -2436,7 +2436,7 @@
   "Session dialect": "",
   "Set Frequency": "",
   "Set Warning Level": "",
-  "Set an expiration date-time for the API key.": "",
+  "Set an expiration date for the API key.": "",
   "Set email": "",
   "Set enable sending messages to the address defined in the <b>Email</b> field.": "",
   "Set for the LDAP server to disable authentication and allow read and write access to any client.": "",
