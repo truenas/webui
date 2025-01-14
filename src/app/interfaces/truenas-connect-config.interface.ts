@@ -14,6 +14,6 @@ export interface TruenasConnectConfig {
   };
   ips: number[];
   status: TruenasConnectStatus;
-  status_reason: TruenasConnectStatusReason;
+  status_reason: typeof TruenasConnectStatusReason;
   certificate: number;
 }

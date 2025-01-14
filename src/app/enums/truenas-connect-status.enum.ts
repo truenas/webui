@@ -1,27 +1,10 @@
-export enum TruenasConnectStatusReason {
-  Disabled = 'TrueNAS Connect is disabled',
-  ClaimTokenMissing = 'Waiting for claim token to be generated',
-  RegistrationFinalizationWaiting = 'Waiting for registration with TrueNAS Connect to complete',
-  RegistrationFinalizationFailed = 'Registration finalization failed',
-  RegistrationFinalizationTimeout = 'Registration finalization timed out',
-  RegistrationFinalizationSucess = 'Registration finalization successful',
-  CertGenerationInProgress = 'Certificate generation is in progress',
-  CertGenerationFailed = 'Certificate generation failed',
-  CertGenerationSuccess = 'Certificate generation was successful',
-  CertConfigurationFailure = 'Failed to configure certificate in system UI',
-  CertRenewalInProgress = 'Certificate renewal is in progress',
-  CertRenewalFailure = 'Failed to renew certificate',
-  CertRenewalSuccess = 'Certificate renewal was successful',
-  Configured = 'TrueNAS Connect is configured',
-}
-
 export enum TruenasConnectStatus {
   Disabled = 'DISABLED',
   ClaimTokenMissing = 'CLAIM_TOKEN_MISSING',
   RegistrationFinalizationWaiting = 'REGISTRATION_FINALIZATION_WAITING',
   RegistrationFinalizationFailed = 'REGISTRATION_FINALIZATION_FAILED',
   RegistrationFinalizationTimeout = 'REGISTRATION_FINALIZATION_TIMEOUT',
-  RegistrationFinalizationSucess = 'REGISTRATION_FINALIZATION_SUCCESS',
+  RegistrationFinalizationSuccess = 'REGISTRATION_FINALIZATION_SUCCESS',
   CertGenerationInProgress = 'CERT_GENERATION_IN_PROGRESS',
   CertGenerationFailed = 'CERT_GENERATION_FAILED',
   CertGenerationSuccess = 'CERT_GENERATION_SUCCESS',
@@ -31,3 +14,21 @@ export enum TruenasConnectStatus {
   CertRenewalSuccess = 'CERT_RENEWAL_SUCCESS',
   Configured = 'CONFIGURED',
 }
+
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
+  [TruenasConnectStatus.Disabled]: 'TrueNAS Connect is disabled',
+  [TruenasConnectStatus.ClaimTokenMissing]: 'Waiting for claim token to be generated',
+  [TruenasConnectStatus.RegistrationFinalizationWaiting]: 'Waiting for registration with TrueNAS Connect to complete',
+  [TruenasConnectStatus.RegistrationFinalizationFailed]: 'Registration finalization failed',
+  [TruenasConnectStatus.RegistrationFinalizationTimeout]: 'Registration finalization timed out',
+  [TruenasConnectStatus.RegistrationFinalizationSuccess]: 'Registration finalization successful',
+  [TruenasConnectStatus.CertGenerationInProgress]: 'Certificate generation is in progress',
+  [TruenasConnectStatus.CertGenerationFailed]: 'Certificate generation failed',
+  [TruenasConnectStatus.CertGenerationSuccess]: 'Certificate generation was successful',
+  [TruenasConnectStatus.CertConfigurationFailure]: 'Failed to configure certificate in system UI',
+  [TruenasConnectStatus.CertRenewalInProgress]: 'Certificate renewal is in progress',
+  [TruenasConnectStatus.CertRenewalFailure]: 'Failed to renew certificate',
+  [TruenasConnectStatus.CertRenewalSuccess]: 'Certificate renewal was successful',
+  [TruenasConnectStatus.Configured]: 'TrueNAS Connect is configured',
+};
