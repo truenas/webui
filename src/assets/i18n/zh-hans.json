@@ -4133,7 +4133,6 @@
   "Shows only the groups that have quotas. This is the default view.": "仅显示具有配额的组。这是默认视图。",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "用户界面中不允许收缩 ZVOL。这可能导致数据丢失。",
   "Shut Down": "关闭",
-  "Shut down": "关闭",
   "Shutdown": "关机",
   "Shutdown Command": "关机命令",
   "Shutdown Mode": "关机模式",

@@ -4129,7 +4129,6 @@
   "Shows only the groups that have quotas. This is the default view.": "할당량을 가진 그룹만 보입니다. 기본 보기입니다.",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "ZVOL 축소는 사용자 인터페이스에서 할 수 없습니다. 데이터가 소실될 수 있습니다.",
   "Shut Down": "종료",
-  "Shut down": "종료",
   "Shutdown": "종료",
   "Shutdown Command": "종료 명령어",
   "Shutdown Mode": "종료 모드",

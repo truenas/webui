@@ -4648,7 +4648,6 @@
   "Shows only the groups that have quotas. This is the default view.": "Показує лише групи, які мають квоти. Це перегляд за замовчуванням.",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Стиснення ZVOL заборонено в інтерфейсі користувача. Це може призвести до втрати даних.",
   "Shut Down": "Відключити",
-  "Shut down": "Відключити",
   "Shutdown": "Закрити",
   "Shutdown Command": "Команда відключення",
   "Shutdown Mode": "Режим відключення",

@@ -4141,7 +4141,6 @@
   "Shows only the groups that have quotas. This is the default view.": "Mostrar únicamente los grupos que tienen cupos. Esta es la vista predeterminada.",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Reducir un ZVOL no está permitido en la interfaz de usuario. Esto puede conducir a la pérdida de datos.",
   "Shut Down": "Apagar",
-  "Shut down": "Apagar",
   "Shutdown": "Apagar",
   "Shutdown Command": "Comando de apagado",
   "Shutdown Mode": "Modo de apagado",
