@@ -65,7 +65,7 @@ export class FilesystemService {
 
       return this.ws.call(
         'filesystem.listdir',
-        [node.data.path, typeFilter, { order_by: ['name'], limit: 1000 }],
+        [node.data.path, typeFilter, { order_by: ['name'], limit: 1000, select: ['name', 'type', 'attributes', 'path'] }],
       ).pipe(
         map((files) => {
           const children: ExplorerNodeData[] = [];
