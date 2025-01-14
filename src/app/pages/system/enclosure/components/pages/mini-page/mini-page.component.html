@@ -17,7 +17,7 @@
       </div>
       <div class="details-column">
         @if (selectedSlot()) {
-          <ix-mini-drive-details></ix-mini-drive-details>
+          <ix-mini-drive-details [slot]="selectedSlot()"></ix-mini-drive-details>
           <ix-mini-drive-stats [slot]="selectedSlot()"></ix-mini-drive-stats>
         } @else {
           <ix-mini-disks-overview [slots]="slots()"></ix-mini-disks-overview>

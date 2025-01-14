@@ -67,7 +67,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
-  private nameAndOptionsSection = viewChild(NameAndOptionsSectionComponent);
+  private nameAndOptionsSection = viewChild.required(NameAndOptionsSectionComponent);
   private encryptionSection = viewChild(EncryptionSectionComponent);
   private quotasSection = viewChild(QuotasSectionComponent);
   private otherOptionsSection = viewChild(OtherOptionsSectionComponent);
@@ -140,7 +140,20 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private store$: Store<AppState>,
     public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, Dataset>,
   ) {
-    this.slideInData = slideInRef.getData();
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(
+        this.form.dirty
+        || this.nameAndOptionsSection().form.dirty
+        || this.encryptionSection().form.dirty
+        || this.otherOptionsSection().form.dirty
+        || this.quotasSection()?.form.dirty,
+      );
+    });
+
+    const slideInData = slideInRef.getData();
+    if (slideInData) {
+      this.slideInData = slideInData;
+    }
   }
 
   ngOnInit(): void {

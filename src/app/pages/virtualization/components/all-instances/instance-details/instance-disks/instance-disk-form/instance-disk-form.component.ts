@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -57,19 +57,25 @@ export class InstanceDiskFormComponent implements OnInit {
     destination: ['', Validators.required],
   });
 
+  protected isNew = computed(() => !this.existingDisk());
+
   protected title = computed(() => {
-    return this.existingDisk() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
+    return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystem: FilesystemService,
-  ) {}
+    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     const disk = this.slideInRef.getData().disk;

@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
@@ -85,26 +85,29 @@ export class NtpServerFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<NtpServer | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
     this.editingServer = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
     if (this.editingServer) {
-      this.setupForm();
+      this.setupForm(this.editingServer);
     }
   }
 
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(): void {
+  setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
-      address: this.editingServer.address,
-      burst: this.editingServer.burst,
-      iburst: this.editingServer.iburst,
-      prefer: this.editingServer.prefer,
-      minpoll: this.editingServer.minpoll,
-      maxpoll: this.editingServer.maxpoll,
+      address: server.address,
+      burst: server.burst,
+      iburst: server.iburst,
+      prefer: server.prefer,
+      minpoll: server.minpoll,
+      maxpoll: server.maxpoll,
     });
   }
 

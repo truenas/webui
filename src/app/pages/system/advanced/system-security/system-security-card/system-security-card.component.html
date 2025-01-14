@@ -23,6 +23,13 @@
           {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
         </span>
       </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Enable General Purpose OS STIG compatibility mode' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.enable_gpos_stig ? ('Yes' | translate) : ('No' | translate) }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 </mat-card>

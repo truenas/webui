@@ -85,8 +85,11 @@ export class DiskFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
-    public slideInRef: SlideInRef<Disk | undefined, boolean>,
+    public slideInRef: SlideInRef<Disk, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.setFormDisk(this.slideInRef.getData());
   }
 

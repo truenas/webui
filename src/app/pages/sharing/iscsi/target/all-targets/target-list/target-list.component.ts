@@ -59,7 +59,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
 export class TargetListComponent implements OnInit {
   readonly isMobileView = input<boolean>();
   readonly toggleShowMobileDetails = output<boolean>();
-  readonly dataProvider = input<AsyncDataProvider<IscsiTarget>>();
+  readonly dataProvider = input.required<AsyncDataProvider<IscsiTarget>>();
   readonly targets = input<IscsiTarget[]>();
 
   protected readonly searchableElements = targetListElements;
@@ -85,9 +85,9 @@ export class TargetListComponent implements OnInit {
       title: this.translate.instant('Mode'),
       propertyName: 'mode',
       hidden: true,
-      getValue: (row) => (iscsiTargetModeNames.has(row.mode)
-        ? this.translate.instant(iscsiTargetModeNames.get(row.mode))
-        : row.mode || '-'),
+      getValue: (row) => {
+        return this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-';
+      },
     }),
   ], {
     uniqueRowTag: (row) => 'iscsi-target-' + row.name,

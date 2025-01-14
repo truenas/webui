@@ -74,7 +74,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CsrAddComponent {
-  protected readonly identifierAndType = viewChild(CsrIdentifierAndTypeComponent);
+  protected readonly identifierAndType = viewChild.required(CsrIdentifierAndTypeComponent);
 
   // Adding new
   protected readonly options = viewChild(CertificateOptionsComponent);

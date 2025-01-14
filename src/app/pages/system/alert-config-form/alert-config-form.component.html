@@ -3,11 +3,11 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   }
 
-  @if (!isFormLoading && !categories?.length) {
+  @if (!isFormLoading && !categories.length) {
     <ix-empty [conf]="noResponseConfig"></ix-empty>
   }
 
-  @if (categories?.length) {
+  @if (categories.length) {
     <div class="mat-title">
       @if (selectedCategory) {
         <h3> {{ 'Category' | translate }}: </h3>

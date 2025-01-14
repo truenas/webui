@@ -10,7 +10,7 @@
 @if (tooltip()) {
   <ix-tooltip
     class="tooltip"
-    [header]="label()"
-    [message]="tooltip()"
+    [header]="label() || ''"
+    [message]="tooltip() || ''"
   ></ix-tooltip>
 }

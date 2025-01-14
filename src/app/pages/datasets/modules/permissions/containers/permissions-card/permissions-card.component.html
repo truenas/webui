@@ -41,12 +41,13 @@
       </div>
     }
 
-    @if (acl()) {
+    @let loadedAcl = acl();
+    @if (loadedAcl) {
       <div class="permissions">
-        @if (acl().trivial) {
+        @if (loadedAcl.trivial) {
           <ix-view-trivial-permissions [stat]="stat()"></ix-view-trivial-permissions>
         } @else {
-          @switch (acl().acltype) {
+          @switch (loadedAcl.acltype) {
             @case (AclType.Posix1e) {
               <ix-view-posix-permissions
                 [acl]="acl() | cast"

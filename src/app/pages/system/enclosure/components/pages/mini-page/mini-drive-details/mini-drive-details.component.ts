@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatIconAnchor } from '@angular/material/button';
 import { TranslateModule } from '@ngx-translate/core';
 import { enclosureDiskStatusLabels } from 'app/enums/enclosure-slot-status.enum';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -24,7 +25,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   ],
 })
 export class MiniDriveDetailsComponent {
-  readonly selectedSlot = this.store.selectedSlot;
+  readonly slot = input.required<DashboardEnclosureSlot>();
 
   readonly enclosureDiskStatusLabels = enclosureDiskStatusLabels;
 

@@ -8,7 +8,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { async, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, startWith } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -49,6 +49,7 @@ export class IscsiComponent {
   protected readonly needRefresh$ = new Subject<void>();
 
   protected readonly navLinks$ = this.iscsiService.hasFibreChannel().pipe(
+    startWith(false),
     map((hasFibreChannel) => {
       const links = [
         {

@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -102,17 +102,20 @@ export class PortalFormComponent implements OnInit {
     protected iscsiService: IscsiService,
     public slideInRef: SlideInRef<IscsiPortal | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingIscsiPortal = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
     if (this.editingIscsiPortal) {
-      this.setupForm();
+      this.setupForm(this.editingIscsiPortal);
     }
   }
 
-  setupForm(): void {
-    this.editingIscsiPortal.listen.forEach((listen) => {
+  setupForm(portal: IscsiPortal): void {
+    portal.listen.forEach((listen) => {
       const newListItem = {} as IscsiInterface;
       newListItem.ip = listen.ip;
       this.form.controls.ip.push(this.fb.control(listen.ip, [Validators.required, ipValidator('all')]));
@@ -120,7 +123,7 @@ export class PortalFormComponent implements OnInit {
     });
 
     this.form.patchValue({
-      ...this.editingIscsiPortal,
+      ...portal,
     });
     this.cdr.markForCheck();
   }
@@ -144,10 +147,10 @@ export class PortalFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.portal.create', [params]);
-    } else {
+    if (this.editingIscsiPortal) {
       request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
+    } else {
+      request$ = this.api.call('iscsi.portal.create', [params]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

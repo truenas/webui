@@ -104,6 +104,9 @@ export class SnapshotAddFormComponent implements OnInit {
     private datasetStore: DatasetTreeStore,
     public slideInRef: SlideInRef<string | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.datasetId = slideInRef.getData();
   }
 

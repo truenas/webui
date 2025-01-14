@@ -70,13 +70,17 @@ export class InstanceProxyFormComponent implements OnInit {
   protected readonly protocolOptions$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
 
   constructor(
-    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-  ) {}
+    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     const proxy = this.slideInRef.getData().proxy;

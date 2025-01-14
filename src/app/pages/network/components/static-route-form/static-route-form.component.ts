@@ -85,12 +85,8 @@ export class StaticRouteFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingRoute) {
-      this.setEditingStaticRoute();
+      this.form.patchValue(this.editingRoute);
     }
-  }
-
-  setEditingStaticRoute(): void {
-    this.form.patchValue(this.editingRoute);
   }
 
   onSubmit(): void {
