@@ -96,7 +96,7 @@ describe('ApiKeyFormComponent', () => {
       Name: 'existing key',
       'Non-expiring': false,
       Username: 'root',
-      'Expires at': expect.stringMatching('2024-11-22'),
+      'Expires On': expect.stringMatching('2024-11-22'),
       Reset: false,
     });
   });
@@ -141,7 +141,7 @@ describe('ApiKeyFormComponent', () => {
       Name: 'My key',
       Reset: true,
       'Non-expiring': false,
-      'Expires at': '2024-12-22T00:00:00Z',
+      'Expires On': '2024-12-22T00:00:00Z',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
