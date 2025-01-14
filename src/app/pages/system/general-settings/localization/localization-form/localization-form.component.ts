@@ -63,7 +63,7 @@ export class LocalizationFormComponent implements OnInit {
   isFormLoading = false;
 
   sortLanguagesByName = true;
-  protected localizationSettings: LocalizationSettings | undefined;
+  protected localizationSettings: LocalizationSettings;
 
   formGroup = this.fb.nonNullable.group({
     language: ['', [Validators.required]],
@@ -146,7 +146,7 @@ export class LocalizationFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    public slideInRef: SlideInRef<LocalizationSettings | undefined, boolean>,
+    public slideInRef: SlideInRef<LocalizationSettings, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {

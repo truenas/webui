@@ -272,7 +272,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     }
 
     if (this.existingSmbShare) {
-      this.setSmbShareForEdit();
+      this.setSmbShareForEdit(this.existingSmbShare);
     }
   }
 
@@ -342,6 +342,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     const nameControl = this.form.controls.name;
     if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
+      if (!name) {
+        return;
+      }
+
       nameControl.setValue(name);
       nameControl.markAsTouched();
     }
@@ -425,18 +429,18 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   clearPresets(): void {
     for (const item of this.presetFields) {
       // eslint-disable-next-line no-restricted-syntax
-      this.form.get(item).enable();
+      this.form.get(item)?.enable();
     }
     this.presetFields = [];
   }
 
-  setSmbShareForEdit(): void {
+  setSmbShareForEdit(share: SmbShare): void {
     this.title = helptextSharingSmb.formTitleEdit;
-    const index = this.namesInUse.findIndex((name) => name === this.existingSmbShare.name);
+    const index = this.namesInUse.findIndex((name) => name === share.name);
     if (index >= 0) {
       this.namesInUse.splice(index, 1);
     }
-    this.form.patchValue(this.existingSmbShare);
+    this.form.patchValue(share);
   }
 
   afpConfirmEnable(value: boolean): void {

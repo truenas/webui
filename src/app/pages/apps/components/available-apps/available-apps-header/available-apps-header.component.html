@@ -77,7 +77,7 @@
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
     <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
       @if (areLoaded$ | async) {
-        <h2>{{ (installedApps$ | async).length }}</h2>
+        <h2>{{ (installedApps$ | async)?.length }}</h2>
       } @else {
         <ngx-skeleton-loader></ngx-skeleton-loader>
       }

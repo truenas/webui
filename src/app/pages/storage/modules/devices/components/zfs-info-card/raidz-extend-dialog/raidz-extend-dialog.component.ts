@@ -85,7 +85,7 @@ export class RaidzExtendDialogComponent {
 
     this.dialogService.jobDialog(
       this.api.job('pool.attach', [this.data.poolId, payload]),
-      { title: this.translate.instant('Extending VDEV') },
+      { title: this.translate.instant('Extending VDEV'), canMinimize: true },
     )
       .afterClosed()
       .pipe(

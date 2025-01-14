@@ -5,4 +5,4 @@
   (change)="onCheckboxChange($event)"
   (click)="$event.stopPropagation()"
 ></mat-checkbox>
-<span>{{ title | translate }}</span>
+<span>{{ title ? (title | translate) : '' }}</span>

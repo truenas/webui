@@ -4,7 +4,7 @@
   <div class="app-list-item">
     <ngx-skeleton-loader></ngx-skeleton-loader>
   </div>
-} @else if (jsonDetails()?.length > 0) {
+} @else if (jsonDetails()?.length) {
   @for (item of jsonDetails(); track item) {
     <div class="app-list-wrapper">
       @for(key of getKeys(item); track key) {

@@ -164,6 +164,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    if (!event.node.id) {
+      return;
+    }
+
     if (this.multiple()) {
       this.selectTreeNodes([
         ...Object.keys(this.tree().treeModel.selectedLeafNodeIds),

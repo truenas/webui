@@ -86,7 +86,11 @@ export class TunableFormComponent implements OnInit {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.editingTunable = this.slideInRef.getData();
+
+    const tunable = this.slideInRef.getData();
+    if (tunable) {
+      this.editingTunable = tunable;
+    }
   }
 
   ngOnInit(): void {

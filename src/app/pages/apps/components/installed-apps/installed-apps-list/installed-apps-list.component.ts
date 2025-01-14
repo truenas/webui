@@ -95,7 +95,7 @@ export class InstalledAppsListComponent implements OnInit {
   readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
 
   dataSource: App[] = [];
-  selectedApp: App;
+  selectedApp: App | undefined;
   filterString = '';
   appJobs = new Map<string, Job<void, AppStartQueryParams>>();
   selection = new SelectionModel<string>(true, []);
@@ -458,7 +458,7 @@ export class InstalledAppsListComponent implements OnInit {
     return errors.length ? `<ul>${errors.join('')}</ul>` : '';
   }
 
-  private selectAppForDetails(appId: string): void {
+  private selectAppForDetails(appId: string | null): void {
     if (!this.dataSource.length) {
       return;
     }

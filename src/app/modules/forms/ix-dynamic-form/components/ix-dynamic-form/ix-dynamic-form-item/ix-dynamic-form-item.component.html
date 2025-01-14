@@ -141,6 +141,7 @@
             [label]="schema.title | translate"
             [tooltip]="schema.tooltip | translate"
             [required]="schema.required || false"
+            [canCreateDataset]="!isEditMode()"
             [nodeProvider]="schema.nodeProvider"
           ></ix-explorer>
         }

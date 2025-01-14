@@ -85,7 +85,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   forbiddenNames: string[] = [];
   credentials: CloudSyncCredential[] = [];
 
-  private readonly providerFormContainer = viewChild('providerFormContainer', { read: ViewContainerRef });
+  private readonly providerFormContainer = viewChild.required('providerFormContainer', { read: ViewContainerRef });
 
   readonly helptext = helptext;
 

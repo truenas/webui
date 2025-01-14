@@ -57,8 +57,10 @@ export class InstanceDiskFormComponent implements OnInit {
     destination: ['', Validators.required],
   });
 
+  protected isNew = computed(() => !this.existingDisk());
+
   protected title = computed(() => {
-    return this.existingDisk() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
+    return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
   protected instance = computed(() => this.slideInRef.getData().instance);
