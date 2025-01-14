@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -103,10 +103,6 @@ export class InstanceWizardComponent {
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({
-    zvolsOnly: true,
-  });
-
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
   macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
 
@@ -131,8 +127,8 @@ export class InstanceWizardComponent {
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
-    cpu: ['', [Validators.required, cpuValidator()]],
-    memory: [Validators.required, null as number],
+    cpu: ['', [cpuValidator()]],
+    memory: [null as number],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -146,6 +142,7 @@ export class InstanceWizardComponent {
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
+      destination: FormControl<string>;
     }>>([]),
     environment_variables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -153,6 +150,18 @@ export class InstanceWizardComponent {
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
+
+  protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
+  protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
+  protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
+
+  readonly directoryNodeProvider = computed(() => {
+    if (this.isVm()) {
+      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
+    }
+
+    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+  });
 
   constructor(
     private api: ApiService,
@@ -166,7 +175,18 @@ export class InstanceWizardComponent {
     protected formatter: IxFormatterService,
     private authService: AuthService,
     private filesystem: FilesystemService,
-  ) {}
+  ) {
+    this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      this.instanceType.set(type);
+      if (type === VirtualizationType.Container) {
+        this.form.controls.cpu.setValidators(cpuValidator());
+        this.form.controls.memory.clearValidators();
+      } else {
+        this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
+        this.form.controls.memory.setValidators([Validators.required]);
+      }
+    });
+  }
 
   protected onBrowseImages(): void {
     this.matDialog
@@ -202,7 +222,12 @@ export class InstanceWizardComponent {
   protected addDisk(): void {
     const control = this.formBuilder.group({
       source: ['', Validators.required],
+      destination: ['', Validators.required],
     });
+
+    if (this.isVm()) {
+      control.removeControl('destination');
+    }
 
     this.form.controls.disks.push(control);
   }
@@ -254,6 +279,7 @@ export class InstanceWizardComponent {
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
+      ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
   }
 
@@ -282,6 +308,7 @@ export class InstanceWizardComponent {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
+      ...(this.isContainer() ? { destination: proxy.destination } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];

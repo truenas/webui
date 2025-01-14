@@ -79,7 +79,7 @@ export class FilesystemService {
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
-            if ((!options.datasetsAndZvols && !options.zvolsOnly && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
+            if ((!(options.datasetsAndZvols || options.zvolsOnly) && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
               return;
             }
 

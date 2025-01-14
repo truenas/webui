@@ -49,7 +49,8 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [required]="true"
+        [required]="isVm()"
+        [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : null"
       ></ix-input>
 
       <ix-input
@@ -57,11 +58,12 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [required]="true"
+        [required]="isVm()"
+        [hint]="isContainer() ? (containersHelptext.memoryHint | translate) : null"
       ></ix-input>
     </ix-form-section>
 
-    @if (false) {
+    @if (isContainer()) {
     <ix-form-section
       [label]="'Environment' | translate"
       [help]="'Environment' | translate"
@@ -116,11 +118,19 @@
           >
             <ix-explorer
               formControlName="source"
-              root="/dev/zvol/"
+              root="/"
               [label]="'Source' | translate"
               [required]="true"
-              [nodeProvider]="directoryNodeProvider"
+              [nodeProvider]="directoryNodeProvider()"
             ></ix-explorer>
+
+            @if (isContainer()) {
+              <ix-input
+                formControlName="destination"
+                [label]="'Destination' | translate"
+                [required]="true"
+              ></ix-input>
+            }
           </ix-list-item>
         }
       </ix-list>
