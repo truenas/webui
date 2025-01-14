@@ -7,8 +7,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -22,7 +22,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
-  instanceId: string;
+  instance: VirtualizationInstance;
   disk: VirtualizationDisk | undefined;
 }
 
@@ -50,7 +50,7 @@ export class InstanceDiskFormComponent implements OnInit {
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
   protected readonly isLoading = signal(false);
-  protected readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: false });
+  protected readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
@@ -60,6 +60,8 @@ export class InstanceDiskFormComponent implements OnInit {
   protected title = computed(() => {
     return this.existingDisk() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
+
+  protected instance = computed(() => this.slideInRef.getData().instance);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -83,6 +85,9 @@ export class InstanceDiskFormComponent implements OnInit {
         source: disk.source || '',
         destination: disk.destination || '',
       });
+    }
+    if (this.instance().type === VirtualizationType.Vm) {
+      this.form.controls.destination.disable();
     }
   }
 
@@ -110,7 +115,7 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   private prepareRequest(): Observable<unknown> {
-    const instanceId = this.slideInRef.getData().instanceId;
+    const instanceId = this.slideInRef.getData().instance.id;
 
     const payload = {
       ...this.form.value,

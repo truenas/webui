@@ -9,16 +9,19 @@
       <ix-fieldset>
         <ix-explorer
           formControlName="source"
+          root="/"
           [label]="'Source' | translate"
           [required]="true"
           [nodeProvider]="directoryNodeProvider"
         ></ix-explorer>
 
-        <ix-input
-          formControlName="destination"
-          [label]="'Destination' | translate"
-          [required]="true"
-        ></ix-input>
+        @if (form.controls.destination.enabled) {
+          <ix-input
+            formControlName="destination"
+            [label]="'Destination' | translate"
+            [required]="true"
+          ></ix-input>
+        }
       </ix-fieldset>
 
       <ix-form-actions>
