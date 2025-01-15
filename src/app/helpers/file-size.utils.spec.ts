@@ -1,4 +1,4 @@
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { buildNormalizedFileSize, convertStringDiskSizeToBytes } from 'app/helpers/file-size.utils';
 
 describe('buildNormalizedFileSize with base 2', () => {
   it('converts 1000 bytes to 1000 B with base 2', () => {
@@ -81,5 +81,23 @@ describe('buildNormalizedFileSize with base 10', () => {
 
   it('converts 1000^9 bits to 1000 Yb with base 10', () => {
     expect(buildNormalizedFileSize(1000 ** 9, 'b', 10)).toBe('1000 Yb');
+  });
+});
+
+describe('convertStringDiskSizeToBytes', () => {
+  it('converts 16 gib of disk size to bytes', () => {
+    expect(convertStringDiskSizeToBytes('16 gib')).toBe(17179869184);
+  });
+
+  it('converts 16 g of disk size to bytes', () => {
+    expect(convertStringDiskSizeToBytes('16 g')).toBe(17179869184);
+  });
+
+  it('converts 16 gb of disk size to bytes', () => {
+    expect(convertStringDiskSizeToBytes('16 gb')).toBe(17179869184);
+  });
+
+  it('handles invalid value', () => {
+    expect(convertStringDiskSizeToBytes('1 dummy')).toBeNull();
   });
 });
