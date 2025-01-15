@@ -5112,7 +5112,6 @@
   "Show Text Console without Password Prompt": "Textkonsole ohne Passwortabfrage anzeigen",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Das Verkleinern eines ZVOLs ist in der Benutzeroberfläche nicht zulässig. Dies kann zu Datenverlust führen.",
   "Shut Down": "Herunterfahren",
-  "Shut down": "Herunterfahren",
   "Shutdown": "Herunterfahren",
   "Shutdown Command": "Shutdown-Befehl",
   "Shutdown Timer": "Timer zum Herunterfahren",

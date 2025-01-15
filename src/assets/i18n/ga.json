@@ -4242,7 +4242,6 @@
   "Shows only the groups that have quotas. This is the default view.": "Ní thaispeánfar ach na grúpaí a bhfuil cuótaí acu. Is é seo an radharc réamhshocraithe.",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Ní cheadaítear ZVOL a chrapadh sa Chomhéadan Úsáideora. D’fhéadfadh caillteanas sonraí a bheith mar thoradh air seo.",
   "Shut Down": "Múchadh",
-  "Shut down": "Stoptar",
   "Shutdown": "Múchadh",
   "Shutdown Command": "Ordú Múchadh",
   "Shutdown Mode": "Mód Múchadh",

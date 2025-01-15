@@ -5030,7 +5030,6 @@
   "Show Text Console without Password Prompt": "Показать текстовую консоль без запроса пароля",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Сжатие ZVOL не допускается в пользовательском интерфейсе. Это может привести к потере данных.",
   "Shut Down": "Отключить",
-  "Shut down": "Отключить",
   "Shutdown Command": "Команда отключения",
   "Shutdown Mode": "Режим отключения",
   "Shutdown Timer": "Таймер отключения",

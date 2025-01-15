@@ -4138,7 +4138,6 @@
   "Shows only the groups that have quotas. This is the default view.": "Toont alleen de groepen die quota hebben. Dit is de standaardweergave.",
   "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.": "Het verkleinen van een ZVol is niet toegestaan in de gebruikersinterface. Dit kan leiden tot dataverlies.",
   "Shut Down": "Afsluiten",
-  "Shut down": "Afsluiten",
   "Shutdown": "Afsluiten",
   "Shutdown Command": "Afsluiten opdracht",
   "Shutdown Mode": "Afsluitmodus",
