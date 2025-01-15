@@ -822,6 +822,7 @@ export interface ApiCallDirectory {
   'tn_connect.ip_choices': { params: void; response: Record<string, string> };
   'tn_connect.update': { params: [{ enabled: boolean; ips: string[] }]; response: TruenasConnectConfig };
   'tn_connect.generate_claim_token': { params: void; response: string };
+  'tn_connect.get_registration_uri': {params: void, response: string}
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };

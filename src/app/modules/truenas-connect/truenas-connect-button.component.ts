@@ -8,6 +8,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-modal/truenas-connect-modal.component';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
@@ -23,28 +24,12 @@ export class TruenasConnectButtonComponent implements OnInit {
   config: TruenasConnectConfig;
   readonly TruenasConnectStatus = TruenasConnectStatus;
 
-  constructor(private matDialog: MatDialog, private api: ApiService) {
+  constructor(private matDialog: MatDialog, private api: ApiService, private tnc: TruenasConnectService) {
   }
 
   ngOnInit(): void {
-    this.api.call('tn_connect.config')
-      .pipe(untilDestroyed(this))
-      .subscribe((config) => {
-        this.config = config;
-      });
   }
-
-  openConnect(): void {
-    this.matDialog
-      .open(TruenasConnectModalComponent, {
-        width: '456px',
-      })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe();
-  }
-
-  showStatus(): void {
+  showModal(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,
@@ -52,7 +37,7 @@ export class TruenasConnectButtonComponent implements OnInit {
         top: '48px',
         right: '0px',
       },
-      data: this.config,
+      data: this.tnc.config.getValue(),
     });
   }
 }

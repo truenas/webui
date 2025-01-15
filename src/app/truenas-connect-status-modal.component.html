@@ -42,10 +42,10 @@
     mat-button
     (click)="generateToken()"
   >
-  {{'Generate Token'}}
+  {{'Generate Token' | translate}}
   </button>
   <button mat-button ixTest="tnc-reenable" (click)="reenable()">
-    {{'Reenable'}}
+    {{'Reenable' | translate}}
   </button>
     <button
       ixTest="tnc-connect"
@@ -53,6 +53,6 @@
       color="primary"
       (click)="openConnectDialog()"
     >
-    {{'Connect'}}
+    {{'Connect' | translate}}
     </button>
 </div>

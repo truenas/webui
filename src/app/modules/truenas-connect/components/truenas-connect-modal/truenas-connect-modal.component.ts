@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions, MatDialogContent, MatDialogTitle,
@@ -26,33 +26,40 @@ import { ApiService } from 'app/modules/websocket/api.service';
   styleUrl: './truenas-connect-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TruenasConnectModalComponent {
+export class TruenasConnectModalComponent implements OnInit {
   readonly helptext = helptextTopbar;
   protected readonly requiredRoles = [Role.TrueCommandWrite];
 
   constructor(@Inject(WINDOW) private window: Window, private api: ApiService, private loader: AppLoaderService) {}
 
+  ngOnInit(): void {
+   
+  }
+
   connect(): void {
-    this.loader.open();
+    console.log('connecting')
     this.api.call('tn_connect.ip_choices')
       .pipe(
         switchMap((ipsRes) => {
+          console.log('ipRes', ipsRes)
           const ips = Object.values(ipsRes);
           return this.api.call('tn_connect.update', [{
             enabled: true,
             ips,
           }]);
         }),
-        switchMap(() => {
+        switchMap((res) => {
+          console.log('resss', res)
           return this.api.call('tn_connect.generate_claim_token');
         }),
         // TODO: need status to be REGISTRATION_FINALIZATION_WAITING
         // switchMap(() => {
         //   return this.api.call('tn_connect.get_registration_uri' as any, [])
         // })
-        untilDestroyed(this),
+        // untilDestroyed(this),
       )
-      .subscribe(() => {
+      .subscribe((res) => {
+        console.log('result', res)
         // this.window.open(url)
       });
   }
