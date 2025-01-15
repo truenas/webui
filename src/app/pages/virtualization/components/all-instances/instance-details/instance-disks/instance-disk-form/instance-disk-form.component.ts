@@ -63,7 +63,9 @@ export class InstanceDiskFormComponent implements OnInit {
     return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
-  protected instance = computed(() => this.slideInRef.getData().instance);
+  protected get instance(): VirtualizationInstance {
+    return this.slideInRef.getData().instance;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -80,7 +82,7 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const disk = this.slideInRef.getData().disk;
+    const disk = this.slideInRef.getData()?.disk;
     if (disk) {
       this.existingDisk.set(disk);
       this.form.patchValue({
@@ -88,17 +90,14 @@ export class InstanceDiskFormComponent implements OnInit {
         destination: disk.destination || '',
       });
     }
-    if (this.instance().type === VirtualizationType.Vm) {
+    if (this.instance.type === VirtualizationType.Vm) {
       this.form.controls.destination.disable();
     }
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
-
-    const request$ = this.prepareRequest();
-
-    request$
+    this.prepareRequest()
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
@@ -117,8 +116,6 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   private prepareRequest(): Observable<unknown> {
-    const instanceId = this.slideInRef.getData().instance.id;
-
     const payload = {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Disk,
@@ -126,10 +123,10 @@ export class InstanceDiskFormComponent implements OnInit {
 
     const existingDisk = this.existingDisk();
     return existingDisk
-      ? this.api.call('virt.instance.device_update', [instanceId, {
+      ? this.api.call('virt.instance.device_update', [this.instance.id, {
         ...payload,
         name: existingDisk.name,
       }])
-      : this.api.call('virt.instance.device_add', [instanceId, payload]);
+      : this.api.call('virt.instance.device_add', [this.instance.id, payload]);
   }
 }
