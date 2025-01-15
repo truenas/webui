@@ -25,20 +25,6 @@ export interface AllCpusUpdate {
   temperature_celsius: number[];
 }
 
-export interface CpuUpdate {
-  guest: number;
-  guest_nice: number;
-  idle: number;
-  iowait: number;
-  irq: number;
-  nice: number;
-  softirq: number;
-  steal: number;
-  system: number;
-  usage: number;
-  user: number;
-}
-
 export interface DisksUpdate {
   busy: number;
   read_bytes: number;
