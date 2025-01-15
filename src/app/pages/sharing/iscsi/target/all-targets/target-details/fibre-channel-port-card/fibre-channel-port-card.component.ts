@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
 } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 
 @Component({
@@ -17,8 +20,10 @@ import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
     MatCardTitle,
     TranslateModule,
     MatCardContent,
+    NgxSkeletonLoaderModule,
   ],
 })
 export class FibreChannelPortCardComponent {
   readonly port = input.required<FibreChannelPort>();
+  readonly isLoading = input.required<boolean>();
 }

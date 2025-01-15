@@ -78,11 +78,11 @@ describe('TargetDetailsComponent', () => {
     expect(spectator.query(FibreChannelPortCardComponent)?.port).toEqual(mockPort);
   });
 
-  it('does not render FibreChannelPortCardComponent if no targetPort is available', () => {
+  it('should render FibreChannelPortCardComponent even if no targetPort is available', () => {
     spectator.component.targetPort.set(null);
     spectator.detectChanges();
 
-    expect(spectator.query(FibreChannelPortCardComponent)).toBeNull();
+    expect(spectator.query(FibreChannelPortCardComponent)).not.toBeNull();
   });
 
   it('calls API to fetch Fibre Channel ports when target ID changes', () => {

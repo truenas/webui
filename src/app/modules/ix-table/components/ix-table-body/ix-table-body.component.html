@@ -42,6 +42,12 @@
         </button>
       </td>
     }
+
+    @if (hasDetails()) {
+      <td class="toggle-cell show-details-cell">
+        <ix-icon name="mdi-chevron-right"></ix-icon>
+      </td>
+    }
   </tr>
 
   @if (detailsTemplate && isExpanded(row)) {

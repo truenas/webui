@@ -26,6 +26,7 @@
         [columns]="columns"
         [dataProvider]="dataProvider()"
         [isLoading]="!!(dataProvider().isLoading$ | async)"
+        [hasDetails]="true"
         (expanded)="expanded($event)"
       ></tbody>
     </ix-table>
