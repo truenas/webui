@@ -25,11 +25,11 @@ describe('CpuCoreBarComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                0: { usage: 6 },
-                1: { usage: 30 },
-                2: { usage: 70 },
-                3: { usage: 9 },
-                average: { usage: 75 },
+                core0_usage: 6,
+                core1_usage: 30,
+                core2_usage: 70,
+                core3_usage: 9,
+                aggregated_usage: 75,
               },
             },
           }),
@@ -55,7 +55,6 @@ describe('CpuCoreBarComponent', () => {
       labels: ['1', '2', '3', '4'],
       datasets: [
         { data: [6, 30, 70, 9] },
-        { data: [31, 83, 0, 0] },
       ],
     });
   });
