@@ -4,7 +4,6 @@ import {
   MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -13,7 +12,6 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
   selector: 'ix-truenas-connect-status-modal',
   standalone: true,
   imports: [
-    TranslateModule,
     MatDivider,
     MatDialogTitle,
     MatDialogContent,

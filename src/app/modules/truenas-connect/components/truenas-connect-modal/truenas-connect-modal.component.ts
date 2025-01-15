@@ -4,7 +4,6 @@ import {
   MatDialogActions, MatDialogContent, MatDialogTitle,
 } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
 import { switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -17,12 +16,10 @@ import { ApiService } from 'app/modules/websocket/api.service';
   selector: 'ix-truenas-connect-modal',
   standalone: true,
   imports: [
-    TranslateModule,
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     IxIconComponent,
-    TranslateModule,
     MatButton,
   ],
   templateUrl: './truenas-connect-modal.component.html',
