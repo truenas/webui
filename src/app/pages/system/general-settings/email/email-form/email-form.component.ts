@@ -164,14 +164,16 @@ export class EmailFormComponent implements OnInit {
     return this.sendMethodControl.value === MailSendMethod.Smtp;
   }
 
+  get isFromEmailRequired(): boolean {
+    return this.isSmtp || this.sendMethodControl.value === MailSendMethod.Outlook;
+  }
+
   get hasOauthAuthorization(): boolean {
     return !!this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
-    return this.isSmtp
-      ? this.form.valid
-      : this.hasOauthAuthorization;
+    return !this.isSmtp ? this.hasOauthAuthorization && this.form.valid : this.form.valid;
   }
 
   ngOnInit(): void {
