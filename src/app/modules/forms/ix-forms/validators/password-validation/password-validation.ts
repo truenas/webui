@@ -37,7 +37,9 @@ export function matchOthersFgValidator(
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    subjectControl.setErrors(prevErrors);
+    if (fg.get(controlName).touched) {
+      subjectControl.setErrors(prevErrors);
+    }
     return null;
   };
 }
@@ -78,7 +80,9 @@ export function doesNotEqualFgValidator(
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    subjectControl.setErrors(prevErrors);
+    if (fg.get(controlName).touched) {
+      subjectControl.setErrors(prevErrors);
+    }
     return null;
   };
 }
