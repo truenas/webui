@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -46,6 +46,10 @@ export class HardwareDiskEncryptionComponent {
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly requiredRoles = [Role.FullAdmin];
+
+  hasSedSupport = computed(() => {
+    return this.isEnterprise() && (this.hasDiskEncryption() || this.hasGlobalEncryption());
+  });
 
   protected readonly hasDiskEncryption = toSignal(
     toObservable(this.topologyDisk).pipe(
