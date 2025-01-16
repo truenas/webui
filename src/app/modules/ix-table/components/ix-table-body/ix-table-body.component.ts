@@ -50,7 +50,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   readonly columns = input<Column<T, ColumnComponent<T>>[]>();
   readonly dataProvider = input<DataProvider<T>>();
   readonly isLoading = input(false);
-  readonly hasDetails = input(false);
+  readonly hasDetailsCards = input(false);
   readonly detailsRowIdentifier = input<keyof T>('id' as keyof T);
 
   readonly expanded = output<T>();

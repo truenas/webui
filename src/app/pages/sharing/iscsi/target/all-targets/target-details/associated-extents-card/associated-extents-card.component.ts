@@ -62,14 +62,12 @@ export class AssociatedExtentsCardComponent {
   });
 
   readonly mappedTargetExtents = computed(() => {
-    const bbb = this.targetExtents().map((targetExtent) => {
+    return this.targetExtents().map((targetExtent) => {
       return {
         ...this.extents().find((extent) => extent.id === targetExtent.extent),
         ...targetExtent,
       };
     }).filter((extent) => extent.target === this.target().id);
-
-    return bbb;
   });
 
   readonly requiredRoles = [

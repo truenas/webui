@@ -35,4 +35,11 @@ describe('FibreChannelPortCardComponent', () => {
     expect(content[1]).toHaveText('Controller A WWPN: 10:00:00:00:c9:20:00:00');
     expect(content[2]).toHaveText('Controller B WWPN: 10:00:00:00:c9:20:00:01');
   });
+
+  it('displays "No associated Fibre Channel port" message', () => {
+    spectator.setInput('port', null);
+    spectator.setInput('isLoading', false);
+    const content = spectator.query('mat-card-content');
+    expect(content).toHaveText('No associated Fibre Channel port');
+  });
 });
