@@ -63,9 +63,7 @@ export class AdvancedSettingsComponent {
   protected readonly searchableElements = advancedSettingsElements;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
-  protected readonly showSedCard = computed(() => {
-    return this.isEnterprise() || this.hasGlobalEncryption();
-  });
+  protected readonly showSedCard = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
 
   constructor(
     private api: ApiService,
