@@ -45,7 +45,7 @@ describe('DatasetNodeComponent', () => {
   });
 
   it('shows an icon for current dataset', () => {
-    const icon = spectator.query(DatasetIconComponent);
+    const icon = spectator.query(DatasetIconComponent)!;
     expect(icon).toBeTruthy();
     expect(icon.dataset).toBe(dataset);
   });
@@ -55,7 +55,7 @@ describe('DatasetNodeComponent', () => {
   });
 
   it('shows a dataset encryption cell', () => {
-    const cell = spectator.query(DatasetEncryptionCellComponent);
+    const cell = spectator.query(DatasetEncryptionCellComponent)!;
     expect(cell).toBeTruthy();
     expect(cell.dataset).toBe(dataset);
   });
@@ -63,7 +63,7 @@ describe('DatasetNodeComponent', () => {
   it('shows a dataset roles cell', () => {
     spectator.setInput('dataset', dataset);
 
-    const cell = spectator.query(DatasetRolesCellComponent);
+    const cell = spectator.query(DatasetRolesCellComponent)!;
     expect(cell).toBeTruthy();
     expect(cell.dataset).toBe(dataset);
     expect(cell.isSystemDataset).toBeFalsy();

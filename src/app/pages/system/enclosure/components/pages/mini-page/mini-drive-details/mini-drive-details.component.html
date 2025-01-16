@@ -1,6 +1,6 @@
 <h3>
-  @if (selectedSlot().dev) {
-    {{ 'Drive Details {disk}' | translate: { disk: selectedSlot().dev } }}
+  @if (slot().dev) {
+    {{ 'Drive Details {disk}' | translate: { disk: slot().dev } }}
   } @else {
     {{ 'Drive Details' | translate }}
   }
@@ -18,51 +18,51 @@
   <li class="item">
     <div class="label">{{ 'Pool' | translate }}:</div>
     <div class="value">
-      {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
+      {{ slot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
     </div>
   </li>
 
   <li class="item">
     <div class="label">{{ 'Vdev' | translate }}:</div>
     <div class="value">
-      {{ selectedSlot().pool_info?.vdev_name || ('Unassigned' | translate) }}
+      {{ slot().pool_info?.vdev_name || ('Unassigned' | translate) }}
     </div>
   </li>
 
-  @if (selectedSlot().pool_info) {
+  @if (slot().pool_info) {
     <li class="item">
       <div class="label">{{ 'Status' | translate }}:</div>
       <div class="value">
-        {{ selectedSlot().pool_info.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
+        {{ slot().pool_info.disk_status | mapValue: enclosureDiskStatusLabels | translate }}
       </div>
     </li>
   }
 
-  @if (selectedSlot().model) {
+  @if (slot().model) {
     <li class="item">
       <div class="label">{{ 'Model' | translate }}:</div>
-      <div class="value">{{ selectedSlot().model }}</div>
+      <div class="value">{{ slot().model }}</div>
     </li>
   }
 
-  @if (selectedSlot().serial) {
+  @if (slot().serial) {
     <li class="item">
       <div class="label">{{ 'Serial' | translate }}:</div>
-      <div class="value">{{ selectedSlot().serial }}</div>
+      <div class="value">{{ slot().serial }}</div>
     </li>
   }
 
-  @if (selectedSlot().rotationrate) {
+  @if (slot().rotationrate) {
     <li class="item">
       <div class="label">{{ 'Rotation Rate' | translate }}:</div>
       <div class="value">
-        {{ '{rate} RPM' | translate: { rate: selectedSlot().rotationrate } }}
+        {{ '{rate} RPM' | translate: { rate: slot().rotationrate } }}
       </div>
     </li>
   }
 </ul>
 
-@if (selectedSlot().supports_identify_light) {
+@if (slot().supports_identify_light) {
   <h3>{{ 'Identify Light' | translate }}</h3>
 
   <ix-identify-light></ix-identify-light>

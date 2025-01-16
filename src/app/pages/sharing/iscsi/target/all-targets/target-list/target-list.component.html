@@ -1,5 +1,5 @@
 <mat-card [ixUiSearch]="searchableElements.elements.list">
-  <ix-fake-progress-bar [loading]="dataProvider().isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="!!(dataProvider().isLoading$ | async)"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'Targets' | translate }}</h3>
 
@@ -25,7 +25,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider()"
-        [isLoading]="dataProvider().isLoading$ | async"
+        [isLoading]="!!(dataProvider().isLoading$ | async)"
         (expanded)="expanded($event)"
       ></tbody>
     </ix-table>

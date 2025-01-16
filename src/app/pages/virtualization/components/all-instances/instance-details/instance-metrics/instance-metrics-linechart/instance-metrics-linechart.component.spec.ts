@@ -3,8 +3,8 @@ import { ChartData } from 'chart.js';
 import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { LocaleService } from 'app/services/locale.service';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { InstanceMetricsLineChartComponent } from './instance-metrics-linechart.component';
 
 describe('InstanceMetricsLineChartComponent', () => {
@@ -59,7 +59,7 @@ describe('InstanceMetricsLineChartComponent', () => {
   });
 
   it('configures chart data correctly', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     const data = chart.data as ChartData<'line'>;
 
     expect(data).toMatchObject({
@@ -78,7 +78,7 @@ describe('InstanceMetricsLineChartComponent', () => {
   });
 
   it('uses correct chart options', () => {
-    const chart = spectator.query(BaseChartDirective);
+    const chart = spectator.query(BaseChartDirective)!;
     const options = chart.options;
 
     expect(options).toMatchObject({

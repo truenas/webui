@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import {
-  filter, switchMap, takeUntil, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -26,14 +26,15 @@ import { WithManageCertificatesLinkComponent } from 'app/modules/forms/ix-forms/
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
+import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -47,7 +48,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -66,13 +67,13 @@ export class GuiFormComponent {
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
-  formGroup = this.fb.group({
+  formGroup = this.fb.nonNullable.group({
     theme: ['', [Validators.required]],
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number | null, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     usage_collection: [false, [Validators.required]],
@@ -92,25 +93,30 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private slideInRef: OldSlideInRef<GuiFormComponent, boolean>,
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private api: ApiService,
     private wsManager: WebSocketHandlerService,
+    private wsStatus: WebSocketStatusService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
+    public slideInRef: SlideInRef<undefined, boolean>,
     @Inject(WINDOW) private window: Window,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+
     this.loadCurrentValues();
     this.setupThemePreview();
   }
 
   replaceHrefWhenWsConnected(href: string): void {
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsStatus.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
         this.window.location.replace(href);
@@ -119,7 +125,7 @@ export class GuiFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     const params = {
       ...values,
       ui_certificate: parseInt(values.ui_certificate),
@@ -166,10 +172,10 @@ export class GuiFormComponent {
     const httpPortChanged = current.ui_port !== next.ui_port;
     const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
     const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
-    const v4AddressesChanged = !(current.ui_address.length === next.ui_address.length
-      && current.ui_address.every((val, index) => val === next.ui_address[index]));
-    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address.length
-      && current.ui_v6address.every((val, index) => val === next.ui_v6address[index]));
+    const v4AddressesChanged = !(current.ui_address.length === next.ui_address?.length
+      && current.ui_address.every((val, index) => val === next.ui_address?.[index]));
+    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address?.length
+      && current.ui_v6address.every((val, index) => val === next.ui_v6address?.[index]));
 
     return [
       uiCertificateChanged,
@@ -194,7 +200,7 @@ export class GuiFormComponent {
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
       }).pipe(
-        tap(() => this.slideInRef.close(true)),
+        tap(() => this.slideInRef.close({ response: true, error: null })),
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -228,7 +234,7 @@ export class GuiFormComponent {
         });
       });
     } else {
-      this.slideInRef.close(true);
+      this.slideInRef.close({ response: true, error: null });
     }
   }
 
@@ -259,7 +265,6 @@ export class GuiFormComponent {
 
   private setupThemePreview(): void {
     this.formGroup.controls.theme.valueChanges.pipe(
-      takeUntil(this.slideInRef.slideInClosed$),
       untilDestroyed(this),
     ).subscribe((theme) => {
       this.store$.dispatch(themeChangedInGuiForm({ theme }));

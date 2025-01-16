@@ -13,13 +13,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInputComponent } from 'app/modules/forms/search-input/components/search-input/search-input.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { UserApiKeysComponent } from 'app/pages/credentials/users/user-api-keys/user-api-keys.component';
-import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('UserApiKeysComponent', () => {
   let spectator: Spectator<UserApiKeysComponent>;
@@ -51,6 +51,12 @@ describe('UserApiKeysComponent', () => {
     },
   ] as ApiKey[];
 
+  const slideInRef: SlideInRef<ApiKey[] | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
+
   const createComponent = createComponentFactory({
     component: UserApiKeysComponent,
     imports: [
@@ -78,14 +84,10 @@ describe('UserApiKeysComponent', () => {
         mockCall('api_key.query', apiKeys),
         mockCall('api_key.delete'),
       ]),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(true),
-      }),
+      mockProvider(SlideInRef, slideInRef),
     ],
   });
 
@@ -99,7 +101,7 @@ describe('UserApiKeysComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, { data: undefined });
   });
 
   it('renders a button that opens API docs', async () => {
@@ -112,7 +114,7 @@ describe('UserApiKeysComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires', ''],
+      ['Name', 'Username', 'Local', 'Revoked', 'Created Date', 'Expires On', ''],
       ['first-api-key', 'root', 'Yes', 'No', '2002-01-03 07:36:50', 'in 7 years', ''],
       ['second-api-key', 'root', 'No', 'Yes', '2002-01-14 21:23:30', 'Never', ''],
     ];
@@ -125,7 +127,7 @@ describe('UserApiKeysComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ApiKeyFormComponent, {
       data: apiKeys[0],
     });
   });
@@ -137,7 +139,7 @@ describe('UserApiKeysComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete API Key',
       buttonText: 'Delete',
-      cancelText: 'Cancel',
+      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>first-api-key</b> API Key?',
     });
 

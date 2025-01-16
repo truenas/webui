@@ -16,13 +16,13 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
@@ -68,15 +68,10 @@ describe('CertificateSigningRequestsListComponent', () => {
           afterClosed: () => of(undefined),
         })),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(true),
-      }),
+      mockProvider(SlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of({ force: false }),
@@ -102,14 +97,14 @@ describe('CertificateSigningRequestsListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CsrAddComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CsrAddComponent);
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateEditComponent, {
       data: certificates[0],
       wide: true,
     });
@@ -125,7 +120,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       hideCheckbox: true,
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',
-      buttonColor: 'red',
+      buttonColor: 'warn',
       buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

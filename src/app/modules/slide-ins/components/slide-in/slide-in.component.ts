@@ -19,12 +19,11 @@ import {
   filter, Observable, of, Subscription, switchMap, timer,
 } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
-  SlideInResponse,
-  ComponentSerialized,
   SlideIn,
-} from 'app/services/slide-in';
+} from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ComponentSerialized, SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 
 @UntilDestroy()
 @Component({
@@ -160,7 +159,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         {
-          provide: SlideInRef<D>,
+          provide: SlideInRef<D, unknown>,
           useValue: {
             close: (response: SlideInResponse): void => {
               (!response.response ? this.canCloseSlideIn() : of(true)).pipe(
@@ -174,7 +173,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
                 },
               });
             },
-            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown): void => {
+            swap: (component: Type<unknown>, options?: { wide?: boolean; data?: unknown }): void => {
               this.canCloseSlideIn().pipe(
                 filter(Boolean),
                 untilDestroyed(this),
@@ -183,8 +182,8 @@ export class SlideInComponent implements OnInit, OnDestroy {
                   this.slideIn.swapComponent({
                     swapComponentId: this.componentInfo().id,
                     component,
-                    wide,
-                    data: incomingComponentData,
+                    wide: options?.wide || false,
+                    data: options?.data,
                   });
                   this.closeSlideIn();
                 },
@@ -196,7 +195,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
             requireConfirmationWhen: (needConfirmation: () => Observable<boolean>): void => {
               this.needConfirmation = needConfirmation;
             },
-          } as SlideInRef<D>,
+          } as SlideInRef<D, unknown>,
         },
       ],
     });
@@ -219,7 +218,7 @@ export class SlideInComponent implements OnInit, OnDestroy {
       message: this.translate.instant('You have unsaved changes. Are you sure you want to close?'),
       cancelText: this.translate.instant('No'),
       buttonText: this.translate.instant('Yes'),
-      buttonColor: 'red',
+      buttonColor: 'warn',
       hideCheckbox: true,
     });
   }

@@ -5,11 +5,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import {
   ScheduleSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/schedule-section/schedule-section.component';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('ScheduleSectionComponent', () => {

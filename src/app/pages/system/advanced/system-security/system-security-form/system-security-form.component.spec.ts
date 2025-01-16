@@ -14,14 +14,15 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
+  enable_gpos_stig: false,
 };
 
 describe('SystemSecurityFormComponent', () => {
@@ -38,7 +39,7 @@ describe('SystemSecurityFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
-          { selector: selectIsHaLicensed, value: false },
+          { selector: selectIsHaLicensed, value: true },
         ],
       }),
       mockProvider(DialogService, {
@@ -51,6 +52,7 @@ describe('SystemSecurityFormComponent', () => {
       mockProvider(SlideInRef, {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),
+        requireConfirmationWhen: jest.fn(),
       }),
       mockAuth(),
       mockProvider(DialogService, {
@@ -74,6 +76,7 @@ describe('SystemSecurityFormComponent', () => {
     it('saves FIPS config when form is filled and Save is pressed', async () => {
       await form.fillForm({
         'Enable FIPS': true,
+        'Enable General Purpose OS STIG compatibility mode': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -81,6 +84,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
+        enable_gpos_stig: true,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
@@ -92,6 +96,7 @@ describe('SystemSecurityFormComponent', () => {
 
       expect(values).toEqual({
         'Enable FIPS': false,
+        'Enable General Purpose OS STIG compatibility mode': false,
       });
     });
   });

@@ -8,11 +8,11 @@ import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { WidgetInterfaceComponent } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 describe('WidgetInterfaceComponent', () => {
   let spectator: Spectator<WidgetInterfaceComponent>;

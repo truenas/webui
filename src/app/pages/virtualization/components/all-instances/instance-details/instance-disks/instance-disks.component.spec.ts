@@ -6,6 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk, VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   InstanceDiskFormComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-disks/instance-disk-form/instance-disk-form.component';
@@ -16,7 +17,6 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { SlideIn } from 'app/services/slide-in';
 
 describe('InstanceDisksComponent', () => {
   let spectator: Spectator<InstanceDisksComponent>;
@@ -85,7 +85,7 @@ describe('InstanceDisksComponent', () => {
   });
 
   it('opens disk for for edit when actions menu emits (edit)', () => {
-    const actionsMenu = spectator.query(DeviceActionsMenuComponent);
+    const actionsMenu = spectator.query(DeviceActionsMenuComponent)!;
     actionsMenu.edit.emit();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(

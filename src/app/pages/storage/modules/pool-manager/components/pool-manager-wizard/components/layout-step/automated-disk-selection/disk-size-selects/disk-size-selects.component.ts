@@ -49,7 +49,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected compareSizeAndTypeWith = isEqual;
 
-  protected form = this.formBuilder.group({
+  protected form = this.formBuilder.nonNullable.group({
     sizeAndType: [[null, null] as SizeAndType, Validators.required],
     treatDiskSizeAsMinimum: [{ value: false, disabled: true }],
   });

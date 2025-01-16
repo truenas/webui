@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -7,6 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -15,10 +16,10 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CertificateDetailsComponent } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
 import {
   ViewCertificateDialogData,
@@ -26,7 +27,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -55,7 +55,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
 
   isLoading = false;
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     add_to_trusted_store: [false],
   });
@@ -70,16 +70,19 @@ export class CertificateAuthorityEditComponent implements OnInit {
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: OldSlideInRef<CertificateAuthorityEditComponent>,
-    @Inject(SLIDE_IN_DATA) private certificate: CertificateAuthority,
-  ) {}
+    public slideInRef: SlideInRef<CertificateAuthority, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.certificateAuthority = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.setCertificateAuthority();
   }
 
   setCertificateAuthority(): void {
-    this.certificateAuthority = this.certificate;
     this.form.patchValue(this.certificateAuthority);
     this.cdr.markForCheck();
   }
@@ -113,7 +116,7 @@ export class CertificateAuthorityEditComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

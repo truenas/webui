@@ -23,13 +23,13 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
-import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -76,8 +76,8 @@ export class WidgetSysInfoPassiveComponent {
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(
-    filter((state) => !state.isLoading),
-    map((state) => state.value.remote_info),
+    map((state) => state.value?.remote_info),
+    filter((value) => !!value),
   ));
 
   startTime = Date.now();
@@ -86,7 +86,7 @@ export class WidgetSysInfoPassiveComponent {
     map(() => {
       return Math.floor((Date.now() - this.startTime) / 1000);
     }),
-  ));
+  ), { requireSync: true });
 
   isWaitingForEnabledHa = computed(() => !this.systemInfo() && !this.canFailover() && !this.isHaEnabled());
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));

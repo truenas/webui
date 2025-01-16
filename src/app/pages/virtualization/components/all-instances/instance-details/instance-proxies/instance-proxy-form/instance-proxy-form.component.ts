@@ -23,9 +23,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
-interface FormOptions {
+interface InstanceProxyFormOptions {
   instanceId: string;
   proxy: VirtualizationProxy | undefined;
 }
@@ -58,9 +58,9 @@ export class InstanceProxyFormComponent implements OnInit {
 
   protected form = this.formBuilder.nonNullable.group({
     source_proto: [VirtualizationProxyProtocol.Tcp],
-    source_port: [null as number, Validators.required],
+    source_port: [null as number | null, Validators.required],
     dest_proto: [VirtualizationProxyProtocol.Tcp],
-    dest_port: [null as number, Validators.required],
+    dest_port: [null as number | null, Validators.required],
   });
 
   protected title = computed(() => {
@@ -73,10 +73,14 @@ export class InstanceProxyFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: SlideInRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-  ) {}
+    public slideInRef: SlideInRef<InstanceProxyFormOptions, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     const proxy = this.slideInRef.getData().proxy;
@@ -96,8 +100,8 @@ export class InstanceProxyFormComponent implements OnInit {
         complete: () => {
           this.snackbar.success(this.translate.instant('Proxy saved'));
           this.slideInRef.close({
-            error: false,
             response: true,
+            error: false,
           });
           this.isLoading.set(false);
         },
@@ -114,11 +118,12 @@ export class InstanceProxyFormComponent implements OnInit {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Proxy,
     } as VirtualizationProxy;
+    const existingProxy = this.existingProxy();
 
-    return this.existingProxy()
+    return existingProxy
       ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
-        name: this.existingProxy().name,
+        name: existingProxy.name,
       }])
       : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }

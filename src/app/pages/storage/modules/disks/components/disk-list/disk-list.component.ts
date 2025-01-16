@@ -8,17 +8,19 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  filter, forkJoin, map, take,
+  filter, forkJoin, map, Observable, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -36,19 +38,19 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/column-component.class';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
-  selected: boolean;
+  selected?: boolean;
 }
 
 @UntilDestroy()
@@ -89,7 +91,10 @@ export class DiskListComponent implements OnInit {
     checkboxColumn({
       propertyName: 'selected',
       onRowCheck: (row, checked) => {
-        this.disks.find((disk) => row.name === disk.name).selected = checked;
+        const diskToSelect = this.disks.find((disk) => row.name === disk.name);
+        if (diskToSelect) {
+          diskToSelect.selected = checked;
+        }
         this.dataProvider.setRows([]);
         this.onListFiltered(this.filterString);
       },
@@ -199,12 +204,35 @@ export class DiskListComponent implements OnInit {
   private unusedDisks: DetailsDisk[] = [];
   private smartDiskChoices: Choices = {};
 
+  protected get emptyConfig(): EmptyConfig {
+    const type = this.dataProvider.emptyType$.value;
+    if (type === EmptyType.NoSearchResults) {
+      return {
+        ...this.emptyService.defaultEmptyConfig(type),
+        button: {
+          action: () => this.onListFiltered(''),
+          label: this.translate.instant('Reset'),
+        },
+      };
+    }
+    if (type === EmptyType.Errors) {
+      return {
+        ...this.emptyService.defaultEmptyConfig(type),
+        button: {
+          action: () => this.dataProvider.load(),
+          label: this.translate.instant('Retry'),
+        },
+      };
+    }
+    return this.emptyService.defaultEmptyConfig(type);
+  }
+
   constructor(
     private api: ApiService,
     private router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -251,18 +279,16 @@ export class DiskListComponent implements OnInit {
 
   edit(disks: DiskUi[]): void {
     const preparedDisks = this.prepareDisks(disks);
-    let slideInRef: OldSlideInRef<DiskBulkEditComponent | DiskFormComponent>;
+    let slideInRef$: Observable<SlideInResponse<boolean>>;
 
     if (preparedDisks.length > 1) {
-      slideInRef = this.slideInService.open(DiskBulkEditComponent);
-      (slideInRef as OldSlideInRef<DiskBulkEditComponent>).componentInstance.setFormDiskBulk(preparedDisks);
+      slideInRef$ = this.slideIn.open(DiskBulkEditComponent);
     } else {
-      slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
-      (slideInRef as OldSlideInRef<DiskFormComponent>).componentInstance.setFormDisk(preparedDisks[0]);
+      slideInRef$ = this.slideIn.open(DiskFormComponent, { wide: true, data: preparedDisks[0] });
     }
 
-    slideInRef.slideInClosed$.pipe(
-      filter((response) => Boolean(response)),
+    slideInRef$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.dataProvider.load());
   }
@@ -290,7 +316,7 @@ export class DiskListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial'] });
+    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {

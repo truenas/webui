@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
+import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,15 +12,20 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const mockDatasets = [
   { name: 'APPS' },
   { name: 'POOL' },
 ] as Dataset[];
+
+const slideInRef: SlideInRef<string | undefined, unknown> = {
+  close: jest.fn(),
+  requireConfirmationWhen: jest.fn(),
+  getData: jest.fn(() => undefined),
+};
 
 const mockNamingSchema = ['%Y %H %d %M %m'];
 
@@ -42,11 +48,12 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('pool.dataset.details'),
         mockCall('vmware.dataset_has_vms', true),
       ]),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockAuth(),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

@@ -15,6 +15,7 @@ import { Role } from 'app/enums/role.enum';
 import { Weekday } from 'app/enums/weekday.enum';
 import { helptextResilver } from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
+import { CalendarService } from 'app/modules/dates/calendar.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -22,11 +23,10 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { resilverConfigElements } from 'app/pages/data-protection/scrub-task/resilver-config/resilver-config.elements';
-import { CalendarService } from 'app/services/calendar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({

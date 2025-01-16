@@ -9,6 +9,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationProxy } from 'app/interfaces/virtualization.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InstanceProxyFormComponent,
@@ -17,7 +18,6 @@ import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { SlideIn } from 'app/services/slide-in';
 
 @UntilDestroy()
 @Component({
@@ -61,8 +61,13 @@ export class InstanceProxiesComponent {
   }
 
   private openProxyForm(proxy?: VirtualizationProxy): void {
+    const instanceId = this.deviceStore.selectedInstance()?.id;
+    if (!instanceId) {
+      return;
+    }
+
     this.slideIn
-      .open(InstanceProxyFormComponent, { data: { proxy, instanceId: this.deviceStore.selectedInstance().id } })
+      .open(InstanceProxyFormComponent, { data: { proxy, instanceId } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.deviceStore.loadDevices());
   }

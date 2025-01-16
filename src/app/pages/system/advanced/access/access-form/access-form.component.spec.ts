@@ -11,11 +11,11 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { SlideIn } from 'app/services/slide-in';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
@@ -24,7 +24,7 @@ import { selectAdvancedConfig, selectGeneralConfig } from 'app/store/system-conf
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
-  const slideInRef: SlideInRef<unknown> = {
+  const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),

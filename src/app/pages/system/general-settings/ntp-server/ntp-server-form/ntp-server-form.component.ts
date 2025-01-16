@@ -1,12 +1,12 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
@@ -16,12 +16,11 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { greaterThanFg } from 'app/services/validators';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +29,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -48,6 +47,7 @@ export class NtpServerFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
+  protected editingServer: NtpServer | undefined;
 
   formGroup = this.fb.nonNullable.group({
     address: [''],
@@ -83,32 +83,36 @@ export class NtpServerFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<NtpServerFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingServer: NtpServer,
-  ) {}
+    public slideInRef: SlideInRef<NtpServer | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.formGroup.dirty);
+    });
+    this.editingServer = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingServer) {
-      this.setupForm();
+      this.setupForm(this.editingServer);
     }
   }
 
   /**
    * @param server Skip argument to add new server.
    */
-  setupForm(): void {
+  setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
-      address: this.editingServer.address,
-      burst: this.editingServer.burst,
-      iburst: this.editingServer.iburst,
-      prefer: this.editingServer.prefer,
-      minpoll: this.editingServer.minpoll,
-      maxpoll: this.editingServer.maxpoll,
+      address: server.address,
+      burst: server.burst,
+      iburst: server.iburst,
+      prefer: server.prefer,
+      minpoll: server.minpoll,
+      maxpoll: server.maxpoll,
     });
   }
 
   onSubmit(): void {
-    const values = this.formGroup.value;
+    const values = this.formGroup.getRawValue();
     const body: CreateNtpServer = {
       address: values.address,
       burst: values.burst,
@@ -131,7 +135,7 @@ export class NtpServerFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

@@ -42,7 +42,7 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
     type: EmptyType.NoPageData,
   });
 
-  readonly templatePortalContent = viewChild<TemplateRef<unknown>>('templatePortalContent');
+  readonly templatePortalContent = viewChild.required<TemplateRef<unknown>>('templatePortalContent');
   templatePortal: TemplatePortal;
 
   constructor(
@@ -57,8 +57,9 @@ export class IxTableEmptyRowComponent implements AfterViewInit {
   }
 
   doAction(): void {
-    if (this.conf().button.action) {
-      this.conf().button.action();
+    const action = this.conf().button?.action;
+    if (action) {
+      action();
     }
   }
 

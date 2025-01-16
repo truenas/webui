@@ -3,8 +3,8 @@ import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { nullOption, skipOption } from 'app/interfaces/option.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('FibreChannelService', () => {
   let spectator: SpectatorService<FibreChannelService>;

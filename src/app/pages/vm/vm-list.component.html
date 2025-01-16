@@ -40,7 +40,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="dataProvider.isLoading$ | async"
+      [isLoading]="!!(dataProvider.isLoading$ | async)"
     >
       <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
         <ix-table-details-row [hiddenColumns]="hiddenColumns" [row]="vm">

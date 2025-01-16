@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,14 +26,13 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -87,6 +86,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected editingTask: PeriodicSnapshotTask | undefined;
 
   readonly labels = {
     dataset: helptextSnapshotForm.dataset_placeholder,
@@ -129,13 +129,17 @@ export class SnapshotTaskFormComponent implements OnInit {
     private taskService: TaskService,
     private snackbar: SnackbarService,
     protected storageService: StorageService,
-    private slideInRef: OldSlideInRef<SnapshotTaskFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingTask: PeriodicSnapshotTask,
-  ) {}
+    public slideInRef: SlideInRef<PeriodicSnapshotTask | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingTask = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
     }
   }
 
@@ -143,12 +147,12 @@ export class SnapshotTaskFormComponent implements OnInit {
     return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(task: PeriodicSnapshotTask): void {
     this.form.patchValue({
-      ...this.editingTask,
-      begin: this.editingTask.schedule.begin,
-      end: this.editingTask.schedule.end,
-      schedule: scheduleToCrontab(this.editingTask.schedule),
+      ...task,
+      begin: task.schedule.begin,
+      end: task.schedule.end,
+      schedule: scheduleToCrontab(task.schedule),
     });
   }
 
@@ -170,13 +174,13 @@ export class SnapshotTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('pool.snapshottask.update', [
         this.editingTask.id,
         params as PeriodicSnapshotTaskUpdate,
       ]);
+    } else {
+      request$ = this.api.call('pool.snapshottask.create', [params as PeriodicSnapshotTaskCreate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -187,7 +191,7 @@ export class SnapshotTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

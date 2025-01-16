@@ -31,6 +31,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -38,7 +39,6 @@ import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface CloudCredentialFormInput {
   providers: CloudSyncProviderName[];
@@ -71,7 +71,7 @@ export interface CloudCredentialFormInput {
 export class CloudCredentialsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
 
-  commonForm = this.formBuilder.group({
+  commonForm = this.formBuilder.nonNullable.group({
     name: ['Storj', Validators.required],
     type: [CloudSyncProviderName.Storj],
   });
@@ -85,7 +85,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   forbiddenNames: string[] = [];
   credentials: CloudSyncCredential[] = [];
 
-  private readonly providerFormContainer = viewChild('providerFormContainer', { read: ViewContainerRef });
+  private readonly providerFormContainer = viewChild.required('providerFormContainer', { read: ViewContainerRef });
 
   readonly helptext = helptext;
 
@@ -99,8 +99,12 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudCredentialFormInput>,
+    public slideInRef: SlideInRef<CloudCredentialFormInput, CloudSyncCredential | null>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.commonForm.dirty || this.providerForm.form.dirty);
+    });
+
     const data = this.slideInRef.getData();
     this.existingCredential = data?.existingCredential;
     this.limitProviders = data?.providers;

@@ -8,10 +8,12 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  async,
-  combineLatest, filter, forkJoin, switchMap,
+  combineLatest,
+  filter,
+  forkJoin,
+  of,
   take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,12 +31,12 @@ import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-li
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -45,7 +47,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCardContent,
     MatCard,
     IxFieldsetComponent,
@@ -62,19 +64,22 @@ import { ApiService } from 'app/services/websocket/api.service';
     TranslateModule,
     AsyncPipe,
   ],
+  providers: [
+    DockerStore,
+  ],
 })
 export class AppsSettingsComponent implements OnInit {
   protected hasNvidiaCard$ = this.api.call('docker.nvidia_present');
   protected isFormLoading = signal(false);
   protected readonly requiredRoles = [Role.AppsWrite, Role.CatalogWrite];
 
-  protected form = this.fb.group({
+  protected form = this.fb.nonNullable.group({
     preferred_trains: [[] as string[], Validators.required],
-    nvidia: [null as boolean],
+    nvidia: [null as boolean | null],
     enable_image_updates: [true],
     address_pools: new FormArray<FormGroup<{
       base: FormControl<string>;
-      size: FormControl<number>;
+      size: FormControl<number | null>;
     }>>([]),
   });
 
@@ -90,11 +95,17 @@ export class AppsSettingsComponent implements OnInit {
   constructor(
     private dockerStore: DockerStore,
     private api: ApiService,
-    private slideInRef: OldSlideInRef<AppsSettingsComponent>,
+    public slideInRef: SlideInRef<undefined, boolean>,
     private errorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
-    private appsStore: AppsStore,
-  ) {}
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.dockerStore.initialize();
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -121,9 +132,9 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   addAddressPool(): void {
-    const control = this.fb.group({
+    const control = this.fb.nonNullable.group({
       base: ['', [Validators.required, ipv4or6cidrValidator()]],
-      size: [null as number, [Validators.required]],
+      size: [null as number | null, [Validators.required]],
     });
 
     this.form.controls.address_pools.push(control);
@@ -142,20 +153,15 @@ export class AppsSettingsComponent implements OnInit {
       this.api.job('docker.update', [{
         enable_image_updates: values.enable_image_updates,
         address_pools: values.address_pools,
-        nvidia: values.nvidia,
+        nvidia: Boolean(values.nvidia),
       }]),
     ])
-      .pipe(
-        switchMap(() => forkJoin([
-          this.dockerStore.reloadDockerConfig(),
-          this.appsStore.loadCatalog(),
-        ])),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isFormLoading.set(false);
-          this.slideInRef.close(true);
+          this.snackbar.success(this.translate.instant('Settings saved'));
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -165,5 +171,4 @@ export class AppsSettingsComponent implements OnInit {
   }
 
   protected readonly helptext = helptextApps;
-  protected readonly async = async;
 }

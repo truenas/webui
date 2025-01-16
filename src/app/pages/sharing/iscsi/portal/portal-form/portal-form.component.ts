@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,7 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -22,12 +22,11 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -37,7 +36,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -86,6 +85,8 @@ export class PortalFormComponent implements OnInit {
 
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
+  protected editingIscsiPortal: IscsiPortal | undefined;
+
   readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
@@ -99,18 +100,22 @@ export class PortalFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     protected iscsiService: IscsiService,
-    private slideInRef: OldSlideInRef<PortalFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingIscsiPortal: IscsiPortal,
-  ) {}
+    public slideInRef: SlideInRef<IscsiPortal | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingIscsiPortal = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingIscsiPortal) {
-      this.setupForm();
+      this.setupForm(this.editingIscsiPortal);
     }
   }
 
-  setupForm(): void {
-    this.editingIscsiPortal.listen.forEach((listen) => {
+  setupForm(portal: IscsiPortal): void {
+    portal.listen.forEach((listen) => {
       const newListItem = {} as IscsiInterface;
       newListItem.ip = listen.ip;
       this.form.controls.ip.push(this.fb.control(listen.ip, [Validators.required, ipValidator('all')]));
@@ -118,7 +123,7 @@ export class PortalFormComponent implements OnInit {
     });
 
     this.form.patchValue({
-      ...this.editingIscsiPortal,
+      ...portal,
     });
     this.cdr.markForCheck();
   }
@@ -142,17 +147,17 @@ export class PortalFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.portal.create', [params]);
-    } else {
+    if (this.editingIscsiPortal) {
       request$ = this.api.call('iscsi.portal.update', [this.editingIscsiPortal.id, params]);
+    } else {
+      request$ = this.api.call('iscsi.portal.create', [params]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

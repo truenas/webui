@@ -22,8 +22,8 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class TooltipComponent {
-  readonly message = input<string>();
-  readonly header = input<string>();
+  readonly message = input<string>('');
+  readonly header = input<string>('');
 
   // Conversion here just allows us to use enum values as string without having to import the enum
   readonly placement = input<NgxPopperjsPlacements, `${NgxPopperjsPlacements}`>(NgxPopperjsPlacements.AUTO, {

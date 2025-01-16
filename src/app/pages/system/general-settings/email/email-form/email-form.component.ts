@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
@@ -29,14 +29,13 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -46,7 +45,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -66,15 +65,15 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class EmailFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  sendMethodControl = new FormControl(MailSendMethod.Smtp);
+  sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
   form = this.formBuilder.group({
-    fromemail: ['', [Validators.required, emailValidator()]],
+    fromemail: ['', [emailValidator()]],
     fromname: [''],
     outgoingserver: [''],
-    port: [null as number, [
+    port: [null as number | null, [
       this.validatorService.validateOnCondition(
-        (control) => control.parent && this.isSmtp && this.hasSmtpAuthentication,
+        (control) => !!control.parent && this.isSmtp && this.hasSmtpAuthentication,
         Validators.required,
       ),
       portRangeValidator(),
@@ -86,6 +85,7 @@ export class EmailFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected emailConfig: MailConfig | undefined;
 
   readonly sendMethodOptions$ = of([
     {
@@ -148,26 +148,32 @@ export class EmailFormComponent implements OnInit {
     private validatorService: IxValidatorsService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
-    private slideInRef: OldSlideInRef<EmailFormComponent>,
-    @Inject(SLIDE_IN_DATA) private emailConfig: MailConfig,
-  ) {}
+    public slideInRef: SlideInRef<MailConfig | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.emailConfig = this.slideInRef.getData();
+  }
 
   get hasSmtpAuthentication(): boolean {
-    return this.form.controls.smtp.value;
+    return Boolean(this.form.controls.smtp.value);
   }
 
   get isSmtp(): boolean {
     return this.sendMethodControl.value === MailSendMethod.Smtp;
   }
 
+  get isFromEmailRequired(): boolean {
+    return this.isSmtp || this.sendMethodControl.value === MailSendMethod.Outlook;
+  }
+
   get hasOauthAuthorization(): boolean {
-    return this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
+    return !!this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
-    return this.isSmtp
-      ? this.form.valid
-      : this.hasOauthAuthorization;
+    return !this.isSmtp ? this.hasOauthAuthorization && this.form.valid : this.form.valid;
   }
 
   ngOnInit(): void {
@@ -210,7 +216,7 @@ export class EmailFormComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Email settings updated.'));
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -267,12 +273,13 @@ export class EmailFormComponent implements OnInit {
       }
     } else {
       update = {
-        fromemail: '',
-        fromname: '',
-        oauth: this.oauthCredentials as MailOauthConfig,
+        fromemail: this.form.value.fromemail,
+        fromname: this.form.value.fromname,
+        oauth: {
+          ...this.oauthCredentials as MailOauthConfig,
+          provider: this.sendMethodControl.value,
+        },
       };
-
-      update.oauth.provider = this.sendMethodControl.value;
 
       if (this.sendMethodControl.value === MailSendMethod.Outlook) {
         update.outgoingserver = 'smtp-mail.outlook.com';

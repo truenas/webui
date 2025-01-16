@@ -12,11 +12,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { customAppButtonElements } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.elements';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class CustomAppButtonComponent {
   constructor(
     private dockerStore: DockerStore,
     private router: Router,
-    private slideIn: OldSlideInService,
+    private slideIn: SlideIn,
   ) { }
 
   openAppWizardCreation(): void {
@@ -59,9 +59,8 @@ export class CustomAppButtonComponent {
   }
 
   openCustomAppYamlCreation(): void {
-    const ref = this.slideIn.open(CustomAppFormComponent, { wide: true });
-    ref.slideInClosed$.pipe(
-      filter(Boolean),
+    this.slideIn.open(CustomAppFormComponent, { wide: true }).pipe(
+      filter((result) => !!result.response),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

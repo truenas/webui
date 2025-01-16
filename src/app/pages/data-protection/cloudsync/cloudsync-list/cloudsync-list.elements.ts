@@ -6,6 +6,7 @@ export const cloudSyncListElements = {
   anchorRouterLink: ['/data-protection', 'cloudsync'],
   elements: {
     tasks: {
+      anchor: 'cloudsync-tasks',
       synonyms: [
         T('Data Protection'),
         T('Tasks'),

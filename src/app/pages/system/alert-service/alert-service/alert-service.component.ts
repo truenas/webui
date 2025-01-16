@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject, OnInit,
+  Component, OnInit,
   Type,
   ViewContainerRef,
   viewChild,
@@ -29,11 +29,11 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AwsSnsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -65,7 +65,6 @@ import {
 import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +73,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -106,8 +105,9 @@ export class AlertServiceComponent implements OnInit {
   );
 
   isLoading = false;
+  protected readonly existingAlertService: AlertService | undefined;
 
-  private readonly alertServiceContainer = viewChild('alertServiceContainer', { read: ViewContainerRef });
+  private readonly alertServiceContainer = viewChild.required('alertServiceContainer', { read: ViewContainerRef });
 
   readonly helptext = helptextAlertService;
 
@@ -121,9 +121,12 @@ export class AlertServiceComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<AlertService>,
-    @Inject(SLIDE_IN_DATA) private existingAlertService: AlertService,
+    public slideInRef: SlideInRef<AlertService | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.commonForm.dirty || this.alertServiceForm?.form.dirty);
+    });
+    this.existingAlertService = this.slideInRef.getData();
     this.setFormEvents();
   }
 
@@ -139,15 +142,15 @@ export class AlertServiceComponent implements OnInit {
     this.renderAlertServiceForm();
 
     if (this.existingAlertService) {
-      this.setAlertServiceForEdit();
+      this.setAlertServiceForEdit(this.existingAlertService);
     }
   }
 
-  setAlertServiceForEdit(): void {
-    this.commonForm.patchValue(this.existingAlertService);
+  setAlertServiceForEdit(alertService: AlertService): void {
+    this.commonForm.patchValue(alertService);
 
     setTimeout(() => {
-      this.alertServiceForm.setValues(this.existingAlertService.attributes);
+      this.alertServiceForm.setValues(alertService.attributes);
     });
   }
 
@@ -197,7 +200,7 @@ export class AlertServiceComponent implements OnInit {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.snackbar.success(this.translate.instant('Alert service saved'));
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

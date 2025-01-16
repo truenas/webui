@@ -11,8 +11,8 @@ import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ix-app-network-info',
@@ -43,11 +43,11 @@ export class AppNetworkInfoComponent {
   });
 
   readonly incomingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0);
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.rx_bytes, 0) || 0;
   });
 
   readonly outgoingTraffic = computed(() => {
-    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0);
+    return this.stats()?.value?.networks?.reduce((sum, stats) => sum + stats.tx_bytes, 0) || 0;
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {

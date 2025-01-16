@@ -23,6 +23,7 @@ import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
@@ -35,7 +36,6 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/set-dedup-quota/set-dedup-quota.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ZfsHealthCardComponent', () => {
   let spectator: Spectator<ZfsHealthCardComponent>;
@@ -117,17 +117,17 @@ describe('ZfsHealthCardComponent', () => {
 
   describe('health indication', () => {
     it('shows an icon for pool status', () => {
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Everything is fine');
     });
 
     it('shows pool status string', () => {
-      const detailsItem = spectator.query(byText('Pool Status:')).parentElement;
+      const detailsItem = spectator.query(byText('Pool Status:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('Online');
     });
 
     it('shows total ZFS error count', () => {
-      const detailsItem = spectator.query(byText('Total ZFS Errors:')).parentElement;
+      const detailsItem = spectator.query(byText('Total ZFS Errors:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('3');
     });
   });
@@ -136,7 +136,7 @@ describe('ZfsHealthCardComponent', () => {
     it('loads and shows if scrub task is set along with a link to view all scrub tasks', () => {
       expect(api.call).toHaveBeenCalledWith('pool.scrub.query', [[['pool_name', '=', 'tank']]]);
 
-      const detailsItem = spectator.query(byText('Scheduled Scrub Task:')).parentElement;
+      const detailsItem = spectator.query(byText('Scheduled Scrub Task:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('Set');
 
       const link = detailsItem.querySelector('a');
@@ -145,13 +145,13 @@ describe('ZfsHealthCardComponent', () => {
     });
 
     it('shows information about last scan', () => {
-      const lastScan = spectator.query(byText('Last Scan:')).parentElement;
+      const lastScan = spectator.query(byText('Last Scan:'))!.parentElement!;
       expect(lastScan.querySelector('.value')).toHaveText('Finished Scrub on 2022-06-22 19:58:45');
 
-      const lastScanErrors = spectator.query(byText('Last Scan Errors:')).parentElement;
+      const lastScanErrors = spectator.query(byText('Last Scan Errors:'))!.parentElement!;
       expect(lastScanErrors.querySelector('.value')).toHaveText('1');
 
-      const lastScanDuration = spectator.query(byText('Last Scan Duration:')).parentElement;
+      const lastScanDuration = spectator.query(byText('Last Scan Duration:'))!.parentElement!;
       expect(lastScanDuration.querySelector('.value')).toHaveText('44 seconds');
     });
 
@@ -177,7 +177,7 @@ describe('ZfsHealthCardComponent', () => {
       });
       spectator.detectChanges();
 
-      const scanInProgress = spectator.query('.scan-in-progress');
+      const scanInProgress = spectator.query('.scan-in-progress')!;
       expect(scanInProgress.querySelector('.scan-description')).toHaveText('Scrub In Progress:  17.43%');
       expect(scanInProgress.querySelector('.time-left')).toHaveText('9 minutes 34 seconds remaining');
 
@@ -207,19 +207,19 @@ describe('ZfsHealthCardComponent', () => {
         },
       });
 
-      const scanInProgress = spectator.query('.scan-in-progress');
+      const scanInProgress = spectator.query('.scan-in-progress')!;
       expect(scanInProgress.querySelector('.scan-description')).toHaveText('Resilvering:  17.43%');
     });
   });
 
   describe('auto TRIM', () => {
     it('shows current auto TRIM setting', () => {
-      const detailsItem = spectator.query(byText('Auto TRIM:')).parentElement;
+      const detailsItem = spectator.query(byText('Auto TRIM:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('On');
     });
 
     it('shows an AutotrimDialog when Edit auto Trim is pressed', () => {
-      spectator.click(spectator.query(byText('Edit Auto TRIM')));
+      spectator.click(spectator.query(byText('Edit Auto TRIM'))!);
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialogComponent, {
         data: pool,
@@ -283,7 +283,7 @@ describe('ZfsHealthCardComponent', () => {
         dedup_table_quota: 'auto',
         dedup_table_size: 100 * KiB,
       });
-      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB');
+      expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB');
 
       // Custom
       spectator.setInput('pool', {
@@ -291,7 +291,7 @@ describe('ZfsHealthCardComponent', () => {
         dedup_table_quota: String(200 * KiB),
         dedup_table_size: 100 * KiB,
       });
-      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB / 200 KiB');
+      expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB / 200 KiB');
 
       // None
       spectator.setInput('pool', {
@@ -299,7 +299,7 @@ describe('ZfsHealthCardComponent', () => {
         dedup_table_quota: '0',
         dedup_table_size: 100 * KiB,
       });
-      expect(spectator.query(byText('Deduplication Table:')).parentElement.querySelector('.value')).toHaveText('100 KiB');
+      expect(spectator.query(byText('Deduplication Table:'))!.parentElement!.querySelector('.value')).toHaveText('100 KiB');
     });
 
     it('opens SetDedupQuotaComponent when Set Quota is pressed', () => {
@@ -308,7 +308,7 @@ describe('ZfsHealthCardComponent', () => {
         dedup_table_size: 100 * KiB,
       });
 
-      spectator.click(spectator.query(byText('Set Quota')));
+      spectator.click(spectator.query(byText('Set Quota'))!);
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetDedupQuotaComponent, {
         data: {
@@ -324,7 +324,7 @@ describe('ZfsHealthCardComponent', () => {
         dedup_table_size: 100 * KiB,
       });
 
-      spectator.click(spectator.query(byText('Prune')));
+      spectator.click(spectator.query(byText('Prune'))!);
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(PruneDedupTableDialogComponent, {
         data: {

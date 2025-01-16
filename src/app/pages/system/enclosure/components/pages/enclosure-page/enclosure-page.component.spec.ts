@@ -37,7 +37,7 @@ describe('EnclosurePageComponent', () => {
   let spectator: Spectator<EnclosurePageComponent>;
   const selectedView = signal(EnclosureView.Expanders);
   const selectedEnclosure = signal({ id: '123' } as DashboardEnclosure);
-  const selectedSlot = signal({} as DashboardEnclosureSlot);
+  const selectedSlot = signal({} as DashboardEnclosureSlot | null);
   const isLoading = signal(true);
   const enclosures = signal([{ id: '123' } as DashboardEnclosure]);
   const createComponent = createComponentFactory({
@@ -109,6 +109,7 @@ describe('EnclosurePageComponent', () => {
 
   it('shows disk details overview is selected', () => {
     expect(spectator.query(DiskDetailsOverviewComponent)).toExist();
+    expect(spectator.query(DiskDetailsOverviewComponent).selectedSlot).toEqual(selectedSlot());
   });
 
   it('redirects to a separate MINI page when selected enclosure is a MINI', () => {

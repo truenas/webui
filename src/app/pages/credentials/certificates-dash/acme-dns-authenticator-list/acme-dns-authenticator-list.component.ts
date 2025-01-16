@@ -25,12 +25,12 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -94,7 +94,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
@@ -124,15 +124,19 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(AcmednsFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(AcmednsFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getAuthenticators();
     });
   }
 
   doEdit(authenticator: DnsAuthenticator): void {
-    const slideInRef = this.slideInService.open(AcmednsFormComponent, { data: authenticator });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(AcmednsFormComponent, { data: authenticator }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getAuthenticators();
     });
   }
@@ -144,6 +148,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> DNS Authenticator?', {
           name: authenticator.name,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

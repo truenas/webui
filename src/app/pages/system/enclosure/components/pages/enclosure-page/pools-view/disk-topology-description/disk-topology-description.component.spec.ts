@@ -17,8 +17,8 @@ describe('DiskTopologyDescriptionComponent', () => {
   });
 
   function getItemValue(title: string): string {
-    const titleElement = spectator.query<HTMLElement>(byText(title));
-    return titleElement.nextElementSibling.textContent;
+    const titleElement = spectator.query<HTMLElement>(byText(title))!;
+    return titleElement.nextElementSibling!.textContent!;
   }
 
   describe('occupied', () => {

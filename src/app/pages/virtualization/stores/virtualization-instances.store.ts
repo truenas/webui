@@ -2,12 +2,12 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { switchMap, tap } from 'rxjs';
+import { of, switchMap, tap } from 'rxjs';
 import { catchError, map, startWith } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface VirtualizationInstancesState {
   isLoading: boolean;
@@ -24,7 +24,9 @@ const initialState: VirtualizationInstancesState = {
 export class VirtualizationInstancesStore extends ComponentStore<VirtualizationInstancesState> {
   readonly stateAsSignal = toSignal(this.state$, { initialValue: initialState });
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
-  readonly instances = computed(() => this.stateAsSignal().instances?.filter(Boolean));
+  readonly instances = computed(() => {
+    return this.stateAsSignal().instances?.filter((instance) => !!instance) ?? [];
+  });
 
   constructor(
     private api: ApiService,
@@ -72,7 +74,7 @@ export class VirtualizationInstancesStore extends ComponentStore<VirtualizationI
           catchError((error: unknown) => {
             this.patchState({ isLoading: false, instances: [] });
             this.errorHandler.showErrorModal(error);
-            return undefined;
+            return of(undefined);
           }),
         );
       }),

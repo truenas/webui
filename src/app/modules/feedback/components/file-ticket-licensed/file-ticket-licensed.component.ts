@@ -36,7 +36,7 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({

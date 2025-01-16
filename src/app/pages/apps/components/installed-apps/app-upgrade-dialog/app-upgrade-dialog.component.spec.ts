@@ -16,7 +16,7 @@ const fakeAppInfo = {
 
 const fakeUpgradeSummary = {
   container_images_to_update: {},
-  changelog: null as string,
+  changelog: '',
   available_versions_for_upgrade: [
     {
       version: '1.0.2',

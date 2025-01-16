@@ -1,4 +1,8 @@
-<ix-old-modal-header [requiredRoles]="requiredRoles" [title]="'FTP' | translate" [loading]="isFormLoading"></ix-old-modal-header>
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="'FTP' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -75,6 +79,7 @@
                   [label]="'Path' | translate"
                   [tooltip]="helptext.anonpath_tooltip | translate"
                   [nodeProvider]="treeNodeProvider"
+                  [canCreateDataset]="true"
                 ></ix-explorer>
               }
 

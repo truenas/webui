@@ -30,6 +30,7 @@ import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UseIxIconsInStepperComponent,
@@ -39,13 +40,12 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -93,7 +93,7 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<unknown>,
+    public slideInRef: SlideInRef<undefined, ReplicationTask | undefined>,
     private authService: AuthService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {

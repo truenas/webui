@@ -15,7 +15,7 @@ import { finalize, take } from 'rxjs';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { CardExpandCollapseComponent } from 'app/modules/card-expand-collapse/card-expand-collapse.component';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -25,20 +25,20 @@ import { ApiService } from 'app/services/websocket/api.service';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    CardExpandCollapseComponent,
     MatCard,
+    MatCardContent,
     MatCardHeader,
     MatCardTitle,
     NgxSkeletonLoaderModule,
     TranslateModule,
-    MatCardContent,
-    CardExpandCollapseComponent,
   ],
 })
 export class ConnectionsCardComponent {
   readonly target = input.required<IscsiTarget>();
 
   isLoading = signal<boolean>(false);
-  sessions = signal<IscsiGlobalSession[]>(null);
+  sessions = signal<IscsiGlobalSession[] | null>(null);
 
   constructor(
     private api: ApiService,

@@ -63,7 +63,7 @@ describe('WidgetInterfaceIpComponent', () => {
     });
 
     it('renders IPv4 addresses for the selected network interface', () => {
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('192.168.1.1\n192.168.1.2');
     });
@@ -71,7 +71,7 @@ describe('WidgetInterfaceIpComponent', () => {
     it('renders IPv4 addresses for the selected network interface from state', () => {
       spectator.setInput('settings', { interface: 'eth2' });
 
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('192.168.1.10\n192.168.1.11');
     });
@@ -82,7 +82,7 @@ describe('WidgetInterfaceIpComponent', () => {
         widgetName: 'IPv6 Address',
       });
 
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('fe80::1');
     });
@@ -90,7 +90,7 @@ describe('WidgetInterfaceIpComponent', () => {
     it('renders "interface not found" when selected interface is not available in interface data', () => {
       spectator.setInput('settings', { interface: 'eth404' });
 
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('Network interface eth404 not found.');
     });
@@ -98,7 +98,7 @@ describe('WidgetInterfaceIpComponent', () => {
     it('renders N/A when an interface has no IPv4 addresses', () => {
       spectator.setInput('settings', { interface: 'eth1' });
 
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.text()).toBe('N/A');
     });
@@ -115,7 +115,7 @@ describe('WidgetInterfaceIpComponent', () => {
     });
 
     it('renders IPv4 addresses for the first picked network interface', () => {
-      const widget = spectator.query(WidgetDatapointComponent);
+      const widget = spectator.query(WidgetDatapointComponent)!;
       expect(widget).toBeTruthy();
       expect(widget.label()).toBe('eth0 Address');
       expect(widget.text()).toBe('192.168.1.1\n192.168.1.2');

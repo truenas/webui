@@ -47,7 +47,7 @@ describe('BasicSearchComponent', () => {
     it('emits (switchToAdvanced) when Switch To Advanced is pressed', async () => {
       spectator.setInput('allowAdvanced', true);
 
-      expect(await (await searchHarness.getSwitchLink()).text()).toBe('Switch To Advanced');
+      expect(await (await searchHarness.getSwitchLink())!.text()).toBe('Switch To Advanced');
       await searchHarness.clickSwitchToAdvanced();
 
       expect(spectator.component.switchToAdvanced.emit).toHaveBeenCalled();

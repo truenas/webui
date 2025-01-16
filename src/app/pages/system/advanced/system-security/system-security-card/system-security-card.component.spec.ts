@@ -3,16 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { SlideIn } from 'app/services/slide-in';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
+  enable_gpos_stig: false,
 };
 
 describe('SystemSecurityCardComponent', () => {
@@ -21,6 +24,11 @@ describe('SystemSecurityCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
     providers: [
+      provideMockStore({
+        selectors: [
+          { selector: selectIsHaLicensed, value: true },
+        ],
+      }),
       mockAuth(),
       mockApi([
         mockCall('system.security.config', fakeSystemSecurityConfig),
@@ -42,6 +50,7 @@ describe('SystemSecurityCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'Enable FIPS: No',
+      'Enable General Purpose OS STIG compatibility mode: No',
     ]);
   });
 

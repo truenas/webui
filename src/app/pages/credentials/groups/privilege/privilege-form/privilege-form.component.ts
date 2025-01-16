@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -26,11 +26,10 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -43,7 +42,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -76,6 +75,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected readonly helptext = helptextPrivilege;
   protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected existingPrivilege: Privilege | undefined;
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -99,7 +99,7 @@ export class PrivilegeFormComponent implements OnInit {
       });
 
       return sortedRoles.map((role) => ({
-        label: roleNames.has(role.name) ? this.translate.instant(roleNames.get(role.name)) : role.name,
+        label: this.translate.instant(roleNames.get(role.name) || role.name),
         value: role.name,
       }));
     }),
@@ -131,15 +131,19 @@ export class PrivilegeFormComponent implements OnInit {
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<PrivilegeFormComponent>,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    @Inject(SLIDE_IN_DATA) private existingPrivilege: Privilege,
-  ) { }
+    public slideInRef: SlideInRef<Privilege | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingPrivilege = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.existingPrivilege) {
-      this.setPrivilegeForEdit();
+      this.setPrivilegeForEdit(this.existingPrivilege);
       if (this.existingPrivilege.builtin_name) {
         this.form.controls.name.disable();
         this.form.controls.roles.disable();
@@ -147,13 +151,13 @@ export class PrivilegeFormComponent implements OnInit {
     }
   }
 
-  setPrivilegeForEdit(): void {
+  setPrivilegeForEdit(existingPrivilege: Privilege): void {
     this.form.patchValue({
-      ...this.existingPrivilege,
-      local_groups: this.existingPrivilege.local_groups.map(
+      ...existingPrivilege,
+      local_groups: existingPrivilege.local_groups.map(
         (group) => group.group || this.translate.instant('Missing group - {gid}', { gid: group.gid }),
       ),
-      ds_groups: this.existingPrivilege.ds_groups.map((group) => group.group),
+      ds_groups: existingPrivilege.ds_groups.map((group) => group.group),
     });
     this.cdr.markForCheck();
   }
@@ -167,10 +171,10 @@ export class PrivilegeFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<Privilege>;
-    if (this.isNew) {
-      request$ = this.api.call('privilege.create', [values]);
-    } else {
+    if (this.existingPrivilege) {
       request$ = this.api.call('privilege.update', [this.existingPrivilege.id, values]);
+    } else {
+      request$ = this.api.call('privilege.create', [values]);
     }
 
     request$.pipe(
@@ -185,7 +189,7 @@ export class PrivilegeFormComponent implements OnInit {
     ).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

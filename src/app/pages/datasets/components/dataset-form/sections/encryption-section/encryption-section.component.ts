@@ -17,7 +17,7 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +48,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   });
 
   // TODO: Add conditional validators
-  readonly form = this.formBuilder.group({
+  readonly form = this.formBuilder.nonNullable.group({
     inherit_encryption: [true],
     encryption: [true],
     encryption_type: [DatasetEncryptionType.Default],
@@ -96,14 +96,16 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   }
 
   protected parentHasPassphrase = computed(() => {
-    return this.parent()
-      && this.parent().encrypted
-      && this.parent().key_format.value === EncryptionKeyFormat.Passphrase;
+    const parent = this.parent();
+    return parent
+      && parent.encrypted
+      && parent.key_format.value === EncryptionKeyFormat.Passphrase;
   });
 
   ngOnChanges(): void {
-    if (this.parent()) {
-      this.setInheritValues();
+    const parent = this.parent();
+    if (parent) {
+      this.setInheritValues(parent);
       this.disableEncryptionIfParentEncrypted();
     }
   }
@@ -144,13 +146,13 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
     };
   }
 
-  private setInheritValues(): void {
+  private setInheritValues(parent: Dataset): void {
     if (this.parentHasPassphrase()) {
       this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
     }
 
-    if (this.parent().encrypted && this.parent().encryption_algorithm?.value) {
-      this.form.controls.algorithm.setValue(this.parent().encryption_algorithm.value);
+    if (parent.encrypted && parent.encryption_algorithm?.value) {
+      this.form.controls.algorithm.setValue(parent.encryption_algorithm.value);
     }
   }
 

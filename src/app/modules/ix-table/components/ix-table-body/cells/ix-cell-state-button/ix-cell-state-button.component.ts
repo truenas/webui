@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, Observable, tap,
+  catchError, EMPTY, filter, Observable, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
@@ -66,11 +66,11 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     this.state.set(job.state);
   });
 
-  getJob: (row: T) => Job;
+  getJob: (row: T) => Job | null;
   private store$: Store<JobSlice> = inject<Store<JobSlice>>(Store<JobSlice>);
-  job = signal<Job>(null);
+  job = signal<Job | null>(null);
   jobUpdates$: Observable<Job<ApiJobResponse<ApiJobMethod>>>;
-  state = signal<JobState>(null);
+  state = signal<JobState | null>(null);
 
   ngOnInit(): void {
     if (this.getJob) {
@@ -86,6 +86,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> implements
     }
     const jobId = this.getJob(this.row()).id;
     this.jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
+      filter((job) => !!job),
       tap((job) => {
         this.job.set(job);
         this.state.set(job.state);

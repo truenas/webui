@@ -32,9 +32,9 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -87,17 +87,17 @@ export class ExportDisconnectModalComponent implements OnInit {
   systemConfig: SystemDatasetConfig;
 
   isFormLoading = false;
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     destroy: [false],
     cascade: [true],
     confirm: [false, [Validators.requiredTrue]],
     nameInput: ['', [
       this.validatorsService.validateOnCondition(
-        (control: AbstractControl) => control.parent?.get('destroy').value,
+        (control: AbstractControl) => control.parent?.get('destroy')?.value,
         this.nameInputRequired,
       ),
       this.validatorsService.validateOnCondition(
-        (control: AbstractControl) => control.parent?.get('destroy').value,
+        (control: AbstractControl) => control.parent?.get('destroy')?.value,
         this.nameInputMustMatch,
       ),
     ]],
@@ -136,7 +136,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   }
 
   startExportDisconnectJob(): void {
-    const value = this.form.value;
+    const value = this.form.getRawValue();
 
     const job$ = this.api.job('pool.export', [
       this.pool.id,

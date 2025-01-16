@@ -27,7 +27,7 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
 })
 export class ProductImageComponent {
   @HostBinding('class.ix-logo') get isIxLogo(): boolean {
-    return this.productImage().includes('ix-original.svg');
+    return this.productImage()?.includes('ix-original.svg') || false;
   }
 
   @HostBinding('class.truenas')

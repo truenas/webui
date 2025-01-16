@@ -128,7 +128,7 @@ describe.skip('IxExplorerComponent', () => {
 
     it('calls nodeProvider when getChildren from TreeComponent options is called', () => {
       const tree = spectator.query(TreeComponent)!;
-      tree.options.getChildren({ path: mntPath });
+      tree.options.getChildren!({ path: mntPath });
 
       expect(fakeNodeProvider).toHaveBeenCalledWith({ path: mntPath });
     });
@@ -149,7 +149,7 @@ describe.skip('IxExplorerComponent', () => {
       spectator.setHostInput('tooltip', 'Enter the location of the system.');
       spectator.detectComponentChanges();
 
-      const label = spectator.query(IxLabelComponent);
+      const label = spectator.query(IxLabelComponent)!;
       expect(label).toExist();
       expect(label.label()).toBe('Select dataset');
       expect(label.required()).toBe(true);
@@ -358,5 +358,9 @@ describe.skip('IxExplorerComponent', () => {
       expect(spectator.query('input')).toBeDisabled();
       expect(spectator.query('.tree-container')).toHaveClass('disabled');
     });
+
+    // TODO: Add test 'disables input when readonly is set to true on ix-explorer'
+    // when overall tests for the component are working, after the following issue is solved
+    // https://github.com/help-me-mom/ng-mocks/issues/10503
   });
 });

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -29,10 +29,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class CustomTransfersDialogComponent {
   readonly helptext = helptextCloudSync;
-  readonly transfers = this.formBuilder.control(null as number, [Validators.required, Validators.min(0)]);
+  readonly transfers = new FormControl(null as number | null, [Validators.required, Validators.min(0)]);
 
   constructor(
-    private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<CustomTransfersDialogComponent>,
   ) { }
 

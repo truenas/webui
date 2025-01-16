@@ -43,7 +43,7 @@ describe('FileTicketComponent', () => {
         })),
       }),
       mockProvider(ImageValidatorService, {
-        getImagesValidator: () => () => of(null as ValidationErrors),
+        getImagesValidator: () => () => of(null as ValidationErrors | null),
       }),
       mockApi([
         mockCall('support.attach_ticket_max_size', 5),
@@ -55,12 +55,13 @@ describe('FileTicketComponent', () => {
     spectator = createComponent({
       props: {
         dialogRef,
+        isLoading: false,
         type: FeedbackType.Bug,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    loginToJiraButton = spectator.query(OauthButtonComponent);
+    loginToJiraButton = spectator.query(OauthButtonComponent)!;
     feedbackService = spectator.inject(FeedbackService);
   });
 
@@ -71,7 +72,7 @@ describe('FileTicketComponent', () => {
   });
 
   it('renders similar issues and passes in title as it is entered', async () => {
-    const similarIssues = spectator.query(SimilarIssuesComponent);
+    const similarIssues = spectator.query(SimilarIssuesComponent)!;
     expect(similarIssues).toBeTruthy();
 
     await form.fillForm({

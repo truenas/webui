@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormBuilder, Validators, FormsModule, ReactiveFormsModule,
+  Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,13 +16,13 @@ import { filter, take } from 'rxjs/operators';
 import { AutofocusDirective } from 'app/directives/autofocus/autofocus.directive';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -62,7 +62,7 @@ export class SigninFormComponent implements OnInit {
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private signinStore: SigninStore,
     private translate: TranslateService,
@@ -114,7 +114,7 @@ export class SigninFormComponent implements OnInit {
     performance.mark('Login Start');
     this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     this.cdr.markForCheck();
     this.authService.login(formValues.username, formValues.password).pipe(
       untilDestroyed(this),
@@ -138,17 +138,15 @@ export class SigninFormComponent implements OnInit {
   private handleFailedLogin(loginResult: LoginResult): void {
     this.isLastLoginAttemptFailed = true;
 
-    switch (loginResult) {
-      case LoginResult.NoAccess:
-        this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
-        break;
-      case LoginResult.NoOtp:
-        this.hasTwoFactor = true;
-        this.lastLoginError = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
-        break;
-      default:
-        this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
-        break;
+    if (loginResult === LoginResult.NoOtp) {
+      this.hasTwoFactor = true;
+      return;
+    }
+
+    if (loginResult === LoginResult.NoAccess) {
+      this.lastLoginError = this.translate.instant('User is lacking permissions to access WebUI.');
+    } else {
+      this.lastLoginError = this.translate.instant('Wrong username or password. Please try again.');
     }
 
     this.cdr.markForCheck();
@@ -179,7 +177,7 @@ export class SigninFormComponent implements OnInit {
 
   protected loginWithOtp(): void {
     this.signinStore.setLoadingState(true);
-    const formValues = this.form.value;
+    const formValues = this.form.getRawValue();
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
       untilDestroyed(this),
     ).subscribe({

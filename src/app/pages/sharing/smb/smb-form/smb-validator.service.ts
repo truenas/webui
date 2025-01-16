@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { extractApiError } from 'app/helpers/api.helper';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Injectable({

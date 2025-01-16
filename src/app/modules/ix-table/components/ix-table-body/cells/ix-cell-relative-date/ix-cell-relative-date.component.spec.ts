@@ -31,6 +31,6 @@ describe('IxCellRelativeDateComponent', () => {
   });
 
   it('shows custom relative format datetime in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('10 days ago');
+    expect(spectator.element.textContent!.trim()).toBe('10 days ago');
   });
 });

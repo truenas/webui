@@ -73,8 +73,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     return new IxComboboxProviderManager(this.provider());
   });
 
-  private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
-  private readonly autoCompleteRef = viewChild('auto', { read: MatAutocomplete });
+  private readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
+  private readonly autoCompleteRef = viewChild.required('auto', { read: MatAutocomplete });
   private readonly autocompleteTrigger = viewChild(MatAutocompleteTrigger);
 
   options: Option[] = [];
@@ -84,9 +84,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   private filterChanged$ = new Subject<string>();
 
-  value: string | number = '';
+  value: string | number | null = '';
   isDisabled = false;
-  filterValue: string;
+  filterValue: string | null;
   selectedOption: Option | null = null;
   textContent = '';
 
@@ -168,26 +168,28 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   onOpenDropdown(): void {
     setTimeout(() => {
+      const autoCompleteRef = this.autoCompleteRef();
+      const autocompleteTrigger = this.autocompleteTrigger();
       if (
-        !this.autoCompleteRef()
-        || !this.autocompleteTrigger()
-        || !this.autoCompleteRef().panel
+        !autoCompleteRef
+        || !autocompleteTrigger
+        || !autoCompleteRef.panel
       ) {
         return;
       }
 
-      fromEvent((this.autoCompleteRef().panel as ElementRef<HTMLElement>).nativeElement, 'scroll')
+      fromEvent((autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement, 'scroll')
         .pipe(
           debounceTime(300),
-          map(() => (this.autoCompleteRef().panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
-          takeUntil(this.autocompleteTrigger().panelClosingActions),
+          map(() => (autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),
+          takeUntil(autocompleteTrigger.panelClosingActions),
           untilDestroyed(this),
         ).subscribe(() => {
           const {
             scrollTop,
             scrollHeight,
             clientHeight: elementHeight,
-          } = this.autoCompleteRef().panel.nativeElement as HTMLElement;
+          } = autoCompleteRef.panel.nativeElement as HTMLElement;
 
           const atBottom = scrollHeight === scrollTop + elementHeight;
           if (!atBottom) {
@@ -270,7 +272,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   hasValue(): boolean {
-    return this.inputElementRef()?.nativeElement?.value && this.inputElementRef().nativeElement.value.length > 0;
+    return !!this.inputElementRef()?.nativeElement?.value && this.inputElementRef().nativeElement.value.length > 0;
   }
 
   isValueFromOptions(value: string): boolean {

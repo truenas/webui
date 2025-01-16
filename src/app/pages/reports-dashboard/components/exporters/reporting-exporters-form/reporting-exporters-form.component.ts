@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
   FormControl, UntypedFormGroup, Validators, ReactiveFormsModule,
@@ -34,12 +34,11 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +48,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -90,6 +89,7 @@ export class ReportingExportersFormComponent implements OnInit {
   isLoading = false;
   isLoadingSchemas = true;
   dynamicSection: DynamicFormSchema[] = [];
+  protected editingExporter: ReportingExporter | undefined;
 
   protected exporterTypeOptions$: Observable<Option[]>;
   protected reportingExporterList: ReportingExporterList[] = [];
@@ -97,15 +97,19 @@ export class ReportingExportersFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: OldSlideInRef<ReportingExportersFormComponent>,
     private translate: TranslateService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    @Inject(SLIDE_IN_DATA) private editingExporter: ReportingExporter,
-  ) { }
+    public slideInRef: SlideInRef<ReportingExporter | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingExporter = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.loadSchemas();
@@ -130,7 +134,10 @@ export class ReportingExportersFormComponent implements OnInit {
         this.createExporterControls(schemas);
 
         if (!this.isNew) {
-          this.form.patchValue(this.editingExporter);
+          this.form.patchValue({
+            ...this.editingExporter,
+            type: this.editingExporter.attributes['exporter_type'] as string,
+          });
         }
 
         this.isLoading = false;
@@ -161,7 +168,7 @@ export class ReportingExportersFormComponent implements OnInit {
       for (const input of schema.schema) {
         this.form.controls.attributes.addControl(
           input._name_,
-          new FormControl('', input._required_ ? [Validators.required] : []),
+          new FormControl(input.const || '', input._required_ ? [Validators.required] : []),
         );
       }
     }
@@ -179,7 +186,9 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
+    return schema.schema
+      .filter((input) => !input.const)
+      .map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
@@ -216,9 +225,8 @@ export class ReportingExportersFormComponent implements OnInit {
       ...this.form.value,
     };
 
-    if (!this.isNew) {
-      delete values.type;
-    }
+    values.attributes['exporter_type'] = values.type;
+    delete values.type;
 
     for (const [key, value] of Object.entries(values.attributes)) {
       if (value == null || value === '') {
@@ -229,19 +237,19 @@ export class ReportingExportersFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('reporting.exporters.create', [values]);
-    } else {
+    if (this.editingExporter) {
       request$ = this.api.call('reporting.exporters.update', [
         this.editingExporter.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('reporting.exporters.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

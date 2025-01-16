@@ -26,8 +26,8 @@ import {
 } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class OsStepComponent implements SummaryProvider {
   form = this.formBuilder.nonNullable.group({
-    os: [null as VmOs],
+    os: [null as VmOs | null],
     hyperv_enlightenments: [false],
     name: ['',
       [Validators.required, Validators.pattern(vmNamePattern)],
@@ -97,10 +97,10 @@ export class OsStepComponent implements SummaryProvider {
   }
 
   getSummary(): SummarySection {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     return [
       { label: this.translate.instant('Name'), value: values.name },
-      { label: this.translate.instant('Guest Operating System'), value: values.os },
+      { label: this.translate.instant('Guest Operating System'), value: values.os || '' },
     ];
   }
 }

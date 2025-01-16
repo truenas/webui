@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,12 +26,12 @@ import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -43,7 +43,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -66,8 +66,8 @@ export class NetworkConfigurationComponent implements OnInit {
 
   form = this.fb.group({
     hostname: ['', Validators.required],
-    hostname_b: [null as string],
-    hostname_virtual: [null as string],
+    hostname_b: [null as string | null],
+    hostname_virtual: [null as string | null],
     inherit_dhcp: [false],
     domain: [''],
     domains: [[] as string[]],
@@ -222,14 +222,18 @@ export class NetworkConfigurationComponent implements OnInit {
   constructor(
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: OldSlideInRef<NetworkConfigurationComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private store$: Store<AppState>,
-  ) {}
+    public slideInRef: SlideInRef<undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading = true;
@@ -350,7 +354,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isFormLoading = false;

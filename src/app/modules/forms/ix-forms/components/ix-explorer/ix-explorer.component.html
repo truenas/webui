@@ -3,7 +3,7 @@
     [label]="label()"
     [tooltip]="tooltip()"
     [required]="required()"
-    [ixTestOverride]="controlDirective.name"
+    [ixTestOverride]="controlDirective.name || ''"
   ></ix-label>
 }
 
@@ -42,7 +42,7 @@
   <tree-root
     #tree
     [nodes]="nodes"
-    [options]="treeOptions"
+    [options]="treeOptions()"
     (select)="onNodeSelect($event)"
     (deselect)="onNodeDeselect($event)"
   >
@@ -79,13 +79,17 @@
   </tree-root>
 </div>
 
+
 @if (loadingError) {
   <mat-error class="loading-error">
     {{ loadingError }}
   </mat-error>
 }
 
-<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+@let control = controlDirective.control;
+@if (control) {
+  <ix-errors [control]="control" [label]="label()"></ix-errors>
+}
 
 @if (hint()) {
   <mat-hint>{{ hint() }}</mat-hint>

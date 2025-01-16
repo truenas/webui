@@ -28,13 +28,13 @@ import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -158,6 +158,7 @@ export class TunableListComponent implements OnInit {
         title: this.translate.instant('Delete Sysctl'),
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
+        buttonColor: 'warn',
       })
       .pipe(
         filter(Boolean),

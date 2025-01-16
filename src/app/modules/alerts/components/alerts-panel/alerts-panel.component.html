@@ -57,7 +57,7 @@
   }
 
   @let unreadAlerts = unreadAlerts$ | async;
-  @if (!unreadAlerts.length) {
+  @if (!unreadAlerts?.length) {
     <div class="no-alerts">
       <ix-icon class="icon" name="info"></ix-icon>
       <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
@@ -86,7 +86,7 @@
   }
 
   @let dismissedAlerts = dismissedAlerts$ | async;
-  @if (dismissedAlerts.length) {
+  @if (dismissedAlerts?.length) {
     <div class="alert-list dismissed-alerts">
       @for (alert of dismissedAlerts; track alert.id; let last = $last) {
         <div

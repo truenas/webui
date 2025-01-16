@@ -24,9 +24,9 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly loading = output<boolean>();
 
   protected form = this.formBuilder.group({
-    exist_credential: [null as number | typeof newOption],
+    exist_credential: [null as number | typeof newOption | null],
   });
 
   protected isLoading: boolean;
@@ -64,7 +64,7 @@ export class CloudSyncProviderComponent implements OnInit {
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
-    private slideInRef: SlideInRef<unknown>,
+    private slideInRef: SlideInRef<unknown, unknown>,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
@@ -125,7 +125,7 @@ export class CloudSyncProviderComponent implements OnInit {
         } else {
           this.dialogService.error({
             title: this.translate.instant('Error'),
-            message: response.excerpt,
+            message: response.excerpt || '',
             backtrace: response.error,
           });
         }
@@ -144,7 +144,7 @@ export class CloudSyncProviderComponent implements OnInit {
   openAdvanced(): void {
     this.slideInRef.swap(
       CloudSyncFormComponent,
-      true,
+      { wide: true },
     );
   }
 

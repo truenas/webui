@@ -41,7 +41,7 @@ export class SearchInput1Component implements OnInit, OnChanges {
 
   readonly search = output<string>();
 
-  private input: Signal<ElementRef<HTMLInputElement>> = viewChild('ixSearchInput', { read: ElementRef });
+  private input: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixSearchInput', { read: ElementRef });
 
   @HostBinding('class.disabled')
   get disabledClass(): boolean {

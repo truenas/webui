@@ -18,8 +18,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export enum QuotaType {
   Auto = 'AUTO',
@@ -53,8 +53,8 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
 })
 export class SetDedupQuotaComponent {
   protected form = this.formBuilder.group({
-    quotaType: [null as QuotaType],
-    quotaValue: [null as number, Validators.min(0)],
+    quotaType: [null as QuotaType | null],
+    quotaValue: [null as number | null, Validators.min(0)],
   });
 
   protected quotaTypeOptions$ = of(mapToOptions(quotaTypeLabels, this.translate));

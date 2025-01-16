@@ -6,6 +6,7 @@ export const dataProtectionDashboardElements = {
   anchorRouterLink: ['/data-protection'],
   elements: {
     dashboard: {
+      anchor: 'data-protection-dashboard',
       synonyms: [T('Tasks')],
     },
   },

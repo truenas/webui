@@ -15,11 +15,11 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;

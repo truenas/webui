@@ -25,20 +25,19 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { LanguageService } from 'app/modules/language/language.service';
 import { ConsoleFooterComponent } from 'app/modules/layout/console-footer/console-footer.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
 import { NavigationComponent } from 'app/modules/layout/navigation/navigation.component';
 import { SecondaryMenuComponent } from 'app/modules/layout/secondary-menu/secondary-menu.component';
+import { SidenavService } from 'app/modules/layout/sidenav.service';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
 import { DefaultPageHeaderComponent } from 'app/modules/page-header/default-page-header/default-page-header.component';
 import { SlideInControllerComponent } from 'app/modules/slide-ins/components/slide-in-controller/slide-in-controller.component';
-import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { LanguageService } from 'app/services/language.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SessionTimeoutService } from 'app/services/session-timeout.service';
-import { SidenavService } from 'app/services/sidenav.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -66,7 +65,6 @@ import { selectCopyrightText, selectIsEnterprise, waitForSystemInfo } from 'app/
     ConsoleFooterComponent,
     AlertsPanelComponent,
     SlideInControllerComponent,
-    OldSlideInComponent,
     AsyncPipe,
     TranslateModule,
     TestDirective,

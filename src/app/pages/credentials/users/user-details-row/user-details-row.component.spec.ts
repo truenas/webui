@@ -16,11 +16,11 @@ import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserDetailsRowComponent } from './user-details-row.component';
 
@@ -36,15 +36,15 @@ const dummyUser = {
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo_commands: [],
-  sudo_commands_nopasswd: [],
+  sudo_commands: [] as string[],
+  sudo_commands_nopasswd: [] as string[],
   email: 'test-user@test-user.com',
   group: {
     id: 41,
     bsdgrp_gid: 0,
     bsdgrp_group: 'test-user',
   },
-  groups: [],
+  groups: [] as number[],
 } as User;
 
 describe('UserDetailsRowComponent', () => {
@@ -58,7 +58,9 @@ describe('UserDetailsRowComponent', () => {
       UserFormComponent,
     ],
     providers: [
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        open: jest.fn(),
+      }),
       mockApi([
         mockCall('user.delete'),
         mockCall('group.query', []),
@@ -97,7 +99,7 @@ describe('UserDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(
       UserFormComponent,
       { wide: true, data: dummyUser },
     );

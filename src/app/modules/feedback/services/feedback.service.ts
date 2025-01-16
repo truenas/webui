@@ -26,10 +26,10 @@ import {
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectProductType, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -43,7 +43,7 @@ type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
 })
 export class FeedbackService {
   private readonly hostname = 'https://feedback.ui.truenas.com';
-  private isFeedbackAllowed: boolean;
+  private isFeedbackAllowed: boolean | undefined;
 
   constructor(
     private httpClient: HttpClient,
@@ -116,6 +116,11 @@ export class FeedbackService {
         ...options,
       }).then((canvas) => {
         canvas.toBlob((blob) => {
+          if (!blob) {
+            observer.error(new Error('Failed to create a screenshot.'));
+            return;
+          }
+
           const file = new File([blob], filename, { type });
           observer.next(file);
           observer.complete();
@@ -273,7 +278,7 @@ export class FeedbackService {
   }
 
   private prepareTicket(token: string, type: TicketType, data: TicketData): Observable<CreateNewTicket> {
-    return this.addDebugInfoToMessage(data.message).pipe(
+    return this.addDebugInfoToMessage(data.message || '').pipe(
       map((body) => ({
         body,
         token,
@@ -285,7 +290,7 @@ export class FeedbackService {
   }
 
   private prepareTicketLicensed(data: TicketLicensedData): Observable<CreateNewTicket> {
-    return this.addDebugInfoToMessage(data.message).pipe(
+    return this.addDebugInfoToMessage(data.message || '').pipe(
       map((body) => ({
         body,
         name: data.name,
@@ -307,7 +312,7 @@ export class FeedbackService {
     token?: string,
   ): Observable<void> {
     const takeScreenshot = data.take_screenshot;
-    const images = data.images;
+    const images = data.images || [];
 
     // Make requests and map to boolean for successful uploads.
     const requests = images.map((attachment) => {

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -34,15 +34,14 @@ import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/i
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 
@@ -54,7 +53,7 @@ import { ServicesState } from 'app/store/services/services.reducer';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -75,8 +74,8 @@ import { ServicesState } from 'app/store/services/services.reducer';
   ],
 })
 export class NfsFormComponent implements OnInit {
-  existingNfsShare: NfsShare;
-  defaultNfsShare: NfsShare;
+  existingNfsShare: NfsShare | undefined;
+  defaultNfsShare: NfsShare | undefined;
 
   isLoading = false;
   isAdvancedMode = false;
@@ -144,18 +143,20 @@ export class NfsFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
-    private slideInRef: OldSlideInRef<NfsFormComponent>,
     private store$: Store<ServicesState>,
-    @Inject(SLIDE_IN_DATA) private data: { existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare },
+    public slideInRef: SlideInRef<{ existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare } | undefined, boolean>,
   ) {
-    this.existingNfsShare = this.data?.existingNfsShare;
-    this.defaultNfsShare = this.data?.defaultNfsShare;
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.existingNfsShare = this.slideInRef.getData()?.existingNfsShare;
+    this.defaultNfsShare = this.slideInRef.getData()?.defaultNfsShare;
   }
 
-  setNfsShareForEdit(): void {
-    this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
-    this.existingNfsShare.hosts.forEach(() => this.addHostControl());
-    this.form.patchValue(this.existingNfsShare);
+  setNfsShareForEdit(share: NfsShare): void {
+    share.networks.forEach(() => this.addNetworkControl());
+    share.hosts.forEach(() => this.addHostControl());
+    this.form.patchValue(share);
   }
 
   ngOnInit(): void {
@@ -166,7 +167,7 @@ export class NfsFormComponent implements OnInit {
     }
 
     if (this.existingNfsShare) {
-      this.setNfsShareForEdit();
+      this.setNfsShareForEdit(this.existingNfsShare);
     }
   }
 
@@ -193,10 +194,10 @@ export class NfsFormComponent implements OnInit {
   onSubmit(): void {
     const nfsShare = this.form.value;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
-    } else {
+    if (this.existingNfsShare) {
       request$ = this.api.call('sharing.nfs.update', [this.existingNfsShare.id, nfsShare]);
+    } else {
+      request$ = this.api.call('sharing.nfs.create', [nfsShare]);
     }
 
     this.datasetService.rootLevelDatasetWarning(
@@ -222,7 +223,7 @@ export class NfsFormComponent implements OnInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isLoading = false;

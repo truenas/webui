@@ -10,8 +10,8 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { GaugeChartComponent } from 'app/modules/charts/gauge-chart/gauge-chart.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { PoolUsageGaugeComponent } from './pool-usage-gauge.component';
 
 describe('PoolUsageGaugeComponent', () => {
@@ -110,8 +110,8 @@ describe('PoolUsageGaugeComponent', () => {
     const lines: { label: string; value: string }[] = [];
     spectator.queryAll('.lines > .line').forEach((line) => {
       lines.push({
-        label: line.querySelector('.label').textContent.trim(),
-        value: line.querySelector('.value').textContent.trim(),
+        label: line.querySelector('.label')!.textContent!.trim(),
+        value: line.querySelector('.value')!.textContent!.trim(),
       });
     });
     expect(lines).toEqual([
@@ -128,10 +128,10 @@ describe('PoolUsageGaugeComponent', () => {
   });
 
   it('shows chart', () => {
-    expect(spectator.query(GaugeChartComponent).label).toBe('80.2%');
-    const value = spectator.query(GaugeChartComponent).value;
+    expect(spectator.query(GaugeChartComponent)!.label).toBe('80.2%');
+    const value = spectator.query(GaugeChartComponent)!.value;
     expect(value).toBeCloseTo(80, 0);
-    expect(spectator.query(GaugeChartComponent).colorFill).toBe('red');
+    expect(spectator.query(GaugeChartComponent)!.colorFill).toBe('red');
   });
 
   it('should display skeleton loader when pool is loading', () => {

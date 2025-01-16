@@ -26,7 +26,7 @@ describe('NameAndOptionsSectionComponent', () => {
       value: DatasetCaseSensitivity.Sensitive,
       source: ZfsPropertySource.Local,
     },
-    children: [],
+    children: [] as Dataset[],
   } as Dataset;
 
   const createComponent = createComponentFactory({
@@ -48,7 +48,7 @@ describe('NameAndOptionsSectionComponent', () => {
   describe('new dataset', () => {
     it('shows form for new dataset', async () => {
       spectator.setInput({
-        existing: null,
+        existing: undefined,
         parent: parentDataset,
       });
 
@@ -88,7 +88,7 @@ describe('NameAndOptionsSectionComponent', () => {
             value: DatasetPreset.Multiprotocol,
           },
         } as Dataset,
-        parent: null,
+        parent: undefined,
       });
 
       const values = await form.getValues();

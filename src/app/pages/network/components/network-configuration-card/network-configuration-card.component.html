@@ -16,9 +16,7 @@
     <div class="columns">
       @if (!isLoading) {
         <div class="first-column">
-          <mat-list
-            class="list"
-          >
+          <mat-list class="list">
             <div class="section-title">{{ 'Nameservers' | translate }}</div>
             @for (nameserver of nameservers; track nameserver.label) {
               <mat-list-item
@@ -32,7 +30,7 @@
             }
           </mat-list>
 
-          @if (ipv4?.length > 0) {
+          @if (ipv4.length > 0) {
             <mat-list class="list">
               <div class="section-title">{{ 'Default Route' | translate }}</div>
               <mat-list-item>
@@ -46,7 +44,7 @@
               </mat-list-item>
             </mat-list>
           }
-          @if (ipv6?.length > 0) {
+          @if (ipv6.length > 0) {
             <mat-list class="list">
               <mat-list-item>
                 <ix-icon name="router" class="list-icon"></ix-icon>

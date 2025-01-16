@@ -41,14 +41,14 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -224,6 +224,8 @@ export class CloudBackupListComponent implements OnInit {
   doDelete(row: CloudBackup): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
       message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
         name: row.description,
       }),

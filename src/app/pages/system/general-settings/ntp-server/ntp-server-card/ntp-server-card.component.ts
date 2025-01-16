@@ -24,12 +24,12 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -110,7 +110,7 @@ export class NtpServerCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
     private dialog: DialogService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
   ) {}
 
   ngOnInit(): void {
@@ -131,6 +131,7 @@ export class NtpServerCardComponent implements OnInit {
         { address: server.address },
       ),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'warn',
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('system.ntpserver.delete', [server.id])),
@@ -142,12 +143,16 @@ export class NtpServerCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(NtpServerFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadItems());
+    this.slideIn.open(NtpServerFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.loadItems());
   }
 
   doEdit(server: NtpServer): void {
-    const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadItems());
+    this.slideIn.open(NtpServerFormComponent, { data: server }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.loadItems());
   }
 }

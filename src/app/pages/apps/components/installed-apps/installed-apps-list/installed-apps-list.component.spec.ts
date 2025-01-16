@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialogComponent } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
@@ -29,7 +30,6 @@ import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const apps = [
   {

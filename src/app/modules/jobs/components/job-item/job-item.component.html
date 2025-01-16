@@ -1,8 +1,8 @@
 <div
   class="job-item"
-  [class.abortable]="job()?.state === JobState.Running && job()?.abortable"
+  [class.abortable]="job().state === JobState.Running && job().abortable"
   [class.interactive]="clickable()"
-  [matTooltip]="job()?.state === JobState.Failed ? job().error : null"
+  [matTooltip]="job().state === JobState.Failed ? job().error : null"
   [matTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable() && open()">
@@ -28,7 +28,7 @@
     <div>
       @switch (job().state) {
         @case (JobState.Running) {
-          @if (job()?.progress?.description) {
+          @if (job().progress.description) {
             <div class="job-progress-description">
               {{ job().progress.description }}
             </div>

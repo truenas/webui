@@ -28,13 +28,13 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -107,7 +107,7 @@ export class NfsCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private api: ApiService,
@@ -124,9 +124,10 @@ export class NfsCardComponent implements OnInit {
   }
 
   openForm(row?: NfsShare): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: row } });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: row } }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.dataProvider.load();
     });
   }
@@ -135,6 +136,8 @@ export class NfsCardComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Are you sure you want to delete NFS Share <b>"{path}"</b>?', { path: nfs.path }),
+      buttonColor: 'warn',
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       switchMap(() => this.api.call('sharing.nfs.delete', [nfs.id])),

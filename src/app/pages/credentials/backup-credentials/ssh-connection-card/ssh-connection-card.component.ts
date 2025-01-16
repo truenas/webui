@@ -25,13 +25,13 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -139,6 +139,7 @@ export class SshConnectionCardComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', {
           name: credential.name,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

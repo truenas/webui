@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, forwardRef, Signal, signal,
+  viewChild,
 } from '@angular/core';
 import {
   FormControl, ValidationErrors, Validators, ReactiveFormsModule,
@@ -7,7 +8,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { tap } from 'rxjs';
+import { of, tap } from 'rxjs';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
@@ -52,6 +53,9 @@ export class WidgetGroupFormComponent {
     { layout: WidgetGroupLayout.Full, slots: [{ type: null }] },
   );
 
+  readonly widgetGroupSlotForm: Signal<WidgetGroupSlotFormComponent>
+    = viewChild(forwardRef(() => WidgetGroupSlotFormComponent));
+
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,
@@ -75,9 +79,13 @@ export class WidgetGroupFormComponent {
   });
 
   constructor(
-    protected slideInRef: SlideInRef<WidgetGroup>,
+    public slideInRef: SlideInRef<WidgetGroup | undefined, WidgetGroup | false>,
     private cdr: ChangeDetectorRef,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
+    });
+
     this.setupLayoutUpdates();
     this.setInitialFormValues();
   }

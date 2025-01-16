@@ -10,10 +10,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AuditFormComponent', () => {
   let spectator: Spectator<AuditFormComponent>;
@@ -41,7 +41,11 @@ describe('AuditFormComponent', () => {
       }),
       mockProvider(DialogService),
       provideMockStore(),
-      mockProvider(SlideInRef, { close: jest.fn(), getData: jest.fn() }),
+      mockProvider(SlideInRef, {
+        close: jest.fn(),
+        getData: jest.fn(),
+        requireConfirmationWhen: jest.fn(),
+      }),
       mockAuth(),
     ],
   });

@@ -39,15 +39,15 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -119,10 +119,11 @@ export class SmbListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (smbShare) => {
-            const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
-            slideInRef.slideInClosed$
-              .pipe(take(1), filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+            this.slideIn.open(SmbFormComponent, { data: { existingSmbShare: smbShare } }).pipe(
+              take(1),
+              filter((response) => !!response.response),
+              untilDestroyed(this),
+            ).subscribe(() => this.dataProvider.load());
           },
         },
         {
@@ -140,8 +141,11 @@ export class SmbListComponent implements OnInit {
                 .pipe(untilDestroyed(this))
                 .subscribe((shareAcl) => {
                   this.appLoader.close();
-                  const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
-                  slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                  this.slideIn.open(SmbAclComponent, { data: shareAcl.share_name }).pipe(
+                    take(1),
+                    filter((response) => !!response.response),
+                    untilDestroyed(this),
+                  ).subscribe(() => {
                     this.dataProvider.load();
                   });
                 });
@@ -174,6 +178,7 @@ export class SmbListComponent implements OnInit {
               title: this.translate.instant('Unshare {name}', { name: row.name }),
               message: shared.delete_share_message,
               buttonText: this.translate.instant('Unshare'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               untilDestroyed(this),
@@ -203,7 +208,7 @@ export class SmbListComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private router: Router,
@@ -232,8 +237,11 @@ export class SmbListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent);
-    slideInRef.slideInClosed$.pipe(take(1), filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(SmbFormComponent).pipe(
+      take(1),
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.dataProvider.load();
       },

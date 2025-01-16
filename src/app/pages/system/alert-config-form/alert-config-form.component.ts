@@ -25,8 +25,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -146,6 +146,10 @@ export class AlertConfigFormComponent implements OnInit {
       .forEach(([className, classControl]: [string, FormGroup<ControlsOf<AlertClassSettings>>]) => {
         const levelControl = classControl.controls.level;
         const policyControl = classControl.controls.policy;
+        if (!levelControl || !policyControl) {
+          return;
+        }
+
         if (levelControl.value !== levelControl.defaultValue || policyControl.value !== policyControl.defaultValue) {
           payload.classes[className] = {};
           if (levelControl.value !== levelControl.defaultValue) {

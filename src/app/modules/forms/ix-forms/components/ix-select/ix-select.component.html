@@ -4,7 +4,7 @@
       [label]="label()"
       [tooltip]="tooltip()"
       [required]="required()"
-      [ixTestOverride]="controlDirective.name"
+      [ixTestOverride]="controlDirective.name || ''"
     ></ix-label>
   }
 
@@ -15,7 +15,7 @@
       [disabled]="disabledState"
       [multiple]="multiple()"
       [ixTest]="controlDirective.name"
-      [aria-label]="label()"
+      [aria-label]="label() || ''"
       [(ngModel)]="value"
       (blur)="onTouch()"
       (ngModelChange)="onChange($event)"
@@ -62,7 +62,7 @@
             [value]="option.value"
             [disabled]="option.disabled"
             [ixTest]="[controlDirective.name, option.label]"
-            [matTooltip]="option.hoverTooltip | translate"
+            [matTooltip]="option.hoverTooltip ? (option.hoverTooltip | translate) : ''"
             [attr.aria-label]="option.label | translate"
           >
             @if (multiple()) {
@@ -100,7 +100,10 @@
     }
   </div>
 
-  <ix-errors [control]="controlDirective.control" [label]="label() | translate"></ix-errors>
+  @let control = controlDirective.control;
+  @if (control) {
+    <ix-errors [control]="control" [label]="label()"></ix-errors>
+  }
 
   @if (hint()) {
     <mat-hint>{{ hint() }}</mat-hint>

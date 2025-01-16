@@ -45,11 +45,11 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -84,9 +84,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     TreeNodeDefDirective,
     TreeNodeToggleDirective,
     TreeNodeOutletDirective,
-  ],
-  providers: [
-    DevicesStore,
   ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
@@ -138,7 +135,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     @Inject(WINDOW) private window: Window,
   ) { }
 
-  getDisk(node: DeviceNestedDataNode): Disk {
+  getDisk(node: DeviceNestedDataNode): Disk | undefined {
     if (isVdevGroup(node) || !isTopologyDisk(node)) {
       return undefined;
     }

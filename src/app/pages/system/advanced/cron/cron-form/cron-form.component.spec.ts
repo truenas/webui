@@ -11,12 +11,12 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LocaleService } from 'app/modules/language/locale.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
-import { LocaleService } from 'app/services/locale.service';
-import { SlideIn } from 'app/services/slide-in';
 import { UserService } from 'app/services/user.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('CronFormComponent', () => {
@@ -40,7 +40,7 @@ describe('CronFormComponent', () => {
   } as Cronjob;
 
   const getData = jest.fn(() => existingCronJob);
-  const componentRef: SlideInRef<Cronjob> = {
+  const componentRef: SlideInRef<Cronjob, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),
     requireConfirmationWhen: jest.fn(),

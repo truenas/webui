@@ -5,7 +5,7 @@ import {
   input,
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { App } from 'app/interfaces/app.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/app-version.pipe';
@@ -16,7 +16,8 @@ import { AppVersionPipe } from 'app/pages/dashboard/widgets/apps/common/utils/ap
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [TranslateModule, MatTooltipModule, IxIconComponent, AppVersionPipe],
+  providers: [AppVersionPipe],
+  imports: [TranslateModule, MatTooltipModule, IxIconComponent],
 })
 export class AppUpdateCellComponent {
   app = input.required<App>();
@@ -25,5 +26,17 @@ export class AppUpdateCellComponent {
 
   @HostBinding('class') get hostClasses(): string[] {
     return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
+  }
+
+  constructor(
+    private translate: TranslateService,
+    private appVersionPipe: AppVersionPipe,
+  ) {}
+
+  protected getVersionMsg(version: string): string {
+    return this.translate.instant(
+      '{version} is available!',
+      { version: this.appVersionPipe.transform(version) || 'Upgrade' },
+    );
   }
 }

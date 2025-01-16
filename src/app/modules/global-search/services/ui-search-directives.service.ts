@@ -9,10 +9,11 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 })
 export class UiSearchDirectivesService {
   private directives = new Set<UiSearchDirective>();
-  protected pendingHighlightElement: UiSearchableElement;
-  directiveAdded$ = new BehaviorSubject<UiSearchDirective>(null);
+  pendingHighlightElement: UiSearchableElement | null;
+  directiveAdded$ = new BehaviorSubject<UiSearchDirective | null>(null);
 
-  get pendingUiHighlightElement(): UiSearchableElement {
+  // TODO: Refactor out and just access property directly?
+  get pendingUiHighlightElement(): UiSearchableElement | null {
     return this.pendingHighlightElement;
   }
 
@@ -20,7 +21,7 @@ export class UiSearchDirectivesService {
     return this.directives.size;
   }
 
-  get(element: UiSearchableElement): UiSearchDirective {
+  get(element: UiSearchableElement): UiSearchDirective | null {
     const elementId = getSearchableElementId(element);
     for (const directive of this.directives.values()) {
       if (directive.id === elementId) {
@@ -30,7 +31,7 @@ export class UiSearchDirectivesService {
     return null;
   }
 
-  setPendingUiHighlightElement(element: UiSearchableElement): void {
+  setPendingUiHighlightElement(element: UiSearchableElement | null): void {
     this.pendingHighlightElement = element;
   }
 

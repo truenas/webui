@@ -3,7 +3,7 @@
     [label]="label()"
     [tooltip]="tooltip()"
     [required]="required()"
-    [ixTestOverride]="controlDirective.name"
+    [ixTestOverride]="controlDirective.name || ''"
   ></ix-label>
 }
 
@@ -57,7 +57,10 @@
   </mat-autocomplete>
 </div>
 
-<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>
+@let control = controlDirective.control;
+@if (control) {
+  <ix-errors [control]="control" [label]="label()"></ix-errors>
+}
 
 @if (hint()) {
   <mat-hint>{{ hint() }}</mat-hint>

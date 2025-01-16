@@ -2,10 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { MatDialog } from '@angular/material/dialog';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +26,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -34,13 +34,12 @@ import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-f
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadOptions, UploadService } from 'app/services/upload.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { updateRebootAfterManualUpdate } from 'app/store/preferences/preferences.actions';
@@ -78,7 +77,7 @@ export class ManualUpdateFormComponent implements OnInit {
   isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
-    updateFile: [null as FileList],
+    updateFile: [null as FileList | null],
     rebootAfterManualUpdate: [false],
   });
 
@@ -92,10 +91,9 @@ export class ManualUpdateFormComponent implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private matDialog: MatDialog,
     protected router: Router,
     public systemService: SystemGeneralService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
@@ -207,7 +205,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading$.next(true);
-    const value = this.form.value;
+    const value = this.form.getRawValue();
     value.filelocation = value.filelocation === ':temp:' ? null : value.filelocation;
     this.store$.dispatch(updateRebootAfterManualUpdate({
       rebootAfterManualUpdate: value.rebootAfterManualUpdate,
@@ -275,7 +273,7 @@ export class ManualUpdateFormComponent implements OnInit {
       hideCheckbox: true,
       buttonText: helptext.ha_update.complete_action,
       hideCancel: true,
-    }).pipe(untilDestroyed(this)).subscribe(() => {});
+    }).pipe(untilDestroyed(this)).subscribe();
   }
 
   handleUpdateSuccess(): void {

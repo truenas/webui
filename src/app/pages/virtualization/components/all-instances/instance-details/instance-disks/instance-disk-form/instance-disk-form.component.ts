@@ -6,7 +6,7 @@ import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -18,10 +18,10 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
-interface FormOptions {
+interface InstanceDiskFormOptions {
   instanceId: string;
   disk: VirtualizationDisk | undefined;
 }
@@ -57,25 +57,34 @@ export class InstanceDiskFormComponent implements OnInit {
     destination: ['', Validators.required],
   });
 
+  protected isNew = computed(() => !this.existingDisk());
+
   protected title = computed(() => {
-    return this.existingDisk() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
+    return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
 
   constructor(
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private api: ApiService,
-    private slideInRef: SlideInRef<FormOptions>,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystem: FilesystemService,
-  ) {}
+    public slideInRef: SlideInRef<InstanceDiskFormOptions, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     const disk = this.slideInRef.getData().disk;
     if (disk) {
       this.existingDisk.set(disk);
-      this.form.patchValue(disk);
+      this.form.patchValue({
+        source: disk.source || '',
+        destination: disk.destination || '',
+      });
     }
   }
 
@@ -110,10 +119,11 @@ export class InstanceDiskFormComponent implements OnInit {
       dev_type: VirtualizationDeviceType.Disk,
     } as VirtualizationDisk;
 
-    return this.existingDisk()
+    const existingDisk = this.existingDisk();
+    return existingDisk
       ? this.api.call('virt.instance.device_update', [instanceId, {
         ...payload,
-        name: this.existingDisk().name,
+        name: existingDisk.name,
       }])
       : this.api.call('virt.instance.device_add', [instanceId, payload]);
   }

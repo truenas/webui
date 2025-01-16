@@ -5,8 +5,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
 import {
-  createHostFactory,
-  mockProvider, SpectatorHost,
+  createComponentFactory,
+  mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -16,9 +16,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
-import { PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NetworkInterface, PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
@@ -26,7 +25,9 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { OldSlideInComponent } from 'app/modules/slide-ins/old-slide-in.component';
+import { SlideInComponent } from 'app/modules/slide-ins/components/slide-in/slide-in.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -42,14 +43,32 @@ import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('NetworkComponent', () => {
-  let spectator: SpectatorHost<NetworkComponent>;
+  let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   let api: MockApiService;
+
+  const existingInterface = {
+    id: '1',
+    type: NetworkInterfaceType.Physical,
+    name: 'eno1',
+    aliases: [
+      {
+        address: '192.168.238.12',
+        netmask: 24,
+        type: NetworkInterfaceAliasType.Inet,
+      },
+    ],
+  } as PhysicalNetworkInterface;
+
+  const slideInRef: SlideInRef<NetworkInterface | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => existingInterface),
+  };
 
   let isTestingChanges = false;
   let wasEditMade = false;
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: NetworkComponent,
     imports: [
       ReactiveFormsModule,
@@ -60,7 +79,7 @@ describe('NetworkComponent', () => {
     ],
     declarations: [
       InterfacesCardComponent,
-      OldSlideInComponent,
+      SlideInComponent,
       InterfaceFormComponent,
       MockComponents(
         NetworkConfigurationCardComponent,
@@ -86,28 +105,11 @@ describe('NetworkComponent', () => {
           isTestingChanges = false;
           return undefined;
         }),
-        mockCall('interface.update', () => {
-          wasEditMade = true;
-          return undefined;
-        }),
         mockCall('interface.commit', () => {
           isTestingChanges = true;
           return undefined;
         }),
-        mockCall('interface.query', () => [
-          {
-            id: '1',
-            type: NetworkInterfaceType.Physical,
-            name: 'eno1',
-            aliases: [
-              {
-                address: '192.168.238.12',
-                netmask: 24,
-                type: NetworkInterfaceAliasType.Inet,
-              },
-            ],
-          } as PhysicalNetworkInterface,
-        ]),
+        mockCall('interface.query', () => [existingInterface]),
         mockCall('interface.xmit_hash_policy_choices'),
         mockCall('interface.lacpdu_rate_choices'),
         mockCall('interface.default_route_will_be_removed'),
@@ -125,16 +127,20 @@ describe('NetworkComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType$: of(ProductType.Scale),
       }),
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(SlideIn, {
+        popComponent: jest.fn(),
+        isTopComponentWide$: of(false),
+        open: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createHost(`
-      <ix-network></ix-network>
-      <ix-old-slide-in id="ix-slide-in-form"></ix-old-slide-in>
-    `);
+    spectator = createComponent();
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
     api = spectator.inject(MockApiService);
 
     isTestingChanges = false;
@@ -142,15 +148,11 @@ describe('NetworkComponent', () => {
   });
 
   async function makeEdit(): Promise<void> {
+    wasEditMade = true;
+
     const table = await loader.getHarness(IxTableHarness);
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
-
-    const input = await rootLoader.getHarness(IxInputHarness.with({ label: 'Description' }));
-    await input.setValue('test');
-
-    const saveButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
     spectator.detectComponentChanges();
   }
 

@@ -24,7 +24,7 @@ describe('DatasetsManagementComponent', () => {
     { id: 'second', name: 'Second Dataset' },
   ]);
 
-  const error$ = new BehaviorSubject(null);
+  const error$ = new BehaviorSubject<unknown>(null);
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
@@ -91,7 +91,7 @@ describe('DatasetsManagementComponent', () => {
 
     spectator.detectChanges();
 
-    expect(spectator.query(EmptyComponent).conf).toEqual(
+    expect(spectator.query(EmptyComponent)!.conf).toEqual(
       expect.objectContaining({
         large: true,
         type: 'errors',
@@ -109,7 +109,7 @@ describe('DatasetsManagementComponent', () => {
     datasets$.next([]);
     spectator.detectChanges();
 
-    expect(spectator.query(EmptyComponent).conf).toEqual(
+    expect(spectator.query(EmptyComponent)!.conf).toEqual(
       expect.objectContaining({
         type: 'no_page_data',
         title: 'No Datasets',

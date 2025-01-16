@@ -24,12 +24,13 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import {
   UseIxIconsInStepperComponent,
 } from 'app/modules/ix-icon/use-ix-icons-in-stepper/use-ix-icons-in-stepper.component';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
 import {
@@ -45,7 +46,6 @@ import {
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -54,7 +54,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     MatStepper,
@@ -78,13 +78,13 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class VmWizardComponent implements OnInit {
-  protected readonly osStep = viewChild(OsStepComponent);
+  protected readonly osStep = viewChild.required(OsStepComponent);
   // TODO: Should be protected, but used in the test.
-  readonly cpuAndMemoryStep = viewChild(CpuAndMemoryStepComponent);
-  readonly diskStep = viewChild(DiskStepComponent);
-  protected readonly networkInterfaceStep = viewChild(NetworkInterfaceStepComponent);
-  protected readonly installationMediaStep = viewChild(InstallationMediaStepComponent);
-  protected readonly gpuStep = viewChild(GpuStepComponent);
+  readonly cpuAndMemoryStep = viewChild.required(CpuAndMemoryStepComponent);
+  readonly diskStep = viewChild.required(DiskStepComponent);
+  protected readonly networkInterfaceStep = viewChild.required(NetworkInterfaceStepComponent);
+  protected readonly installationMediaStep = viewChild.required(InstallationMediaStepComponent);
+  protected readonly gpuStep = viewChild.required(GpuStepComponent);
 
   protected readonly requiredRoles = [Role.VmWrite];
 
@@ -119,13 +119,25 @@ export class VmWizardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<VmWizardComponent>,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private gpuService: GpuService,
     private vmGpuService: VmGpuService,
     private snackbar: SnackbarService,
-  ) {}
+    public slideInRef: SlideInRef<undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(
+        this.osStep().form.dirty
+        || this.cpuAndMemoryStep().form.dirty
+        || this.diskStep().form.dirty
+        || this.networkInterfaceStep().form.dirty
+        || this.installationMediaStep().form.dirty
+        || this.installationMediaStep().form.dirty
+        || this.gpuStep().form.dirty,
+      );
+    });
+  }
 
   ngOnInit(): void {
     this.setDefaultsFromOs();
@@ -155,7 +167,7 @@ export class VmWizardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },

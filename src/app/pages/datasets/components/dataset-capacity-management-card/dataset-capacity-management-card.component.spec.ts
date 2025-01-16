@@ -12,11 +12,11 @@ import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 const datasetQuotas = {
   refreservation: {
@@ -87,10 +87,8 @@ describe('DatasetCapacityManagementCardComponent', () => {
           },
         }]),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(),
-        })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
     ],
   });
@@ -110,11 +108,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows SpaceManagementChartComponent', () => {
-      expect(spectator.query(SpaceManagementChartComponent).dataset).toBe(datasetFilesystem);
+      expect(spectator.query(SpaceManagementChartComponent)!.dataset).toBe(datasetFilesystem);
     });
 
     it('shows chart block', () => {
-      const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
+      const chartExtra = spectator.query('.chart-extra')!.querySelectorAll('.details-item');
       expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Reserved for Dataset:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('1 KiB');
@@ -159,11 +157,11 @@ describe('DatasetCapacityManagementCardComponent', () => {
     });
 
     it('shows SpaceManagementChartComponent', () => {
-      expect(spectator.query(SpaceManagementChartComponent).dataset).toBe(datasetZvol);
+      expect(spectator.query(SpaceManagementChartComponent)!.dataset).toBe(datasetZvol);
     });
 
     it('shows chart block', () => {
-      const chartExtra = spectator.query('.chart-extra').querySelectorAll('.details-item');
+      const chartExtra = spectator.query('.chart-extra')!.querySelectorAll('.details-item');
       expect(chartExtra).toHaveLength(2);
       expect(chartExtra[0].querySelector('.label')).toHaveText('Provisioning Type:');
       expect(chartExtra[0].querySelector('.value')).toHaveText('Thick');
@@ -197,7 +195,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open)
+    expect(spectator.inject(SlideIn).open)
       .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
   });
 });

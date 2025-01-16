@@ -25,13 +25,13 @@ import { IxTablePagerShowMoreComponent } from 'app/modules/ix-table/components/i
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { SlideIn } from 'app/services/slide-in';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -173,6 +173,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: credential.name,
         }),
+        buttonColor: 'warn',
         buttonText: this.translate.instant('Delete'),
       })
       .pipe(

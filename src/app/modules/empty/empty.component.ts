@@ -31,7 +31,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class EmptyComponent {
   readonly conf = input.required<EmptyConfig>();
-  readonly requiredRoles = input<Role[]>();
+  readonly requiredRoles = input<Role[]>([]);
 
   doAction(): void {
     const action = this.conf().button?.action;
@@ -44,12 +44,17 @@ export class EmptyComponent {
     return this.conf().type === EmptyType.Loading;
   });
 
-  getIcon(): MarkedIcon {
+  getIcon(): MarkedIcon | undefined {
     let icon = iconMarker('ix-truenas-logo');
-    if (this.conf().icon) {
-      icon = this.conf().icon;
+    const confIcon = this.conf().icon;
+    if (confIcon) {
+      icon = confIcon;
     } else {
       const type = this.conf().type;
+      if (!type) {
+        return undefined;
+      }
+
       switch (type) {
         case EmptyType.Loading:
           icon = iconMarker('ix-truenas-logo');

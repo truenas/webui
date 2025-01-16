@@ -5,17 +5,18 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
+  take,
 } from 'rxjs/operators';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   userPageEntered,
   userRemoved,
   usersLoaded,
   usersNotLoaded,
 } from 'app/pages/credentials/users/store/user.actions';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -24,7 +25,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class UserEffects {
   loadUsers$ = createEffect(() => this.actions$.pipe(
     ofType(userPageEntered, builtinUsersToggled),
-    switchMap(() => this.store$.pipe(waitForPreferences)),
+    switchMap(() => this.store$.pipe(waitForPreferences, take(1))),
     switchMap((preferences) => {
       let params: QueryParams<User> = [];
       if (preferences.hideBuiltinUsers) {

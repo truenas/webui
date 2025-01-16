@@ -19,7 +19,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -101,7 +101,7 @@ describe('AlertComponent', () => {
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toBe('1970-01-20 03:03:31 (America/Alaska)');
+    expect(alert.dateTimeElement.textContent!.replace(/\s{2,}/g, ' ').trim()).toBe('1970-01-20 03:03:31 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);

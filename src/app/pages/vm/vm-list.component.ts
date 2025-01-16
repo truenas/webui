@@ -43,14 +43,14 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualMachineDetailsRowComponent } from 'app/pages/vm/vm-list/vm-details-row/vm-details-row.component';
 import { vmListElements } from 'app/pages/vm/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -102,7 +102,6 @@ export class VmListComponent implements OnInit {
     large: true,
     icon: iconMarker('laptop'),
     title: this.translate.instant('Virtualization is not supported'),
-    button: null,
   };
 
   columns = createTable<VirtualMachine>([
@@ -180,7 +179,7 @@ export class VmListComponent implements OnInit {
   }
 
   constructor(
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
     private api: ApiService,
@@ -216,10 +215,11 @@ export class VmListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(VmWizardComponent);
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
+    this.slideIn.open(VmWizardComponent)
+      .pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe(() => {
         this.vmService.checkMemory();
         this.refresh();
       });

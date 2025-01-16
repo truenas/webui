@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -27,12 +27,11 @@ import {
   crontabToScheduleWithoutMinutes,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +40,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -80,6 +79,7 @@ export class SmartTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected editingTest: SmartTestTask | undefined;
 
   isAllDisksSelected$ = this.form.select((values) => values.all_disks);
 
@@ -100,21 +100,21 @@ export class SmartTaskFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
-    private slideInRef: OldSlideInRef<SmartTaskFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingTest: SmartTestTask,
-  ) {}
+    public slideInRef: SlideInRef<SmartTestTask | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.editingTest = this.slideInRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingTest) {
-      this.setTestForEdit();
+      this.form.patchValue({
+        ...this.editingTest,
+        schedule: scheduleToCrontab(this.editingTest.schedule),
+      });
     }
-  }
-
-  setTestForEdit(): void {
-    this.form.patchValue({
-      ...this.editingTest,
-      schedule: scheduleToCrontab(this.editingTest.schedule),
-    });
   }
 
   onSubmit(): void {
@@ -126,13 +126,13 @@ export class SmartTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('smart.test.create', [values]);
-    } else {
+    if (this.editingTest) {
       request$ = this.api.call('smart.test.update', [
         this.editingTest.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('smart.test.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -143,7 +143,7 @@ export class SmartTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

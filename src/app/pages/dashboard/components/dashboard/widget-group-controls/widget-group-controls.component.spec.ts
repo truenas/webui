@@ -23,7 +23,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('renders a button to move widget up on mobile', () => {
       jest.spyOn(spectator.component.moveUp, 'emit').mockReturnValue();
 
-      const button = spectator.query('[aria-label="Move widget up"]');
+      const button = spectator.query('[aria-label="Move widget up"]')!;
       expect(button).toExist();
       expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-menu-up');
 
@@ -44,7 +44,7 @@ describe('WidgetGroupControlsComponent', () => {
     it('renders a button to move widget down on mobile', () => {
       jest.spyOn(spectator.component.moveDown, 'emit').mockReturnValue();
 
-      const button = spectator.query('[aria-label="Move widget down"]');
+      const button = spectator.query('[aria-label="Move widget down"]')!;
       expect(button).toExist();
       expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-menu-down');
 
@@ -64,7 +64,7 @@ describe('WidgetGroupControlsComponent', () => {
   it('renders a button to edit a widget', () => {
     jest.spyOn(spectator.component.edit, 'emit').mockReturnValue();
 
-    const button = spectator.query('[aria-label="Edit group"]');
+    const button = spectator.query('[aria-label="Edit group"]')!;
     expect(button).toExist();
     expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'edit');
 
@@ -76,7 +76,7 @@ describe('WidgetGroupControlsComponent', () => {
   it('renders a button to delete a widget', () => {
     jest.spyOn(spectator.component.delete, 'emit').mockReturnValue();
 
-    const button = spectator.query('[aria-label="Delete group"]');
+    const button = spectator.query('[aria-label="Delete group"]')!;
     expect(button).toExist();
     expect(button.querySelector('ix-icon')).toHaveAttribute('name', 'mdi-delete');
 

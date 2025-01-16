@@ -27,17 +27,15 @@ import {
 } from 'app/modules/ix-table/components/ix-table-details-row/ix-table-details-row.component';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table/directives/ix-table-details-row.directive';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { LocaleService } from 'app/services/locale.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { SlideIn } from 'app/services/slide-in';
 import { TaskService } from 'app/services/task.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('CloudSyncListComponent', () => {
   let spectator: Spectator<CloudSyncListComponent>;
@@ -124,12 +122,9 @@ describe('CloudSyncListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -214,6 +209,8 @@ describe('CloudSyncListComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>"custom-cloudlist"</b>?',
+      buttonColor: 'warn',
+      buttonText: 'Delete',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);

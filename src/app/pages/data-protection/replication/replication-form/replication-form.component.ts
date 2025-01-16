@@ -17,6 +17,7 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -24,6 +25,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   GeneralSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/general-section/general-section.component';
@@ -42,12 +44,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -74,11 +74,11 @@ import { ApiService } from 'app/services/websocket/api.service';
   ],
 })
 export class ReplicationFormComponent implements OnInit {
-  protected readonly generalSection = viewChild(GeneralSectionComponent);
-  protected readonly transportSection = viewChild(TransportSectionComponent);
-  protected readonly sourceSection = viewChild(SourceSectionComponent);
-  protected readonly targetSection = viewChild(TargetSectionComponent);
-  protected readonly scheduleSection = viewChild(ScheduleSectionComponent);
+  protected readonly generalSection = viewChild.required(GeneralSectionComponent);
+  protected readonly transportSection = viewChild.required(TransportSectionComponent);
+  protected readonly sourceSection = viewChild.required(SourceSectionComponent);
+  protected readonly targetSection = viewChild.required(TargetSectionComponent);
+  protected readonly scheduleSection = viewChild.required(ScheduleSectionComponent);
 
   isLoading = false;
 
@@ -92,7 +92,7 @@ export class ReplicationFormComponent implements OnInit {
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  protected existingReplication: ReplicationTask;
+  protected existingReplication: ReplicationTask | undefined;
 
   constructor(
     private api: ApiService,
@@ -106,17 +106,8 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private authService: AuthService,
-    private slideInRef: SlideInRef<ReplicationTask>,
+    public slideInRef: SlideInRef<ReplicationTask | undefined, ReplicationTask | false>,
   ) {
-    this.slideInRef.requireConfirmationWhen(() => {
-      return of(
-        this.generalSection().form.dirty
-        || this.transportSection().form.dirty
-        || this.sourceSection().form.dirty
-        || this.targetSection().form.dirty
-        || this.scheduleSection().form.dirty,
-      );
-    });
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
       return of(
@@ -214,7 +205,7 @@ export class ReplicationFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap(
       ReplicationWizardComponent,
-      true,
+      { wide: true },
     );
   }
 
@@ -245,7 +236,7 @@ export class ReplicationFormComponent implements OnInit {
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
-      && formValues.source_datasets.length
+      && Boolean(formValues.source_datasets.length)
       && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
   }
 

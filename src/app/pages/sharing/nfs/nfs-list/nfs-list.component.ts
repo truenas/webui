@@ -32,12 +32,12 @@ import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -115,10 +115,10 @@ export class NfsListComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } });
-            slideInRef.slideInClosed$
-              .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.refresh());
+            this.slideIn.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } }).pipe(
+              filter((response) => !!response.response),
+              untilDestroyed(this),
+            ).subscribe(() => this.refresh());
           },
         },
         {
@@ -129,6 +129,7 @@ export class NfsListComponent implements OnInit {
               title: this.translate.instant('Unshare {name}', { name: row.path }),
               message: shared.delete_share_message,
               buttonText: this.translate.instant('Unshare'),
+              buttonColor: 'warn',
             }).pipe(
               filter(Boolean),
               untilDestroyed(this),
@@ -158,7 +159,7 @@ export class NfsListComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
@@ -185,8 +186,10 @@ export class NfsListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    this.slideIn.open(NfsFormComponent).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.refresh();
       },

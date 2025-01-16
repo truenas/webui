@@ -15,12 +15,13 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import {
   IxTableExpandableRowComponent,
 } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/credentials/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupDetailsRowComponent } from 'app/pages/credentials/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/credentials/groups/group-form/group-form.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const dummyGroup = {
@@ -29,12 +30,18 @@ const dummyGroup = {
   group: 'dummy',
   builtin: false,
   smb: true,
-  users: [],
+  users: [] as number[],
 } as Group;
 
 describe('GroupDetailsRowComponent', () => {
   let spectator: SpectatorRouting<GroupDetailsRowComponent>;
   let loader: HarnessLoader;
+
+  const slideInRef: SlideInRef<Group | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => dummyGroup),
+  };
 
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
@@ -43,7 +50,10 @@ describe('GroupDetailsRowComponent', () => {
       MockComponent(GroupFormComponent),
     ],
     providers: [
-      mockProvider(OldSlideInService),
+      mockProvider(SlideInRef, slideInRef),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
+      }),
       mockApi([
         mockCall('user.query'),
         mockCall('group.delete'),
@@ -93,7 +103,7 @@ describe('GroupDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

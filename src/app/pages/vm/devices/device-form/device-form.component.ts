@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
   FormBuilder, FormControl, Validators, ReactiveFormsModule,
@@ -35,15 +35,14 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const specifyCustom = T('Specify custom');
 
@@ -55,7 +54,7 @@ const specifyCustom = T('Specify custom');
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -89,9 +88,10 @@ export class DeviceFormComponent implements OnInit {
   }
 
   existingDevice: VmDevice;
+  protected slideInData: { virtualMachineId?: number; device?: VmDevice } | undefined;
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
-  orderControl = new FormControl(null as number);
+  orderControl = new FormControl(null as number | null);
 
   cdromForm = this.formBuilder.nonNullable.group({
     path: [mntPath, Validators.required],
@@ -99,12 +99,12 @@ export class DeviceFormComponent implements OnInit {
 
   diskForm = this.formBuilder.group({
     path: ['', Validators.required],
-    type: [null as VmDiskMode],
+    type: [null as VmDiskMode | null],
     sectorsize: [0],
   });
 
   nicForm = this.formBuilder.group({
-    type: [null as VmNicType, Validators.required],
+    type: [null as VmNicType | null, Validators.required],
     mac: ['', Validators.pattern(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
@@ -113,8 +113,8 @@ export class DeviceFormComponent implements OnInit {
   rawFileForm = this.formBuilder.group({
     path: ['', Validators.required],
     sectorsize: [0],
-    type: [null as VmDiskMode],
-    size: [null as number],
+    type: [null as VmDiskMode | null],
+    size: [null as number | null],
   });
 
   pciForm = this.formBuilder.nonNullable.group({
@@ -122,7 +122,7 @@ export class DeviceFormComponent implements OnInit {
   });
 
   displayForm = this.formBuilder.group({
-    port: [null as number],
+    port: [null as number | null],
     resolution: [''],
     bind: [''],
     password: [''],
@@ -241,10 +241,14 @@ export class DeviceFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInRef: OldSlideInRef<DeviceFormComponent>,
     private errorHandler: ErrorHandlerService,
-    @Inject(SLIDE_IN_DATA) private slideInData: { virtualMachineId: number; device: VmDevice },
-  ) {}
+    public slideInRef: SlideInRef<{ virtualMachineId?: number; device?: VmDevice } | undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.typeSpecificForm.dirty);
+    });
+    this.slideInData = slideInRef.getData();
+  }
 
   ngOnInit(): void {
     this.usbForm.controls.usb.disable();
@@ -256,12 +260,12 @@ export class DeviceFormComponent implements OnInit {
       }
     });
 
-    if (this.slideInData.virtualMachineId) {
+    if (this.slideInData?.virtualMachineId) {
       this.virtualMachineId = this.slideInData.virtualMachineId;
       this.setVirtualMachineId();
     }
 
-    if (this.slideInData.device) {
+    if (this.slideInData?.device) {
       this.existingDevice = this.slideInData.device;
       this.setDeviceForEdit();
     }
@@ -385,7 +389,7 @@ export class DeviceFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleValidationErrors(error, this.typeSpecificForm);

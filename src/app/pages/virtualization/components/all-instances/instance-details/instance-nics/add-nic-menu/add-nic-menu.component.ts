@@ -17,9 +17,9 @@ import {
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -42,8 +42,11 @@ export class AddNicMenuComponent {
   private readonly bridgedChoices = toSignal(this.getNicChoices(VirtualizationNicType.Bridged), { initialValue: {} });
   private readonly macVlanChoices = toSignal(this.getNicChoices(VirtualizationNicType.Macvlan), { initialValue: {} });
 
-  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
-  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
+  protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged)
+    || VirtualizationNicType.Bridged;
+
+  protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan)
+    || VirtualizationNicType.Macvlan;
 
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
@@ -99,7 +102,11 @@ export class AddNicMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance().id;
+    const instanceId = this.deviceStore.selectedInstance()?.id;
+    if (!instanceId) {
+      return;
+    }
+
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),

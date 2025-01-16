@@ -15,7 +15,7 @@ describe('HasAccessDirective', () => {
 
     expect(element.children).toHaveLength(1);
     expect(element.firstElementChild).toHaveId('test');
-    expect(element.firstElementChild.tagName).toBe('DIV');
+    expect(element.firstElementChild!.tagName).toBe('DIV');
   });
 
   it('adds missing access wrapper over the element when hasAccess is false', () => {
@@ -26,6 +26,6 @@ describe('HasAccessDirective', () => {
     const element = spectator.fixture.nativeElement as HTMLElement;
 
     expect(element.children).toHaveLength(1);
-    expect(element.firstElementChild.tagName).toBe('ix-missing-access-wrapper'.toUpperCase());
+    expect(element.firstElementChild!.tagName).toBe('ix-missing-access-wrapper'.toUpperCase());
   });
 });

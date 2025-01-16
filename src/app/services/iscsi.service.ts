@@ -14,7 +14,8 @@ import {
   IscsiTarget,
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { ApiService } from 'app/services/websocket/api.service';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -26,6 +27,7 @@ export class IscsiService {
 
   constructor(
     protected api: ApiService,
+    protected auth: AuthService,
     private store$: Store<AppState>,
   ) {}
 

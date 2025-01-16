@@ -17,34 +17,31 @@ describe('PoolCardIconComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-  });
-
   it('renders icon when type is safe', () => {
     spectator = createComponent({
-      props: { type: PoolCardIconType.Safe },
+      props: { type: PoolCardIconType.Safe, tooltip: '' },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('check_circle');
+    expect(spectator.query(IxIconComponent)!.name).toBe('check_circle');
   });
 
   it('renders icon when type is warn', () => {
     spectator = createComponent({
-      props: { type: PoolCardIconType.Warn },
+      props: { type: PoolCardIconType.Warn, tooltip: '' },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('error');
+    expect(spectator.query(IxIconComponent)!.name).toBe('error');
   });
 
   it('renders icon when type is faulted', () => {
     spectator = createComponent({
-      props: { type: PoolCardIconType.Faulted },
+      props: { type: PoolCardIconType.Faulted, tooltip: '' },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('help');
+    expect(spectator.query(IxIconComponent)!.name).toBe('help');
   });
 
   it('renders icon when type is error', () => {
     spectator = createComponent({
-      props: { type: PoolCardIconType.Error },
+      props: { type: PoolCardIconType.Error, tooltip: '' },
     });
-    expect(spectator.query(IxIconComponent).name).toBe('cancel');
+    expect(spectator.query(IxIconComponent)!.name).toBe('cancel');
   });
 });

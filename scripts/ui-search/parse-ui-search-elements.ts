@@ -61,14 +61,16 @@ export function parseUiSearchElements(
 function createUiSearchElement(
   cheerioRoot$: (selector: CheerioElement | string) => { attr: (attr: string) => string },
   element: CheerioElement,
-  elementConfig: UiSearchableElement,
+  elementConfig: Record<string, UiSearchableElement>,
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
   componentProperties: Record<string, string>,
 ): UiSearchableElement {
   try {
     const parent = (elementConfig?.[parentKey] || elementConfig) as UiSearchableElement;
-    const child = parent?.elements?.[childKey] || parent?.manualRenderElements?.[childKey] || {};
+    const child = parent?.elements?.[childKey]
+      || parent?.manualRenderElements?.[childKey]
+      || {} as UiSearchableElement;
 
     const hierarchy = [...parent?.hierarchy || [], ...child?.hierarchy || []];
     const visibleTokens = [...parent?.visibleTokens || [], ...child?.visibleTokens || []];

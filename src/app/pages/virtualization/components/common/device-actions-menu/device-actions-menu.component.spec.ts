@@ -4,14 +4,15 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/virtualization/components/common/device-actions-menu/device-actions-menu.component';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
@@ -40,6 +41,7 @@ describe('DeviceActionsMenuComponent', () => {
       props: {
         device: {
           name: 'my-device',
+          dev_type: VirtualizationDeviceType.Gpu,
         } as VirtualizationDevice,
       },
     });

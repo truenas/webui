@@ -12,15 +12,16 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskFormComponent } from './disk-form.component';
 
 describe('DiskFormComponent', () => {
   let spectator: Spectator<DiskFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+
   const dataDisk = {
     name: 'sdc',
     serial: 'VB9fbb6dfe-9cf26570',
@@ -36,13 +37,20 @@ describe('DiskFormComponent', () => {
     devname: 'sdc',
     identifier: '{serial}VB9fbb6dfe-9cf26570',
   } as Disk;
+
+  const slideInRef: SlideInRef<Disk | undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => dataDisk),
+  };
+
   const createComponent = createComponentFactory({
     component: DiskFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockApi([
@@ -67,7 +75,6 @@ describe('DiskFormComponent', () => {
   });
 
   it('sets disk settings when form is opened', async () => {
-    spectator.component.setFormDisk(dataDisk);
     const formValue = await form.getValues();
     expect(formValue).toEqual({
       'Advanced Power Management': 'Level 127 - Maximum power usage with Standby',
@@ -86,7 +93,6 @@ describe('DiskFormComponent', () => {
   });
 
   it('saves disk settings when form is saved', async () => {
-    spectator.component.setFormDisk(dataDisk);
     const changeValue = {
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
       Critical: '',
@@ -114,7 +120,7 @@ describe('DiskFormComponent', () => {
       togglesmart: true,
       passwd: '',
     }]);
-    expect(spectator.inject(OldSlideInRef).close).toHaveBeenCalledWith(true);
+    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true, error: null });
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

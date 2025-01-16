@@ -8,7 +8,7 @@ describe('getFieldValue', () => {
     const property = {
       value: 'value',
     } as ZfsProperty<string>;
-    expect(getFieldValue(property, null)).toBe('value');
+    expect(getFieldValue(property)).toBe('value');
   });
 });
 

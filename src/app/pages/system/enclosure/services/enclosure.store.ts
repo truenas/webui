@@ -10,13 +10,13 @@ import { Observable, switchMap, tap } from 'rxjs';
 import { debounceTime, finalize } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
+import { ThemeService } from 'app/modules/theme/theme.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getDefaultSide } from 'app/pages/system/enclosure/utils/get-default-side.utils';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ThemeService } from 'app/services/theme/theme.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];
@@ -24,7 +24,7 @@ export interface EnclosureState {
   selectedEnclosureIndex: number;
   selectedSlotNumber: number | null;
   selectedView: EnclosureView;
-  selectedSide: EnclosureSide;
+  selectedSide: EnclosureSide | undefined;
 }
 
 const initialState: EnclosureState = {
@@ -47,15 +47,16 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly isLoading = computed(() => this.stateAsSignal().isLoading);
   readonly selectedSlot = computed(() => {
     const selectedSlotNumber = this.stateAsSignal().selectedSlotNumber;
-    if (selectedSlotNumber === null || !this.selectedEnclosure()) {
+    const selectedEnclosure = this.selectedEnclosure();
+    if (selectedSlotNumber === null || !selectedEnclosure) {
       return null;
     }
 
-    const elements = this.selectedEnclosure().elements[EnclosureElementType.ArrayDeviceSlot];
+    const elements = selectedEnclosure.elements[EnclosureElementType.ArrayDeviceSlot];
     return elements[selectedSlotNumber];
   });
 
-  readonly selectedEnclosure = computed(() => {
+  readonly selectedEnclosure = computed<DashboardEnclosure | undefined>(() => {
     const state = this.stateAsSignal();
     return state.enclosures[state.selectedEnclosureIndex];
   });
@@ -92,10 +93,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   readonly hasMoreThanOneSide = computed(() => {
     return [
-      this.selectedEnclosure().front_loaded,
-      this.selectedEnclosure().top_loaded,
-      this.selectedEnclosure().rear_slots > 0,
-      this.selectedEnclosure().internal_slots > 0,
+      this.selectedEnclosure()?.front_loaded,
+      this.selectedEnclosure()?.top_loaded,
+      Number(this.selectedEnclosure()?.rear_slots) > 0,
+      Number(this.selectedEnclosure()?.internal_slots) > 0,
     ].filter(Boolean).length > 1;
   });
 
@@ -221,6 +222,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }) => {
     return produce(state, (draft) => {
       const enclosureToUpdate = draft.enclosures.find((enclosure) => enclosure.id === options.enclosureId);
+      if (!enclosureToUpdate) {
+        return;
+      }
+
       const driveBay = enclosureToUpdate.elements[EnclosureElementType.ArrayDeviceSlot][options.driveBayNumber];
       driveBay.drive_bay_light_status = options.status;
     });

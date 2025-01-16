@@ -1,0 +1,51 @@
+<div class="header-card item-search">
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="!!(dataProvider().isLoading$ | async)"
+  ></ix-fake-progress-bar>
+
+  <div class="actions-bar">
+    <div class="search-container">
+      <ix-search-input2
+        #searchInput
+        class="search-input"
+        [properties]="searchProperties()"
+        [advancedSearchPlaceholder]="advancedSearchPlaceholder"
+        [query]="searchQuery()"
+        (runSearch)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
+      ></ix-search-input2>
+      <div class="search-button-wrapper">
+        <button
+          mat-button
+          type="button"
+          color="primary"
+          ixTest="search"
+          (click)="onSearch(searchInput.query()); updateUrlOptions(); searchInput.advancedSearch()?.hideDatePicker()"
+        >
+          {{ 'Search' | translate }}
+        </button>
+        @if (isMobileView()) {
+          <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
+        }
+      </div>
+    </div>
+    @if (!isMobileView()) {
+      <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
+    }
+  </div>
+</div>
+
+
+<ng-template #exportButton>
+  @if (dataProvider().totalRows) {
+    <ix-export-button
+      jobMethod="audit.export"
+      downloadMethod="audit.download_report"
+      [addReportNameArgument]="true"
+      [searchQuery]="searchQuery()"
+      [sorting]="dataProvider().sorting"
+      [defaultFilters]="basicQueryFilters()"
+      [controllerType]="dataProvider().selectedControllerType"
+    ></ix-export-button>
+  }
+</ng-template>

@@ -6,8 +6,8 @@ import {
 import { of } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AppStats } from 'app/interfaces/app.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 describe('AppsStatsService', () => {
   const plexStats: AppStats = {
@@ -70,7 +70,7 @@ describe('AppsStatsService', () => {
       spectator.service.subscribeToUpdates();
       const plexStats$ = spectator.service.getStatsForApp('plex');
 
-      let plexStatsUpdate: AppStats;
+      let plexStatsUpdate: AppStats | undefined = undefined;
       plexStats$.subscribe((stats) => plexStatsUpdate = stats);
 
       expect(plexStatsUpdate).toBe(plexStats);

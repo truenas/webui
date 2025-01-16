@@ -2,7 +2,7 @@ import { miniSeries, serverSeries } from 'app/constants/server-series.constant';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 
-export function getServerProduct(systemProduct: string): string {
+export function getServerProduct(systemProduct: string): string | undefined {
   return serverSeries.find((series) => systemProduct?.includes(series));
 }
 
@@ -29,7 +29,7 @@ export function getProductImageSrc(
   return 'assets/images' + (imgName.startsWith('/') ? imgName : ('/' + imgName));
 }
 
-export function getProductEnclosure(systemProduct: string): ProductEnclosure {
+export function getProductEnclosure(systemProduct: string): ProductEnclosure | null {
   if (!systemProduct) {
     return null;
   }

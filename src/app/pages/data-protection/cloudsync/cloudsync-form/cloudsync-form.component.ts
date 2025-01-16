@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -35,6 +36,7 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
@@ -56,6 +58,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
@@ -63,7 +66,6 @@ import { TransferModeExplanationComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const customOptionValue = -1;
 
@@ -210,10 +212,12 @@ export class CloudSyncFormComponent implements OnInit {
 
   bucketOptions$ = of<SelectOption[]>([]);
 
+  protected readonly hasRequiredRoles = toSignal(this.authService.hasRole(this.requiredRoles));
+
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
-  private editingTask: CloudSyncTaskUi;
+  private editingTask: CloudSyncTaskUi | undefined;
 
   constructor(
     private translate: TranslateService,
@@ -228,7 +232,8 @@ export class CloudSyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudSyncTaskUi>,
+    public slideInRef: SlideInRef<CloudSyncTaskUi | undefined, CloudSyncTask | false>,
+    private authService: AuthService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -388,7 +393,21 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   loadBucketOptions(): void {
+    if (!this.hasRequiredRoles()) {
+      this.isLoading = false;
+      const bucket = this.editingTask.attributes.bucket as string;
+      if (bucket) {
+        this.form.controls.bucket.enable();
+        this.bucketOptions$ = of([{ label: bucket, value: bucket }]);
+        this.form.controls.bucket.setValue(bucket);
+      }
+      this.cdr.markForCheck();
+      return;
+    }
     const targetCredentials = find(this.credentialsList, { id: this.form.controls.credentials.value });
+    if (!targetCredentials) {
+      return;
+    }
 
     this.cloudCredentialService.getBuckets(targetCredentials.id)
       .pipe(untilDestroyed(this))
@@ -491,7 +510,7 @@ export class CloudSyncFormComponent implements OnInit {
       this.enableRemoteExplorer();
       const targetCredentials = find(this.credentialsList, { id: credentials });
       const targetProvider = find(this.providersList, { name: targetCredentials?.provider.type });
-      if (targetProvider?.buckets) {
+      if (targetCredentials && targetProvider?.buckets) {
         this.isLoading = true;
         if (targetCredentials.provider.type === CloudSyncProviderName.MicrosoftAzure
           || targetCredentials.provider.type === CloudSyncProviderName.Hubic
@@ -542,7 +561,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   isCustomTransfers(transfers: number): boolean {
     const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
-    return transfers && !transfersDefaultValues.includes(transfers);
+    return Boolean(transfers) && !transfersDefaultValues.includes(transfers);
   }
 
   setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
@@ -554,67 +573,67 @@ export class CloudSyncFormComponent implements OnInit {
     }
   }
 
-  setTaskForEdit(): void {
-    const transfers = this.editingTask.transfers;
+  setTaskForEdit(editingTask: CloudSyncTaskUi): void {
+    const transfers = editingTask.transfers;
     if (this.isCustomTransfers(transfers)) {
       this.setTransfersOptions(true, transfers);
     }
 
     this.form.patchValue({
-      ...this.editingTask,
-      cloudsync_picker: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
-      credentials: this.editingTask.credentials.id,
-      encryption: this.editingTask.encryption,
-      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
+      ...editingTask,
+      cloudsync_picker: scheduleToCrontab(editingTask.schedule) as CronPresetValue,
+      credentials: editingTask.credentials.id,
+      encryption: editingTask.encryption,
+      bwlimit: editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
           ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
           : `${bwlimit.time}, off`;
       }),
     });
 
-    if (this.editingTask.direction === Direction.Pull) {
-      this.form.controls.path_destination.setValue([this.editingTask.path]);
+    if (editingTask.direction === Direction.Pull) {
+      this.form.controls.path_destination.setValue([editingTask.path]);
 
-      if (this.editingTask.include?.length) {
+      if (editingTask.include?.length) {
         this.form.controls.folder_source.setValue(
-          this.editingTask.include.map((path: string) => `${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`),
+          editingTask.include.map((path: string) => `${editingTask.attributes.folder as string}/${path.split('/')[1]}`),
         );
       } else {
-        this.form.controls.folder_source.setValue([this.editingTask.attributes.folder as string]);
+        this.form.controls.folder_source.setValue([editingTask.attributes.folder as string]);
       }
     } else {
-      this.form.controls.folder_destination.setValue([this.editingTask.attributes.folder as string]);
+      this.form.controls.folder_destination.setValue([editingTask.attributes.folder as string]);
 
-      if (this.editingTask.include?.length) {
+      if (editingTask.include?.length) {
         this.form.controls.path_source.setValue(
-          this.editingTask.include.map((path: string) => `${this.editingTask.path}/${path.split('/')[1]}`),
+          editingTask.include.map((path: string) => `${editingTask.path}/${path.split('/')[1]}`),
         );
       } else {
-        this.form.controls.path_source.setValue([this.editingTask.path]);
+        this.form.controls.path_source.setValue([editingTask.path]);
       }
     }
 
-    if (this.editingTask.attributes.bucket) {
-      this.form.controls.bucket.setValue(this.editingTask.attributes.bucket as string);
-      this.form.controls.bucket_input.setValue(this.editingTask.attributes.bucket as string);
+    if (editingTask.attributes.bucket) {
+      this.form.controls.bucket.setValue(editingTask.attributes.bucket as string);
+      this.form.controls.bucket_input.setValue(editingTask.attributes.bucket as string);
     }
-    if (this.editingTask.attributes.bucket_policy_only) {
-      this.form.controls.bucket_policy_only.setValue(this.editingTask.attributes.bucket_policy_only as boolean);
+    if (editingTask.attributes.bucket_policy_only) {
+      this.form.controls.bucket_policy_only.setValue(editingTask.attributes.bucket_policy_only as boolean);
     }
-    if (this.editingTask.attributes.task_encryption) {
-      this.form.controls.task_encryption.setValue(this.editingTask.attributes.task_encryption as string);
+    if (editingTask.attributes.task_encryption) {
+      this.form.controls.task_encryption.setValue(editingTask.attributes.task_encryption as string);
     }
-    if (this.editingTask.attributes.fast_list) {
-      this.form.controls.fast_list.setValue(this.editingTask.attributes.fast_list as boolean);
+    if (editingTask.attributes.fast_list) {
+      this.form.controls.fast_list.setValue(editingTask.attributes.fast_list as boolean);
     }
-    if (this.editingTask.attributes.chunk_size) {
-      this.form.controls.chunk_size.setValue(this.editingTask.attributes.chunk_size as number);
+    if (editingTask.attributes.chunk_size) {
+      this.form.controls.chunk_size.setValue(editingTask.attributes.chunk_size as number);
     }
-    if (this.editingTask.attributes.acknowledge_abuse) {
-      this.form.controls.acknowledge_abuse.setValue(this.editingTask.attributes.acknowledge_abuse as boolean);
+    if (editingTask.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(editingTask.attributes.acknowledge_abuse as boolean);
     }
-    if (this.editingTask.attributes.storage_class) {
-      this.form.controls.storage_class.setValue(this.editingTask.attributes.storage_class as string);
+    if (editingTask.attributes.storage_class) {
+      this.form.controls.storage_class.setValue(editingTask.attributes.storage_class as string);
     }
   }
 
@@ -720,10 +739,10 @@ export class CloudSyncFormComponent implements OnInit {
     this.isLoading = true;
     let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.api.call('cloudsync.create', [payload]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('cloudsync.update', [this.editingTask.id, payload]);
+    } else {
+      request$ = this.api.call('cloudsync.create', [payload]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
@@ -747,7 +766,7 @@ export class CloudSyncFormComponent implements OnInit {
   onSwitchToWizard(): void {
     this.slideInRef.swap(
       CloudSyncWizardComponent,
-      true,
+      { wide: true },
     );
   }
 
@@ -778,7 +797,7 @@ export class CloudSyncFormComponent implements OnInit {
       this.setupForm();
 
       if (this.editingTask) {
-        this.setTaskForEdit();
+        this.setTaskForEdit(this.editingTask);
       }
 
       this.listenToFilenameEncryption();

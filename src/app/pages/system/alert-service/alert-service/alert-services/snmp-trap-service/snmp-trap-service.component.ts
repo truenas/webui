@@ -25,11 +25,11 @@ const disabledValue = 'disabled';
   ],
 })
 export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     host: ['', Validators.required],
     port: [162],
     v3: [false],
-    v3_username: ['', this.validators.validateOnCondition((control) => control.parent && this.isV3, Validators.required)],
+    v3_username: ['', this.validators.validateOnCondition((control) => Boolean(control.parent) && this.isV3, Validators.required)],
     v3_authkey: [''],
     v3_privkey: [''],
     v3_authprotocol: [''],

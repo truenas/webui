@@ -18,8 +18,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -43,7 +43,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class SignCsrDialogComponent {
   form = this.formBuilder.group({
-    csr_cert_id: [null as number, Validators.required],
+    csr_cert_id: [null as number | null, Validators.required],
     name: ['', Validators.required],
   });
 

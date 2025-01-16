@@ -11,10 +11,13 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { JobProgressDialogComponent } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
-import { SessionExpiringDialogComponent } from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
+import {
+  SessionExpiringDialogComponent,
+  SessionExpiringDialogOptions,
+} from 'app/modules/dialog/components/session-expiring-dialog/session-expiring-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { AuthService } from 'app/services/auth/auth.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -87,7 +90,7 @@ export class SessionTimeoutService {
               For security reasons we will log you out at {time}.
             `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
             buttonText: this.translate.instant('Extend session'),
-          },
+          } as SessionExpiringDialogOptions,
         });
 
         dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((isExtend) => {

@@ -18,6 +18,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -25,11 +26,10 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
-import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
-import { WebSocketHandlerService } from 'app/services/websocket/websocket-handler.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 

@@ -26,7 +26,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class CardExpandCollapseComponent implements OnChanges {
-  section = viewChild<ElementRef<HTMLElement>>('section');
+  section = viewChild.required<ElementRef<HTMLElement>>('section');
   maxHeight = input<number>(250);
   height = signal<number>(this.maxHeight());
   isCollapsed = signal<boolean>(true);

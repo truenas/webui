@@ -12,10 +12,10 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const fakeJbofDataSource: Jbof[] = [
   {
@@ -56,11 +56,8 @@ describe('JbofListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockAuth(),
     ],
@@ -87,7 +84,7 @@ describe('JbofListComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'description 1');
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(JbofFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(JbofFormComponent, {
       data: fakeJbofDataSource[0],
     });
   });
@@ -103,7 +100,7 @@ describe('JbofListComponent', () => {
       secondaryCheckbox: true,
       secondaryCheckboxText: 'Force',
       buttonText: 'Delete',
-      buttonColor: 'red',
+      buttonColor: 'warn',
     });
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);

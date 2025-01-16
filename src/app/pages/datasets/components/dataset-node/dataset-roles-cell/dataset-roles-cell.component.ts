@@ -25,8 +25,8 @@ export class DatasetRolesCellComponent {
   readonly isSystemDataset = input.required<boolean>();
 
   readonly isApps = computed(() => this.dataset().name.endsWith(ixAppsDataset));
-  readonly appNames = computed(() => uniq(this.dataset().apps.map((app) => app.name)).join(', '));
-  readonly vmNames = computed(() => uniq(this.dataset().vms.map((vm) => vm.name)).join(', '));
+  readonly appNames = computed(() => uniq(this.dataset().apps?.map((app) => app.name))?.join(', ') || '');
+  readonly vmNames = computed(() => uniq(this.dataset().vms?.map((vm) => vm.name))?.join(', ') || '');
 
   readonly hasShares = computed(() => doesDatasetHaveShares(this.dataset()));
 }

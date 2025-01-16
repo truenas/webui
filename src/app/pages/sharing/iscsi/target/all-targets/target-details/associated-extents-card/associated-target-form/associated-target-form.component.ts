@@ -23,7 +23,7 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/services/websocket/api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -50,11 +50,11 @@ import { ApiService } from 'app/services/websocket/api.service';
 })
 export class AssociatedTargetFormComponent {
   form = this.formBuilder.group({
-    lunid: [null as number, [
+    lunid: [null as number | null, [
       Validators.min(0),
       Validators.max(1023),
     ]],
-    extent: [null as number, Validators.required],
+    extent: [null as number | null, Validators.required],
   });
 
   isLoading = signal<boolean>(false);

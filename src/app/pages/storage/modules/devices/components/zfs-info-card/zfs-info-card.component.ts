@@ -22,6 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
@@ -30,7 +31,6 @@ import {
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 

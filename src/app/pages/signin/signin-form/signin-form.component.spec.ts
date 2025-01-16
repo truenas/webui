@@ -8,12 +8,12 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
-import { LoginExResponseType } from 'app/interfaces/auth.interface';
+import { LoginExResponseType, LoginSuccessResponse } from 'app/interfaces/auth.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { InsecureConnectionComponent } from 'app/pages/signin/insecure-connection/insecure-connection.component';
 import { SigninFormComponent } from 'app/pages/signin/signin-form/signin-form.component';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
-import { AuthService } from 'app/services/auth/auth.service';
 
 describe('SigninFormComponent', () => {
   let spectator: Spectator<SigninFormComponent>;
@@ -32,7 +32,7 @@ describe('SigninFormComponent', () => {
         login: jest.fn(() => of(LoginResult.Success)),
       }),
       mockApi([
-        mockCall('auth.login_ex', { response_type: LoginExResponseType.Success }),
+        mockCall('auth.login_ex', { response_type: LoginExResponseType.Success } as LoginSuccessResponse),
       ]),
       mockProvider(SigninStore, {
         setLoadingState: jest.fn(),

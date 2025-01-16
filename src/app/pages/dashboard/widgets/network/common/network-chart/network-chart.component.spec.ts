@@ -2,8 +2,8 @@ import { Component, ChangeDetectionStrategy, input } from '@angular/core';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { ViewChartAreaComponent } from 'app/modules/charts/view-chart-area/view-chart-area.component';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { LocaleService } from 'app/services/locale.service';
 
 // TODO: Update when fix is ready
 // See https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -48,7 +48,7 @@ describe('NetworkChartComponent', () => {
     spectator.setInput('data', { datasets: [], labels: [] });
     spectator.detectChanges();
 
-    const chart = spectator.query(ViewChartAreaMockComponent);
+    const chart = spectator.query(ViewChartAreaMockComponent)!;
     expect(chart).toBeTruthy();
 
     const data = chart.data();

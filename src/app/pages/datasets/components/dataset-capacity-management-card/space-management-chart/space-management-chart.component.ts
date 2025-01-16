@@ -12,7 +12,7 @@ import {
   DatasetDetails, DiskSpace, DiskSpaceKey, SwatchColors,
 } from 'app/interfaces/dataset.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { ThemeService } from 'app/modules/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -31,8 +31,8 @@ import { ThemeService } from 'app/services/theme/theme.service';
 export class SpaceManagementChartComponent {
   readonly dataset = input.required<DatasetDetails>();
 
-  swatchColors: SwatchColors;
-  chartOptions: ChartOptions<'doughnut'> = {
+  protected swatchColors?: SwatchColors;
+  protected chartOptions: ChartOptions<'doughnut'> = {
     plugins: {
       tooltip: {
         enabled: false,

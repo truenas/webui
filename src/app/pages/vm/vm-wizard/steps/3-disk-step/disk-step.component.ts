@@ -18,8 +18,8 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export enum NewOrExistingDisk {
   New = 'new',
@@ -50,7 +50,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     newOrExisting: [NewOrExistingDisk.New],
     hdd_type: [VmDiskMode.Ahci],
     datastore: [''],
-    volsize: [null as number],
+    volsize: [null as number | null],
     hdd_path: [''],
   }, {
     asyncValidators: [this.freeSpaceValidator.validate],
@@ -102,7 +102,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     let diskDescription: string;
     if (this.isCreatingNewDisk) {
       diskDescription = this.translate.instant('{size} {type} at {location}', {
-        size: buildNormalizedFileSize(values.volsize),
+        size: buildNormalizedFileSize(values.volsize || 0),
         type: values.hdd_type,
         location: values.datastore,
       });

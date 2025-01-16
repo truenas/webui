@@ -91,5 +91,5 @@ export type VmDeleteParams = [
 
 export interface VirtualizationDetails {
   supported: boolean;
-  error: string;
+  error: string | null;
 }

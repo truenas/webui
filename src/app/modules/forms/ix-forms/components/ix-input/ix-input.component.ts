@@ -67,7 +67,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   readonly tooltip = input<string>();
   readonly required = input<boolean>(false);
   readonly readonly = input<boolean>();
-  readonly type = input<string>();
+  readonly type = input<string>('text');
   readonly autocomplete = input('off');
   readonly autocompleteOptions = input<Option[]>();
   readonly maxLength = input(524288);
@@ -75,9 +75,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   readonly format = input<(value: string | number) => string>();
-  readonly parse = input<(value: string | number) => string | number>();
+  readonly parse = input<(value: string | number) => string | number | null>();
 
-  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild('ixInput', { read: ElementRef });
+  readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 
   private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
@@ -85,8 +85,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   isDisabled = false;
   showPassword = false;
   invalid = false;
-  filteredOptions: Option[];
-  private lastKnownValue: string | number = this._value;
+  filteredOptions: Option[] | undefined;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -152,11 +151,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     });
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = (val) => {
-      this.lastKnownValue = val;
-      onChange(val);
-    };
+  registerOnChange(onChanged: () => void): void {
+    this.onChange = onChanged;
   }
 
   registerOnTouched(onTouched: () => void): void {
@@ -212,18 +208,16 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.onTouch();
 
     if (this.formatted) {
-      if (this.parse()) {
-        this.value = this.parse()(this.formatted);
+      const parse = this.parse();
+      if (parse) {
+        this.value = parse(this.formatted);
         this.formatted = this.value;
       }
-      if (this.format()) {
-        this.formatted = this.format()(this.value);
-      }
-    }
 
-    if (this.value !== this.lastKnownValue) {
-      this.lastKnownValue = this.value;
-      this.onChange(this.value);
+      const format = this.format();
+      if (format) {
+        this.formatted = format(this.value);
+      }
     }
 
     if (this.autocompleteOptions() && !this.findExistingOption(this.value)) {
@@ -251,14 +245,15 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   filterOptions(customFilterValue?: string): void {
     const filterValue = (customFilterValue ?? this.value) || '';
-    if (this.autocompleteOptions()) {
-      this.filteredOptions = this.autocompleteOptions().filter((option) => {
+    const autocompleteOptions = this.autocompleteOptions();
+    if (autocompleteOptions) {
+      this.filteredOptions = autocompleteOptions.filter((option) => {
         return option.label.toString().toLowerCase().includes(filterValue.toString().toLowerCase());
       }).slice(0, 50);
     }
   }
 
-  private findExistingOption(value: string | number): Option {
+  private findExistingOption(value: string | number): Option | undefined {
     return this.autocompleteOptions()?.find((option) => (option.label === value) || (option.value === value));
   }
 

@@ -11,7 +11,7 @@ import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { LayoutService } from 'app/services/layout.service';
+import { LayoutService } from 'app/modules/layout/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -36,10 +36,12 @@ export class AppCardLogoComponent {
   protected readonly scroll$: Observable<Event | void>;
 
   constructor() {
-    this.scroll$ = merge(
-      fromEvent(this.scrollTarget, 'scroll'),
-      this.initialEmitter$,
-    );
+    if (this.scrollTarget) {
+      this.scroll$ = merge(
+        fromEvent(this.scrollTarget, 'scroll'),
+        this.initialEmitter$,
+      );
+    }
     toObservable(this.url).pipe(
       untilDestroyed(this),
     ).subscribe({

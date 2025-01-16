@@ -50,8 +50,8 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   ],
 })
 export class ManualSelectionVdevComponent implements OnChanges {
-  readonly vdev = input<ManualSelectionVdev>();
-  readonly layout = input<CreateVdevLayout>();
+  readonly vdev = input.required<ManualSelectionVdev>();
+  readonly layout = input.required<CreateVdevLayout>();
   readonly editable = input(false);
 
   readonly enclosures = input<Enclosure[]>();
@@ -134,11 +134,12 @@ export class ManualSelectionVdevComponent implements OnChanges {
   private groupDisksByEnclosure(): void {
     this.enclosuresDisks = new Map();
     this.nonEnclosureDisks = [];
-    if (!this.vdev()?.disks) {
+    const disks = this.vdev()?.disks;
+    if (!disks) {
       return;
     }
 
-    for (const disk of this.vdev().disks) {
+    for (const disk of disks) {
       if (disk.enclosure?.id) {
         let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.id);
         if (!enclosureDisks) {
@@ -152,7 +153,7 @@ export class ManualSelectionVdevComponent implements OnChanges {
   }
 
   private validateVdev(): void {
-    let vdevErrorMsg: string = null;
+    let vdevErrorMsg = '';
     if (this.vdev().disks?.length < this.minDisks[this.layout()]) {
       const typeKey = Object.entries(CreateVdevLayout).filter(
         ([, value]) => value === this.layout(),

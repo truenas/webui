@@ -18,9 +18,10 @@
   </ng-container>
 
   <ng-container detail>
-    @if (selectedInstance()) {
+    @let instance = selectedInstance();
+    @if (instance) {
       <ix-instance-details
-        [instance]="selectedInstance()"
+        [instance]="instance"
       ></ix-instance-details>
     }
   </ng-container>

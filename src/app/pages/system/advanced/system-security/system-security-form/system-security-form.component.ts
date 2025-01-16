@@ -7,6 +7,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -16,10 +17,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -45,9 +45,8 @@ export class SystemSecurityFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     enable_fips: [false],
+    enable_gpos_stig: [false],
   });
-
-  private isHaLicensed$ = this.store$.select(selectIsHaLicensed);
 
   private systemSecurityConfig: SystemSecurityConfig;
 
@@ -56,12 +55,15 @@ export class SystemSecurityFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private slideInRef: SlideInRef<SystemSecurityConfig>,
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    public slideInRef: SlideInRef<SystemSecurityConfig, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.systemSecurityConfig = this.slideInRef.getData();
   }
 

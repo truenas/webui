@@ -3,9 +3,9 @@ import { TranslateService } from '@ngx-translate/core';
 import cronstrue from 'cronstrue/i18n';
 import { format, parse } from 'date-fns';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { LanguageService } from 'app/modules/language/language.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { LanguageService } from 'app/services/language.service';
-import { LocaleService } from 'app/services/locale.service';
 
 @Pipe({
   name: 'scheduleDescription',
@@ -28,7 +28,7 @@ export class ScheduleDescriptionPipe implements PipeTransform {
 
       const description = cronstrue.toString(crontab, cronstrueOptions);
 
-      if ('begin' in schedule && 'end' in schedule) {
+      if (schedule.begin && schedule.end) {
         return this.translate.instant('{crontabDescription}, from {startHour} to {endHour}', {
           crontabDescription: description,
           startHour: this.formatTime(schedule.begin),

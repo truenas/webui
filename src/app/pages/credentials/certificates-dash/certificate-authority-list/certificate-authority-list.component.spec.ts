@@ -16,11 +16,11 @@ import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
 import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateAuthorityListComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-list/certificate-authority-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
@@ -34,6 +34,12 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   common: 'localhost',
   san: ['DNS:localhost'],
 })) as CertificateAuthority[];
+
+const slideInRef: SlideInRef<undefined, unknown> = {
+  close: jest.fn(),
+  requireConfirmationWhen: jest.fn(),
+  getData: jest.fn(() => undefined),
+};
 
 describe('CertificateAuthorityListComponent', () => {
   let spectator: Spectator<CertificateAuthorityListComponent>;
@@ -55,15 +61,10 @@ describe('CertificateAuthorityListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
-      mockProvider(OldSlideInRef, {
-        slideInClosed$: of(true),
-      }),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -89,14 +90,14 @@ describe('CertificateAuthorityListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CertificateAuthorityAddComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateAuthorityAddComponent);
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(CertificateAuthorityEditComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(CertificateAuthorityEditComponent, {
       data: certificates[0],
       wide: true,
     });
@@ -110,6 +111,7 @@ describe('CertificateAuthorityListComponent', () => {
 
     expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
+      buttonColor: 'warn',
       message: 'Are you sure you want to delete the <b>certificate-authority-0</b> certificate authority?',
       title: 'Delete Certificate Authority',
     });

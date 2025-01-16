@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -32,14 +31,14 @@ import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-sele
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
@@ -51,7 +50,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     MatCard,
     MatCardContent,
     ReactiveFormsModule,
@@ -78,16 +77,16 @@ export class ServiceNfsComponent implements OnInit {
     allow_nonroot: [false],
     bindip: [[] as string[]],
     servers_auto: [true],
-    servers: [null as number, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
+    servers: [null as number | null, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
       (control) => !control.parent?.get('servers_auto')?.value,
       Validators.required,
     )]],
     protocols: [[NfsProtocol.V3], Validators.required],
     v4_domain: [''],
     v4_krb: [false],
-    mountd_port: [null as number, portRangeValidator()],
-    rpcstatd_port: [null as number, portRangeValidator()],
-    rpclockd_port: [null as number, portRangeValidator()],
+    mountd_port: [null as number | null, portRangeValidator()],
+    rpcstatd_port: [null as number | null, portRangeValidator()],
+    rpclockd_port: [null as number | null, portRangeValidator()],
     userd_manage_gids: [false],
     rdma: [false],
   });
@@ -129,15 +128,19 @@ export class ServiceNfsComponent implements OnInit {
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private store$: Store<AppState>,
     private translate: TranslateService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private slideInRef: OldSlideInRef<ServiceNfsComponent>,
     private validatorsService: IxValidatorsService,
-  ) {}
+    public slideInRef: SlideInRef<undefined, boolean>,
+  ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+  }
 
   ngOnInit(): void {
     this.isFormLoading.set(true);
@@ -172,7 +175,7 @@ export class ServiceNfsComponent implements OnInit {
         next: () => {
           this.isFormLoading.set(false);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
         },
         error: (error: unknown) => {
           this.isFormLoading.set(false);
@@ -242,7 +245,7 @@ export class ServiceNfsComponent implements OnInit {
 
   get isAddSpnVisible(): boolean {
     return !this.hasNfsStatus()
-      && this.form.value.v4_krb
+      && this.form.getRawValue().v4_krb
       && this.activeDirectoryState() === DirectoryServiceState.Healthy;
   }
 

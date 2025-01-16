@@ -12,6 +12,7 @@
           [label]="'Source' | translate"
           [required]="true"
           [nodeProvider]="directoryNodeProvider"
+          [canCreateDataset]="isNew()"
         ></ix-explorer>
 
         <ix-input

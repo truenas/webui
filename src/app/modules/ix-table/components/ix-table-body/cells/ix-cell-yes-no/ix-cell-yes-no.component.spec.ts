@@ -21,12 +21,12 @@ describe('IxCellYesNoComponent', () => {
   });
 
   it('shows "Yes" when "true"', () => {
-    expect(spectator.element.textContent.trim()).toBe('Yes');
+    expect(spectator.element.textContent!.trim()).toBe('Yes');
   });
 
   it('shows "No" when "false"', () => {
     spectator.component.setRow({ yesNoField: false });
     spectator.detectComponentChanges();
-    expect(spectator.element.textContent.trim()).toBe('No');
+    expect(spectator.element.textContent!.trim()).toBe('No');
   });
 });

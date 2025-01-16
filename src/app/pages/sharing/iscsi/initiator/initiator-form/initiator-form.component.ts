@@ -22,9 +22,9 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 interface InitiatorItem {
   id: string;
@@ -61,7 +61,7 @@ export class InitiatorFormComponent implements OnInit {
   isFormLoading = false;
   pk: number;
 
-  form = this.fb.group({
+  form = this.fb.nonNullable.group({
     all: [false],
     comment: [''],
     new_initiator: [''],
@@ -79,7 +79,7 @@ export class InitiatorFormComponent implements OnInit {
   });
 
   get isAllowAll(): boolean {
-    return this.form.value.all;
+    return this.form.getRawValue().all;
   }
 
   readonly helptext = helptextSharingIscsi;
@@ -119,7 +119,7 @@ export class InitiatorFormComponent implements OnInit {
 
   onSubmit(): void {
     const payload = {
-      comment: this.form.value.comment,
+      comment: this.form.getRawValue().comment,
       initiators: this.isAllowAll ? [] : this.selectedInitiators().map((item) => item.id),
     };
 

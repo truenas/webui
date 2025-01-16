@@ -18,8 +18,8 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export enum PruneBy {
   Percentage = 'percentage',
@@ -56,8 +56,8 @@ export const pruneByLabels = new Map<PruneBy, string>([
 export class PruneDedupTableDialogComponent {
   protected form = this.formBuilder.group({
     pruneBy: [PruneBy.Percentage],
-    percentage: [null as number, [Validators.min(1), Validators.max(100)]],
-    days: [null as number],
+    percentage: [null as number | null, [Validators.min(1), Validators.max(100)]],
+    days: [null as number | null],
   });
 
   constructor(

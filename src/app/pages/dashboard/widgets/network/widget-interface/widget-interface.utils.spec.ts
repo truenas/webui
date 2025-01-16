@@ -111,7 +111,7 @@ describe('processNetworkInterfaces', () => {
           ],
         },
         bridge_members: ['bond0'],
-      },
+      } as NetworkInterface,
     ] as NetworkInterface[];
 
     expect(processNetworkInterfaces(interfaces)).toEqual([

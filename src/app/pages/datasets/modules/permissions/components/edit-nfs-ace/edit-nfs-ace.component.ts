@@ -58,12 +58,12 @@ import {
   ],
 })
 export class EditNfsAceComponent implements OnChanges, OnInit {
-  readonly ace = input<NfsAclItem>();
+  readonly ace = input.required<NfsAclItem>();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     tag: [NfsAclTag.User as NfsAclTag],
-    user: [null as string],
-    group: [null as string],
+    user: [null as string | null],
+    group: [null as string | null],
     type: [NfsAclType.Allow],
     permissionType: [NfsFormPermsType.Basic],
     basicPermission: [newNfsAce.perms.BASIC],

@@ -7,8 +7,8 @@ import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
-import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -90,17 +90,15 @@ export class NavigationService {
       name: T('Virtualization'),
       type: MenuItemType.Link,
       tooltip: T('Virtualization'),
-      icon: iconMarker('computer'),
-      state: 'vm',
-      isVisible$: this.hasVms$,
+      icon: iconMarker('mdi-laptop'),
+      state: 'virtualization',
     },
     {
-      name: T('Containers (WIP)'),
+      name: T('Virtualization (Old)'),
       type: MenuItemType.Link,
-      tooltip: T('Containers'),
-      icon: iconMarker('view_in_ar'),
-      state: 'virtualization',
-      isVisible$: this.hasApps$,
+      tooltip: T('Virtualization (Old)'),
+      icon: iconMarker('mdi-laptop'),
+      state: 'vm',
     },
     {
       name: T('Apps'),
@@ -133,7 +131,7 @@ export class NavigationService {
         {
           name: T('Shell'),
           state: 'shell',
-          hasAccess$: this.authService.user$.pipe(map((user) => user?.privilege?.web_shell)),
+          hasAccess$: this.authService.user$.pipe(map((user) => !!user?.privilege?.web_shell)),
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },

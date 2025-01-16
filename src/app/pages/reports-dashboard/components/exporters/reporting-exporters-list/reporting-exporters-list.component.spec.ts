@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -11,11 +12,11 @@ import { SearchInput1Component } from 'app/modules/forms/search-input1/search-in
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 const exporters: ReportingExporter[] = [
   {
@@ -23,10 +24,10 @@ const exporters: ReportingExporter[] = [
     attributes: {
       secret: 'abcd',
       email: 'testemail',
+      exporter_type: ReportingExporterKey.Graphite,
     },
     enabled: true,
     name: 'test',
-    type: ReportingExporterKey.Graphite,
   },
 ];
 
@@ -34,6 +35,12 @@ describe('ReportingExportersListComponent', () => {
   let spectator: Spectator<ReportingExporterListComponent>;
   let loader: HarnessLoader;
   let table: IxTableHarness;
+
+  const slideInRef: SlideInRef<undefined, unknown> = {
+    close: jest.fn(),
+    requireConfirmationWhen: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: ReportingExporterListComponent,
@@ -47,12 +54,12 @@ describe('ReportingExportersListComponent', () => {
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),
       ]),
-      mockProvider(OldSlideInRef),
+      mockProvider(SlideInRef, slideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(OldSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of(true) })),
+      mockProvider(SlideIn, {
+        open: jest.fn(() => of()),
       }),
       mockAuth(),
     ],
@@ -73,14 +80,14 @@ describe('ReportingExportersListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
   });
 
   it('opens reporting exporters form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(OldSlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
+    expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(ReportingExportersFormComponent, {
       data: exporters[0],
     });
   });
@@ -90,6 +97,16 @@ describe('ReportingExportersListComponent', () => {
     await deleteButton.click();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
+  });
+
+  it('updates a reporting exporter when Enabled checkbox is toggled', async () => {
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 2);
+    await toggle.toggle();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
+      1,
+      { enabled: false },
+    ]);
   });
 
   it('should show table rows', async () => {

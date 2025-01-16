@@ -11,11 +11,11 @@ import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { ApiService } from 'app/services/websocket/api.service';
 import { SelectPresetModalComponent } from './select-preset-modal.component';
 
 describe('SelectPresetModalComponent', () => {

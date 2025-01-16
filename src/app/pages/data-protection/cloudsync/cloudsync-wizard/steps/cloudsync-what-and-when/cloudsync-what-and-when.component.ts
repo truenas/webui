@@ -46,13 +46,13 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
 
@@ -80,18 +80,18 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   ],
 })
 export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
-  readonly credentialId = input.required<number>();
+  readonly credentialId = input<number>();
 
   readonly save = output();
 
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],
     direction: [Direction.Pull, Validators.required],
     transfer_mode: [TransferMode.Copy, Validators.required],
     path_destination: [[mntPath], Validators.required],
     path_source: [[mntPath], Validators.required],
 
-    credentials: [null as number],
+    credentials: [null as number | null],
     bucket: [''],
     bucket_input: ['', Validators.required],
     acknowledge_abuse: [false],
@@ -160,7 +160,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef,
-    private slideInRef: SlideInRef<unknown>,
+    private slideInRef: SlideInRef<unknown, unknown>,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -173,7 +173,8 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes?.credentialId?.currentValue) {
+    const newCredentialId = changes?.credentialId?.currentValue;
+    if (!newCredentialId) {
       return;
     }
     combineLatest([
@@ -181,7 +182,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       this.getCloudCredentials(),
     ]).pipe(
       tap(() => {
-        this.form.controls.credentials.setValue(changes.credentialId.currentValue);
+        this.form.controls.credentials.setValue(newCredentialId);
         this.cdr.markForCheck();
       }),
       catchError((error: unknown) => {
@@ -301,7 +302,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.slideInRef.swap(CloudSyncFormComponent, true);
+      this.slideInRef.swap(CloudSyncFormComponent, { wide: true });
     });
   }
 
@@ -395,7 +396,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.enableRemoteExplorer();
         const targetCredentials = find(this.credentials, { id: credential });
         const targetProvider = find(this.providers, { name: targetCredentials?.provider?.type });
-        if (targetProvider?.buckets) {
+        if (targetCredentials && targetProvider?.buckets) {
           if (
             [
               CloudSyncProviderName.MicrosoftAzure,
@@ -476,7 +477,14 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   private loadBucketOptions(): void {
-    const credential = find(this.credentials, { id: this.form.controls.credentials.value });
+    const credential = find(
+      this.credentials,
+      { id: this.form.controls.credentials.value },
+    ) as CloudSyncCredential | undefined;
+
+    if (!credential) {
+      throw new Error('Credential not found');
+    }
 
     this.cloudCredentialService.getBuckets(credential.id)
       .pipe(untilDestroyed(this))

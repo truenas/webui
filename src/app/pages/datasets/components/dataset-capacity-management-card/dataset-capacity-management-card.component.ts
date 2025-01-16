@@ -13,6 +13,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
 import {
   map, take, switchMap, tap,
+  filter,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -22,14 +23,14 @@ import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetCapacityManagementElements } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.elements';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -95,7 +96,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private datasetStore: DatasetTreeStore,
-    private slideInService: OldSlideInService,
+    private slideIn: SlideIn,
     private dialogService: DialogService,
   ) {}
 
@@ -160,12 +161,11 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   }
 
   editDataset(): void {
-    this.slideInService
-      .open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() })
-      .slideInClosed$
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.datasetStore.datasetUpdated();
-      });
+    this.slideIn.open(DatasetCapacitySettingsComponent, { wide: true, data: this.dataset() }).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.datasetStore.datasetUpdated();
+    });
   }
 }

@@ -5,9 +5,9 @@ import { MockComponent } from 'ng-mocks';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AppStats } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ThemeService } from 'app/modules/theme/theme.service';
 import { AppDiskInfoComponent } from 'app/pages/dashboard/widgets/apps/common/app-disk-info/app-disk-info.component';
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
-import { ThemeService } from 'app/services/theme/theme.service';
 
 describe('AppDiskInfoComponent', () => {
   let spectator: Spectator<AppDiskInfoComponent>;

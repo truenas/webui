@@ -17,8 +17,8 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
@@ -47,7 +47,7 @@ export interface ReplaceDiskDialogData {
   ],
 })
 export class ReplaceDiskDialogComponent {
-  form = this.formBuilder.group({
+  form = this.formBuilder.nonNullable.group({
     replacement: ['', Validators.required],
     preserve_settings: [true],
     preserve_description: [true],
@@ -70,13 +70,14 @@ export class ReplaceDiskDialogComponent {
   ) {}
 
   onSubmit(): void {
+    const values = this.form.getRawValue();
     this.dialogService.jobDialog(
       this.api.job('pool.replace', [this.data.poolId, {
         label: this.data.guid,
-        disk: this.form.value.replacement,
-        force: this.form.value.force,
-        preserve_settings: this.form.value.preserve_settings,
-        preserve_description: this.form.value.preserve_description,
+        disk: values.replacement,
+        force: values.force,
+        preserve_settings: values.preserve_settings,
+        preserve_description: values.preserve_description,
       }]),
       { title: helptextVolumeStatus.replace_disk.title },
     )

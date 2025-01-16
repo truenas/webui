@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { firstValueFrom, of } from 'rxjs';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { AuthService } from 'app/services/auth/auth.service';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { UploadService } from 'app/services/upload.service';
 
 describe('UploadService', () => {
@@ -49,11 +49,11 @@ describe('UploadService', () => {
       expect(request.method).toBe('POST');
       expect(request.url).toMatch('_upload');
       expect(request.body).toBeInstanceOf(FormData);
-      expect(request.body.get('data')).toBe(JSON.stringify({
+      expect(request.body!.get('data')).toBe(JSON.stringify({
         method: options.method,
         params: options.params,
       }));
-      expect(request.body.get('file')).toEqual(options.file);
+      expect(request.body!.get('file')).toEqual(options.file);
     });
   });
 
@@ -66,11 +66,11 @@ describe('UploadService', () => {
       expect(request.method).toBe('POST');
       expect(request.url).toMatch('_upload');
       expect(request.body).toBeInstanceOf(FormData);
-      expect(request.body.get('data')).toBe(JSON.stringify({
+      expect(request.body!.get('data')).toBe(JSON.stringify({
         method: options.method,
         params: options.params,
       }));
-      expect(request.body.get('file')).toEqual(options.file);
+      expect(request.body!.get('file')).toEqual(options.file);
 
       expect(spectator.inject(Store).select).toHaveBeenCalled();
 

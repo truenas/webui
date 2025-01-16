@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { VirtualizationGpuType, VirtualizationNicType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationGpuType, VirtualizationNicType } from 'app/enums/virtualization.enum';
 import {
   Acl,
   AclQueryParams,
@@ -199,7 +199,7 @@ import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import {
-  CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
+  ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
 } from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
@@ -510,7 +510,7 @@ export interface ApiCallDirectory {
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
 
   // Interface
-  'interface.bridge_members_choices': { params: [id: string]; response: Choices };
+  'interface.bridge_members_choices': { params: [id?: string]; response: Choices };
   'interface.cancel_rollback': { params: void; response: void };
   'interface.checkin': { params: void; response: void };
   'interface.checkin_waiting': { params: void; response: number | null };
@@ -520,7 +520,7 @@ export interface ApiCallDirectory {
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.lacpdu_rate_choices': { params: void; response: Choices };
-  'interface.lag_ports_choices': { params: [id: string]; response: Choices };
+  'interface.lag_ports_choices': { params: [id?: string]; response: Choices };
   'interface.lag_supported_protocols': { params: void; response: string[] };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.rollback': { params: void; response: void };
@@ -695,7 +695,7 @@ export interface ApiCallDirectory {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Reporting
-  'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.create': { params: [UpdateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
   'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
   'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
@@ -864,7 +864,7 @@ export interface ApiCallDirectory {
 
   'virt.device.disk_choices': { params: []; response: Choices };
   'virt.device.gpu_choices': {
-    params: [instanceType: VirtualizationType, gpuType: VirtualizationGpuType];
+    params: [gpuType: VirtualizationGpuType];
     response: AvailableGpus;
   };
   'virt.device.usb_choices': { params: []; response: Record<string, AvailableUsb> };

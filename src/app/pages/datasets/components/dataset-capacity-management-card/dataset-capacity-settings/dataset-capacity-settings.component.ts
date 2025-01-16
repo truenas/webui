@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -19,13 +20,12 @@ import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { OldModalHeaderComponent } from 'app/modules/slide-ins/components/old-modal-header/old-modal-header.component';
-import { OldSlideInRef } from 'app/modules/slide-ins/old-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/slide-ins/slide-in.token';
+import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ import { ApiService } from 'app/services/websocket/api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    OldModalHeaderComponent,
+    ModalHeaderComponent,
     RequiresRolesDirective,
     MatCard,
     MatCardContent,
@@ -56,7 +56,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   readonly defaultQuotaCritical = 95;
 
   form = this.formBuilder.group({
-    refquota: [null as number, this.validators.withMessage(
+    refquota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -71,7 +71,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     ]],
     refquota_critical_inherit: [false],
 
-    quota: [null as number, this.validators.withMessage(
+    quota: [null as number | null, this.validators.withMessage(
       Validators.min(GiB),
       this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
@@ -86,11 +86,12 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     ]],
     quota_critical_inherit: [false],
 
-    refreservation: [null as number],
-    reservation: [null as number],
+    refreservation: [null as number | null],
+    reservation: [null as number | null],
   });
 
   isLoading = false;
+  protected dataset: DatasetDetails | undefined;
 
   readonly helptext = helptextDatasetForm;
 
@@ -111,15 +112,18 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     private snackbarService: SnackbarService,
     private translate: TranslateService,
     private validators: IxValidatorsService,
-    private slideInRef: OldSlideInRef<DatasetCapacitySettingsComponent>,
-    @Inject(SLIDE_IN_DATA) public dataset: DatasetDetails,
+    public slideInRef: SlideInRef<DatasetDetails | undefined, boolean>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
+    this.dataset = slideInRef.getData();
     this.setFormRelations();
   }
 
   ngOnInit(): void {
     if (this.dataset) {
-      this.setDatasetForEdit();
+      this.setDatasetForEdit(this.dataset);
     }
   }
 
@@ -138,23 +142,23 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   }
 
   get isRoot(): boolean {
-    return isRootDataset(this.dataset);
+    return Boolean(this.dataset) && isRootDataset(this.dataset);
   }
 
-  setDatasetForEdit(): void {
+  setDatasetForEdit(dataset: DatasetDetails): void {
     this.oldValues = {
-      refquota: this.dataset.refquota.parsed,
-      refquota_warning: this.dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
-      refquota_warning_inherit: isPropertyInherited(this.dataset.refquota_warning),
-      refquota_critical: this.dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
-      refquota_critical_inherit: isPropertyInherited(this.dataset.refquota_critical),
-      quota: this.dataset.quota.parsed,
-      quota_warning: this.dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
-      quota_warning_inherit: isPropertyInherited(this.dataset.quota_warning),
-      quota_critical: this.dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
-      quota_critical_inherit: isPropertyInherited(this.dataset.quota_critical),
-      refreservation: this.dataset.refreservation.parsed,
-      reservation: this.dataset.reservation.parsed,
+      refquota: dataset.refquota.parsed,
+      refquota_warning: dataset.refquota_warning?.parsed ?? this.defaultQuotaWarning,
+      refquota_warning_inherit: isPropertyInherited(dataset.refquota_warning),
+      refquota_critical: dataset.refquota_critical?.parsed ?? this.defaultQuotaCritical,
+      refquota_critical_inherit: isPropertyInherited(dataset.refquota_critical),
+      quota: dataset.quota.parsed,
+      quota_warning: dataset.quota_warning?.parsed ?? this.defaultQuotaWarning,
+      quota_warning_inherit: isPropertyInherited(dataset.quota_warning),
+      quota_critical: dataset.quota_critical?.parsed ?? this.defaultQuotaCritical,
+      quota_critical_inherit: isPropertyInherited(dataset.quota_critical),
+      refreservation: dataset.refreservation.parsed,
+      reservation: dataset.reservation.parsed,
     };
     this.form.patchValue(this.oldValues);
     this.cdr.markForCheck();
@@ -173,7 +177,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.snackbarService.success(
             this.translate.instant('Dataset settings updated.'),
           );
-          this.slideInRef.close(true);
+          this.slideInRef.close({ response: true, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

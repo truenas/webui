@@ -44,7 +44,7 @@ describe('MiniDriveTemperaturesComponent', () => {
     providers: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => enclosure,
-        selectedSlot: () => null as DashboardEnclosureSlot,
+        selectedSlot: () => null as DashboardEnclosureSlot | null,
         selectSlot: jest.fn(),
       }),
       mockProvider(DiskTemperatureService, {
@@ -63,8 +63,8 @@ describe('MiniDriveTemperaturesComponent', () => {
 
     const contents = lines.map((line) => {
       return {
-        label: line.querySelector('.dev').textContent.trim(),
-        temperature: line.querySelector('.temperature').textContent.trim(),
+        label: line.querySelector('.dev')!.textContent!.trim(),
+        temperature: line.querySelector('.temperature')!.textContent!.trim(),
         hideTooltip: !line.querySelector('ix-tooltip'),
       };
     });

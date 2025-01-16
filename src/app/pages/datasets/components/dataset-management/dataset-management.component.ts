@@ -62,13 +62,13 @@ import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -368,8 +368,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         .subscribe({
           next: (scrollLeft: number) => {
             this.window.dispatchEvent(new Event('resize'));
-            this.ixTreeHeader().nativeElement.scrollLeft = scrollLeft;
-            this.ixTree().nativeElement.scrollLeft = scrollLeft;
+            const treeHeader = this.ixTreeHeader();
+            const tree = this.ixTree();
+
+            if (!treeHeader || !tree) {
+              return;
+            }
+
+            treeHeader.nativeElement.scrollLeft = scrollLeft;
+            tree.nativeElement.scrollLeft = scrollLeft;
           },
         }),
     );

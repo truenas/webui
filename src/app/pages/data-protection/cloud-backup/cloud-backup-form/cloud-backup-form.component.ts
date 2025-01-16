@@ -39,9 +39,9 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 type FormValue = CloudBackupFormComponent['form']['value'];
 
@@ -116,7 +116,7 @@ export class CloudBackupFormComponent implements OnInit {
   });
 
   isLoading = false;
-  editingTask: CloudBackup;
+  editingTask: CloudBackup | undefined;
 
   bucketOptions$ = of<SelectOption[]>([]);
   transferSettings$ = this.api.call('cloud_backup.transfer_setting_choices').pipe(
@@ -144,8 +144,11 @@ export class CloudBackupFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
     private cloudCredentialService: CloudCredentialService,
-    private slideInRef: SlideInRef<CloudBackup>,
+    public slideInRef: SlideInRef<CloudBackup | undefined, CloudBackup | false>,
   ) {
+    this.slideInRef.requireConfirmationWhen(() => {
+      return of(this.form.dirty);
+    });
     this.editingTask = slideInRef.getData();
   }
 
@@ -158,7 +161,7 @@ export class CloudBackupFormComponent implements OnInit {
     this.listenForBucketInputChanges();
 
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
       this.form.controls.absolute_paths.disable();
     } else {
       this.listenForTakeSnapshotChanges();
@@ -241,14 +244,14 @@ export class CloudBackupFormComponent implements OnInit {
     };
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(editingTask: CloudBackup): void {
     this.form.patchValue({
-      ...this.editingTask,
-      schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
-      path: this.editingTask.path,
-      credentials: this.editingTask.credentials.id,
-      folder: this.editingTask.attributes.folder as string,
-      bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
+      ...editingTask,
+      schedule: scheduleToCrontab(editingTask.schedule) as CronPresetValue,
+      path: editingTask.path,
+      credentials: editingTask.credentials.id,
+      folder: editingTask.attributes.folder as string,
+      bucket: editingTask.attributes.bucket === newOption ? '' : editingTask.attributes.bucket as string || '',
     });
   }
 
@@ -258,7 +261,7 @@ export class CloudBackupFormComponent implements OnInit {
 
     this.isLoading = true;
 
-    if (!this.isNew) {
+    if (this.editingTask) {
       request$ = this.api.call('cloud_backup.update', [this.editingTask.id, payload]);
     }
 

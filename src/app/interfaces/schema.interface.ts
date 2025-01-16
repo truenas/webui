@@ -12,7 +12,7 @@ export interface OldSchema {
   type: SchemaType | SchemaType[];
   _name_: string;
   _required_: boolean;
-
+  const?: string;
 }
 
 export interface SchemaProperties {

@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
+import { signal, ViewContainerRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
@@ -18,13 +19,12 @@ import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/wid
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { OldSlideInService } from 'app/services/old-slide-in.service';
 
 describe('WidgetGroupFormComponent', () => {
   let spectator: Spectator<WidgetGroupFormComponent>;
   let loader: HarnessLoader;
 
-  const slideInRef: SlideInRef<WidgetGroup> = {
+  const slideInRef: SlideInRef<WidgetGroup, unknown> = {
     close: jest.fn(),
     getData: jest.fn(() => ({ layout: WidgetGroupLayout.Full, slots: [] })),
     swap: jest.fn(),
@@ -43,7 +43,9 @@ describe('WidgetGroupFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(SlideInRef, slideInRef),
-      mockProvider(OldSlideInService),
+      mockProvider(SlideIn, {
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
     ],
@@ -51,7 +53,7 @@ describe('WidgetGroupFormComponent', () => {
 
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
-    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal(null));
+    MockInstance(WidgetGroupSlotFormComponent, 'settingsContainer', signal({} as ViewContainerRef));
   });
 
   describe('check layout selector', () => {
@@ -62,7 +64,7 @@ describe('WidgetGroupFormComponent', () => {
 
     it('checks layout selector', async () => {
       const layoutSelector = await loader.getHarness(IxIconGroupHarness.with({ label: 'Layout' }));
-      const editor = spectator.query(WidgetEditorGroupComponent);
+      const editor = spectator.query(WidgetEditorGroupComponent)!;
       expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Full);
       expect(editor.group).toEqual({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       await layoutSelector.setValue(WidgetGroupLayout.Halves);
@@ -87,7 +89,7 @@ describe('WidgetGroupFormComponent', () => {
               }) as WidgetGroup,
               close: jest.fn(),
               requireConfirmationWhen: () => of(false),
-            } as SlideInRef<WidgetGroup>,
+            } as SlideInRef<WidgetGroup, unknown>,
           },
         ],
       });
@@ -111,11 +113,11 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('changes slot', () => {
-      const editor = spectator.query(WidgetEditorGroupComponent);
+      const editor = spectator.query(WidgetEditorGroupComponent)!;
       editor.selectedSlotChange.emit(1);
 
       spectator.detectChanges();
-      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       expect(slotForm.slotConfig).toEqual({
         type: WidgetType.Ipv4Address,
         settings: {
@@ -127,7 +129,7 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('disables button when slot has validation errors', async () => {
-      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       slotForm.validityChange.emit([SlotPosition.First, { interface: { required: true } }]);
       spectator.detectChanges();
       const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -135,7 +137,7 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('updates settings', async () => {
-      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent)!;
       slotForm.settingsChange.emit({
         slotPosition: SlotPosition.First,
         type: WidgetType.Ipv4Address,

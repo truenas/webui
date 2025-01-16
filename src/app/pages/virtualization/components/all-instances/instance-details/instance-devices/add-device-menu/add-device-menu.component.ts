@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType, VirtualizationGpuType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationGpuType } from 'app/enums/virtualization.enum';
 import {
   AvailableUsb,
   VirtualizationDevice,
@@ -17,9 +17,9 @@ import {
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virtualization-devices.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ApiService } from 'app/services/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ import { ApiService } from 'app/services/websocket/api.service';
 export class AddDeviceMenuComponent {
   private readonly usbChoices = toSignal(this.api.call('virt.device.usb_choices'), { initialValue: {} });
   // TODO: Stop hardcoding params
-  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationType.Container, VirtualizationGpuType.Physical]), { initialValue: {} });
+  private readonly gpuChoices = toSignal(this.api.call('virt.device.gpu_choices', [VirtualizationGpuType.Physical]), { initialValue: {} });
 
   protected readonly isLoadingDevices = this.deviceStore.isLoading;
 
@@ -94,7 +94,11 @@ export class AddDeviceMenuComponent {
   }
 
   private addDevice(payload: VirtualizationDevice): void {
-    const instanceId = this.deviceStore.selectedInstance().id;
+    const instanceId = this.deviceStore.selectedInstance()?.id;
+    if (!instanceId) {
+      return;
+    }
+
     this.api.call('virt.instance.device_add', [instanceId, payload])
       .pipe(
         this.loader.withLoader(),

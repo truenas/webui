@@ -14,15 +14,15 @@ import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { AuthService } from 'app/services/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ShellService } from 'app/services/shell.service';
-import { ApiService } from 'app/services/websocket/api.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -47,7 +47,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class TerminalComponent implements OnInit, OnDestroy {
   readonly conf = input.required<TerminalConfiguration>();
 
-  private readonly container: Signal<ElementRef<HTMLElement>> = viewChild('terminal', { read: ElementRef });
+  private readonly container: Signal<ElementRef<HTMLElement>> = viewChild.required('terminal', { read: ElementRef });
 
   waitParentChanges = 300;
   fontSize = 14;
@@ -95,8 +95,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.initShell();
     }
 
-    if (this.conf().reconnectShell$) {
-      this.conf().reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
+    const reconnectShell$ = this.conf().reconnectShell$;
+    if (reconnectShell$) {
+      reconnectShell$.pipe(untilDestroyed(this)).subscribe(() => {
         this.reconnect();
       });
     }
@@ -187,7 +188,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
-    if (size) {
+    if (size && this.connectionId) {
       this.api.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
         this.xterm.focus();
       });
@@ -199,12 +200,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
   initializeWebShell(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
 
-    this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
-      this.shellConnected = event.connected;
-      this.connectionId = event.id;
-      this.updateTerminal();
-      this.resizeTerm();
-    });
+    this.shellService.shellConnected$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((event: ShellConnectedEvent) => {
+        this.shellConnected = event.connected;
+        this.connectionId = event.id;
+        this.updateTerminal();
+        this.resizeTerm();
+      });
   }
 
   resetDefault(): void {
