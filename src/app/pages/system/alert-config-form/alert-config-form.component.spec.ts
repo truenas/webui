@@ -1,9 +1,8 @@
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  createComponentFactory, mockProvider, Spectator,
-} from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,12 +27,12 @@ describe('AlertConfigFormComponent', () => {
             title: 'Applications',
             classes: [
               {
-                id: 'app_1',
+                id: AlertClassName.AppUpdate,
                 title: 'app_title_1',
                 level: AlertLevel.Info,
               },
               {
-                id: 'app_2',
+                id: AlertClassName.ApplicationsConfigurationFailed,
                 title: 'app_title_1',
                 level: AlertLevel.Warning,
               },
@@ -44,12 +43,12 @@ describe('AlertConfigFormComponent', () => {
             title: 'Certificates',
             classes: [
               {
-                id: 'cert_1',
+                id: AlertClassName.CertificateExpired,
                 title: 'cert_title_1',
                 level: AlertLevel.Critical,
               },
               {
-                id: 'cert_2',
+                id: AlertClassName.CertificateIsExpiring,
                 title: 'cert_title_2',
                 level: AlertLevel.Notice,
               },
@@ -59,11 +58,11 @@ describe('AlertConfigFormComponent', () => {
         mockCall('alertclasses.config', {
           id: 1,
           classes: {
-            app_1: {
+            [AlertClassName.AppUpdate]: {
               level: AlertLevel.Error,
               policy: AlertPolicy.Never,
             },
-            cert_2: {
+            [AlertClassName.CertificateIsExpiring]: {
               level: AlertLevel.Error,
             },
           },
@@ -93,28 +92,28 @@ describe('AlertConfigFormComponent', () => {
     expect(api.call).toHaveBeenCalledWith('alert.list_categories');
     expect(api.call).toHaveBeenCalledWith('alertclasses.config');
     expect(spectator.component.form.value).toEqual({
-      app_1: { level: AlertLevel.Error, policy: AlertPolicy.Never },
-      app_2: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
-      cert_1: { level: AlertLevel.Critical, policy: AlertPolicy.Immediately },
-      cert_2: { level: AlertLevel.Error, policy: AlertPolicy.Immediately },
+      [AlertClassName.AppUpdate]: { level: AlertLevel.Error, policy: AlertPolicy.Never },
+      [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Warning, policy: AlertPolicy.Immediately },
+      [AlertClassName.CertificateExpired]: { level: AlertLevel.Critical, policy: AlertPolicy.Immediately },
+      [AlertClassName.CertificateIsExpiring]: { level: AlertLevel.Error, policy: AlertPolicy.Immediately },
     });
   });
 
   it('saves updated config', () => {
     spectator.component.form.patchValue({
-      app_1: { level: AlertLevel.Info, policy: AlertPolicy.Immediately },
-      app_2: { level: AlertLevel.Notice },
-      cert_1: { policy: AlertPolicy.Never },
-      cert_2: { policy: AlertPolicy.Hourly },
+      [AlertClassName.AppUpdate]: { level: AlertLevel.Info, policy: AlertPolicy.Immediately },
+      [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Notice },
+      [AlertClassName.CertificateExpired]: { policy: AlertPolicy.Never },
+      [AlertClassName.CertificateIsExpiring]: { policy: AlertPolicy.Hourly },
     });
 
     spectator.component.onSubmit();
 
     expect(api.call).toHaveBeenNthCalledWith(4, 'alertclasses.update', [{
       classes: {
-        app_2: { level: AlertLevel.Notice },
-        cert_1: { policy: AlertPolicy.Never },
-        cert_2: { level: AlertLevel.Error, policy: AlertPolicy.Hourly },
+        [AlertClassName.ApplicationsConfigurationFailed]: { level: AlertLevel.Notice },
+        [AlertClassName.CertificateExpired]: { policy: AlertPolicy.Never },
+        [AlertClassName.CertificateIsExpiring]: { level: AlertLevel.Error, policy: AlertPolicy.Hourly },
       },
     }]);
   });

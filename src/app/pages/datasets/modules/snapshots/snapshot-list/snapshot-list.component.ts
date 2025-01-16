@@ -21,6 +21,7 @@ import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -50,6 +51,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
+import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { AppState } from 'app/store';
@@ -88,6 +90,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
     IxTableDetailsRowDirective,
     SnapshotDetailsRowComponent,
     IxTablePagerComponent,
+    UiSearchDirective,
   ],
 })
 export class SnapshotListComponent implements OnInit {
@@ -101,6 +104,8 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
   ]).pipe(map(([isLoading, loadingExtraColumns]) => isLoading || loadingExtraColumns));
+
+  protected readonly searchableElements = snapshotListElements;
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,

@@ -8,7 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 @Injectable({
   providedIn: 'root',
 })
-export class NavigateAndInteractService {
+export class NavigateAndHighlightService {
   private prevHighlightDiv: HTMLDivElement | null = null;
   private prevSubscription: Subscription | null = null;
   private clickOutsideListener: ((event: MouseEvent) => void) | null = null;
@@ -18,7 +18,7 @@ export class NavigateAndInteractService {
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  navigateAndInteract(route: string[], hash: string): void {
+  navigateAndHighlight(route: string[], hash: string): void {
     this.router.navigate(route, { fragment: hash }).then(() => {
       setTimeout(() => {
         const htmlElement = this.window.document.getElementById(hash);
