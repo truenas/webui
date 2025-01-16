@@ -56,30 +56,38 @@ describe('HardwareDiskEncryptionComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  it('loads and shows whether password is set for the current disk', () => {
-    expect(spectator.inject(ApiService).call)
-      .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
-
-    const detailsItem = spectator.query(byText('SED Password:', { exact: true }))!;
-    expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
-
-    expect(spectator.query(byText('Manage SED Password'))).toBeNull();
-  });
-
-  it('loads and shows whether SED password is set globally', () => {
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
-
-    const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }))!;
-    expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
-
-    expect(spectator.query(byText('Manage Global SED Password'))).toBeNull();
-  });
-
-  describe('enterprise', () => {
+  describe('no SED support', () => {
     beforeEach(() => {
       store$.overrideSelector(selectIsEnterprise, true);
       store$.refreshState();
       spectator.detectChanges();
+    });
+
+    it('checks no hardware disk encryption support', () => {
+      expect(spectator.query('.mat-card')).not.toExist();
+    });
+  });
+
+  describe('with SED support', () => {
+    beforeEach(() => {
+      store$.overrideSelector(selectIsEnterprise, true);
+      store$.refreshState();
+      spectator.detectChanges();
+    });
+
+    it('loads and shows whether password is set for the current disk', () => {
+      expect(spectator.inject(ApiService).call)
+        .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
+
+      const detailsItem = spectator.query(byText('SED Password:', { exact: true }))!;
+      expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
+    });
+
+    it('loads and shows whether SED password is set globally', () => {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
+
+      const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }))!;
+      expect(detailsItem.nextElementSibling).toHaveText('Password is not set');
     });
 
     it('shows a link to manage SED password and opens dialog', () => {

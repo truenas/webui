@@ -48,7 +48,7 @@ export class HardwareDiskEncryptionComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
 
   hasSedSupport = computed(() => {
-    return this.isEnterprise() && (this.hasDiskEncryption() || this.hasGlobalEncryption());
+    return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());
   });
 
   protected readonly hasDiskEncryption = toSignal(
