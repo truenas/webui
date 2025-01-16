@@ -14,15 +14,13 @@
         }}
       </div>
 
-      @if (hasDiskEncryption() || isEnterprise()) {
-        <a
-          *ixHasRole="requiredRoles"
-          ixTest="manage-sed-password"
-          (click)="onManageSedPassword()"
-        >
-          {{ 'Manage SED Password' | translate }}
-        </a>
-      }
+      <a
+        *ixHasRole="requiredRoles"
+        ixTest="manage-sed-password"
+        (click)="onManageSedPassword()"
+      >
+        {{ 'Manage SED Password' | translate }}
+      </a>
     </div>
 
     <div class="details-item">
@@ -34,15 +32,13 @@
           }}
         </div>
 
-        @if (hasGlobalEncryption() || isEnterprise()) {
-          <a
-            *ixHasRole="requiredRoles"
-            ixTest="manage-global-sed-password"
-            [routerLink]="['/system/advanced']"
-          >
-            {{ 'Manage Global SED Password' | translate }}
-          </a>
-        }
+        <a
+          *ixHasRole="requiredRoles"
+          ixTest="manage-global-sed-password"
+          [routerLink]="['/system/advanced']"
+        >
+          {{ 'Manage Global SED Password' | translate }}
+        </a>
     </div>
   </mat-card-content>
 </mat-card>
