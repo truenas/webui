@@ -37,7 +37,7 @@
     "./src/app/core/testing/utils/mock-window.utils.ts",
     "./src/app/core/testing/utils/query-all-nested-directives.utils.ts",
     "./src/app/directives/has-access/missing-access-wrapper.component.ts",
-    "./src/app/directives/navigate-and-interact/navigate-and-interact.directive.ts",
+    "./src/app/directives/navigate-and-interact/navigate-and-highlight.directive.ts",
     "./src/app/directives/step-activation.directive.ts",
     "./src/app/enums/account-attribute.enum.ts",
     "./src/app/enums/acl-type.enum.ts",

@@ -4,12 +4,12 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { MockProvider } from 'ng-mocks';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
 describe('NavigateAndInteractService', () => {
-  let spectator: SpectatorService<NavigateAndInteractService>;
+  let spectator: SpectatorService<NavigateAndHighlightService>;
   const createComponent = createServiceFactory({
-    service: NavigateAndInteractService,
+    service: NavigateAndHighlightService,
     providers: [
       MockProvider(Router, {
         navigate: jest.fn(() => Promise.resolve(true)),
@@ -22,7 +22,7 @@ describe('NavigateAndInteractService', () => {
   });
 
   it('should call router.navigate with correct parameters on click', () => {
-    spectator.service.navigateAndInteract(['/some-path'], 'testHash');
+    spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/some-path'], { fragment: 'testHash' });
   });
 
@@ -36,7 +36,7 @@ describe('NavigateAndInteractService', () => {
 
     const clickSpy = jest.spyOn(HTMLElement.prototype, 'click');
 
-    spectator.service.navigateAndInteract(['/some-path'], 'testHash');
+    spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
 
     setTimeout(() => {
       expect(scrollIntoViewMock).toHaveBeenCalled();
