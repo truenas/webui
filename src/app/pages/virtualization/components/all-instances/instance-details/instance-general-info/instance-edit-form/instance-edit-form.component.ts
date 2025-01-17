@@ -140,7 +140,7 @@ export class InstanceEditFormComponent {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
-      vnc_port: values.vnc_port,
+      vnc_port: values.vnc_port || 5900,
     } as UpdateVirtualizationInstance;
   }
 

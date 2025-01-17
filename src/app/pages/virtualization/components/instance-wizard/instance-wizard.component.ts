@@ -258,7 +258,7 @@ export class InstanceWizardComponent {
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
       enable_vnc: this.isVmInstanceType ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVmInstanceType ? this.form.value.vnc_port : null,
+      vnc_port: this.isVmInstanceType ? this.form.value.vnc_port || 5900 : null,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
