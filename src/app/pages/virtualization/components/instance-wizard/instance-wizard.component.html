@@ -261,6 +261,15 @@
       </ix-form-section>
     }
 
+    @if (isVm()) {
+      <ix-form-section label="TPM">
+        <ix-checkbox
+          formControlName="tpm"
+          [label]="'Add Trusted Platform Module' | translate"
+        ></ix-checkbox>
+      </ix-form-section>
+    }
+
     <div class="actions">
       <button
         mat-button
