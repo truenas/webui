@@ -61,6 +61,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
@@ -258,7 +259,7 @@ export class InstanceWizardComponent {
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
       enable_vnc: this.isVmInstanceType ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVmInstanceType ? this.form.value.vnc_port || 5900 : null,
+      vnc_port: this.isVmInstanceType ? this.form.value.vnc_port || defaultVncPort : null,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,

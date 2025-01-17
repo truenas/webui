@@ -31,6 +31,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 
 @UntilDestroy()
 @Component({
@@ -140,7 +141,7 @@ export class InstanceEditFormComponent {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
-      vnc_port: values.vnc_port || 5900,
+      vnc_port: values.vnc_port || defaultVncPort,
     } as UpdateVirtualizationInstance;
   }
 
