@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { MatBadge } from '@angular/material/badge';
 import { MatIconButton } from '@angular/material/button';
@@ -47,6 +47,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectHasConsoleFooter } from 'app/store/system-config/system-config.selectors';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @UntilDestroy()
 @Component({
@@ -90,9 +92,14 @@ export class TopbarComponent implements OnInit {
   updateNotificationSent = false;
   tooltips = helptextTopbar.mat_tooltips;
   protected searchableElements = toolBarElements;
-
+  
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
+  // readonly tncConfigSignal = toSignal(this.tnc.config)
+  readonly hasTncConfig = computed(() => {
+    const config = this.tnc.config()
+    return config?.ips?.length && config.tnc_base_url && config.account_service_base_url && config.leca_service_base_url
+  })
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -106,6 +113,7 @@ export class TopbarComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private tnc: TruenasConnectService
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;

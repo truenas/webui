@@ -10,6 +10,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-modal/truenas-connect-modal.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { switchMap } from 'rxjs';
 
@@ -31,13 +32,13 @@ import { switchMap } from 'rxjs';
 export class TruenasConnectStatusModalComponent implements OnInit {
   readonly TruenasConnectStatus = TruenasConnectStatus;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public config: TruenasConnectConfig, @Inject(WINDOW) private window: Window, private api: ApiService, private matDialog: MatDialog) { }
+  constructor(@Inject(WINDOW) private window: Window, private api: ApiService, private matDialog: MatDialog, public tnc: TruenasConnectService) { }
 
   ngOnInit(): void {
     
   }
 
-  openConnectDialog(): void {
+  openTncFormDialog(): void {
     this.matDialog
       .open(TruenasConnectModalComponent, {
         width: '456px',
@@ -56,6 +57,14 @@ export class TruenasConnectStatusModalComponent implements OnInit {
         error: err => console.log('errror', err)
       });
     }
+
+  connect() {
+    this.api.call('tn_connect.get_registration_uri')
+      .subscribe(url => {
+        console.log('url', url)
+        this.window.open(url)
+      })
+  }
 
     reenable() {
       this.api.call('tn_connect.ip_choices')

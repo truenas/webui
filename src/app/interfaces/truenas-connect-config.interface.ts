@@ -16,4 +16,7 @@ export interface TruenasConnectConfig {
   status: TruenasConnectStatus;
   status_reason: typeof TruenasConnectStatusReason;
   certificate: number;
+  account_service_base_url: string;
+  leca_service_base_url: string;
+  tnc_base_url: string;
 }

@@ -2,21 +2,21 @@
 <mat-divider></mat-divider>
 <mat-dialog-content>
     <div>
-        @if (config.status === TruenasConnectStatus.Configured) {
+        @if (tnc.config().status === TruenasConnectStatus.Configured) {
             <ix-icon
               class="status-connected"
               name="check_circle"
             ></ix-icon>
           }
-          @else if (config.status === TruenasConnectStatus.Disabled) {
+          @else if (tnc.config().status === TruenasConnectStatus.Disabled) {
             <ix-icon
               class="status-disabled"
               name="pause_circle_filled"
             ></ix-icon>
           }
           @else if (
-            config.status === TruenasConnectStatus.RegistrationFinalizationFailed ||
-            config.status === TruenasConnectStatus.CertGenerationFailed
+            tnc.config().status === TruenasConnectStatus.RegistrationFinalizationFailed ||
+            tnc.config().status === TruenasConnectStatus.CertGenerationFailed
           ){
             <ix-icon
               class="status-failed"
@@ -29,30 +29,43 @@
             name="pending"
           ></ix-icon>
           }
-          <span>{{ config.status }}</span>
+          <span>{{ tnc.config().status }}</span>
     </div>
 
       <div id="error">
-      {{ config.status_reason }}
+      {{ tnc.config().status_reason }}
     </div>
 </mat-dialog-content>
 <div mat-dialog-actions>
-    <button
-    ixTest="tnc-generate-token"
-    mat-button
-    (click)="generateToken()"
-  >
-  {{'Generate Token'}}
-  </button>
-  <button mat-button ixTest="tnc-reenable" (click)="reenable()">
+    @if(tnc.config().status === TruenasConnectStatus.ClaimTokenMissing) {
+      <button
+        ixTest="tnc-generate-token"
+        mat-button
+        (click)="generateToken()"
+      >
+      {{'Generate Token'}}
+      </button>
+    }
+
+  <!-- <button mat-button ixTest="tnc-reenable" (click)="reenable()">
     {{'Reenable'}}
-  </button>
-    <button
+  </button> -->
+    @if (tnc.config().status === TruenasConnectStatus.RegistrationFinalizationWaiting) {
+      <button
       ixTest="tnc-connect"
       mat-button
       color="primary"
-      (click)="openConnectDialog()"
+      (click)="connect()"
     >
     {{'Connect'}}
+    </button>
+    }
+
+    <button
+      ixTest="tnc-generate-token"
+      mat-button
+      (click)="openTncFormDialog()"
+    >
+    {{'Edit'}}
     </button>
 </div>

@@ -88,7 +88,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   startSuggestionsCompletion(): void {
-    startCompletion(this.editorView);
+    startCompletion(this.editorView as any);
   }
 
   initEditor(): void {
@@ -114,7 +114,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
       },
     });
 
-    const advancedSearchLinter = linter((view) => view.state.field(diagnosticField));
+    const advancedSearchLinter = linter((view) => view.state.field(diagnosticField as any));
 
     const autocompleteExtension = autocompletion({
       override: [(context: CompletionContext) => this.advancedSearchAutocomplete.getCompletions(context)],
@@ -143,7 +143,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
         ],
       }),
       parent: this.inputArea().nativeElement,
-    });
+    } as any);
 
     this.focusInput();
   }

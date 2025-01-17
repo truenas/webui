@@ -24,7 +24,7 @@ export class TruenasConnectButtonComponent implements OnInit {
   config: TruenasConnectConfig;
   readonly TruenasConnectStatus = TruenasConnectStatus;
 
-  constructor(private matDialog: MatDialog, private api: ApiService, private tnc: TruenasConnectService) {
+  constructor(private matDialog: MatDialog, private api: ApiService) {
   }
 
   ngOnInit(): void {
@@ -37,7 +37,6 @@ export class TruenasConnectButtonComponent implements OnInit {
         top: '48px',
         right: '0px',
       },
-      data: this.tnc.config.getValue(),
     });
   }
 }
