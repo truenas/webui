@@ -37,7 +37,7 @@ export interface VirtualizationInstance {
   aliases: VirtualizationAlias;
   raw: unknown;
   image: VirtualizationImage;
-  enable_vnc: boolean;
+  vnc_enabled: boolean;
   vnc_port: number | null;
 }
 
@@ -73,6 +73,7 @@ export interface UpdateVirtualizationInstance {
   autostart?: boolean;
   cpu?: string;
   memory?: number;
+  enable_vnc?: boolean;
   vnc_port?: number | null;
 }
 

@@ -30,7 +30,7 @@
         </span>
       }
 
-      @if (isVmInstanceType() && instance.enable_vnc && instance.vnc_port) {
+      @if (isVmInstanceType() && instance.vnc_enabled && instance.vnc_port) {
         <p>{{ 'VNC' | translate }}:
           <a ixTest="vnc-link" target="_blank" [href]="vncLink()">{{ vncLink() }}</a>
         </p>

@@ -35,7 +35,7 @@ describe('InstanceEditFormComponent', () => {
     memory: 2 * GiB,
     environment: {},
     type: VirtualizationType.Vm,
-    enable_vnc: true,
+    vnc_enabled: true,
     vnc_port: 9001,
   } as VirtualizationInstance;
 
@@ -58,6 +58,7 @@ describe('InstanceEditFormComponent', () => {
                 cpu: '2-5',
                 memory: GiB,
                 environment: {},
+                enable_vnc: true,
                 vnc_port: 9000,
               },
             })),
@@ -103,6 +104,7 @@ describe('InstanceEditFormComponent', () => {
       cpu: '2-5',
       memory: GiB,
       environment: {},
+      enable_vnc: true,
       vnc_port: 9000,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -114,6 +116,7 @@ describe('InstanceEditFormComponent', () => {
         cpu: '2-5',
         memory: GiB,
         environment: {},
+        enable_vnc: true,
         vnc_port: 9000,
       },
       error: false,

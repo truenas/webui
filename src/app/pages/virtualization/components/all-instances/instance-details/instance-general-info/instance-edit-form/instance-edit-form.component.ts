@@ -68,6 +68,7 @@ export class InstanceEditFormComponent {
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    enable_vnc: [false],
     vnc_port: [null as number | null],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
@@ -92,6 +93,7 @@ export class InstanceEditFormComponent {
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
       memory: this.editingInstance.memory,
+      enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
     });
 
@@ -141,7 +143,8 @@ export class InstanceEditFormComponent {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
-      vnc_port: values.vnc_port || defaultVncPort,
+      enable_vnc: values.enable_vnc,
+      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : undefined,
     } as UpdateVirtualizationInstance;
   }
 

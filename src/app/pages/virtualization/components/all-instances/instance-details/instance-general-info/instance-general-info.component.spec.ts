@@ -49,7 +49,7 @@ const instance = {
   },
   aliases: {} as VirtualizationAlias,
   raw: null,
-  enable_vnc: true,
+  vnc_enabled: true,
   vnc_port: 9000,
 } as VirtualizationInstance;
 

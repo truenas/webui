@@ -8,7 +8,7 @@
         [label]="'Autostart' | translate"
       ></ix-checkbox>
 
-      @if (isVmInstanceType && editingInstance.enable_vnc) {
+      @if (isVmInstanceType && editingInstance.vnc_enabled) {
         <ix-input
           formControlName="vnc_port"
           type="number"
