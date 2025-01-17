@@ -11,10 +11,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   VirtualizationDeviceType,
   VirtualizationNicType,
@@ -23,7 +24,6 @@ import {
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -35,6 +35,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UploadService } from 'app/services/upload.service';
 
 describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
@@ -47,7 +48,10 @@ describe('InstanceWizardComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     providers: [
-      mockProvider(AuthService, { hasRole: () => of(true) }),
+      mockAuth(),
+      mockProvider(UploadService, {
+        uploadAsJob: jest.fn(() => of(fakeSuccessfulJob())),
+      }),
       mockProvider(Router),
       mockProvider(FilesystemService),
       mockApi([
@@ -89,14 +93,13 @@ describe('InstanceWizardComponent', () => {
             manufacturer: 'Linux 6.6.44-production+truenas xhci-hcd',
           },
         }),
+        mockJob('virt.volume.import_iso', fakeSuccessfulJob({ name: 'image.iso' })),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn((request$: Observable<Job>) => ({
-          afterClosed: () => request$.pipe(
-            map((job) => job.result),
-          ),
+          afterClosed: () => request$,
         })),
       }),
       mockProvider(MatDialog, {
@@ -280,6 +283,46 @@ describe('InstanceWizardComponent', () => {
       image: 'almalinux/8/cloud',
       memory: GiB,
       environment: {},
+    }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+  });
+
+  it('loads image and creates new instance when form is submitted', async () => {
+    await form.fillForm({
+      Name: 'new',
+      'VM Image Options': 'Upload an iso image',
+    });
+
+    const fakeImage = fakeFile('image.iso');
+    await form.fillForm({ Image: [fakeImage] });
+
+    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+    await createButton.click();
+
+    expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
+      file: fakeImage,
+      method: 'virt.volume.import_iso',
+      params: [{
+        name: fakeImage.name,
+        upload_iso: true,
+      }],
+    });
+
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+      name: 'new',
+      autostart: true,
+      cpu: '',
+      instance_type: VirtualizationType.Container,
+      devices: [{
+        dev_type: VirtualizationDeviceType.Disk,
+        source: 'image.iso',
+        destination: null,
+        boot_priority: 1,
+      }],
+      memory: null,
+      environment: {},
+      source_type: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

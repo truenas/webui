@@ -16,6 +16,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter,
   map, Observable, of,
+  switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -37,6 +38,7 @@ import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
+  VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -63,7 +65,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -179,7 +180,6 @@ export class InstanceWizardComponent {
     private matDialog: MatDialog,
     private router: Router,
     private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
@@ -245,32 +245,18 @@ export class InstanceWizardComponent {
   }
 
   protected onSubmit(): void {
-    const payload$ = this.form.value.image_type === SelectImageType.Load
-      ? this.getPayloadWithSaveImage()
-      : of(this.getPayload());
-
-    payload$.pipe(
-      this.errorHandler.catchError(),
+    (this.form.value.image_type === SelectImageType.Load ? this.importIsoImage() : of(null)).pipe(
+      switchMap(() => this.createInstance()),
       untilDestroyed(this),
-    ).subscribe((payload) => this.createInstance(payload));
-  }
-
-  createInstance(payload: CreateVirtualizationInstance): void {
-    const job$ = this.api.job('virt.instance.create', [payload]);
-
-    this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: ({ result }) => {
-          this.snackbar.success(this.translate.instant('Instance created'));
-          this.router.navigate(['/virtualization', 'view', result?.id]);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
+    ).subscribe({
+      next: (instance) => {
+        this.snackbar.success(this.translate.instant('Instance created'));
+        this.router.navigate(['/virtualization', 'view', instance?.id]);
+      },
+      error: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+      },
+    });
   }
 
   addEnvironmentVariable(): void {
@@ -286,26 +272,34 @@ export class InstanceWizardComponent {
     this.form.controls.environment_variables.removeAt(index);
   }
 
-  private getPayloadWithSaveImage(): Observable<CreateVirtualizationInstance> {
-    return this.dialogService.jobDialog(
-      this.uploadService.uploadAsJob({
-        file: this.form.value.image_file[0],
-        method: 'virt.volume.import_iso',
-        params: [{
-          name: this.form.value.image_file[0].name,
-          upload_iso: true,
-        }],
-      }),
-      { title: this.translate.instant('Uploading Image') },
-    ).afterClosed().pipe(
-      map((job) => ({ ...this.getPayload(), image: job.result.name })),
-    );
+  private createInstance(): Observable<VirtualizationInstance> {
+    const payload = this.getPayload();
+    const job$ = this.api.job('virt.instance.create', [payload]);
+
+    return this.dialogService
+      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
+      .afterClosed().pipe(map((job) => job.result));
+  }
+
+  private importIsoImage(): Observable<string> {
+    const job$ = this.uploadService.uploadAsJob({
+      file: this.form.value.image_file[0],
+      method: 'virt.volume.import_iso',
+      params: [{
+        name: this.form.value.image_file[0].name,
+        upload_iso: true,
+      }],
+    });
+
+    return this.dialogService
+      .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
+      .afterClosed().pipe(map((job) => job.result?.name));
   }
 
   private getPayload(): CreateVirtualizationInstance {
     const devices = this.getDevicesPayload();
 
-    return {
+    const payload = {
       devices,
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
@@ -315,6 +309,13 @@ export class InstanceWizardComponent {
       image: this.form.controls.image.value,
       environment: this.environmentVariablesPayload,
     } as CreateVirtualizationInstance;
+
+    if (this.form.value.image_type === SelectImageType.Load) {
+      delete payload.image;
+      payload.source_type = null;
+    }
+
+    return payload;
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
@@ -339,6 +340,17 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
+    const iso = this.form.value.image_type === SelectImageType.Load
+      ? [
+          {
+            dev_type: VirtualizationDeviceType.Disk,
+            source: this.form.value.image_file[0].name,
+            destination: null as string,
+            boot_priority: 1,
+          },
+        ]
+      : [];
+
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
@@ -391,6 +403,7 @@ export class InstanceWizardComponent {
     }));
 
     return [
+      ...iso,
       ...disks,
       ...proxies,
       ...macVlanNics,

@@ -89,6 +89,7 @@ export interface VirtualizationDisk {
   source: string | null;
   destination: string | null;
   product_id: string;
+  boot_priority?: number;
 }
 
 export interface VirtualizationGpu {
