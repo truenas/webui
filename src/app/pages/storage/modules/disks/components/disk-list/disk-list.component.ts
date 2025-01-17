@@ -316,7 +316,7 @@ export class DiskListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial'] });
+    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {
