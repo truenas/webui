@@ -1,11 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDeviceType, VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDevice,
+  VirtualizationInstance,
+  VirtualizationTpm,
+} from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -17,6 +22,10 @@ import { VirtualizationDevicesStore } from 'app/pages/virtualization/stores/virt
 describe('DeviceActionsMenuComponent', () => {
   let spectator: Spectator<DeviceActionsMenuComponent>;
   let loader: HarnessLoader;
+  const selectedInstance = signal({
+    id: 'my-instance',
+    type: VirtualizationType.Container,
+  } as VirtualizationInstance);
   const createComponent = createComponentFactory({
     component: DeviceActionsMenuComponent,
     providers: [
@@ -28,9 +37,7 @@ describe('DeviceActionsMenuComponent', () => {
         mockCall('virt.instance.device_delete'),
       ]),
       mockProvider(VirtualizationDevicesStore, {
-        selectedInstance: () => ({
-          id: 'my-instance',
-        }),
+        selectedInstance,
         loadDevices: jest.fn(),
       }),
     ],
@@ -48,14 +55,31 @@ describe('DeviceActionsMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows menu as disabled for readonly devices', async () => {
-    spectator.setInput('device', {
-      name: 'my-device',
-      readonly: true,
-    } as VirtualizationDevice);
+  describe('disabled state', () => {
+    it('shows menu as disabled for readonly devices', async () => {
+      spectator.setInput('device', {
+        name: 'my-device',
+        readonly: true,
+      } as VirtualizationDevice);
 
-    const menu = await loader.getHarness(MatMenuHarness);
-    expect(await menu.isDisabled()).toBe(true);
+      const menu = await loader.getHarness(MatMenuHarness);
+      expect(await menu.isDisabled()).toBe(true);
+    });
+
+    it('shows menu as disabled when device is a TPM and the instance is running', async () => {
+      spectator.setInput('device', {
+        dev_type: VirtualizationDeviceType.Tpm,
+      } as VirtualizationTpm);
+
+      selectedInstance.set({
+        id: 'my-instance',
+        type: VirtualizationType.Vm,
+        status: VirtualizationStatus.Running,
+      } as VirtualizationInstance);
+
+      const menu = await loader.getHarness(MatMenuHarness);
+      expect(await menu.isDisabled()).toBe(true);
+    });
   });
 
   describe('delete', () => {

@@ -41,7 +41,7 @@
         >{{ 'Browse Catalog' | translate }}</button>
       </div>
 
-      @if (isVmInstanceType) {
+      @if (isVm) {
         <ix-checkbox
           formControlName="enable_vnc"
           [label]="'Enable VNC' | translate"
@@ -273,6 +273,15 @@
           [label]="'GPU Devices' | translate"
           [options]="gpuDevices$"
         ></ix-checkbox-list>
+      </ix-form-section>
+    }
+
+    @if (isVm()) {
+      <ix-form-section label="TPM">
+        <ix-checkbox
+          formControlName="tpm"
+          [label]="'Add Trusted Platform Module' | translate"
+        ></ix-checkbox>
       </ix-form-section>
     }
 

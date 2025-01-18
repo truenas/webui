@@ -3,15 +3,22 @@ import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { pickBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { VirtualizationDeviceType, VirtualizationGpuType } from 'app/enums/virtualization.enum';
+import {
+  VirtualizationDeviceType,
+  VirtualizationGpuType,
+  VirtualizationStatus,
+  VirtualizationType,
+} from 'app/enums/virtualization.enum';
 import {
   AvailableUsb,
   VirtualizationDevice,
   VirtualizationGpu,
+  VirtualizationTpm,
   VirtualizationUsb,
 } from 'app/interfaces/virtualization.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -37,6 +44,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     MatMenuTrigger,
     NgxSkeletonLoaderModule,
     KeyValuePipe,
+    MatTooltip,
   ],
 })
 export class AddDeviceMenuComponent {
@@ -66,8 +74,19 @@ export class AddDeviceMenuComponent {
     });
   });
 
+  protected canAddTpm = computed(() => {
+    return this.deviceStore.selectedInstance().type === VirtualizationType.Vm
+      && !this.deviceStore.devices().some((device) => device.dev_type === VirtualizationDeviceType.Tpm);
+  });
+
+  protected canAddTpmNow = computed(() => {
+    return this.canAddTpm() && this.deviceStore.selectedInstance().status === VirtualizationStatus.Stopped;
+  });
+
   protected readonly hasDevicesToAdd = computed(() => {
-    return this.availableUsbDevices().length > 0 || Object.keys(this.availableGpuDevices()).length > 0;
+    return this.availableUsbDevices().length > 0
+      || Object.keys(this.availableGpuDevices()).length > 0
+      || this.canAddTpm();
   });
 
   constructor(
@@ -91,6 +110,12 @@ export class AddDeviceMenuComponent {
       dev_type: VirtualizationDeviceType.Gpu,
       pci: gpuPci,
     } as VirtualizationGpu);
+  }
+
+  protected addTpm(): void {
+    this.addDevice({
+      dev_type: VirtualizationDeviceType.Tpm,
+    } as VirtualizationTpm);
   }
 
   private addDevice(payload: VirtualizationDevice): void {
