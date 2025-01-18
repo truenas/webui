@@ -24,10 +24,9 @@ export class TruenasConnectButtonComponent {
   config: TruenasConnectConfig;
   tooltips = helptextTopbar.mat_tooltips;
 
-  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {
-  }
+  constructor(private matDialog: MatDialog, public tnc: TruenasConnectService) {}
 
-  showStatus(): void {
+  protected showStatus(): void {
     this.matDialog.open(TruenasConnectStatusModalComponent, {
       width: '400px',
       hasBackdrop: true,

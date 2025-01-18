@@ -10,19 +10,14 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 
 @UntilDestroy()
 @Component({
@@ -67,7 +62,6 @@ export class TruenasConnectModalComponent {
 
   constructor(
     @Inject(WINDOW) private window: Window,
-    private api: ApiService,
     private loader: AppLoaderService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<TruenasConnectModalComponent>,
@@ -82,120 +76,68 @@ export class TruenasConnectModalComponent {
     });
   }
 
-  save(): void {
+  protected save(): void {
     const formValue = this.form.getRawValue();
-    this.loader.open();
-    this.api.call('tn_connect.update', [{
+    const payload = {
       ips: this.tnc.config().ips,
       enabled: true,
       tnc_base_url: formValue.tnc_base_url,
       account_service_base_url: formValue.account_service_base_url,
       leca_service_base_url: formValue.leca_service_base_url,
-    }])
-      .pipe(
-        filter((config) => {
-          return config.status === TruenasConnectStatus.ClaimTokenMissing;
-        }),
-        switchMap(() => {
-          return this.api.call('tn_connect.generate_claim_token');
-        }),
-        switchMap(() => {
-          return this.tnc.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => {
-              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
-            }),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.loader.close();
-      });
-  }
-
-  disableService(): void {
-    const config = this.tnc.config();
+    };
     this.loader.open();
-    this.api.call('tn_connect.update', [{
-      ips: config.ips,
-      enabled: false,
-      tnc_base_url: config.tnc_base_url,
-      account_service_base_url: config.account_service_base_url,
-      leca_service_base_url: config.leca_service_base_url,
-    }])
-      .pipe(
-        switchMap(() => {
-          return this.tnc.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.loader.close();
-      });
-  }
-
-  enableService(): void {
-    const config = this.tnc.config();
-    this.loader.open();
-    this.api.call('tn_connect.update', [{
-      ips: config.ips,
-      enabled: true,
-      tnc_base_url: config.tnc_base_url,
-      account_service_base_url: config.account_service_base_url,
-      leca_service_base_url: config.leca_service_base_url,
-    }])
-      .pipe(
-        filter((configRes) => {
-          return configRes.status === TruenasConnectStatus.ClaimTokenMissing;
-        }),
-        switchMap(() => {
-          return this.api.call('tn_connect.generate_claim_token');
-        }),
-        switchMap(() => {
-          return this.tnc.config$.pipe(
-            filter((configRes: TruenasConnectConfig) => {
-              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
-            }),
-          );
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.loader.close();
-      });
-  }
-
-  generateToken(): void {
-    this.loader.open();
-    this.api.call('tn_connect.generate_claim_token')
+    this.tnc.enableService(payload)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.loader.close();
       });
   }
 
-  connect(): void {
+  protected enableService(): void {
+    const config = this.tnc.config();
+    const payload = {
+      ips: config.ips,
+      enabled: true,
+      tnc_base_url: config.tnc_base_url,
+      account_service_base_url: config.account_service_base_url,
+      leca_service_base_url: config.leca_service_base_url,
+    };
     this.loader.open();
-    this.api.call('tn_connect.get_registration_uri')
-      .pipe(
-        tap((url) => {
-          this.window.open(url);
-        }),
-        switchMap(() => {
-          return this.tnc.config$.pipe(
-            filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
-          );
-        }),
-        untilDestroyed(this),
-      )
+    this.tnc.enableService(payload)
+      .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.loader.close();
       });
   }
 
-  cancel(): void {
+  protected disableService(): void {
+    this.loader.open();
+    this.tnc.disableService()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.loader.close();
+      });
+  }
+
+  protected generateToken(): void {
+    this.loader.open();
+    this.tnc.generateToken()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.loader.close();
+      });
+  }
+
+  protected connect(): void {
+    this.loader.open();
+    this.tnc.connect()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.loader.close();
+      });
+  }
+
+  protected cancel(): void {
     this.dialogRef.close();
   }
 }
