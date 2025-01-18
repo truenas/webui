@@ -140,7 +140,7 @@ export class AdvancedSearchAutocompleteService<T> {
       selection: { anchor: shouldAppendSpace ? anchor + 1 : anchor },
     });
 
-    startCompletion(this.editorView as any);
+    startCompletion(this.editorView);
   }
 
   private getQueryContext(query: string, cursorPosition: number): QueryContext {

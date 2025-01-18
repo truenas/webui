@@ -1,3 +1,10 @@
+:host ::ng-deep {
+    mat-dialog-actions {
+        display: flex;
+        justify-content: space-between !important;
+    }
+}
+
 .title {
     font-size: 32px;
     justify-content: center;
@@ -18,4 +25,8 @@ mat-dialog-content {
     h3 {
         padding-bottom: 8px;
     }
+}
+
+.warning {
+    color: var(--red);
 }

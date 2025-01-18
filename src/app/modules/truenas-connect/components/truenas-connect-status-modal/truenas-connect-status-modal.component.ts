@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import {
-  MAT_DIALOG_DATA, MatDialogTitle, MatDialogContent, MatDialogActions,
+  MatDialogTitle, MatDialogContent, MatDialogActions,
   MatDialog,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-modal/truenas-connect-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'ix-truenas-connect-status-modal',
@@ -24,75 +25,32 @@ import { switchMap } from 'rxjs';
     IxIconComponent,
     MatButton,
     MatDialogActions,
+    TranslateModule,
   ],
   templateUrl: './truenas-connect-status-modal.component.html',
   styleUrl: './truenas-connect-status-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TruenasConnectStatusModalComponent implements OnInit {
+export class TruenasConnectStatusModalComponent {
   readonly TruenasConnectStatus = TruenasConnectStatus;
 
-  constructor(@Inject(WINDOW) private window: Window, private api: ApiService, private matDialog: MatDialog, public tnc: TruenasConnectService) { }
+  constructor(
+    @Inject(WINDOW) private window: Window,
+    private matDialog: MatDialog,
+    public tnc: TruenasConnectService,
+  ) { }
 
-  ngOnInit(): void {
-    
-  }
-
-  openTncFormDialog(): void {
+  protected openSettings(): void {
     this.matDialog
       .open(TruenasConnectModalComponent, {
         width: '456px',
       })
       .afterClosed()
+      .pipe(untilDestroyed(this))
       .subscribe();
   }
 
-  generateToken() {
-    console.log('generating a token')
-    this.api.call('tn_connect.generate_claim_token')
-      .subscribe({
-        next: (token) => {
-          console.log('token', token)
-        },
-        error: err => console.log('errror', err)
-      });
-    }
-
-  connect() {
-    this.api.call('tn_connect.get_registration_uri')
-      .subscribe(url => {
-        console.log('url', url)
-        this.window.open(url)
-      })
+  protected open(): void {
+    this.window.open(this.tnc.config().tnc_base_url);
   }
-
-    reenable() {
-      this.api.call('tn_connect.ip_choices')
-      .pipe(
-        switchMap((ipsRes) => {
-          console.log('ipRes', ipsRes)
-          const ips = Object.values(ipsRes);
-          return this.api.call('tn_connect.update', [{
-            enabled: false,
-            ips,
-          }]);
-        }),
-        switchMap((ipsRes) => {
-          console.log('ipRes', ipsRes)
-          const ips = Object.values(ipsRes);
-          return this.api.call('tn_connect.update', [{
-            enabled: true,
-            ips,
-          }]);
-        }),
-      )
-      .subscribe({
-        next: res => {
-          console.log('reenable', res)
-        },
-        error: err => {
-          console.log('err', err)
-        }
-      })
-    }
 }

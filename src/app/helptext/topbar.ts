@@ -17,6 +17,7 @@ export const helptextTopbar = {
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),
+    tnc_status: T('Status of Truenas Connect'),
     update: T('Update in Progress'),
     reboot_info: T('Reboot Required'),
     pending_network_changes: T('Pending Network Changes'),
@@ -45,11 +46,6 @@ export const helptextTopbar = {
 Login or signup is required.'),
     enabled_placeholder: T('Enable'),
     enabled_tooltip: T('Immediately connect to TrueCommand.'),
-  },
-
-  tncDialog: {
-    content: T('This allows your TrueNAS system to be monitored and administrated by\
-      Truenas Connect. Click <b>SIGNUP</b> to create a new Truenas Connect instance or <b>CONNECT</b> to join an existing instance.'),
   },
 
   tcDialog: {

@@ -1,8 +1,7 @@
 import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/truenas-connect-status.enum';
 
-export interface TruenasConnectConfig {
+export interface TruenasConnectConfig extends TruenasConnectUpdate {
   id: number;
-  enabled: boolean;
   registration_details: {
     scopes: string[];
     account_id: string;
@@ -12,11 +11,15 @@ export interface TruenasConnectConfig {
     iat: number;
     iss: string;
   };
-  ips: number[];
   status: TruenasConnectStatus;
   status_reason: typeof TruenasConnectStatusReason;
   certificate: number;
+}
+
+export interface TruenasConnectUpdate {
+  enabled: boolean;
+  ips: string[];
+  tnc_base_url: string;
   account_service_base_url: string;
   leca_service_base_url: string;
-  tnc_base_url: string;
 }

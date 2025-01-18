@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum TruenasConnectStatus {
   Disabled = 'DISABLED',
   ClaimTokenMissing = 'CLAIM_TOKEN_MISSING',
@@ -17,18 +19,18 @@ export enum TruenasConnectStatus {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const TruenasConnectStatusReason: Record<TruenasConnectStatus, string> = {
-  [TruenasConnectStatus.Disabled]: 'TrueNAS Connect is disabled',
-  [TruenasConnectStatus.ClaimTokenMissing]: 'Waiting for claim token to be generated',
-  [TruenasConnectStatus.RegistrationFinalizationWaiting]: 'Waiting for registration with TrueNAS Connect to complete',
-  [TruenasConnectStatus.RegistrationFinalizationFailed]: 'Registration finalization failed',
-  [TruenasConnectStatus.RegistrationFinalizationTimeout]: 'Registration finalization timed out',
-  [TruenasConnectStatus.RegistrationFinalizationSuccess]: 'Registration finalization successful',
-  [TruenasConnectStatus.CertGenerationInProgress]: 'Certificate generation is in progress',
-  [TruenasConnectStatus.CertGenerationFailed]: 'Certificate generation failed',
-  [TruenasConnectStatus.CertGenerationSuccess]: 'Certificate generation was successful',
-  [TruenasConnectStatus.CertConfigurationFailure]: 'Failed to configure certificate in system UI',
-  [TruenasConnectStatus.CertRenewalInProgress]: 'Certificate renewal is in progress',
-  [TruenasConnectStatus.CertRenewalFailure]: 'Failed to renew certificate',
-  [TruenasConnectStatus.CertRenewalSuccess]: 'Certificate renewal was successful',
-  [TruenasConnectStatus.Configured]: 'TrueNAS Connect is configured',
+  [TruenasConnectStatus.Disabled]: T('TrueNAS Connect is disabled'),
+  [TruenasConnectStatus.ClaimTokenMissing]: T('Waiting for claim token to be generated'),
+  [TruenasConnectStatus.RegistrationFinalizationWaiting]: T('Waiting for registration with TrueNAS Connect to complete'),
+  [TruenasConnectStatus.RegistrationFinalizationFailed]: T('Registration finalization failed'),
+  [TruenasConnectStatus.RegistrationFinalizationTimeout]: T('Registration finalization timed out'),
+  [TruenasConnectStatus.RegistrationFinalizationSuccess]: T('Registration finalization successful'),
+  [TruenasConnectStatus.CertGenerationInProgress]: T('Certificate generation is in progress'),
+  [TruenasConnectStatus.CertGenerationFailed]: T('Certificate generation failed'),
+  [TruenasConnectStatus.CertGenerationSuccess]: T('Certificate generation was successful'),
+  [TruenasConnectStatus.CertConfigurationFailure]: T('Failed to configure certificate in system UI'),
+  [TruenasConnectStatus.CertRenewalInProgress]: T('Certificate renewal is in progress'),
+  [TruenasConnectStatus.CertRenewalFailure]: T('Failed to renew certificate'),
+  [TruenasConnectStatus.CertRenewalSuccess]: T('Certificate renewal was successful'),
+  [TruenasConnectStatus.Configured]: T('TrueNAS Connect is configured'),
 };

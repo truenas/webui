@@ -1,4 +1,4 @@
-<div mat-dialog-title>{{ 'Truenas Connect Service' }}</div>
+<div mat-dialog-title>{{ 'Truenas Connect Service' | translate }}</div>
 <mat-divider></mat-divider>
 <mat-dialog-content>
     <div>
@@ -31,41 +31,19 @@
           }
           <span>{{ tnc.config().status }}</span>
     </div>
-
       <div id="error">
       {{ tnc.config().status_reason }}
     </div>
 </mat-dialog-content>
 <div mat-dialog-actions>
-    @if(tnc.config().status === TruenasConnectStatus.ClaimTokenMissing) {
-      <button
-        ixTest="tnc-generate-token"
-        mat-button
-        (click)="generateToken()"
-      >
-      {{'Generate Token'}}
-      </button>
-    }
-
-  <!-- <button mat-button ixTest="tnc-reenable" (click)="reenable()">
-    {{'Reenable'}}
-  </button> -->
-    @if (tnc.config().status === TruenasConnectStatus.RegistrationFinalizationWaiting) {
-      <button
-      ixTest="tnc-connect"
-      mat-button
-      color="primary"
-      (click)="connect()"
-    >
-    {{'Connect'}}
-    </button>
-    }
-
     <button
-      ixTest="tnc-generate-token"
+      ixTest="tnc-settings"
       mat-button
-      (click)="openTncFormDialog()"
+      (click)="openSettings()"
     >
-    {{'Edit'}}
+    {{'Settings' | translate}}
+    </button>
+    <button color="primary" mat-button ixTest="tnc-open" [disabled]="tnc.config().status !== TruenasConnectStatus.Configured" (click)="open()">
+      {{'Open' | translate}}
     </button>
 </div>
