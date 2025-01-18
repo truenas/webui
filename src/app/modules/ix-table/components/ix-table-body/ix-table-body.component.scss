@@ -30,12 +30,6 @@
     @media(max-width: $breakpoint-sm) {
       padding: 0 8px;
     }
-
-    &.show-details-cell {
-      @media (min-width: $breakpoint-sm) {
-        display: none;
-      }
-    }
   }
 
   .toggle-cell {
