@@ -39,7 +39,7 @@ import { UserService } from 'app/services/user.service';
   ],
 })
 export class EditPosixAceComponent implements OnInit, OnChanges {
-  readonly ace = input<PosixAclItem>();
+  readonly ace = input.required<PosixAclItem>();
 
   form = this.formBuilder.nonNullable.group({
     tag: [null as PosixAclTag | null],

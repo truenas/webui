@@ -55,59 +55,59 @@ export class RebootOrShutdownDialogComponent {
     },
     {
       label: this.translate.instant('System Update'),
-      tooltip: this.translate.instant('Applying important system or security updates.'),
-      value: 'Applying important system or security updates.',
+      hoverTooltip: this.translate.instant('Applying important system or security updates.'),
+      value: 'System Update',
     },
     {
       label: this.translate.instant('Hardware Change'),
-      tooltip: this.translate.instant('Adding, removing, or changing hardware components.'),
-      value: 'Adding, removing, or changing hardware components.',
+      hoverTooltip: this.translate.instant('Adding, removing, or changing hardware components.'),
+      value: 'Hardware Change',
     },
     {
       label: this.translate.instant('Troubleshooting Issues'),
-      tooltip: this.translate.instant('Required reset to fix system operation issues.'),
-      value: 'Required reset to fix system operation issues.',
+      hoverTooltip: this.translate.instant('Required reset to fix system operation issues.'),
+      value: 'Troubleshooting Issues',
     },
     {
       label: this.translate.instant('Power Outage'),
-      tooltip: this.translate.instant('Unexpected power loss necessitating a restart.'),
-      value: 'Unexpected power loss necessitating a restart.',
+      hoverTooltip: this.translate.instant('Unexpected power loss necessitating a restart.'),
+      value: 'Power Outage',
     },
     {
       label: this.translate.instant('Maintenance Window'),
-      tooltip: this.translate.instant('Regularly scheduled system checks and updates.'),
-      value: 'Regularly scheduled system checks and updates.',
+      hoverTooltip: this.translate.instant('Regularly scheduled system checks and updates.'),
+      value: 'Maintenance Window',
     },
     {
       label: this.translate.instant('System Overload'),
-      tooltip: this.translate.instant('High usage necessitating a system reset.'),
-      value: 'High usage necessitating a system reset.',
+      hoverTooltip: this.translate.instant('High usage necessitating a system reset.'),
+      value: 'System Overload',
     },
     {
       label: this.translate.instant('Software Installation'),
-      tooltip: this.translate.instant('Required restart after new software installation.'),
-      value: 'Required restart after new software installation.',
+      hoverTooltip: this.translate.instant('Required restart after new software installation.'),
+      value: 'Software Installation',
     },
     {
       label: this.translate.instant('Performance Optimization'),
-      tooltip: this.translate.instant('Restart to improve system performance speed.'),
-      value: 'Restart to improve system performance speed.',
+      hoverTooltip: this.translate.instant('Restart to improve system performance speed.'),
+      value: 'Performance Optimization',
     },
     {
       label: this.translate.instant('Network Reset'),
-      tooltip: this.translate.instant('Restart to re-establish network connections.'),
-      value: 'Restart to re-establish network connections.',
+      hoverTooltip: this.translate.instant('Restart to re-establish network connections.'),
+      value: 'Network Reset',
     },
     {
       label: this.translate.instant('System Freeze'),
-      tooltip: this.translate.instant('Unresponsive system necessitating a forced restart.'),
-      value: 'Unresponsive system necessitating a forced restart.',
+      hoverTooltip: this.translate.instant('Unresponsive system necessitating a forced restart.'),
+      value: 'System Freeze',
     },
   ]);
 
   get title(): string {
     return this.isShutdown
-      ? this.translate.instant('Shut down')
+      ? this.translate.instant('Shutdown')
       : this.translate.instant('Restart');
   }
 

@@ -80,12 +80,6 @@ export class JbofFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingJbof) {
-      this.setJbofForEdit();
-    }
-  }
-
-  setJbofForEdit(): void {
-    if (!this.isNew) {
       this.form.patchValue(this.editingJbof);
     }
   }

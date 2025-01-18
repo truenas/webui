@@ -14,20 +14,20 @@
           [options]="sendMethodOptions$"
         ></ix-radio-group>
 
+        <ix-input
+          formControlName="fromemail"
+          [label]="'From Email' | translate"
+          [required]="isFromEmailRequired"
+          [tooltip]="helptext.fromemail.tooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="fromname"
+          [label]="'From Name' | translate"
+          [tooltip]="helptext.fromname.tooltip | translate"
+        ></ix-input>
+
         @if (isSmtp) {
-          <ix-input
-            formControlName="fromemail"
-            [label]="'From Email' | translate"
-            [required]="true"
-            [tooltip]="helptext.fromemail.tooltip | translate"
-          ></ix-input>
-
-          <ix-input
-            formControlName="fromname"
-            [label]="'From Name' | translate"
-            [tooltip]="helptext.fromname.tooltip | translate"
-          ></ix-input>
-
           <ix-input
             formControlName="outgoingserver"
             [label]="'Outgoing Mail Server' | translate"

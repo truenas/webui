@@ -22,7 +22,7 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
 export class AppJsonDetailsCardComponent<T> {
   readonly isLoading = input<boolean>();
   readonly jsonDetails = input<T[]>();
-  readonly title = input<string>();
+  readonly title = input.required<string>();
 
   getKeys(item: T): string[] {
     return Object.keys(item);

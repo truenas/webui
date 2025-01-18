@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -98,7 +98,7 @@ export class GroupFormComponent implements OnInit {
   );
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -187,7 +187,7 @@ export class GroupFormComponent implements OnInit {
     ).subscribe({
       next: (group) => {
         const roles = this.privilegesList
-          .filter((privilege) => this.form.value.privileges.some((id) => id === privilege.id))
+          .filter((privilege) => this.form.getRawValue().privileges.some((id) => id === privilege.id))
           .map((role) => role.builtin_name) as Role[];
 
         if (this.isNew) {
@@ -310,7 +310,7 @@ export class GroupFormComponent implements OnInit {
   private get existingPrivilegesRemoved(): number[] {
     return Array.from(new Set(
       this.initialGroupRelatedPrivilegesList
-        .filter((privilege) => !this.form.value.privileges.includes(privilege.id as never))
+        .filter((privilege) => !this.form.getRawValue().privileges.includes(privilege.id as never))
         .map((privileges) => privileges.id),
     ));
   }

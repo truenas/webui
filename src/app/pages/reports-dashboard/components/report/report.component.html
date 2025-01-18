@@ -108,10 +108,10 @@
           <section #legendElement class="legend">
             @if (report() && data?.legend) {
               <div class="legend-timestamp">
-                @if (data && legendData?.xHTML && shouldShowLegendValue) {
+                @if (data && legendData.xHTML && shouldShowLegendValue) {
                   <h4>
                     <strong>{{ 'Time' | translate }}:</strong>
-                    @if (legendData?.xHTML) {
+                    @if (legendData.xHTML) {
                       <span class="date">
                         <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
                       </span>
@@ -151,7 +151,7 @@
                         <span class="legend-item">
                           <strong>{{ legendItem | translate }}</strong>
                         </span>
-                        @if (legendData?.series?.[i]?.yHTML && shouldShowLegendValue) {
+                        @if (legendData.series?.[i]?.yHTML && shouldShowLegendValue) {
                           <span class="date">:
                             {{ legendData.series[i].yHTML | translate }}
                           </span>
@@ -170,7 +170,7 @@
                 </table>
               </div>
             }
-            @if (legendData?.stackedTotalHTML && shouldShowTotal && shouldShowLegendValue) {
+            @if (legendData.stackedTotalHTML && shouldShowTotal && shouldShowLegendValue) {
               <h4 class="total-line">
                 <strong>{{ 'Total' | translate }}:</strong>
                 <span>{{ legendData.stackedTotalHTML | translate }}</span>

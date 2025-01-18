@@ -104,7 +104,7 @@ export class UserApiKeysComponent implements OnInit {
       propertyName: 'created_at',
     }),
     relativeDateColumn({
-      title: this.translate.instant('Expires'),
+      title: this.translate.instant('Expires On'),
       propertyName: 'expires_at',
       getValue: (row) => row.expires_at?.$date || this.translate.instant('Never'),
     }),

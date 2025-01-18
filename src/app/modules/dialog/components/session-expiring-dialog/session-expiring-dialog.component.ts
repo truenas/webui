@@ -7,7 +7,7 @@ import {
   MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions,
 } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
-import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
+import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
 export interface SessionExpiringDialogOptions {
@@ -28,7 +28,7 @@ export interface SessionExpiringDialogOptions {
     MatDialogActions,
     MatButton,
     TranslateModule,
-    NavigateAndInteractDirective,
+    NavigateAndHighlightDirective,
     TestDirective,
   ],
 })

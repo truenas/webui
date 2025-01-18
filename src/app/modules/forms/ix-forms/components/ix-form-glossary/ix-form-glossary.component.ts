@@ -17,7 +17,7 @@ import {
   distinctUntilChanged,
   map,
 } from 'rxjs/operators';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { SectionWithControls } from 'app/interfaces/form-sections.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
@@ -61,7 +61,7 @@ export class IxFormGlossaryComponent implements OnInit {
     private formBuilder: FormBuilder,
     private formService: IxFormService,
     private cdr: ChangeDetectorRef,
-    private navigateAndInteractService: NavigateAndInteractService,
+    private navigateAndHighlight: NavigateAndHighlightService,
   ) {
     this.handleControlsUpdates();
     this.handleSectionUpdates();
@@ -154,7 +154,7 @@ export class IxFormGlossaryComponent implements OnInit {
   }
 
   protected onSectionClick(section: IxFormSectionComponent): void {
-    this.navigateAndInteractService.scrollIntoView(section.elementRef.nativeElement);
+    this.navigateAndHighlight.scrollIntoView(section.elementRef.nativeElement);
   }
 
   private handleSearchControl(): void {
@@ -178,6 +178,6 @@ export class IxFormGlossaryComponent implements OnInit {
       return;
     }
 
-    this.navigateAndInteractService.scrollIntoView(element);
+    this.navigateAndHighlight.scrollIntoView(element);
   }
 }

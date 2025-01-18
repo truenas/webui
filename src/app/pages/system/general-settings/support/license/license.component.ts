@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
+  ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -8,9 +8,9 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -64,6 +64,7 @@ export class LicenseComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     public slideInRef: SlideInRef<undefined, boolean>,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
@@ -79,18 +80,20 @@ export class LicenseComponent {
         this.isFormLoading = false;
         this.slideInRef.close({ response: true, error: null });
         this.cdr.markForCheck();
-        setTimeout(() => {
-          this.dialogService.confirm({
+        this.dialogService
+          .confirm({
             title: helptext.update_license.reload_dialog_title,
             message: helptext.update_license.reload_dialog_message,
             hideCheckbox: true,
             buttonText: helptext.update_license.reload_dialog_action,
             hideCancel: true,
             disableClose: true,
-          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            document.location.reload();
+          })
+          // Deliberate. Keeps subscribe effect going after form is closed.
+          // eslint-disable-next-line rxjs-angular/prefer-takeuntil
+          .subscribe(() => {
+            this.window.location.reload();
           });
-        }, 200);
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
