@@ -8,10 +8,13 @@ interface TestTableData {
   numberField: number;
   stringField: string;
   booleanField: boolean;
+  size?: number;
 }
 
 const testTableData: TestTableData[] = [
-  { numberField: 1, stringField: 'a', booleanField: true },
+  {
+    numberField: 1, stringField: 'a', booleanField: true, size: 17179869999,
+  },
   { numberField: 2, stringField: 'c', booleanField: false },
   { numberField: 4, stringField: 'b', booleanField: false },
   { numberField: 3, stringField: 'd', booleanField: true },
@@ -66,5 +69,19 @@ describe('AsyncDataProvider', () => {
     expect(
       await firstValueFrom(dataProvider.currentPage$),
     ).toEqual([{ numberField: 2, stringField: 'c', booleanField: false }]);
+  });
+
+  it('filters rows based on "size" query param with a pre-defined margin', async () => {
+    const request$ = of(testTableData);
+    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
+
+    dataProvider.setFilter({ query: '16.3 gib', columnKeys: ['size'] });
+    expect(dataProvider.totalRows).toBe(1);
+    expect(
+      await firstValueFrom(dataProvider.currentPage$),
+    ).toEqual([{
+      numberField: 1, stringField: 'a', booleanField: true, size: 17179869999,
+    }]);
   });
 });

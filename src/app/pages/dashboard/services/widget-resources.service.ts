@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { subHours, subMinutes } from 'date-fns';
 import {
@@ -18,7 +18,6 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
-import { poolStore } from 'app/services/global-store/stores.constant';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -71,7 +70,7 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly pools$ = inject(poolStore).callAndSubscribe.pipe(
+  readonly pools$ = this.api.callAndSubscribe('pool.query').pipe(
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

@@ -1718,6 +1718,47 @@
   },
   {
     "hierarchy": [
+      "Data Protection",
+      "Snapshots",
+      "Add"
+    ],
+    "synonyms": [
+      "Create Snapshot",
+      "Take Snapshot",
+      "New Snapshot"
+    ],
+    "requiredRoles": [
+      "SNAPSHOT_DELETE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/datasets",
+      "snapshots"
+    ],
+    "routerLink": null,
+    "anchor": "add-snapshot",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Snapshots"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/datasets",
+      "snapshots"
+    ],
+    "routerLink": null,
+    "anchor": "snapshots",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Directory Services",
       "Idmap",
       "Add Idmap"

@@ -40,7 +40,11 @@ export class InstanceDevicesComponent {
 
   protected readonly shownDevices = computed(() => {
     return this.deviceStore.devices().filter((device) => {
-      return [VirtualizationDeviceType.Usb, VirtualizationDeviceType.Gpu].includes(device.dev_type);
+      return [
+        VirtualizationDeviceType.Usb,
+        VirtualizationDeviceType.Gpu,
+        VirtualizationDeviceType.Tpm,
+      ].includes(device.dev_type);
     });
   });
 

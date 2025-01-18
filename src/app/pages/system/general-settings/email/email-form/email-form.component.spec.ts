@@ -241,6 +241,16 @@ describe('EmailFormComponent', () => {
       );
     });
 
+    it('disables Save button when no From Email is provided for Outlook OAuth', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+        'From Email': '',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
       await form.fillForm({
         'Send Mail Method': 'Outlook OAuth',
