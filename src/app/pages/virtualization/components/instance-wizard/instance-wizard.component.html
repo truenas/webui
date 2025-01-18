@@ -41,7 +41,13 @@
         >{{ 'Browse Catalog' | translate }}</button>
       </div>
 
-      @if (isVm) {
+    </ix-form-section>
+
+    @if (isVm()) {
+      <ix-form-section
+        [label]="'VNC' | translate"
+        [help]="'VNC' | translate"
+      >
         <ix-checkbox
           formControlName="enable_vnc"
           [label]="'Enable VNC' | translate"
@@ -54,8 +60,8 @@
             [label]="'VNC Port' | translate"
           ></ix-input>
         }
-      }
-    </ix-form-section>
+      </ix-form-section>
+    }
 
     <ix-form-section
       [label]="'CPU & Memory' | translate"
