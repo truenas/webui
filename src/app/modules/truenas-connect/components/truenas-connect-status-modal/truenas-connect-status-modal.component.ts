@@ -7,7 +7,7 @@ import {
   MatDialog,
 } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,6 +15,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TruenasConnectModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-modal/truenas-connect-modal.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-truenas-connect-status-modal',
   standalone: true,

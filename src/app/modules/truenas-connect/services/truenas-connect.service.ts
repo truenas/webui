@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { switchMap, timer } from 'rxjs';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -8,6 +9,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class TruenasConnectService {
   config = signal<TruenasConnectConfig>(null);
+  config$ = toObservable(this.config);
   constructor(private api: ApiService) {
     this.getConfig();
   }
@@ -20,7 +22,6 @@ export class TruenasConnectService {
         }),
       )
       .subscribe((config) => {
-        console.log('config', config);
         this.config.set(config);
       });
   }

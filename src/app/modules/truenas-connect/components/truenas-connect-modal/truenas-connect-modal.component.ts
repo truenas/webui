@@ -8,19 +8,23 @@ import {
   MatDialogActions, MatDialogContent, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import {
+  filter, switchMap, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-truenas-connect-modal',
   standalone: true,
@@ -70,8 +74,7 @@ export class TruenasConnectModalComponent {
     public tnc: TruenasConnectService,
   ) {
     effect(() => {
-      const config = this.tnc.config();
-      if (config.status === TruenasConnectStatus.Disabled) {
+      if (this.tnc.config().status === TruenasConnectStatus.Disabled) {
         this.form.enable();
       } else {
         this.form.disable();
@@ -81,6 +84,7 @@ export class TruenasConnectModalComponent {
 
   save(): void {
     const formValue = this.form.getRawValue();
+    this.loader.open();
     this.api.call('tn_connect.update', [{
       ips: this.tnc.config().ips,
       enabled: true,
@@ -95,13 +99,23 @@ export class TruenasConnectModalComponent {
         switchMap(() => {
           return this.api.call('tn_connect.generate_claim_token');
         }),
+        switchMap(() => {
+          return this.tnc.config$.pipe(
+            filter((configRes: TruenasConnectConfig) => {
+              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
+            }),
+          );
+        }),
         untilDestroyed(this),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.loader.close();
+      });
   }
 
-  stop(): void {
+  disableService(): void {
     const config = this.tnc.config();
+    this.loader.open();
     this.api.call('tn_connect.update', [{
       ips: config.ips,
       enabled: false,
@@ -109,12 +123,22 @@ export class TruenasConnectModalComponent {
       account_service_base_url: config.account_service_base_url,
       leca_service_base_url: config.leca_service_base_url,
     }])
-      .pipe(untilDestroyed(this))
-      .subscribe();
+      .pipe(
+        switchMap(() => {
+          return this.tnc.config$.pipe(
+            filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.loader.close();
+      });
   }
 
-  start(): void {
+  enableService(): void {
     const config = this.tnc.config();
+    this.loader.open();
     this.api.call('tn_connect.update', [{
       ips: config.ips,
       enabled: true,
@@ -129,22 +153,45 @@ export class TruenasConnectModalComponent {
         switchMap(() => {
           return this.api.call('tn_connect.generate_claim_token');
         }),
+        switchMap(() => {
+          return this.tnc.config$.pipe(
+            filter((configRes: TruenasConnectConfig) => {
+              return configRes.status === TruenasConnectStatus.RegistrationFinalizationWaiting;
+            }),
+          );
+        }),
         untilDestroyed(this),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.loader.close();
+      });
   }
 
   generateToken(): void {
+    this.loader.open();
     this.api.call('tn_connect.generate_claim_token')
       .pipe(untilDestroyed(this))
-      .subscribe();
+      .subscribe(() => {
+        this.loader.close();
+      });
   }
 
   connect(): void {
+    this.loader.open();
     this.api.call('tn_connect.get_registration_uri')
-      .pipe(untilDestroyed(this))
-      .subscribe((url) => {
-        this.window.open(url);
+      .pipe(
+        tap((url) => {
+          this.window.open(url);
+        }),
+        switchMap(() => {
+          return this.tnc.config$.pipe(
+            filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.loader.close();
       });
   }
 

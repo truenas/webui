@@ -33,9 +33,9 @@
 <mat-dialog-actions>
     <div>
       @if(tnc.config().status !== TruenasConnectStatus.Disabled) {
-        <button mat-button color="warn" ixTest="tnc-disable" (click)="stop()">{{'Disable Service' | translate}}</button>
+        <button mat-button color="warn" ixTest="tnc-disable" (click)="disableService()">{{'Disable Service' | translate}}</button>
       } @else {
-        <button mat-button ixTest="tnc-enable" [disabled]="hasChange()" (click)="start()">{{'Enable Service' | translate}}</button>
+        <button mat-button ixTest="tnc-enable" [disabled]="hasChange()" (click)="enableService()">{{'Enable Service' | translate}}</button>
       }
     </div>
    
