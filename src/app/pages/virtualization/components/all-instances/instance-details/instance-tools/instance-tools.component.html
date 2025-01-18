@@ -19,6 +19,19 @@
 
         <ix-icon name="mdi-console"></ix-icon>
       </a>
+      @if (isVm() && instance().vnc_enabled && instance().vnc_port) {
+        <a 
+          mat-flat-button
+          color="default"
+          ixTest="open-vnc"
+          class="tool"
+          [disabled]="isInstanceStopped()"
+          (click)="openVnc()"
+        >
+          <span>{{ 'VNC' | translate }}</span>
+          <span>{{ vncLink() }}</span>
+        </a>
+      }
     </div>
   </mat-card-content>
 </mat-card>

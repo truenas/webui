@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, computed, Inject, input,
 } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
 import {
@@ -8,7 +8,8 @@ import {
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -36,4 +37,14 @@ export class InstanceToolsComponent {
   readonly instance = input.required<VirtualizationInstance>();
 
   protected readonly isInstanceStopped = computed(() => this.instance().status !== VirtualizationStatus.Running);
+  protected readonly isVm = computed(() => this.instance().type === VirtualizationType.Vm);
+  protected readonly vncLink = computed(() => `vnc://${this.window.location.hostname}:${this.instance().vnc_port}`);
+
+  constructor(
+    @Inject(WINDOW) private window: Window,
+  ) {}
+
+  openVnc(): void {
+    this.window.open(this.vncLink(), '_blank');
+  }
 }

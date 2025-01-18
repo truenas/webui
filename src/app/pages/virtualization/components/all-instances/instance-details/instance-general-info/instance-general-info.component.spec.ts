@@ -10,7 +10,6 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationAlias, VirtualizationImage, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
@@ -65,11 +64,6 @@ describe('InstanceGeneralInfoComponent', () => {
     ],
     providers: [
       IxFormatterService,
-      mockWindow({
-        location: {
-          hostname: 'truenas.com',
-        },
-      }),
       mockAuth(),
       mockProvider(SlideIn, {
         open: jest.fn(() => of({
@@ -110,13 +104,12 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(6);
+    expect(chartExtra).toHaveLength(5);
     expect(chartExtra[0]).toHaveText('Status: Running');
     expect(chartExtra[1]).toHaveText('Autostart: Yes');
     expect(chartExtra[2]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[3]).toHaveText('CPU: 525');
     expect(chartExtra[4]).toHaveText('Memory: 125 MiB');
-    expect(chartExtra[5]).toHaveText('VNC: vnc://truenas.com:9000');
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {
