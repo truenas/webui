@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -9,6 +9,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, NEVER, Observable, switchMap, tap,
 } from 'rxjs';
+import { VirtualizationDeviceType, VirtualizationStatus } from 'app/enums/virtualization.enum';
 import { VirtualizationDevice } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -43,6 +44,23 @@ export class DeviceActionsMenuComponent {
   readonly showEdit = input(true);
 
   readonly edit = output();
+
+  protected readonly canManage = computed(() => {
+    return !this.manageRestrictedExplanation();
+  });
+
+  protected readonly manageRestrictedExplanation = computed(() => {
+    if (this.device().readonly) {
+      return this.translate.instant('This device is read-only and cannot be edited.');
+    }
+
+    const isInstanceStopped = this.deviceStore.selectedInstance().status === VirtualizationStatus.Stopped;
+    if (this.device().dev_type === VirtualizationDeviceType.Tpm && !isInstanceStopped) {
+      return this.translate.instant('This device cannot be edited while the instance is running.');
+    }
+
+    return null;
+  });
 
   constructor(
     private dialog: DialogService,
