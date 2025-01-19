@@ -7,28 +7,22 @@ export interface ReportingRealtimeUpdate {
   disks: DisksUpdate;
   interfaces: AllNetworkInterfacesUpdate;
   memory: MemoryUpdate;
-  virtual_memory: VirtualMemoryUpdate;
-  zfs: ZfsUpdate;
 }
 
 export interface AllCpusUpdate {
-  [cpuNumber: number]: CpuUpdate;
-  average: CpuUpdate;
-  temperature_celsius: number[];
-}
-
-export interface CpuUpdate {
-  guest: number;
-  guest_nice: number;
+  user: number;
+  nice: number;
+  system: number;
   idle: number;
   iowait: number;
   irq: number;
-  nice: number;
   softirq: number;
   steal: number;
-  system: number;
-  usage: number;
-  user: number;
+  guest: number;
+  guest_nice: number;
+  aggregated_usage: number;
+  [key: `core${number}_usage`]: number;
+  temperature_celsius: number;
 }
 
 export interface DisksUpdate {
@@ -49,47 +43,11 @@ export interface NetworkInterfaceUpdate {
 }
 
 export interface MemoryUpdate {
-  classes: {
-    apps: number;
-    arc: number;
-    buffers: number;
-    cache: number;
-    page_tables: number;
-    slab_cache: number;
-    swap_cache: number;
-    unused: number;
-  };
-  extra: {
-    active: number;
-    committed: number;
-    inactive: number;
-    mapped: number;
-    vmalloc_used: number;
-  };
-  swap: {
-    total: number;
-    used: number;
-  };
-}
-
-export interface VirtualMemoryUpdate {
-  active: number;
-  available: number;
-  buffers: number;
-  cached: number;
-  free: number;
-  inactive: number;
-  percent: number;
-  shared: number;
-  slab: number;
-  total: number;
-  used: number;
-}
-
-export interface ZfsUpdate {
-  arc_max_size: number;
   arc_size: number;
-  cache_hit_ratio: number;
+  arc_free_memory: number;
+  arc_available_memory: number;
+  physical_memory_total: number;
+  physical_memory_available: number;
 }
 
 export interface ReportingQueryOptions {
