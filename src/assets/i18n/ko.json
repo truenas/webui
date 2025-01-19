@@ -1,7 +1,11 @@
 {
   "": "",
   "Add Trusted Platform Module": "",
+  "Drive Account Type": "",
+  "Drive ID": "",
+  "Drives List": "",
   "Instance must be stopped to add TPM.": "",
+  "Microsoft OneDrive": "",
   "This device cannot be edited while the instance is running.": "",
   "This device is read-only and cannot be edited.": "",
   "Trusted Platform Module (TPM)": "",

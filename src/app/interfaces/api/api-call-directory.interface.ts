@@ -69,7 +69,7 @@ import {
   CloudSyncBucket,
   CloudSyncCredential,
   CloudSyncCredentialUpdate,
-  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
+  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult, CloudSyncOneDriveDrive, CloudSyncOneDriveParams,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import {
@@ -405,6 +405,7 @@ export interface ApiCallDirectory {
   'cloudsync.delete': { params: [id: number]; response: boolean };
   'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
+  'cloudsync.onedrive_list_drives': { params: [CloudSyncOneDriveParams]; response: CloudSyncOneDriveDrive[] };
   'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
