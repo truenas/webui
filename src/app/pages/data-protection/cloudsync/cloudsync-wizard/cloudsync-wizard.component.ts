@@ -70,7 +70,7 @@ export class CloudSyncWizardComponent {
     private errorHandler: ErrorHandlerService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => of(
-      this.whatAndWhen().form.dirty || this.cloudSyncProvider().isDirty(),
+      this.whatAndWhen()?.form?.dirty || this.cloudSyncProvider()?.isDirty(),
     ));
   }
 
