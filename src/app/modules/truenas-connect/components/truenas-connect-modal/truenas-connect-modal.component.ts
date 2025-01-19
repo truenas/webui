@@ -10,10 +10,12 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { Omit } from 'utility-types';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
+import { TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
@@ -77,22 +79,18 @@ export class TruenasConnectModalComponent {
   protected save(): void {
     const formValue = this.form.getRawValue();
     const payload = {
-      ips: this.tnc.config().ips,
-      enabled: true,
       tnc_base_url: formValue.tnc_base_url,
       account_service_base_url: formValue.account_service_base_url,
       leca_service_base_url: formValue.leca_service_base_url,
     };
-    this.tnc.enableService(payload)
-      .pipe(untilDestroyed(this))
-      .subscribe();
+    this.enableService(payload);
   }
 
-  protected enableService(): void {
-    const config = this.tnc.config();
+  protected enableService(data?: Omit<TruenasConnectUpdate, 'enabled' | 'ips'>): void {
+    const config = { ...this.tnc.config(), ...data };
     const payload = {
-      ips: config.ips,
       enabled: true,
+      ips: config.ips,
       tnc_base_url: config.tnc_base_url,
       account_service_base_url: config.account_service_base_url,
       leca_service_base_url: config.leca_service_base_url,
