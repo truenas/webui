@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
@@ -30,12 +30,15 @@ export class WidgetCpuTempComponent implements WidgetComponent {
 
   protected readonly cpuTemp$ = this.resources.realtimeUpdates$.pipe(
     map((update) => {
-      return update.fields.cpu?.temperature_celsius ? `${update.fields.cpu?.temperature_celsius} C°` : 'N/A';
+      return update.fields.cpu?.temperature_celsius
+        ? `${update.fields.cpu?.temperature_celsius} C°`
+        : this.translate.instant('N/A');
     }),
     toLoadingState(),
   );
 
   constructor(
+    private translate: TranslateService,
     private resources: WidgetResourcesService,
   ) {}
 }
