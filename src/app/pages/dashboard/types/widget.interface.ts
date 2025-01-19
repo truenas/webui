@@ -38,6 +38,7 @@ export enum WidgetType {
   SerialActive = 'serial-active',
   SerialPassive = 'serial-passive',
   CpuModelWidget = 'cpu-model-widget',
+  CpuTempWidget = 'cpu-temp-widget',
 }
 
 export enum SlotSize {

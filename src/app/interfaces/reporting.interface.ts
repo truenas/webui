@@ -22,7 +22,7 @@ export interface AllCpusUpdate {
   guest_nice: number;
   aggregated_usage: number;
   [key: `core${number}_usage`]: number;
-  temperature_celsius: number[];
+  temperature_celsius: number;
 }
 
 export interface DisksUpdate {
