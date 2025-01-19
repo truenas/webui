@@ -62,7 +62,12 @@ export class ApplicationsService {
   }
 
   getAllApps(): Observable<App[]> {
-    return this.api.call('app.query', [[], { extra: { retrieve_config: true } }]);
+    return this.api.call('app.query', [[], {
+      extra: {
+        retrieve_config: true,
+        host_ip: window.location.hostname,
+      },
+    }]);
   }
 
   getApp(name: string): Observable<App[]> {
@@ -70,6 +75,7 @@ export class ApplicationsService {
       extra: {
         include_app_schema: true,
         retrieve_config: true,
+        host_ip: window.location.hostname,
       },
     }]);
   }
