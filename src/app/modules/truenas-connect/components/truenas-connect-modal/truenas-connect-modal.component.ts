@@ -16,7 +16,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
 
 @UntilDestroy()
@@ -62,7 +61,6 @@ export class TruenasConnectModalComponent {
 
   constructor(
     @Inject(WINDOW) private window: Window,
-    private loader: AppLoaderService,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<TruenasConnectModalComponent>,
     public tnc: TruenasConnectService,
@@ -85,12 +83,9 @@ export class TruenasConnectModalComponent {
       account_service_base_url: formValue.account_service_base_url,
       leca_service_base_url: formValue.leca_service_base_url,
     };
-    this.loader.open();
     this.tnc.enableService(payload)
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-      });
+      .subscribe();
   }
 
   protected enableService(): void {
@@ -102,39 +97,27 @@ export class TruenasConnectModalComponent {
       account_service_base_url: config.account_service_base_url,
       leca_service_base_url: config.leca_service_base_url,
     };
-    this.loader.open();
     this.tnc.enableService(payload)
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-      });
+      .subscribe();
   }
 
   protected disableService(): void {
-    this.loader.open();
     this.tnc.disableService()
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-      });
+      .subscribe();
   }
 
   protected generateToken(): void {
-    this.loader.open();
     this.tnc.generateToken()
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-      });
+      .subscribe();
   }
 
   protected connect(): void {
-    this.loader.open();
     this.tnc.connect()
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.loader.close();
-      });
+      .subscribe();
   }
 
   protected cancel(): void {

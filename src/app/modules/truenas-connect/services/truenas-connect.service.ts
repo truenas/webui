@@ -1,12 +1,14 @@
 import { Inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import {
-  filter, Observable, switchMap, tap, timer,
+  filter, map, merge, Observable, switchMap, tap,
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,17 +16,23 @@ import { ApiService } from 'app/modules/websocket/api.service';
 export class TruenasConnectService {
   config = signal<TruenasConnectConfig>(null);
   config$ = toObservable(this.config);
-  constructor(@Inject(WINDOW) private window: Window, private api: ApiService) {
+  constructor(
+    @Inject(WINDOW) private window: Window,
+    private api: ApiService,
+    private errorHandler: ErrorHandlerService,
+    private loader: AppLoaderService,
+  ) {
     this.getConfig();
   }
 
   getConfig(): void {
-    timer(0, 5000)
-      .pipe(
-        switchMap(() => {
-          return this.api.call('tn_connect.config');
-        }),
-      )
+    merge(
+      this.api.call('tn_connect.config'),
+      this.api.subscribe('tn_connect.config').pipe(
+        map((event) => event.fields),
+        filter(Boolean),
+      ),
+    )
       .subscribe((config) => {
         this.config.set(config);
       });
@@ -40,11 +48,13 @@ export class TruenasConnectService {
     };
     return this.api.call('tn_connect.update', [payload])
       .pipe(
+        this.loader.withLoader(),
         switchMap(() => {
           return this.config$.pipe(
             filter((configRes: TruenasConnectConfig) => configRes.status === TruenasConnectStatus.Disabled),
           );
         }),
+        this.errorHandler.catchError(),
       );
   }
 
@@ -54,6 +64,7 @@ export class TruenasConnectService {
       enabled: true,
     }])
       .pipe(
+        this.loader.withLoader(),
         filter((config) => {
           return config.status === TruenasConnectStatus.ClaimTokenMissing;
         }),
@@ -67,6 +78,7 @@ export class TruenasConnectService {
             }),
           );
         }),
+        this.errorHandler.catchError(),
       );
   }
 
@@ -81,10 +93,16 @@ export class TruenasConnectService {
             filter((config: TruenasConnectConfig) => config.status === TruenasConnectStatus.Configured),
           );
         }),
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
       );
   }
 
   generateToken(): Observable<string> {
-    return this.api.call('tn_connect.generate_claim_token');
+    return this.api.call('tn_connect.generate_claim_token')
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+      );
   }
 }
