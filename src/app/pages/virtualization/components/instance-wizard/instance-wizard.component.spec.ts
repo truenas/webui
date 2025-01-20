@@ -348,6 +348,8 @@ describe('InstanceWizardComponent', () => {
       await form.fillForm({
         Name: 'new',
         'VM Image Options': 'Upload an ISO image',
+        'CPU Configuration': '2',
+        'Memory Size': '1 GiB',
       });
 
       const fakeImage = fakeFile('image.iso');
@@ -368,7 +370,7 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
-        cpu: '',
+        cpu: '2',
         instance_type: VirtualizationType.Vm,
         devices: [{
           dev_type: VirtualizationDeviceType.Disk,
@@ -376,9 +378,10 @@ describe('InstanceWizardComponent', () => {
           destination: null,
           boot_priority: 1,
         }],
-        memory: null,
-        environment: {},
+        enable_vnc: false,
         source_type: null,
+        memory: 1073741824,
+        vnc_port: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
