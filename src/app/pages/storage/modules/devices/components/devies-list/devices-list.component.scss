@@ -3,9 +3,6 @@
 
 @include tree-node-with-details-container;
 
-:host {
-  display: block;
-}
 
 .disk-tree {
   border-top: 2px solid var(--lines);
@@ -20,4 +17,12 @@
 
 .spacer-root {
   width: 30px;
+}
+
+.container {
+  height: 100%;
+}
+
+.table-container {
+  max-width: none;
 }

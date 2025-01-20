@@ -1,5 +1,13 @@
+:host {
+  display: block;
+}
+
 ix-disk-details-panel {
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+ix-devices-list {
+  height: 100%;
 }
