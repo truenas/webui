@@ -143,9 +143,9 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(
         this.form.dirty
-        || this.nameAndOptionsSection().form.dirty
-        || this.encryptionSection().form.dirty
-        || this.otherOptionsSection().form.dirty
+        || this.nameAndOptionsSection()?.form?.dirty
+        || this.encryptionSection()?.form?.dirty
+        || this.otherOptionsSection()?.form?.dirty
         || this.quotasSection()?.form.dirty,
       );
     });

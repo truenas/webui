@@ -4,7 +4,7 @@ import { subHours, subMinutes } from 'date-fns';
 import {
   Observable, Subject, catchError, combineLatestWith, debounceTime,
   filter,
-  forkJoin, map, of, repeat, shareReplay, switchMap, take, throttleTime, timer, startWith,
+  forkJoin, map, of, repeat, shareReplay, startWith, switchMap, take, throttleTime, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
