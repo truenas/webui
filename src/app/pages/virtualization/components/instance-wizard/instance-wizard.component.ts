@@ -131,7 +131,7 @@ export class InstanceWizardComponent {
 
   imageOptions$: Observable<Option<SelectImageType>[]> = of([
     { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: SelectImageType.Choose },
-    { label: this.translate.instant('Upload an iso image'), value: SelectImageType.Load },
+    { label: this.translate.instant('Upload an ISO image'), value: SelectImageType.Load },
   ]);
 
   gpuDevices$ = this.api.call(
@@ -149,6 +149,7 @@ export class InstanceWizardComponent {
     instance_type: [VirtualizationType.Container, Validators.required],
     image_type: [SelectImageType.Choose, [Validators.required]],
     image_file: [null as File[], [Validators.required]],
+    image_file_name: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
@@ -194,16 +195,25 @@ export class InstanceWizardComponent {
     private uploadService: UploadService,
   ) {
     this.form.controls.image_file.disable();
+    this.form.controls.image_file_name.disable();
     this.form.controls.image_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       if (type === SelectImageType.Choose) {
         this.form.controls.image_file.disable();
+        this.form.controls.image_file_name.disable();
         this.form.controls.image.enable();
       } else {
         this.form.controls.image_file.enable();
+        this.form.controls.image_file_name.enable();
         this.form.controls.image.disable();
       }
     });
+    this.form.controls.image_file.valueChanges.pipe(untilDestroyed(this)).subscribe((file) => {
+      this.form.controls.image_file_name.setValue(file?.[0] ? `${file[0].name.replace('.iso', '')}_${Date.now()}.iso` : '');
+    });
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      if (type === VirtualizationType.Container) {
+        this.form.controls.image_type.setValue(SelectImageType.Choose);
+      }
       this.instanceType.set(type);
     });
   }
@@ -294,7 +304,7 @@ export class InstanceWizardComponent {
       file: this.form.value.image_file[0],
       method: 'virt.volume.import_iso',
       params: [{
-        name: this.form.value.image_file[0].name,
+        name: this.form.value.image_file_name,
         upload_iso: true,
       }],
     });
@@ -352,7 +362,7 @@ export class InstanceWizardComponent {
       ? [
           {
             dev_type: VirtualizationDeviceType.Disk,
-            source: this.form.value.image_file[0].name,
+            source: this.form.value.image_file_name,
             destination: null as string,
             boot_priority: 1,
           },

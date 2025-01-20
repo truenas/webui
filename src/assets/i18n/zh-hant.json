@@ -3324,7 +3324,7 @@
   "Upgrades both controllers. Files are downloaded to the Active Controller and then transferred to the Standby Controller. The upgrade process starts concurrently on both TrueNAS Controllers. Continue with download?": "",
   "Upgrading Apps. Please check on the progress in Task Manager.": "",
   "Upload Chunk Size (MiB)": "",
-  "Upload an iso image": "",
+  "Upload an ISO image": "",
   "Uploading Image": "",
   "Use Signature Version 2": "",
   "Use Syslog Only": "",

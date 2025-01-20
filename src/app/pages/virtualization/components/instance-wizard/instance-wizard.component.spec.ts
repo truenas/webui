@@ -289,9 +289,14 @@ describe('InstanceWizardComponent', () => {
   });
 
   it('loads image and creates new instance when form is submitted', async () => {
+    global.Date.now = jest.fn(() => (new Date('2025-01-20 12:00:00')).getTime());
+
+    const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+    await instanceType.setValue('VM');
+
     await form.fillForm({
       Name: 'new',
-      'VM Image Options': 'Upload an iso image',
+      'VM Image Options': 'Upload an ISO image',
     });
 
     const fakeImage = fakeFile('image.iso');
@@ -304,7 +309,7 @@ describe('InstanceWizardComponent', () => {
       file: fakeImage,
       method: 'virt.volume.import_iso',
       params: [{
-        name: fakeImage.name,
+        name: 'image_1737367200000.iso',
         upload_iso: true,
       }],
     });
@@ -313,10 +318,10 @@ describe('InstanceWizardComponent', () => {
       name: 'new',
       autostart: true,
       cpu: '',
-      instance_type: VirtualizationType.Container,
+      instance_type: VirtualizationType.Vm,
       devices: [{
         dev_type: VirtualizationDeviceType.Disk,
-        source: 'image.iso',
+        source: 'image_1737367200000.iso',
         destination: null,
         boot_priority: 1,
       }],

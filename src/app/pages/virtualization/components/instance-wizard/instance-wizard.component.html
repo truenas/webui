@@ -24,12 +24,14 @@
         [showLabels]="true"
       ></ix-icon-group>
 
-      <ix-radio-group
-        formControlName="image_type"
-        [label]="'VM Image Options' | translate"
-        [required]="true"
-        [options]="imageOptions$"
-      ></ix-radio-group>
+      @if (isVm()) {
+        <ix-radio-group
+          formControlName="image_type"
+          [label]="'VM Image Options' | translate"
+          [required]="true"
+          [options]="imageOptions$"
+        ></ix-radio-group>
+      }
 
       @if (form.value.image_type === SelectImageType.Choose) {
         <div class="image-field">
@@ -51,11 +53,16 @@
       } @else {
         <ix-file-input
           formControlName="image_file"
-          acceptedFiles=".img,.iso"
+          acceptedFiles=".iso"
           [label]="'Image' | translate"
           [multiple]="false"
           [required]="true"
         ></ix-file-input>
+        <ix-input
+          formControlName="image_file_name"
+          [label]="'Image Name' | translate"
+          [required]="true"
+        ></ix-input>
       }
 
     </ix-form-section>
