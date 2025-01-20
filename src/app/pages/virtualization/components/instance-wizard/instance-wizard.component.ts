@@ -16,6 +16,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
   filter,
   map, Observable, of,
+  switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -37,18 +38,21 @@ import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
+  VirtualizationInstance,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxIconGroupComponent } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonly-badge/readonly-badge.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -63,6 +67,12 @@ import {
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UploadService } from 'app/services/upload.service';
+
+enum SelectImageType {
+  Load = 'LOAD',
+  Choose = 'CHOOSE',
+}
 
 @UntilDestroy()
 @Component({
@@ -79,6 +89,8 @@ import { FilesystemService } from 'app/services/filesystem.service';
     IxListComponent,
     IxListItemComponent,
     IxSelectComponent,
+    IxRadioGroupComponent,
+    IxFileInputComponent,
     MatButton,
     NgxSkeletonLoaderModule,
     PageHeaderComponent,
@@ -104,6 +116,8 @@ export class InstanceWizardComponent {
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
+  readonly SelectImageType = SelectImageType;
+
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
   macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
 
@@ -113,6 +127,11 @@ export class InstanceWizardComponent {
       value: choice.product_id.toString(),
     }))),
   );
+
+  imageOptions$: Observable<Option<SelectImageType>[]> = of([
+    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: SelectImageType.Choose },
+    { label: this.translate.instant('Upload an ISO image'), value: SelectImageType.Load },
+  ]);
 
   gpuDevices$ = this.api.call(
     'virt.device.gpu_choices',
@@ -127,6 +146,9 @@ export class InstanceWizardComponent {
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
+    image_type: [SelectImageType.Choose, [Validators.required]],
+    image_file: [null as File[], [Validators.required]],
+    image_file_name: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
@@ -179,8 +201,28 @@ export class InstanceWizardComponent {
     protected formatter: IxFormatterService,
     private authService: AuthService,
     private filesystem: FilesystemService,
+    private uploadService: UploadService,
   ) {
+    this.form.controls.image_file.disable();
+    this.form.controls.image_file_name.disable();
+    this.form.controls.image_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      if (type === SelectImageType.Choose) {
+        this.form.controls.image_file.disable();
+        this.form.controls.image_file_name.disable();
+        this.form.controls.image.enable();
+      } else {
+        this.form.controls.image_file.enable();
+        this.form.controls.image_file_name.enable();
+        this.form.controls.image.disable();
+      }
+    });
+    this.form.controls.image_file.valueChanges.pipe(untilDestroyed(this)).subscribe((file) => {
+      this.form.controls.image_file_name.setValue(file?.[0] ? `${file[0].name.replace('.iso', '')}_${Date.now()}.iso` : '');
+    });
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      if (type === VirtualizationType.Container) {
+        this.form.controls.image_type.setValue(SelectImageType.Choose);
+      }
       this.instanceType.set(type);
       if (type === VirtualizationType.Container) {
         this.form.controls.cpu.setValidators(cpuValidator());
@@ -241,22 +283,18 @@ export class InstanceWizardComponent {
   }
 
   protected onSubmit(): void {
-    const payload = this.getPayload();
-    const job$ = this.api.job('virt.instance.create', [payload]);
-
-    this.dialogService
-      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: ({ result }) => {
-          this.snackbar.success(this.translate.instant('Instance created'));
-          this.router.navigate(['/virtualization', 'view', result?.id]);
-        },
-        error: (error: unknown) => {
-          this.formErrorHandler.handleValidationErrors(error, this.form);
-        },
-      });
+    (this.form.value.image_type === SelectImageType.Load ? this.importIsoImage() : of(null)).pipe(
+      switchMap(() => this.createInstance()),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (instance) => {
+        this.snackbar.success(this.translate.instant('Instance created'));
+        this.router.navigate(['/virtualization', 'view', instance?.id]);
+      },
+      error: (error: unknown) => {
+        this.formErrorHandler.handleValidationErrors(error, this.form);
+      },
+    });
   }
 
   addEnvironmentVariable(): void {
@@ -272,10 +310,34 @@ export class InstanceWizardComponent {
     this.form.controls.environment_variables.removeAt(index);
   }
 
+  private createInstance(): Observable<VirtualizationInstance> {
+    const payload = this.getPayload();
+    const job$ = this.api.job('virt.instance.create', [payload]);
+
+    return this.dialogService
+      .jobDialog(job$, { title: this.translate.instant('Creating Instance') })
+      .afterClosed().pipe(map((job) => job.result));
+  }
+
+  private importIsoImage(): Observable<string> {
+    const job$ = this.uploadService.uploadAsJob({
+      file: this.form.value.image_file[0],
+      method: 'virt.volume.import_iso',
+      params: [{
+        name: this.form.value.image_file_name,
+        upload_iso: true,
+      }],
+    });
+
+    return this.dialogService
+      .jobDialog(job$, { title: this.translate.instant('Uploading Image') })
+      .afterClosed().pipe(map((job) => job.result?.name));
+  }
+
   private getPayload(): CreateVirtualizationInstance {
     const devices = this.getDevicesPayload();
 
-    return {
+    const payload = {
       devices,
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
@@ -287,6 +349,13 @@ export class InstanceWizardComponent {
       image: this.form.controls.image.value,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
+
+    if (this.form.value.image_type === SelectImageType.Load) {
+      delete payload.image;
+      payload.source_type = null;
+    }
+
+    return payload;
   }
 
   private getNicDevicesOptions(nicType: VirtualizationNicType): Observable<Option[]> {
@@ -311,6 +380,17 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
+    const iso = this.form.value.image_type === SelectImageType.Load
+      ? [
+          {
+            dev_type: VirtualizationDeviceType.Disk,
+            source: this.form.value.image_file_name,
+            destination: null as string,
+            boot_priority: 1,
+          },
+        ]
+      : [];
+
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
@@ -370,6 +450,7 @@ export class InstanceWizardComponent {
     }
 
     return [
+      ...iso,
       ...disks,
       ...proxies,
       ...macVlanNics,
