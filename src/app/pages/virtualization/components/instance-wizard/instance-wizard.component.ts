@@ -107,7 +107,6 @@ enum SelectImageType {
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly VirtualizationNicType = VirtualizationNicType;
   protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
@@ -117,7 +116,6 @@ export class InstanceWizardComponent {
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
 
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
   readonly SelectImageType = SelectImageType;
 
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
@@ -183,6 +181,14 @@ export class InstanceWizardComponent {
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
+  readonly directoryNodeProvider = computed(() => {
+    if (this.isVm()) {
+      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
+    }
+
+    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+  });
+
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
@@ -218,6 +224,13 @@ export class InstanceWizardComponent {
         this.form.controls.image_type.setValue(SelectImageType.Choose);
       }
       this.instanceType.set(type);
+      if (type === VirtualizationType.Container) {
+        this.form.controls.cpu.setValidators(cpuValidator());
+        this.form.controls.memory.clearValidators();
+      } else {
+        this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
+        this.form.controls.memory.setValidators([Validators.required]);
+      }
     });
   }
 
@@ -257,6 +270,10 @@ export class InstanceWizardComponent {
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
+
+    if (this.isVm()) {
+      control.removeControl('destination');
+    }
 
     this.form.controls.disks.push(control);
   }
@@ -330,7 +347,7 @@ export class InstanceWizardComponent {
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
-      environment: this.environmentVariablesPayload,
+      ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
     if (this.form.value.image_type === SelectImageType.Load) {
@@ -377,7 +394,7 @@ export class InstanceWizardComponent {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
-      destination: proxy.destination,
+      ...(this.isContainer() ? { destination: proxy.destination } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];

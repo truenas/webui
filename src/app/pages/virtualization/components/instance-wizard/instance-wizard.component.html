@@ -73,7 +73,8 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [hint]="containersHelptext.cpuHint | translate"
+        [required]="isVm()"
+        [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : null"
       ></ix-input>
 
       <ix-input
@@ -81,10 +82,12 @@
         [label]="'Memory Size' | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [hint]="containersHelptext.memoryHint | translate"
+        [required]="isVm()"
+        [hint]="isContainer() ? (containersHelptext.memoryHint | translate) : null"
       ></ix-input>
     </ix-form-section>
 
+    @if (isContainer()) {
     <ix-form-section
       [label]="'Environment' | translate"
       [help]="'Environment' | translate"
@@ -118,6 +121,7 @@
         }
       </ix-list>
     </ix-form-section>
+    }
 
     <ix-form-section
       [label]="'Disks' | translate"
@@ -138,17 +142,20 @@
           >
             <ix-explorer
               formControlName="source"
+              root="/"
               [label]="'Source' | translate"
               [required]="true"
-              [nodeProvider]="directoryNodeProvider"
+              [nodeProvider]="directoryNodeProvider()"
               [canCreateDataset]="true"
             ></ix-explorer>
 
-            <ix-input
-              formControlName="destination"
-              [label]="'Destination' | translate"
-              [required]="true"
-            ></ix-input>
+            @if (isContainer()) {
+              <ix-input
+                formControlName="destination"
+                [label]="'Destination' | translate"
+                [required]="true"
+              ></ix-input>
+            }
           </ix-list-item>
         }
       </ix-list>

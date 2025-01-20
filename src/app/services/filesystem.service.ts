@@ -17,7 +17,23 @@ export interface ProviderOptions {
   showHiddenFiles?: boolean;
   includeSnapshots?: boolean;
   datasetsAndZvols?: boolean;
+  zvolsOnly?: boolean;
 }
+
+const roolZvolNode = {
+  path: '/dev/zvol',
+  name: '/dev/zvol',
+  hasChildren: true,
+  type: ExplorerNodeType.Directory,
+} as ExplorerNodeData;
+
+const roolDatasetNode = {
+  path: '/mnt',
+  name: '/mnt',
+  hasChildren: true,
+  type: ExplorerNodeType.Directory,
+};
+
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
   constructor(
@@ -33,27 +49,16 @@ export class FilesystemService {
       showHiddenFiles: false,
       includeSnapshots: true,
       datasetsAndZvols: false,
+      zvolsOnly: false,
       ...providerOptions,
     };
 
     return (node: TreeNode<ExplorerNodeData>) => {
-      if (options.datasetsAndZvols) {
-        if (node.data.path.trim() === '/') {
-          return of([
-            {
-              path: '/mnt',
-              name: '/mnt',
-              hasChildren: true,
-              type: ExplorerNodeType.Directory,
-            },
-            {
-              path: '/dev/zvol',
-              name: '/dev/zvol',
-              hasChildren: true,
-              type: ExplorerNodeType.Directory,
-            },
-          ] as ExplorerNodeData[]);
-        }
+      if (options.datasetsAndZvols && node.data.path.trim() === '/') {
+        return of([roolDatasetNode, roolZvolNode]);
+      }
+      if (options.zvolsOnly && node.data.path.trim() === '/') {
+        return of([roolZvolNode]);
       }
       const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
@@ -71,11 +76,10 @@ export class FilesystemService {
       };
 
       return this.api.call('filesystem.listdir', [node.data.path, typeFilter, queryOptions]).pipe(
-
         map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
-            if ((!options.datasetsAndZvols && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
+            if ((!(options.datasetsAndZvols || options.zvolsOnly) && file.type === FileType.Symlink) || !file.hasOwnProperty('name')) {
               return;
             }
 
