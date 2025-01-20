@@ -1,0 +1,86 @@
+<h1 mat-dialog-title class="title">
+  <ix-icon name="ix-truenas-connect-logo-color"></ix-icon>
+  <span class="truenas">TrueNAS &nbsp;</span>
+  <span>CONNECT</span>
+</h1>
+
+<mat-dialog-content>
+  @if(tnc.config().status !== TruenasConnectStatus.Disabled) {
+  <span class="warning">{{
+    'In order to update the form, you need to disable the service first'
+      | translate
+  }}</span>
+  }
+  <form [formGroup]="form">
+    <ix-input
+      formControlName="tnc_base_url"
+      [label]="'TNC Base Url' | translate"
+      [tooltip]="tooltips.tnc_base_url | translate"
+      [required]="true"
+    ></ix-input>
+    <ix-input
+      formControlName="account_service_base_url"
+      [label]="'Account Service Base Url' | translate"
+      [tooltip]="tooltips.account_service_base_url | translate"
+      [required]="true"
+    ></ix-input>
+    <ix-input
+      formControlName="leca_service_base_url"
+      [label]="'Leca Service Base Url' | translate"
+      [tooltip]="tooltips.leca_service_base_url | translate"
+      [required]="true"
+    ></ix-input>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <div>
+    @if(tnc.config().status !== TruenasConnectStatus.Disabled) {
+    <button
+      mat-button
+      color="warn"
+      ixTest="tnc-disable"
+      (click)="disableService()"
+    >
+      {{ 'Disable Service' | translate }}
+    </button>
+    } @else {
+    <button
+      mat-button
+      ixTest="tnc-enable"
+      [disabled]="hasChange()"
+      (click)="enableService()"
+    >
+      {{ 'Enable Service' | translate }}
+    </button>
+    }
+  </div>
+
+  <div>
+    @if(tnc.config().status === TruenasConnectStatus.ClaimTokenMissing) {
+    <button ixTest="tnc-generate-token" mat-button (click)="generateToken()">
+      {{ 'Generate Token' | translate }}
+    </button>
+    }
+    <button mat-button ixTest="tnc-form-cancel" (click)="cancel()">
+      {{ 'Cancel' | translate }}
+    </button>
+
+    @if (tnc.config().status ===
+    TruenasConnectStatus.RegistrationFinalizationWaiting) {
+    <button ixTest="tnc-connect" mat-button color="primary" (click)="connect()">
+      {{ 'Connect' | translate }}
+    </button>
+    } @else {
+    <button
+      mat-button
+      ixTest="tnc-connect"
+      color="primary"
+      [disabled]="!hasChange() || form.invalid"
+      (click)="save()"
+    >
+      {{ 'Save' | translate }}
+    </button>
+    }
+  </div>
+</mat-dialog-actions>

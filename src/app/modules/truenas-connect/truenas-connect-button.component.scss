@@ -1,0 +1,14 @@
+:host {
+  margin-left: 4px;
+  margin-right: -4px;
+  margin-top: 2px;
+  opacity: 0.9;
+
+  ::ng-deep {
+    .mat-badge-small .mat-badge-content {
+      height: 8px;
+      margin-bottom: -10px;
+      width: 8px;
+    }
+  }
+}
