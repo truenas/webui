@@ -27,6 +27,8 @@ export interface CloudSyncBucket {
 }
 
 export interface CloudSyncOneDriveDrive {
+  name: string;
+  description: string;
   drive_type: OneDriveType;
   drive_id: string;
 }

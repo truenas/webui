@@ -130,10 +130,18 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
       .subscribe((drives) => {
         this.drives = drives;
         this.drives$ = of(
-          drives.map((drive) => ({
-            label: `${drive.drive_type} - ${drive.drive_id}`,
-            value: drive.drive_id,
-          })),
+          drives.map((drive) => {
+            let label = [
+              drive.name,
+              drive.description,
+            ].filter(Boolean).join(' - ');
+
+            if (!label) {
+              label = `${drive.drive_type} - ${drive.drive_id}`;
+            }
+
+            return { label, value: drive.drive_id };
+          }),
         );
 
         this.cdr.detectChanges();

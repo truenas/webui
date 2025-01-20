@@ -32,10 +32,14 @@ describe('OneDriveProviderFormComponent', () => {
           {
             drive_type: OneDriveType.Business,
             drive_id: 'business1',
+            name: 'ODCMetadataArchive',
+            description: 'ODC Archived Metadata',
           },
           {
             drive_type: OneDriveType.DocumentLibrary,
             drive_id: 'library1',
+            name: 'OneDrive',
+            description: '',
           },
         ]),
       ]),
@@ -91,8 +95,8 @@ describe('OneDriveProviderFormComponent', () => {
     const drivesSelect = await form.getControl('Drives List') as IxSelectHarness;
     expect(await drivesSelect.getOptionLabels()).toEqual([
       '--',
-      'BUSINESS - business1',
-      'DOCUMENT_LIBRARY - library1',
+      'ODCMetadataArchive - ODC Archived Metadata',
+      'OneDrive',
     ]);
   });
 
@@ -107,7 +111,7 @@ describe('OneDriveProviderFormComponent', () => {
     });
 
     const drivesSelect = await form.getControl('Drives List') as IxSelectHarness;
-    await drivesSelect.setValue('BUSINESS - business1');
+    await drivesSelect.setValue('ODCMetadataArchive - ODC Archived Metadata');
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({
