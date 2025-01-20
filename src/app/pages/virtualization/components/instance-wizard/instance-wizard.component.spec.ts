@@ -199,6 +199,8 @@ describe('InstanceWizardComponent', () => {
       image: 'almalinux/8/cloud',
       memory: GiB,
       environment: {},
+      enable_vnc: false,
+      vnc_port: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -252,6 +254,9 @@ describe('InstanceWizardComponent', () => {
     const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
     await gpuDeviceCheckbox.check();
 
+    await form.fillForm({ 'Enable VNC': true });
+    await form.fillForm({ 'VNC Port': 9000 });
+
     const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
     await createButton.click();
 
@@ -280,6 +285,8 @@ describe('InstanceWizardComponent', () => {
       image: 'almalinux/8/cloud',
       memory: GiB,
       environment: {},
+      enable_vnc: true,
+      vnc_port: 9000,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -317,6 +324,8 @@ describe('InstanceWizardComponent', () => {
       memory: GiB,
       environment: {},
       instance_type: 'CONTAINER',
+      enable_vnc: false,
+      vnc_port: null,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
