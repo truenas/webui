@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, effect, input,
 } from '@angular/core';
@@ -18,6 +17,7 @@ import {
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
@@ -40,7 +40,7 @@ import {
 @Component({
   selector: 'ix-widget-sys-info-passive',
   templateUrl: './widget-sys-info-passive.component.html',
-  styleUrls: ['../common/widget-sys-info.scss'],
+  styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -58,7 +58,6 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
-    TitleCasePipe,
   ],
 })
 export class WidgetSysInfoPassiveComponent {
@@ -73,6 +72,7 @@ export class WidgetSysInfoPassiveComponent {
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
+  protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(

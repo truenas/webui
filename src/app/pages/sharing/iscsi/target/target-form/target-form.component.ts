@@ -72,8 +72,8 @@ export class TargetFormComponent implements OnInit {
     return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
   }
 
-  get isFibreChannelMode(): boolean {
-    return this.form.value.mode === IscsiTargetMode.Fc;
+  get showPortControls(): boolean {
+    return this.form.value.mode === IscsiTargetMode.Fc || this.form.value.mode === IscsiTargetMode.Both;
   }
 
   get title(): string {
@@ -204,9 +204,10 @@ export class TargetFormComponent implements OnInit {
 
     request$.pipe(
       switchMap((target) => {
-        if (!this.isFibreChannelMode) {
+        if (!this.showPortControls) {
           return of(target);
         }
+
         return this.fcService.linkFiberChannelToTarget(
           target.id,
           this.fcForm.value.port,

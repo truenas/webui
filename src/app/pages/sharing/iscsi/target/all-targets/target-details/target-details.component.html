@@ -5,8 +5,12 @@
     }
 
     @if (hasFibreCards()) {
+      <ix-fibre-channel-port-card
+        [port]="targetPort()"
+        [isLoading]="isLoading()"
+      ></ix-fibre-channel-port-card>
+
       @if (targetPort()) {
-        <ix-fibre-channel-port-card [port]="targetPort()"></ix-fibre-channel-port-card>
         <ix-fibre-channel-connections-card [connections]="connections()"></ix-fibre-channel-connections-card>
       }
     }
