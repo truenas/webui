@@ -2,7 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { VirtualizationStatus } from 'app/enums/virtualization.enum';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
   InstanceToolsComponent,
@@ -13,6 +14,14 @@ describe('InstanceToolsComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: InstanceToolsComponent,
+    providers: [
+      mockWindow({
+        location: {
+          hostname: 'truenas.com',
+        },
+        open: jest.fn(),
+      }),
+    ],
   });
 
   beforeEach(() => {
@@ -21,6 +30,9 @@ describe('InstanceToolsComponent', () => {
         instance: {
           id: 'my-instance',
           status: VirtualizationStatus.Running,
+          type: VirtualizationType.Vm,
+          vnc_enabled: true,
+          vnc_port: 5900,
         } as VirtualizationInstance,
       },
     });
@@ -44,6 +56,41 @@ describe('InstanceToolsComponent', () => {
 
       const shellLink = await loader.getHarness(MatButtonHarness.with({ text: 'Shell' }));
       expect(await shellLink.isDisabled()).toBe(true);
+    });
+  });
+
+  describe('vnc', () => {
+    it('shows a link to  VNC', async () => {
+      const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
+      expect(vncLink).toBeTruthy();
+
+      expect(await (await vncLink.host()).getAttribute('href')).toBe('vnc://truenas.com:5900');
+    });
+
+    it('shows vnc link as disabled when instance is not running', async () => {
+      spectator.setInput('instance', {
+        id: 'my-instance',
+        status: VirtualizationStatus.Stopped,
+        type: VirtualizationType.Vm,
+        vnc_enabled: true,
+        vnc_port: 5900,
+      } as VirtualizationInstance);
+
+      const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
+      expect(await vncLink.isDisabled()).toBe(true);
+    });
+
+    it('hides vnc link when vnc is not enabled', async () => {
+      spectator.setInput('instance', {
+        id: 'my-instance',
+        status: VirtualizationStatus.Stopped,
+        type: VirtualizationType.Vm,
+        vnc_enabled: false,
+        vnc_port: 5900,
+      } as VirtualizationInstance);
+
+      const vncLink = await loader.getHarnessOrNull(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
+      expect(vncLink).toBeNull();
     });
   });
 });

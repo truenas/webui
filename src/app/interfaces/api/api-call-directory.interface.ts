@@ -239,6 +239,7 @@ import {
   TrueCommandConfig, TrueCommandUpdateResponse,
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
+import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
@@ -816,6 +817,13 @@ export interface ApiCallDirectory {
   // Truecommand
   'truecommand.config': { params: void; response: TrueCommandConfig };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
+
+  // Truenas Connect
+  'tn_connect.config': { params: void; response: TruenasConnectConfig };
+  'tn_connect.ip_choices': { params: void; response: Record<string, string> };
+  'tn_connect.update': { params: [TruenasConnectUpdate]; response: TruenasConnectConfig };
+  'tn_connect.generate_claim_token': { params: void; response: string };
+  'tn_connect.get_registration_uri': { params: void; response: string };
 
   // TrueNAS
   'truenas.accept_eula': { params: void; response: void };

@@ -17,6 +17,7 @@ export const helptextTopbar = {
     toggle_collapse: T('Toggle Collapse'),
     tc_connect: T('Connecting to TrueCommand'),
     tc_status: T('Status of TrueCommand'),
+    tnc_status: T('Status of Truenas Connect'),
     update: T('Update in Progress'),
     reboot_info: T('Reboot Required'),
     pending_network_changes: T('Pending Network Changes'),

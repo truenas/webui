@@ -61,6 +61,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
@@ -94,7 +95,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly VirtualizationNicType = VirtualizationNicType;
   protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
@@ -103,8 +103,6 @@ export class InstanceWizardComponent {
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
-
-  readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider();
 
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
   macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
@@ -130,6 +128,8 @@ export class InstanceWizardComponent {
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    enable_vnc: [false],
+    vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
     tpm: [false],
@@ -159,6 +159,14 @@ export class InstanceWizardComponent {
   protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
   protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
+  readonly directoryNodeProvider = computed(() => {
+    if (this.isVm()) {
+      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
+    }
+
+    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+  });
+
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
@@ -174,6 +182,13 @@ export class InstanceWizardComponent {
   ) {
     this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       this.instanceType.set(type);
+      if (type === VirtualizationType.Container) {
+        this.form.controls.cpu.setValidators(cpuValidator());
+        this.form.controls.memory.clearValidators();
+      } else {
+        this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
+        this.form.controls.memory.setValidators([Validators.required]);
+      }
     });
   }
 
@@ -213,6 +228,10 @@ export class InstanceWizardComponent {
       source: ['', Validators.required],
       destination: ['', Validators.required],
     });
+
+    if (this.isVm()) {
+      control.removeControl('destination');
+    }
 
     this.form.controls.disks.push(control);
   }
@@ -260,11 +279,13 @@ export class InstanceWizardComponent {
       devices,
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
+      enable_vnc: this.isVm ? this.form.value.enable_vnc : false,
+      vnc_port: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
       image: this.form.controls.image.value,
-      environment: this.environmentVariablesPayload,
+      ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
   }
 
@@ -293,7 +314,7 @@ export class InstanceWizardComponent {
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
-      destination: proxy.destination,
+      ...(this.isContainer() ? { destination: proxy.destination } : null),
     }));
 
     const usbDevices: { dev_type: VirtualizationDeviceType; product_id: string }[] = [];
