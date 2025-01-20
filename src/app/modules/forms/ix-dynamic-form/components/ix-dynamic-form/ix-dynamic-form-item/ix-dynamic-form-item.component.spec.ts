@@ -5,6 +5,7 @@ import {
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockInstance } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import {
   DynamicFormSchemaInput,
@@ -135,6 +136,9 @@ describe('IxDynamicFormItemComponent', () => {
     component: IxDynamicFormItemComponent,
     imports: [
       ReactiveFormsModule,
+    ],
+    providers: [
+      mockAuth(),
     ],
   });
 

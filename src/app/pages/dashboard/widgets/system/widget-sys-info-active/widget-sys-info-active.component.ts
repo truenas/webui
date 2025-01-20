@@ -66,8 +66,8 @@ export class WidgetSysInfoActiveComponent {
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(
-    filter((state) => !state.isLoading),
     map((state) => state.value),
+    filter((value) => !!value),
   ));
 
   startTime = Date.now();

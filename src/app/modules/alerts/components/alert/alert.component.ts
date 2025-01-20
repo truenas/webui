@@ -14,7 +14,8 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { Role } from 'app/enums/role.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
+import { AlertLinkService } from 'app/modules/alerts/services/alert-link.service';
+import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -80,12 +81,15 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   constructor(
     private store$: Store<AppState>,
     private translate: TranslateService,
+    protected alertLink: AlertLinkService,
   ) {}
 
   readonly levelLabel = computed(() => {
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
     return this.translate.instant(levelLabel);
   });
+
+  readonly link = computed(() => this.alertLink.getLink(this.alert().klass));
 
   ngOnChanges(): void {
     this.setStyles();
@@ -106,6 +110,11 @@ export class AlertComponent implements OnChanges, AfterViewInit {
 
   onReopen(): void {
     this.store$.dispatch(reopenAlertPressed({ id: this.alert().id }));
+  }
+
+  openLink(): void {
+    this.alertLink.openLink(this.alert().klass);
+    this.store$.dispatch(alertPanelClosed());
   }
 
   private setStyles(): void {

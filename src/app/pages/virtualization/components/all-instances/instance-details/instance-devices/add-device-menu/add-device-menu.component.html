@@ -37,5 +37,18 @@
         </button>
       }
     }
+
+    @if (canAddTpm()) {
+      <h4 class="menu-header">TPM</h4>
+      <button
+        mat-menu-item
+        [ixTest]="['add-tpm']"
+        [matTooltip]="canAddTpmNow() ? '' : ('Instance must be stopped to add TPM.' | translate)"
+        [disabled]="!canAddTpmNow()"
+        (click)="addTpm()"
+      >
+        {{ 'Add Trusted Platform Module' | translate }}
+      </button>
+    }
   </mat-menu>
 }

@@ -68,7 +68,7 @@ export class EmailFormComponent implements OnInit {
   sendMethodControl = new FormControl(MailSendMethod.Smtp, { nonNullable: true });
 
   form = this.formBuilder.group({
-    fromemail: ['', [Validators.required, emailValidator()]],
+    fromemail: ['', [emailValidator()]],
     fromname: [''],
     outgoingserver: [''],
     port: [null as number | null, [
@@ -164,14 +164,16 @@ export class EmailFormComponent implements OnInit {
     return this.sendMethodControl.value === MailSendMethod.Smtp;
   }
 
+  get isFromEmailRequired(): boolean {
+    return this.isSmtp || this.sendMethodControl.value === MailSendMethod.Outlook;
+  }
+
   get hasOauthAuthorization(): boolean {
     return !!this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
-    return this.isSmtp
-      ? this.form.valid
-      : this.hasOauthAuthorization;
+    return !this.isSmtp ? this.hasOauthAuthorization && this.form.valid : this.form.valid;
   }
 
   ngOnInit(): void {
@@ -271,8 +273,8 @@ export class EmailFormComponent implements OnInit {
       }
     } else {
       update = {
-        fromemail: '',
-        fromname: '',
+        fromemail: this.form.value.fromemail,
+        fromname: this.form.value.fromname,
         oauth: {
           ...this.oauthCredentials as MailOauthConfig,
           provider: this.sendMethodControl.value,

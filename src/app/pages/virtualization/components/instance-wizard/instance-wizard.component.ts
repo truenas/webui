@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -152,6 +152,7 @@ export class InstanceWizardComponent {
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
+    tpm: [false],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -173,6 +174,10 @@ export class InstanceWizardComponent {
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
   }
+
+  protected readonly instanceType = signal<VirtualizationType>(this.form.value.instance_type);
+  protected readonly isContainer = computed(() => this.instanceType() === VirtualizationType.Container);
+  protected readonly isVm = computed(() => this.instanceType() === VirtualizationType.Vm);
 
   constructor(
     private api: ApiService,
@@ -197,6 +202,9 @@ export class InstanceWizardComponent {
         this.form.controls.image_file.enable();
         this.form.controls.image.disable();
       }
+    });
+    this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      this.instanceType.set(type);
     });
   }
 
@@ -402,6 +410,13 @@ export class InstanceWizardComponent {
       dest_port: proxy.dest_port,
     }));
 
+    const tpmDevice = [];
+    if (this.isVm() && this.form.value.tpm) {
+      tpmDevice.push({
+        dev_type: VirtualizationDeviceType.Tpm,
+      });
+    }
+
     return [
       ...iso,
       ...disks,
@@ -410,6 +425,7 @@ export class InstanceWizardComponent {
       ...bridgedNics,
       ...usbDevices,
       ...gpuDevices,
+      ...tpmDevice,
     ] as VirtualizationDevice[];
   }
 

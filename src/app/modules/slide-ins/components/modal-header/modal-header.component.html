@@ -15,7 +15,7 @@
     </button>
   }
   <h3 class="ix-form-title">
-    {{ title() | translate }}
+    {{ title() ? (title() | translate) : '' }}
     @if (requiredRoles().length && !(hasRequiredRoles | async)) {
       <ix-readonly-badge></ix-readonly-badge>
     }

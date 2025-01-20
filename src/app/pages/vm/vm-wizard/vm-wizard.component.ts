@@ -128,13 +128,13 @@ export class VmWizardComponent implements OnInit {
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(
-        this.osStep().form.dirty
-        || this.cpuAndMemoryStep().form.dirty
-        || this.diskStep().form.dirty
-        || this.networkInterfaceStep().form.dirty
-        || this.installationMediaStep().form.dirty
-        || this.installationMediaStep().form.dirty
-        || this.gpuStep().form.dirty,
+        this.osStep()?.form?.dirty
+        || this.cpuAndMemoryStep()?.form?.dirty
+        || this.diskStep()?.form?.dirty
+        || this.networkInterfaceStep()?.form?.dirty
+        || this.installationMediaStep()?.form?.dirty
+        || this.installationMediaStep()?.form?.dirty
+        || this.gpuStep()?.form?.dirty,
       );
     });
   }

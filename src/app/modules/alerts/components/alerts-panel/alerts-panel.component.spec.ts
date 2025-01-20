@@ -5,7 +5,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NavigateAndInteractDirective } from 'app/directives/navigate-and-interact/navigate-and-interact.directive';
+import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -75,7 +75,7 @@ describe('AlertsPanelComponent', () => {
         },
       }),
       EffectsModule.forRoot([AlertEffects]),
-      NavigateAndInteractDirective,
+      NavigateAndHighlightDirective,
     ],
     declarations: [
       MockComponent(AlertComponent),

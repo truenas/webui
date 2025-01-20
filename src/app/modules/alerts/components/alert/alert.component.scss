@@ -117,3 +117,13 @@
     outline-offset: 1px;
   }
 }
+
+.links {
+  display: flex;
+  gap: 18px;
+
+  > a {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

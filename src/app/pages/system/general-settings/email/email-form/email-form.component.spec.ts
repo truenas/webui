@@ -159,6 +159,8 @@ describe('EmailFormComponent', () => {
 
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
       await form.fillForm({
+        'From Email': 'newfrom@ixsystems.com',
+        'From Name': 'Johnny',
         'Send Mail Method': 'GMail OAuth',
       });
 
@@ -169,8 +171,8 @@ describe('EmailFormComponent', () => {
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
-        fromemail: '',
-        fromname: '',
+        fromemail: 'newfrom@ixsystems.com',
+        fromname: 'Johnny',
         oauth: {
           client_id: 'new_client_id',
           client_secret: 'new_secret',
@@ -202,8 +204,8 @@ describe('EmailFormComponent', () => {
             text: 'This is a test message from TrueNAS SCALE.',
           },
           {
-            fromemail: '',
-            fromname: '',
+            fromemail: 'from@ixsystems.com',
+            fromname: 'John Smith',
             oauth: {
               client_id: 'new_client_id',
               client_secret: 'new_secret',
@@ -239,6 +241,16 @@ describe('EmailFormComponent', () => {
       );
     });
 
+    it('disables Save button when no From Email is provided for Outlook OAuth', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+        'From Email': '',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
       await form.fillForm({
         'Send Mail Method': 'Outlook OAuth',
@@ -253,6 +265,8 @@ describe('EmailFormComponent', () => {
 
     it('saves Outlook Oauth config when user authorizes via Outlook and saves the form', async () => {
       await form.fillForm({
+        'From Email': 'newfrom@ixsystems.com',
+        'From Name': 'Johnny',
         'Send Mail Method': 'Outlook OAuth',
       });
 
@@ -263,8 +277,8 @@ describe('EmailFormComponent', () => {
       await saveButton.click();
 
       expect(api.call).toHaveBeenCalledWith('mail.update', [{
-        fromemail: '',
-        fromname: '',
+        fromemail: 'newfrom@ixsystems.com',
+        fromname: 'Johnny',
         outgoingserver: 'smtp-mail.outlook.com',
         port: 587,
         security: 'TLS',
@@ -299,8 +313,8 @@ describe('EmailFormComponent', () => {
             text: 'This is a test message from TrueNAS SCALE.',
           },
           {
-            fromemail: '',
-            fromname: '',
+            fromemail: 'from@ixsystems.com',
+            fromname: 'John Smith',
             outgoingserver: 'smtp-mail.outlook.com',
             port: 587,
             security: 'TLS',
@@ -426,6 +440,8 @@ describe('EmailFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
+        'From Email': 'from@ixsystems.com',
+        'From Name': 'John Smith',
         'Send Mail Method': 'GMail OAuth',
       });
       expect(spectator.query('.oauth-message')).toHaveText('Gmail credentials have been applied.');
@@ -458,6 +474,8 @@ describe('EmailFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
+        'From Email': 'from@ixsystems.com',
+        'From Name': 'John Smith',
         'Send Mail Method': 'Outlook OAuth',
       });
       expect(spectator.query('.oauth-message')).toHaveText('Outlook credentials have been applied.');

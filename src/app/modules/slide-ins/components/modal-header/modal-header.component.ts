@@ -36,7 +36,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
   ],
 })
 export class ModalHeaderComponent implements AfterViewInit {
-  readonly title = input<string>();
+  readonly title = input<string>('');
   readonly loading = input<boolean>();
   readonly disableClose = input(false);
   readonly requiredRoles = input<Role[]>([]);

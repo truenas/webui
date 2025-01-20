@@ -87,14 +87,10 @@ export class KerberosKeytabsFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingKerberosKeytab) {
-      this.setKerberosKeytabsForEdit();
+      this.form.patchValue({
+        name: this.editingKerberosKeytab.name,
+      });
     }
-  }
-
-  setKerberosKeytabsForEdit(): void {
-    this.form.patchValue({
-      name: this.editingKerberosKeytab.name,
-    });
   }
 
   onSubmit(): void {

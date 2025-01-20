@@ -20,6 +20,7 @@
     mat-button
     color="primary"
     ixTest="add-snapshot"
+    [ixUiSearch]="searchableElements.elements.add"
     (click)="doAdd()"
   >
     {{ 'Add' | translate }}
@@ -51,6 +52,7 @@
 
 <ix-table
   class="table"
+  [ixUiSearch]="searchableElements.elements.list"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
 >

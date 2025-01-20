@@ -9,7 +9,7 @@ import { FocusService } from 'app/services/focus.service';
 
 @Injectable({ providedIn: 'root' })
 export class AppLoaderService {
-  dialogRef: MatDialogRef<AppLoaderComponent> | null;
+  dialogRef: MatDialogRef<AppLoaderComponent> | null = null;
 
   constructor(
     private matDialog: MatDialog,

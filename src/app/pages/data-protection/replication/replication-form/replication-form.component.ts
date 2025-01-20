@@ -111,11 +111,11 @@ export class ReplicationFormComponent implements OnInit {
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
       return of(
-        this.generalSection().form.dirty
-        || this.transportSection().form.dirty
-        || this.sourceSection().form.dirty
-        || this.targetSection().form.dirty
-        || this.scheduleSection().form.dirty,
+        this.generalSection()?.form?.dirty
+        || this.transportSection()?.form?.dirty
+        || this.sourceSection()?.form?.dirty
+        || this.targetSection()?.form?.dirty
+        || this.scheduleSection()?.form?.dirty,
       );
     });
   }
@@ -236,7 +236,7 @@ export class ReplicationFormComponent implements OnInit {
   private get canCountSnapshots(): boolean {
     const formValues = this.getPayload();
     return this.isPush
-      && formValues.source_datasets.length
+      && Boolean(formValues.source_datasets.length)
       && (Boolean(formValues.name_regex) || formValues.also_include_naming_schema?.length > 0);
   }
 
