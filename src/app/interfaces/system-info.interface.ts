@@ -46,7 +46,6 @@ export interface SystemLicense {
 
 export enum ContractType {
   Gold = 'GOLD',
-  Best = 'BEST',
   SilverInternational = 'SILVERINTERNATIONAL',
   Legacy = 'LEGACY',
   Standard = 'STANDARD',
@@ -59,7 +58,6 @@ export enum ContractType {
 export function getLabelForContractType(contractType: ContractType): string {
   const contractTypeToLabelsMap: Record<ContractType, string> = {
     [ContractType.Gold]: 'Gold',
-    [ContractType.Best]: 'Best',
     [ContractType.Legacy]: 'Legacy',
     [ContractType.Standard]: 'Standard',
     [ContractType.Bronze]: 'Bronze',
