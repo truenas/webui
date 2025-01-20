@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component,
   computed,
-  input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TinyColor } from '@ctrl/tinycolor';
@@ -22,9 +21,6 @@ import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-reso
   imports: [NgxSkeletonLoaderModule, BaseChartDirective],
 })
 export class CpuCoreBarComponent {
-  hideTemperature = input<boolean>(false);
-  hideUsage = input<boolean>(false);
-
   protected cpuData = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.cpu),
   ));
@@ -32,7 +28,11 @@ export class CpuCoreBarComponent {
   protected isLoading = computed(() => !this.cpuData());
   protected coreCount = computed(() => {
     const cpus = Object.keys(this.cpuData())
-      .map(Number)
+      .filter((key) => key.startsWith('core'))
+      .map((key) => {
+        const splitCoreTitle = key.split('_')[0];
+        return Number(splitCoreTitle.replace('core', ''));
+      })
       .filter((key) => !Number.isNaN(key));
 
     return Math.max(...cpus) + 1;
@@ -115,19 +115,13 @@ export class CpuCoreBarComponent {
 
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];
-    const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.coreCount(); i++) {
-      const usage = parseInt(cpuData[i]?.usage?.toFixed(1) || '0');
-      const temperature = parseInt(cpuData.temperature_celsius?.[i]?.toFixed(0) || '0');
+      const usage = parseInt(cpuData[`core${i}_usage`]?.toFixed(1) || '0');
 
       usageColumn.push(usage);
-      temperatureColumn.push(temperature);
     }
 
-    return [
-      this.hideUsage() ? [] : usageColumn,
-      this.hideTemperature() ? [] : temperatureColumn,
-    ];
+    return [usageColumn];
   }
 }

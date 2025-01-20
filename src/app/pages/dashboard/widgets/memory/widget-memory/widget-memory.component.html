@@ -24,7 +24,7 @@
               [theme]="{ height: 42, background: 'var(--alt-bg2)', opacity: 0.25 }"
             ></ngx-skeleton-loader>
           } @else {
-            {{ formatUnit(memory().total) }}
+            {{ formatUnit(memory().physical_memory_total) }}
             <span class="units">GiB</span>
           }
         </h2>

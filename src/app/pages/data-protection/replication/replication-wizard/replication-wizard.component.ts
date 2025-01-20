@@ -97,7 +97,7 @@ export class ReplicationWizardComponent {
     private authService: AuthService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.whatAndWhere().form.dirty || this.when().form.dirty);
+      return of(this.whatAndWhere()?.form?.dirty || this.when()?.form?.dirty);
     });
   }
 
