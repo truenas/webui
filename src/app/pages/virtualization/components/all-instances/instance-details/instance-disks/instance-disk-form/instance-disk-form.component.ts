@@ -7,8 +7,8 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
-import { VirtualizationDisk } from 'app/interfaces/virtualization.interface';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationDisk, VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -22,7 +22,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 interface InstanceDiskFormOptions {
-  instanceId: string;
+  instance: VirtualizationInstance;
   disk: VirtualizationDisk | undefined;
 }
 
@@ -50,7 +50,7 @@ export class InstanceDiskFormComponent implements OnInit {
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
   protected readonly isLoading = signal(false);
-  protected readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: false });
+  protected readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
@@ -62,6 +62,10 @@ export class InstanceDiskFormComponent implements OnInit {
   protected title = computed(() => {
     return !this.isNew() ? this.translate.instant('Edit Disk') : this.translate.instant('Add Disk');
   });
+
+  protected get instance(): VirtualizationInstance {
+    return this.slideInRef.getData().instance;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -78,7 +82,7 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const disk = this.slideInRef.getData().disk;
+    const disk = this.slideInRef.getData()?.disk;
     if (disk) {
       this.existingDisk.set(disk);
       this.form.patchValue({
@@ -86,14 +90,14 @@ export class InstanceDiskFormComponent implements OnInit {
         destination: disk.destination || '',
       });
     }
+    if (this.instance.type === VirtualizationType.Vm) {
+      this.form.controls.destination.disable();
+    }
   }
 
   onSubmit(): void {
     this.isLoading.set(true);
-
-    const request$ = this.prepareRequest();
-
-    request$
+    this.prepareRequest()
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
@@ -112,8 +116,6 @@ export class InstanceDiskFormComponent implements OnInit {
   }
 
   private prepareRequest(): Observable<unknown> {
-    const instanceId = this.slideInRef.getData().instanceId;
-
     const payload = {
       ...this.form.value,
       dev_type: VirtualizationDeviceType.Disk,
@@ -121,10 +123,10 @@ export class InstanceDiskFormComponent implements OnInit {
 
     const existingDisk = this.existingDisk();
     return existingDisk
-      ? this.api.call('virt.instance.device_update', [instanceId, {
+      ? this.api.call('virt.instance.device_update', [this.instance.id, {
         ...payload,
         name: existingDisk.name,
       }])
-      : this.api.call('virt.instance.device_add', [instanceId, payload]);
+      : this.api.call('virt.instance.device_add', [this.instance.id, payload]);
   }
 }

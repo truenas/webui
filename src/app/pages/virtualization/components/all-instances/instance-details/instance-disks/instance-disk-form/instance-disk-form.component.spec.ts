@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationDeviceType } from 'app/enums/virtualization.enum';
+import { VirtualizationDeviceType, VirtualizationType } from 'app/enums/virtualization.enum';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,7 +36,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instanceId: 'my-instance',
+              instance: { id: 'my-instance', type: VirtualizationType.Container },
             }),
             close: jest.fn(),
             requireConfirmationWhen: jest.fn(),
@@ -80,7 +80,7 @@ describe('InstanceDiskFormComponent', () => {
         providers: [
           mockProvider(SlideInRef, {
             getData: () => ({
-              instanceId: 'my-instance',
+              instance: { id: 'my-instance', type: VirtualizationType.Container },
               disk: {
                 name: 'existing-disk',
                 source: '/mnt/from',
