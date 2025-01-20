@@ -10,6 +10,36 @@
   </a>
 </ix-page-header>
 
+@let selectedNode = selectedNode$ | async;
 @if (poolId()) {
-  <ix-devices-list [poolId]="poolId()"></ix-devices-list>
+  <ix-master-detail-view
+    #masterDetailView="masterDetailViewContext"
+    [selectedItem]="selectedNode"
+  >
+    <ix-devices-list
+      master 
+      [poolId]="poolId()" 
+      (showDetails)="viewDetails($event)"
+    ></ix-devices-list>
+    <ng-container detail>
+      <div
+        class="details-container"
+        ixDetailsHeight
+        [class.details-container-mobile]="showMobileDetails()"
+      >
+        @if (selectedNode) {
+          <ix-disk-details-panel
+            [topologyItem]="selectedNode | cast"
+            [topologyParentItem]="selectedParentNode$ | async | cast"
+            [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
+            [poolId]="poolId()"
+            [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
+            [topologyCategory]="selectedTopologyCategory$ | async"
+            [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
+            (closeMobileDetails)="closeMobileDetails()"
+          ></ix-disk-details-panel>
+        }
+      </div>
+    </ng-container>
+  </ix-master-detail-view>
 }

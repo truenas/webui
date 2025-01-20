@@ -46,7 +46,7 @@
             <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
             <ix-topology-item-node
               [topologyItem]="topologyItem | cast"
-              [disk]="getDisk(topologyItem)"
+              [disk]="devicesStore.getDisk(topologyItem)"
             ></ix-topology-item-node>
             <ix-icon
               name="mdi-chevron-right"
@@ -110,7 +110,7 @@
 
               <ix-topology-item-node
                 [topologyItem]="vdev | cast"
-                [disk]="getDisk(vdev.children[0])"
+                [disk]="devicesStore.getDisk(vdev.children[0])"
               ></ix-topology-item-node>
 
               <ix-icon
@@ -129,22 +129,5 @@
       </div>
     </div>
   </div>
-  <div
-    class="details-container"
-    ixDetailsHeight
-    [class.details-container-mobile]="showMobileDetails"
-  >
-    @if (selectedNode) {
-      <ix-disk-details-panel
-        [topologyItem]="selectedNode | cast"
-        [topologyParentItem]="selectedParentNode$ | async | cast"
-        [disk]="getDisk(selectedNode.children[0] || selectedNode)"
-        [poolId]="poolId()"
-        [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
-        [topologyCategory]="selectedTopologyCategory$ | async"
-        [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
-        (closeMobileDetails)="closeMobileDetails()"
-      ></ix-disk-details-panel>
-    }
-  </div>
+  
 </div>
