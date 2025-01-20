@@ -1,13 +1,13 @@
 <div
-  [matTooltip]="device().readonly ? ('Device is readonly and cannot be removed.' | translate) : ''"
-  [class.disabled]="device().readonly"
+  [matTooltip]="canManage() ? '' : manageRestrictedExplanation()"
+  [class.disabled]="!canManage()"
 >
   <button
     mat-icon-button
     type="button"
     [ixTest]="['actions-for', device().description]"
     [matMenuTriggerFor]="menu"
-    [disabled]="device().readonly"
+    [disabled]="!canManage()"
     [attr.aria-label]="'Actions for {device}' | translate: { device: device().description }"
   >
     <ix-icon name="more_vert"></ix-icon>

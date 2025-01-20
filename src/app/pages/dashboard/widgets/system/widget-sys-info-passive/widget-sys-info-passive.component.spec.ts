@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemLicense, SystemInfo, ContractType } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -37,7 +37,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       version: 'TrueNAS-SCALE-24.10.0-MASTER-20240301-233006',
       codename: Codename.ElectricEel,
       license: {
-        contract_type: 'BEST',
+        contract_type: ContractType.Gold,
         contract_end: {
           $type: 'date',
           $value: '2025-01-01',
@@ -133,7 +133,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-M40-HA',
         'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
-        'Support License: Best contract, expires 2025-01-01',
+        'Support License: Gold Contract,  Expires on 2025-01-01',
         'System Serial: AA-00002',
         'Hostname: test-hostname-b',
         'Uptime: 1 minute 17 seconds as of 10:34',

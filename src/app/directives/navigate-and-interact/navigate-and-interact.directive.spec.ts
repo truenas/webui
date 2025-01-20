@@ -1,22 +1,22 @@
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
-import { NavigateAndInteractDirective } from './navigate-and-interact.directive';
+import { NavigateAndHighlightDirective } from 'app/directives/navigate-and-interact/navigate-and-highlight.directive';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 
 describe('NavigateAndInteractDirective', () => {
-  let spectator: SpectatorDirective<NavigateAndInteractDirective>;
+  let spectator: SpectatorDirective<NavigateAndHighlightDirective>;
   const createDirective = createDirectiveFactory({
-    directive: NavigateAndInteractDirective,
+    directive: NavigateAndHighlightDirective,
     providers: [
-      mockProvider(NavigateAndInteractService),
+      mockProvider(NavigateAndHighlightService),
     ],
   });
 
   beforeEach(() => {
-    spectator = createDirective('<div ixNavigateAndInteract [navigateRoute]="[\'/some-path\']" navigateHash="testHash"></div>');
+    spectator = createDirective('<div ixNavigateAndHighlight [navigateRoute]="[\'/some-path\']" navigateHash="testHash"></div>');
   });
 
   it('calls NavigateAndInteractService.navigateAndInteract when element is clicked', () => {
     spectator.dispatchMouseEvent(spectator.element, 'click');
-    expect(spectator.inject(NavigateAndInteractService).navigateAndInteract).toHaveBeenCalledWith(['/some-path'], 'testHash');
+    expect(spectator.inject(NavigateAndHighlightService).navigateAndHighlight).toHaveBeenCalledWith(['/some-path'], 'testHash');
   });
 });

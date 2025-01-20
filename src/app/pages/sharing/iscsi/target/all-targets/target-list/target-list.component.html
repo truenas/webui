@@ -27,7 +27,15 @@
         [dataProvider]="dataProvider()"
         [isLoading]="!!(dataProvider().isLoading$ | async)"
         (expanded)="expanded($event)"
-      ></tbody>
+      >
+        <ng-template
+          ix-table-cell
+          [columnIndex]="3"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-icon name="mdi-chevron-right"></ix-icon>
+        </ng-template>
+      </tbody>
     </ix-table>
     <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </mat-card-content>

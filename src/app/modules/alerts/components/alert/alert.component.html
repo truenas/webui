@@ -39,27 +39,38 @@
     }
   </div>
 
-  @if (alert().dismissed) {
-    <a
-      *ixRequiresRoles="requiredRoles"
-      tabindex="0"
-      role="button"
-      class="action-link"
-      [ixTest]="[alert().key, 'reopen']"
-      (click)="onReopen()"
-    >
-      {{ 'Re-Open' | translate }}
-    </a>
-  } @else {
-    <a
-      *ixRequiresRoles="requiredRoles"
-      tabindex="0"
-      role="button"
-      class="action-link"
-      [ixTest]="[alert().key, 'dismiss']"
-      (click)="onDismiss()"
-    >
-      {{ 'Dismiss' | translate }}
-    </a>
-  }
+  <div class="links">
+    @if (alert().dismissed) {
+      <a
+        *ixRequiresRoles="requiredRoles"
+        tabindex="0"
+        role="button"
+        class="action-link"
+        [ixTest]="[alert().key, 'reopen']"
+        (click)="onReopen()"
+      >
+        {{ 'Re-Open' | translate }}
+      </a>
+    } @else {
+      <a
+        *ixRequiresRoles="requiredRoles"
+        tabindex="0"
+        role="button"
+        class="action-link"
+        [ixTest]="[alert().key, 'dismiss']"
+        (click)="onDismiss()"
+      >
+        {{ 'Dismiss' | translate }}
+      </a>
+    }
+
+    @if (link()) {
+      <a
+        [ixTest]="[alert().key, 'open-link']"
+        (click)="openLink()"
+      >
+        {{ link().label | translate }}
+      </a>
+    }
+  </div>
 </div>

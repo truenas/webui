@@ -113,16 +113,24 @@
 
           @if (systemInfo()?.license) {
             <mat-list-item>
-              <strong>{{ 'Support License' | translate }}:</strong>
-                <span>
-                  {{
-                    '{license} contract, expires {date}' | translate:
-                    {
-                      license: systemInfo().license.contract_type | titlecase,
-                      date: systemInfo().license.contract_end.$value,
-                    }
-                  }}
-                </span>
+              <div class="license-info">
+                <div class="title">{{ 'Support License' | translate }}:</div>
+                <div class="info">
+                  <div>
+                    {{
+                      '{license} Contract,' | translate:
+                      {
+                        license: getLabelForContractType(systemInfo().license.contract_type),
+                      }
+                    }}
+                  </div>
+                  <div>
+                    {{
+                      'Expires on {date}' | translate: { date: systemInfo().license.contract_end.$value }
+                    }}
+                  </div>
+                </div>
+              </div>
             </mat-list-item>
           }
 

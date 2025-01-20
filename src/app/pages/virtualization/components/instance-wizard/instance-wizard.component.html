@@ -40,6 +40,7 @@
           (click)="onBrowseImages()"
         >{{ 'Browse Catalog' | translate }}</button>
       </div>
+
     </ix-form-section>
 
     <ix-form-section
@@ -265,6 +266,33 @@
           [label]="'GPU Devices' | translate"
           [options]="gpuDevices$"
         ></ix-checkbox-list>
+      </ix-form-section>
+    }
+
+    @if (isVm()) {
+      <ix-form-section
+        [label]="'VNC' | translate"
+        [help]="'VNC' | translate"
+      >
+        <ix-checkbox
+          formControlName="enable_vnc"
+          [label]="'Enable VNC' | translate"
+        ></ix-checkbox>
+
+        @if (form.value.enable_vnc) {
+          <ix-input
+            formControlName="vnc_port"
+            type="number"
+            [label]="'VNC Port' | translate"
+          ></ix-input>
+        }
+      </ix-form-section>
+
+      <ix-form-section label="TPM">
+        <ix-checkbox
+          formControlName="tpm"
+          [label]="'Add Trusted Platform Module' | translate"
+        ></ix-checkbox>
       </ix-form-section>
     }
 

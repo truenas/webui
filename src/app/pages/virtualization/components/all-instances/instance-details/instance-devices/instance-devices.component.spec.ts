@@ -26,6 +26,9 @@ describe('InstanceDevicesComponent', () => {
       description: 'Matrox G200eW',
     },
     {
+      dev_type: VirtualizationDeviceType.Tpm,
+    },
+    {
       name: 'gpu1',
     } as VirtualizationProxy,
   ];
@@ -56,14 +59,15 @@ describe('InstanceDevicesComponent', () => {
   it('shows a list of USB or GPU devices', () => {
     const deviceRows = spectator.queryAll('.device');
 
-    expect(deviceRows).toHaveLength(2);
+    expect(deviceRows).toHaveLength(3);
     expect(deviceRows[0]).toHaveText('USB Microphone');
     expect(deviceRows[1]).toHaveText('Matrox G200eW');
+    expect(deviceRows[2]).toHaveText('Trusted Platform Module');
   });
 
   it('renders a menu to delete the device', () => {
     const actionsMenu = spectator.queryAll(DeviceActionsMenuComponent);
-    expect(actionsMenu).toHaveLength(2);
+    expect(actionsMenu).toHaveLength(3);
     expect(actionsMenu[0].device).toBe(devices[0]);
   });
 

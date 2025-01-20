@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { take } from 'rxjs';
+import { finalize, take } from 'rxjs';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -35,6 +35,8 @@ export class TargetDetailsComponent {
   readonly target = input.required<IscsiTarget>();
 
   targetPort = signal<FibreChannelPort | null>(null);
+  isLoading = signal<boolean>(false);
+
   connections = toSignal(this.api.call('fcport.status'));
 
   protected hasIscsiCards = computed(() => [
@@ -61,9 +63,12 @@ export class TargetDetailsComponent {
   }
 
   private getPortByTargetId(id: number): void {
+    this.isLoading.set(true);
+
     this.api.call('fcport.query', [[['target.id', '=', id]]])
       .pipe(
         take(1),
+        finalize(() => this.isLoading.set(false)),
         untilDestroyed(this),
       )
       .subscribe((ports) => {

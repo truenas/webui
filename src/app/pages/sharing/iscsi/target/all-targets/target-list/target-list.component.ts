@@ -16,12 +16,15 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
+import { templateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-body/ix-table-body.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
+import { IxTableCellDirective } from 'app/modules/ix-table/directives/ix-table-cell.directive';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
@@ -35,6 +38,7 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
 @Component({
   selector: 'ix-iscsi-target-list',
   templateUrl: './target-list.component.html',
+  styleUrls: ['./target-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -53,7 +57,9 @@ import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/
     IxTablePagerComponent,
     TranslateModule,
     AsyncPipe,
+    IxIconComponent,
     UiSearchDirective,
+    IxTableCellDirective,
   ],
 })
 export class TargetListComponent implements OnInit {
@@ -88,6 +94,9 @@ export class TargetListComponent implements OnInit {
       getValue: (row) => {
         return this.translate.instant(iscsiTargetModeNames.get(row.mode) || row.mode) || '-';
       },
+    }),
+    templateColumn({
+      cssClass: 'view-details-column',
     }),
   ], {
     uniqueRowTag: (row) => 'iscsi-target-' + row.name,

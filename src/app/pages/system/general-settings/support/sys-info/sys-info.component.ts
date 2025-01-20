@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 
@@ -16,4 +17,6 @@ export class SysInfoComponent {
   readonly hasLicense = input<boolean>();
   readonly licenseInfo = input<LicenseInfoInSupport>();
   readonly systemInfo = input.required<SystemInfoInSupport>();
+
+  protected readonly getLabelForContractType = getLabelForContractType;
 }

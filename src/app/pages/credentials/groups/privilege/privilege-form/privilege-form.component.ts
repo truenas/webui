@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, finalize, map, of, switchMap,
+  Observable, combineLatest, finalize, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role, roleNames } from 'app/enums/role.enum';
@@ -30,6 +30,7 @@ import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-hea
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
@@ -63,7 +64,6 @@ export class PrivilegeFormComponent implements OnInit {
 
   protected isLoading = false;
   protected localGroups: Group[] = [];
-  protected dsGroups: Group[] = [];
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -118,7 +118,6 @@ export class PrivilegeFormComponent implements OnInit {
   readonly dsGroupsProvider: ChipsProvider = (query: string) => {
     return this.api.call('group.query', [[['local', '=', false]]]).pipe(
       map((groups) => {
-        this.dsGroups = groups;
         const chips = groups.map((group) => group.group);
         return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
       }),
@@ -133,6 +132,7 @@ export class PrivilegeFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private userService: UserService,
     public slideInRef: SlideInRef<Privilege | undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -163,21 +163,20 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values: PrivilegeUpdate = {
-      ...this.form.value,
-      local_groups: this.localGroupsUids,
-      ds_groups: this.dsGroupsUids,
-    };
-
     this.isLoading = true;
-    let request$: Observable<Privilege>;
-    if (this.existingPrivilege) {
-      request$ = this.api.call('privilege.update', [this.existingPrivilege.id, values]);
-    } else {
-      request$ = this.api.call('privilege.create', [values]);
-    }
 
-    request$.pipe(
+    this.dsGroupsUids$.pipe(
+      switchMap((dsGroups) => {
+        const values: PrivilegeUpdate = {
+          ...this.form.value,
+          local_groups: this.localGroupsUids,
+          ds_groups: dsGroups,
+        };
+
+        return this.existingPrivilege
+          ? this.api.call('privilege.update', [this.existingPrivilege.id, values])
+          : this.api.call('privilege.create', [values]);
+      }),
       switchMap(() => this.store$.pipe(waitForGeneralConfig)),
       switchMap((generalConfig) => {
         if (this.isEnterprise() && !generalConfig.ds_auth) {
@@ -222,9 +221,11 @@ export class PrivilegeFormComponent implements OnInit {
       .map((group) => group.gid);
   }
 
-  private get dsGroupsUids(): number[] {
-    return this.dsGroups
-      .filter((group) => this.form.value.ds_groups.includes(group.group))
-      .map((group) => group.gid);
+  private get dsGroupsUids$(): Observable<number[]> {
+    return this.form.value.ds_groups.length
+      ? combineLatest(
+        this.form.value.ds_groups.map((groupName) => this.userService.getGroupByName(groupName)),
+      ).pipe(map((groups) => groups.map((group) => group.gr_gid)))
+      : of([]);
   }
 }

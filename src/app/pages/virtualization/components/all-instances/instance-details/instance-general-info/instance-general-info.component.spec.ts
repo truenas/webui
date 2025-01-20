@@ -31,7 +31,7 @@ import { VirtualizationInstancesStore } from 'app/pages/virtualization/stores/vi
 const instance = {
   id: 'demo',
   name: 'Demo',
-  type: VirtualizationType.Container,
+  type: VirtualizationType.Vm,
   status: VirtualizationStatus.Running,
   cpu: '525',
   autostart: true,
@@ -48,6 +48,8 @@ const instance = {
   },
   aliases: {} as VirtualizationAlias,
   raw: null,
+  vnc_enabled: true,
+  vnc_port: 9000,
 } as VirtualizationInstance;
 
 describe('InstanceGeneralInfoComponent', () => {

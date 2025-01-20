@@ -5,6 +5,7 @@ import { MockDirective } from 'ng-mocks';
 import { BaseChartDirective } from 'ng2-charts';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -24,13 +25,13 @@ describe('WidgetMemoryComponent', () => {
         {
           realtimeUpdates$: of({
             fields: {
-              virtual_memory: {
-                total: 16 * GiB,
-                free: 9 * GiB,
-              },
-              zfs: {
+              memory: {
+                physical_memory_total: 16 * GiB,
+                physical_memory_available: 9 * GiB,
                 arc_size: 0.2 * GiB,
-              },
+                arc_available_memory: GiB,
+                arc_free_memory: 0.8 * GiB,
+              } as MemoryUpdate,
             },
           }),
         },
