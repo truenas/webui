@@ -1,4 +1,3 @@
-import { TitleCasePipe } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
@@ -13,6 +12,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map } from 'rxjs';
+import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -33,7 +33,7 @@ import {
 @Component({
   selector: 'ix-widget-sys-info-active',
   templateUrl: './widget-sys-info-active.component.html',
-  styleUrls: ['../common/widget-sys-info.scss'],
+  styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -52,7 +52,6 @@ import {
     CopyButtonComponent,
     TranslateModule,
     UptimePipe,
-    TitleCasePipe,
   ],
 })
 export class WidgetSysInfoActiveComponent {
@@ -63,6 +62,7 @@ export class WidgetSysInfoActiveComponent {
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
+  protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(

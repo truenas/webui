@@ -23,12 +23,11 @@ describe('CpuChartGaugeComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                0: { usage: 6 },
-                1: { usage: 30 },
-                2: { usage: 70 },
-                3: { usage: 9 },
-                average: { usage: 75 },
-                temperature_celsius: [31, 83],
+                core0_usage: 6,
+                core1_usage: 30,
+                core2_usage: 70,
+                core3_usage: 9,
+                aggregated_usage: 75,
               },
             },
           }),

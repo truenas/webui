@@ -33,7 +33,7 @@ export interface SystemLicense {
   addhw_detail: unknown[];
   contract_end: ApiDate;
   contract_start: ApiDate;
-  contract_type: string;
+  contract_type: ContractType;
   customer_name: string;
   expired: boolean;
   features: LicenseFeature[];
@@ -42,4 +42,29 @@ export interface SystemLicense {
   model: string;
   system_serial: string;
   system_serial_ha: string;
+}
+
+export enum ContractType {
+  Gold = 'GOLD',
+  SilverInternational = 'SILVERINTERNATIONAL',
+  Legacy = 'LEGACY',
+  Standard = 'STANDARD',
+  Bronze = 'BRONZE',
+  Silver = 'SILVER',
+  FreeNasCertified = 'FREENASCERTIFIED',
+  FreeNasMini = 'FREENASMINI',
+}
+
+export function getLabelForContractType(contractType: ContractType): string {
+  const contractTypeToLabelsMap: Record<ContractType, string> = {
+    [ContractType.Gold]: 'Gold',
+    [ContractType.Legacy]: 'Legacy',
+    [ContractType.Standard]: 'Standard',
+    [ContractType.Bronze]: 'Bronze',
+    [ContractType.Silver]: 'Silver',
+    [ContractType.FreeNasCertified]: 'Free NAS Certified',
+    [ContractType.FreeNasMini]: 'Free NAS Mini',
+    [ContractType.SilverInternational]: 'Silver International',
+  };
+  return contractTypeToLabelsMap[contractType] || contractType;
 }

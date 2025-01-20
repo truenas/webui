@@ -11,7 +11,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -80,7 +80,7 @@ describe('ServicesComponent', () => {
         open: jest.fn(() => of()),
       }),
       mockProvider(IscsiService),
-      mockProvider(NavigateAndInteractService),
+      mockProvider(NavigateAndHighlightService),
       provideMockStore({
         initialState,
         selectors: [{

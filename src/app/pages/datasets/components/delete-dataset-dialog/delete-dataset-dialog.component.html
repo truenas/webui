@@ -65,9 +65,7 @@
     }
   </div>
 
-  <p>
-    {{ 'Enter {value} below to confirm.' | translate: { value: dataset.name } }}
-  </p>
+  <p [innerHtml]="deleteDatasetHelptext.prompt | translate: { value: dataset.name }"></p>
 
   <ix-input formControlName="confirmDatasetName"></ix-input>
   <ix-checkbox

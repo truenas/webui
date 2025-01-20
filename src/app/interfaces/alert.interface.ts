@@ -1,3 +1,4 @@
+import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
@@ -9,7 +10,7 @@ export interface Alert {
   formatted: string;
   id: string;
   key: string;
-  klass: string;
+  klass: AlertClassName;
   last_occurrence: ApiTimestamp;
   level: AlertLevel;
   mail: string;
@@ -27,7 +28,7 @@ export interface AlertCategory {
 }
 
 export interface AlertClass {
-  id: string;
+  id: AlertClassName;
   level: AlertLevel;
   title: string;
   proactive_support?: boolean;
