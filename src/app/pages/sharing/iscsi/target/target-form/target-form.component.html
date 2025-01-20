@@ -54,7 +54,7 @@
               }
             </ix-list>
 
-            @if (isFibreChannelMode) {
+            @if (showPortControls) {
               <ix-fc-ports-controls [form]="fcForm" [isEdit]="!isNew"></ix-fc-ports-controls>
             }
           </ix-fieldset>
@@ -118,7 +118,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || (isFibreChannelMode && fcForm.invalid) || isLoading || isAsyncValidatorPending"
+          [disabled]="form.invalid || (showPortControls && fcForm.invalid) || isLoading || isAsyncValidatorPending"
         >
           {{ 'Save' | translate }}
         </button>

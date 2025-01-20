@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -10,9 +11,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { timer } from 'rxjs';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-card-expand-collapse',
   templateUrl: './card-expand-collapse.component.html',
@@ -25,7 +29,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     TestDirective,
   ],
 })
-export class CardExpandCollapseComponent implements OnChanges {
+export class CardExpandCollapseComponent implements OnChanges, AfterViewInit {
   section = viewChild.required<ElementRef<HTMLElement>>('section');
   maxHeight = input<number>(250);
   height = signal<number>(this.maxHeight());
@@ -46,6 +50,10 @@ export class CardExpandCollapseComponent implements OnChanges {
   ngOnChanges(): void {
     this.isCollapsed.set(true);
     this.section().nativeElement.style.maxHeight = `${this.maxHeight()}px`;
+  }
+
+  ngAfterViewInit(): void {
+    timer(0).pipe(untilDestroyed(this)).subscribe(() => this.setHeight());
   }
 
   changeCollapsed(): void {

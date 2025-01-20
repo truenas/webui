@@ -88,8 +88,8 @@ describe('TargetListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Alias'],
-      ['test-iscsi-target', 'test-iscsi-target-alias'],
+      ['Name', 'Alias', ''],
+      ['test-iscsi-target', 'test-iscsi-target-alias', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -100,8 +100,8 @@ describe('TargetListComponent', () => {
     spectator.setInput('targets', targets);
 
     const expectedRows = [
-      ['Name', 'Alias', 'Mode'],
-      ['test-iscsi-target', 'test-iscsi-target-alias', 'Fibre Channel'],
+      ['Name', 'Alias', 'Mode', ''],
+      ['test-iscsi-target', 'test-iscsi-target-alias', 'Fibre Channel', ''],
     ];
 
     const cells = await table.getCellTexts();

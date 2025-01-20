@@ -1,8 +1,7 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, input,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import {
   MatCard, MatCardContent, MatCardHeader, MatCardTitle,
@@ -12,7 +11,9 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { filter, switchMap, take } from 'rxjs';
+import {
+  filter, finalize, forkJoin, switchMap, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -50,10 +51,9 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class AssociatedExtentsCardComponent {
   readonly target = input.required<IscsiTarget>();
 
+  readonly isLoadingExtents = signal<boolean>(false);
   readonly targetExtents = signal<IscsiTargetExtent[]>([]);
-  readonly isLoadingExtents = signal<boolean>(true);
-
-  readonly extents = toSignal(this.iscsiService.getExtents(), { initialValue: [] });
+  readonly extents = signal<IscsiExtent[]>([]);
 
   readonly unassociatedExtents = computed(() => {
     return this.extents().filter((extent) => {
@@ -84,7 +84,11 @@ export class AssociatedExtentsCardComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {
-    this.getTargetExtents();
+    effect(() => {
+      if (this.target()) {
+        this.getTargetExtents();
+      }
+    });
   }
 
   associateTarget(): void {
@@ -112,17 +116,22 @@ export class AssociatedExtentsCardComponent {
       filter(Boolean),
       switchMap(() => this.iscsiService.deleteTargetExtent(extent.id).pipe(this.loader.withLoader())),
       untilDestroyed(this),
-    )
-      .subscribe(() => this.getTargetExtents());
+    ).subscribe(() => this.getTargetExtents());
   }
 
   private getTargetExtents(): void {
-    this.iscsiService.getTargetExtents().pipe(
+    this.isLoadingExtents.set(true);
+
+    forkJoin([
+      this.iscsiService.getExtents(),
+      this.iscsiService.getTargetExtents(),
+    ]).pipe(
       take(1),
       untilDestroyed(this),
-    ).subscribe((extents) => {
-      this.targetExtents.set(extents);
-      this.isLoadingExtents.set(false);
+      finalize(() => this.isLoadingExtents.set(false)),
+    ).subscribe(([extents, targetExtents]) => {
+      this.extents.set(extents);
+      this.targetExtents.set(targetExtents);
       this.cdr.markForCheck();
     });
   }
