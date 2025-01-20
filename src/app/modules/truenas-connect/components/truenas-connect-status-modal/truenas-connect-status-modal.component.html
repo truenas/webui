@@ -1,0 +1,35 @@
+<div mat-dialog-title>{{ "Truenas Connect Service" | translate }}</div>
+<mat-divider></mat-divider>
+<mat-dialog-content>
+  <div>
+    @if (tnc.config().status === TruenasConnectStatus.Configured) {
+    <ix-icon class="status-connected" name="check_circle"></ix-icon>
+    } @else if (tnc.config().status === TruenasConnectStatus.Disabled) {
+    <ix-icon class="status-disabled" name="pause_circle_filled"></ix-icon>
+    } @else if ( tnc.config().status ===
+    TruenasConnectStatus.RegistrationFinalizationFailed || tnc.config().status
+    === TruenasConnectStatus.CertGenerationFailed ){
+    <ix-icon class="status-failed" name="cancel"></ix-icon>
+    } @else {
+    <ix-icon class="status-pending" name="pending"></ix-icon>
+    }
+    <span>{{ tnc.config().status }}</span>
+  </div>
+  <div id="error">
+    {{ tnc.config().status_reason }}
+  </div>
+</mat-dialog-content>
+<div mat-dialog-actions>
+  <button ixTest="tnc-settings" mat-button (click)="openSettings()">
+    {{ "Settings" | translate }}
+  </button>
+  <button
+    color="primary"
+    mat-button
+    ixTest="tnc-open"
+    [disabled]="tnc.config().status !== TruenasConnectStatus.Configured"
+    (click)="open()"
+  >
+    {{ "Open" | translate }}
+  </button>
+</div>
