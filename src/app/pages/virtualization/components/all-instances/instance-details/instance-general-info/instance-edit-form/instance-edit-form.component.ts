@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -30,6 +31,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 
 @UntilDestroy()
 @Component({
@@ -58,10 +60,16 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
+  get isVmInstanceType(): boolean {
+    return this.editingInstance.type === VirtualizationType.Vm;
+  }
+
   protected readonly form = this.formBuilder.nonNullable.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    enable_vnc: [false],
+    vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -79,12 +87,23 @@ export class InstanceEditFormComponent {
       return of(this.form.dirty);
     });
 
+    this.form.controls.vnc_port.disable();
+    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
+      if (vncEnabled) {
+        this.form.controls.vnc_port.enable();
+      } else {
+        this.form.controls.vnc_port.disable();
+      }
+    });
+
     this.editingInstance = this.slideInRef.getData();
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
       memory: this.editingInstance.memory,
+      enable_vnc: this.editingInstance.vnc_enabled,
+      vnc_port: this.editingInstance.vnc_port,
     });
 
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
@@ -133,6 +152,8 @@ export class InstanceEditFormComponent {
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
+      enable_vnc: values.enable_vnc,
+      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
     } as UpdateVirtualizationInstance;
   }
 

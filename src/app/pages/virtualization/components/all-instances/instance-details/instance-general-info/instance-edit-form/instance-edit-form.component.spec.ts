@@ -12,6 +12,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,6 +34,9 @@ describe('InstanceEditFormComponent', () => {
     cpu: '1-3',
     memory: 2 * GiB,
     environment: {},
+    type: VirtualizationType.Vm,
+    vnc_enabled: true,
+    vnc_port: 9001,
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -54,6 +58,8 @@ describe('InstanceEditFormComponent', () => {
                 cpu: '2-5',
                 memory: GiB,
                 environment: {},
+                enable_vnc: true,
+                vnc_port: 9000,
               },
             })),
           ),
@@ -78,6 +84,7 @@ describe('InstanceEditFormComponent', () => {
       Autostart: false,
       'CPU Configuration': '1-3',
       'Memory Size': '2 GiB',
+      'VNC Port': '9001',
     });
   });
 
@@ -86,6 +93,7 @@ describe('InstanceEditFormComponent', () => {
       Autostart: true,
       'CPU Configuration': '2-5',
       'Memory Size': '1 GiB',
+      'VNC Port': 9000,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -96,6 +104,8 @@ describe('InstanceEditFormComponent', () => {
       cpu: '2-5',
       memory: GiB,
       environment: {},
+      enable_vnc: true,
+      vnc_port: 9000,
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -106,6 +116,8 @@ describe('InstanceEditFormComponent', () => {
         cpu: '2-5',
         memory: GiB,
         environment: {},
+        enable_vnc: true,
+        vnc_port: 9000,
       },
       error: false,
     });
