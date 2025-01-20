@@ -7,7 +7,7 @@ import {
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { NavigateAndInteractService } from 'app/directives/navigate-and-interact/navigate-and-interact.service';
+import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { IxFormGlossaryComponent } from 'app/modules/forms/ix-forms/components/ix-form-glossary/ix-form-glossary.component';
 import { IxFormSectionComponent } from 'app/modules/forms/ix-forms/components/ix-form-section/ix-form-section.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -51,7 +51,7 @@ describe('IxFormGlossaryComponent', () => {
           },
         ]),
       }),
-      mockProvider(NavigateAndInteractService),
+      mockProvider(NavigateAndHighlightService),
     ],
   });
 
