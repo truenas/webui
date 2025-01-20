@@ -12,6 +12,7 @@
         color="default"
         ixTest="open-shell"
         class="tool"
+        [class.disabled]="isInstanceStopped()"
         [disabled]="isInstanceStopped()"
         [routerLink]="['/virtualization', 'view', instance().id, 'shell']"
       >
@@ -25,8 +26,10 @@
           color="default"
           ixTest="open-vnc"
           class="tool"
+          target="_blank"
+          [class.disabled]="isInstanceStopped()"
           [disabled]="isInstanceStopped()"
-          (click)="openVnc()"
+          [href]="vncLink()"
         >
           <span>{{ 'VNC' | translate }}</span>
           <span>{{ vncLink() }}</span>

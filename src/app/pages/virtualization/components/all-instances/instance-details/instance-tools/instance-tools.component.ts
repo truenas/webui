@@ -43,8 +43,4 @@ export class InstanceToolsComponent {
   constructor(
     @Inject(WINDOW) private window: Window,
   ) {}
-
-  openVnc(): void {
-    this.window.open(this.vncLink(), '_blank');
-  }
 }

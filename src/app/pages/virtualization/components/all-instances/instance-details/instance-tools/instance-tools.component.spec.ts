@@ -4,7 +4,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import {
   InstanceToolsComponent,
@@ -61,12 +60,11 @@ describe('InstanceToolsComponent', () => {
   });
 
   describe('vnc', () => {
-    it('opens VNC when when VNC link is pressed', async () => {
+    it('shows a link to  VNC', async () => {
       const vncLink = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="open-vnc"]' }));
       expect(vncLink).toBeTruthy();
 
-      await vncLink.click();
-      expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('vnc://truenas.com:5900', '_blank');
+      expect(await (await vncLink.host()).getAttribute('href')).toBe('vnc://truenas.com:5900');
     });
 
     it('shows vnc link as disabled when instance is not running', async () => {
