@@ -49,7 +49,7 @@ describe('TruenasConnectModalComponent', () => {
   });
 
   it('should disable the service', async () => {
-    const disableSpy = jest.spyOn(spectator.component.tnc, 'disableService');
+    const disableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'disableService');
     const disableBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Disable Service',
@@ -64,7 +64,7 @@ describe('TruenasConnectModalComponent', () => {
       ...config,
       status: TruenasConnectStatus.Disabled,
     });
-    const enableSpy = jest.spyOn(spectator.component.tnc, 'enableService');
+    const enableSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'enableService');
     const enableBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Enable Service',
@@ -85,7 +85,7 @@ describe('TruenasConnectModalComponent', () => {
       ...config,
       status: TruenasConnectStatus.ClaimTokenMissing,
     });
-    const generateSpy = jest.spyOn(spectator.component.tnc, 'generateToken');
+    const generateSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'generateToken');
     const generateBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Generate Token',
@@ -106,7 +106,7 @@ describe('TruenasConnectModalComponent', () => {
         text: 'Save',
       }),
     );
-    const enableService = jest.spyOn(spectator.component.tnc, 'enableService');
+    const enableService = jest.spyOn(spectator.inject(TruenasConnectService), 'enableService');
     const tncUrl = 'http://tnc-test.com';
     await tncInput.setValue(tncUrl);
     await saveBtn.click();
@@ -129,7 +129,7 @@ describe('TruenasConnectModalComponent', () => {
         text: 'Connect',
       }),
     );
-    const connectSpy = jest.spyOn(spectator.component.tnc, 'connect');
+    const connectSpy = jest.spyOn(spectator.inject(TruenasConnectService), 'connect');
     await connectBtn.click();
     expect(connectSpy).toHaveBeenCalled();
   });
@@ -140,7 +140,7 @@ describe('TruenasConnectModalComponent', () => {
         text: 'Cancel',
       }),
     );
-    const closeSpy = jest.spyOn(spectator.component.dialogRef, 'close');
+    const closeSpy = jest.spyOn(spectator.inject(MatDialogRef), 'close');
     await cancelBtn.click();
     expect(closeSpy).toHaveBeenCalled();
   });

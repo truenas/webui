@@ -38,7 +38,7 @@ export class TruenasConnectStatusModalComponent {
   constructor(
     @Inject(WINDOW) private window: Window,
     private matDialog: MatDialog,
-    public tnc: TruenasConnectService,
+    protected tnc: TruenasConnectService,
   ) { }
 
   protected openSettings(): void {

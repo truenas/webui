@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
@@ -35,7 +36,7 @@ describe('TruenasConnectButtonComponent', () => {
   });
 
   it('should popup the TNC service status', async () => {
-    const openSpy = jest.spyOn(spectator.component.matDialog, 'open');
+    const openSpy = jest.spyOn(spectator.inject(MatDialog), 'open');
     const statusBtn = await loader.getHarness(
       MatButtonHarness.with({ selector: '[ixTest="tnc-show-status"]' }),
     );

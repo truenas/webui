@@ -65,7 +65,7 @@ export class TruenasConnectModalComponent {
     @Inject(WINDOW) private window: Window,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<TruenasConnectModalComponent>,
-    public tnc: TruenasConnectService,
+    protected tnc: TruenasConnectService,
   ) {
     effect(() => {
       if (this.tnc.config().status === TruenasConnectStatus.Disabled) {

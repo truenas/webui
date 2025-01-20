@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import {
   Spectator,
   createComponentFactory,
@@ -46,7 +47,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should open a settings dialog for TNC', async () => {
-    const openSpy = jest.spyOn(spectator.component.matDialog, 'open');
+    const openSpy = jest.spyOn(spectator.inject(MatDialog), 'open');
     const settingsBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Settings',
@@ -59,7 +60,7 @@ describe('TruenasConnectStatusModalComponent', () => {
   });
 
   it('should open TNC', async () => {
-    const openSpy = jest.spyOn(spectator.component.window, 'open');
+    const openSpy = jest.spyOn(spectator.inject<Window>(WINDOW), 'open');
     const openBtn = await loader.getHarness(
       MatButtonHarness.with({
         text: 'Open',
