@@ -69,7 +69,7 @@ export class InstanceEditFormComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     enable_vnc: [false],
-    vnc_port: [null as number | null],
+    vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -85,6 +85,15 @@ export class InstanceEditFormComponent {
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
+    });
+
+    this.form.controls.vnc_port.disable();
+    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
+      if (vncEnabled) {
+        this.form.controls.vnc_port.enable();
+      } else {
+        this.form.controls.vnc_port.disable();
+      }
     });
 
     this.editingInstance = this.slideInRef.getData();
@@ -144,7 +153,7 @@ export class InstanceEditFormComponent {
       cpu: values.cpu,
       memory: values.memory,
       enable_vnc: values.enable_vnc,
-      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : undefined,
+      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
     } as UpdateVirtualizationInstance;
   }
 
