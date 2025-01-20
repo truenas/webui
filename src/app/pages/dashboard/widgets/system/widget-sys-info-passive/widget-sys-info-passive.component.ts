@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -26,7 +27,7 @@ import {
 @Component({
   selector: 'ix-widget-sys-info-passive',
   templateUrl: './widget-sys-info-passive.component.html',
-  styleUrls: ['../common/widget-sys-info.scss'],
+  styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-passive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetSysInfoPassiveComponent {
@@ -41,6 +42,7 @@ export class WidgetSysInfoPassiveComponent {
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
+  protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(

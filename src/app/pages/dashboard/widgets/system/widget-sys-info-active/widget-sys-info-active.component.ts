@@ -5,6 +5,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
+import { getLabelForContractType } from 'app/interfaces/system-info.interface';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'ix-widget-sys-info-active',
   templateUrl: './widget-sys-info-active.component.html',
-  styleUrls: ['../common/widget-sys-info.scss'],
+  styleUrls: ['../common/widget-sys-info.scss', './widget-sys-info-active.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetSysInfoActiveComponent {
@@ -30,6 +31,7 @@ export class WidgetSysInfoActiveComponent {
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
+  protected readonly getLabelForContractType = getLabelForContractType;
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(

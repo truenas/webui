@@ -72,7 +72,7 @@ describe('SysInfoComponent', () => {
       'Licensed Serials:': licenseInfo.system_serial,
       'System Serial:': systemInfo.system_serial,
       'Features:': licenseInfo.features.join(', '),
-      'Contract Type:': licenseInfo.contract_type,
+      'Contract Type:': 'Gold',
       'Expiration Date:': `${licenseInfo.expiration_date} ( EXPIRED )`,
       'Additional Hardware:': licenseInfo.add_hardware,
     });
