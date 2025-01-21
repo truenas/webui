@@ -9,6 +9,7 @@
   "Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.": "",
   "Expires On": "",
   "Expires on {date}": "",
+  "Global Two-Factor Authentication must be enabled to activate this feature.": "",
   "Go To Directory Services": "",
   "Go to API keys": "",
   "Go to App Settings": "",

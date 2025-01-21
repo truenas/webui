@@ -62,6 +62,7 @@ describe('AuthService', () => {
           user_info: {
             privilege: { webui_access: true },
           },
+          authenticator: 'LEVEL_1',
         } as LoginExResponse),
       ]),
       {

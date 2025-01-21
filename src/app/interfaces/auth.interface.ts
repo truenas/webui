@@ -14,9 +14,12 @@ export enum LoginExMechanism {
   ApiKeyPlain = 'API_KEY_PLAIN',
 }
 
+export type AuthenticatorLoginLevel = 'LEVEL_1' | 'LEVEL_2';
+
 export interface LoginSuccessResponse {
   response_type: LoginExResponseType.Success;
   user_info: LoggedInUser;
+  authenticator: AuthenticatorLoginLevel;
 }
 
 export interface LoginAuthErrorResponse {

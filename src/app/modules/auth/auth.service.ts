@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from 'ngx-webstorage';
 import {
@@ -56,6 +56,7 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
+  readonly isTokenAllowed = signal(false);
 
   /**
    * Special case that only matches root and admin users.
@@ -205,10 +206,14 @@ export class AuthService {
 
           this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-          return this.authToken$.pipe(
-            take(1),
-            map(() => LoginResult.Success),
-          );
+          if (result?.authenticator === 'LEVEL_1') {
+            this.isTokenAllowed.set(true);
+            return this.authToken$.pipe(
+              take(1),
+              map(() => LoginResult.Success),
+            );
+          }
+          return of(LoginResult.Success);
         }
         this.wsStatus.setLoginStatus(false);
 
@@ -244,7 +249,9 @@ export class AuthService {
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());
-          this.setupPeriodicTokenGeneration();
+          if (this.isTokenAllowed()) {
+            this.setupPeriodicTokenGeneration();
+          }
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();
           this.latestTokenGenerated$ = new ReplaySubject<string>(1);
