@@ -1,20 +1,17 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, signal, OnInit,
-  Inject, AfterViewInit,
+  ChangeDetectionStrategy, Component, signal, OnInit, AfterViewInit,
 } from '@angular/core';
 import { MatAnchor } from '@angular/material/button';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, Observable } from 'rxjs';
-import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -22,6 +19,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesListComponent } from 'app/pages/storage/modules/devices/components/devies-list/devices-list.component';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/devices/components/disk-details-panel/disk-details-panel.component';
+import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
@@ -42,10 +40,10 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     TranslateModule,
     MatAnchor,
     CastPipe,
-    DetailsHeightDirective,
     DiskDetailsPanelComponent,
     MasterDetailViewComponent,
     AsyncPipe,
+    TopologyItemIconComponent,
   ],
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
@@ -69,6 +67,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     }),
   );
 
+  protected getTitle(topologyItem: TopologyItem): string {
+    if (isTopologyDisk(topologyItem)) {
+      return topologyItem.disk || topologyItem.guid;
+    }
+
+    return topologyItem.type;
+  }
+
   get pageTitle(): string {
     return this.poolName()
       ? this.translate.instant('{name} Devices', { name: this.poolName() })
@@ -80,8 +86,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private api: ApiService,
     private breakpointObserver: BreakpointObserver,
-    private router: Router,
-    @Inject(WINDOW) private window: Window,
     protected devicesStore: DevicesStore,
   ) { }
 
@@ -114,16 +118,5 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails.set(false);
-  }
-
-  viewDetails({ poolId, guid }: { poolId: number; guid: string }): void {
-    this.router.navigate(['/storage', poolId, 'devices', guid]);
-
-    if (this.isMobileView()) {
-      this.showMobileDetails.set(true);
-
-      // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
   }
 }

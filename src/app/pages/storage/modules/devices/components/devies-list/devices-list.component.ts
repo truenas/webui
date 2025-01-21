@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
 import {
-  ActivatedRoute, RouterLink, RouterLinkActive,
+  ActivatedRoute, Router, RouterLink, RouterLinkActive,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -72,6 +72,8 @@ export class DevicesListComponent implements OnInit {
 
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId = input.required<number>();
+  isMobileView = input<boolean>();
+  showMobileDetails = output<boolean>();
 
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -83,6 +85,7 @@ export class DevicesListComponent implements OnInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
+    private router: Router,
     protected devicesStore: DevicesStore,
   ) { }
 
@@ -186,5 +189,10 @@ export class DevicesListComponent implements OnInit {
 
   viewDetails(poolId: number, guid: string): void {
     this.showDetails.emit({ poolId, guid });
+    this.router.navigate(['/storage', poolId, 'devices', guid]);
+
+    if (this.isMobileView()) {
+      this.showMobileDetails.emit(true);
+    }
   }
 }

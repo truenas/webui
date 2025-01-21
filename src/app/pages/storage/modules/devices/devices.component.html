@@ -1,45 +1,54 @@
+@let pool = poolId();
 <ix-page-header [pageTitle]="pageTitle">
   <a
     *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="add-vdev"
-    [routerLink]="['/storage', poolId, 'add-vdevs']"
+    [routerLink]="['/storage', pool, 'add-vdevs']"
   >
     {{ 'Add VDEV' | translate }}
   </a>
 </ix-page-header>
 
 @let selectedNode = selectedNode$ | async;
-@if (poolId()) {
+@if (pool) {
   <ix-master-detail-view
     #masterDetailView="masterDetailViewContext"
     [selectedItem]="selectedNode"
-  >
+    >
     <ix-devices-list
       master 
-      [poolId]="poolId()" 
-      (showDetails)="viewDetails($event)"
+      [poolId]="pool" 
+      [isMobileView]="isMobileView()"
+      (showMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
     ></ix-devices-list>
+    <ng-container detail-header>
+      @if (selectedNode) {
+        <span>{{ 'Details for ' | translate }}</span>
+        <ix-topology-item-icon
+          class="title-icon"
+          [topologyItem]="selectedNode | cast"
+          [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
+        ></ix-topology-item-icon>
+        <span class="device-name">
+          {{ getTitle(selectedNode | cast) | translate }}
+        </span>
+      }
+    </ng-container>
     <ng-container detail>
-      <div
-        class="details-container"
-        ixDetailsHeight
-        [class.details-container-mobile]="showMobileDetails()"
-      >
-        @if (selectedNode) {
-          <ix-disk-details-panel
-            [topologyItem]="selectedNode | cast"
-            [topologyParentItem]="selectedParentNode$ | async | cast"
-            [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
-            [poolId]="poolId()"
-            [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
-            [topologyCategory]="selectedTopologyCategory$ | async"
-            [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
-            (closeMobileDetails)="closeMobileDetails()"
-          ></ix-disk-details-panel>
-        }
-      </div>
+      @if (selectedNode) {
+        <ix-disk-details-panel
+          [topologyItem]="selectedNode | cast"
+          [topologyParentItem]="selectedParentNode$ | async | cast"
+          [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
+          [poolId]="pool"
+          [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
+          [topologyCategory]="selectedTopologyCategory$ | async"
+          [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
+          (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
+        ></ix-disk-details-panel>
+      }
     </ng-container>
   </ix-master-detail-view>
 }
