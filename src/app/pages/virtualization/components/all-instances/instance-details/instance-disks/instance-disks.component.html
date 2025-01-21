@@ -17,11 +17,11 @@
     } @else {
       @for (disk of visibleDisks(); track disk.name) {
         <div class="disk">
-          <div>
-            {{ disk.source }}
-            →
-            {{ disk.destination }}
-          </div>
+          @if (disk.destination) {
+            <div>{{ disk.source }} → {{ disk.destination }}</div>
+          } @else {
+            <div>{{ disk.source }}</div>
+          }
 
           <ix-device-actions-menu
             [device]="disk"

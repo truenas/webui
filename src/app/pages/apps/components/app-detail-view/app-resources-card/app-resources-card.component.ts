@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { map, throttleTime } from 'rxjs';
-import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
+import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
@@ -50,20 +50,16 @@ export class AppResourcesCardComponent implements OnInit {
       throttleTime(2000),
       untilDestroyed(this),
     ).subscribe((update) => {
-      if (update?.cpu?.average) {
-        this.cpuPercentage.set(parseInt(update.cpu.average.usage.toFixed(1)));
+      if (update?.cpu?.aggregated_usage) {
+        this.cpuPercentage.set(parseInt(update.cpu.aggregated_usage.toFixed(1)));
       }
 
-      if (update?.virtual_memory) {
-        const memStats: MemoryStatsEventData = { ...update.virtual_memory };
+      if (update?.memory) {
+        const memStats: MemoryUpdate = { ...update.memory };
 
-        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-        if (update.zfs && update.zfs.arc_size !== null) {
-          memStats.arc_size = update.zfs.arc_size;
-        }
-        const services = memStats.total - memStats.free - memStats.arc_size;
+        const services = memStats.physical_memory_total - memStats.physical_memory_available - memStats.arc_size;
         this.memoryUsed.set(memStats.arc_size + services);
-        this.memoryTotal.set(memStats.total);
+        this.memoryTotal.set(memStats.physical_memory_total);
       }
     });
   }

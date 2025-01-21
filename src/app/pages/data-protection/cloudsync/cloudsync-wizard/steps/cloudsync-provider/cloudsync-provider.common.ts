@@ -9,6 +9,9 @@ import { GoogleDriveProviderFormComponent } from 'app/pages/credentials/backup-c
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { HttpProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
 import { MegaProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
+import {
+  OneDriveProviderFormComponent,
+} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
 import { OpenstackSwiftProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/openstack-swift-provider-form/openstack-swift-provider-form.component';
 import { PcloudProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
 import { S3ProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
@@ -24,6 +27,7 @@ export const cloudsyncProviderFormMap = new Map<CloudSyncProviderName, Type<Base
   [CloudSyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
   [CloudSyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
   [CloudSyncProviderName.GooglePhotos, GooglePhotosProviderFormComponent],
+  [CloudSyncProviderName.MicrosoftOneDrive, OneDriveProviderFormComponent],
   [CloudSyncProviderName.Http, HttpProviderFormComponent],
   [CloudSyncProviderName.Mega, MegaProviderFormComponent],
   [CloudSyncProviderName.OpenstackSwift, OpenstackSwiftProviderFormComponent],
