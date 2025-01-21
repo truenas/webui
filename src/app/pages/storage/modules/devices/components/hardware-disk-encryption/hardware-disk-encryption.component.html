@@ -1,3 +1,4 @@
+@if (hasSedSupport()) {
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Hardware Disk Encryption' | translate }}</h3>
@@ -6,13 +7,15 @@
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'SED Password' | translate }}:</div>
-      <ng-container *ixWithLoadingState="hasDiskEncryption$ as hasDiskEncryption">
-        <div class="value">
-          {{ hasDiskEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
-        </div>
-      </ng-container>
+      <div class="value">
+        {{ hasDiskEncryption()
+          ? ('Password is set' | translate)
+          : ('Password is not set' | translate)
+        }}
+      </div>
+
       <a
-        *ixHasRole="[Role.FullAdmin]"
+        *ixHasRole="requiredRoles"
         ixTest="manage-sed-password"
         (click)="onManageSedPassword()"
       >
@@ -22,18 +25,21 @@
 
     <div class="details-item">
       <div class="label">{{ 'Global SED Password' | translate }}:</div>
-      <ng-container *ixWithLoadingState="hasGlobalEncryption$ as hasGlobalEncryption">
         <div class="value">
-          {{ hasGlobalEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
+          {{ hasGlobalEncryption()
+            ? ('Password is set' | translate)
+            : ('Password is not set' | translate)
+          }}
         </div>
-      </ng-container>
-      <a
-        *ixHasRole="[Role.FullAdmin]"
-        ixTest="manage-global-sed-password"
-        [routerLink]="['/system/advanced']"
-      >
-        {{ 'Manage Global SED Password' | translate }}
-      </a>
+
+        <a
+          *ixHasRole="requiredRoles"
+          ixTest="manage-global-sed-password"
+          [routerLink]="['/system/advanced']"
+        >
+          {{ 'Manage Global SED Password' | translate }}
+        </a>
     </div>
   </mat-card-content>
 </mat-card>
+}

@@ -1,8 +1,10 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ProductType } from 'app/enums/product-type.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -28,6 +30,7 @@ import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-
 import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 import { InitShutdownCardComponent } from './init-shutdown/init-shutdown-card/init-shutdown-card.component';
 
 describe('AdvancedSettingsComponent', () => {
@@ -61,8 +64,15 @@ describe('AdvancedSettingsComponent', () => {
     providers: [
       mockApi([
         mockCall('system.security.info.fips_available', true),
+        mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockAuth(),
+      provideMockStore({
+        selectors: [{
+          selector: selectProductType,
+          value: ProductType.Scale,
+        }],
+      }),
     ],
   });
 
@@ -70,7 +80,7 @@ describe('AdvancedSettingsComponent', () => {
     spectator = createComponent();
   });
 
-  it('shows cards with advanced settings', () => {
+  it('community edition: shows cards with advanced settings', () => {
     expect(spectator.query(ConsoleCardComponent)).toExist();
     expect(spectator.query(SyslogCardComponent)).toExist();
     expect(spectator.query(KernelCardComponent)).toExist();
@@ -82,9 +92,19 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(AccessCardComponent)).toExist();
     expect(spectator.query(AuditCardComponent)).toExist();
     expect(spectator.query(AllowedAddressesCardComponent)).toExist();
-    expect(spectator.query(SelfEncryptingDriveCardComponent)).toExist();
+    expect(spectator.query(SelfEncryptingDriveCardComponent)).not.toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();
     expect(spectator.query(GlobalTwoFactorAuthCardComponent)).toExist();
     expect(spectator.query(SystemSecurityCardComponent)).toExist();
+  });
+
+  it('enterprise: shows cards with advanced settings', () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectProductType, ProductType.ScaleEnterprise);
+    store$.refreshState();
+
+    spectator.detectChanges();
+
+    expect(spectator.query(SelfEncryptingDriveCardComponent)).toExist();
   });
 });
