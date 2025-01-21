@@ -17,7 +17,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
+import {
+  AuthenticatorLoginLevel, LoginExMechanism, LoginExResponse, LoginExResponseType,
+} from 'app/interfaces/auth.interface';
 import { DashConfigItem } from 'app/interfaces/dash-config-item.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -58,11 +60,11 @@ describe('AuthService', () => {
         mockCall('auth.generate_token', 'DUMMY_TOKEN'),
         mockCall('auth.logout'),
         mockCall('auth.login_ex', {
+          authenticator: AuthenticatorLoginLevel.Level1,
           response_type: LoginExResponseType.Success,
           user_info: {
             privilege: { webui_access: true },
           },
-          authenticator: 'LEVEL_1',
         } as LoginExResponse),
       ]),
       {
@@ -135,6 +137,35 @@ describe('AuthService', () => {
       );
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.generate_token');
+    });
+
+    it('initializes auth session with LEVEL_2 with no token support.', () => {
+      timer$.next(0);
+
+      // Mock the auth.login_ex response for LEVEL_2 authentication
+      spectator.inject(MockApiService).mockCall('auth.login_ex', {
+        authenticator: AuthenticatorLoginLevel.Level2,
+        response_type: LoginExResponseType.Success,
+        user_info: {
+          privilege: { webui_access: true },
+        },
+      } as LoginExResponse);
+
+      const obs$ = spectator.service.login('dummy', 'dummy');
+
+      testScheduler.run(({ expectObservable }) => {
+        expectObservable(obs$).toBe(
+          '(a|)',
+          { a: LoginResult.Success },
+        );
+      });
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+        'auth.login_ex',
+        [{ mechanism: 'PASSWORD_PLAIN', username: 'dummy', password: 'dummy' }],
+      );
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.generate_token');
     });
   });
 

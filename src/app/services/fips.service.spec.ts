@@ -7,6 +7,7 @@ import {
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FipsService } from 'app/services/fips.service';
@@ -26,6 +27,9 @@ describe('FipsService', () => {
       mockApi([
         mockJob('failover.reboot.other_node', fakeSuccessfulJob()),
       ]),
+      mockProvider(AuthService, {
+        clearAuthToken: jest.fn(),
+      }),
     ],
   });
 
@@ -42,6 +46,7 @@ describe('FipsService', () => {
           buttonText: 'Restart Now',
         }),
       );
+      expect(spectator.inject(AuthService).clearAuthToken).toHaveBeenCalled();
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system-tasks/restart'], { skipLocationChange: true });
     });
   });

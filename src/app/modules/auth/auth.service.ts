@@ -1,4 +1,4 @@
-import { Inject, Injectable, signal } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { LocalStorage } from 'ngx-webstorage';
 import {
@@ -18,8 +18,11 @@ import {
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LoginExMechanism, LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
+import {
+  AuthenticatorLoginLevel, LoginExMechanism, LoginExResponse, LoginExResponseType,
+} from 'app/interfaces/auth.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -56,7 +59,7 @@ export class AuthService {
   private generateTokenSubscription: Subscription | null;
 
   readonly user$ = this.loggedInUser$.asObservable();
-  readonly isTokenAllowed = signal(false);
+  readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
 
   /**
    * Special case that only matches root and admin users.
@@ -84,6 +87,7 @@ export class AuthService {
   ) {
     this.setupAuthenticationUpdate();
     this.setupWsConnectionUpdate();
+    this.setupPeriodicTokenGeneration();
     this.setupTokenUpdate();
   }
 
@@ -206,8 +210,8 @@ export class AuthService {
 
           this.wsStatus.setLoginStatus(true);
           this.window.sessionStorage.setItem('loginBannerDismissed', 'true');
-          if (result?.authenticator === 'LEVEL_1') {
-            this.isTokenAllowed.set(true);
+          if (result?.authenticator === AuthenticatorLoginLevel.Level1) {
+            this.isTokenAllowed$.next(true);
             return this.authToken$.pipe(
               take(1),
               map(() => LoginResult.Success),
@@ -226,14 +230,19 @@ export class AuthService {
   }
 
   private setupPeriodicTokenGeneration(): void {
-    if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
-      this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
-        switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
-        filter(Boolean),
-        switchMap(() => this.api.call('auth.generate_token')),
-        tap((token) => this.latestTokenGenerated$.next(token)),
-      ).subscribe();
-    }
+    this.isTokenAllowed$.pipe(
+      filter(Boolean),
+      filterAsync(() => this.wsStatus.isAuthenticated$),
+    ).subscribe(() => {
+      if (!this.generateTokenSubscription || this.generateTokenSubscription.closed) {
+        this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
+          switchMap(() => this.wsStatus.isAuthenticated$.pipe(take(1))),
+          filter(Boolean),
+          switchMap(() => this.api.call('auth.generate_token')),
+          tap((token) => this.latestTokenGenerated$.next(token)),
+        ).subscribe();
+      }
+    });
   }
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
@@ -245,13 +254,10 @@ export class AuthService {
   }
 
   private setupAuthenticationUpdate(): void {
-    this.wsStatus.isAuthenticated$.subscribe({
+    this.wsStatus.isAuthenticated$.pipe().subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());
-          if (this.isTokenAllowed()) {
-            this.setupPeriodicTokenGeneration();
-          }
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();
           this.latestTokenGenerated$ = new ReplaySubject<string>(1);
