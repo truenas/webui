@@ -19,6 +19,7 @@ describe('IxFormGlossaryComponent', () => {
   let spectator: SpectatorHost<IxFormGlossaryComponent>;
   let harnessLoader: HarnessLoader;
   const statusChanges$ = new Subject<void>();
+  const element = document.createElement('div');
 
   const createHost = createHostFactory({
     component: IxFormGlossaryComponent,
@@ -50,6 +51,7 @@ describe('IxFormGlossaryComponent', () => {
             name: 'control2',
           },
         ]),
+        getElementByControlName: jest.fn(() => element),
       }),
       mockProvider(NavigateAndHighlightService),
     ],
@@ -72,13 +74,16 @@ describe('IxFormGlossaryComponent', () => {
 
   it('loads input options from form glossary', async () => {
     expect(spectator.component).toBeTruthy();
-    const input = await harnessLoader.getHarness(IxInputHarness);
-    await input.setValue('Control');
-    spectator.detectChanges();
-    const matAutocomplete = spectator.query(MatAutocomplete);
-    matAutocomplete.showPanel = true;
-    const options = matAutocomplete.options.map((option) => option.getLabel());
-    expect(options).toEqual(['Control1', 'Control2']);
+    const input = await harnessLoader.getHarness(IxInputHarness.with({ label: 'Search' }));
+    await input.setValue('Control2');
+    const matAutocomplete = await input.getMatAutoCompleteHarness();
+    const options = await matAutocomplete.getOptions();
+    const optionsText: string[] = [];
+    for (const option of options) {
+      optionsText.push(await option.getText());
+    }
+    expect(optionsText).toEqual(['Control2']);
+    expect(spectator.inject(NavigateAndHighlightService).scrollIntoView).toHaveBeenCalledWith(element);
   });
 
   it('shows sections as options', fakeAsync(() => {

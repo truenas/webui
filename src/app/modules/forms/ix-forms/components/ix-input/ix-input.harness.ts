@@ -1,4 +1,5 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -17,6 +18,8 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   getMatInputHarness = this.locatorFor(MatInputHarness);
+  getMatAutoCompleteHarness = this.locatorFor(MatAutocompleteHarness);
+
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
