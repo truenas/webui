@@ -2,6 +2,14 @@
   display: flex;
   margin: 0 -16px;
 
+  &:not(&.disabled) {
+    color: var(--fg2) !important;
+  }
+
+  &.disabled {
+    color: var(--mdc-filled-button-disabled-label-text-color);
+  }
+
   ::ng-deep .mdc-button__label {
     flex-grow: 1;
     justify-content: space-between;

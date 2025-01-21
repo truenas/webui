@@ -16,6 +16,7 @@ import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmartTestProgressUpdate } from 'app/interfaces/smart-test-progress.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VirtualizationGlobalConfig, VirtualizationInstance, VirtualizationInstanceMetrics } from 'app/interfaces/virtualization.interface';
@@ -42,6 +43,7 @@ export interface ApiEventDirectory {
   'service.query': { response: Service };
   'smart.test.progress': { response: SmartTestProgressUpdate };
   'system.reboot.info': { response: SystemRebootInfo };
+  'tn_connect.config': { response: TruenasConnectConfig };
   'truecommand.config': { response: TrueCommandConfig };
   'user.query': { response: User };
   'virt.global.config': { response: VirtualizationGlobalConfig };

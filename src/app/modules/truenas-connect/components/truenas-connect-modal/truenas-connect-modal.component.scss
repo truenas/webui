@@ -1,0 +1,33 @@
+:host ::ng-deep {
+  mat-dialog-actions {
+    display: flex;
+    justify-content: space-between !important;
+  }
+}
+
+.title {
+  font-size: 32px;
+  justify-content: center;
+
+  ix-icon {
+    height: 56px;
+    margin-right: 8px;
+    width: 56px;
+  }
+
+  .truenas {
+    color: var(--primary);
+  }
+}
+
+mat-dialog-content {
+  text-align: center;
+
+  h3 {
+    padding-bottom: 8px;
+  }
+}
+
+.warning {
+  color: var(--red);
+}
