@@ -12,13 +12,15 @@
     >
       <ix-input
         formControlName="name"
-        [label]="'Name' | translate"
+        [label]="containersHelptext.name_placeholder | translate"
+        [tooltip]="containersHelptext.name_tooltip | translate"
         [required]="true"
       ></ix-input>
 
       <ix-icon-group
         formControlName="instance_type"
-        [label]="'Virtualization Method' | translate"
+        [label]="containersHelptext.instance_type_placeholder | translate"
+        [tooltip]="containersHelptext.instance_type_tooltip | translate"
         [required]="true"
         [options]="virtualizationTypeIcons"
         [showLabels]="true"
@@ -72,14 +74,16 @@
     >
       <ix-input
         formControlName="cpu"
-        [label]="'CPU Configuration' | translate"
+        [label]="containersHelptext.cpu_placeholder | translate"
+        [tooltip]="containersHelptext.cpu_tooltip | translate"
         [required]="isVm()"
         [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : null"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
-        [label]="'Memory Size' | translate"
+        [label]="containersHelptext.memory_placeholder | translate"
+        [tooltip]="containersHelptext.memory_tooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm()"
@@ -95,7 +99,8 @@
       <ix-list
         formArrayName="environment_variables"
         [empty]="form.controls.environment_variables.controls.length === 0"
-        [label]="'Environment Variables' | translate"
+        [label]="containersHelptext.env_placeholder | translate"
+        [tooltip]="containersHelptext.env_tooltip | translate"
         (add)="addEnvironmentVariable()"
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
@@ -107,13 +112,15 @@
             <div class="environment-variable">
               <ix-input
                 formControlName="name"
-                [label]="'Name' | translate"
+                [label]="containersHelptext.env_name_placeholder | translate"
+                [tooltip]="containersHelptext.env_name_tooltip | translate"
                 [required]="true"
               ></ix-input>
 
               <ix-input
                 formControlName="value"
-                [label]="'Value' | translate"
+                [label]="containersHelptext.env_value_placeholder | translate"
+                [tooltip]="containersHelptext.env_value_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -130,7 +137,8 @@
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
-        [label]="'Disks' | translate"
+        [label]="containersHelptext.disks_placeholder | translate"
+        [tooltip]="containersHelptext.disks_tooltip | translate"
         [formArray]="form.controls.disks"
         (add)="addDisk()"
       >
@@ -143,7 +151,8 @@
             <ix-explorer
               formControlName="source"
               root="/"
-              [label]="'Source' | translate"
+              [label]="containersHelptext.disks_src_placeholder | translate"
+              [tooltip]="containersHelptext.disks_src_tooltip | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider()"
               [canCreateDataset]="true"
@@ -152,7 +161,8 @@
             @if (isContainer()) {
               <ix-input
                 formControlName="destination"
-                [label]="'Destination' | translate"
+                [label]="containersHelptext.disks_dst_placeholder | translate"
+                [tooltip]="containersHelptext.disks_dst_tooltip | translate"
                 [required]="true"
               ></ix-input>
             }
@@ -168,7 +178,8 @@
       <ix-list
         formArrayName="proxies"
         [empty]="form.controls.proxies.controls.length === 0"
-        [label]="'Proxies' | translate"
+        [label]="containersHelptext.proxies_placeholder | translate"
+        [tooltip]="containersHelptext.proxies_tooltip | translate"
         [formArray]="form.controls.proxies"
         (add)="addProxy()"
       >
@@ -182,7 +193,8 @@
               <ix-select
                 class="protocol"
                 formControlName="source_proto"
-                [label]="'Host Protocol' | translate"
+                [label]="containersHelptext.host_protocol_placeholder | translate"
+                [tooltip]="containersHelptext.host_protocol_tooltip | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
@@ -191,7 +203,8 @@
                 class="port"
                 type="number"
                 formControlName="source_port"
-                [label]="'Host Port' | translate"
+                [label]="containersHelptext.host_port_placeholder | translate"
+                [tooltip]="containersHelptext.host_port_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -200,7 +213,8 @@
               <ix-select
                 class="protocol"
                 formControlName="dest_proto"
-                [label]="'Instance Protocol' | translate"
+                [label]="containersHelptext.instance_protocol_placeholder | translate"
+                [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
@@ -209,7 +223,8 @@
                 class="port"
                 type="number"
                 formControlName="dest_port"
-                [label]="'Instance Port' | translate"
+                [label]="containersHelptext.instance_port_placeholder | translate"
+                [tooltip]="containersHelptext.instance_port_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -224,7 +239,8 @@
     >
       <ix-checkbox
         formControlName="use_default_network"
-        [label]="'Use default network settings' | translate"
+        [label]="containersHelptext.network_use_default_placeholder | translate"
+        [tooltip]="containersHelptext.network_use_default_tooltip | translate"
       ></ix-checkbox>
 
       @if (!form.controls.use_default_network.value) {
@@ -239,7 +255,8 @@
 
               <ix-checkbox-list
                 formControlName="bridged_nics"
-                [label]="'Bridged NICs' | translate"
+                [label]="containersHelptext.network_bridged_nics_placeholder | translate"
+                [tooltip]="containersHelptext.network_bridged_nics_tooltip | translate"
                 [options]="bridgedNicDevices$"
               ></ix-checkbox-list>
             }
@@ -253,7 +270,8 @@
 
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"
-                [label]="'Macvlan NICs' | translate"
+                [label]="containersHelptext.network_mac_vlan_nics_placeholder | translate"
+                [tooltip]="containersHelptext.network_mac_vlan_nics_tooltip | translate"
                 [options]="macVlanNicDevices$"
               ></ix-checkbox-list>
             }
@@ -272,7 +290,8 @@
       >
         <ix-checkbox-list
           formControlName="usb_devices"
-          [label]="'USB Devices' | translate"
+          [label]="containersHelptext.usb_devices_placeholder | translate"
+          [tooltip]="containersHelptext.usb_devices_tooltip | translate"
           [options]="usbDevices$"
         ></ix-checkbox-list>
       </ix-form-section>
@@ -299,7 +318,9 @@
       >
         <ix-checkbox
           formControlName="enable_vnc"
-          [label]="'Enable VNC' | translate"
+          [label]="containersHelptext.enable_vnc_placeholder | translate"
+          [tooltip]="containersHelptext.enable_vnc_tooltip | translate"
+          [hint]="form.value.enable_vnc && containersHelptext.vncHint | translate"
         ></ix-checkbox>
 
         @if (form.value.enable_vnc) {
@@ -314,7 +335,8 @@
       <ix-form-section label="TPM">
         <ix-checkbox
           formControlName="tpm"
-          [label]="'Add Trusted Platform Module' | translate"
+          [label]="containersHelptext.add_tpm_placeholder | translate"
+          [tooltip]="containersHelptext.add_tpm_tooltip | translate"
         ></ix-checkbox>
       </ix-form-section>
     }
