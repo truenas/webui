@@ -21,6 +21,10 @@ export const helptextApps = {
     no_installed_message: T('Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.'),
   },
 
+  dockerRegistries: {
+    tooltip: T('Signing in to Docker Hub is not required for Apps to function, but may help if you experience rate limiting issues.'),
+  },
+
   catalogMessage: {
     loading: T('Loading...'),
     no_search_result: T('No Search Results.'),

@@ -29,9 +29,24 @@
       {{ 'Unset Pool' | translate }}
     </button>
   }
-  <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
+
+  <button
+    mat-menu-item
+    ixTest="container-images"
+    [routerLink]="['/apps', 'manage-container-images']"
+  >
     {{ 'Manage Container Images' | translate }}
   </button>
+
+  <button
+    mat-menu-item
+    ixTest="docker-registries"
+    [matTooltip]="helptext.dockerRegistries.tooltip | translate"
+    [routerLink]="['/apps', 'docker-registries']"
+  >
+    {{ 'Sign-in to Docker Hub or other registry' | translate }}
+  </button>
+
   <button
     mat-menu-item
     ixTest="update-preferred-trains"

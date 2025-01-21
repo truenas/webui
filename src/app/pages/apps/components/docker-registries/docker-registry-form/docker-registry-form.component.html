@@ -1,0 +1,67 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="title | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        @if (!isLoggedInToDockerHub && !existingDockerRegistry) {
+          <ix-select
+            formControlName="registry"
+            [label]="'URI' | translate"
+            [options]="registriesOptions$"
+            [hideEmpty]="true"
+          ></ix-select>
+        }
+
+        @if (existingDockerRegistry || isLoggedInToDockerHub || !form.controls.registry.value) {
+          <ix-input
+            formControlName="uri"
+            [label]="'URI' | translate"
+            [required]="true"
+          ></ix-input>
+        }
+
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="username"
+          [label]="'Username' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="password"
+          type="password"
+          [label]="'Password' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="description"
+          [label]="'Description' | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
