@@ -279,7 +279,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
         } else if (name === 'bucket_input') {
-          attributes['bucket'] = formValue[name];
+          attributes.bucket = formValue[name];
         } else {
           attributes[name] = formValue[name];
         }

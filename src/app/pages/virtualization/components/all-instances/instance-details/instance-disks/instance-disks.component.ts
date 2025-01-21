@@ -60,7 +60,7 @@ export class InstanceDisksComponent {
   }
 
   private openDiskForm(disk?: VirtualizationDisk): void {
-    this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instanceId: this.deviceStore.selectedInstance().id } })
+    this.slideIn.open(InstanceDiskFormComponent, { data: { disk, instance: this.deviceStore.selectedInstance() } })
       .pipe(filter((result) => !!result.response), untilDestroyed(this))
       .subscribe(() => this.deviceStore.loadDevices());
   }

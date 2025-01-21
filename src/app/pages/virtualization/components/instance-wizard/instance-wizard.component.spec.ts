@@ -11,10 +11,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   VirtualizationDeviceType,
   VirtualizationNicType,
@@ -23,7 +24,6 @@ import {
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -35,6 +35,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UploadService } from 'app/services/upload.service';
 
 describe('InstanceWizardComponent', () => {
   let spectator: SpectatorRouting<InstanceWizardComponent>;
@@ -47,7 +48,10 @@ describe('InstanceWizardComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     providers: [
-      mockProvider(AuthService, { hasRole: () => of(true) }),
+      mockAuth(),
+      mockProvider(UploadService, {
+        uploadAsJob: jest.fn(() => of(fakeSuccessfulJob())),
+      }),
       mockProvider(Router),
       mockProvider(FilesystemService),
       mockApi([
@@ -89,14 +93,13 @@ describe('InstanceWizardComponent', () => {
             manufacturer: 'Linux 6.6.44-production+truenas xhci-hcd',
           },
         }),
+        mockJob('virt.volume.import_iso', fakeSuccessfulJob({ name: 'image.iso' })),
         mockJob('virt.instance.create', fakeSuccessfulJob({ id: 'new' } as VirtualizationInstance)),
       ]),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         jobDialog: jest.fn((request$: Observable<Job>) => ({
-          afterClosed: () => request$.pipe(
-            map((job) => job.result),
-          ),
+          afterClosed: () => request$,
         })),
       }),
       mockProvider(MatDialog, {
@@ -116,209 +119,311 @@ describe('InstanceWizardComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('opens SelectImageDialogComponent when Browse image button is pressed and show image label when image is selected', async () => {
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
-    await browseButton.click();
+  describe('container', () => {
+    it('creates new instance when form is submitted', async () => {
+      await form.fillForm({
+        Name: 'new',
+        'CPU Configuration': '1-2',
+        'Memory Size': '1 GiB',
+      });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
-    expect(await form.getValues()).toMatchObject({
-      Image: 'almalinux/8/cloud',
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+      expect(await form.getValues()).toMatchObject({
+        Image: 'almalinux/8/cloud',
+      });
+
+      const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+      await diskList.pressAddButton();
+      const diskForm = await diskList.getLastListItem();
+      await diskForm.fillForm({
+        Source: '/mnt/source',
+        Destination: 'destination',
+      });
+
+      const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
+      await proxiesList.pressAddButton();
+      const proxyForm = await proxiesList.getLastListItem();
+      await proxyForm.fillForm({
+        'Host Port': 3000,
+        'Host Protocol': 'TCP',
+        'Instance Port': 2000,
+        'Instance Protocol': 'UDP',
+      });
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+        label: 'xHCI Host Controller (0003)',
+      }));
+      await usbDeviceCheckbox.check();
+
+      const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+      await useDefaultNetworkCheckbox.setValue(false);
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+      await nicDeviceCheckbox.check();
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+      await gpuDeviceCheckbox.check();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '1-2',
+        instance_type: VirtualizationType.Container,
+        devices: [
+          {
+            dev_type: VirtualizationDeviceType.Disk,
+            source: '/mnt/source',
+            destination: 'destination',
+          },
+          {
+            dev_type: VirtualizationDeviceType.Proxy,
+            source_port: 3000,
+            source_proto: VirtualizationProxyProtocol.Tcp,
+            dest_port: 2000,
+            dest_proto: VirtualizationProxyProtocol.Udp,
+          },
+          { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
+          { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+        ],
+        image: 'almalinux/8/cloud',
+        memory: GiB,
+        environment: {},
+        enable_vnc: false,
+        vnc_port: null,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('sends no NIC devices when default network settings checkbox is set', async () => {
+      await form.fillForm({
+        Name: 'new',
+        'CPU Configuration': '1-2',
+        'Memory Size': '1 GiB',
+      });
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+      expect(await form.getValues()).toMatchObject({
+        Image: 'almalinux/8/cloud',
+      });
+
+      const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+      await useDefaultNetworkCheckbox.setValue(false);
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+      await nicDeviceCheckbox.check();
+
+      await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '1-2',
+        devices: [],
+        image: 'almalinux/8/cloud',
+        memory: GiB,
+        enable_vnc: false,
+        vnc_port: null,
+        instance_type: 'CONTAINER',
+        environment: {},
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
 
-  it('creates new container instance when form is submitted', async () => {
-    await form.fillForm({
-      Name: 'new',
-      'CPU Configuration': '1-2',
-      'Memory Size': '1 GiB',
+  describe('vm', () => {
+    it('creates new instance when form is submitted', async () => {
+      await form.fillForm({
+        Name: 'new',
+        'CPU Configuration': '1-2',
+        'Memory Size': '1 GiB',
+      });
+
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
+
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+      expect(await form.getValues()).toMatchObject({
+        Image: 'almalinux/8/cloud',
+      });
+
+      const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
+      await diskList.pressAddButton();
+      const diskForm = await diskList.getLastListItem();
+      await diskForm.fillForm({
+        Source: '/mnt/source',
+      });
+
+      const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
+      await proxiesList.pressAddButton();
+      const proxyForm = await proxiesList.getLastListItem();
+      await proxyForm.fillForm({
+        'Host Port': 3000,
+        'Host Protocol': 'TCP',
+        'Instance Port': 2000,
+        'Instance Protocol': 'UDP',
+      });
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
+        label: 'xHCI Host Controller (0003)',
+      }));
+      await usbDeviceCheckbox.check();
+
+      const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+      await useDefaultNetworkCheckbox.setValue(false);
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+      await nicDeviceCheckbox.check();
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
+      await gpuDeviceCheckbox.check();
+
+      await form.fillForm({ 'Enable VNC': true });
+      await form.fillForm({ 'VNC Port': 9000 });
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '1-2',
+        instance_type: VirtualizationType.Vm,
+        devices: [
+          {
+            dev_type: VirtualizationDeviceType.Disk,
+            source: '/mnt/source',
+          },
+          {
+            dev_type: VirtualizationDeviceType.Proxy,
+            source_port: 3000,
+            source_proto: VirtualizationProxyProtocol.Tcp,
+            dest_port: 2000,
+            dest_proto: VirtualizationProxyProtocol.Udp,
+          },
+          { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
+          { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
+          { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
+        ],
+        image: 'almalinux/8/cloud',
+        memory: GiB,
+        enable_vnc: true,
+        vnc_port: 9000,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
-    await browseButton.click();
+    it('loads image and creates new instance when form is submitted', async () => {
+      global.Date.now = jest.fn(() => (new Date('2025-01-20 12:00:00')).getTime());
 
-    const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
-    await diskList.pressAddButton();
-    const diskForm = await diskList.getLastListItem();
-    await diskForm.fillForm({
-      Source: '/mnt/source',
-      Destination: 'destination',
-    });
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
 
-    const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
-    await proxiesList.pressAddButton();
-    const proxyForm = await proxiesList.getLastListItem();
-    await proxyForm.fillForm({
-      'Host Port': 3000,
-      'Host Protocol': 'TCP',
-      'Instance Port': 2000,
-      'Instance Protocol': 'UDP',
-    });
+      await form.fillForm({
+        Name: 'new',
+        'VM Image Options': 'Upload an ISO image',
+        'CPU Configuration': '2',
+        'Memory Size': '1 GiB',
+      });
 
-    // TODO: Fix this to use IxCheckboxHarness
-    const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
-      label: 'xHCI Host Controller (0003)',
-    }));
-    await usbDeviceCheckbox.check();
+      const fakeImage = fakeFile('image.iso');
+      await form.fillForm({ Image: [fakeImage] });
 
-    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-    await useDefaultNetworkCheckbox.setValue(false);
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
 
-    // TODO: Fix this to use IxCheckboxHarness
-    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
-    await nicDeviceCheckbox.check();
+      expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
+        file: fakeImage,
+        method: 'virt.volume.import_iso',
+        params: [{
+          name: 'image_1737367200000.iso',
+          upload_iso: true,
+        }],
+      });
 
-    // TODO: Fix this to use IxCheckboxHarness
-    const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-    await gpuDeviceCheckbox.check();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-    await createButton.click();
-
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-      name: 'new',
-      autostart: true,
-      cpu: '1-2',
-      instance_type: VirtualizationType.Container,
-      devices: [
-        {
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '2',
+        instance_type: VirtualizationType.Vm,
+        devices: [{
           dev_type: VirtualizationDeviceType.Disk,
-          source: '/mnt/source',
-          destination: 'destination',
-        },
-        {
-          dev_type: VirtualizationDeviceType.Proxy,
-          source_port: 3000,
-          source_proto: VirtualizationProxyProtocol.Tcp,
-          dest_port: 2000,
-          dest_proto: VirtualizationProxyProtocol.Udp,
-        },
-        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
-        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
-      ],
-      image: 'almalinux/8/cloud',
-      memory: GiB,
-      environment: {},
-    }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-  });
-
-  it('creates new vm instance when form is submitted', async () => {
-    await form.fillForm({
-      Name: 'new',
-      'CPU Configuration': '1-2',
-      'Memory Size': '1 GiB',
+          source: 'image_1737367200000.iso',
+          destination: null,
+          boot_priority: 1,
+        }],
+        enable_vnc: false,
+        source_type: null,
+        memory: 1073741824,
+        vnc_port: null,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
-    await instanceType.setValue('VM');
+    it('sends no NIC devices when default network settings checkbox is set', async () => {
+      await form.fillForm({
+        Name: 'new',
+        'CPU Configuration': '1-2',
+        'Memory Size': '1 GiB',
+      });
 
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
-    await browseButton.click();
+      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
+      await browseButton.click();
 
-    const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
-    await diskList.pressAddButton();
-    const diskForm = await diskList.getLastListItem();
-    await diskForm.fillForm({
-      Source: '/mnt/source',
-      Destination: 'destination',
+      const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
+      await useDefaultNetworkCheckbox.setValue(false);
+
+      // TODO: Fix this to use IxCheckboxHarness
+      const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
+      await nicDeviceCheckbox.check();
+
+      await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
+      spectator.detectChanges();
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '1-2',
+        devices: [],
+        image: 'almalinux/8/cloud',
+        memory: GiB,
+        environment: {},
+        instance_type: 'CONTAINER',
+        enable_vnc: false,
+        vnc_port: null,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
-
-    const proxiesList = await loader.getHarness(IxListHarness.with({ label: 'Proxies' }));
-    await proxiesList.pressAddButton();
-    const proxyForm = await proxiesList.getLastListItem();
-    await proxyForm.fillForm({
-      'Host Port': 3000,
-      'Host Protocol': 'TCP',
-      'Instance Port': 2000,
-      'Instance Protocol': 'UDP',
-    });
-
-    // TODO: Fix this to use IxCheckboxHarness
-    const usbDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({
-      label: 'xHCI Host Controller (0003)',
-    }));
-    await usbDeviceCheckbox.check();
-
-    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-    await useDefaultNetworkCheckbox.setValue(false);
-
-    // TODO: Fix this to use IxCheckboxHarness
-    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
-    await nicDeviceCheckbox.check();
-
-    // TODO: Fix this to use IxCheckboxHarness
-    const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
-    await gpuDeviceCheckbox.check();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-    await createButton.click();
-
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-      name: 'new',
-      autostart: true,
-      cpu: '1-2',
-      instance_type: VirtualizationType.Vm,
-      devices: [
-        {
-          dev_type: VirtualizationDeviceType.Disk,
-          source: '/mnt/source',
-          destination: 'destination',
-        },
-        {
-          dev_type: VirtualizationDeviceType.Proxy,
-          source_port: 3000,
-          source_proto: VirtualizationProxyProtocol.Tcp,
-          dest_port: 2000,
-          dest_proto: VirtualizationProxyProtocol.Udp,
-        },
-        { dev_type: VirtualizationDeviceType.Nic, nic_type: VirtualizationNicType.Bridged, parent: 'nic1' },
-        { dev_type: VirtualizationDeviceType.Usb, product_id: '0003' },
-        { dev_type: VirtualizationDeviceType.Gpu, pci: 'pci_0000_01_00_0' },
-      ],
-      image: 'almalinux/8/cloud',
-      memory: GiB,
-      environment: {},
-    }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-  });
-
-  it('sends no NIC devices when default network settings checkbox is set', async () => {
-    await form.fillForm({
-      Name: 'new',
-      'CPU Configuration': '1-2',
-      'Memory Size': '1 GiB',
-    });
-
-    const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
-    await browseButton.click();
-
-    const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-    await useDefaultNetworkCheckbox.setValue(false);
-
-    // TODO: Fix this to use IxCheckboxHarness
-    const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
-    await nicDeviceCheckbox.check();
-
-    await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
-    spectator.detectChanges();
-
-    const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-    await createButton.click();
-
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-      name: 'new',
-      autostart: true,
-      cpu: '1-2',
-      devices: [],
-      image: 'almalinux/8/cloud',
-      memory: GiB,
-      environment: {},
-      instance_type: 'CONTAINER',
-    }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

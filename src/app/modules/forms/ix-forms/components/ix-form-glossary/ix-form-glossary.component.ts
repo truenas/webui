@@ -81,7 +81,6 @@ export class IxFormGlossaryComponent implements OnInit {
 
   private handleSectionUpdates(): void {
     this.formService.controlSections$.pipe(
-      delay(0),
       untilDestroyed(this),
     ).subscribe({
       next: (sectionsWithControls) => {
