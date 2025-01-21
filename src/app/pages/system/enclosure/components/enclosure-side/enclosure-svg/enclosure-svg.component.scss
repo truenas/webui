@@ -36,34 +36,15 @@
       }
 
       &.selected {
-        fill-opacity: 0; // 0.7;
-        // filter: brightness(1.2);
+        fill-opacity: 0;
         stroke: var(--primary);
         stroke-dasharray: none;
-        stroke-width: 3px; // 1%;
-
-        /*&.tinted {
-          fill: var(--primary) !important;
-        }*/
+        stroke-width: 3px;
       }
 
       &.selected-vdev-disk {
-        // filter: brightness(1.2);
-        // stroke: white;
-        // stroke-dasharray: none;
-        // stroke-width: 4px; // 4px;
-
         fill: black;
-        opacity: 0.25; // 0.5;
-
-        /*&.tinted {
-          fill: var(--primary) !important;
-        }*/
-      }
-
-      &.not-selected-vdev-disk {
-        // fill: black;
-        // opacity: 0.25; // 0.5;
+        opacity: 0.25;
       }
     }
   }
