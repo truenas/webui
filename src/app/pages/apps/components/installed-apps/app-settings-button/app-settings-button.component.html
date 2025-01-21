@@ -41,10 +41,12 @@
   <button
     mat-menu-item
     ixTest="docker-registries"
-    [matTooltip]="helptext.dockerRegistries.tooltip | translate"
+    matTooltipPosition="right"
+    [matTooltip]="!(dockerStore.selectedPool$ | async) ? ('Choose pool first' | translate) : helptext.dockerRegistries.tooltip | translate"
+    [disabled]="!(dockerStore.selectedPool$ | async)"
     [routerLink]="['/apps', 'docker-registries']"
   >
-    {{ 'Sign-in to Docker Hub or other registry' | translate }}
+    {{ 'Sign-in to a Docker registry' | translate }}
   </button>
 
   <button

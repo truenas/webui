@@ -64,8 +64,8 @@ describe('DockerRegistriesListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Description', 'Username', 'Uri', ''],
-      ['Docker Hub', 'Docker Hub', 'docker', 'https://index.docker.io/v1/', ''],
+      ['Name', 'Username', 'URI', ''],
+      ['Docker Hub', 'docker', 'https://index.docker.io/v1/', ''],
     ];
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.query');

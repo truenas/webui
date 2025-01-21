@@ -26,7 +26,6 @@ describe('DockerRegistryFormComponent', () => {
     name: 'Old Registry',
     username: 'old_user',
     password: '',
-    description: 'Old description',
   };
 
   const slideInRef: SlideInRef<undefined, unknown> = {
@@ -57,17 +56,33 @@ describe('DockerRegistryFormComponent', () => {
       api = spectator.inject(ApiService);
     });
 
-    it('initializes the form with default values', async () => {
+    it('initializes the form with default values for Docker Hub as a URI and submits with default values', async () => {
       const form = await loader.getHarness(IxFormHarness);
       const values = await form.getValues();
 
       expect(values).toEqual({
         URI: 'Docker Hub',
-        Name: '',
         Username: '',
         Password: '',
-        Description: '',
       });
+
+      await form.fillForm({
+        Username: 'admin',
+        Password: 'password',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('app.registry.create', [
+        {
+          uri: 'https://registry-1.docker.io/',
+          name: 'Docker Hub',
+          username: 'admin',
+          password: 'password',
+        },
+      ]);
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
     });
 
     it('sends a create payload and closes the modal when the save button is clicked', async () => {
@@ -81,7 +96,6 @@ describe('DockerRegistryFormComponent', () => {
         Name: 'New GHCR Registry',
         Username: 'admin',
         Password: 'password',
-        Description: 'A new test registry',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -93,7 +107,6 @@ describe('DockerRegistryFormComponent', () => {
           name: 'New GHCR Registry',
           username: 'admin',
           password: 'password',
-          description: 'A new test registry',
         },
       ]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
@@ -125,7 +138,6 @@ describe('DockerRegistryFormComponent', () => {
         Name: 'Old Registry',
         Username: 'old_user',
         Password: '',
-        Description: 'Old description',
       });
 
       const uriSelector = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'URI' }));
@@ -139,7 +151,6 @@ describe('DockerRegistryFormComponent', () => {
         Name: 'Updated Registry',
         Username: 'updated_user',
         Password: 'updated_password',
-        Description: 'Updated description',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -152,7 +163,6 @@ describe('DockerRegistryFormComponent', () => {
           name: 'Updated Registry',
           username: 'updated_user',
           password: 'updated_password',
-          description: 'Updated description',
         },
       ]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
@@ -184,7 +194,6 @@ describe('DockerRegistryFormComponent', () => {
         Name: '',
         Username: '',
         Password: '',
-        Description: '',
       });
 
       const uriSelector = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'URI' }));

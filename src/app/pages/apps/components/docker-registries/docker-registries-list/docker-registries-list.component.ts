@@ -73,15 +73,11 @@ export class DockerRegistriesListComponent implements OnInit {
       propertyName: 'name',
     }),
     textColumn({
-      title: this.translate.instant('Description'),
-      propertyName: 'description',
-    }),
-    textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
     }),
     textColumn({
-      title: this.translate.instant('Uri'),
+      title: this.translate.instant('URI'),
       propertyName: 'uri',
     }),
     actionsColumn({
@@ -101,7 +97,7 @@ export class DockerRegistriesListComponent implements OnInit {
     }),
   ], {
     uniqueRowTag: (row) => `docker-registry-${row.uri}-${row.name}`,
-    ariaLabels: (row) => [row.name, row.description, this.translate.instant('Docker Registry')],
+    ariaLabels: (row) => [row.name, this.translate.instant('Docker Registry')],
   });
 
   constructor(
@@ -138,7 +134,7 @@ export class DockerRegistriesListComponent implements OnInit {
     this.filterString = query;
     this.dataProvider.setFilter({
       query,
-      columnKeys: ['name', 'description', 'username', 'uri'],
+      columnKeys: ['name', 'username', 'uri'],
     });
   }
 

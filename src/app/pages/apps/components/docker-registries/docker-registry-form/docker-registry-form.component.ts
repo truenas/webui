@@ -14,6 +14,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -58,8 +59,7 @@ export class DockerRegistryFormComponent implements OnInit {
     name: ['', Validators.required],
     username: ['', Validators.required],
     password: ['', Validators.required],
-    uri: [''],
-    description: [''],
+    uri: ['', Validators.pattern(this.urlValidationService.urlRegex)],
   });
 
   get title(): string {
@@ -74,13 +74,19 @@ export class DockerRegistryFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
+    private urlValidationService: UrlValidationService,
     private translate: TranslateService,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+
     this.existingDockerRegistry = this.slideInRef.getData()?.registry;
     this.isLoggedInToDockerHub = this.slideInRef.getData()?.isLoggedInToDockerHub;
+
+    if (!this.isLoggedInToDockerHub && !this.existingDockerRegistry) {
+      this.setNameForDockerHub();
+    }
   }
 
   ngOnInit(): void {
@@ -90,6 +96,12 @@ export class DockerRegistryFormComponent implements OnInit {
 
     this.form.controls.registry.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.form.patchValue({ uri: value });
+
+      if (value === dockerHubRegistry) {
+        this.setNameForDockerHub();
+      } else {
+        this.form.controls.name.patchValue('');
+      }
     });
   }
 
@@ -136,5 +148,9 @@ export class DockerRegistryFormComponent implements OnInit {
     this.form.patchValue({
       ...this.existingDockerRegistry,
     });
+  }
+
+  private setNameForDockerHub(): void {
+    this.form.controls.name.patchValue(this.translate.instant('Docker Hub'));
   }
 }

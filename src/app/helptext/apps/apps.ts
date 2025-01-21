@@ -22,7 +22,7 @@ export const helptextApps = {
   },
 
   dockerRegistries: {
-    tooltip: T('Signing in to Docker Hub is not required for Apps to function, but may help if you experience rate limiting issues.'),
+    tooltip: T('Signing in to a registry, such as Docker Hub, is not required for Apps to function, but may help if you experience rate limiting issues.'),
   },
 
   catalogMessage: {
