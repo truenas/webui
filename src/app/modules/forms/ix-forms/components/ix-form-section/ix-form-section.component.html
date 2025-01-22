@@ -8,7 +8,7 @@
       <ng-content></ng-content>
     </div>
     <div class="help" [hidden]="!help()">
-      <div class="value">{{ help() }}</div>
+      <div class="value" [innerHTML]="help()"></div>
     </div>
   </div>
 </ix-fieldset>
