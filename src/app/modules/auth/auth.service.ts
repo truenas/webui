@@ -150,6 +150,13 @@ export class AuthService {
     );
   }
 
+  isOtpwUser(): Observable<boolean> {
+    return this.user$.pipe(
+      filter(Boolean),
+      map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
+    );
+  }
+
   /**
    * Checks whether user has any of the supplied roles.
    * Does not ensure that user was loaded.

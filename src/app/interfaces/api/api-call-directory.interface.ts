@@ -347,6 +347,7 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.generate_token': { params: void; response: string };
+  'auth.generate_onetime_password': { params: [{ username: string }]; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };

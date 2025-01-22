@@ -1,5 +1,6 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -20,7 +21,7 @@ import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
-import { User, UserUpdate } from 'app/interfaces/user.interface';
+import { User, UserStigPasswordOption, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -33,6 +34,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   IxSlideToggleComponent,
@@ -75,6 +77,7 @@ const defaultHomePath = '/var/empty';
     MatDivider,
     IxChipsComponent,
     IxComboboxComponent,
+    IxRadioGroupComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     IxCheckboxComponent,
@@ -94,6 +97,7 @@ export class UserFormComponent implements OnInit {
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
   protected editingUser: User | undefined;
+  isStigMode = signal<boolean>(false);
 
   get isNewUser(): boolean {
     return !this.editingUser;
@@ -127,6 +131,7 @@ export class UserFormComponent implements OnInit {
         Validators.required,
       ),
     ]],
+    stig_password: [UserStigPasswordOption.DisablePassword],
     uid: [null as number, [Validators.required]],
     group: [null as number],
     group_create: [true],
@@ -163,6 +168,7 @@ export class UserFormComponent implements OnInit {
     home_create: helptextUsers.user_form_home_create_tooltip,
     sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
     password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
+    one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
     shell: helptextUsers.user_form_shell_tooltip,
     locked: helptextUsers.user_form_lockuser_tooltip,
     smb: helptextUsers.user_form_smb_tooltip,
@@ -181,6 +187,19 @@ export class UserFormComponent implements OnInit {
       map((groups) => groups.map((group) => group.group)),
     );
   };
+
+  stigPasswordOptions$ = of([
+    {
+      label: this.translate.instant('Disable Password'),
+      value: UserStigPasswordOption.DisablePassword,
+      tooltip: this.tooltips.password_disabled,
+    },
+    {
+      label: this.translate.instant('Generate Temporary One-Time Password'),
+      value: UserStigPasswordOption.OneTimePassword,
+      tooltip: this.tooltips.one_time_password,
+    },
+  ]);
 
   get homeCreateWarning(): string {
     const homeCreate = this.form.value.home_create;
@@ -246,6 +265,10 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+
+    this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.isStigMode.set(config.enable_gpos_stig);
+    });
   }
 
   setupForm(): void {
@@ -316,8 +339,45 @@ export class UserFormComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const payload = this.getPayload();
+
+    const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
+
+    homeCreateConfirmation$
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.submitUserRequest(payload)),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (user) => {
+          if (this.isNewUser) {
+            this.snackbar.success(this.translate.instant('User added'));
+            this.store$.dispatch(userAdded({ user }));
+          } else {
+            this.snackbar.success(this.translate.instant('User updated'));
+            this.store$.dispatch(userChanged({ user }));
+          }
+          this.isFormLoading = false;
+          this.slideInRef.close({ response: true, error: null });
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isFormLoading = false;
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private getPayload(): UserUpdate {
     const values = this.form.value;
-    const body: UserUpdate = {
+
+    const disablePassword = this.isStigMode() && this.isNewUser
+      ? values.stig_password === UserStigPasswordOption.DisablePassword
+      : values.password_disabled;
+
+    return {
       email: values.email ? values.email : null,
       full_name: values.full_name,
       group: values.group,
@@ -325,8 +385,8 @@ export class UserFormComponent implements OnInit {
       home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
-      locked: values.password_disabled ? false : values.locked,
-      password_disabled: values.password_disabled,
+      locked: disablePassword ? false : values.locked,
+      password_disabled: disablePassword,
       shell: values.shell,
       smb: values.smb,
       ssh_password_enabled: values.ssh_password_enabled,
@@ -335,76 +395,82 @@ export class UserFormComponent implements OnInit {
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
     };
+  }
 
-    let homeCreateWarningConfirmation$ = of(true);
+  private getHomeCreateConfirmation(): Observable<boolean> {
     if (this.homeCreateWarning) {
-      homeCreateWarningConfirmation$ = this.dialog.confirm({
+      return this.dialog.confirm({
         title: this.translate.instant('Warning!'),
         message: this.homeCreateWarning,
       });
     }
+    return of(true);
+  }
 
-    homeCreateWarningConfirmation$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading = true;
-        this.cdr.markForCheck();
+  private addOneTimePasswordIfNeeded(id: number): Observable<number> {
+    if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
+      return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
+        switchMap(() => {
+          return of(id);
+        }),
+      );
+    }
+    return of(id);
+  }
 
-        let request$: Observable<number>;
-        let nextRequest$: Observable<number>;
-        if (this.editingUser) {
-          const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
-          if (passwordNotEmpty && !values.password_disabled) {
-            body.password = values.password;
-          }
-          if (body.home_create) {
-            request$ = this.api.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
-            delete body.home_create;
-            delete body.home;
-            nextRequest$ = this.api.call('user.update', [this.editingUser.id, body]);
-          } else {
-            request$ = this.api.call('user.update', [this.editingUser.id, body]);
-          }
-        } else {
-          request$ = this.api.call('user.create', [{
-            ...body,
-            group_create: values.group_create,
-            password: values.password,
-            uid: values.uid,
-          }]);
-        }
+  private submitUserRequest(payload: UserUpdate): Observable<User> {
+    let request$: Observable<number>;
 
-        request$.pipe(
-          switchMap((id) => nextRequest$ || of(id)),
-          filter(Boolean),
-          switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
-          map((users) => users[0]),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (user) => {
-            if (this.isNewUser) {
-              this.snackbar.success(this.translate.instant('User added'));
-              this.store$.dispatch(userAdded({ user }));
-            } else {
-              this.snackbar.success(this.translate.instant('User updated'));
-              this.store$.dispatch(userChanged({ user }));
-            }
-            this.isFormLoading = false;
-            this.slideInRef.close({ response: true, error: null });
-            this.cdr.markForCheck();
-          },
-          error: (error: unknown) => {
-            this.isFormLoading = false;
-            this.formErrorHandler.handleValidationErrors(error, this.form);
-            this.cdr.markForCheck();
-          },
-        });
+    this.isFormLoading = true;
+    this.cdr.markForCheck();
+
+    if (this.editingUser) {
+      request$ = this.getUpdateUserRequest(payload);
+    } else {
+      request$ = this.getCreateUserRequest(payload);
+    }
+
+    return request$.pipe(
+      switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
+      map((users) => users[0]),
+    );
+  }
+
+  private getCreateUserRequest(payload: UserUpdate): Observable<number> {
+    return this.api.call('user.create', [
+      {
+        ...payload,
+        group_create: this.form.value.group_create,
+        // '' Empty in this case would require user to set it immediately on login.
+        password: this.form.value.password || '',
+        uid: this.form.value.uid,
       },
-      complete: () => {
-      },
-    });
+    ]).pipe(
+      switchMap((id) => this.addOneTimePasswordIfNeeded(id)),
+    );
+  }
+
+  private getUpdateUserRequest(payload: UserUpdate): Observable<number> {
+    const values = this.form.value;
+
+    const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
+    if (passwordNotEmpty && !values.password_disabled) {
+      payload.password = values.password;
+    }
+
+    if (payload.home_create) {
+      return this.api.call('user.update', [
+        this.editingUser.id,
+        { home_create: true, home: payload.home },
+      ]).pipe(
+        switchMap(() => {
+          delete payload.home_create;
+          delete payload.home;
+          return this.api.call('user.update', [this.editingUser.id, payload]);
+        }),
+      );
+    }
+    return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
   onDownloadSshPublicKey(): void {
@@ -425,6 +491,22 @@ export class UserFormComponent implements OnInit {
       this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
+    );
+
+    if (this.isStigMode()) {
+      this.handleNewUserWhenStigMode();
+    }
+  }
+
+  private handleNewUserWhenStigMode(): void {
+    this.form.controls.password.disable();
+    this.form.controls.password_conf.disable();
+
+    this.subscriptions.push(
+      this.form.controls.locked.disabledWhile(
+        this.form.controls.stig_password.value$
+          .pipe(map((option) => option === UserStigPasswordOption.DisablePassword)),
+      ),
     );
   }
 
@@ -484,7 +566,7 @@ export class UserFormComponent implements OnInit {
       ['enabled', '=', true],
       ['home', '=', true],
     ]]).pipe(
-      filter((shares) => !!shares.length),
+      filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),
       untilDestroyed(this),
     ).subscribe((homeSharePath) => {

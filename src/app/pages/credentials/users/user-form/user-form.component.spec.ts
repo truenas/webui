@@ -12,6 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
@@ -81,6 +82,9 @@ describe('UserFormComponent', () => {
         mockCall('user.query'),
         mockCall('user.create'),
         mockCall('user.update'),
+        mockCall('system.security.config', {
+          enable_gpos_stig: false,
+        } as SystemSecurityConfig),
         mockCall('user.shell_choices', {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
@@ -116,7 +120,7 @@ describe('UserFormComponent', () => {
     ],
   });
 
-  describe('adding a user', () => {
+  describe('adding a user when no stig mode enabled', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -287,7 +291,7 @@ describe('UserFormComponent', () => {
         69, { home: '/home/updated', home_create: true },
       ]);
 
-      expect(api.call).toHaveBeenLastCalledWith('user.update', [
+      expect(api.call).toHaveBeenCalledWith('user.update', [
         69,
         {
           email: null,

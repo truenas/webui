@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
+  ChangeDetectorRef, Component, Inject, input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardActions } from '@angular/material/card';
@@ -55,6 +55,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
+  readonly title = input<string | null>(null);
+
   protected readonly searchableElements = twoFactorElements;
 
   userTwoFactorAuthConfigured = false;

@@ -71,3 +71,8 @@ export interface SetPasswordParams {
   old_password: string;
   new_password: string;
 }
+
+export enum UserStigPasswordOption {
+  DisablePassword = 'DISABLE_PASSWORD',
+  OneTimePassword = 'ONE_TIME_PASSWORD',
+}
