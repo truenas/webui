@@ -68,7 +68,7 @@ export class FilesystemService {
         [
           node.data.path,
           typeFilter,
-          { order_by: ['name'], limit: 1000, select: ['name', 'type', 'attributes', 'path'] },
+          { order_by: ['name'], limit: 1000, select: ['name', 'type', 'attributes', 'path', 'is_ctldir'] },
         ],
       ).pipe(
         map((files) => {
