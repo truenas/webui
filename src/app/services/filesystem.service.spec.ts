@@ -60,7 +60,7 @@ describe('FilesystemService', () => {
           [],
           {
             order_by: ['name'],
-            select: ['name', 'type', 'attributes', 'path'],
+            select: ['name', 'type', 'attributes', 'path', 'is_ctldir'],
             limit: 1000,
           },
         ],
