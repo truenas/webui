@@ -27,21 +27,18 @@ set CPU topology. Example: 1-2,5,9-11'),
   memory_tooltip: T('Specify RAM allocation for the container. You can use units such as GB, MB.'),
 
   env_placeholder: T('Environment Variables'),
-  env_tooltip: T(''),
   env_name_placeholder: T('Name'),
   env_name_tooltip: T('Specify the environment variable name.'),
   env_value_placeholder: T('Value'),
   env_value_tooltip: T('Enter the value for the environment variable.'),
 
   disks_placeholder: T('Disks'),
-  disks_tooltip: T(''),
   disks_src_placeholder: T('Source'),
   disks_src_tooltip: T('Specify the source disk.'),
   disks_dst_placeholder: T('Destination'),
   disks_dst_tooltip: T('Specify the container filesystem path where the disk will be mounted.'),
 
   proxies_placeholder: T('Proxies'),
-  proxies_tooltip: T(''),
 
   host_protocol_placeholder: T('Host Protocol'),
   host_protocol_tooltip: T('Specify the protocol (TCP or UDP) for the host.'),

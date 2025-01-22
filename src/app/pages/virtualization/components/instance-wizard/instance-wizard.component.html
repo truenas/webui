@@ -94,13 +94,11 @@
     @if (isContainer()) {
     <ix-form-section
       [label]="'Environment' | translate"
-      [help]="containersHelptext.env_tooltip | translate"
     >
       <ix-list
         formArrayName="environment_variables"
         [empty]="form.controls.environment_variables.controls.length === 0"
         [label]="containersHelptext.env_placeholder | translate"
-        [tooltip]="containersHelptext.env_tooltip | translate"
         (add)="addEnvironmentVariable()"
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
@@ -132,13 +130,11 @@
 
     <ix-form-section
       [label]="'Disks' | translate"
-      [help]="containersHelptext.disks_tooltip | translate"
     >
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
         [label]="containersHelptext.disks_placeholder | translate"
-        [tooltip]="containersHelptext.disks_tooltip | translate"
         [formArray]="form.controls.disks"
         (add)="addDisk()"
       >
@@ -173,13 +169,11 @@
 
     <ix-form-section
       [label]="'Proxies' | translate"
-      [help]="containersHelptext.proxies_tooltip | translate"
     >
       <ix-list
         formArrayName="proxies"
         [empty]="form.controls.proxies.controls.length === 0"
         [label]="containersHelptext.proxies_placeholder | translate"
-        [tooltip]="containersHelptext.proxies_tooltip | translate"
         [formArray]="form.controls.proxies"
         (add)="addProxy()"
       >
