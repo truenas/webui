@@ -8,7 +8,7 @@
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
       [label]="'Instance Configuration' | translate"
-      [help]="'Instance Configuration' | translate"
+      [help]="containersHelptext.instance_type_tooltip | translate"
     >
       <ix-input
         formControlName="name"
@@ -70,7 +70,7 @@
 
     <ix-form-section
       [label]="'CPU & Memory' | translate"
-      [help]="'CPU & Memory' | translate"
+      [help]="containersHelptext.cpu_memory_tooltip | translate"
     >
       <ix-input
         formControlName="cpu"
@@ -94,7 +94,7 @@
     @if (isContainer()) {
     <ix-form-section
       [label]="'Environment' | translate"
-      [help]="'Environment' | translate"
+      [help]="containersHelptext.env_tooltip | translate"
     >
       <ix-list
         formArrayName="environment_variables"
@@ -132,7 +132,7 @@
 
     <ix-form-section
       [label]="'Disks' | translate"
-      [help]="'Disks' | translate"
+      [help]="containersHelptext.disks_tooltip | translate"
     >
       <ix-list
         formArrayName="disks"
@@ -173,7 +173,7 @@
 
     <ix-form-section
       [label]="'Proxies' | translate"
-      [help]="'Proxies' | translate"
+      [help]="containersHelptext.proxies_tooltip | translate"
     >
       <ix-list
         formArrayName="proxies"
@@ -235,7 +235,7 @@
 
     <ix-form-section
       [label]="'Network' | translate"
-      [help]="'Network' | translate"
+      [help]="containersHelptext.network_tooltip | translate"
     >
       <ix-checkbox
         formControlName="use_default_network"
@@ -286,7 +286,6 @@
     @if (usbDevices && usbDevices.length > 0) {
       <ix-form-section
         [label]="'USB Devices' | translate"
-        [help]="'USB Devices' | translate"
       >
         <ix-checkbox-list
           formControlName="usb_devices"
@@ -301,7 +300,6 @@
     @if (gpuDevices && gpuDevices.length > 0) {
       <ix-form-section
         [label]="'GPU Devices' | translate"
-        [help]="'GPU Devices' | translate"
       >
         <ix-checkbox-list
           formControlName="gpu_devices"
@@ -314,7 +312,6 @@
     @if (isVm()) {
       <ix-form-section
         [label]="'VNC' | translate"
-        [help]="'VNC' | translate"
       >
         <ix-checkbox
           formControlName="enable_vnc"

@@ -9,39 +9,39 @@ export const containersHelptext = {
   name_tooltip: T('Specify a unique name for the container.'),
 
   instance_type_placeholder: T('Virtualization Method'),
-  instance_type_tooltip: T('<b>Difference between Container and VM:</b><br /><br /> \
-<b>Why choose Container?</b><br /> \
+  instance_type_tooltip: T('<b>Why choose Container?</b><br />\
 Containers offer lightweight, \
 efficient virtualization by sharing the host OS kernel, \
 providing faster startup times and reduced resource usage compared to VMs. \
-Ideal for scalable applications.<br /><br /> \
-<b>Why choose VM?</b><br /> \
+Ideal for scalable applications.<br /><br />\
+<b>Why choose VM?</b><br />\
 Choose a VM for full OS isolation, kernel independence, and running diverse OS types.'),
 
+  cpu_memory_tooltip: T('<b>CPU Configuration</b><br />Enter number of cores or multiple values or ranges to\
+set CPU topology. Example: 1-2,5,9-11'),
+
   cpu_placeholder: T('CPU Configuration'),
-  cpu_tooltip: T('Specify the logical cores that container is allowed to use. \
-Better cache locality can be achieved by setting CPU set base on CPU topology. \
-E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
+  cpu_tooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
 
   memory_placeholder: T('Memory Size'),
   memory_tooltip: T('Specify RAM allocation for the container. You can use units such as GB, MB.'),
 
   env_placeholder: T('Environment Variables'),
-  env_tooltip: T('Environment variables allow you to customize container behavior.'),
+  env_tooltip: T(''),
   env_name_placeholder: T('Name'),
   env_name_tooltip: T('Specify the environment variable name.'),
   env_value_placeholder: T('Value'),
   env_value_tooltip: T('Enter the value for the environment variable.'),
 
   disks_placeholder: T('Disks'),
-  disks_tooltip: T('Specify storage volumes for your Linux Containers.'),
+  disks_tooltip: T(''),
   disks_src_placeholder: T('Source'),
-  disks_src_tooltip: T('Specify the disk source for your container.'),
+  disks_src_tooltip: T('Specify the source disk.'),
   disks_dst_placeholder: T('Destination'),
   disks_dst_tooltip: T('Specify the container filesystem path where the disk will be mounted.'),
 
   proxies_placeholder: T('Proxies'),
-  proxies_tooltip: T('Brief explanation of proxy configuration for Linux Containers.'),
+  proxies_tooltip: T(''),
 
   host_protocol_placeholder: T('Host Protocol'),
   host_protocol_tooltip: T('Specify the protocol (TCP or UDP) for the host.'),
@@ -52,6 +52,12 @@ E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   instance_protocol_tooltip: T('Select the protocol for the instance\'s network connection.'),
   instance_port_placeholder: T('Instance Port'),
   instance_port_tooltip: T('Specify the network port for the container instance.'),
+
+  network_tooltip: T('Use the default network settings to connect the default bridge to the host.</br>\
+<br />\
+<b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the instance.<br />\
+<br />\
+<b>MACVLAN NIC</b> sets up a new network device based on an existing one, but using a different MAC address.'),
 
   network_use_default_placeholder: T('Use default network settings'),
   network_use_default_tooltip: T('Enable to apply default network configurations.'),
