@@ -9,6 +9,7 @@
   "Enable to apply default network configurations.": "",
   "Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11": "",
   "Enter the value for the environment variable.": "",
+  "Global Two-Factor Authentication must be enabled to activate this feature.": "",
   "Select the protocol for the instance's network connection.": "",
   "Specify RAM allocation for the container. You can use units such as GB, MB.": "",
   "Specify a unique name for the container.": "",

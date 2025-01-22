@@ -20,9 +20,8 @@
         [tooltip]="'Enable this mode to enhance system security to meet US federal government security requirements. Note that enabling STIG mode will restrict some functionality.' | translate"
       ></ix-slide-toggle>
 
-      <p class="hint">
-        {{ 'Restart is required after changing these settings.' | translate }}
-      </p>
+      <mat-hint>{{ 'Global Two-Factor Authentication must be enabled to activate this feature.' | translate }}</mat-hint>
+      <mat-hint>{{ 'Restart is required after changing these settings.' | translate }}</mat-hint>
 
       <div class="form-actions">
         <button

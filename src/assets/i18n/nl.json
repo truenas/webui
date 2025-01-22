@@ -46,6 +46,7 @@
   "Failed to configure certificate in system UI": "",
   "Failed to renew certificate": "",
   "Generate Token": "",
+  "Global Two-Factor Authentication must be enabled to activate this feature.": "",
   "Go To Directory Services": "",
   "Go to API keys": "",
   "Go to App Settings": "",

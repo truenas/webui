@@ -12,6 +12,7 @@
   "Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11": "",
   "Enter the value for the environment variable.": "",
   "Flash Identify Light": "",
+  "Global Two-Factor Authentication must be enabled to activate this feature.": "",
   "Key Cert Sign": "",
   "Key Usage Config": "",
   "Keychain Credential Read": "",
