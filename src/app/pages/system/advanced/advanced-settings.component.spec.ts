@@ -70,7 +70,7 @@ describe('AdvancedSettingsComponent', () => {
       provideMockStore({
         selectors: [{
           selector: selectProductType,
-          value: ProductType.Scale,
+          value: ProductType.CommunityEdition,
         }],
       }),
     ],
@@ -100,7 +100,7 @@ describe('AdvancedSettingsComponent', () => {
 
   it('enterprise: shows cards with advanced settings', () => {
     const store$ = spectator.inject(MockStore);
-    store$.overrideSelector(selectProductType, ProductType.ScaleEnterprise);
+    store$.overrideSelector(selectProductType, ProductType.Enterprise);
     store$.refreshState();
 
     spectator.detectChanges();

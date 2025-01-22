@@ -194,7 +194,7 @@ describe('OtherOptionsSectionComponent', () => {
         mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
       mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.Scale),
+        getProductType: jest.fn(() => ProductType.CommunityEdition),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -409,7 +409,7 @@ describe('OtherOptionsSectionComponent', () => {
 
     it('does not show deduplication field on Enterprise systems that do not have a dedup license', async () => {
       const systemGeneralService = spectator.inject(SystemGeneralService);
-      jest.spyOn(systemGeneralService, 'getProductType').mockReturnValue(ProductType.ScaleEnterprise);
+      jest.spyOn(systemGeneralService, 'getProductType').mockReturnValue(ProductType.Enterprise);
       const store$ = spectator.inject(MockStore);
       store$.overrideSelector(selectSystemInfo, {
         license: {

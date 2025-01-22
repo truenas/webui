@@ -259,7 +259,7 @@ export class NetworkConfigurationComponent implements OnInit {
       },
     );
 
-    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.hostnameB.hidden = !isHaLicensed;
         this.hostnameVirtual.hidden = !isHaLicensed;

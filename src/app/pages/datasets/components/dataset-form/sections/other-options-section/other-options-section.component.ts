@@ -227,7 +227,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.hasDeduplication = false;
     this.cdr.markForCheck();
 
-    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       this.hasDeduplication = true;
       this.cdr.markForCheck();
       return;

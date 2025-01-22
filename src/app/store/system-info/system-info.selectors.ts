@@ -30,7 +30,7 @@ export const selectProductType = createSelector(
 
 export const selectIsEnterprise = createSelector(
   selectProductType,
-  (productType) => productType === ProductType.ScaleEnterprise,
+  (productType) => productType === ProductType.Enterprise,
 );
 
 export const selectBuildYear = createSelector(
