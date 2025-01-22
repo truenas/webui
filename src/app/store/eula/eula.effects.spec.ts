@@ -31,7 +31,7 @@ describe('EulaEffects', () => {
       provideMockStore({
         selectors: [{
           selector: selectProductType,
-          value: ProductType.ScaleEnterprise,
+          value: ProductType.Enterprise,
         }],
       }),
       mockAuth(),

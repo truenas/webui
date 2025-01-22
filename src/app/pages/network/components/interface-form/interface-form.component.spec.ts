@@ -137,7 +137,7 @@ describe('InterfaceFormComponent', () => {
         components$: of([]),
       }),
       mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.ScaleEnterprise,
+        getProductType: () => ProductType.Enterprise,
       }),
       mockProvider(SlideInRef, slideInRef),
       mockAuth(),
