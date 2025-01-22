@@ -101,6 +101,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
@@ -325,6 +326,13 @@ export interface ApiCallDirectory {
   'app.similar': { params: [app_name: string, train: string]; response: AvailableApp[] };
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
   'app.ix_volume.exists': { params: [string]; response: boolean };
+
+  // App/Docker Registry
+  'app.registry.create': { params: [DockerRegistryPayload]; response: DockerRegistry };
+  'app.registry.delete': { params: [number]; response: null };
+  'app.registry.update': { params: [number, DockerRegistryPayload]; response: DockerRegistry };
+  'app.registry.get_instance': { params: [number]; response: DockerRegistry };
+  'app.registry.query': { params: QueryParams<DockerRegistryPayload>; response: DockerRegistry[] };
 
   // App Image
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };

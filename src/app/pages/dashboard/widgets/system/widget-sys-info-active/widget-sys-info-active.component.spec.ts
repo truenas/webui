@@ -72,7 +72,7 @@ describe('WidgetSysInfoActiveComponent', () => {
         selectors: [
           {
             selector: selectProductType,
-            value: ProductType.ScaleEnterprise,
+            value: ProductType.Enterprise,
           },
           {
             selector: selectIsEnterprise,

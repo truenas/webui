@@ -285,6 +285,45 @@
   {
     "hierarchy": [
       "Applications",
+      "Docker Registries",
+      "Add Registry"
+    ],
+    "synonyms": [
+      "Add Docker Registry"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/apps",
+      "docker-registries"
+    ],
+    "routerLink": null,
+    "anchor": "add-registry",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Docker Registries"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/apps",
+      "docker-registries"
+    ],
+    "routerLink": null,
+    "anchor": "docker-registries-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
       "Installed",
       "Settings"
     ],

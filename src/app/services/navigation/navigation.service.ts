@@ -82,7 +82,7 @@ export class NavigationService {
         {
           name: 'KMIP',
           state: 'kmip',
-          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise),
+          isVisible$: of(this.systemGeneralService.getProductType() === ProductType.Enterprise),
         },
       ],
     },
@@ -149,7 +149,7 @@ export class NavigationService {
   }
 
   private checkForEnterpriseLicenses(): void {
-    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       this.hasVms$.next(true);
       this.hasApps$.next(true);
       return;
