@@ -14,10 +14,12 @@
   <ix-replication-settings-card></ix-replication-settings-card>
   <ix-access-card></ix-access-card>
   <ix-allowed-addresses-card></ix-allowed-addresses-card>
-  <ix-self-encrypting-drive-card></ix-self-encrypting-drive-card>
+  @if (showSedCard()) {
+    <ix-self-encrypting-drive-card></ix-self-encrypting-drive-card>
+  }
   <ix-isolated-gpus-card></ix-isolated-gpus-card>
   <ix-global-two-factor-card></ix-global-two-factor-card>
-  @if (!!(isSystemLicensed$ | async)) {
+  @if (isSystemLicensed()) {
     <ix-system-security-card></ix-system-security-card>
   }
 </div>

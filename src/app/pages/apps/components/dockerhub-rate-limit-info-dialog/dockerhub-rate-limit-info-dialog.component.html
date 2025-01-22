@@ -2,6 +2,10 @@
   <h3>{{ 'Docker Hub Rate Limit Warning' | translate }}</h3>
   <div>
     <p>{{  warningText }}</p>
+
+    <p>
+      {{ 'You can alleviate rate limiting issues by signing in with Docker Hub.' | translate }}
+    </p>
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
@@ -12,5 +16,15 @@
     [matDialogClose]="true"
   >
     {{ 'Close' | translate }}
+  </button>
+  <button
+    mat-button
+    type="button"
+    color="primary"
+    ixTest="navigate-to-docker-registries"
+    [routerLink]="['/apps', 'docker-registries']"
+    [matDialogClose]="true"
+  >
+    {{ 'Sign-in to Docker Hub' | translate }}
   </button>
 </mat-dialog-actions>
