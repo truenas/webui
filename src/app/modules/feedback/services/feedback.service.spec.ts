@@ -50,7 +50,7 @@ describe('FeedbackService', () => {
         selectors: [
           {
             selector: selectProductType,
-            value: ProductType.ScaleEnterprise,
+            value: ProductType.Enterprise,
           },
           {
             selector: selectSystemInfoState,
@@ -75,7 +75,7 @@ describe('FeedbackService', () => {
       }),
       mockProvider(MatSnackBar),
       mockProvider(SystemGeneralService, {
-        getProductType: jest.fn(() => ProductType.ScaleEnterprise),
+        getProductType: jest.fn(() => ProductType.Enterprise),
       }),
       mockWindow({
         location: {
@@ -289,7 +289,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.ScaleEnterprise,
+        product_type: ProductType.Enterprise,
         rating: 1,
         release: 'SCALE-24.04',
         user_agent: 'Safari',
@@ -314,7 +314,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.ScaleEnterprise,
+        product_type: ProductType.Enterprise,
         rating: 1,
         release: 'SCALE-24.04',
         user_agent: 'Safari',
@@ -348,7 +348,7 @@ describe('FeedbackService', () => {
         message: 'Git gud',
         page: '/storage',
         product_model: 'M40',
-        product_type: ProductType.ScaleEnterprise,
+        product_type: ProductType.Enterprise,
         rating: 5,
         release: 'SCALE-24.04',
         user_agent: 'Safari',

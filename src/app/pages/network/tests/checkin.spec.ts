@@ -125,7 +125,7 @@ describe('NetworkComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(SystemGeneralService, {
-        getProductType$: of(ProductType.Scale),
+        getProductType$: of(ProductType.CommunityEdition),
       }),
       mockProvider(SlideInRef, slideInRef),
       mockProvider(SlideIn, {

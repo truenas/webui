@@ -132,7 +132,7 @@ export class NetworkComponent implements OnInit {
         this.cdr.markForCheck();
       });
 
-    if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() === ProductType.Enterprise) {
       this.listenForHaStatus();
     }
 
