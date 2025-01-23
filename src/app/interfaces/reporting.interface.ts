@@ -20,14 +20,9 @@ export interface AllCpusUpdate {
   steal: number;
   guest: number;
   guest_nice: number;
-  cpu: CpuUsageUpdate;
-  [key: `cpu${number}`]: CpuUsageUpdate;
+  aggregated_usage: number;
+  [key: `core${number}_usage`]: number;
   temperature_celsius: number;
-}
-
-export interface CpuUsageUpdate {
-  usage: number;
-  temp: number;
 }
 
 export interface DisksUpdate {
