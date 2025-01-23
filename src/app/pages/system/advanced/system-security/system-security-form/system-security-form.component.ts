@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
+  signal,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatHint } from '@angular/material/form-field';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -19,7 +20,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -38,6 +38,7 @@ import { AppState } from 'app/store';
     MatButton,
     TestDirective,
     TranslateModule,
+    MatHint,
   ],
 })
 export class SystemSecurityFormComponent implements OnInit {
@@ -48,14 +49,12 @@ export class SystemSecurityFormComponent implements OnInit {
     enable_gpos_stig: [false],
   });
 
-  private systemSecurityConfig: SystemSecurityConfig;
+  private systemSecurityConfig = signal<SystemSecurityConfig>(this.slideInRef.getData());
 
   constructor(
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
     private dialogService: DialogService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
@@ -64,11 +63,10 @@ export class SystemSecurityFormComponent implements OnInit {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
-    this.systemSecurityConfig = this.slideInRef.getData();
   }
 
   ngOnInit(): void {
-    if (this.systemSecurityConfig) {
+    if (this.systemSecurityConfig()) {
       this.initSystemSecurityForm();
     }
   }
@@ -92,7 +90,11 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private initSystemSecurityForm(): void {
-    this.form.patchValue(this.systemSecurityConfig);
-    this.cdr.markForCheck();
+    this.form.patchValue(this.systemSecurityConfig());
+    this.form.controls.enable_gpos_stig.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value && !this.form.controls.enable_fips.value) {
+        this.form.patchValue({ enable_fips: true });
+      }
+    });
   }
 }
