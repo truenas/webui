@@ -1,3 +1,4 @@
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
@@ -5,6 +6,7 @@ import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-f
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { StigFirstLoginDialogComponent } from 'app/pages/credentials/users/stig-first-login-dialog/stig-first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TwoFactorGuardService', () => {
@@ -14,6 +16,7 @@ describe('TwoFactorGuardService', () => {
   const userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig | null>(null);
   const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
+  const isOtpwUser$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -26,6 +29,12 @@ describe('TwoFactorGuardService', () => {
         userTwoFactorConfig$,
         getGlobalTwoFactorConfig,
         hasRole: jest.fn(() => hasRole$),
+        isOtpwUser: jest.fn(() => isOtpwUser$),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
       }),
       mockProvider(DialogService, {
         fullScreenDialog: jest.fn(() => of(undefined)),
@@ -97,5 +106,26 @@ describe('TwoFactorGuardService', () => {
 
     expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/two-factor-auth']);
+  });
+
+  it('handles STIG first login for user to proceed with changing one-time password and setting up 2FA', async () => {
+    isAuthenticated$.next(true);
+    getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
+    userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
+    isOtpwUser$.next(true);
+
+    const isAllowed = await firstValueFrom(
+      spectator.service.canActivateChild({} as ActivatedRouteSnapshot, { url: '/dashboard' } as RouterStateSnapshot),
+    );
+    expect(isAllowed).toBe(true);
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StigFirstLoginDialogComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
   });
 });

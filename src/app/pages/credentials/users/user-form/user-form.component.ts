@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -50,6 +51,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
@@ -101,6 +103,16 @@ export class UserFormComponent implements OnInit {
 
   get isNewUser(): boolean {
     return !this.editingUser;
+  }
+
+  get smbTooltip(): string {
+    if (this.isStigMode()) {
+      return this.translate.instant(this.tooltips.smbStig);
+    }
+
+    return this.isEditingBuiltinUser
+      ? this.translate.instant(this.tooltips.smbBuiltin)
+      : this.translate.instant(this.tooltips.smb);
   }
 
   get title(): string {
@@ -173,6 +185,7 @@ export class UserFormComponent implements OnInit {
     locked: helptextUsers.user_form_lockuser_tooltip,
     smb: helptextUsers.user_form_smb_tooltip,
     smbBuiltin: helptextUsers.smbBuiltin,
+    smbStig: helptextUsers.smbStig,
   };
 
   readonly groupOptions$ = this.api.call('group.query').pipe(
@@ -244,6 +257,7 @@ export class UserFormComponent implements OnInit {
     private downloadService: DownloadService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private matDialog: MatDialog,
     private userService: UserService,
     public slideInRef: SlideInRef<User | undefined, boolean>,
   ) {
@@ -268,6 +282,10 @@ export class UserFormComponent implements OnInit {
 
     this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
       this.isStigMode.set(config.enable_gpos_stig);
+
+      if (this.isStigMode()) {
+        this.handleUserWhenStigMode();
+      }
     });
   }
 
@@ -338,6 +356,23 @@ export class UserFormComponent implements OnInit {
     }
   }
 
+  handleUserWhenStigMode(): void {
+    this.form.controls.smb.patchValue(false);
+    this.form.controls.smb.disable();
+
+    if (!this.editingUser) {
+      this.form.controls.password.disable();
+      this.form.controls.password_conf.disable();
+
+      this.subscriptions.push(
+        this.form.controls.locked.disabledWhile(
+          this.form.controls.stig_password.value$
+            .pipe(map((option) => option === UserStigPasswordOption.DisablePassword)),
+        ),
+      );
+    }
+  }
+
   onSubmit(): void {
     const payload = this.getPayload();
 
@@ -388,7 +423,7 @@ export class UserFormComponent implements OnInit {
       locked: disablePassword ? false : values.locked,
       password_disabled: disablePassword,
       shell: values.shell,
-      smb: values.smb,
+      smb: values.smb || false,
       ssh_password_enabled: values.ssh_password_enabled,
       sshpubkey: values.sshpubkey ? values.sshpubkey.trim() : values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
@@ -407,10 +442,11 @@ export class UserFormComponent implements OnInit {
     return of(true);
   }
 
-  private addOneTimePasswordIfNeeded(id: number): Observable<number> {
+  private generateOneTimePasswordIfNeeded(id: number): Observable<number> {
     if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
-        switchMap(() => {
+        switchMap((password) => {
+          this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
           return of(id);
         }),
       );
@@ -437,16 +473,14 @@ export class UserFormComponent implements OnInit {
   }
 
   private getCreateUserRequest(payload: UserUpdate): Observable<number> {
-    return this.api.call('user.create', [
-      {
-        ...payload,
-        group_create: this.form.value.group_create,
-        // '' Empty in this case would require user to set it immediately on login.
-        password: this.form.value.password || '',
-        uid: this.form.value.uid,
-      },
-    ]).pipe(
-      switchMap((id) => this.addOneTimePasswordIfNeeded(id)),
+    return this.api.call('user.create', [{
+      ...payload,
+      group_create: this.form.value.group_create,
+      password: payload.password_disabled ? null : this.form.value.password || 'test',
+      // random_password: true,
+      uid: this.form.value.uid,
+    }]).pipe(
+      switchMap((id) => this.generateOneTimePasswordIfNeeded(id)),
     );
   }
 
@@ -491,22 +525,6 @@ export class UserFormComponent implements OnInit {
       this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
       this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
-    );
-
-    if (this.isStigMode()) {
-      this.handleNewUserWhenStigMode();
-    }
-  }
-
-  private handleNewUserWhenStigMode(): void {
-    this.form.controls.password.disable();
-    this.form.controls.password_conf.disable();
-
-    this.subscriptions.push(
-      this.form.controls.locked.disabledWhile(
-        this.form.controls.stig_password.value$
-          .pipe(map((option) => option === UserStigPasswordOption.DisablePassword)),
-      ),
     );
   }
 

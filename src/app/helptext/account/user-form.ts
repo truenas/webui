@@ -51,4 +51,5 @@ export const helptextUsers = {
  a <b>Password</b> has been created for the account.'),
   user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.'),
   smbBuiltin: T('Cannot be enabled for built-in users.'),
+  smbStig: T('Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.'),
 };

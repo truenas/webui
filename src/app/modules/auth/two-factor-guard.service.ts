@@ -52,8 +52,6 @@ export class TwoFactorGuardService implements CanActivateChild {
           return this.showStigFirstLoginDialog();
         }
 
-        this.showStigFirstLoginDialog();
-
         if (!globalConfig.enabled || userConfig.secret_configured || state.url.endsWith('/two-factor-auth')) {
           return of(true);
         }
