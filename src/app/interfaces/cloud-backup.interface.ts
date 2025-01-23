@@ -7,6 +7,7 @@ import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
   id: number;
+  absolute_paths: boolean;
   description: string;
   path: string;
   attributes: Record<string, string | number | boolean>;
