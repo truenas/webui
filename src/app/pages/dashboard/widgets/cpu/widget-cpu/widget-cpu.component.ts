@@ -115,10 +115,16 @@ export class WidgetCpuComponent {
 
     for (let i = 0; i < this.threadCount(); i++) {
       usageColumn.push(parseInt(cpuData[`cpu${i}`].usage.toFixed(1)));
-      tempColumn.push(parseInt(cpuData[`cpu${i}`].temp.toString()));
+      if (cpuData[`cpu${i}`].temp) {
+        tempColumn.push(parseInt(cpuData[`cpu${i}`].temp?.toString() || ''));
+      }
     }
 
-    return [usageColumn, tempColumn];
+    const columns = [usageColumn];
+    if (tempColumn.length) {
+      columns.push(tempColumn);
+    }
+    return columns;
   }
 
   protected getCpuParams(): CpuParams {
