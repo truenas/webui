@@ -10,10 +10,6 @@ import { MapOption, Option } from 'app/interfaces/option.interface';
  */
 export function choicesToOptions(): OperatorFunction<Choices, Option[]> {
   return map((choices) => {
-    if (!choices) {
-      return [];
-    }
-
     return Object.entries(choices).map(
       ([value, label]) => ({ label, value }),
     );
