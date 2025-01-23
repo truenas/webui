@@ -21,7 +21,7 @@ describe('WidgetCpuTempComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                temperature_celsius: 10,
+                cpu: { temp: 10 },
               },
             },
           }),
@@ -44,7 +44,7 @@ describe('WidgetCpuTempComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                temperature_celsius: undefined,
+                cpu: { temp: undefined },
               },
             },
           }),
