@@ -22,7 +22,6 @@ export interface AllCpusUpdate {
   guest_nice: number;
   cpu: CpuUsageUpdate;
   [key: `cpu${number}`]: CpuUsageUpdate;
-  temperature_celsius: number;
 }
 
 export interface CpuUsageUpdate {

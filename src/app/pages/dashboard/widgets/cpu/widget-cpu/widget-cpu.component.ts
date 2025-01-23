@@ -56,7 +56,7 @@ export class WidgetCpuComponent {
     map((update) => update.fields.cpu),
   ));
 
-  cpuTemp = computed(() => this.cpuData()?.temperature_celsius || Math.floor(Math.random() * 99) + 1);
+  cpuTemp = computed(() => this.cpuData()?.cpu.temp);
 
   protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
   protected cpuModel = computed(() => this.sysInfo().model);
