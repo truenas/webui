@@ -47,7 +47,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
         provide: SLIDE_IN_DATA,
         useValue: {
           snapshot: { id: 1 },
-          backup: { id: 1, path: '/mnt/dozer' },
+          backup: { id: 1, path: '/mnt/dozer', absolute_paths: true },
         },
       },
     ],
