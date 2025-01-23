@@ -156,14 +156,19 @@ export class AppInfoCardComponent {
         }).afterClosed();
       }),
       filter(Boolean),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     )
-      .subscribe(({ removeVolumes, removeImages }) => this.executeDelete(name, removeVolumes, removeImages));
+      .subscribe((options) => this.executeDelete(name, options));
   }
 
-  executeDelete(name: string, removeVolumes = false, removeImages = true): void {
+  executeDelete(name: string, options: AppDeleteDialogOutputData): void {
     this.dialogService.jobDialog(
-      this.ws.job('app.delete', [name, { remove_images: removeImages, remove_ix_volumes: removeVolumes }]),
+      this.ws.job('app.delete', [name, {
+        remove_images: options.removeImages,
+        remove_ix_volumes: options.removeVolumes,
+        force_remove_ix_volumes: options.forceRemoveVolumes,
+      }]),
       { title: helptextApps.apps.delete_dialog.job },
     )
       .afterClosed()
