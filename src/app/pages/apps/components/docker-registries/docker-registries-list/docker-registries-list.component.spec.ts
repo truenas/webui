@@ -6,7 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DockerRegistry } from 'app/interfaces/docker-registry.interface';
+import { dockerHubRegistry, DockerRegistry } from 'app/interfaces/docker-registry.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -27,7 +27,7 @@ describe('DockerRegistriesListComponent', () => {
       id: 1,
       name: 'Docker Hub',
       description: 'Docker Hub',
-      uri: 'https://index.docker.io/v1/',
+      uri: dockerHubRegistry,
       username: 'docker',
       password: 'password',
     },
@@ -65,7 +65,7 @@ describe('DockerRegistriesListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Username', 'URI', ''],
-      ['Docker Hub', 'docker', 'https://index.docker.io/v1/', ''],
+      ['Docker Hub', 'docker', dockerHubRegistry, ''],
     ];
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.registry.query');
@@ -92,7 +92,7 @@ describe('DockerRegistriesListComponent', () => {
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(DockerRegistryFormComponent, {
       data: {
-        isLoggedInToDockerHub: false,
+        isLoggedInToDockerHub: true,
       },
     });
   });
