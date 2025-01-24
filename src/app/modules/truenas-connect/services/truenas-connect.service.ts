@@ -14,7 +14,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   providedIn: 'root',
 })
 export class TruenasConnectService {
-  config = signal<TruenasConnectConfig>(null);
+  config = signal<TruenasConnectConfig | null>(null);
   config$ = toObservable(this.config);
   constructor(
     @Inject(WINDOW) private window: Window,

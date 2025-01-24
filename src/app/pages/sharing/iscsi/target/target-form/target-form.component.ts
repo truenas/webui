@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { uniq } from 'lodash-es';
@@ -145,8 +145,8 @@ export class TargetFormComponent implements OnInit {
   });
 
   fcForm = this.formBuilder.group({
-    port: [nullOption as string, [Validators.required]],
-    host_id: [null as number | null, [Validators.required]],
+    port: new FormControl(nullOption as string | null, [Validators.required]),
+    host_id: new FormControl(null as number | null, [Validators.required]),
   });
 
   constructor(
@@ -231,10 +231,10 @@ export class TargetFormComponent implements OnInit {
   addGroup(): void {
     this.form.controls.groups.push(
       this.formBuilder.group({
-        portal: [null as number, Validators.required],
-        initiator: [null as number],
+        portal: new FormControl(null as number | null, Validators.required),
+        initiator: new FormControl(null as number | null),
         authmethod: [IscsiAuthMethod.None, Validators.required],
-        auth: [null as number],
+        auth: new FormControl(null as number | null),
       }),
     );
   }

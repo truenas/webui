@@ -80,7 +80,7 @@ describe('SupportCardComponent', () => {
           contract_end: {
             $value: '2027-09-29',
           },
-          addhw_detail: [],
+          addhw_detail: [] as unknown[],
         } as SystemLicense,
       });
       store$.refreshState();

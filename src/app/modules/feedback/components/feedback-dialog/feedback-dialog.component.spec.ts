@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialogComponent>;
-  let typeButtonGroup: IxButtonGroupHarness;
+  let typeButtonGroup: IxButtonGroupHarness | null;
   let loader: HarnessLoader;
 
   const isReviewAllowed$ = new BehaviorSubject(false);
@@ -77,7 +77,7 @@ describe('FeedbackDialogComponent', () => {
         isReviewAllowed$.next(true);
         isEnterprise$.next(true);
 
-        expect(await typeButtonGroup.getOptions()).toEqual(['Rate this page', 'Report a bug']);
+        expect(await typeButtonGroup!.getOptions()).toEqual(['Rate this page', 'Report a bug']);
       });
 
       it('hides type selector when only one option is available (enterprise with reviews disabled)', async () => {
@@ -92,7 +92,7 @@ describe('FeedbackDialogComponent', () => {
         isReviewAllowed$.next(true);
         isEnterprise$.next(false);
 
-        expect(await typeButtonGroup.getOptions()).toEqual([
+        expect(await typeButtonGroup!.getOptions()).toEqual([
           'Rate this page',
           'Report a bug',
         ]);
@@ -102,33 +102,33 @@ describe('FeedbackDialogComponent', () => {
     describe('forms', () => {
       it('shows FileReview system when Review is selected', async () => {
         isReviewAllowed$.next(true);
-        await typeButtonGroup.setValue('Rate this page');
+        await typeButtonGroup!.setValue('Rate this page');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileReviewComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         expect(spectator.query(FileTicketComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
       });
 
       it('shows FileTicket form when Bug is selected on a non-enterprise system', async () => {
-        await typeButtonGroup.setValue('Report a bug');
+        await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
 
         let visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
-        expect(visibleForm.type).toBe(FeedbackType.Bug);
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.type).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
 
         visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
-        expect(visibleForm.type).toBe(FeedbackType.Bug);
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.type).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
@@ -137,29 +137,29 @@ describe('FeedbackDialogComponent', () => {
       it('shows FileTicketLicensed form when Bug is selected on an enterprise system', async () => {
         isEnterprise$.next(true);
 
-        await typeButtonGroup.setValue('Report a bug');
+        await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketLicensedComponent);
         expect(visibleForm).toExist();
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketComponent)).not.toExist();
       });
 
       it('disables dialog close when loading is set to true', async () => {
-        await typeButtonGroup.setValue('Report a bug');
+        await typeButtonGroup!.setValue('Report a bug');
         spectator.detectChanges();
 
         const visibleForm = spectator.query(FileTicketComponent);
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
+        expect(visibleForm!.dialogRef).toBe(spectator.inject(MatDialogRef));
 
         spectator.component.onIsLoadingChange(true);
-        expect(visibleForm.dialogRef).toHaveProperty('disableClose', true);
+        expect(visibleForm!.dialogRef).toHaveProperty('disableClose', true);
 
         spectator.component.onIsLoadingChange(false);
-        expect(visibleForm.dialogRef).toHaveProperty('disableClose', false);
+        expect(visibleForm!.dialogRef).toHaveProperty('disableClose', false);
       });
     });
   });
@@ -176,7 +176,7 @@ describe('FeedbackDialogComponent', () => {
     await setupTest();
     isReviewAllowed$.next(true);
 
-    expect(await typeButtonGroup.getValue()).toBe('Report a bug');
+    expect(await typeButtonGroup!.getValue()).toBe('Report a bug');
     expect(spectator.query(FileTicketComponent)).toExist();
   });
 });

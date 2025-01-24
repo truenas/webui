@@ -27,8 +27,8 @@ describe('DiskInfoComponent', () => {
   });
 
   function getValueByLabel(label: string): string {
-    const labelElement = spectator.query(byText(`${label}:`));
-    return labelElement.nextElementSibling.textContent;
+    const labelElement = spectator.query(byText(`${label}:`))!;
+    return labelElement.nextElementSibling!.textContent!;
   }
 
   it('adds .no-slot class when there is no enclosure', () => {

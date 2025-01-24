@@ -207,7 +207,7 @@ describe('SlideInComponent', () => {
     const form = spectator.query(CloudSyncFormComponent)!;
     form.form.markAsDirty();
     spectator.detectChanges();
-    const backdrop = spectator.query('.ix-slide-in2-background');
+    const backdrop = spectator.query('.ix-slide-in2-background')!;
     backdrop.dispatchEvent(new Event('click'));
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -223,7 +223,7 @@ describe('SlideInComponent', () => {
 
   it('doesnt ask for confirmation when form is saved', fakeAsync(async () => {
     setupComponent();
-    const form = spectator.query(CloudSyncFormComponent);
+    const form = spectator.query(CloudSyncFormComponent)!;
     form.form.patchValue({
       description: 'New Cloud Sync Task',
       credentials: 1,

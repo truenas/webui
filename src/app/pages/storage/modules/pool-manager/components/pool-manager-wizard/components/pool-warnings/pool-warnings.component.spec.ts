@@ -19,7 +19,7 @@ const duplicateSerialDisk = {
 
 const exportedPoolDisk = {
   identifier: '{uuid}bb73faf5-6d50-4af9-ae30-bc8ba0cf8695',
-  duplicate_serial: [],
+  duplicate_serial: [] as string[],
   exported_zpool: 'FAKE_POOL',
   devname: 'sdb',
 } as DetailsDisk;

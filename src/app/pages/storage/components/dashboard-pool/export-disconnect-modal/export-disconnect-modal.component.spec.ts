@@ -33,7 +33,7 @@ const fakeData = {
     { type: 'type2', attachments: ['partX,partY', 'part4,part5,part6'] },
   ] as DatasetAttachment[],
   processes: [
-    { name: 'process name 1' },
+    { name: 'process name 1' } as Process,
     { pid: 'pid1', cmdline: 'cmdline1' },
     { name: 'process name 2' },
     { pid: 'pid2', cmdline: 'cmdline2' },

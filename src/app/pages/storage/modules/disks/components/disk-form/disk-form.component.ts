@@ -4,7 +4,7 @@ import {
   Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
@@ -81,7 +81,7 @@ export class DiskFormComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private api: ApiService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,

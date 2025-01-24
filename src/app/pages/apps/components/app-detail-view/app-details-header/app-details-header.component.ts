@@ -71,6 +71,7 @@ export class AppDetailsHeaderComponent {
   private showAgreementWarning(): Observable<unknown> {
     return this.authService.user$.pipe(
       take(1),
+      filter((user) => !!user),
       switchMap((user) => {
         return user.attributes.appsAgreement
           ? of(true)
