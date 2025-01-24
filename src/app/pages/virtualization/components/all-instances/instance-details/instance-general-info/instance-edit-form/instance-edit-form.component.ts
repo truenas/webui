@@ -78,6 +78,7 @@ export class InstanceEditFormComponent {
     memory: [null as number | null],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_password: [null as string],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -104,6 +105,7 @@ export class InstanceEditFormComponent {
       memory: this.editingInstance.memory,
       enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
+      vnc_password: this.editingInstance.vnc_password,
     });
 
     this.setVncControls();
@@ -115,6 +117,10 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
+    if (!payload.enable_vnc) {
+      delete payload.vnc_port;
+      delete payload.vnc_password;
+    }
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
@@ -156,6 +162,7 @@ export class InstanceEditFormComponent {
       memory: values.memory,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      vnc_password: values.enable_vnc ? values.vnc_password : null,
     } as UpdateVirtualizationInstance;
   }
 
@@ -172,7 +179,6 @@ export class InstanceEditFormComponent {
   }
 
   private setVncControls(): void {
-    this.form.controls.vnc_port.disable();
     this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
       if (vncEnabled) {
         this.form.controls.vnc_port.enable();
@@ -183,6 +189,8 @@ export class InstanceEditFormComponent {
 
     if (!this.isStopped) {
       this.form.controls.enable_vnc.disable();
+      this.form.controls.vnc_password.disable();
+      this.form.controls.vnc_port.disable();
     }
   }
 }
