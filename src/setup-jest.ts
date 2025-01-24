@@ -30,7 +30,7 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import failOnConsole from 'jest-fail-on-console';
-import { MockDirective, MockProvider } from 'ng-mocks';
+import { MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
   Observable,
@@ -68,7 +68,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
-import { RegisteredControlDirective } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon-registry.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -99,9 +98,6 @@ failOnConsole({ silenceMessage: silenceJsDomCssParseError });
 jest.setTimeout(30 * 1000);
 
 defineGlobalsInjections({
-  declarations: [
-    MockDirective(RegisteredControlDirective),
-  ],
   imports: [
     HttpClientModule,
     MatCheckboxModule,
@@ -129,7 +125,6 @@ defineGlobalsInjections({
     IxFieldsetComponent,
     ModalHeaderComponent,
     IxFormSectionComponent,
-    RegisteredControlDirective,
     IxButtonGroupComponent,
     IxExplorerComponent,
     IxFileInputComponent,

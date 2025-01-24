@@ -5,6 +5,7 @@ import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
+import { DockerRegistriesListComponent } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.component';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { ContainerShellComponent } from 'app/pages/apps/components/installed-apps/container-shell/container-shell.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
@@ -26,6 +27,11 @@ export const appsRoutes: Routes = [
       {
         path: 'installed/manage-container-images',
         redirectTo: 'manage-container-images',
+        pathMatch: 'full',
+      },
+      {
+        path: 'installed/docker-registries',
+        redirectTo: 'docker-registries',
         pathMatch: 'full',
       },
       {
@@ -71,6 +77,11 @@ export const appsRoutes: Routes = [
         path: 'manage-container-images',
         component: DockerImagesListComponent,
         data: { title: T('Manage Container Images') },
+      },
+      {
+        path: 'docker-registries',
+        component: DockerRegistriesListComponent,
+        data: { title: T('Docker Registries') },
       },
       {
         path: 'available',

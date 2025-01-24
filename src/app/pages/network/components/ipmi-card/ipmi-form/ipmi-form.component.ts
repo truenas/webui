@@ -308,7 +308,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFailoverData(): Observable<unknown> {
-    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       return of(null);
     }
 

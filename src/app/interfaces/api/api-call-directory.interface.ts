@@ -69,7 +69,7 @@ import {
   CloudSyncBucket,
   CloudSyncCredential,
   CloudSyncCredentialUpdate,
-  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
+  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult, CloudSyncOneDriveDrive, CloudSyncOneDriveParams,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import {
@@ -101,6 +101,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerRegistry, DockerRegistryPayload } from 'app/interfaces/docker-registry.interface';
 import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
@@ -326,6 +327,13 @@ export interface ApiCallDirectory {
   'app.rollback_versions': { params: [app_name: string]; response: string[] };
   'app.ix_volume.exists': { params: [string]; response: boolean };
 
+  // App/Docker Registry
+  'app.registry.create': { params: [DockerRegistryPayload]; response: DockerRegistry };
+  'app.registry.delete': { params: [number]; response: null };
+  'app.registry.update': { params: [number, DockerRegistryPayload]; response: DockerRegistry };
+  'app.registry.get_instance': { params: [number]; response: DockerRegistry };
+  'app.registry.query': { params: QueryParams<DockerRegistryPayload>; response: DockerRegistry[] };
+
   // App Image
   'app.image.delete': { params: DeleteContainerImageParams; response: boolean };
   'app.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
@@ -406,6 +414,7 @@ export interface ApiCallDirectory {
   'cloudsync.delete': { params: [id: number]; response: boolean };
   'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
+  'cloudsync.onedrive_list_drives': { params: [CloudSyncOneDriveParams]; response: CloudSyncOneDriveDrive[] };
   'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
   'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
@@ -834,6 +843,7 @@ export interface ApiCallDirectory {
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
+  'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
   'update.check_available': { params: void; response: SystemUpdate };

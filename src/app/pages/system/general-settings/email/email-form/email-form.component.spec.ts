@@ -77,7 +77,7 @@ describe('EmailFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.Scale,
+        getProductType: () => ProductType.CommunityEdition,
       }),
       mockWindow({
         open: jest.fn(),
@@ -201,7 +201,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -310,7 +310,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -393,7 +393,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',

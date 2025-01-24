@@ -241,7 +241,7 @@ export class EmailFormComponent implements OnInit {
     const productType = this.systemGeneralService.getProductType();
     const email = {
       subject: 'Test Message',
-      text: `This is a test message from TrueNAS ${productType}.`,
+      text: `This is a test message from TrueNAS ${productType.replace('_', ' ')}.`,
     };
     const config = this.prepareConfigUpdate();
 

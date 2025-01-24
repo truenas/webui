@@ -75,9 +75,10 @@ describe('AddDeviceMenuComponent', () => {
     await menu.open();
 
     const menuItems = await menu.getItems();
-    expect(menuItems).toHaveLength(2);
+    expect(menuItems).toHaveLength(3);
     expect(await menuItems[0].getText()).toContain('Card Reader');
     expect(await menuItems[1].getText()).toContain('MAD Galeon 5000');
+    expect(await menuItems[2].getText()).toContain('Add Trusted Platform Module');
   });
 
   it('adds a usb device when it is selected', async () => {
@@ -109,12 +110,9 @@ describe('AddDeviceMenuComponent', () => {
   });
 
   describe('TPM', () => {
-    it('allows TPM to be added to VMs if it has not been added before', async () => {
+    it('allows TPM to be added if it has not been added before', async () => {
       const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
       await menu.open();
-
-      const menuItems = await menu.getItems({ text: 'Add Trusted Platform Module' });
-      expect(menuItems).toHaveLength(0);
 
       selectedInstance.set({
         id: 'my-instance',
@@ -122,8 +120,8 @@ describe('AddDeviceMenuComponent', () => {
         type: VirtualizationType.Vm,
       });
 
-      const newMenuItems = await menu.getItems({ text: 'Add Trusted Platform Module' });
-      expect(newMenuItems).toHaveLength(1);
+      const menuItems = await menu.getItems({ text: 'Add Trusted Platform Module' });
+      expect(menuItems).toHaveLength(1);
     });
 
     it('adds a TPM module when the corresponding option is selected', async () => {

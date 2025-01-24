@@ -54,7 +54,7 @@ describe('ManualUpdateFormComponent', () => {
       }),
       mockWindow({
         localStorage: {
-          getItem: () => ProductType.ScaleEnterprise,
+          getItem: () => ProductType.Enterprise,
         },
       }),
       provideMockStore({

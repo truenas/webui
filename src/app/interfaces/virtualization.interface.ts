@@ -39,6 +39,7 @@ export interface VirtualizationInstance {
   image: VirtualizationImage;
   vnc_enabled: boolean;
   vnc_port: number | null;
+  vnc_password: string | null;
 }
 
 export interface VirtualizationAlias {
@@ -66,6 +67,7 @@ export interface CreateVirtualizationInstance {
    * Value must be greater or equal to 5900 and lesser or equal to 65535
    */
   vnc_port?: number | null;
+  vnc_password?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -75,6 +77,7 @@ export interface UpdateVirtualizationInstance {
   memory?: number;
   enable_vnc?: boolean;
   vnc_port?: number | null;
+  vnc_password?: string | null;
 }
 
 export type VirtualizationDevice =

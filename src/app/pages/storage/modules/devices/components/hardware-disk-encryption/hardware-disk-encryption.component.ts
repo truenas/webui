@@ -1,25 +1,26 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
   MatCard, MatCardHeader, MatCardTitle, MatCardContent,
 } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { HasRoleDirective } from 'app/directives/has-role/has-role.directive';
 import { Role } from 'app/enums/role.enum';
-import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -33,53 +34,46 @@ import {
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
-    WithLoadingStateDirective,
     HasRoleDirective,
     TestDirective,
     RouterLink,
     TranslateModule,
   ],
 })
-export class HardwareDiskEncryptionComponent implements OnChanges {
+export class HardwareDiskEncryptionComponent {
   readonly topologyDisk = input.required<TopologyDisk>();
 
-  hasGlobalEncryption$ = this.api.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
-  hasDiskEncryption$: Observable<LoadingState<boolean>>;
+  protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly requiredRoles = [Role.FullAdmin];
 
-  protected readonly Role = Role;
+  hasSedSupport = computed(() => {
+    return this.isEnterprise() || (this.hasDiskEncryption() || this.hasGlobalEncryption());
+  });
+
+  protected readonly hasDiskEncryption = toSignal(
+    toObservable(this.topologyDisk).pipe(
+      filter(Boolean),
+      switchMap((topologyItem) => {
+        return this.api.call('disk.query', [[['devname', '=', topologyItem.disk]],
+          { extra: { passwords: true } }]).pipe(
+          map(([disk]) => disk.passwd !== ''),
+        );
+      }),
+    ),
+  );
 
   constructor(
+    private store$: Store<AppState>,
     private matDialog: MatDialog,
     private api: ApiService,
-    private cdr: ChangeDetectorRef,
-  ) { }
-
-  ngOnChanges(): void {
-    this.loadDiskEncryption();
-  }
+  ) {}
 
   onManageSedPassword(): void {
-    const dialog = this.matDialog.open(ManageDiskSedDialogComponent, {
+    this.matDialog.open(ManageDiskSedDialogComponent, {
       data: this.topologyDisk().disk,
-    });
-    dialog
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((wasChanged) => {
-        if (!wasChanged) {
-          return;
-        }
-
-        this.loadDiskEncryption();
-        this.cdr.markForCheck();
-      });
-  }
-
-  private loadDiskEncryption(): void {
-    this.hasDiskEncryption$ = this.api.call('disk.query', [[['devname', '=', this.topologyDisk().disk]], { extra: { passwords: true } }])
-      .pipe(
-        map((disks) => disks[0].passwd !== ''),
-        toLoadingState(),
-      );
+    }).afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe();
   }
 }

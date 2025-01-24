@@ -324,7 +324,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   private loadFailoverStatus(): void {
-    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       return;
     }
 
