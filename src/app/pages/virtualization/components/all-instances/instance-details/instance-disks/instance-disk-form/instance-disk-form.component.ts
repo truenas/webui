@@ -50,7 +50,14 @@ export class InstanceDiskFormComponent implements OnInit {
   private existingDisk = signal<VirtualizationDisk | null>(null);
 
   protected readonly isLoading = signal(false);
-  protected readonly directoryNodeProvider = this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+
+  readonly directoryNodeProvider = computed(() => {
+    if (this.instance.type === VirtualizationType.Vm) {
+      return this.filesystem.getFilesystemNodeProvider({ zvolsOnly: true });
+    }
+
+    return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
+  });
 
   protected form = this.formBuilder.nonNullable.group({
     source: ['', Validators.required],
