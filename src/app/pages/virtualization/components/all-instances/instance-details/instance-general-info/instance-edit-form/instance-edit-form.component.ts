@@ -105,6 +105,7 @@ export class InstanceEditFormComponent {
       memory: this.editingInstance.memory,
       enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
+      vnc_password: this.editingInstance.vnc_password,
     });
 
     this.setVncControls();
