@@ -9,7 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
-import { TunableType } from 'app/enums/tunable-type.enum';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
@@ -17,6 +17,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
+import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxTextareaComponent } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
@@ -44,6 +45,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     MatButton,
     TestDirective,
     TranslateModule,
+    IxSelectComponent,
   ],
 })
 export class TunableFormComponent implements OnInit {
@@ -60,6 +62,7 @@ export class TunableFormComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.nonNullable.group({
+    type: [''],
     var: ['', Validators.required], // TODO Add pattern and explanation for it
     value: ['', Validators.required],
     comment: [''],
@@ -74,6 +77,10 @@ export class TunableFormComponent implements OnInit {
   };
 
   private editingTunable: Tunable;
+
+  protected types$ = this.api.call('tunable.tunable_type_choices').pipe(
+    choicesToOptions(),
+  );
 
   constructor(
     private api: ApiService,
@@ -101,6 +108,7 @@ export class TunableFormComponent implements OnInit {
 
   setTunableForEdit(): void {
     this.form.patchValue(this.editingTunable);
+    this.form.controls.type.disable();
     this.form.controls.var.disable();
   }
 
@@ -123,10 +131,7 @@ export class TunableFormComponent implements OnInit {
   }
 
   private createTunable(): Observable<Job<Tunable>> {
-    return this.api.job('tunable.create', [{
-      ...this.form.getRawValue(),
-      type: TunableType.Sysctl,
-    }]);
+    return this.api.job('tunable.create', [this.form.getRawValue()]);
   }
 
   private updateTunable(): Observable<Job<Tunable>> {
