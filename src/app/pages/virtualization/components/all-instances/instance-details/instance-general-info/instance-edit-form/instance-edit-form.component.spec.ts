@@ -1,18 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import {
-  createComponentFactory,
-  mockProvider,
-  Spectator,
-} from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,7 +16,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { InstanceEditFormComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
+import {
+  InstanceEditFormComponent,
+} from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-edit-form/instance-edit-form.component';
 
 describe('InstanceEditFormComponent', () => {
   let spectator: Spectator<InstanceEditFormComponent>;
@@ -37,6 +35,7 @@ describe('InstanceEditFormComponent', () => {
     type: VirtualizationType.Vm,
     vnc_enabled: true,
     vnc_port: 9001,
+    status: VirtualizationStatus.Stopped,
     vnc_password: null,
   } as VirtualizationInstance;
 
@@ -75,48 +74,36 @@ describe('InstanceEditFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-  });
-
-  it('loads instance data in edit mode and populates the form', async () => {
-    expect(await form.getValues()).toMatchObject({
-      Autostart: false,
-      'CPU Configuration': '1-3',
-      'Memory Size': '2 GiB',
-      'VNC Port': '9001',
-      'VNC Password': '',
-    });
-  });
-
-  it('updates an instance when form is submitted', async () => {
-    await form.fillForm({
-      Autostart: true,
-      'CPU Configuration': '2-5',
-      'Memory Size': '1 GiB',
-      'VNC Port': 9000,
-      'VNC Password': 'testing',
+  describe('normal form operations', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('loads instance data in edit mode and populates the form', async () => {
+      expect(await form.getValues()).toMatchObject({
+        Autostart: false,
+        'CPU Configuration': '1-3',
+        'Memory Size': '2 GiB',
+        'VNC Port': '9001',
+        'VNC Password': '',
+      });
+    });
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
-      autostart: true,
-      cpu: '2-5',
-      memory: GiB,
-      environment: {},
-      enable_vnc: true,
-      vnc_port: 9000,
-      vnc_password: 'testing',
-    }]);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
-      response: {
-        id: 'updated_instance',
+    it('updates an instance when form is submitted', async () => {
+      await form.fillForm({
+        Autostart: true,
+        'CPU Configuration': '2-5',
+        'Memory Size': '1 GiB',
+        'VNC Port': 9000,
+        'VNC Password': 'testing',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.update', ['test', {
         autostart: true,
         cpu: '2-5',
         memory: GiB,
@@ -124,8 +111,41 @@ describe('InstanceEditFormComponent', () => {
         enable_vnc: true,
         vnc_port: 9000,
         vnc_password: 'testing',
-      },
-      error: false,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({
+        response: {
+          id: 'updated_instance',
+          autostart: true,
+          cpu: '2-5',
+          memory: GiB,
+          environment: {},
+          enable_vnc: true,
+          vnc_port: 9000,
+          vnc_password: 'testing',
+        },
+        error: false,
+      });
     });
+  });
+
+  it('marks Enable VNC as disabled when instance is not stopped', async () => {
+    spectator = createComponent({
+      providers: [
+        mockProvider(SlideInRef, {
+          getData: () => ({
+            ...mockInstance,
+            status: VirtualizationStatus.Running,
+          }),
+          requireConfirmationWhen: jest.fn(),
+          close: jest.fn(),
+        }),
+      ],
+    });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+
+    expect(await (await form.getControl('Enable VNC')).isDisabled()).toBe(true);
   });
 });

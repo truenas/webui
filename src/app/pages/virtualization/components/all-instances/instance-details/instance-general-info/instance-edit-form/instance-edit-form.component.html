@@ -9,12 +9,29 @@
       ></ix-checkbox>
     </ix-fieldset>
 
-    @if (isVmInstanceType) {
+    <ix-fieldset [title]="'CPU & Memory' | translate">
+      <ix-input
+        formControlName="cpu"
+        [label]="'CPU Configuration' | translate"
+        [hint]="containersHelptext.cpuHint | translate"
+      ></ix-input>
+
+      <ix-input
+        formControlName="memory"
+        [label]="'Memory Size' | translate"
+        [format]="formatter.memorySizeFormatting"
+        [parse]="formatter.memorySizeParsing"
+        [hint]="containersHelptext.memoryHint | translate"
+      ></ix-input>
+    </ix-fieldset>
+
+    @if (isVm) {
       <ix-fieldset [title]="'VNC' | translate">
 
         <ix-checkbox
           formControlName="enable_vnc"
           [label]="'Enable VNC' | translate"
+          [matTooltip]="isStopped ? '' : ('Instance must be stopped to update VNC.' | translate)"
         ></ix-checkbox>
 
         @if (form.value.enable_vnc) {
@@ -34,22 +51,6 @@
         }
       </ix-fieldset>
     }
-
-    <ix-fieldset [title]="'CPU & Memory' | translate">
-      <ix-input
-        formControlName="cpu"
-        [label]="'CPU Configuration' | translate"
-        [hint]="containersHelptext.cpuHint | translate"
-      ></ix-input>
-
-      <ix-input
-        formControlName="memory"
-        [label]="'Memory Size' | translate"
-        [format]="formatter.memorySizeFormatting"
-        [parse]="formatter.memorySizeParsing"
-        [hint]="containersHelptext.memoryHint | translate"
-      ></ix-input>
-    </ix-fieldset>
 
     <ix-fieldset [title]="'Environment' | translate">
       <ix-list

@@ -6,11 +6,12 @@ import {
   FormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -48,6 +49,7 @@ import { defaultVncPort } from 'app/pages/virtualization/virtualization.constant
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
+    MatTooltip,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -60,8 +62,14 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
-  get isVmInstanceType(): boolean {
+  protected readonly containersHelptext = containersHelptext;
+
+  get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;
+  }
+
+  get isStopped(): boolean {
+    return this.editingInstance.status === VirtualizationStatus.Stopped;
   }
 
   protected readonly form = this.formBuilder.nonNullable.group({
@@ -88,16 +96,8 @@ export class InstanceEditFormComponent {
       return of(this.form.dirty);
     });
 
-    this.form.controls.vnc_port.disable();
-    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
-      if (vncEnabled) {
-        this.form.controls.vnc_port.enable();
-      } else {
-        this.form.controls.vnc_port.disable();
-      }
-    });
-
     this.editingInstance = this.slideInRef.getData();
+
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
@@ -106,6 +106,8 @@ export class InstanceEditFormComponent {
       enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
     });
+
+    this.setVncControls();
 
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
       this.addEnvironmentVariable(key, this.editingInstance.environment[key]);
@@ -150,7 +152,7 @@ export class InstanceEditFormComponent {
   }
 
   private getSubmissionPayload(): UpdateVirtualizationInstance {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     return {
       environment: this.environmentVariablesPayload,
@@ -175,5 +177,18 @@ export class InstanceEditFormComponent {
     }, {});
   }
 
-  protected readonly containersHelptext = containersHelptext;
+  private setVncControls(): void {
+    this.form.controls.vnc_port.disable();
+    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
+      if (vncEnabled) {
+        this.form.controls.vnc_port.enable();
+      } else {
+        this.form.controls.vnc_port.disable();
+      }
+    });
+
+    if (!this.isStopped) {
+      this.form.controls.enable_vnc.disable();
+    }
+  }
 }
