@@ -179,7 +179,6 @@ export class InstanceEditFormComponent {
   }
 
   private setVncControls(): void {
-    this.form.controls.vnc_port.disable();
     this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
       if (vncEnabled) {
         this.form.controls.vnc_port.enable();
@@ -190,6 +189,8 @@ export class InstanceEditFormComponent {
 
     if (!this.isStopped) {
       this.form.controls.enable_vnc.disable();
+      this.form.controls.vnc_password.disable();
+      this.form.controls.vnc_port.disable();
     }
   }
 }
