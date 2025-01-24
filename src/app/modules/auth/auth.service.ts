@@ -39,6 +39,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 export class AuthService {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
+  isOptwPasswordChanged$ = new BehaviorSubject<boolean>(false);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life

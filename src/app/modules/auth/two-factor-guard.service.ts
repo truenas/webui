@@ -46,9 +46,13 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.getGlobalTwoFactorConfig(),
       this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
       this.authService.isOtpwUser().pipe(take(1)),
+      this.authService.isOptwPasswordChanged$.asObservable().pipe(take(1)),
     ]).pipe(
-      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser]) => {
-        if (isOtpwUser && !userConfig.secret_configured && globalConfig.enabled) {
+      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser, isOptwPasswordChanged]) => {
+        if (
+          ((isOtpwUser && !isOptwPasswordChanged) || (isOtpwUser && !userConfig.secret_configured))
+          && globalConfig.enabled
+        ) {
           return this.showStigFirstLoginDialog();
         }
 

@@ -17,6 +17,7 @@ describe('TwoFactorGuardService', () => {
   const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
   const isOtpwUser$ = new BehaviorSubject(false);
+  const isOptwPasswordChanged$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -30,6 +31,7 @@ describe('TwoFactorGuardService', () => {
         getGlobalTwoFactorConfig,
         hasRole: jest.fn(() => hasRole$),
         isOtpwUser: jest.fn(() => isOtpwUser$),
+        isOptwPasswordChanged$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
