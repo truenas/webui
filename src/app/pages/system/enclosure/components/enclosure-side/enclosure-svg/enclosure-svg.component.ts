@@ -57,6 +57,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   protected svgContainer = viewChild<ElementRef<HTMLElement>>('svgContainer');
 
   private overlayRects: Record<number, SVGRectElement> = {};
+  private slotElements: Record<number, SVGGElement> = {};
 
   constructor(
     private renderer: Renderer2,
@@ -107,6 +108,7 @@ export class EnclosureSvgComponent implements OnDestroy {
         return;
       }
 
+      this.slotElements[slot.drive_bay_number] = tray;
       this.addOverlay(slot, tray);
 
       if (this.enableMouseEvents()) {
@@ -259,7 +261,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   };
 
   private addTint(slot: DashboardEnclosureSlot): void {
-    const tintTargets: NodeListOf<SVGGElement> = this.getTintTarget(slot.drive_bay_number);
+    const tintTargets: NodeListOf<SVGGElement> = this.getTintTargets(slot.drive_bay_number);
     const slotTint = this.slotTintFn()(slot);
 
     if (slotTint) {
@@ -280,10 +282,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   }
 
   private dimSlot(slotNumber: number, opacity: number): void {
-    const slotId: string = 'DRIVE_CAGE_' + slotNumber.toString();
-    const slotSvg = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>(`svg [id^=${slotId}]`);
-
-    this.renderer.setStyle(slotSvg[0], 'opacity', opacity.toString());
+    this.renderer.setStyle(this.slotElements[slotNumber], 'opacity', opacity.toString());
   }
 
   private resetDimValues(): void {
@@ -306,11 +305,11 @@ export class EnclosureSvgComponent implements OnDestroy {
     });
   }
 
-  private getTintTarget(slotNumber: number): NodeListOf<SVGGElement> {
+  private getTintTargets(slotNumber: number): NodeListOf<SVGGElement> {
     const slotId: string = 'DRIVE_CAGE_' + slotNumber.toString();
-    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>(`svg [id^=${slotId}] .tint-target`);
+    const tintTargets = this.slotElements[slotNumber].querySelectorAll<SVGGElement>(`svg [id^=${slotId}] .tint-target`);
 
-    return driveTrays;
+    return tintTargets;
   }
 
   private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot | undefined {
