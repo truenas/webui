@@ -70,6 +70,7 @@ export class InstanceEditFormComponent {
     memory: [null as number | null],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_password: [null as string],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -113,6 +114,10 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
+    if (!payload.enable_vnc) {
+      delete payload.vnc_port;
+      delete payload.vnc_password;
+    }
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
@@ -154,6 +159,7 @@ export class InstanceEditFormComponent {
       memory: values.memory,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      vnc_password: values.enable_vnc ? values.vnc_password : null,
     } as UpdateVirtualizationInstance;
   }
 

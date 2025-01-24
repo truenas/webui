@@ -37,6 +37,7 @@ describe('InstanceEditFormComponent', () => {
     type: VirtualizationType.Vm,
     vnc_enabled: true,
     vnc_port: 9001,
+    vnc_password: null,
   } as VirtualizationInstance;
 
   const createComponent = createComponentFactory({
@@ -60,6 +61,7 @@ describe('InstanceEditFormComponent', () => {
                 environment: {},
                 enable_vnc: true,
                 vnc_port: 9000,
+                vnc_password: 'testing',
               },
             })),
           ),
@@ -85,6 +87,7 @@ describe('InstanceEditFormComponent', () => {
       'CPU Configuration': '1-3',
       'Memory Size': '2 GiB',
       'VNC Port': '9001',
+      'VNC Password': '',
     });
   });
 
@@ -94,6 +97,7 @@ describe('InstanceEditFormComponent', () => {
       'CPU Configuration': '2-5',
       'Memory Size': '1 GiB',
       'VNC Port': 9000,
+      'VNC Password': 'testing',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -106,6 +110,7 @@ describe('InstanceEditFormComponent', () => {
       environment: {},
       enable_vnc: true,
       vnc_port: 9000,
+      vnc_password: 'testing',
     }]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -118,6 +123,7 @@ describe('InstanceEditFormComponent', () => {
         environment: {},
         enable_vnc: true,
         vnc_port: 9000,
+        vnc_password: 'testing',
       },
       error: false,
     });
