@@ -9,4 +9,4 @@ export interface DockerRegistry {
 
 export type DockerRegistryPayload = Omit<DockerRegistry, 'id'>;
 
-export const dockerHubRegistry = 'https://registry-1.docker.io/';
+export const dockerHubRegistry = 'https://index.docker.io/v1/';
