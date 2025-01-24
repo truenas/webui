@@ -2374,6 +2374,7 @@
   "Instance created": "",
   "Instance is not running": "",
   "Instance must be stopped to add TPM.": "",
+  "Instance must be stopped to update VNC.": "",
   "Instance restarted": "",
   "Instance started": "",
   "Instance stopped": "",

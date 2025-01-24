@@ -9,25 +9,6 @@
       ></ix-checkbox>
     </ix-fieldset>
 
-    @if (isVmInstanceType) {
-      <ix-fieldset [title]="'VNC' | translate">
-
-        <ix-checkbox
-          formControlName="enable_vnc"
-          [label]="'Enable VNC' | translate"
-        ></ix-checkbox>
-
-        @if (form.value.enable_vnc) {
-          <ix-input
-            formControlName="vnc_port"
-            type="number"
-            [label]="'VNC Port' | translate"
-            [required]="true"
-          ></ix-input>
-        }
-      </ix-fieldset>
-    }
-
     <ix-fieldset [title]="'CPU & Memory' | translate">
       <ix-input
         formControlName="cpu"
@@ -43,6 +24,26 @@
         [hint]="containersHelptext.memoryHint | translate"
       ></ix-input>
     </ix-fieldset>
+
+    @if (isVm) {
+      <ix-fieldset [title]="'VNC' | translate">
+
+        <ix-checkbox
+          formControlName="enable_vnc"
+          [label]="'Enable VNC' | translate"
+          [matTooltip]="isStopped ? '' : ('Instance must be stopped to update VNC.' | translate)"
+        ></ix-checkbox>
+
+        @if (form.value.enable_vnc) {
+          <ix-input
+            formControlName="vnc_port"
+            type="number"
+            [label]="'VNC Port' | translate"
+            [required]="true"
+          ></ix-input>
+        }
+      </ix-fieldset>
+    }
 
     <ix-fieldset [title]="'Environment' | translate">
       <ix-list
