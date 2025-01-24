@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash';
 import { EMPTY } from 'rxjs';
 import {
-  catchError, filter, map, mergeMap, pairwise, switchMap, take, withLatestFrom,
+  catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -72,10 +72,10 @@ export class PreferencesEffects {
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
     ),
-    withLatestFrom(this.store$.pipe(waitForPreferences, take(1), pairwise())),
+    withLatestFrom(this.store$.pipe(waitForPreferences, pairwise())),
     filter(([, [prevPrefs, newPrefs]]) => !isEqual(prevPrefs, newPrefs)),
-    switchMap(([, preferences]) => {
-      return this.api.call('auth.set_attribute', ['preferences', preferences]);
+    switchMap(([, [, newPrefs]]) => {
+      return this.api.call('auth.set_attribute', ['preferences', newPrefs]);
     }),
   ), { dispatch: false });
 
