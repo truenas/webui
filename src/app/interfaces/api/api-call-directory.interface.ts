@@ -843,6 +843,7 @@ export interface ApiCallDirectory {
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
+  'tunable.tunable_type_choices': { params: void; response: Choices };
 
   // Update
   'update.check_available': { params: void; response: SystemUpdate };
