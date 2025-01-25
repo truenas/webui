@@ -169,13 +169,18 @@ export class UserFormComponent implements OnInit {
     smbBuiltin: helptextUsers.smbBuiltin,
   };
 
-  readonly groupOptions$ = this.api.call('group.query').pipe(
+  readonly localGroupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+  readonly groupProvider = new SimpleAsyncComboboxProvider(
+    this.api.call('group.query').pipe(
+      map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
+    ),
+  );
+
   autocompleteProvider: ChipsProvider = (query: string) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),
