@@ -7,6 +7,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
+// TODO: Clean up this service.
 @Injectable({ providedIn: 'root' })
 export class UserService {
   static readonly namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
