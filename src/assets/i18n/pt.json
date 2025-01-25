@@ -2243,6 +2243,7 @@
   "Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?": "",
   "Roll back snapshots": "",
   "Roll back snapshots of ix_volumes": "",
+  "Root Disk Size (in GiB)": "",
   "Root TCP Socket": "",
   "Root dataset ACL cannot be edited.": "",
   "Rotation Rate": "",
