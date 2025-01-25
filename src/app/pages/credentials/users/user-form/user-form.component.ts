@@ -182,7 +182,7 @@ export class UserFormComponent implements OnInit {
   );
 
   autocompleteProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query).pipe(
+    return this.api.call('group.query', [[['name', '^', query]]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
   };
