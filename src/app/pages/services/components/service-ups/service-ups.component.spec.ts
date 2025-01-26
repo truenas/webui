@@ -3,8 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.harness';
@@ -40,7 +41,7 @@ describe('ServiceUpsComponent', () => {
           hostsync: 16,
           id: 1,
           identifier: 'ups',
-          mode: 'MASTER',
+          mode: UpsMode.Master,
           monpwd: '',
           monuser: 'upsmon',
           nocommwarntime: null,
@@ -51,7 +52,7 @@ describe('ServiceUpsComponent', () => {
           remotehost: '',
           remoteport: 3456,
           rmonitor: true,
-          shutdown: 'BATT',
+          shutdown: UpsShutdownMode.Battery,
           shutdowncmd: '',
           shutdowntimer: 30,
         } as UpsConfig),

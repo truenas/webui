@@ -110,13 +110,13 @@ export class ReplicationFormComponent implements OnInit {
   ) {
     this.existingReplication = this.slideInRef.getData();
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(
+      return of(Boolean(
         this.generalSection()?.form?.dirty
         || this.transportSection()?.form?.dirty
         || this.sourceSection()?.form?.dirty
         || this.targetSection()?.form?.dirty
         || this.scheduleSection()?.form?.dirty,
-      );
+      ));
     });
   }
 

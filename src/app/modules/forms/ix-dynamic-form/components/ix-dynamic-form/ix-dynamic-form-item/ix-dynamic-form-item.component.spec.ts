@@ -181,10 +181,10 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-code-editor')).toBeVisible();
-      expect(spectator.query(IxCodeEditorComponent).required()).toBe(textSchema.required);
-      expect(spectator.query(IxCodeEditorComponent).tooltip()).toBe(textSchema.tooltip);
+      expect(spectator.query(IxCodeEditorComponent)!.required()).toBe(textSchema.required);
+      expect(spectator.query(IxCodeEditorComponent)!.tooltip()).toBe(textSchema.tooltip);
       expect(spectator.query('ix-code-editor')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.text as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.text as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -201,12 +201,12 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-select')).toBeVisible();
-      expect(spectator.query(IxSelectComponent).required()).toBe(selectSchema.required);
-      expect(spectator.query(IxSelectComponent).hideEmpty()).toBe(selectSchema.hideEmpty);
-      expect(spectator.query(IxSelectComponent).tooltip()).toBe(selectSchema.tooltip);
+      expect(spectator.query(IxSelectComponent)!.required()).toBe(selectSchema.required);
+      expect(spectator.query(IxSelectComponent)!.hideEmpty()).toBe(selectSchema.hideEmpty);
+      expect(spectator.query(IxSelectComponent)!.tooltip()).toBe(selectSchema.tooltip);
 
       expect(spectator.query('ix-select')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.select as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.select as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -223,11 +223,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-checkbox')).toBeVisible();
-      expect(spectator.query(IxCheckboxComponent).required()).toBe(checkboxSchema.required);
-      expect(spectator.query(IxCheckboxComponent).tooltip()).toBe(checkboxSchema.tooltip);
+      expect(spectator.query(IxCheckboxComponent)!.required()).toBe(checkboxSchema.required);
+      expect(spectator.query(IxCheckboxComponent)!.tooltip()).toBe(checkboxSchema.tooltip);
 
       expect(spectator.query('ix-checkbox')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.checkbox as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.checkbox as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -244,11 +244,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-ip-input-with-netmask')).toBeVisible();
-      expect(spectator.query(IxIpInputWithNetmaskComponent).required()).toBe(ipaddrSchema.required);
-      expect(spectator.query(IxIpInputWithNetmaskComponent).tooltip()).toBe(ipaddrSchema.tooltip);
+      expect(spectator.query(IxIpInputWithNetmaskComponent)!.required()).toBe(ipaddrSchema.required);
+      expect(spectator.query(IxIpInputWithNetmaskComponent)!.tooltip()).toBe(ipaddrSchema.tooltip);
 
       expect(spectator.query('ix-ip-input-with-netmask')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.ipaddr as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.ipaddr as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -265,11 +265,11 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-explorer')).toBeVisible();
-      expect(spectator.query(IxExplorerComponent).required()).toBe(explorerSchema.required);
-      expect(spectator.query(IxExplorerComponent).tooltip()).toBe(explorerSchema.tooltip);
+      expect(spectator.query(IxExplorerComponent)!.required()).toBe(explorerSchema.required);
+      expect(spectator.query(IxExplorerComponent)!.tooltip()).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.explorer as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.explorer as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -288,11 +288,11 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-list')).toBeVisible();
       expect(spectator.queryAll('ix-list-item')).toHaveLength(1);
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(listSchema.items.length);
-      expect(spectator.query(IxListComponent).empty()).toBe(false);
-      expect(spectator.query(IxListComponent).label()).toBe(listSchema.title);
+      expect(spectator.query(IxListComponent)!.empty()).toBe(false);
+      expect(spectator.query(IxListComponent)!.label()).toBe(listSchema.title);
 
       expect(spectator.query('ix-list')).not.toBeHidden();
-      const field = spectator.component.dynamicForm().controls.list as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -315,7 +315,7 @@ describe('IxDynamicFormItemComponent', () => {
         expect(item).not.toBeHidden();
       });
 
-      const field = spectator.component.dynamicForm().controls.dict as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.dict as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -337,7 +337,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      const field = spectator.component.dynamicForm().controls.list as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -345,7 +345,7 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.detectComponentChanges();
 
       jest.spyOn(spectator.component.addListItem, 'emit').mockImplementation();
-      spectator.query(IxListComponent).add.emit([]);
+      spectator.query(IxListComponent)!.add.emit([]);
 
       expect(spectator.component.addListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,
@@ -361,7 +361,7 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
 
-      const field = spectator.component.dynamicForm().controls.list as CustomUntypedFormField;
+      const field = spectator.component.dynamicForm()!.controls.list as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
@@ -370,7 +370,7 @@ describe('IxDynamicFormItemComponent', () => {
 
       jest.spyOn(spectator.component.deleteListItem, 'emit').mockImplementation();
       expect(spectator.queryAll(IxListItemComponent)).toHaveLength(1);
-      spectator.query(IxListItemComponent).delete.emit();
+      spectator.query(IxListItemComponent)!.delete.emit();
 
       expect(spectator.component.deleteListItem.emit).toHaveBeenCalledWith({
         array: dynamicForm.controls.list,

@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import {
-  FormArray,
-  FormBuilder, ReactiveFormsModule, Validators,
+  FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -72,19 +71,19 @@ export class InstanceEditFormComponent {
     return this.editingInstance.status === VirtualizationStatus.Stopped;
   }
 
-  protected readonly form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     enable_vnc: [false],
-    vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_port: [defaultVncPort as number | null, [Validators.required, Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -140,7 +139,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });

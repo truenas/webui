@@ -159,13 +159,13 @@ describe('WidgetStorageComponent', () => {
     expect(headers).toEqual(['my pool']);
 
     const contents = tiles.map((tile) => {
-      const labels: string[] = [];
-      const values: string[] = [];
+      const labels: (string | null)[] = [];
+      const values: (string | null)[] = [];
       tile.querySelectorAll('li').forEach((row) => {
-        const label = row.querySelector('.label');
-        const value = row.querySelector('.value');
-        labels.push(label ? label.textContent.trim() : null);
-        values.push(value ? value.getAttribute('ng-reflect-content') || value.textContent.trim() : null);
+        const label = row.querySelector('.label')!;
+        const value = row.querySelector('.value')!;
+        labels.push(label ? label.textContent!.trim() : null);
+        values.push(value ? value.getAttribute('ng-reflect-content')! || value.textContent!.trim() : null);
       });
       return { labels, values };
     });

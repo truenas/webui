@@ -21,6 +21,6 @@ describe('IxCellTextComponent', () => {
   });
 
   it('shows text in template', () => {
-    expect(spectator.element.querySelector('span').textContent.trim()).toBe('text in cell');
+    expect(spectator.element.querySelector('span')!.textContent!.trim()).toBe('text in cell');
   });
 });
