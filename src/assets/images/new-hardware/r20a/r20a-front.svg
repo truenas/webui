@@ -21,7 +21,7 @@
         opacity: 0.15 !important;
       }
 
-      .chassis {
+      #R20A_CHASSIS .chassis {
         opacity: 0.35 !important;
       }
     </style>

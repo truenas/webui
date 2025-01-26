@@ -109,7 +109,7 @@
         opacity: 0.75;
       }
 
-      .chassis {
+      #R10_CHASSIS .chassis {
         opacity: 0.2;
       }
     </style>

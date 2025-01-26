@@ -160,77 +160,83 @@
         display:none;
       }
 
-      #ES102G2-Chassis,
-      .sides {
+      #ES102G2-Chassis .sides {
         opacity: 0.75;
       }
 
 
-      #IOM_A,
-      #IOM_B,
-      #FAN_1,
-      #FAN_2,
-      #FAN_3,
-      #FAN_4,
-      #_5V_POWER_REGULATOR_1,
-      #_5V_POWER_REGULATOR_2 {
-        opacity: 0.15;
+      #ES102G2-Chassis .chassis {
+        opacity: 0.1;
+      }
+
+      #ES102_Gen_2 #IOM_A,
+      #ES102_Gen_2 #IOM_B,
+      #ES102_Gen_2 #FAN_1,
+      #ES102_Gen_2 #FAN_2,
+      #ES102_Gen_2 #FAN_3,
+      #ES102_Gen_2 #FAN_4 {
+        opacity: 0.05;
+      }
+
+      #ES102_Gen_2 #_5V_POWER_REGULATOR_1,
+      #ES102_Gen_2 #_5V_POWER_REGULATOR_2 {
+        opacity: 0.02;
       }
     </style>
   </defs>
   <g id="ES102G2-Chassis">
     <rect class="es102g2-cls-29" x="754.66" y="-627.96" width="1229.17" height="2624.12" transform="translate(2053.35 -685.15) rotate(90)"/>
-    <g>
+    <g class="chassis">
       <g>
         <g>
           <g>
-            <rect class="es102g2-cls-36" x="2656.2" y="1177.89" width="2.16" height="67.38"/>
-            <rect class="es102g2-cls-36" x="2654.04" y="1216.84" width="4.32" height="5.16"/>
-            <rect class="es102g2-cls-36" x="2654.04" y="1201.2" width="4.32" height="5.12"/>
-            <polygon class="es102g2-cls-36" points="2656.2 1177.89 2651.88 1172.44 2654.04 1172.44 2658.36 1177.89 2656.2 1177.89"/>
-            <polygon class="es102g2-cls-36" points="2656.2 1245.27 2651.88 1251.21 2654.04 1251.21 2658.36 1245.27 2656.2 1245.27"/>
+            <rect class="chassis es102g2-cls-36" x="2656.2" y="1177.89" width="2.16" height="67.38"/>
+            <rect class="chassis es102g2-cls-36" x="2654.04" y="1216.84" width="4.32" height="5.16"/>
+            <rect class="chassis es102g2-cls-36" x="2654.04" y="1201.2" width="4.32" height="5.12"/>
+            <polygon class="chassis es102g2-cls-36" points="2656.2 1177.89 2651.88 1172.44 2654.04 1172.44 2658.36 1177.89 2656.2 1177.89"/>
+            <polygon class="chassis es102g2-cls-36" points="2656.2 1245.27 2651.88 1251.21 2654.04 1251.21 2658.36 1245.27 2656.2 1245.27"/>
           </g>
-          <path class="es102g2-cls-12" d="M2692.11,1219.65v-15.63h-10.23l-6.41-2.84h-9.07c-5.01,0-9.07,4.06-9.07,9.07v3.17c0,2.5,1.02,4.77,2.66,6.41,1.64,1.65,3.9,2.66,6.41,2.66h9.07l6.41-2.84h10.23Z"/>
+          <path class="chassis es102g2-cls-12" d="M2692.11,1219.65v-15.63h-10.23l-6.41-2.84h-9.07c-5.01,0-9.07,4.06-9.07,9.07v3.17c0,2.5,1.02,4.77,2.66,6.41,1.64,1.65,3.9,2.66,6.41,2.66h9.07l6.41-2.84h10.23Z"/>
           <g>
-            <rect class="es102g2-cls-30" x="2605.31" y="1221.83" width="13.77" height="79.37" transform="translate(3873.72 -1350.68) rotate(90)"/>
-            <rect class="es102g2-cls-30" x="2571.16" y="1255.99" width="13.77" height="11.06" transform="translate(3839.56 -1316.52) rotate(90)"/>
-            <rect class="es102g2-cls-30" x="2639.47" y="1255.99" width="13.77" height="11.06" transform="translate(3907.88 -1384.84) rotate(90)"/>
+            <rect class="chassis es102g2-cls-30" x="2605.31" y="1221.83" width="13.77" height="79.37" transform="translate(3873.72 -1350.68) rotate(90)"/>
+            <rect class="chassis es102g2-cls-30" x="2571.16" y="1255.99" width="13.77" height="11.06" transform="translate(3839.56 -1316.52) rotate(90)"/>
+            <rect class="chassis es102g2-cls-30" x="2639.47" y="1255.99" width="13.77" height="11.06" transform="translate(3907.88 -1384.84) rotate(90)"/>
           </g>
-          <path class="es102g2-cls-24" d="M2571,1264.38v-2.16h-.01v-92.12h-27.31v-11.34c0-.99-.81-1.8-1.8-1.8h-188.64c-1,0-1.8.81-1.8,1.8v3.74h-12.6v-5.54h-11.92v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8h-124.52c-1,0-1.8.81-1.8,1.8v3.74h-12.6v-5.54h-11.91v5.54h-3.79v-3.74c0-.99-.83-1.8-1.85-1.8h-34.98c-.99,0-1.8.81-1.8,1.8v105.62h442.91Z"/>
+          <path class="chassis es102g2-cls-24" d="M2571,1264.38v-2.16h-.01v-92.12h-27.31v-11.34c0-.99-.81-1.8-1.8-1.8h-188.64c-1,0-1.8.81-1.8,1.8v3.74h-12.6v-5.54h-11.92v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8h-124.52c-1,0-1.8.81-1.8,1.8v3.74h-12.6v-5.54h-11.91v5.54h-3.79v-3.74c0-.99-.83-1.8-1.85-1.8h-34.98c-.99,0-1.8.81-1.8,1.8v105.62h442.91Z"/>
           <g>
-            <circle class="es102g2-cls-25" cx="2146.66" cy="1255.02" r="7.92"/>
-            <path class="es102g2-cls-20" d="M2145.73,1258.86h1.87v-1.04c0-.14.02-.76.51-1.28.53-.58,1.25-.59,1.36-.6h1.04v-1.86h-1.04c-.12,0-.83-.02-1.36-.6-.49-.52-.51-1.14-.51-1.28v-1.04h-1.87v1.04c0,.14-.02.76-.51,1.28-.53.58-1.25.6-1.36.6h-1.04v1.86h1.04c.12,0,.83.02,1.36.6.49.52.51,1.14.51,1.28v1.04Z"/>
+            <circle class="chassis es102g2-cls-25" cx="2146.66" cy="1255.02" r="7.92"/>
+            <path class="chassis es102g2-cls-20" d="M2145.73,1258.86h1.87v-1.04c0-.14.02-.76.51-1.28.53-.58,1.25-.59,1.36-.6h1.04v-1.86h-1.04c-.12,0-.83-.02-1.36-.6-.49-.52-.51-1.14-.51-1.28v-1.04h-1.87v1.04c0,.14-.02.76-.51,1.28-.53.58-1.25.6-1.36.6h-1.04v1.86h1.04c.12,0,.83.02,1.36.6.49.52.51,1.14.51,1.28v1.04Z"/>
           </g>
           <g>
-            <circle class="es102g2-cls-25" cx="2328.64" cy="1255.02" r="7.92"/>
-            <path class="es102g2-cls-20" d="M2327.71,1258.86h1.87v-1.04c0-.14.02-.76.51-1.28.53-.58,1.25-.59,1.36-.6h1.04v-1.86h-1.04c-.12,0-.83-.02-1.36-.6-.49-.52-.51-1.14-.51-1.28v-1.04h-1.87v1.04c0,.14-.02.76-.51,1.28-.53.58-1.25.6-1.36.6h-1.04v1.86h1.04c.12,0,.83.02,1.36.6.49.52.51,1.14.51,1.28v1.04Z"/>
+            <circle class="chassis es102g2-cls-25" cx="2328.64" cy="1255.02" r="7.92"/>
+            <path class="chassis es102g2-cls-20" d="M2327.71,1258.86h1.87v-1.04c0-.14.02-.76.51-1.28.53-.58,1.25-.59,1.36-.6h1.04v-1.86h-1.04c-.12,0-.83-.02-1.36-.6-.49-.52-.51-1.14-.51-1.28v-1.04h-1.87v1.04c0,.14-.02.76-.51,1.28-.53.58-1.25.6-1.36.6h-1.04v1.86h1.04c.12,0,.83.02,1.36.6.49.52.51,1.14.51,1.28v1.04Z"/>
           </g>
-          <path class="es102g2-cls-5" d="M2572.52,1262.22v-93.64h-25.16v-13.78h-419.27v3.96c0-.99.81-1.8,1.8-1.8h34.98c1.02,0,1.85.81,1.85,1.8v3.74h3.79v-5.54h11.91v5.54h12.6v-3.74c0-.99.8-1.8,1.8-1.8h124.52c.99,0,1.8.81,1.8,1.8v3.74h3.78v-5.54h11.92v5.54h12.6v-3.74c0-.99.8-1.8,1.8-1.8h188.64c.99,0,1.8.81,1.8,1.8v11.34h27.31v92.12h1.53Z"/>
-          <rect class="es102g2-cls-3" x="2543.68" y="1154.8" width="3.68" height="15.3"/>
-          <polygon class="es102g2-cls-24" points="2570.99 1268.41 2559.47 1264.38 2570.99 1264.38 2570.99 1268.41"/>
-          <rect class="es102g2-cls-1" x="2570.99" y="1262.22" width="1.52" height="2.16"/>
-          <polygon class="es102g2-cls-20" points="2572.52 1262.22 2572.52 1168.58 2543.68 1168.58 2543.68 1170.1 2570.99 1170.1 2570.99 1262.22 2572.52 1262.22"/>
-          <rect class="es102g2-cls-20" x="2531.84" y="1154.8" width="15.52" height="2.16"/>
-          <polygon class="es102g2-cls-36" points="2654.05 1264.38 2654.05 1154.8 2547.36 1154.8 2547.36 1159.12 2545.52 1159.12 2545.52 1166.03 2547.36 1166.03 2547.36 1168.58 2572.52 1168.58 2572.52 1262.22 2576.29 1262.22 2576.29 1264.38 2654.05 1264.38"/>
-          <rect class="es102g2-cls-20" x="2651.88" y="1254.87" width="2.16" height="13.54"/>
-          <rect class="es102g2-cls-20" x="2651.88" y="1154.8" width="2.16" height="10.91"/>
-          <circle class="es102g2-cls-20" cx="2639.93" cy="1188.13" r="3.46"/>
-          <circle class="es102g2-cls-20" cx="2639.93" cy="1231.05" r="3.46"/>
-          <circle class="es102g2-cls-20" cx="2597.02" cy="1167.76" r="3.46"/>
-          <line class="es102g2-cls-35" x1="2230.45" y1="1200.12" x2="2230.45" y2="1200.13"/>
-          <rect class="es102g2-cls-20" x="2128.09" y="1262.22" width="2.16" height="2.16"/>
-          <rect class="es102g2-cls-23" x="2111.31" y="1163.87" width="4.64" height="28.91" transform="translate(3291.95 -935.31) rotate(90)"/>
-          <rect class="es102g2-cls-6" x="2326.22" y="1144.34" width="2.16" height="23.08" transform="translate(1171.43 3483.18) rotate(-90)"/>
-          <path class="es102g2-cls-3" d="M2321.34,1156.96h5.58v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8Z"/>
-          <rect class="es102g2-cls-6" x="2169.81" y="1144.34" width="2.16" height="23.08" transform="translate(1015.02 3326.77) rotate(-90)"/>
-          <path class="es102g2-cls-3" d="M2164.93,1156.96h5.58v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8Z"/>
+          <path class="chassis es102g2-cls-5" d="M2572.52,1262.22v-93.64h-25.16v-13.78h-419.27v3.96c0-.99.81-1.8,1.8-1.8h34.98c1.02,0,1.85.81,1.85,1.8v3.74h3.79v-5.54h11.91v5.54h12.6v-3.74c0-.99.8-1.8,1.8-1.8h124.52c.99,0,1.8.81,1.8,1.8v3.74h3.78v-5.54h11.92v5.54h12.6v-3.74c0-.99.8-1.8,1.8-1.8h188.64c.99,0,1.8.81,1.8,1.8v11.34h27.31v92.12h1.53Z"/>
+          <rect class="chassis es102g2-cls-3" x="2543.68" y="1154.8" width="3.68" height="15.3"/>
+          <polygon class="chassis es102g2-cls-24" points="2570.99 1268.41 2559.47 1264.38 2570.99 1264.38 2570.99 1268.41"/>
+          <rect class="chassis es102g2-cls-1" x="2570.99" y="1262.22" width="1.52" height="2.16"/>
+          <polygon class="chassis es102g2-cls-20" points="2572.52 1262.22 2572.52 1168.58 2543.68 1168.58 2543.68 1170.1 2570.99 1170.1 2570.99 1262.22 2572.52 1262.22"/>
+          <rect class="chassis es102g2-cls-20" x="2531.84" y="1154.8" width="15.52" height="2.16"/>
+          <polygon class="chassis es102g2-cls-36" points="2654.05 1264.38 2654.05 1154.8 2547.36 1154.8 2547.36 1159.12 2545.52 1159.12 2545.52 1166.03 2547.36 1166.03 2547.36 1168.58 2572.52 1168.58 2572.52 1262.22 2576.29 1262.22 2576.29 1264.38 2654.05 1264.38"/>
+          <rect class="chassis es102g2-cls-20" x="2651.88" y="1254.87" width="2.16" height="13.54"/>
+          <rect class="chassis es102g2-cls-20" x="2651.88" y="1154.8" width="2.16" height="10.91"/>
+          <circle class="chassis es102g2-cls-20" cx="2639.93" cy="1188.13" r="3.46"/>
+          <circle class="chassis es102g2-cls-20" cx="2639.93" cy="1231.05" r="3.46"/>
+          <circle class="chassis es102g2-cls-20" cx="2597.02" cy="1167.76" r="3.46"/>
+          <line class="chassis es102g2-cls-35" x1="2230.45" y1="1200.12" x2="2230.45" y2="1200.13"/>
+          <rect class="chassis es102g2-cls-20" x="2128.09" y="1262.22" width="2.16" height="2.16"/>
+          <rect class="chassis es102g2-cls-23" x="2111.31" y="1163.87" width="4.64" height="28.91" transform="translate(3291.95 -935.31) rotate(90)"/>
+          <rect class="chassis es102g2-cls-6" x="2326.22" y="1144.34" width="2.16" height="23.08" transform="translate(1171.43 3483.18) rotate(-90)"/>
+          <path class="chassis es102g2-cls-3" d="M2321.34,1156.96h5.58v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8Z"/>
+          <rect class="chassis es102g2-cls-6" x="2169.81" y="1144.34" width="2.16" height="23.08" transform="translate(1015.02 3326.77) rotate(-90)"/>
+          <path class="chassis es102g2-cls-3" d="M2164.93,1156.96h5.58v5.54h-3.78v-3.74c0-.99-.81-1.8-1.8-1.8Z"/>
           <g>
-            <circle class="es102g2-cls-17" cx="2555.35" cy="1210.34" r="9.83"/>
-            <path class="es102g2-cls-12" d="M2560.34,1211.55v-2.42h-1.34c-.18,0-.99-.02-1.66-.66-.76-.69-.77-1.62-.78-1.77v-1.34h-2.41v1.34c0,.15-.02,1.08-.78,1.77-.67.64-1.48.66-1.66.66h-1.34v2.42h1.34c.18,0,.99.02,1.66.66.76.69.78,1.62.78,1.77v1.34h2.41v-1.34c.01-.15.02-1.08.78-1.77.67-.64,1.48-.66,1.66-.66h1.34Z"/>
+            <circle class="chassis es102g2-cls-17" cx="2555.35" cy="1210.34" r="9.83"/>
+            <path class="chassis es102g2-cls-12" d="M2560.34,1211.55v-2.42h-1.34c-.18,0-.99-.02-1.66-.66-.76-.69-.77-1.62-.78-1.77v-1.34h-2.41v1.34c0,.15-.02,1.08-.78,1.77-.67.64-1.48.66-1.66.66h-1.34v2.42h1.34c.18,0,.99.02,1.66.66.76.69.78,1.62.78,1.77v1.34h2.41v-1.34c.01-.15.02-1.08.78-1.77.67-.64,1.48-.66,1.66-.66h1.34Z"/>
           </g>
-          <path class="es102g2-cls-24" d="M2673.13,1211.83c0-2.09-.84-3.97-2.21-5.34s-3.26-2.22-5.35-2.22h-11.52v15.12h11.52c4.18,0,7.56-3.38,7.56-7.56Z"/>
-          <circle class="es102g2-cls-17" cx="2665.12" cy="1211.83" r="5.63"/>
-          <rect class="es102g2-cls-42" x="2692.1" y="1200.22" width="29.16" height="23.22"/>
+          <path class="chassis es102g2-cls-24" d="M2673.13,1211.83c0-2.09-.84-3.97-2.21-5.34s-3.26-2.22-5.35-2.22h-11.52v15.12h11.52c4.18,0,7.56-3.38,7.56-7.56Z"/>
+          <circle class="chassis es102g2-cls-17" cx="2665.12" cy="1211.83" r="5.63"/>
+          <rect class="chassis es102g2-cls-42" x="2692.1" y="1200.22" width="29.16" height="23.22"/>
         </g>
         <rect class="es102g2-cls-17" x="2647.89" y="1252.94" width="19.66" height="7.34" transform="translate(3914.33 -1401.11) rotate(90)"/>
         <rect class="es102g2-cls-17" x="2647.89" y="1162.91" width="19.66" height="7.34" transform="translate(3824.3 -1491.14) rotate(90)"/>
@@ -242,13 +248,13 @@
         <polygon class="es102g2-cls-24" points="2658.79 1161.2 2671.75 1161.2 2671.75 1203.57 2662.72 1203.57 2655.88 1220.6 2651.95 1220.6 2651.95 1178.23 2658.79 1178.23 2658.79 1161.2"/>
       </g>
     </g>
-    <rect class="es102g2-cls-42" x="-542.4" y="680.81" width="1229.16" height="6.59" transform="translate(756.29 611.91) rotate(90)"/>
-    <rect class="es102g2-cls-42" x="1302.56" y="69.51" width="6.58" height="495.2"/>
-    <rect class="es102g2-cls-42" x="1302.56" y="720.59" width="6.58" height="578.09"/>
-    <rect class="es102g2-cls-42" x="1440.96" y="69.51" width="6.59" height="495.2"/>
-    <rect class="es102g2-cls-42" x="1440.96" y="720.59" width="6.59" height="578.09"/>
-    <rect class="es102g2-cls-12" x="1461.14" y="27.31" width="11.66" height="2565" transform="translate(2776.77 -157.16) rotate(90)"/>
-    <rect class="es102g2-cls-12" x="1461.14" y="-1224.06" width="11.66" height="2565" transform="translate(1525.41 -1408.53) rotate(90)"/>
+    <rect class="chassis es102g2-cls-42" x="-542.4" y="680.81" width="1229.16" height="6.59" transform="translate(756.29 611.91) rotate(90)"/>
+    <rect class="chassis es102g2-cls-42" x="1302.56" y="69.51" width="6.58" height="495.2"/>
+    <rect class="chassis es102g2-cls-42" x="1302.56" y="720.59" width="6.58" height="578.09"/>
+    <rect class="chassis es102g2-cls-42" x="1440.96" y="69.51" width="6.59" height="495.2"/>
+    <rect class="chassis es102g2-cls-42" x="1440.96" y="720.59" width="6.59" height="578.09"/>
+    <rect class="chassis es102g2-cls-12" x="1461.14" y="27.31" width="11.66" height="2565" transform="translate(2776.77 -157.16) rotate(90)"/>
+    <rect class="chassis es102g2-cls-12" x="1461.14" y="-1224.06" width="11.66" height="2565" transform="translate(1525.41 -1408.53) rotate(90)"/>
     <g>
       <rect class="es102g2-cls-37" x="17.43" y="1197.89" width="15.55" height="50.15" transform="translate(-1197.77 1248.17) rotate(-90)"/>
       <polygon class="es102g2-cls-37" points=".13 1302.78 .13 1329.96 19.6 1329.96 39.08 1329.96 39.08 1302.78 .13 1302.78"/>
@@ -271,7 +277,7 @@
         <path class="es102g2-cls-37" d="M20.31,48.98h-1.41v.78c0,.11-.01.58-.38.97-.4.44-.94.45-1.03.45h-.78v1.4h.78c.09,0,.63.01,1.03.45.37.39.38.86.38.97v.78h1.41v-.78c0-.11.01-.58.38-.97.4-.44.94-.45,1.03-.45h.78v-1.4h-.78c-.09,0-.63-.01-1.03-.45-.37-.39-.38-.86-.38-.97v-.78Z"/>
       </g>
     </g>
-    <g>
+    <g class="chassis">
       <g>
         <rect class="es102g2-cls-7" x="157.35" y="24.48" width="24.97" height="9.91"/>
         <polyline class="es102g2-cls-7" points="163.66 22.9 163.17 23.89 164.93 34.99 165.73 35.98 163.66 22.9 164.46 23.89 166.22 34.99 165.73 35.98"/>
@@ -539,7 +545,7 @@
         <line class="es102g2-cls-35" x1="2739.64" y1="1298.68" x2="2718.23" y2="1298.68"/>
       </g>
     </g>
-    <g>
+    <g class="chassis">
       <rect class="es102g2-cls-31" x="2684.62" y="78.21" width="33.59" height="1211.82"/>
       <polygon class="es102g2-cls-12" points="2689.91 78.21 2684.62 78.21 2684.62 69.54 2718.22 69.54 2718.22 74.83 2689.91 74.83 2689.91 78.21"/>
       <polygon class="es102g2-cls-12" points="2689.91 1290.03 2684.62 1290.03 2684.62 1298.71 2718.22 1298.71 2718.22 1293.42 2689.91 1293.42 2689.91 1290.03"/>
@@ -547,18 +553,18 @@
     </g>
     <rect class="es102g2-cls-31" x="1453.98" y="726.46" width="2.88" height="2.88" transform="translate(2183.32 -727.52) rotate(90)"/>
     <rect class="es102g2-cls-42" x="74.44" y="680.81" width="1229.16" height="6.59" transform="translate(1373.12 -4.92) rotate(90)"/>
-    <path class="es102g2-cls-31" d="M707.65,720.59h-14.15v-155.88h14.15c1.99,0,3.6,1.61,3.6,3.6v32.16h-14.4v11.88h14.4v59.68h-14.4v11.88h14.4v33.08c0,1.99-1.61,3.6-3.6,3.6Z"/>
+    <path class="chassis es102g2-cls-31" d="M707.65,720.59h-14.15v-155.88h14.15c1.99,0,3.6,1.61,3.6,3.6v32.16h-14.4v11.88h14.4v59.68h-14.4v11.88h14.4v33.08c0,1.99-1.61,3.6-3.6,3.6Z"/>
     <rect class="es102g2-cls-42" x="-233.98" y="680.87" width="1229.16" height="6.59" transform="translate(1064.77 303.56) rotate(90)"/>
     <rect class="es102g2-cls-42" x="994.14" y="69.51" width="6.59" height="495.2"/>
     <rect class="es102g2-cls-42" x="994.14" y="720.59" width="6.59" height="578.09"/>
     <rect class="es102g2-cls-42" x="1749.37" y="69.51" width="6.58" height="495.2"/>
     <rect class="es102g2-cls-42" x="1749.37" y="720.59" width="6.58" height="578.09"/>
-    <path class="es102g2-cls-36" d="M2066.99,1198.24h-300.24v100.44h300.24v-100.44ZM1769.27,1296.16v-95.4h295.2v95.4h-295.2Z"/>
-    <rect class="es102g2-cls-3" x="1769.27" y="1200.76" width="295.2" height="95.4"/>
-    <path class="es102g2-cls-36" d="M2073.47,1291.66h-9v-86.4h9c.99,0,1.8.81,1.8,1.8v82.8c0,.99-.81,1.8-1.8,1.8Z"/>
-    <path class="es102g2-cls-36" d="M1769.27,1291.66h-9c-.99,0-1.8-.81-1.8-1.8v-82.8c0-.99.81-1.8,1.8-1.8h9v86.4Z"/>
-    <rect class="es102g2-cls-36" x="1783.67" y="1195.72" width="266.4" height="5.04"/>
-    <g>
+    <path class="chassis es102g2-cls-36" d="M2066.99,1198.24h-300.24v100.44h300.24v-100.44ZM1769.27,1296.16v-95.4h295.2v95.4h-295.2Z"/>
+    <rect class="chassis es102g2-cls-3" x="1769.27" y="1200.76" width="295.2" height="95.4"/>
+    <path class="chassis es102g2-cls-36" d="M2073.47,1291.66h-9v-86.4h9c.99,0,1.8.81,1.8,1.8v82.8c0,.99-.81,1.8-1.8,1.8Z"/>
+    <path class="chassis es102g2-cls-36" d="M1769.27,1291.66h-9c-.99,0-1.8-.81-1.8-1.8v-82.8c0-.99.81-1.8,1.8-1.8h9v86.4Z"/>
+    <rect class="chassis es102g2-cls-36" x="1783.67" y="1195.72" width="266.4" height="5.04"/>
+    <g class="chassis">
       <path class="es102g2-cls-31" d="M2074.41,1200.76h-315.94v97.92h-2.52v-160.56h867.96v12.6h5.04v147.96h-547.34v-90.72c0-3.98-3.22-7.2-7.2-7.2Z"/>
       <polygon class="es102g2-cls-31" points="1790.51 1298.68 1755.95 1298.68 1755.95 1269.88 1758.47 1269.88 1758.47 1296.16 1790.51 1296.16 1790.51 1298.68"/>
       <rect class="es102g2-cls-36" x="1722.65" y="1234.06" width="69.12" height="2.52" transform="translate(2992.53 -521.88) rotate(90)"/>
@@ -608,9 +614,9 @@
     <rect class="es102g2-cls-42" x="2674.72" y="720.59" width="6.59" height="417.53"/>
     <rect class="es102g2-cls-8" x="2681.31" y="72.29" width="3.31" height="492.42"/>
     <rect class="es102g2-cls-8" x="2681.31" y="720.59" width="3.31" height="417.53"/>
-    <rect class="es102g2-cls-31" x="57.19" y="720.59" width="2627.43" height="5.86"/>
-    <rect class="es102g2-cls-31" x="692.32" y="558.84" width="1992.3" height="5.87"/>
-    <g>
+    <rect class="chassis es102g2-cls-31" x="57.19" y="720.59" width="2627.43" height="5.86"/>
+    <rect class="chassis es102g2-cls-31" x="692.32" y="558.84" width="1992.3" height="5.87"/>
+    <g class="chassis">
       <polygon class="es102g2-cls-36" points="2684.62 720.4 2535.73 720.4 2535.73 695.49 2547.25 695.49 2547.25 651.1 2535.73 651.1 2535.73 621.87 2547.25 621.87 2547.25 577.48 2535.73 577.48 2535.73 564.88 2684.62 564.88 2684.62 720.4"/>
       <rect class="es102g2-cls-5" x="2535.73" y="564.88" width="2.52" height="155.71"/>
       <rect class="es102g2-cls-3" x="2538.25" y="577.48" width="9" height="44.39"/>
@@ -623,8 +629,8 @@
       <rect class="es102g2-cls-1" x="1359.45" y="1214.44" width="3.71" height="3.71" transform="translate(145 2577.6) rotate(-90)"/>
       <rect class="es102g2-cls-1" x="1371.97" y="1214.44" width="3.71" height="3.71" transform="translate(157.53 2590.12) rotate(-90)"/>
     </g>
-    <rect class="es102g2-cls-31" x="2539.22" y="566.07" width="11.73" height="9.36" transform="translate(3115.84 -1974.34) rotate(90)"/>
-    <rect class="es102g2-cls-31" x="2530.47" y="631.81" width="29.23" height="9.36" transform="translate(3181.58 -1908.6) rotate(90)"/>
+    <rect class="chassis es102g2-cls-31" x="2539.22" y="566.07" width="11.73" height="9.36" transform="translate(3115.84 -1974.34) rotate(90)"/>
+    <rect class="chassis es102g2-cls-31" x="2530.47" y="631.81" width="29.23" height="9.36" transform="translate(3181.58 -1908.6) rotate(90)"/>
   </g>
   <g id="DRIVES">
     <g id="DRIVE_CAGE_1">
