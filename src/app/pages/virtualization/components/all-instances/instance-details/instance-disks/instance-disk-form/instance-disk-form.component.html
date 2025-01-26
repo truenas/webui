@@ -12,7 +12,7 @@
           root="/"
           [label]="'Source' | translate"
           [required]="true"
-          [nodeProvider]="directoryNodeProvider"
+          [nodeProvider]="directoryNodeProvider()"
           [canCreateDataset]="isNew()"
         ></ix-explorer>
 
