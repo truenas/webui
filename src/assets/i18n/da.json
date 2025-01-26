@@ -567,6 +567,7 @@
   "Auto TRIM": "",
   "Autoconfigure IPv6": "",
   "Automated Disk Selection": "",
+  "Automatic": "",
   "Automatic update check failed. Please check system network settings.": "",
   "Automatically populated with the original hostname of the system. This name is limited to 15 characters and cannot be the <b>Workgroup</b> name.": "",
   "Automatically restart the system after the update is applied.": "",

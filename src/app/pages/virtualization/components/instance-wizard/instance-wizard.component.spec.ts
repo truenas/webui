@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -110,6 +111,10 @@ describe('InstanceWizardComponent', () => {
           } as VirtualizationImageWithId),
         })),
       }),
+      mockProvider(VirtualizationConfigStore, {
+        initialize: jest.fn(),
+        config: jest.fn(() => ({ v4_network: 'v4_network', v6_network: 'v6_network' })),
+      }),
     ],
   });
 
@@ -158,6 +163,13 @@ describe('InstanceWizardComponent', () => {
         label: 'xHCI Host Controller (0003)',
       }));
       await usbDeviceCheckbox.check();
+
+      const listItems = spectator.queryAll('.network-list-item > span');
+      expect(listItems.map((element) => element.textContent)).toEqual([
+        'Automatic',
+        'v4_network',
+        'v6_network',
+      ]);
 
       const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
       await useDefaultNetworkCheckbox.setValue(false);

@@ -64,6 +64,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -189,6 +190,14 @@ export class InstanceWizardComponent {
     return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
   });
 
+  protected defaultIpv4Network = computed(() => {
+    return this.configStore.config()?.v4_network || 'N/A';
+  });
+
+  protected defaultIpv6Network = computed(() => {
+    return this.configStore.config()?.v6_network || 'N/A';
+  });
+
   constructor(
     private api: ApiService,
     private formBuilder: NonNullableFormBuilder,
@@ -199,10 +208,12 @@ export class InstanceWizardComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
+    protected configStore: VirtualizationConfigStore,
     private authService: AuthService,
     private filesystem: FilesystemService,
     private uploadService: UploadService,
   ) {
+    this.configStore.initialize();
     this.form.controls.image_file.disable();
     this.form.controls.image_file_name.disable();
     this.form.controls.image_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
