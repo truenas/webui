@@ -3,14 +3,9 @@
   <defs>
     <style>
       /* Contrast Fixes */
-      #R50_REAR .sides {
-        opacity: 0.75;
-      }
-
       #R50_REAR #R50_CHASSIS,
       #R50_REAR #R50_CASE_FANS,
-      #R50_REAR #R50_POWER_SUPPLIES,
-      #R50_REAR .chassis {
+      #R50_REAR #R50_POWER_SUPPLIES {
         opacity: 0.25;
       }
     </style>
