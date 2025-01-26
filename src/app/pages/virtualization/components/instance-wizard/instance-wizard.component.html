@@ -273,6 +273,21 @@
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
         }
+      } @else {
+        <div>
+          <div class="network-list-item">
+            <strong>{{ 'Bridge' | translate }}: </strong>
+            <span>{{ 'Automatic' | translate }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv4 Network' | translate }}: </strong>
+            <span>{{ defaultIpv4Network() }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv6 Network' | translate }}: </strong>
+            <span>{{ defaultIpv6Network() }}</span>
+          </div>
+        </div>
       }
     </ix-form-section>
 
