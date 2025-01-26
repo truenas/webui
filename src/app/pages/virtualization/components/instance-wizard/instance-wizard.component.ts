@@ -156,6 +156,7 @@ export class InstanceWizardComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     tpm: [false],
+    secure_boot: [false],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -347,22 +348,30 @@ export class InstanceWizardComponent {
 
   private getPayload(): CreateVirtualizationInstance {
     const devices = this.getDevicesPayload();
+    const values = this.form.getRawValue();
 
     const payload = {
       devices,
       autostart: true,
-      instance_type: this.form.controls.instance_type.value,
-      enable_vnc: this.isVm() ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVm() && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
-      vnc_password: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_password : null,
-      name: this.form.controls.name.value,
-      cpu: this.form.controls.cpu.value,
-      memory: this.form.controls.memory.value,
-      image: this.form.controls.image.value,
+      instance_type: values.instance_type,
+      enable_vnc: this.isVm() ? values.enable_vnc : false,
+      vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      name: values.name,
+      cpu: values.cpu,
+      memory: values.memory,
+      image: values.image,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
-    if (this.form.value.image_type === SelectImageType.Load) {
+    if (this.isVm()) {
+      payload.secure_boot = values.secure_boot;
+
+      if (values.enable_vnc) {
+        payload.vnc_password = values.vnc_password;
+      }
+    }
+
+    if (values.image_type === SelectImageType.Load) {
       delete payload.image;
       payload.source_type = null;
     }
