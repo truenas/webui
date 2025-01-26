@@ -1,10 +1,8 @@
-import { TunableType } from 'app/enums/tunable-type.enum';
-
 export interface Tunable {
   comment: string;
   enabled: boolean;
   id: number;
-  type: TunableType;
+  type: string;
   value: string;
   var: string;
   orig_value?: string;
