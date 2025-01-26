@@ -50,7 +50,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
   protected compareSizeAndTypeWith = isEqual;
 
   protected form = this.formBuilder.nonNullable.group({
-    sizeAndType: [[null, null] as SizeAndType, Validators.required],
+    sizeAndType: [[null, null] as [number | null, DiskType | null], Validators.required],
     treatDiskSizeAsMinimum: [{ value: false, disabled: true }],
   });
 

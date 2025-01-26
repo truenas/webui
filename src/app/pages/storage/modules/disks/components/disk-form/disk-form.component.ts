@@ -6,7 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
@@ -91,7 +91,7 @@ export class DiskFormComponent implements OnInit {
     private store$: Store<AppState>,
     private translate: TranslateService,
     private api: ApiService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
     public slideInRef: SlideInRef<Disk, boolean>,

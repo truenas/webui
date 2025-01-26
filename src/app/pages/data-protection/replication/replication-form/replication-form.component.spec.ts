@@ -216,11 +216,11 @@ describe('ReplicationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.query(GeneralSectionComponent).getPayload).toHaveBeenCalled();
-      expect(spectator.query(TransportSectionComponent).getPayload).toHaveBeenCalled();
-      expect(spectator.query(SourceSectionComponent).getPayload).toHaveBeenCalled();
-      expect(spectator.query(TargetSectionComponent).getPayload).toHaveBeenCalled();
-      expect(spectator.query(ScheduleSectionComponent).getPayload).toHaveBeenCalled();
+      expect(spectator.query(GeneralSectionComponent)!.getPayload).toHaveBeenCalled();
+      expect(spectator.query(TransportSectionComponent)!.getPayload).toHaveBeenCalled();
+      expect(spectator.query(SourceSectionComponent)!.getPayload).toHaveBeenCalled();
+      expect(spectator.query(TargetSectionComponent)!.getPayload).toHaveBeenCalled();
+      expect(spectator.query(ScheduleSectionComponent)!.getPayload).toHaveBeenCalled();
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
@@ -310,8 +310,8 @@ describe('ReplicationFormComponent', () => {
       tick();
       spectator.detectChanges();
 
-      expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
-      expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(remoteNodeProvider);
+      expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(remoteNodeProvider);
     }));
 
     it('pull from remote to local', fakeAsync(() => {
@@ -320,8 +320,8 @@ describe('ReplicationFormComponent', () => {
       tick();
       spectator.detectChanges();
 
-      expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(remoteNodeProvider);
-      expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(remoteNodeProvider);
+      expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
     }));
 
     it('from local to local', fakeAsync(() => {
@@ -329,14 +329,14 @@ describe('ReplicationFormComponent', () => {
       generalForm.controls.transport.setValue(TransportMode.Local);
       tick();
       spectator.detectChanges();
-      expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
-      expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
 
       generalForm.controls.direction.setValue(Direction.Pull);
       tick();
       spectator.detectChanges();
-      expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
-      expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
+      expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
     }));
   });
 

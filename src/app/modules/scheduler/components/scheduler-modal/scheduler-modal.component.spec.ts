@@ -146,7 +146,7 @@ describe('SchedulerModalComponent', () => {
       const daysOfWeek = await loader.getAllHarnesses(MatCheckboxHarness.with({ ancestor: '.weekdays' }));
       await daysOfWeek[0].check();
 
-      const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
+      const previewColumn = spectator.query(SchedulerPreviewColumnComponent)!;
       expect(previewColumn.crontab).toBe('25 */2 2-5 2,3,4,5,6,7,8,9,10,11,12 mon,sun');
     });
 

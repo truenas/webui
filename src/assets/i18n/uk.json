@@ -238,6 +238,7 @@
   "Authentication Type": "",
   "Authority Key Config": "",
   "Auto Refresh": "",
+  "Automatic": "",
   "Automatically restart the system after the update is applied.": "",
   "Automatically sets number of threads used by the kernel NFS server.": "",
   "Autostart": "",

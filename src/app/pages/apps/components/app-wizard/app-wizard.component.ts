@@ -7,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, ReactiveFormsModule, Validators,
+  FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -107,7 +107,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
   forbiddenAppNames$ = this.appService.getAllApps().pipe(map((apps) => apps.map((app) => app.name)));
 
-  form = this.formBuilder.nonNullable.group<ChartFormValues>({
+  form = this.formBuilder.group<ChartFormValues>({
     release_name: '',
   });
 
@@ -143,7 +143,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
     private validatorsService: IxValidatorsService,
@@ -441,7 +441,10 @@ export class AppWizardComponent implements OnInit, OnDestroy {
 
     this._pageTitle$.next(app.metadata.title || app.name);
 
-    this.form.addControl('release_name', new FormControl(app.name, [Validators.required]));
+    this.form.addControl('release_name', new FormControl(app.name, {
+      nonNullable: true,
+      validators: [Validators.required],
+    }));
 
     this.rootDynamicSection.push({
       name: 'Application name',

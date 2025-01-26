@@ -4,7 +4,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { isNumber } from 'lodash-es';
@@ -153,8 +153,8 @@ export class SmbAclComponent implements OnInit {
         both: [null as never],
         user: [null as never],
         group: [null as never],
-        ae_perm: [null as SmbSharesecPermission | null],
-        ae_type: [null as SmbSharesecType | null],
+        ae_perm: new FormControl(null as SmbSharesecPermission | null),
+        ae_type: new FormControl(null as SmbSharesecType | null),
       }),
     );
   }

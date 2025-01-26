@@ -66,8 +66,8 @@ describe('SmbFormComponent', () => {
     path_local: '/mnt/pool123/ds222',
     audit: {
       enable: true,
-      watch_list: [],
-      ignore_list: [],
+      watch_list: [] as string[],
+      ignore_list: [] as string[],
     },
   } as SmbShare;
 

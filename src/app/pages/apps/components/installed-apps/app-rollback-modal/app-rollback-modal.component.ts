@@ -96,7 +96,7 @@ export class AppRollbackModalComponent {
 
   private selectFirstVersion(firstOption: Option): void {
     this.form.patchValue({
-      app_version: firstOption.value.toString(),
+      app_version: String(firstOption.value),
     });
   }
 }

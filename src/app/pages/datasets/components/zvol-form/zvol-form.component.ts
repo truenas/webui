@@ -234,7 +234,7 @@ export class ZvolFormComponent implements OnInit {
       return of(this.form.dirty);
     });
 
-    this.slideInData = slideInRef.getData();
+    this.slideInData = slideInRef.getData() || null;
     this.form.controls.key.disable();
     this.form.controls.passphrase.disable();
     this.form.controls.confirm_passphrase.disable();

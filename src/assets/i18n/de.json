@@ -415,6 +415,7 @@
   "Auto Refresh": "",
   "Auto TRIM": "",
   "Automated Disk Selection": "",
+  "Automatic": "",
   "Automatically populated with the original hostname of the system. This name is limited to 15 characters and cannot be the <b>Workgroup</b> name.": "",
   "Automatically restart the system after the update is applied.": "",
   "Automatically sets number of threads used by the kernel NFS server.": "",

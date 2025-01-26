@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -106,7 +106,7 @@ export class VmEditFormComponent implements OnInit {
   protected existingVm: VirtualMachine;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private translate: TranslateService,
     public formatter: IxFormatterService,
@@ -155,7 +155,7 @@ export class VmEditFormComponent implements OnInit {
 
     const vmPayload = {
       ...this.form.value,
-      memory: Math.round(this.form.value.memory / MiB),
+      memory: Math.round(Number(this.form.value.memory) / MiB),
       min_memory: this.form.value.min_memory
         ? Math.round(this.form.value.min_memory / MiB)
         : null,
@@ -166,7 +166,7 @@ export class VmEditFormComponent implements OnInit {
       vmPayload.cpu_model = null;
     }
 
-    const gpusIds = this.form.value.gpus;
+    const gpusIds = this.form.getRawValue().gpus;
     this.gpuService.addIsolatedGpuPciIds(gpusIds).pipe(
       switchMap(() => forkJoin([
         this.api.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),

@@ -1,6 +1,6 @@
-export type BaseOptionValueType = string | number;
+export type BaseOptionValueType = string | number | null;
 export type RadioOptionValueType = string | number | boolean;
-export type SelectOptionValueType = string | number | string[] | number[] | [ number, string ];
+export type SelectOptionValueType = string | number | null | string[] | number[] | [ number, string ];
 
 export interface Option<T = BaseOptionValueType> {
   label: string;

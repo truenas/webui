@@ -2,6 +2,7 @@
   "": "",
   "<b>Why choose Container?</b><br />Containers offer lightweight, efficient virtualization by sharing the host OS kernel, providing faster startup times and reduced resource usage compared to VMs. Ideal for scalable applications.<br /><br /><b>Why choose VM?</b><br />Choose a VM for full OS isolation, kernel independence, and running diverse OS types.": "",
   "Archs": "",
+  "Automatic": "",
   "Flash Identify Light": "",
   "Instance must be stopped to update VNC.": "",
   "Key Cert Sign": "",

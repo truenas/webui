@@ -13,6 +13,7 @@ import { TicketType } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport } from 'app/helptext/system/support';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
@@ -259,11 +260,12 @@ export class FeedbackService {
     );
   }
 
-  private getSystemInfo(): Observable<[SystemInfoState, string]> {
+  private getSystemInfo(): Observable<[SystemInfoState & { systemInfo: SystemInfo }, string]> {
     return forkJoin([
       this.store$.pipe(
         select(selectSystemInfoState),
         filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
+        map((systemInfoState) => systemInfoState as SystemInfoState & { systemInfo: SystemInfo }),
         take(1),
       ),
       this.api.call('system.host_id'),
