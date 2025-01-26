@@ -31,7 +31,7 @@ describe('WidgetCpuTempComponent', () => {
 
     const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
-    expect(widget.text()).toBe('10 C°');
+    expect(widget.text()).toBe('10 °C');
   });
 
   it('shows an error when CPU Temp cannot be determined', () => {

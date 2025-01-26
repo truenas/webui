@@ -95,6 +95,7 @@
   "Specify the source disk.": "",
   "Status of Truenas Connect": "",
   "TNC Base Url": "",
+  "Temperature (°C)": "",
   "This device cannot be edited while the instance is running.": "",
   "This device is read-only and cannot be edited.": "",
   "TrueNAS Connect is configured": "",

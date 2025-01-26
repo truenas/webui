@@ -45,7 +45,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     map((update) => update.fields.cpu),
     tap((realtimeUpdate) => {
       this.cachedCpuStats.update((cachedStats) => {
-        return [...cachedStats, [realtimeUpdate.user, realtimeUpdate.system]].slice(-60);
+        return [...cachedStats, [realtimeUpdate.cpu.usage, realtimeUpdate.cpu.temp]].slice(-60);
       });
     }),
   ));
@@ -55,10 +55,10 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     map((response) => {
       const [update] = response;
 
-      const userIndex = update.legend.indexOf('user');
-      const systemIndex = update.legend.indexOf('system');
+      const usageIndex = update.legend.indexOf('usage');
+      const tempIndex = update.legend.indexOf('temp');
 
-      return (update.data as number[][]).slice(-60).map((item) => ([item[userIndex], item[systemIndex]]));
+      return (update.data as number[][]).slice(-60).map((item) => ([item[usageIndex], item[tempIndex]]));
     }),
     startWith(Array.from({ length: 60 }, () => ([0, 0]))),
   ));
@@ -86,7 +86,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     return {
       datasets: [
         {
-          label: this.translate.instant('User'),
+          label: this.translate.instant('Usage'),
           data: values.map((item, index) => ({ x: labels[index], y: item[0] })),
           borderColor: currentTheme.blue,
           backgroundColor: currentTheme.blue,
@@ -96,7 +96,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
           fill: false,
         },
         {
-          label: this.translate.instant('System'),
+          label: this.translate.instant('Temperature (°C)'),
           data: values.map((item, index) => ({ x: labels[index], y: item[1] })),
           borderColor: currentTheme.orange,
           backgroundColor: currentTheme.orange,
