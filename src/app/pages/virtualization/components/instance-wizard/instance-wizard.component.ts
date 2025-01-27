@@ -157,6 +157,8 @@ export class InstanceWizardComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number],
     tpm: [false],
+    secure_boot: [false],
+    root_disk_size: [10],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -348,6 +350,7 @@ export class InstanceWizardComponent {
 
   private getPayload(): CreateVirtualizationInstance {
     const devices = this.getDevicesPayload();
+    const values = this.form.getRawValue();
 
     const payload = {
       devices,
@@ -363,7 +366,15 @@ export class InstanceWizardComponent {
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
-    if (this.form.value.image_type === SelectImageType.Load) {
+    if (this.isVm()) {
+      payload.secure_boot = values.secure_boot;
+
+      if (values.enable_vnc) {
+        payload.vnc_password = values.vnc_password;
+      }
+    }
+
+    if (values.image_type === SelectImageType.Load) {
       delete payload.image;
       payload.source_type = null;
     }

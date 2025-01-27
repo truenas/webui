@@ -324,6 +324,7 @@ describe('InstanceWizardComponent', () => {
       await form.fillForm({
         'VNC Port': 9000,
         'VNC Password': 'testing',
+        'Secure Boot': true,
       });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
@@ -355,6 +356,7 @@ describe('InstanceWizardComponent', () => {
         enable_vnc: true,
         vnc_port: 9000,
         vnc_password: 'testing',
+        secure_boot: true,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -401,6 +403,7 @@ describe('InstanceWizardComponent', () => {
         }],
         enable_vnc: false,
         source_type: null,
+        secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
         vnc_password: null,

@@ -70,5 +70,7 @@ set CPU topology. Example: 1-2,5,9-11'),
   enable_vnc_tooltip: T('Check to allow remote desktop access via VNC.'),
 
   add_tpm_placeholder: T('Add Trusted Platform Module'),
-  add_tpm_tooltip: T('Enable TPM for enhanced security features in your VM instance.'),
+  add_tpm_tooltip: T('Virtual device that provides hardware-based security functions like encryption key management.'),
+
+  secure_boot_tooltip: T('Secure Boot ensures that only trusted, signed software runs during a system’s startup process. May be incompatible with some images.'),
 };
