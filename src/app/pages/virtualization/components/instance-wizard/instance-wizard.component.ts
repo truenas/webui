@@ -154,6 +154,7 @@ export class InstanceWizardComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     tpm: [false],
+    secure_boot: [false],
     root_disk_size: [10],
     use_default_network: [true],
     usb_devices: [[] as string[]],
@@ -362,6 +363,7 @@ export class InstanceWizardComponent {
     } as CreateVirtualizationInstance;
 
     if (this.isVm()) {
+      payload.secure_boot = values.secure_boot;
       payload.root_disk_size = values.root_disk_size;
 
       if (values.enable_vnc) {
