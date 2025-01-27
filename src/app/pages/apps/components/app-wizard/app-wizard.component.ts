@@ -121,7 +121,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   pageTitle$ = this._pageTitle$.asObservable().pipe(
     filter(Boolean),
     map((name) => {
-      if (name?.toLocaleLowerCase() === customApp?.toLocaleLowerCase()) {
+      if (name?.toLocaleLowerCase() === 'iX App'.toLocaleLowerCase()) {
         return `${this.titlePrefix} ${this.translate.instant('Custom App')}`;
       }
       return `${this.titlePrefix} ${name}`;
