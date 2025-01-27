@@ -131,6 +131,16 @@
     <ix-form-section
       [label]="'Disks' | translate"
     >
+
+      @if (isVm()) {
+        <ix-input
+          formControlName="root_disk_size"
+          type="number"
+          [required]="true"
+          [label]="'Root Disk Size (in GiB)' | translate"
+        ></ix-input>
+      }
+
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
