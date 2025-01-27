@@ -50,6 +50,7 @@ const instance = {
   raw: null,
   vnc_enabled: true,
   vnc_password: '123456',
+  secure_boot: true,
   vnc_port: 9000,
 } as VirtualizationInstance;
 
@@ -105,12 +106,13 @@ describe('InstanceGeneralInfoComponent', () => {
 
   it('renders details in card', () => {
     const chartExtra = spectator.query('mat-card-content')!.querySelectorAll('p');
-    expect(chartExtra).toHaveLength(5);
+    expect(chartExtra).toHaveLength(6);
     expect(chartExtra[0]).toHaveText('Status: Running');
     expect(chartExtra[1]).toHaveText('Autostart: Yes');
     expect(chartExtra[2]).toHaveText('Base Image: Almalinux 8 amd64 (20241030_23:38)');
     expect(chartExtra[3]).toHaveText('CPU: 525');
     expect(chartExtra[4]).toHaveText('Memory: 125 MiB');
+    expect(chartExtra[5]).toHaveText('Secure Boot: Yes');
   });
 
   it('renders correct values when CPU or Memory limit is not set', () => {

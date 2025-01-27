@@ -89,7 +89,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and shows total number of SMART test results', () => {
-    const detailsItem = spectator.query(byText('Completed S.M.A.R.T. Tests:')).parentElement;
+    const detailsItem = spectator.query(byText('Completed S.M.A.R.T. Tests:'))!.parentElement;
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: '4',
@@ -99,7 +99,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('shows a link to view all smart tests for a disk', () => {
-    const link = spectator.query(byText('View All Test Results'));
+    const link = spectator.query(byText('View All Test Results'))!;
     expect(link).toBeTruthy();
     expect(link.getAttribute('href')).toBe('/storage/disks/smartresults/disk/sdc');
   });
@@ -123,22 +123,22 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('loads and show last tests in up to 4 categories', () => {
-    const resultsByCategory = spectator.query('.results-by-category').children;
+    const resultsByCategory = spectator.query('.results-by-category')!.children;
     expect(resultsByCategory).toHaveLength(3);
 
-    const category1 = spectator.query(byText('Last Short Test:')).parentElement;
+    const category1 = spectator.query(byText('Last Short Test:'))!.parentElement;
     expect(category1).toHaveDescendantWithText({
       selector: '.value',
       text: 'SUCCESS',
     });
 
-    const category2 = spectator.query(byText('Last Long Test:')).parentElement;
+    const category2 = spectator.query(byText('Last Long Test:'))!.parentElement;
     expect(category2).toHaveDescendantWithText({
       selector: '.value',
       text: 'FAILED',
     });
 
-    const category3 = spectator.query(byText('Last Conveyance Test:')).parentElement;
+    const category3 = spectator.query(byText('Last Conveyance Test:'))!.parentElement;
     expect(category3).toHaveDescendantWithText({
       selector: '.value',
       text: 'SUCCESS',
@@ -148,7 +148,7 @@ describe('SmartInfoCardComponent', () => {
   it('loads and shows a number of SMART tasks associated with the disk', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smart.test.query_for_disk', ['sdc']);
 
-    const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:')).parentElement;
+    const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:'))!.parentElement;
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: '2 Tasks Configured',
@@ -156,7 +156,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('shows a link to manage all smart tasks', () => {
-    const link = spectator.query(byText('Manage S.M.A.R.T. Tasks'));
+    const link = spectator.query(byText('Manage S.M.A.R.T. Tasks'))!;
     expect(link).toBeTruthy();
     expect(link.getAttribute('href')).toBe('/data-protection/smart');
   });
@@ -167,7 +167,7 @@ describe('SmartInfoCardComponent', () => {
       togglesmart: false,
     });
 
-    const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:')).parentElement;
+    const detailsItem = spectator.query(byText('S.M.A.R.T. Tasks:'))!.parentElement;
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: 'Disabled in Disk Settings',
@@ -175,7 +175,7 @@ describe('SmartInfoCardComponent', () => {
   });
 
   it('shows SMART options if they are set for the disk', () => {
-    const detailsItem = spectator.query(byText('S.M.A.R.T. Options:')).parentElement;
+    const detailsItem = spectator.query(byText('S.M.A.R.T. Options:'))!.parentElement;
     expect(detailsItem).toHaveDescendantWithText({
       selector: '.value',
       text: '--some-option',

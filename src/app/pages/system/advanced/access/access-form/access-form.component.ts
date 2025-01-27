@@ -157,7 +157,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   private updateLoginBanner(): Observable<unknown> {
-    const loginBanner = this.form.value.login_banner;
+    const loginBanner = this.form.value.login_banner || '';
     return this.api.call('system.advanced.update', [{ login_banner: loginBanner }])
       .pipe(finalize(() => {
         this.store$.dispatch(advancedConfigUpdated());

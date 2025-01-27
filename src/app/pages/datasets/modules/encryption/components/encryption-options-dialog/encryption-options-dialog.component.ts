@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogClose, MatDialogRef, MatDialogTitle,
 } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
@@ -69,7 +69,7 @@ enum EncryptionType {
 export class EncryptionOptionsDialogComponent implements OnInit {
   form = this.fb.group({
     inherit_encryption: [false],
-    encryption_type: [null as EncryptionType],
+    encryption_type: new FormControl(null as EncryptionType | null),
     generate_key: [false],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],

@@ -9,6 +9,7 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -37,17 +38,17 @@ describe('NfsCardComponent', () => {
     {
       id: 10,
       path: '/mnt/x',
-      aliases: [],
+      aliases: [] as string[],
       comment: 'sweet',
-      hosts: [],
+      hosts: [] as string[],
       ro: false,
       maproot_user: '',
       maproot_group: '',
       mapall_user: '',
       mapall_group: '',
-      security: [],
+      security: [] as NfsSecurityProvider[],
       enabled: true,
-      networks: [],
+      networks: [] as string[],
       locked: false,
     },
   ] as NfsShare[];

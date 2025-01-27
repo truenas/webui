@@ -36,13 +36,13 @@ describe('FakeProgressBarComponent', () => {
 
     const progressBar = await loader.getHarness(MatProgressBarHarness);
     tick(500);
-    expect(Math.floor(await progressBar.getValue())).toBe(9);
+    expect(Math.floor((await progressBar.getValue())!)).toBe(9);
     tick(500);
-    expect(Math.floor(await progressBar.getValue())).toBe(28);
+    expect(Math.floor((await progressBar.getValue())!)).toBe(28);
     tick(500);
-    expect(Math.floor(await progressBar.getValue())).toBe(37);
+    expect(Math.floor((await progressBar.getValue())!)).toBe(37);
     tick(500);
-    expect(Math.floor(await progressBar.getValue())).toBe(47);
+    expect(Math.floor((await progressBar.getValue())!)).toBe(47);
 
     discardPeriodicTasks();
   }));

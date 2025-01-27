@@ -1,6 +1,6 @@
 import { CloudSyncProviderName, OneDriveType } from 'app/enums/cloudsync-provider.enum';
 
-export type SomeProviderAttributes = Record<string, string | number | boolean | string[] | number[] | boolean[]>;
+export type SomeProviderAttributes = Record<string, string | number | boolean | null | string[] | number[] | boolean[]>;
 
 export interface CloudSyncCredential {
   id: number;

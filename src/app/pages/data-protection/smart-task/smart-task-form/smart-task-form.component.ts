@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -73,7 +73,7 @@ export class SmartTaskFormComponent implements OnInit {
   form = this.fb.group({
     disks: [[] as string[]],
     all_disks: [false],
-    type: [null as SmartTestType, Validators.required],
+    type: new FormControl(null as SmartTestType | null, Validators.required),
     desc: [''],
     schedule: ['', Validators.required],
   });

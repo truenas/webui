@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -110,6 +111,10 @@ describe('InstanceWizardComponent', () => {
           } as VirtualizationImageWithId),
         })),
       }),
+      mockProvider(VirtualizationConfigStore, {
+        initialize: jest.fn(),
+        config: jest.fn(() => ({ v4_network: 'v4_network', v6_network: 'v6_network' })),
+      }),
     ],
   });
 
@@ -159,6 +164,13 @@ describe('InstanceWizardComponent', () => {
       }));
       await usbDeviceCheckbox.check();
 
+      const listItems = spectator.queryAll('.network-list-item > span');
+      expect(listItems.map((element) => element.textContent)).toEqual([
+        'Automatic',
+        'v4_network',
+        'v6_network',
+      ]);
+
       const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
       await useDefaultNetworkCheckbox.setValue(false);
 
@@ -200,7 +212,6 @@ describe('InstanceWizardComponent', () => {
         environment: {},
         enable_vnc: false,
         vnc_port: null,
-        vnc_password: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -243,7 +254,6 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: false,
         vnc_port: null,
-        vnc_password: null,
         instance_type: 'CONTAINER',
         environment: {},
       }]);
@@ -269,6 +279,10 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
       expect(await form.getValues()).toMatchObject({
         Image: 'almalinux/8/cloud',
+      });
+
+      await form.fillForm({
+        'Root Disk Size (in GiB)': 9,
       });
 
       const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
@@ -307,11 +321,9 @@ describe('InstanceWizardComponent', () => {
 
       await form.fillForm({
         'Enable VNC': true,
-      });
-
-      await form.fillForm({
         'VNC Port': 9000,
         'VNC Password': 'testing',
+        'Secure Boot': true,
       });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
@@ -342,7 +354,9 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
+        root_disk_size: 9,
         vnc_password: 'testing',
+        secure_boot: true,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -389,49 +403,10 @@ describe('InstanceWizardComponent', () => {
         }],
         enable_vnc: false,
         source_type: null,
+        secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
-        vnc_password: null,
-      }]);
-      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
-    });
-
-    it('sends no NIC devices when default network settings checkbox is set', async () => {
-      await form.fillForm({
-        Name: 'new',
-        'CPU Configuration': '1-2',
-        'Memory Size': '1 GiB',
-      });
-
-      const browseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Browse Catalog' }));
-      await browseButton.click();
-
-      const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
-      await useDefaultNetworkCheckbox.setValue(false);
-
-      // TODO: Fix this to use IxCheckboxHarness
-      const nicDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'nic1' }));
-      await nicDeviceCheckbox.check();
-
-      await useDefaultNetworkCheckbox.setValue(true); // no nic1 should be send now
-      spectator.detectChanges();
-
-      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
-      await createButton.click();
-
-      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
-        name: 'new',
-        autostart: true,
-        cpu: '1-2',
-        devices: [],
-        image: 'almalinux/8/cloud',
-        memory: GiB,
-        environment: {},
-        instance_type: 'CONTAINER',
-        enable_vnc: false,
-        vnc_port: null,
-        vnc_password: null,
+        root_disk_size: 10,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

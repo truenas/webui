@@ -5,7 +5,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -67,11 +67,11 @@ export class SyslogFormComponent implements OnInit {
 
   readonly form = this.fb.group({
     fqdn_syslog: [false],
-    sysloglevel: [null as SyslogLevel],
+    sysloglevel: new FormControl(null as SyslogLevel | null),
     syslogserver: [''],
-    syslog_transport: [null as SyslogTransport],
-    syslog_tls_certificate: [null as string],
-    syslog_tls_certificate_authority: [null as string],
+    syslog_transport: new FormControl(null as SyslogTransport | null),
+    syslog_tls_certificate: new FormControl(null as string | null),
+    syslog_tls_certificate_authority: new FormControl(null as string | null),
     syslog_audit: [false],
   });
 

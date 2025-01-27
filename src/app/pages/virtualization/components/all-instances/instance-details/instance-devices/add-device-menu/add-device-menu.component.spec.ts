@@ -51,7 +51,7 @@ describe('AddDeviceMenuComponent', () => {
           {
             dev_type: VirtualizationDeviceType.Usb,
             product_id: 'already-added',
-          },
+          } as VirtualizationDevice,
           {
             dev_type: VirtualizationDeviceType.Gpu,
             pci: 'pci_0000_01_00_0',
