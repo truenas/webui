@@ -79,6 +79,7 @@
   "Registration finalization successful": "",
   "Registration finalization timed out": "",
   "Restart is required after changing these settings.": "",
+  "Root Disk Size (in GiB)": "",
   "Select the protocol for the instance's network connection.": "",
   "Set an expiration date for the API key.": "",
   "Sign-in to Docker Hub": "",
