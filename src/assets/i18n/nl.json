@@ -1,6 +1,7 @@
 {
   "": "",
   "Automatic": "",
+  "Edit App YAML": "",
   "Instance must be stopped to update VNC.": "",
   "Root Disk Size (in GiB)": "",
   "Secure Boot": "",
@@ -204,7 +205,6 @@
   "Add Container": "Container toevoegen",
   "Add Credential": "Inloggegevens toevoegen",
   "Add Cron Job": "Cronjob toevoegen",
-  "Add Custom App": "Aangepaste App toevoegen",
   "Add DNS Authenticator": "DNS authenticator toevoegen",
   "Add Dataset": "Dataset toevoegen",
   "Add Device": "Apparaat toevoegen",
@@ -1543,7 +1543,6 @@
   "Edit Certificate Authority": "Certificaat Autoriteit bewerken",
   "Edit Cloud Sync Task": "Cloudsynchronisatietaak bewerken",
   "Edit Cron Job": "Cronjob bewerken",
-  "Edit Custom App": "Aangepaste app bewerken",
   "Edit DNS Authenticator": "DNS authenticator bewerken",
   "Edit Dataset": "Dataset bewerken",
   "Edit Device": "Apparaat bewerken",

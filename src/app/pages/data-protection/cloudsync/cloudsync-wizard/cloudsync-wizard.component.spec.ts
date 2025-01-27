@@ -21,8 +21,8 @@ import { CloudSyncWizardComponent } from './cloudsync-wizard.component';
 describe('CloudSyncWizardComponent', () => {
   let spectator: Spectator<CloudSyncWizardComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let form: IxFormHarness | null;
+  let nextButton: MatStepperNextHarness | null;
   const slideInRef: SlideInRef<unknown, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
@@ -69,22 +69,22 @@ describe('CloudSyncWizardComponent', () => {
   }
 
   async function goToNextStep(): Promise<void> {
-    await nextButton.click();
+    await nextButton!.click();
     await updateStepHarnesses();
   }
 
   it('creates objects when wizard is submitted', async () => {
-    expect(await form.getValues()).toEqual({
+    expect(await form!.getValues()).toEqual({
       Credentials: '',
     });
 
-    await form.fillForm({
+    await form!.fillForm({
       Credentials: 'Google Photos (Google Photos)',
     });
 
     await goToNextStep();
 
-    await form.fillForm({
+    await form!.fillForm({
       Description: 'Sync Google Photos - TestUser',
     });
 

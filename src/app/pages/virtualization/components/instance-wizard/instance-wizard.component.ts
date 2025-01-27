@@ -4,8 +4,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormArray,
-  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
+  FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -142,18 +141,18 @@ export class InstanceWizardComponent {
     }))),
   );
 
-  protected readonly form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image_type: [SelectImageType.Choose, [Validators.required]],
-    image_file: [null as File[], [Validators.required]],
+    image_file: [null as File[] | null, [Validators.required]],
     image_file_name: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     tpm: [false],
     root_disk_size: [10],
     secure_boot: [false],
@@ -164,9 +163,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number>;
+      source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number>;
+      dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -201,7 +200,7 @@ export class InstanceWizardComponent {
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private matDialog: MatDialog,
     private router: Router,
     private formErrorHandler: FormErrorHandlerService,
@@ -265,9 +264,9 @@ export class InstanceWizardComponent {
   protected addProxy(): void {
     const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number, Validators.required],
+      source_port: [null as number | null, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number, Validators.required],
+      dest_port: [null as number | null, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -407,7 +406,7 @@ export class InstanceWizardComponent {
           {
             dev_type: VirtualizationDeviceType.Disk,
             source: this.form.value.image_file_name,
-            destination: null as string,
+            destination: null as string | null,
             boot_priority: 1,
           },
         ]

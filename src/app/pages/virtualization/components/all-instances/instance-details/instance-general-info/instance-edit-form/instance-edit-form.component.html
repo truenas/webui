@@ -13,15 +13,19 @@
       <ix-input
         formControlName="cpu"
         [label]="'CPU Configuration' | translate"
-        [hint]="containersHelptext.cpuHint | translate"
+        [tooltip]="containersHelptext.cpu_tooltip | translate"
+        [required]="isVm"
+        [hint]="isVm ? null : (containersHelptext.cpuHint | translate)"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
         [label]="'Memory Size' | translate"
+        [tooltip]="containersHelptext.memory_tooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
-        [hint]="containersHelptext.memoryHint | translate"
+        [required]="isVm"
+        [hint]="isVm ? null : (containersHelptext.memoryHint | translate)"
       ></ix-input>
     </ix-fieldset>
 

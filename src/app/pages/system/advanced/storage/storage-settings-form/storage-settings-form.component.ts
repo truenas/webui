@@ -137,6 +137,7 @@ export class StorageSettingsFormComponent implements OnInit {
     this.isFormLoading = true;
     this.cdr.markForCheck();
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
+      filter((service) => !!service),
       switchMap((smbService) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();

@@ -73,7 +73,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   ) {
     effect(() => {
       this.dataProvider.selectedControllerType = this.controllerType();
-      this.dataProvider.isHaLicensed = this.isHaLicensed();
+      this.dataProvider.isHaLicensed = Boolean(this.isHaLicensed());
       this.dataProvider.load();
     });
   }

@@ -65,7 +65,7 @@ export class BootEnvironmentFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private api: ApiService,
     private errorHandler: FormErrorHandlerService,
-    public slideInRef: SlideInRef<string | undefined, boolean>,
+    public slideInRef: SlideInRef<string, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.formGroup.dirty);

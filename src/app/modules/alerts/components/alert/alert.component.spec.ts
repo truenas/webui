@@ -125,7 +125,7 @@ describe('AlertComponent', () => {
   });
 
   it('shows a link for an alert class', () => {
-    const link = spectator.query(byText('Go to API keys'));
+    const link = spectator.query(byText('Go to API keys'))!;
     expect(link).toExist();
 
     const alertLinkService = spectator.inject(AlertLinkService);

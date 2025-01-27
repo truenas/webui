@@ -16,11 +16,11 @@ export interface ApiKey {
 export interface CreateApiKeyRequest {
   name: string;
   username: string;
-  expires_at?: ApiTimestamp;
+  expires_at: ApiTimestamp | null;
 }
 
 export type UpdateApiKeyRequest = [number, {
   name: string;
   reset?: boolean;
-  expires_at?: ApiTimestamp;
+  expires_at?: ApiTimestamp | null;
 }];

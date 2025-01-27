@@ -32,7 +32,7 @@ import { DiskDetailsComponent } from './disks-overview-details/disk-details.comp
   ],
 })
 export class DiskDetailsOverviewComponent {
-  readonly selectedSlot = input<DashboardEnclosureSlot>();
+  readonly selectedSlot = input.required<DashboardEnclosureSlot>();
 
   readonly diskName = computed(() => {
     return this.selectedSlot().dev

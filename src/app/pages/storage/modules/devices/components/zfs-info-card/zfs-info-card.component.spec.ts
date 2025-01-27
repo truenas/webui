@@ -93,16 +93,16 @@ describe('ZfsInfoCardComponent', () => {
 
   describe('disks', () => {
     it('shows errors of the current disk', () => {
-      const parent = spectator.query(byText('Parent:', { exact: true }));
+      const parent = spectator.query(byText('Parent:', { exact: true }))!;
       expect(parent.nextElementSibling).toHaveText('MIRROR-0');
 
-      const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
+      const readErrors = spectator.query(byText('Read Errors:', { exact: true }))!;
       expect(readErrors.nextElementSibling).toHaveText('3');
 
-      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }));
+      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }))!;
       expect(writeErrors.nextElementSibling).toHaveText('2');
 
-      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
+      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }))!;
       expect(checksumErrors.nextElementSibling).toHaveText('1');
     });
 
@@ -185,13 +185,13 @@ describe('ZfsInfoCardComponent', () => {
     });
 
     it('shows error summary for a vdev', () => {
-      const readErrors = spectator.query(byText('Read Errors:', { exact: true }));
+      const readErrors = spectator.query(byText('Read Errors:', { exact: true }))!;
       expect(readErrors.nextElementSibling).toHaveText('1');
 
-      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }));
+      const writeErrors = spectator.query(byText('Write Errors:', { exact: true }))!;
       expect(writeErrors.nextElementSibling).toHaveText('2');
 
-      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }));
+      const checksumErrors = spectator.query(byText('Checksum Errors:', { exact: true }))!;
       expect(checksumErrors.nextElementSibling).toHaveText('3');
     });
 
