@@ -65,22 +65,25 @@ import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-s
   ],
 })
 export class DevicesListComponent implements OnInit {
-  isLoading$ = this.devicesStore.isLoading$;
-  protected selectedNode$ = this.devicesStore.selectedNode$;
-
-  showDetails = output<{ poolId: number; guid: string }>();
-
-  dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId = input.required<number>();
   isMobileView = input<boolean>();
   showMobileDetails = output<boolean>();
+  showDetails = output<{ poolId: number; guid: string }>();
 
-  treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
+  protected isLoading$ = this.devicesStore.isLoading$;
+  protected selectedNode$ = this.devicesStore.selectedNode$;
+
+  protected dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
+
+  protected treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
 
-  readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => Boolean(node.children?.length);
-  readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
+  protected readonly hasNestedChild = (_: number, node: DeviceNestedDataNode): boolean => {
+    return Boolean(node.children?.length);
+  };
+
+  protected readonly isVdevGroup = (_: number, node: DeviceNestedDataNode): boolean => isVdevGroup(node);
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -96,7 +99,7 @@ export class DevicesListComponent implements OnInit {
     this.setupTree();
   }
 
-  onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
+  protected onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
     if (this.treeControl.isExpanded(dataNodeSelected)) {
       this.treeControl.collapse(dataNodeSelected);
     } else {
@@ -104,7 +107,7 @@ export class DevicesListComponent implements OnInit {
     }
   }
 
-  onSearch(query: string): void {
+  protected onSearch(query: string): void {
     this.dataSource.filter(query);
   }
 
@@ -187,7 +190,7 @@ export class DevicesListComponent implements OnInit {
     });
   }
 
-  viewDetails(poolId: number, guid: string): void {
+  protected viewDetails(poolId: number, guid: string): void {
     this.showDetails.emit({ poolId, guid });
     this.router.navigate(['/storage', poolId, 'devices', guid]);
 
