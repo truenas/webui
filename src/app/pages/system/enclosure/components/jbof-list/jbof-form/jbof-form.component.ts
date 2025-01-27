@@ -89,10 +89,10 @@ export class JbofFormComponent implements OnInit {
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('jbof.create', [values]);
-    } else {
+    if (this.editingJbof) {
       request$ = this.api.call('jbof.update', [this.editingJbof.id, values]);
+    } else {
+      request$ = this.api.call('jbof.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

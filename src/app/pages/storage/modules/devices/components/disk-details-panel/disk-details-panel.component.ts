@@ -41,7 +41,7 @@ export class DiskDetailsPanelComponent {
   readonly poolId = input<number>();
   readonly topologyCategory = input<VdevType>();
   readonly hasTopLevelRaidz = input<boolean>();
-  readonly disksWithSmartTestSupport = input<string[]>();
+  readonly disksWithSmartTestSupport = input<string[]>([]);
 
   readonly closeMobileDetails = output();
 
@@ -66,7 +66,8 @@ export class DiskDetailsPanelComponent {
   });
 
   protected hasSmartTestSupport = computed(() => {
-    return this.disk && this.disksWithSmartTestSupport().includes(this.disk().devname);
+    const disk = this.disk();
+    return disk && this.disksWithSmartTestSupport().includes(disk.devname);
   });
 
   onCloseMobileDetails(): void {

@@ -78,7 +78,7 @@ export class AddDeviceMenuComponent {
   });
 
   protected canAddTpmNow = computed(() => {
-    return this.canAddTpm() && this.deviceStore.selectedInstance().status === VirtualizationStatus.Stopped;
+    return this.canAddTpm() && this.deviceStore.selectedInstance()?.status === VirtualizationStatus.Stopped;
   });
 
   protected readonly hasDevicesToAdd = computed(() => {

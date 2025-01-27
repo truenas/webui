@@ -41,9 +41,10 @@ export class AllInstancesHeaderComponent {
 
   protected readonly canAddNewInstances = computed(() => this.state() === VirtualizationGlobalState.Initialized);
   protected readonly hasCreateNewButton = computed(() => {
+    const state = this.state();
     // Conditions for showing button and button being disabled are different on purpose
     // to communicate current state to the user better.
-    return [VirtualizationGlobalState.Initializing, VirtualizationGlobalState.Initialized].includes(this.state());
+    return state && [VirtualizationGlobalState.Initializing, VirtualizationGlobalState.Initialized].includes(state);
   });
 
   constructor(

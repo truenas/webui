@@ -4,6 +4,6 @@ export type CoreBulkQuery = [
 ];
 
 export interface CoreBulkResponse<T = unknown> {
-  error: string;
+  error: string | null;
   result: T;
 }

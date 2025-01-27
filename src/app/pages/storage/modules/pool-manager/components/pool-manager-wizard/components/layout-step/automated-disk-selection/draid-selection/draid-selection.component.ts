@@ -146,7 +146,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
   private updateStoreOnChanges(): void {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      const values = this.form.value;
+      const values = this.form.getRawValue();
 
       this.store.setAutomaticTopologyCategory(this.type(), {
         width: values.children,

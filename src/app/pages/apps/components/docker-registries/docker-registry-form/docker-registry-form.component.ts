@@ -82,7 +82,7 @@ export class DockerRegistryFormComponent implements OnInit {
     });
 
     this.existingDockerRegistry = this.slideInRef.getData()?.registry;
-    this.isLoggedInToDockerHub = this.slideInRef.getData()?.isLoggedInToDockerHub;
+    this.isLoggedInToDockerHub = Boolean(this.slideInRef.getData()?.isLoggedInToDockerHub);
 
     if (!this.isLoggedInToDockerHub && !this.existingDockerRegistry) {
       this.setNameForDockerHub();

@@ -50,7 +50,12 @@ export function getProviderFormClass(providerName: CloudSyncProviderName): Type<
     return TokenProviderFormComponent;
   }
 
-  return cloudsyncProviderFormMap.get(providerName);
+  const formClass = cloudsyncProviderFormMap.get(providerName);
+  if (!formClass) {
+    throw new Error(`No form class found for provider ${providerName}`);
+  }
+
+  return formClass;
 }
 
 // Will return "(1)" from "Google Photos (1)"
