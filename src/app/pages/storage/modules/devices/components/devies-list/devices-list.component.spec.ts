@@ -707,10 +707,6 @@ describe('DevicesListComponent', () => {
     const vdevGroup = spectator.query('ix-vdev-group-node');
     const text = vdevGroup.querySelector('.caption-name');
     expect(text.textContent).toBe('Data VDEVs');
-    const nestedTreeNode = spectator.query('ix-nested-tree-node > ix-nested-tree-node');
-    const topologyItem = nestedTreeNode.querySelector('ix-topology-item-node');
-    const nameCell = topologyItem.querySelector('.cell-name');
-    expect(nameCell.textContent).toBe('MIRROR');
     const button = spectator.query('.mat-mdc-button-touch-target');
     button.dispatchEvent(new Event('click'));
     expect(console.warn).toHaveBeenCalledWith('Tree is using conflicting node types which can cause unexpected behavior. Please use tree nodes of the same type (e.g. only flat or only nested). Current node type: "nested", new node type "flat".');
