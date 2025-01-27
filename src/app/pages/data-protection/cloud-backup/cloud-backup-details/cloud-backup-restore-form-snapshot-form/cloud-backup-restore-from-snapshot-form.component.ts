@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef, Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -114,7 +114,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,

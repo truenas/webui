@@ -2,15 +2,15 @@ import {
   ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import {
-  FormArray,
-  FormBuilder, ReactiveFormsModule, Validators,
+  FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { VirtualizationType } from 'app/enums/virtualization.enum';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -48,6 +48,7 @@ import { defaultVncPort } from 'app/pages/virtualization/virtualization.constant
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
+    MatTooltip,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -60,22 +61,29 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
-  get isVmInstanceType(): boolean {
+  protected readonly containersHelptext = containersHelptext;
+
+  get isVm(): boolean {
     return this.editingInstance.type === VirtualizationType.Vm;
   }
 
-  protected readonly form = this.formBuilder.nonNullable.group({
+  get isStopped(): boolean {
+    return this.editingInstance.status === VirtualizationStatus.Stopped;
+  }
+
+  protected readonly form = this.formBuilder.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     enable_vnc: [false],
-    vnc_port: [defaultVncPort, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_port: [defaultVncPort as number | null, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_password: [null as string],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -87,16 +95,8 @@ export class InstanceEditFormComponent {
       return of(this.form.dirty);
     });
 
-    this.form.controls.vnc_port.disable();
-    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
-      if (vncEnabled) {
-        this.form.controls.vnc_port.enable();
-      } else {
-        this.form.controls.vnc_port.disable();
-      }
-    });
-
     this.editingInstance = this.slideInRef.getData();
+
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
@@ -104,7 +104,10 @@ export class InstanceEditFormComponent {
       memory: this.editingInstance.memory,
       enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
+      vnc_password: this.editingInstance.vnc_password,
     });
+
+    this.setVncControls();
 
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
       this.addEnvironmentVariable(key, this.editingInstance.environment[key]);
@@ -113,6 +116,10 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
+    if (!payload.enable_vnc) {
+      delete payload.vnc_port;
+      delete payload.vnc_password;
+    }
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
@@ -132,7 +139,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });
@@ -145,7 +152,7 @@ export class InstanceEditFormComponent {
   }
 
   private getSubmissionPayload(): UpdateVirtualizationInstance {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     return {
       environment: this.environmentVariablesPayload,
@@ -154,6 +161,7 @@ export class InstanceEditFormComponent {
       memory: values.memory,
       enable_vnc: values.enable_vnc,
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      vnc_password: values.enable_vnc ? values.vnc_password : null,
     } as UpdateVirtualizationInstance;
   }
 
@@ -169,5 +177,19 @@ export class InstanceEditFormComponent {
     }, {});
   }
 
-  protected readonly containersHelptext = containersHelptext;
+  private setVncControls(): void {
+    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
+      if (vncEnabled) {
+        this.form.controls.vnc_port.enable();
+      } else {
+        this.form.controls.vnc_port.disable();
+      }
+    });
+
+    if (!this.isStopped) {
+      this.form.controls.enable_vnc.disable();
+      this.form.controls.vnc_password.disable();
+      this.form.controls.vnc_port.disable();
+    }
+  }
 }

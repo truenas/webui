@@ -43,14 +43,11 @@ describe('ReplicationTaskCardComponent', () => {
       name: 'APPS/test2 - APPS/test3',
       state: {
         state: 'FINISHED',
-        warnings: [],
         last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
         datetime: {
           $date: new Date().getTime() - 50000,
         },
       },
-      restrict_schedule: null,
-      job: null,
     } as ReplicationTask,
   ];
 

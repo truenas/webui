@@ -6,7 +6,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin, Observable, of } from 'rxjs';
@@ -79,12 +79,12 @@ export class ActiveDirectoryComponent implements OnInit {
     disable_freenas_cache: [false],
     restrict_pam: [false],
     site: [''],
-    kerberos_realm: [null as number],
+    kerberos_realm: new FormControl(null as number | null),
     kerberos_principal: [''],
     createcomputer: [''],
-    timeout: [null as number],
-    dns_timeout: [null as number],
-    nss_info: [null as NssInfoType],
+    timeout: new FormControl(null as number | null),
+    dns_timeout: new FormControl(null as number | null),
+    nss_info: new FormControl(null as NssInfoType | null),
     netbiosname: ['', [Validators.required, Validators.maxLength(15)]],
     netbiosalias: [[] as string[]],
   });

@@ -71,10 +71,11 @@ export class GeneralSectionComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.replication()) {
+    const replication = this.replication();
+    if (replication) {
       this.form.patchValue({
-        ...this.replication(),
-        logging_level: this.replication().logging_level || LoggingLevel.Default,
+        ...replication,
+        logging_level: replication.logging_level || LoggingLevel.Default,
       });
     }
   }

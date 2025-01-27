@@ -3219,24 +3219,24 @@ describe('TopologyCardComponent', () => {
     });
 
     it('rendering status icon', () => {
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Safe);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Everything is fine');
 
       spectator.setInput('poolState', { healthy: false, status: PoolStatus.Online } as Pool);
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool is not healthy');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool is not healthy');
 
       spectator.setInput('poolState', { healthy: true, status: PoolStatus.Offline } as Pool);
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains OFFLINE Data VDEVs');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Warn);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains OFFLINE Data VDEVs');
 
       spectator.setInput('poolState', { healthy: true, status: PoolStatus.Removed } as Pool);
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains REMOVED Data VDEVs');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains REMOVED Data VDEVs');
 
       spectator.setInput('poolState', { healthy: true, status: PoolStatus.Faulted } as Pool);
-      expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
-      expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains FAULTED Data VDEVs');
+      expect(spectator.query(PoolCardIconComponent)!.type).toBe(PoolCardIconType.Error);
+      expect(spectator.query(PoolCardIconComponent)!.tooltip).toBe('Pool contains FAULTED Data VDEVs');
     });
   });
 

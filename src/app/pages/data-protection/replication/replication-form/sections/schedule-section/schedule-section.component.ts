@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input, OnChanges,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
@@ -35,7 +35,7 @@ export class ScheduleSectionComponent implements OnChanges {
   form = this.formBuilder.group({
     auto: [true],
     schedule: [false],
-    schedule_picker: [CronPresetValue.Daily as string],
+    schedule_picker: [CronPresetValue.Daily as string | null],
     schedule_begin: ['00:00'],
     schedule_end: ['23:59'],
     only_matching_schedule: [false],
@@ -47,18 +47,19 @@ export class ScheduleSectionComponent implements OnChanges {
   protected readonly CronPresetValue = CronPresetValue;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private taskService: TaskService,
   ) {}
 
   ngOnChanges(): void {
-    if (this.replication()) {
-      this.setFormValues(this.replication());
+    const replication = this.replication();
+    if (replication) {
+      this.setFormValues(replication);
     }
   }
 
   getPayload(): Partial<ReplicationCreate> {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const payload = {
       auto: values.auto,

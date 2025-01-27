@@ -5,7 +5,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -105,7 +105,7 @@ export class InterfaceFormComponent implements OnInit {
   failoverLabelSuffix = '';
 
   form = this.formBuilder.group({
-    type: [null as NetworkInterfaceType, Validators.required],
+    type: new FormControl(null as NetworkInterfaceType | null, Validators.required),
     name: ['', [
       Validators.required,
       this.interfaceFormValidator.validate,
@@ -127,12 +127,12 @@ export class InterfaceFormComponent implements OnInit {
 
     // Vlan fields
     vlan_parent_interface: [''],
-    vlan_tag: [null as number, rangeValidator(1, 4094)],
-    vlan_pcp: [null as number],
+    vlan_tag: new FormControl(null as number | null, rangeValidator(1, 4094)),
+    vlan_pcp: new FormControl(null as number | null),
 
     // Failover
     failover_critical: [false],
-    failover_group: [null as number],
+    failover_group: new FormControl(null as number | null),
 
     mtu: [this.defaultMtu, rangeValidator(68, 9216)],
 
@@ -241,7 +241,7 @@ export class InterfaceFormComponent implements OnInit {
       aliases: interfaceAliasesToFormAliases(nic),
     });
 
-    this.setOptionsForEdit();
+    this.setOptionsForEdit(nic);
     this.disableVlanParentInterface();
   }
 
@@ -311,14 +311,14 @@ export class InterfaceFormComponent implements OnInit {
     });
   }
 
-  private setOptionsForEdit(): void {
+  private setOptionsForEdit(nic: NetworkInterface): void {
     if (this.isBridge) {
       this.bridgeMembers$ = this.networkService
-        .getBridgeMembersChoices(this.existingInterface.id)
+        .getBridgeMembersChoices(nic.id)
         .pipe(choicesToOptions());
     } else if (this.isLag) {
       this.lagPorts$ = this.networkService
-        .getLaggPortsChoices(this.existingInterface.id)
+        .getLaggPortsChoices(nic.id)
         .pipe(choicesToOptions());
     }
   }

@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -90,7 +90,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   private sedConfig: SedConfig;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private ws: ApiService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,

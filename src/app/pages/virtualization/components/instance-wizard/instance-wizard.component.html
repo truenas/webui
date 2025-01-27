@@ -273,6 +273,21 @@
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
         }
+      } @else {
+        <div>
+          <div class="network-list-item">
+            <strong>{{ 'Bridge' | translate }}: </strong>
+            <span>{{ 'Automatic' | translate }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv4 Network' | translate }}: </strong>
+            <span>{{ defaultIpv4Network() }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv6 Network' | translate }}: </strong>
+            <span>{{ defaultIpv6Network() }}</span>
+          </div>
+        </div>
       }
     </ix-form-section>
 
@@ -319,6 +334,13 @@
             formControlName="vnc_port"
             type="number"
             [label]="'VNC Port' | translate"
+          ></ix-input>
+
+          <ix-input
+            formControlName="vnc_password"
+            type="password"
+            [label]="'VNC Password' | translate"
+            [hint]="'VNC password is not cryptographically secure. You should not rely on it as a single authentication mechanism for your VMs.' | translate"
           ></ix-input>
         }
       </ix-form-section>

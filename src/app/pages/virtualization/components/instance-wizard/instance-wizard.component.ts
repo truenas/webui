@@ -4,8 +4,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormArray,
-  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
+  FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
@@ -65,6 +64,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
@@ -143,17 +143,18 @@ export class InstanceWizardComponent {
     }))),
   );
 
-  protected readonly form = this.formBuilder.nonNullable.group({
+  protected readonly form = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     instance_type: [VirtualizationType.Container, Validators.required],
     image_type: [SelectImageType.Choose, [Validators.required]],
-    image_file: [null as File[], [Validators.required]],
+    image_file: [null as File[] | null, [Validators.required]],
     image_file_name: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
+    vnc_password: [null as string],
     cpu: ['', [cpuValidator()]],
-    memory: [null as number],
+    memory: [null as number | null],
     tpm: [false],
     use_default_network: [true],
     usb_devices: [[] as string[]],
@@ -162,9 +163,9 @@ export class InstanceWizardComponent {
     mac_vlan_nics: [[] as string[]],
     proxies: this.formBuilder.array<FormGroup<{
       source_proto: FormControl<VirtualizationProxyProtocol>;
-      source_port: FormControl<number>;
+      source_port: FormControl<number | null>;
       dest_proto: FormControl<VirtualizationProxyProtocol>;
-      dest_port: FormControl<number>;
+      dest_port: FormControl<number | null>;
     }>>([]),
     disks: this.formBuilder.array<FormGroup<{
       source: FormControl<string>;
@@ -189,9 +190,17 @@ export class InstanceWizardComponent {
     return this.filesystem.getFilesystemNodeProvider({ datasetsAndZvols: true });
   });
 
+  protected defaultIpv4Network = computed(() => {
+    return this.configStore.config()?.v4_network || 'N/A';
+  });
+
+  protected defaultIpv6Network = computed(() => {
+    return this.configStore.config()?.v6_network || 'N/A';
+  });
+
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private matDialog: MatDialog,
     private router: Router,
     private formErrorHandler: FormErrorHandlerService,
@@ -199,10 +208,12 @@ export class InstanceWizardComponent {
     private snackbar: SnackbarService,
     private dialogService: DialogService,
     protected formatter: IxFormatterService,
+    protected configStore: VirtualizationConfigStore,
     private authService: AuthService,
     private filesystem: FilesystemService,
     private uploadService: UploadService,
   ) {
+    this.configStore.initialize();
     this.form.controls.image_file.disable();
     this.form.controls.image_file_name.disable();
     this.form.controls.image_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
@@ -253,9 +264,9 @@ export class InstanceWizardComponent {
   protected addProxy(): void {
     const control = this.formBuilder.group({
       source_proto: [VirtualizationProxyProtocol.Tcp],
-      source_port: [null as number, Validators.required],
+      source_port: [null as number | null, Validators.required],
       dest_proto: [VirtualizationProxyProtocol.Tcp],
-      dest_port: [null as number, Validators.required],
+      dest_port: [null as number | null, Validators.required],
     });
 
     this.form.controls.proxies.push(control);
@@ -341,8 +352,9 @@ export class InstanceWizardComponent {
       devices,
       autostart: true,
       instance_type: this.form.controls.instance_type.value,
-      enable_vnc: this.isVm ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
+      enable_vnc: this.isVm() ? this.form.value.enable_vnc : false,
+      vnc_port: this.isVm() && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
+      vnc_password: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_password : null,
       name: this.form.controls.name.value,
       cpu: this.form.controls.cpu.value,
       memory: this.form.controls.memory.value,
@@ -385,7 +397,7 @@ export class InstanceWizardComponent {
           {
             dev_type: VirtualizationDeviceType.Disk,
             source: this.form.value.image_file_name,
-            destination: null as string,
+            destination: null as string | null,
             boot_priority: 1,
           },
         ]

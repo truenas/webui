@@ -68,7 +68,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows nameservers assigned via settings', () => {
-    const nameserversSection = spectator.query(byText('Nameservers')).parentElement;
+    const nameserversSection = spectator.query(byText('Nameservers'))!.parentElement!;
     const nameserverItems = nameserversSection.querySelectorAll('mat-list-item');
 
     expect(nameserverItems).toHaveLength(3);
@@ -79,7 +79,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('separately shows nameservers obtained via DHCP and not settings', () => {
-    const nameserversSection = spectator.query(byText('Nameservers')).parentElement;
+    const nameserversSection = spectator.query(byText('Nameservers'))!.parentElement!;
     const nameserverItems = nameserversSection.querySelectorAll('mat-list-item');
 
     expect(nameserverItems).toHaveLength(3);
@@ -88,7 +88,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows IPv4 addresses', () => {
-    const ipv4Section = spectator.query(byText('IPv4:')).parentElement;
+    const ipv4Section = spectator.query(byText('IPv4:'))!.parentElement!;
     const addresses = ipv4Section.querySelectorAll('li');
 
     expect(addresses).toHaveLength(1);
@@ -96,7 +96,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('shows IPv6 addresses', () => {
-    const ipv4Section = spectator.query(byText('IPv6:')).parentElement;
+    const ipv4Section = spectator.query(byText('IPv6:'))!.parentElement!;
     const addresses = ipv4Section.querySelectorAll('li');
 
     expect(addresses).toHaveLength(1);
@@ -106,8 +106,8 @@ describe('NetworkConfigurationCardComponent', () => {
   it('shows config details', () => {
     const detailsList = spectator.queryAll('.details-list li');
     const detailsItems = detailsList.reduce((items, element) => {
-      const label = element.querySelector('.label').textContent;
-      const value = element.querySelector('.value').textContent;
+      const label = element.querySelector('.label')!.textContent!;
+      const value = element.querySelector('.value')!.textContent!;
       items[label.trim()] = value.trim();
       return items;
     }, {} as Record<string, string>);

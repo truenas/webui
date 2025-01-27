@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
+import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
 
@@ -110,6 +111,10 @@ describe('InstanceWizardComponent', () => {
           } as VirtualizationImageWithId),
         })),
       }),
+      mockProvider(VirtualizationConfigStore, {
+        initialize: jest.fn(),
+        config: jest.fn(() => ({ v4_network: 'v4_network', v6_network: 'v6_network' })),
+      }),
     ],
   });
 
@@ -159,6 +164,13 @@ describe('InstanceWizardComponent', () => {
       }));
       await usbDeviceCheckbox.check();
 
+      const listItems = spectator.queryAll('.network-list-item > span');
+      expect(listItems.map((element) => element.textContent)).toEqual([
+        'Automatic',
+        'v4_network',
+        'v6_network',
+      ]);
+
       const useDefaultNetworkCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Use default network settings' }));
       await useDefaultNetworkCheckbox.setValue(false);
 
@@ -200,6 +212,7 @@ describe('InstanceWizardComponent', () => {
         environment: {},
         enable_vnc: false,
         vnc_port: null,
+        vnc_password: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -242,6 +255,7 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: false,
         vnc_port: null,
+        vnc_password: null,
         instance_type: 'CONTAINER',
         environment: {},
       }]);
@@ -303,8 +317,14 @@ describe('InstanceWizardComponent', () => {
       const gpuDeviceCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'NVIDIA GeForce GTX 1080' }));
       await gpuDeviceCheckbox.check();
 
-      await form.fillForm({ 'Enable VNC': true });
-      await form.fillForm({ 'VNC Port': 9000 });
+      await form.fillForm({
+        'Enable VNC': true,
+      });
+
+      await form.fillForm({
+        'VNC Port': 9000,
+        'VNC Password': 'testing',
+      });
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
@@ -334,6 +354,7 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
+        vnc_password: 'testing',
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -382,6 +403,7 @@ describe('InstanceWizardComponent', () => {
         source_type: null,
         memory: 1073741824,
         vnc_port: null,
+        vnc_password: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -421,6 +443,7 @@ describe('InstanceWizardComponent', () => {
         instance_type: 'CONTAINER',
         enable_vnc: false,
         vnc_port: null,
+        vnc_password: null,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

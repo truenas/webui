@@ -47,12 +47,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   readonly chartId = input<string>();
   readonly chartColors = input<string[]>([]);
   readonly data = input<ReportingData>();
-  readonly report = input<Report>();
+  readonly report = input.required<Report>();
   readonly timezone = input<string>();
   readonly stacked = input(false);
   readonly labelY = input('Label Y');
 
-  private readonly el: Signal<ElementRef<HTMLElement> | undefined> = viewChild('wrapper', { read: ElementRef });
+  private readonly el: Signal<ElementRef<HTMLElement>> = viewChild.required('wrapper', { read: ElementRef });
 
   lastMinDate: number;
   lastMaxDate: number;

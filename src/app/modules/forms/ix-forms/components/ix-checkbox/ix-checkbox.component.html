@@ -17,13 +17,13 @@
 @if (tooltip()) {
   <ix-tooltip
     class="tooltip"
-    [header]="label()"
-    [message]="tooltip()"
+    [header]="label() || ''"
+    [message]="tooltip() || ''"
   ></ix-tooltip>
 }
 
 @if (warning()) {
-  <ix-warning [message]="warning()"></ix-warning>
+  <ix-warning [message]="warning() || ''"></ix-warning>
 }
 
 @let control = controlDirective.control;

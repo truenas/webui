@@ -29,7 +29,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
 
   currentPage$ = new BehaviorSubject<T[]>([]);
   expandedRow$ = new BehaviorSubject<T | null>(null);
-  expandedRow: T;
+  expandedRow: T | null;
   totalRows = 0;
 
   sorting: TableSort<T> = {

@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
@@ -76,7 +76,7 @@ export class InitShutdownFormComponent implements OnInit {
     type: [InitShutdownScriptType.Command],
     command: ['', [Validators.required]],
     script: ['', [Validators.required]],
-    when: [null as InitShutdownScriptWhen | null, [Validators.required]],
+    when: new FormControl(null as InitShutdownScriptWhen | null, [Validators.required]),
     enabled: [true],
     timeout: [10],
   });

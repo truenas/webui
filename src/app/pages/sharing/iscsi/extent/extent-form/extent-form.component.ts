@@ -4,7 +4,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { sortBy, startsWith } from 'lodash-es';
@@ -85,11 +85,11 @@ export class ExtentFormComponent implements OnInit {
     type: [IscsiExtentType.Disk],
     disk: [''],
     path: [mntPath],
-    filesize: [null as number],
+    filesize: new FormControl(null as number | null),
     serial: [''],
     blocksize: [512],
     pblocksize: [false],
-    avail_threshold: [null as number, [Validators.min(1), Validators.max(99)]],
+    avail_threshold: new FormControl(null as number | null, [Validators.min(1), Validators.max(99)]),
     insecure_tpc: [true],
     xen: [false],
     rpm: [IscsiExtentRpm.Ssd],
@@ -181,19 +181,19 @@ export class ExtentFormComponent implements OnInit {
       values.path = values.disk;
     }
 
-    if (values.type === IscsiExtentType.File && +values.filesize !== 0) {
-      values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
+    if (values.type === IscsiExtentType.File && Number(values.filesize) !== 0) {
+      values.filesize = Number(values.filesize) + (values.blocksize - Number(values.filesize) % values.blocksize);
     }
 
     this.isLoading = true;
     let request$: Observable<unknown>;
-    if (this.isNew) {
-      request$ = this.api.call('iscsi.extent.create', [values]);
-    } else {
+    if (this.editingExtent) {
       request$ = this.api.call('iscsi.extent.update', [
         this.editingExtent.id,
         values,
       ]);
+    } else {
+      request$ = this.api.call('iscsi.extent.create', [values]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

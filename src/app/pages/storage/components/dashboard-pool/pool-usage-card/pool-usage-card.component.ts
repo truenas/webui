@@ -49,7 +49,7 @@ const maxPct = 80;
 })
 export class PoolUsageCardComponent implements OnInit {
   readonly poolState = input.required<Pool>();
-  readonly rootDataset = input<Dataset>();
+  readonly rootDataset = input.required<Dataset>();
 
   chartLowCapacityColor: string;
   chartFillColor: string;

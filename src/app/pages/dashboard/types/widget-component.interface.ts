@@ -24,7 +24,7 @@ export interface WidgetSettingsComponent<Settings extends SomeWidgetSettings = n
   widgetSettingsRef: WidgetSettingsRef<Settings>;
 }
 
-type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
+export type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
   ? WidgetSettingsComponent<Settings>
   : null;
 

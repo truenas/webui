@@ -127,7 +127,7 @@ export class VmWizardComponent implements OnInit {
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(
+      return of(Boolean(
         this.osStep()?.form?.dirty
         || this.cpuAndMemoryStep()?.form?.dirty
         || this.diskStep()?.form?.dirty
@@ -135,7 +135,7 @@ export class VmWizardComponent implements OnInit {
         || this.installationMediaStep()?.form?.dirty
         || this.installationMediaStep()?.form?.dirty
         || this.gpuStep()?.form?.dirty,
-      );
+      ));
     });
   }
 
