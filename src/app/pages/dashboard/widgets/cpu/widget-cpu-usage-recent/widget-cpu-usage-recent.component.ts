@@ -45,7 +45,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     map((update) => update.fields.cpu),
     tap((realtimeUpdate) => {
       this.cachedCpuStats.update((cachedStats) => {
-        return [...cachedStats, [realtimeUpdate.cpu.usage, realtimeUpdate.cpu.temp]].slice(-60);
+        return [...cachedStats, [realtimeUpdate.cpu.usage]].slice(-60);
       });
     }),
   ));
@@ -56,9 +56,8 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
       const [update] = response;
 
       const usageIndex = update.legend.indexOf('usage');
-      const tempIndex = update.legend.indexOf('temp');
 
-      return (update.data as number[][]).slice(-60).map((item) => ([item[usageIndex], item[tempIndex]]));
+      return (update.data as number[][]).slice(-60).map((item) => ([item[usageIndex]]));
     }),
     startWith(Array.from({ length: 60 }, () => ([0, 0]))),
   ));
@@ -95,16 +94,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
           tension: 0.2,
           fill: false,
         },
-        {
-          label: this.translate.instant('Temperature (°C)'),
-          data: values.map((item, index) => ({ x: labels[index], y: item[1] })),
-          borderColor: currentTheme.orange,
-          backgroundColor: currentTheme.orange,
-          pointBackgroundColor: currentTheme.orange,
-          pointRadius: 0,
-          tension: 0.2,
-          fill: false,
-        },
+
       ],
     };
   });
@@ -118,6 +108,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
       maintainAspectRatio: false,
       plugins: {
         legend: {
+          display: false,
           align: 'end',
           labels: {
             boxPadding: 2,
