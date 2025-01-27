@@ -29,7 +29,6 @@ import {
   VirtualizationRemote,
   VirtualizationType,
   virtualizationTypeIcons,
-  virtualizationTypeLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
@@ -108,7 +107,6 @@ enum SelectImageType {
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -355,19 +353,19 @@ export class InstanceWizardComponent {
     const payload = {
       devices,
       autostart: true,
-      instance_type: this.form.controls.instance_type.value,
-      enable_vnc: this.isVm ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
-      vnc_password: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_password : null,
-      name: this.form.controls.name.value,
-      cpu: this.form.controls.cpu.value,
-      memory: this.form.controls.memory.value,
-      image: this.form.controls.image.value,
+      instance_type: values.instance_type,
+      enable_vnc: this.isVm() ? values.enable_vnc : false,
+      vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      name: values.name,
+      cpu: values.cpu,
+      memory: values.memory,
+      image: values.image,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
+      payload.root_disk_size = values.root_disk_size;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
