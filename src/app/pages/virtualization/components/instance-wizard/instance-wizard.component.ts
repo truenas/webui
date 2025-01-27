@@ -156,6 +156,7 @@ export class InstanceWizardComponent {
     memory: [null as number],
     tpm: [false],
     root_disk_size: [10],
+    secure_boot: [false],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -364,6 +365,7 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.root_disk_size = values.root_disk_size;
+      payload.secure_boot = values.secure_boot;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
