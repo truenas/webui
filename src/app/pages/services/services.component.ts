@@ -107,7 +107,6 @@ export class ServicesComponent implements OnInit {
           iconName: iconMarker('edit'),
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.configureService(row),
-          dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
         },
       ],
     }),

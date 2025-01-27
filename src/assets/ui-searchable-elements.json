@@ -2802,9 +2802,7 @@
       "Global Target Configuration"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "SHARING_ISCSI_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/sharing",
