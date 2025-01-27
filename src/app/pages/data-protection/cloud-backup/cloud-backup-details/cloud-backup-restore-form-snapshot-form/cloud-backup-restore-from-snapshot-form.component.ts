@@ -96,6 +96,10 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     share_type: DatasetPreset.Generic,
   };
 
+  get backupMntPath(): string {
+    return this.data.backup.absolute_paths ? this.data.backup.path : '/';
+  }
+
   get isExcludePathsSelected(): boolean {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.ExcludePaths;
   }
@@ -126,7 +130,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
     this.data = this.slideInRef.getData();
     this.form.patchValue({
-      subFolder: this.data.backup.path,
+      subFolder: this.backupMntPath,
     });
   }
 
@@ -192,7 +196,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   private prepareParams(): CloudBackupRestoreParams {
-    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path;
+    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.backupMntPath;
 
     const options = {
       exclude: this.isExcludeByPatternSelected
