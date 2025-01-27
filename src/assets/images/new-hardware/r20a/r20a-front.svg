@@ -24,6 +24,10 @@
       #R20A_CHASSIS .chassis {
         opacity: 0.35 !important;
       }
+
+      #R20A_DRIVES .tint-target {
+        filter: brightness(0.85) !important;
+      }
     </style>
   </defs>
   <g id="R20A_CHASSIS">

@@ -19,6 +19,10 @@
       #MINI_R_CHASSIS {
         opacity: 0.75;
       }
+
+      #MINI_R .tint-target {
+        filter: brightness(0.85) !important;
+      }
     </style>
   </defs>
   <g id="MINI_R_CHASSIS">
