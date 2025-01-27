@@ -53,6 +53,11 @@ export interface CreateVirtualizationInstance {
   image: string;
   remote: VirtualizationRemote;
   instance_type: VirtualizationType;
+
+  /**
+   * Value in GBs.
+   */
+  root_disk_size?: number;
   source_type?: VirtualizationSource;
   environment?: Record<string, string>;
   autostart?: boolean;
