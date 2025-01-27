@@ -281,6 +281,10 @@ describe('InstanceWizardComponent', () => {
         Image: 'almalinux/8/cloud',
       });
 
+      await form.fillForm({
+        'Root Disk Size (in GiB)': 9,
+      });
+
       const diskList = await loader.getHarness(IxListHarness.with({ label: 'Disks' }));
       await diskList.pressAddButton();
       const diskForm = await diskList.getLastListItem();
@@ -350,6 +354,7 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
+        root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
       }]);
@@ -401,6 +406,7 @@ describe('InstanceWizardComponent', () => {
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
+        root_disk_size: 10,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

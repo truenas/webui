@@ -28,7 +28,6 @@ import {
   VirtualizationRemote,
   VirtualizationType,
   virtualizationTypeIcons,
-  virtualizationTypeLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
@@ -107,7 +106,6 @@ enum SelectImageType {
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -157,6 +155,7 @@ export class InstanceWizardComponent {
     memory: [null as number | null],
     tpm: [false],
     secure_boot: [false],
+    root_disk_size: [10],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -365,6 +364,7 @@ export class InstanceWizardComponent {
 
     if (this.isVm()) {
       payload.secure_boot = values.secure_boot;
+      payload.root_disk_size = values.root_disk_size;
 
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
