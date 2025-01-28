@@ -49,13 +49,16 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CustomAppFormComponent implements OnInit {
-  protected isNew = signal(true);
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected form = this.fb.group({
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
+
+  get isNew(): boolean {
+    return !this.existingApp;
+  }
 
   protected existingApp: App | undefined;
 
@@ -94,7 +97,6 @@ export class CustomAppFormComponent implements OnInit {
   }
 
   private setAppForEdit(app: App): void {
-    this.isNew.set(false);
     this.form.patchValue({
       release_name: app.id,
       custom_compose_config_string: jsonToYaml(app.config),
@@ -124,14 +126,14 @@ export class CustomAppFormComponent implements OnInit {
       { custom_compose_config_string: data.custom_compose_config_string },
     ]);
 
-    const job$ = this.isNew() ? appCreate$ : appUpdate$;
+    const job$ = this.isNew ? appCreate$ : appUpdate$;
 
     this.dialogService.jobDialog(
       job$,
       {
         title: this.translate.instant('Custom App'),
         canMinimize: false,
-        description: this.isNew()
+        description: this.isNew
           ? this.translate.instant('Creating custom app')
           : this.translate.instant('Updating custom app'),
       },
@@ -153,7 +155,7 @@ export class CustomAppFormComponent implements OnInit {
     });
   }
 
-  handleExistingApp(): void {
+  private handleExistingApp(): void {
     this.isLoading.set(true);
 
     this.appService.getApp(this.existingApp.id).pipe(
