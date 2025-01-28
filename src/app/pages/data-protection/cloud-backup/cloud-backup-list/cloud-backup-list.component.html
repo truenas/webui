@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider().expandedRow">
+  <div class="table-container">
     @if (!isMobileView()) {
       <ng-container [ngTemplateOutlet]="thead"></ng-container>
     }
