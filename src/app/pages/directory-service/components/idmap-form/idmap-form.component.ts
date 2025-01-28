@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of, tap } from 'rxjs';
@@ -85,33 +85,33 @@ export class IdmapFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     idmap_backend: [IdmapBackend.Ad],
-    name: [null as IdmapName | typeof customIdmapName, Validators.required],
+    name: new FormControl(null as IdmapName | typeof customIdmapName | null, Validators.required),
     custom_name: ['', this.validationHelpers.validateOnCondition(
       (control) => (control.parent?.value as { name: string })?.name === customIdmapName,
       Validators.required,
     )],
     dns_domain_name: [''],
-    range_low: [null as number, [
+    range_low: new FormControl(null as number | null, [
       Validators.required,
       rangeValidator(minAllowedRange, maxAllowedRange),
-    ]],
-    range_high: [null as number, [
+    ]),
+    range_high: new FormControl(null as number | null, [
       Validators.required,
       rangeValidator(minAllowedRange, maxAllowedRange),
-    ]],
-    certificate: [null as number],
-    schema_mode: [null as IdmapSchemaMode],
+    ]),
+    certificate: new FormControl(null as number | null),
+    schema_mode: new FormControl(null as IdmapSchemaMode | null),
     unix_primary_group: [false],
     unix_nss_info: [false],
-    rangesize: [null as number],
+    rangesize: new FormControl(null as number | null),
     readonly: [false],
     ignore_builtin: [false],
     ldap_base_dn: [''],
     ldap_user_dn: [''],
     ldap_user_dn_password: [''],
     ldap_url: [''],
-    ssl: [null as IdmapSslEncryptionMode],
-    linked_service: [null as IdmapLinkedService],
+    ssl: new FormControl(null as IdmapSslEncryptionMode | null),
+    linked_service: new FormControl(null as IdmapLinkedService | null),
     ldap_server: [''],
     ldap_realm: [''],
     bind_path_user: [''],
@@ -241,9 +241,9 @@ export class IdmapFormComponent implements OnInit {
 
     const params = this.prepareSubmitParams();
 
-    const request$ = this.isNew
-      ? this.api.call('idmap.create', [params])
-      : this.api.call('idmap.update', [this.existingIdmap.id, params]);
+    const request$ = this.existingIdmap
+      ? this.api.call('idmap.update', [this.existingIdmap.id, params])
+      : this.api.call('idmap.create', [params]);
 
     request$
       .pipe(

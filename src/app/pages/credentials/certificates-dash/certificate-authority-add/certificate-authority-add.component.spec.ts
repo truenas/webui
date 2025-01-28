@@ -43,8 +43,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('CertificateAuthorityAddComponent', () => {
   let spectator: Spectator<CertificateAuthorityAddComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let form: IxFormHarness | null;
+  let nextButton: MatStepperNextHarness | null;
 
   const profile = {
     lifetime: 3650,
@@ -159,7 +159,7 @@ describe('CertificateAuthorityAddComponent', () => {
   }
 
   async function fillInSubjectStep(): Promise<void> {
-    await form.fillForm({
+    await form!.fillForm({
       Country: 'United States',
       State: 'Pennsylvania',
       Locality: 'Racoon City',
@@ -171,12 +171,12 @@ describe('CertificateAuthorityAddComponent', () => {
   }
 
   async function goToNextStep(): Promise<void> {
-    await nextButton.click();
+    await nextButton!.click();
     await updateStepHarnesses();
   }
 
   it('creates a new CA when Type = Internal CA and form is submitted', async () => {
-    await form.fillForm({
+    await form!.fillForm({
       Name: 'new',
       Type: 'Internal CA',
       'Add To Trusted Store': true,
@@ -195,14 +195,14 @@ describe('CertificateAuthorityAddComponent', () => {
   });
 
   it('create a new CA when Type = Intermediate and form is submitted', async () => {
-    await form.fillForm({
+    await form!.fillForm({
       Name: 'intermediate',
       Type: 'Intermediate CA',
     });
 
     await goToNextStep();
 
-    await form.fillForm({
+    await form!.fillForm({
       'Signing Certificate Authority': 'Test CA',
     });
     await goToNextStep();
@@ -223,22 +223,22 @@ describe('CertificateAuthorityAddComponent', () => {
   });
 
   it('imports a certificate when Type = Import CA and form is submitted', async () => {
-    await form.fillForm({
+    await form!.fillForm({
       Name: 'import',
       Type: 'Import CA',
     });
 
-    await nextButton.click();
+    await nextButton!.click();
     await updateStepHarnesses();
 
-    await form.fillForm({
+    await form!.fillForm({
       Certificate: '-----BEGIN CERTIFICATE-----',
       'Private Key': '-----BEGIN PRIVATE-----',
       Passphrase: '1234567890',
       'Confirm Passphrase': '1234567890',
     });
 
-    await nextButton.click();
+    await nextButton!.click();
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
 
@@ -253,7 +253,7 @@ describe('CertificateAuthorityAddComponent', () => {
   });
 
   it('shows summary on the last step of the wizard', async () => {
-    await form.fillForm({
+    await form!.fillForm({
       Name: 'new',
       Type: 'Internal CA',
     });
@@ -301,7 +301,7 @@ describe('CertificateAuthorityAddComponent', () => {
     const constraintsForm = spectator.query(CertificateConstraintsComponent)!;
     jest.spyOn(constraintsForm, 'setFromProfile');
 
-    await form.fillForm({
+    await form!.fillForm({
       Name: 'profile',
       Profile: 'CA',
     });

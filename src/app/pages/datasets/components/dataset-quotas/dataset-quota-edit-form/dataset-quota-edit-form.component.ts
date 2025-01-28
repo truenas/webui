@@ -4,7 +4,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -119,8 +119,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     name: [''],
-    data_quota: [null as number],
-    obj_quota: [null as number],
+    data_quota: new FormControl(null as number | null),
+    obj_quota: new FormControl(null as number | null),
   });
 
   constructor(

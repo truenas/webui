@@ -51,7 +51,6 @@ describe('AppContainersCardComponent', () => {
             id: '1',
             service_name: 'netdata',
             image: 'netdata/netdata:v1.46.1',
-            port_config: [],
             state: AppContainerState.Running,
             volume_mounts: [
               {

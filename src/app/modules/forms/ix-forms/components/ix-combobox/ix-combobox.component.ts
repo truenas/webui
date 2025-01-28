@@ -90,7 +90,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   selectedOption: Option | null = null;
   textContent = '';
 
-  onChange: (value: string | number) => void = (): void => {};
+  onChange: (value: string | number | null) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(

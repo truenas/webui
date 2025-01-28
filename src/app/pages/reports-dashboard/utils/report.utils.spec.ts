@@ -13,7 +13,7 @@ describe('optimizeLegend', () => {
     const data = {
       name: 'TestGraph',
       legend: ['time', 'value1', 'value2'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -25,7 +25,7 @@ describe('optimizeLegend', () => {
     const data = {
       name: 'memory',
       legend: ['memory-used_value', 'memory-free_value'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -37,7 +37,7 @@ describe('optimizeLegend', () => {
     const data = {
       name: 'UnknownGraph',
       legend: ['value1', 'value2'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -49,7 +49,7 @@ describe('optimizeLegend', () => {
     const data = {
       name: 'diskgeomlatency',
       legend: ['geom_latency-read_time', 'geom_latency-write_time'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -61,7 +61,7 @@ describe('optimizeLegend', () => {
     const data = {
       name: 'diskgeombusy',
       legend: ['some_label'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -75,7 +75,7 @@ describe('convertAggregations', () => {
     const data = {
       name: 'TestGraph',
       legend: ['time', 'value'],
-      data: [],
+      data: [] as number[][],
       aggregations: { min: [1024], max: [2048], mean: [1536] },
     } as ReportingData;
 
@@ -91,7 +91,7 @@ describe('convertAggregations', () => {
     const data = {
       name: 'TestGraph',
       legend: ['time', 'value'],
-      data: [],
+      data: [] as number[][],
       aggregations: {},
     } as ReportingData;
 
@@ -105,7 +105,7 @@ describe('convertAggregations', () => {
     const data: ReportingData = {
       name: 'TestGraph',
       legend: ['time', 'value'],
-      data: [],
+      data: [] as number[][],
       aggregations: {
         min: [1024],
         max: [2048],

@@ -8,5 +8,10 @@ export const extentListElements = {
     list: {
       anchor: 'extent-list',
     },
+    add: {
+      hierarchy: [T('Add Extent')],
+      synonyms: [T('New Extent'), T('Create Extent')],
+      anchor: 'add-extent',
+    },
   },
 } satisfies UiSearchableElement;

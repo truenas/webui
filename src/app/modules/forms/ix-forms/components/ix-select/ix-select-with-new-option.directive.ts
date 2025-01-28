@@ -48,7 +48,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   ): IxSelectValue;
   abstract getFormComponentType(): ComponentInSlideIn<unknown, unknown>;
   abstract fetchOptions(): Observable<Option[]>;
-  getFormInputData(): Record<string, unknown> {
+  getFormInputData(): Record<string, unknown> | undefined {
     return undefined;
   }
 

@@ -6,7 +6,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -151,10 +151,10 @@ export class UserFormComponent implements OnInit {
     home: [defaultHomePath, []],
     home_mode: ['700'],
     home_create: [false],
-    sshpubkey: [null as string],
-    sshpubkey_file: [null as File[]],
+    sshpubkey: new FormControl(null as string | null),
+    sshpubkey_file: new FormControl(null as File[] | null),
     password_disabled: [false],
-    shell: [null as string],
+    shell: new FormControl(null as string | null),
     locked: [false],
     sudo_commands: [[] as string[]],
     sudo_commands_all: [false],
@@ -188,15 +188,16 @@ export class UserFormComponent implements OnInit {
     smbStig: helptextUsers.smbStig,
   };
 
-  readonly groupOptions$ = this.api.call('group.query').pipe(
+  readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+
   autocompleteProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query).pipe(
+    return this.api.call('group.query', [[['name', '^', query], ['local', '=', true]]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
   };

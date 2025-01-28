@@ -1,4 +1,7 @@
-import { FormGroup, UntypedFormControl, ValidatorFn } from '@angular/forms';
+import {
+  FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
+} from '@angular/forms';
+import { FormControl } from '@ngneat/reactive-forms';
 import { isEmpty } from 'lodash-es';
 
 export function matchOthersFgValidator(
@@ -6,7 +9,7 @@ export function matchOthersFgValidator(
   comparateControlNames: string[],
   errMsg?: string,
 ): ValidatorFn {
-  return function matchOthersFgValidate(fg: FormGroup<unknown>) {
+  return function matchOthersFgValidate(fg: FormGroup<Record<string, FormControl<string>>>) {
     if (!fg?.get(controlName)) {
       return null;
     }
@@ -32,12 +35,12 @@ export function matchOthersFgValidator(
         [controlName]: { matchOther: errMsg ? { message: errMsg } : true },
       };
     }
-    let prevErrors = { ...subjectControl.errors };
+    let prevErrors: ValidationErrors | null = { ...subjectControl.errors };
     delete prevErrors.matchOther;
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    if (fg.get(controlName).touched) {
+    if (fg.get(controlName)?.touched) {
       subjectControl.setErrors(prevErrors);
     }
     return null;
@@ -49,7 +52,7 @@ export function doesNotEqualFgValidator(
   comparateControlNames: string[],
   errMsg?: string,
 ): ValidatorFn {
-  return (fg: FormGroup<unknown>) => {
+  return (fg: FormGroup<Record<string, FormControl<string>>>) => {
     if (!fg?.get(controlName)) {
       return null;
     }
@@ -75,12 +78,12 @@ export function doesNotEqualFgValidator(
         [controlName]: { matchesOther: errMsg ? { message: errMsg } : true },
       };
     }
-    let prevErrors = { ...subjectControl.errors };
+    let prevErrors: ValidationErrors | null = { ...subjectControl.errors };
     delete prevErrors.matchesOther;
     if (isEmpty(prevErrors)) {
       prevErrors = null;
     }
-    if (fg.get(controlName).touched) {
+    if (fg.get(controlName)?.touched) {
       subjectControl.setErrors(prevErrors);
     }
     return null;

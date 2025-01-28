@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef, Component,
   OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -96,6 +96,10 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     share_type: DatasetPreset.Generic,
   };
 
+  get backupMntPath(): string {
+    return this.data.backup.absolute_paths ? this.data.backup.path : '/';
+  }
+
   get isExcludePathsSelected(): boolean {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.ExcludePaths;
   }
@@ -110,7 +114,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -126,7 +130,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
     this.data = this.slideInRef.getData();
     this.form.patchValue({
-      subFolder: this.data.backup.path,
+      subFolder: this.backupMntPath,
     });
   }
 
@@ -192,7 +196,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   }
 
   private prepareParams(): CloudBackupRestoreParams {
-    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.data.backup.path;
+    const subfolder = this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : this.backupMntPath;
 
     const options = {
       exclude: this.isExcludeByPatternSelected

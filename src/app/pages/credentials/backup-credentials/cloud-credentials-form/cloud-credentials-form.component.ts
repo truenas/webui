@@ -223,7 +223,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   private preparePayload(): CloudSyncCredentialUpdate {
-    const commonValues = this.commonForm.value;
+    const commonValues = this.commonForm.getRawValue();
     return {
       name: commonValues.name,
       provider: {

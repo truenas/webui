@@ -95,7 +95,7 @@ describe('GlobalSearchComponent', () => {
       return of([]);
     });
 
-    spectator.typeInElement('Filtered', inputElement);
+    spectator.typeInElement('Filtered', inputElement!);
     tick(150);
     spectator.detectChanges();
 
@@ -125,7 +125,7 @@ describe('GlobalSearchComponent', () => {
         return of(mockedSearchResults);
       });
 
-      spectator.typeInElement('Unknown', inputElement);
+      spectator.typeInElement('Unknown', inputElement!);
       tick(150);
       spectator.detectChanges();
 
@@ -142,7 +142,7 @@ describe('GlobalSearchComponent', () => {
 
   it('should reset search input and results', () => {
     const inputElement = spectator.query('.search-input');
-    spectator.typeInElement('Filtered', inputElement);
+    spectator.typeInElement('Filtered', inputElement!);
 
     spectator.component.resetInput();
     spectator.detectChanges();
@@ -160,14 +160,14 @@ describe('GlobalSearchComponent', () => {
       if (spectator.component.isSearchInputFocused) {
         spectator.component.searchControl.setValue(spectator.component.searchControl.value + symbol);
       }
-      spectator.dispatchKeyboardEvent(inputElement, 'keydown', symbol);
+      spectator.dispatchKeyboardEvent(inputElement!, 'keydown', symbol);
     });
     tick(150);
     spectator.detectChanges();
     expect(spectator.component.searchControl.value).toBe('Filtered');
     expect(spectator.component.searchResults).toHaveLength(3);
 
-    spectator.dispatchKeyboardEvent(inputElement, 'keydown', 'Enter');
+    spectator.dispatchKeyboardEvent(inputElement!, 'keydown', 'Enter');
     expect(focusHelper.moveToNextFocusableElement).toHaveBeenCalled();
   }));
 

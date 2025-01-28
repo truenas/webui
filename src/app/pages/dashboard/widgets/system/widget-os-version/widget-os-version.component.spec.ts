@@ -42,7 +42,6 @@ describe('WidgetOsVersionComponent', () => {
       providers: [
         mockProvider(WidgetResourcesService, {
           systemInfo$: of({
-            value: null,
             isLoading: false,
             error: new Error('Fatal error'),
           } as LoadingState<SystemInfo>),
