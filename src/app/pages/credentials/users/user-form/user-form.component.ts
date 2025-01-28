@@ -475,13 +475,20 @@ export class UserFormComponent implements OnInit {
 
   private getCreateUserRequest(payload: UserUpdate): Observable<number> {
     const oneTimePassword = this.form.value.stig_password === UserStigPasswordOption.OneTimePassword;
-    return this.api.call('user.create', [{
+
+    const userPayload = {
       ...payload,
       group_create: this.form.value.group_create,
       password: oneTimePassword || payload.password_disabled ? null : this.form.value.password,
       random_password: oneTimePassword,
       uid: this.form.value.uid,
-    }]).pipe(
+    };
+
+    if (!oneTimePassword) {
+      delete userPayload.random_password;
+    }
+
+    return this.api.call('user.create', [userPayload]).pipe(
       switchMap((id) => this.generateOneTimePasswordIfNeeded(id)),
     );
   }
