@@ -37,6 +37,7 @@
           </p>
 
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-icon-button
             [ixTest]="'remove-extent-association' + extent.extent"
             [title]="'Remove extent association' | translate"

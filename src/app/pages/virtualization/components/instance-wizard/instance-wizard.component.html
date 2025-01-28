@@ -131,6 +131,16 @@
     <ix-form-section
       [label]="'Disks' | translate"
     >
+
+      @if (isVm()) {
+        <ix-input
+          formControlName="root_disk_size"
+          type="number"
+          [required]="true"
+          [label]="'Root Disk Size (in GiB)' | translate"
+        ></ix-input>
+      }
+
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
@@ -345,11 +355,17 @@
         }
       </ix-form-section>
 
-      <ix-form-section label="TPM">
+      <ix-form-section [label]="'Security' | translate">
         <ix-checkbox
           formControlName="tpm"
           [label]="containersHelptext.add_tpm_placeholder | translate"
           [tooltip]="containersHelptext.add_tpm_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="secure_boot"
+          [label]="'Secure Boot' | translate"
+          [tooltip]="containersHelptext.secure_boot_tooltip | translate"
         ></ix-checkbox>
       </ix-form-section>
     }

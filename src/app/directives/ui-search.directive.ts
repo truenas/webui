@@ -62,8 +62,12 @@ export class UiSearchDirective implements OnInit, OnDestroy {
 
   private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     if (this.elementRef.nativeElement) {
-      this.highlightAndClickElement(this.elementRef.nativeElement, !!element.triggerAnchor);
-      if (this.elementRef.nativeElement.id !== element.anchor && element.anchor) {
+      setTimeout(() => {
+        const anchorRef = document.getElementById(this.elementRef.nativeElement.id) || this.elementRef.nativeElement;
+        this.highlightAndClickElement(anchorRef, !!element.triggerAnchor);
+      }, searchDelayConst);
+
+      if (this.elementRef.nativeElement.id !== element.anchor) {
         this.highlightElementAnchor(element.anchor);
       }
     } else if (attemptCount < 2) {
