@@ -4,6 +4,7 @@ import {
   signal, computed, inject,
   output,
   input,
+  effect,
 } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -17,6 +18,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { InstanceListBulkActionsComponent } from 'app/pages/virtualization/components/all-instances/instance-list/instance-list-bulk-actions/instance-list-bulk-actions.component';
@@ -97,6 +99,7 @@ export class InstanceListComponent {
     private activatedRoute: ActivatedRoute,
     private translate: TranslateService,
     private deviceStore: VirtualizationDevicesStore,
+    private searchDirectives: UiSearchDirectivesService,
   ) {
     toObservable(this.instances).pipe(
       filter((instances) => !!instances?.length),
@@ -108,6 +111,14 @@ export class InstanceListComponent {
         this.deviceStore.selectInstance(instanceId);
       } else {
         this.navigateToDetails(this.instances()[0]);
+      }
+    });
+
+    effect(() => {
+      if (this.instances()?.length > 0) {
+        setTimeout(() => {
+          this.handlePendingGlobalSearchElement();
+        });
       }
     });
   }
@@ -135,5 +146,13 @@ export class InstanceListComponent {
 
   resetSelection(): void {
     this.selection.clear();
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }
