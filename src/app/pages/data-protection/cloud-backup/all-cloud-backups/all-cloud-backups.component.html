@@ -1,0 +1,33 @@
+<ix-page-header>
+  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-task"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="openForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
+
+<ix-master-detail-view
+  #masterDetailView="masterDetailViewContext"
+  [selectedItem]="dataProvider.expandedRow"
+>
+  <ix-cloud-backup-list
+    #masterDetailView
+    master
+    [dataProvider]="dataProvider"
+    [isMobileView]="masterDetailView.isMobileView()"
+    (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+  ></ix-cloud-backup-list>
+
+  <ng-container detail>
+    @if (dataProvider.expandedRow) {
+      <ix-cloud-backup-details [backup]="dataProvider.expandedRow"></ix-cloud-backup-details>
+    }
+  </ng-container>
+</ix-master-detail-view>

@@ -1,56 +1,28 @@
-<ix-page-header>
-  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
-
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="add-task"
-    [ixUiSearch]="searchableElements.elements.add"
-    (click)="openForm()"
-  >
-    {{ 'Add' | translate }}
-  </button>
-</ix-page-header>
-
 <div class="container">
-  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
-    @if (!isMobileView) {
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider().expandedRow">
+    @if (!isMobileView()) {
       <ng-container [ngTemplateOutlet]="thead"></ng-container>
     }
 
     <ix-table
       class="table"
       [ixUiSearch]="searchableElements.elements.tasks"
-      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
       >
-      @if (isMobileView) {
+      @if (isMobileView()) {
         <ng-container [ngTemplateOutlet]="thead"></ng-container>
       }
       <tbody
         ix-table-body
         [columns]="columns"
-        [dataProvider]="dataProvider"
-        [isLoading]="!!(dataProvider.isLoading$ | async)"
+        [dataProvider]="dataProvider()"
+        [isLoading]="!!(dataProvider().isLoading$ | async)"
         (expanded)="expanded($event)"
       ></tbody>
     </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </div>
-
-  @if (dataProvider.expandedRow) {
-    <div
-      ixDetailsHeight
-      class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
-    >
-      <ix-cloud-backup-details
-        [backup]="dataProvider.expandedRow"
-        (closeMobileDetails)="closeMobileDetails()"
-      ></ix-cloud-backup-details>
-    </div>
-  }
 </div>
 
 <ng-template #thead>
@@ -59,7 +31,7 @@
       class="header-row"
       ix-table-head
       [columns]="columns"
-      [dataProvider]="dataProvider"
+      [dataProvider]="dataProvider()"
     ></thead>
   </div>
 </ng-template>
