@@ -58,7 +58,7 @@ describe('ChangePasswordDialogComponent', () => {
       'Confirm Password': '123456',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Change Password' }));
     await saveButton.click();
 
     expect(api.call).toHaveBeenCalledWith('user.set_password', [{
@@ -83,7 +83,7 @@ describe('ChangePasswordDialogComponent', () => {
       'Confirm Password': '123456',
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Change Password' }));
     await saveButton.click();
 
     expect(spectator.inject(FormErrorHandlerService).handleValidationErrors)
