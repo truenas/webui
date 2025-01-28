@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
@@ -75,13 +75,16 @@ export class CustomAppFormComponent implements OnInit {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+
     this.existingApp = this.slideInRef.getData();
+
+    if (this.existingApp?.id) {
+      this.handleExistingApp();
+    }
   }
 
   ngOnInit(): void {
-    if (this.existingApp) {
-      this.setAppForEdit(this.existingApp);
-    } else {
+    if (!this.existingApp) {
       this.setNewApp();
     }
   }
@@ -146,6 +149,27 @@ export class CustomAppFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  handleExistingApp(): void {
+    this.isLoading.set(true);
+
+    this.appService.getApp(this.existingApp.id).pipe(
+      filter((apps) => apps.length > 0),
+      untilDestroyed(this),
+    ).subscribe({
+      next: ([app]) => {
+        this.existingApp = app;
+        this.setAppForEdit(app);
+      },
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        this.slideInRef.close({ response: false, error });
+      },
+      complete: () => {
+        this.isLoading.set(false);
       },
     });
   }
