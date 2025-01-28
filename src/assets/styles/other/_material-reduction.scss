@@ -886,6 +886,8 @@ div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
 
 mat-tab-nav-panel {
   .search-element-highlighted {
-    display: block;
+    &:not(button) {
+      display: block;
+    }
   }
 }

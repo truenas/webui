@@ -5,14 +5,14 @@ import {
 
 describe('getSystemVersion', () => {
   it('should return the correct system version when valid input is provided', () => {
-    expect(getSystemVersion('TrueNAS-SCALE-24.10.0-MASTER-20240301-233006', Codename.ElectricEel)).toBe(
-      'ElectricEel-24.10.0-MASTER-20240301-233006',
+    expect(getSystemVersion('TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805', Codename.Goldeye)).toBe(
+      'Goldeye-25.10.0-MASTER-20250126-184805',
     );
   });
 
   it('should initial version if second argument is skipped', () => {
-    expect(getSystemVersion('TrueNAS-SCALE-24.10.0-MASTER-20240301-233006')).toBe(
-      'TrueNAS-SCALE-24.10.0-MASTER-20240301-233006',
+    expect(getSystemVersion('TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805')).toBe(
+      'TrueNAS-COMMUNITY_EDITION-25.10.0-MASTER-20250126-184805',
     );
   });
 });

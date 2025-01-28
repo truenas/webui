@@ -8,7 +8,14 @@
 
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-target" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="primary"
+        ixTest="add-target"
+        [ixUiSearch]="searchableElements.elements.add"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
