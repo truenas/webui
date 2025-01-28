@@ -9,6 +9,7 @@ import {
 } from 'ng-lazyload-image';
 import {
   fromEvent, merge, Observable, Subject,
+  timer,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { LayoutService } from 'app/modules/layout/layout.service';
@@ -33,13 +34,14 @@ export class AppCardLogoComponent {
   protected readonly appImagePlaceholder = appImagePlaceholder;
 
   protected readonly initialEmitter$ = new Subject<void>();
-  protected readonly scroll$: Observable<Event | void>;
+  protected readonly scroll$: Observable<Event | void | number>;
 
   constructor() {
     if (this.scrollTarget) {
       this.scroll$ = merge(
         fromEvent(this.scrollTarget, 'scroll'),
         this.initialEmitter$,
+        timer(0),
       );
     }
     toObservable(this.url).pipe(
