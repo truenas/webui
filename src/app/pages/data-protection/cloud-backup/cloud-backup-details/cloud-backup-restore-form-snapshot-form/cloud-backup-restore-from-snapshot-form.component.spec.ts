@@ -20,7 +20,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
   let spectator: Spectator<CloudBackupRestoreFromSnapshotFormComponent>;
 
   const data = {
-    backup: { id: 1, path: '/mnt/dozer' } as CloudBackup,
+    backup: { id: 1, path: '/mnt/dozer', absolute_paths: true } as CloudBackup,
     snapshot: { id: 1 } as unknown as CloudBackupSnapshot,
   };
 

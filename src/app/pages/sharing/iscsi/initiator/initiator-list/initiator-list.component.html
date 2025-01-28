@@ -7,7 +7,13 @@
 
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-initiator" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="primary"
+        ixTest="add-initiator"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
