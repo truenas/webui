@@ -474,11 +474,12 @@ export class UserFormComponent implements OnInit {
   }
 
   private getCreateUserRequest(payload: UserUpdate): Observable<number> {
+    const oneTimePassword = this.form.value.stig_password === UserStigPasswordOption.OneTimePassword;
     return this.api.call('user.create', [{
       ...payload,
       group_create: this.form.value.group_create,
-      password: payload.password_disabled ? null : this.form.value.password || 'test',
-      // random_password: true,
+      password: oneTimePassword || payload.password_disabled ? null : this.form.value.password,
+      random_password: oneTimePassword,
       uid: this.form.value.uid,
     }]).pipe(
       switchMap((id) => this.generateOneTimePasswordIfNeeded(id)),

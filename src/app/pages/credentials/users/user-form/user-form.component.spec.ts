@@ -371,7 +371,8 @@ describe('UserFormComponent', () => {
       expect(api.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
         full_name: 'John Smith',
         group_create: true,
-        password: 'test',
+        password: null,
+        random_password: true,
         uid: 1234,
         username: 'jsmith',
       })]);
