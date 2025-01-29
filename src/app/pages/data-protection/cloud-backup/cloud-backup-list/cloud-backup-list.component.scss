@@ -14,7 +14,7 @@
       position: static;
     }
 
-    > thead {
+    >thead {
       align-items: center;
       display: flex;
       width: 100%;
@@ -66,7 +66,7 @@
       width: 100%;
       z-index: 1;
 
-      > div {
+      >div {
         align-items: center;
         display: flex;
         font-weight: bold;
@@ -88,10 +88,4 @@
   padding-bottom: 53px;
   position: sticky;
   top: 53px;
-}
-
-.mobile-hidden {
-  @media (max-width: $breakpoint-md) {
-    display: none;
-  }
 }

@@ -106,9 +106,3 @@
   border-radius: 0;
   margin-bottom: 16px;
 }
-
-.mobile-hidden {
-  @media (max-width: $breakpoint-md) {
-    display: none;
-  }
-}

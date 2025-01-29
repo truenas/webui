@@ -1,27 +1,22 @@
-import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  output,
+  signal,
 } from '@angular/core';
-import { MatButton } from '@angular/material/button';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   filter, of, switchMap, tap,
 } from 'rxjs';
-import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -37,15 +32,11 @@ import { IxTableBodyComponent } from 'app/modules/ix-table/components/ix-table-b
 import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-head/ix-table-head.component';
 import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-pager/ix-table-pager.component';
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
-import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -58,31 +49,23 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    PageHeaderComponent,
-    SearchInput1Component,
-    RequiresRolesDirective,
-    MatButton,
-    TestDirective,
     UiSearchDirective,
     NgTemplateOutlet,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableBodyComponent,
     IxTablePagerComponent,
-    DetailsHeightDirective,
-    CloudBackupDetailsComponent,
     IxTableHeadComponent,
     TranslateModule,
     AsyncPipe,
   ],
 })
-export class CloudBackupListComponent implements OnInit {
-  cloudBackups: CloudBackup[] = [];
-  isMobileView = false;
-  filterString = '';
-  dataProvider: AsyncDataProvider<CloudBackup>;
-  showMobileDetails = false;
+export class CloudBackupListComponent {
+  dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
+  readonly isMobileView = input<boolean>(false);
+  readonly toggleShowMobileDetails = output<boolean>();
   readonly requiredRoles = [Role.CloudBackupWrite];
+  readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
 
   columns = createTable<CloudBackup>([
@@ -103,7 +86,7 @@ export class CloudBackupListComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row?.job?.state,
-      getJob: (row) => row.job,
+      getJob: (row) => row?.job,
       cssClass: 'state-button',
     }),
     relativeDateColumn({
@@ -147,38 +130,8 @@ export class CloudBackupListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
     private appLoader: AppLoaderService,
-    private breakpointObserver: BreakpointObserver,
-    private route: ActivatedRoute,
     protected emptyService: EmptyService,
-    @Inject(WINDOW) private window: Window,
   ) {}
-
-  ngOnInit(): void {
-    this.route.fragment.pipe(
-      tap((id) => this.loadCloudBackups(id)),
-      untilDestroyed(this),
-    ).subscribe();
-
-    this.initMobileView();
-  }
-
-  closeMobileDetails(): void {
-    this.showMobileDetails = false;
-    this.dataProvider.expandedRow = null;
-    this.cdr.markForCheck();
-  }
-
-  setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 1,
-      direction: SortDirection.Asc,
-      propertyName: 'description',
-    });
-  }
-
-  getCloudBackups(): void {
-    this.dataProvider.load();
-  }
 
   runNow(row: CloudBackup): void {
     this.dialogService.confirm({
@@ -197,14 +150,14 @@ export class CloudBackupListComponent implements OnInit {
       next: (job: Job) => {
         this.updateRowJob(row, job);
         // Update expanded row to call child ngOnChanges method & update snapshots list
-        if (job.state === JobState.Success && this.dataProvider.expandedRow?.id === row.id) {
-          this.dataProvider.expandedRow = { ...row };
+        if (job.state === JobState.Success && this.dataProvider().expandedRow?.id === row.id) {
+          this.dataProvider().expandedRow = { ...row };
         }
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
-        this.getCloudBackups();
+        this.dataProvider().load();
       },
     });
   }
@@ -214,11 +167,7 @@ export class CloudBackupListComponent implements OnInit {
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.getCloudBackups();
-        },
-      });
+      ).subscribe();
   }
 
   doDelete(row: CloudBackup): void {
@@ -235,7 +184,7 @@ export class CloudBackupListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.getCloudBackups();
+        this.dataProvider().load();
       },
       error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
@@ -243,42 +192,9 @@ export class CloudBackupListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query;
-    this.dataProvider.setFilter({ query, columnKeys: ['description'] });
-  }
-
   expanded(row: CloudBackup): void {
-    if (!row) {
-      return;
-    }
-
-    if (this.isMobileView) {
-      this.showMobileDetails = true;
-      this.cdr.markForCheck();
-
-      // TODO: Do not rely on querying DOM elements
-      // focus on details container
-      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
-    }
-  }
-
-  private loadCloudBackups(id?: string): void {
-    const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
-      tap((cloudBackups) => {
-        this.cloudBackups = cloudBackups;
-
-        const selectedBackup = id
-          ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === id)
-          : cloudBackups.find((cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id);
-
-        this.dataProvider.expandedRow = this.isMobileView ? null : (selectedBackup || cloudBackups[0]);
-        this.expanded(this.dataProvider.expandedRow);
-      }),
-    );
-
-    this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
-    this.getCloudBackups();
+    if (!row || !this.isMobileView()) return;
+    this.toggleShowMobileDetails.emit(true);
   }
 
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
@@ -287,43 +203,18 @@ export class CloudBackupListComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.getCloudBackups();
+          this.dataProvider().load();
         },
         error: (err: unknown) => {
-          this.getCloudBackups();
+          this.dataProvider().load();
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
 
   private updateRowJob(row: CloudBackup, job: Job): void {
-    this.dataProvider.setRows(this.cloudBackups.map((task) => {
-      if (task.id === row.id) {
-        return {
-          ...task,
-          job,
-        };
-      }
-      return task;
+    this.dataProvider().setRows(this.cloudBackups().map((task) => {
+      return task.id === row.id ? { ...task, job } : { ...task };
     }));
-  }
-
-  private initMobileView(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView = true;
-          if (this.dataProvider?.expandedRow) {
-            this.expanded(this.dataProvider.expandedRow);
-          } else {
-            this.closeMobileDetails();
-          }
-        } else {
-          this.isMobileView = false;
-        }
-        this.cdr.markForCheck();
-      });
   }
 }
