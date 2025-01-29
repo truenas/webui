@@ -8,5 +8,10 @@ export const portalListElements = {
     list: {
       anchor: 'portal-list',
     },
+    add: {
+      hierarchy: [T('Add Portal')],
+      synonyms: [T('New Portal'), T('Create Portal')],
+      anchor: 'add-portal',
+    },
   },
 } satisfies UiSearchableElement;

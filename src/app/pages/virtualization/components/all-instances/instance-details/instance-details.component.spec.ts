@@ -2,9 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
-import {
-  InstanceDetailsComponent,
-} from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
+import { InstanceDetailsComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-details.component';
 import {
   InstanceDevicesComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-devices/instance-devices.component';

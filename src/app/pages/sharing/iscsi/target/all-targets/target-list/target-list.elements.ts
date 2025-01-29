@@ -8,5 +8,10 @@ export const targetListElements = {
     list: {
       anchor: 'target-list',
     },
+    add: {
+      hierarchy: [T('Add Target')],
+      synonyms: [T('New Target'), T('Create Target')],
+      anchor: 'add-target',
+    },
   },
 } satisfies UiSearchableElement;

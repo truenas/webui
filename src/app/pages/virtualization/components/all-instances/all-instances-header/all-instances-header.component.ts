@@ -3,9 +3,11 @@ import { MatAnchor, MatButton } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
+import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { VirtualizationGlobalState } from 'app/enums/virtualization.enum';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { allInstancesHeaderElements } from 'app/pages/virtualization/components/all-instances/all-instances-header/all-instances-header.elements';
 import {
   GlobalConfigFormComponent,
 } from 'app/pages/virtualization/components/all-instances/all-instances-header/global-config-form/global-config-form.component';
@@ -30,10 +32,13 @@ import {
     MatAnchor,
     RouterLink,
     VirtualizationStateComponent,
+    UiSearchDirective,
   ],
 })
 export class AllInstancesHeaderComponent {
   protected readonly state = this.configStore.virtualizationState;
+
+  protected readonly searchableElements = allInstancesHeaderElements;
 
   protected readonly needToSetupPool = computed(() => this.state() === VirtualizationGlobalState.NoPool);
   protected readonly isLocked = computed(() => this.state() === VirtualizationGlobalState.Locked);

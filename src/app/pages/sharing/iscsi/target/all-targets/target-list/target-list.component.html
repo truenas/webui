@@ -6,7 +6,14 @@
     <div class="actions action-icon">
       <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
 
-      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-target" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="primary"
+        ixTest="add-target"
+        [ixUiSearch]="searchableElements.elements.add"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
