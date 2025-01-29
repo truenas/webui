@@ -598,6 +598,7 @@
   "Descriptor": "",
   "Desired – encrypt transport if supported by client during session negotiation": "",
   "Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be       unable to re-mount data from the exported pool.": "",
+  "Details for ": "",
   "Details for {vmDevice}": "",
   "Determines whether restic backup will contain absolute or relative paths": "",
   "Device added": "",
