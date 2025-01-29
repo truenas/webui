@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, signal,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
 import { MatDialogClose } from '@angular/material/dialog';
@@ -14,9 +15,9 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-stig-first-login-dialog',
-  templateUrl: './stig-first-login-dialog.component.html',
-  styleUrls: ['./stig-first-login-dialog.component.scss'],
+  selector: 'ix-first-login-dialog',
+  templateUrl: './first-login-dialog.component.html',
+  styleUrls: ['./first-login-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -30,16 +31,13 @@ import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.compone
     MatDialogClose,
   ],
 })
-export class StigFirstLoginDialogComponent {
-  readonly isPasswordUpdated = signal(false);
+export class FirstLoginDialogComponent {
+  isOtpwUser = toSignal(this.authService.isOtpwUser$);
+  wasOneTimePasswordChanged = toSignal(this.authService.wasOneTimePasswordChanged$);
 
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   passwordChanged(): void {
-    this.isPasswordUpdated.set(true);
-
-    this.authService.isOptwPasswordChanged$.next(true);
+    this.authService.wasOneTimePasswordChanged$.next(true);
   }
 }

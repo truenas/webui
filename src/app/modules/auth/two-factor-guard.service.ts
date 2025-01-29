@@ -11,7 +11,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { StigFirstLoginDialogComponent } from 'app/pages/credentials/users/stig-first-login-dialog/stig-first-login-dialog.component';
+import { FirstLoginDialogComponent } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
@@ -45,15 +45,15 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
       this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
-      this.authService.isOtpwUser().pipe(take(1)),
-      this.authService.isOptwPasswordChanged$.asObservable().pipe(take(1)),
+      this.authService.isOtpwUser$.pipe(take(1)),
+      this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
     ]).pipe(
-      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser, isOptwPasswordChanged]) => {
+      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser, wasOneTimePasswordChanged]) => {
         if (
-          ((isOtpwUser && !isOptwPasswordChanged) || (isOtpwUser && !userConfig.secret_configured))
+          ((isOtpwUser && !wasOneTimePasswordChanged) || (isOtpwUser && !userConfig.secret_configured))
           && globalConfig.enabled
         ) {
-          return this.showStigFirstLoginDialog();
+          return this.showFirstLoginDialog();
         }
 
         if (!globalConfig.enabled || userConfig.secret_configured || state.url.endsWith('/two-factor-auth')) {
@@ -83,8 +83,8 @@ export class TwoFactorGuardService implements CanActivateChild {
     );
   }
 
-  private showStigFirstLoginDialog(): Observable<boolean> {
-    const dialogRef = this.matDialog.open(StigFirstLoginDialogComponent, {
+  private showFirstLoginDialog(): Observable<boolean> {
+    const dialogRef = this.matDialog.open(FirstLoginDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

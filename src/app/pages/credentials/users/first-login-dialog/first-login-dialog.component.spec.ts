@@ -7,22 +7,22 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { BehaviorSubject, of } from 'rxjs';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ChangePasswordFormComponent } from 'app/modules/layout/topbar/change-password-dialog/change-password-form/change-password-form.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
-import { StigFirstLoginDialogComponent } from './stig-first-login-dialog.component';
+import { FirstLoginDialogComponent } from './first-login-dialog.component';
 
-describe('StigFirstLoginDialogComponent', () => {
-  let spectator: Spectator<StigFirstLoginDialogComponent>;
+describe('FirstLoginDialogComponent', () => {
+  let spectator: Spectator<FirstLoginDialogComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: StigFirstLoginDialogComponent,
+    component: FirstLoginDialogComponent,
     declarations: [MockComponents(ChangePasswordFormComponent, TwoFactorComponent)],
     providers: [
       mockProvider(AuthService, {
-        isOptwPasswordChanged$: {
-          next: jest.fn(),
-        },
+        wasOneTimePasswordChanged$: new BehaviorSubject(false),
+        isOtpwUser$: of(true),
       }),
       provideMockStore(),
       mockProvider(MatDialogRef),
@@ -45,13 +45,16 @@ describe('StigFirstLoginDialogComponent', () => {
   });
 
   it('shows the "Finish" button only when both steps are completed', async () => {
+    const authService = spectator.inject(AuthService);
+    jest.spyOn(authService.wasOneTimePasswordChanged$, 'next');
+
     let finishButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Finish' }));
     expect(finishButton).toBeNull();
 
     spectator.component.passwordChanged();
 
-    expect(spectator.component.isPasswordUpdated()).toBe(true);
-    expect(spectator.inject(AuthService).isOptwPasswordChanged$.next).toHaveBeenCalledWith(true);
+    expect(spectator.component.wasOneTimePasswordChanged()).toBe(true);
+    expect(authService.wasOneTimePasswordChanged$.next).toHaveBeenCalledWith(true);
 
     const twoFactorComponent = spectator.query(TwoFactorComponent);
     twoFactorComponent.userTwoFactorAuthConfigured = true;

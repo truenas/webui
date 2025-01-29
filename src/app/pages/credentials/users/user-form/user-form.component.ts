@@ -22,7 +22,7 @@ import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
-import { User, UserStigPasswordOption, UserUpdate } from 'app/interfaces/user.interface';
+import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/forms/ix-forms/classes/simple-async-combobox-provider';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -62,6 +62,11 @@ import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
 const defaultHomePath = '/var/empty';
+
+export enum UserStigPasswordOption {
+  DisablePassword = 'DISABLE_PASSWORD',
+  OneTimePassword = 'ONE_TIME_PASSWORD',
+}
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -202,7 +207,7 @@ export class UserFormComponent implements OnInit {
     );
   };
 
-  stigPasswordOptions$ = of([
+  protected stigPasswordOptions$ = of([
     {
       label: this.translate.instant('Disable Password'),
       value: UserStigPasswordOption.DisablePassword,
@@ -443,37 +448,26 @@ export class UserFormComponent implements OnInit {
     return of(true);
   }
 
-  private generateOneTimePasswordIfNeeded(id: number): Observable<number> {
+  private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
     if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
         switchMap((password) => {
           this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
-          return of(id);
+          return of(user);
         }),
       );
     }
-    return of(id);
+    return of(user);
   }
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {
-    let request$: Observable<number>;
-
     this.isFormLoading = true;
     this.cdr.markForCheck();
 
-    if (this.editingUser) {
-      request$ = this.getUpdateUserRequest(payload);
-    } else {
-      request$ = this.getCreateUserRequest(payload);
-    }
-
-    return request$.pipe(
-      switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
-      map((users) => users[0]),
-    );
+    return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
   }
 
-  private getCreateUserRequest(payload: UserUpdate): Observable<number> {
+  private getCreateUserRequest(payload: UserUpdate): Observable<User> {
     const oneTimePassword = this.form.value.stig_password === UserStigPasswordOption.OneTimePassword;
 
     const userPayload = {
@@ -489,11 +483,11 @@ export class UserFormComponent implements OnInit {
     }
 
     return this.api.call('user.create', [userPayload]).pipe(
-      switchMap((id) => this.generateOneTimePasswordIfNeeded(id)),
+      switchMap((user) => this.generateOneTimePasswordIfNeeded(user)),
     );
   }
 
-  private getUpdateUserRequest(payload: UserUpdate): Observable<number> {
+  private getUpdateUserRequest(payload: UserUpdate): Observable<User> {
     const values = this.form.value;
 
     const passwordNotEmpty = values.password !== '' && values.password_conf !== '';

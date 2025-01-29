@@ -6,7 +6,7 @@ import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-f
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TwoFactorGuardService } from 'app/modules/auth/two-factor-guard.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { StigFirstLoginDialogComponent } from 'app/pages/credentials/users/stig-first-login-dialog/stig-first-login-dialog.component';
+import { FirstLoginDialogComponent } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('TwoFactorGuardService', () => {
@@ -17,7 +17,7 @@ describe('TwoFactorGuardService', () => {
   const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig | null));
   const hasRole$ = new BehaviorSubject(false);
   const isOtpwUser$ = new BehaviorSubject(false);
-  const isOptwPasswordChanged$ = new BehaviorSubject(false);
+  const wasOneTimePasswordChanged$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -30,8 +30,8 @@ describe('TwoFactorGuardService', () => {
         userTwoFactorConfig$,
         getGlobalTwoFactorConfig,
         hasRole: jest.fn(() => hasRole$),
-        isOtpwUser: jest.fn(() => isOtpwUser$),
-        isOptwPasswordChanged$,
+        isOtpwUser$,
+        wasOneTimePasswordChanged$,
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -121,7 +121,7 @@ describe('TwoFactorGuardService', () => {
     );
     expect(isAllowed).toBe(true);
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StigFirstLoginDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(FirstLoginDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',

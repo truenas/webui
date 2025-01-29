@@ -1,10 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, input, output,
+  ChangeDetectionStrategy, Component, output,
 } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef, MatDialogClose } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -34,14 +33,12 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxInputComponent,
     FormActionsComponent,
     MatButton,
-    MatDialogClose,
     TranslateModule,
     TestDirective,
     AsyncPipe,
   ],
 })
 export class ChangePasswordFormComponent {
-  readonly usedInDialog = input<boolean>(false);
   readonly passwordUpdated = output();
 
   form = this.fb.nonNullable.group({
@@ -76,7 +73,6 @@ export class ChangePasswordFormComponent {
     private loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    public dialogRef: MatDialogRef<ChangePasswordFormComponent>,
   ) {
     this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
       this.loggedInUser = user;
@@ -97,11 +93,7 @@ export class ChangePasswordFormComponent {
           this.translate.instant(helptextTopbar.changePasswordDialog.pw_updated),
         );
 
-        if (this.usedInDialog()) {
-          this.dialogRef.close();
-        } else {
-          this.passwordUpdated.emit();
-        }
+        this.passwordUpdated.emit();
       },
       error: (error: unknown) => {
         this.formErrorHandler.handleValidationErrors(error, this.form);
