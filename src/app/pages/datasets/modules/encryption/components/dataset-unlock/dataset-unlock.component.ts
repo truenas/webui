@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
-  FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
+  FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -77,7 +77,7 @@ export class DatasetUnlockComponent implements OnInit {
   form = this.formBuilder.group({
     use_file: [true],
     unlock_children: [true],
-    file: [null as File[], [Validators.required]],
+    file: [null as File[] | null, [Validators.required]],
     key: [''],
     datasets: this.formBuilder.array<FormGroup<DatasetFormGroup>>([]),
     force: [false],
@@ -101,7 +101,7 @@ export class DatasetUnlockComponent implements OnInit {
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private aroute: ActivatedRoute,
     private authService: AuthService,
     private dialogService: DialogService,

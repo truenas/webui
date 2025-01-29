@@ -112,7 +112,7 @@ export interface DetailsDisk {
   dif: boolean;
   exported_zpool: string;
   unsupported_md_devices: unknown;
-  duplicate_serial: unknown[];
+  duplicate_serial: string[];
   devname: string;
   partitions: {
     path: string;

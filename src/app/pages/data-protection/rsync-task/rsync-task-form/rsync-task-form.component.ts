@@ -4,7 +4,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
@@ -84,7 +84,7 @@ export class RsyncTaskFormComponent implements OnInit {
   form = this.formBuilder.group({
     path: ['', Validators.required],
     user: ['', Validators.required],
-    direction: [null as Direction, Validators.required],
+    direction: new FormControl(null as Direction | null, Validators.required),
     desc: [''],
     mode: [RsyncMode.Module],
     remotehost: ['', this.validatorsService.validateOnCondition(
@@ -112,7 +112,7 @@ export class RsyncTaskFormComponent implements OnInit {
     extra: [[] as string[]],
     enabled: [true],
     sshconnectmode: [RsyncSshConnectMode.PrivateKey],
-    ssh_credentials: [null as number | typeof newOption],
+    ssh_credentials: new FormControl(null as number | typeof newOption | null),
   });
 
   isLoading = false;
@@ -137,7 +137,7 @@ export class RsyncTaskFormComponent implements OnInit {
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  private editingTask: RsyncTask;
+  private editingTask: RsyncTask | undefined;
 
   constructor(
     private translate: TranslateService,
@@ -171,16 +171,16 @@ export class RsyncTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
     }
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(editingTask: RsyncTask): void {
     this.form.patchValue({
-      ...this.editingTask,
-      schedule: scheduleToCrontab(this.editingTask.schedule),
-      sshconnectmode: this.editingTask.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
-      ssh_credentials: this.editingTask.ssh_credentials?.id || null,
+      ...editingTask,
+      schedule: scheduleToCrontab(editingTask.schedule),
+      sshconnectmode: editingTask.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
+      ssh_credentials: editingTask.ssh_credentials?.id || null,
     });
   }
 

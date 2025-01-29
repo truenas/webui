@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -121,7 +121,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   );
 
   constructor(
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private api: ApiService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
@@ -165,9 +165,9 @@ export class SnapshotTaskFormComponent implements OnInit {
         ? {
             begin: values.begin,
             end: values.end,
-            ...crontabToSchedule(this.form.value.schedule),
+            ...crontabToSchedule(this.form.getRawValue().schedule),
           }
-        : crontabToSchedule(this.form.value.schedule),
+        : crontabToSchedule(this.form.getRawValue().schedule),
     };
     delete params.begin;
     delete params.end;

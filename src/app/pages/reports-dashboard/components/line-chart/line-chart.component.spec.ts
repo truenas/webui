@@ -36,6 +36,7 @@ describe('LineChartComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
+        report: {} as Report,
         chartId: 'chart-uuid-report',
       },
     });

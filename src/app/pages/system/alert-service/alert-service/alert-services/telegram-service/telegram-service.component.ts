@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  AbstractControl, FormBuilder, Validators, ReactiveFormsModule,
+  AbstractControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
@@ -33,7 +33,7 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
   });
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
   ) {

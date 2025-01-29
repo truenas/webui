@@ -33,9 +33,6 @@ const oneDisk = {
     allocated: 5607686144,
     fragmentation: 4,
   },
-  children: [],
-  device: null,
-  disk: null,
 } as TopologyItem;
 
 const poolInstance = {

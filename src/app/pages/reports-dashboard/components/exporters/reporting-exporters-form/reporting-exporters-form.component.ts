@@ -2,11 +2,11 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
-  FormControl, UntypedFormGroup, Validators, ReactiveFormsModule,
+  UntypedFormGroup, Validators, ReactiveFormsModule,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -75,11 +75,11 @@ export class ReportingExportersFormComponent implements OnInit {
       : this.translate.instant('Edit Reporting Exporter');
   }
 
-  form = this.fb.group({
-    name: [null as string, Validators.required],
-    enabled: [true],
-    type: [null as string, Validators.required],
-    attributes: this.fb.group<Record<string, unknown>>({}),
+  form = new FormGroup({
+    name: new FormControl(null as string | null, Validators.required),
+    enabled: new FormControl(true),
+    type: new FormControl(null as string | null, Validators.required),
+    attributes: new FormGroup<Record<string, unknown>>({}),
   });
 
   get formGroup(): UntypedFormGroup {
@@ -96,7 +96,6 @@ export class ReportingExportersFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
-    private fb: FormBuilder,
     private translate: TranslateService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
@@ -133,7 +132,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.setExporterTypeOptions(schemas);
         this.createExporterControls(schemas);
 
-        if (!this.isNew) {
+        if (this.editingExporter) {
           this.form.patchValue({
             ...this.editingExporter,
             type: this.editingExporter.attributes['exporter_type'] as string,
@@ -196,7 +195,7 @@ export class ReportingExportersFormComponent implements OnInit {
     return { key: schema.key, variables };
   }
 
-  onExporterTypeChanged(type: ReportingExporterType): void {
+  onExporterTypeChanged(type: ReportingExporterType | null): void {
     for (const list of this.reportingExporterList) {
       if (list.key === type) {
         for (const variable of list.variables) {

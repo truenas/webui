@@ -10,23 +10,23 @@ export class JobsPanelPageObject {
     return queryAllNestedDirectives(this.spectator.debugElement, this.jobsListSection, JobItemComponent);
   }
 
-  get title(): HTMLElement {
+  get title(): HTMLElement | null {
     return this.spectator.query('.jobs-header h3');
   }
 
-  get runningBadgeCount(): HTMLElement {
+  get runningBadgeCount(): HTMLElement | null {
     return this.spectator.query('.job-badge.running .job-badge-count');
   }
 
-  get waitingBadgeCount(): HTMLElement {
+  get waitingBadgeCount(): HTMLElement | null {
     return this.spectator.query('.job-badge.waiting .job-badge-count');
   }
 
-  get failedBadgeCount(): HTMLElement {
+  get failedBadgeCount(): HTMLElement | null {
     return this.spectator.query('.job-badge.failed .job-badge-count');
   }
 
-  get jobsListSection(): HTMLElement {
+  get jobsListSection(): HTMLElement | null {
     return this.spectator.query('.jobs-list');
   }
 }

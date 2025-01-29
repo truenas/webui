@@ -24,6 +24,10 @@
       <p>{{ 'CPU' | translate }}: {{ instance.cpu || ('All Host CPUs' | translate) }}</p>
       <p>{{ 'Memory' | translate }}: {{ formatter.memorySizeFormatting(instance.memory) || ('Available Host Memory' | translate) }}</p>
 
+      @if (this.isVm) {
+        <p>{{ 'Secure Boot' | translate }}: {{ instance.secure_boot | yesNo }}</p>
+      }
+
       @if (instance.environment && (instance.environment | keyvalue)?.length) {
         <span class="environment-variables" [matTooltip]="environmentVariablesTooltip()">
           {{ '{n, plural, one {# Environment Variable} other {# Environment Variables} }' | translate: { n: (instance.environment | keyvalue)?.length } }}

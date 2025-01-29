@@ -39,9 +39,8 @@ describe('PrivilegeFormComponent', () => {
       { gid: 222, group: 'Group B' },
       { gid: 333, group: null },
     ],
-    ds_groups: [],
+    ds_groups: [] as Group[],
     roles: [Role.ReadonlyAdmin],
-    builtin_name: null,
   } as Privilege;
 
   const createComponent = createComponentFactory({
