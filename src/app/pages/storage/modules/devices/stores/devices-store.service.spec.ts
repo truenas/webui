@@ -3,8 +3,11 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 
@@ -169,6 +172,40 @@ describe('DevicesStore', () => {
         expect.objectContaining({ guid: 'data' }),
         expect.objectContaining({ guid: 'guid1' }),
       ]);
+    });
+  });
+
+  describe('getDisk', () => {
+    it('returns a disk from disk dictinoary when called with a', () => {
+      spectator.service.patchState({
+        isLoading: false,
+        error: null,
+        nodes: [
+          {
+            children: [
+              { name: 'raidz1-0', guid: 'guid1', isRoot: true } as TopologyItem,
+            ],
+            group: 'Data VDEVs',
+            guid: 'data',
+          },
+          {
+            children: [
+              { name: 'sdr', guid: 'guid2', isRoot: true } as TopologyItem,
+            ],
+            group: 'Cache',
+            guid: 'cache',
+          },
+        ],
+        diskDictionary: {
+          sdr: { devname: 'sdr' } as Disk,
+        },
+        poolId: 4,
+        selectedNodeGuid: null,
+        disksWithSmartTestSupport: [],
+      } as DevicesState);
+
+      const disk = spectator.service.getDisk({ name: 'sdr', type: TopologyItemType.Disk, disk: 'sdr' } as DeviceNestedDataNode);
+      expect(disk).toEqual({ devname: 'sdr' });
     });
   });
 });
