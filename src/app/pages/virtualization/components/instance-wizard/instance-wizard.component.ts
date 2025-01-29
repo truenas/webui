@@ -17,6 +17,7 @@ import {
   map, Observable, of,
   switchMap,
 } from 'rxjs';
+import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { Role } from 'app/enums/role.enum';
 import {
   VirtualizationDeviceType,
@@ -28,7 +29,6 @@ import {
   VirtualizationRemote,
   VirtualizationType,
   virtualizationTypeIcons,
-  virtualizationTypeLabels,
 } from 'app/enums/virtualization.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
@@ -57,6 +57,7 @@ import { ReadOnlyComponent } from 'app/modules/forms/ix-forms/components/readonl
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { cpuValidator } from 'app/modules/forms/ix-forms/validators/cpu-validation/cpu-validation';
+import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -107,7 +108,6 @@ enum SelectImageType {
 export class InstanceWizardComponent {
   protected readonly isLoading = signal<boolean>(false);
   protected readonly requiredRoles = [Role.VirtGlobalWrite];
-  protected readonly virtualizationTypeOptions$ = of(mapToOptions(virtualizationTypeLabels, this.translate));
   protected readonly virtualizationTypeIcons = virtualizationTypeIcons;
 
   protected readonly hasPendingInterfaceChanges = toSignal(this.api.call('interface.has_pending_changes'));
@@ -115,6 +115,10 @@ export class InstanceWizardComponent {
   protected readonly proxyProtocols$ = of(mapToOptions(virtualizationProxyProtocolLabels, this.translate));
   protected readonly bridgedNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Bridged);
   protected readonly macVlanNicTypeLabel = virtualizationNicTypeLabels.get(VirtualizationNicType.Macvlan);
+
+  protected readonly forbiddenNames$ = this.api.call('virt.instance.query', [
+    [], { select: ['name'], order_by: ['name'] },
+  ]).pipe(map((keys) => keys.map((key) => key.name)));
 
   readonly SelectImageType = SelectImageType;
 
@@ -144,7 +148,11 @@ export class InstanceWizardComponent {
   );
 
   protected readonly form = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
+    name: [
+      '',
+      [Validators.required, Validators.minLength(1), Validators.maxLength(200), Validators.pattern(nameValidatorRegex)],
+      [forbiddenAsyncValues(this.forbiddenNames$)],
+    ],
     instance_type: [VirtualizationType.Container, Validators.required],
     image_type: [SelectImageType.Choose, [Validators.required]],
     image_file: [null as File[] | null, [Validators.required]],
@@ -156,6 +164,8 @@ export class InstanceWizardComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     tpm: [false],
+    secure_boot: [false],
+    root_disk_size: [10],
     use_default_network: [true],
     usb_devices: [[] as string[]],
     gpu_devices: [[] as string[]],
@@ -347,22 +357,31 @@ export class InstanceWizardComponent {
 
   private getPayload(): CreateVirtualizationInstance {
     const devices = this.getDevicesPayload();
+    const values = this.form.getRawValue();
 
     const payload = {
       devices,
       autostart: true,
-      instance_type: this.form.controls.instance_type.value,
-      enable_vnc: this.isVm() ? this.form.value.enable_vnc : false,
-      vnc_port: this.isVm() && this.form.value.enable_vnc ? this.form.value.vnc_port || defaultVncPort : null,
-      vnc_password: this.isVm && this.form.value.enable_vnc ? this.form.value.vnc_password : null,
-      name: this.form.controls.name.value,
-      cpu: this.form.controls.cpu.value,
-      memory: this.form.controls.memory.value,
-      image: this.form.controls.image.value,
+      instance_type: values.instance_type,
+      enable_vnc: this.isVm() ? values.enable_vnc : false,
+      vnc_port: this.isVm() && values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      name: values.name,
+      cpu: values.cpu,
+      memory: values.memory,
+      image: values.image,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
-    if (this.form.value.image_type === SelectImageType.Load) {
+    if (this.isVm()) {
+      payload.secure_boot = values.secure_boot;
+      payload.root_disk_size = values.root_disk_size;
+
+      if (values.enable_vnc) {
+        payload.vnc_password = values.vnc_password;
+      }
+    }
+
+    if (values.image_type === SelectImageType.Load) {
       delete payload.image;
       payload.source_type = null;
     }

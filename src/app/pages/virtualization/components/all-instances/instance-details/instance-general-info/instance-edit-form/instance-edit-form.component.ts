@@ -76,8 +76,9 @@ export class InstanceEditFormComponent {
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
     enable_vnc: [false],
-    vnc_port: [defaultVncPort as number | null, [Validators.required, Validators.min(5900), Validators.max(65535)]],
+    vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
     vnc_password: [null as string],
+    secure_boot: [false],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
@@ -105,6 +106,7 @@ export class InstanceEditFormComponent {
       enable_vnc: this.editingInstance.vnc_enabled,
       vnc_port: this.editingInstance.vnc_port,
       vnc_password: this.editingInstance.vnc_password,
+      secure_boot: this.editingInstance.secure_boot,
     });
 
     this.setVncControls();
@@ -116,10 +118,6 @@ export class InstanceEditFormComponent {
 
   protected onSubmit(): void {
     const payload = this.getSubmissionPayload();
-    if (!payload.enable_vnc) {
-      delete payload.vnc_port;
-      delete payload.vnc_password;
-    }
     const job$ = this.api.job('virt.instance.update', [this.editingInstance.id, payload]);
 
     this.dialogService.jobDialog(job$, {
@@ -154,7 +152,7 @@ export class InstanceEditFormComponent {
   private getSubmissionPayload(): UpdateVirtualizationInstance {
     const values = this.form.getRawValue();
 
-    return {
+    let payload = {
       environment: this.environmentVariablesPayload,
       autostart: values.autostart,
       cpu: values.cpu,
@@ -163,6 +161,20 @@ export class InstanceEditFormComponent {
       vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
       vnc_password: values.enable_vnc ? values.vnc_password : null,
     } as UpdateVirtualizationInstance;
+
+    if (payload.enable_vnc) {
+      payload = {
+        ...payload,
+        vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+        vnc_password: values.enable_vnc ? values.vnc_password : null,
+      };
+    }
+
+    if (this.isVm) {
+      payload.secure_boot = values.secure_boot;
+    }
+
+    return payload;
   }
 
   private get environmentVariablesPayload(): Record<string, string> {
