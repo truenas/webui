@@ -5,10 +5,10 @@ import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
+import { DeviceNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { isTopologyDisk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 
@@ -198,5 +198,12 @@ export class DevicesStore extends ComponentStore<DevicesState> {
         }) as TopologyDisk[],
       };
     });
+  }
+
+  getDisk(node: DeviceNestedDataNode): Disk | undefined {
+    if (isVdevGroup(node) || !isTopologyDisk(node)) {
+      return undefined;
+    }
+    return this.state().diskDictionary[node.disk];
   }
 }
