@@ -157,7 +157,6 @@
   "Enable General Purpose OS STIG compatibility mode": "",
   "Enable NFS over RDMA": "",
   "Enable Outlook OAuth authentication.": "",
-  "Enable Two Factor Authentication": "",
   "Enable VNC": "",
   "Enable or disable NICs.": "",
   "Enable or disable the USB device for your container.": "",

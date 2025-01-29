@@ -921,7 +921,6 @@
   "Enable SMB2/3 Durable Handles": "",
   "Enable SMTP configuration": "",
   "Enable TLS": "",
-  "Enable Two Factor Authentication": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",
   "Enable VNC": "",

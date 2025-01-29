@@ -788,7 +788,6 @@
   "Enable NFS over RDMA": "",
   "Enable Outlook OAuth authentication.": "",
   "Enable TLS": "",
-  "Enable Two Factor Authentication": "",
   "Enable VNC": "",
   "Enable a Display (Virtual Network Computing) remote connection. Requires <i>UEFI</i> booting.": "",
   "Enable for TrueNAS to periodically review data blocks and identify empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block overwrites (default).": "",
