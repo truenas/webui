@@ -19,7 +19,7 @@ import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
-export class NestedTreeNodeComponent<T, K = T> extends CdkNestedTreeNode<T, K> {
+export class NestedTreeNodeComponent<T extends { children?: T[] }, K = T> extends CdkNestedTreeNode<T, K> {
   @HostBinding('class.ix-nested-tree-node') get hostClass(): boolean { return true; }
 
   readonly treeNodeDefDataSource = input<NestedTreeDataSource<T>>();

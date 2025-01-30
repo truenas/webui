@@ -160,7 +160,7 @@ export class EnclosureSvgComponent implements OnDestroy {
     }
 
     for (const slot of allSlots) {
-      if (selectedVdevDisks.includes(slot.dev)) {
+      if (slot.dev && selectedVdevDisks.includes(slot.dev)) {
         this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'selected-vdev-disk');
       } else if (slot.drive_bay_number !== selectedSlot.drive_bay_number) {
         this.renderer.addClass(this.overlayRects[slot.drive_bay_number], 'not-selected-vdev-disk');

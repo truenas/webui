@@ -1,9 +1,9 @@
 @import 'scss-imports/variables';
 
 :host {
+  color: var(--fg1);
   display: block;
   font-size: 12px;
-
   margin-bottom: 19px;
   margin-top: 12px;
 

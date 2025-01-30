@@ -59,9 +59,9 @@ export class WidgetCpuComponent {
   cpuTemp = computed(() => this.cpuData()?.temperature_celsius || Math.floor(Math.random() * 99) + 1);
 
   protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
-  protected cpuModel = computed(() => this.sysInfo().model);
-  protected coreCount = computed(() => this.sysInfo().physical_cores);
-  protected threadCount = computed(() => this.sysInfo().cores);
+  protected cpuModel = computed(() => this.sysInfo()?.model);
+  protected coreCount = computed(() => this.sysInfo()?.physical_cores);
+  protected threadCount = computed(() => this.sysInfo()?.cores);
 
   protected highest = computed(() => {
     const cpuParams = this.getCpuParams();

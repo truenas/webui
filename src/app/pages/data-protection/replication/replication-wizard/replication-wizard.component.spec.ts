@@ -68,7 +68,7 @@ describe('ReplicationWizardComponent', () => {
   const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn(() => ({} as ReplicationTask)),
     requireConfirmationWhen: jest.fn(),
   };
 

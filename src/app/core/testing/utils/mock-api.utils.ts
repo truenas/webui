@@ -8,6 +8,7 @@ import {
   MockApiCallResponse, MockApiJobResponse,
   MockApiResponseType,
 } from 'app/core/testing/interfaces/mock-api-responses.interface';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -102,7 +103,7 @@ export function mockCall<M extends ApiCallMethod>(
  */
 export function mockJob<M extends ApiJobMethod>(
   method: M,
-  response: JobResponseOrFactory<M> = undefined,
+  response: JobResponseOrFactory<M> = fakeSuccessfulJob(),
 ): MockApiJobResponse {
   return {
     response,

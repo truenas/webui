@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  Validators, ReactiveFormsModule, FormBuilder,
+  Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle, MatDialogClose } from '@angular/material/dialog';
@@ -46,7 +46,7 @@ export class UploadConfigDialogComponent {
   readonly helptext = helptext;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private router: Router,
     private translate: TranslateService,
     private upload: UploadService,

@@ -88,7 +88,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.conf().preInit) {
-      this.conf().preInit().pipe(untilDestroyed(this)).subscribe(() => {
+      this.conf().preInit?.().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
       });
     } else {

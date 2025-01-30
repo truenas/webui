@@ -41,7 +41,7 @@ import {
   IscsiPortalUpdate,
   IscsiTarget,
   IscsiTargetExtent,
-  IscsiTargetExtentUpdate,
+  IscsiTargetExtentUpdate, IscsiTargetGroup,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { newOption, nullOption } from 'app/interfaces/option.interface';
@@ -172,7 +172,7 @@ export class IscsiWizardComponent implements OnInit {
     return {
       name: value.extent.dataset.replace(`${mntPath}/`, '') + '/' + value.extent.name,
       type: DatasetType.Volume,
-      volsize: value.extent.volsize,
+      volsize: value.extent.volsize || undefined,
     };
   }
 
@@ -234,7 +234,7 @@ export class IscsiWizardComponent implements OnInit {
             initiator: this.isNewInitiator ? this.createdInitiator.id : null,
             authmethod: IscsiAuthMethod.None,
             auth: null,
-          }],
+          } as IscsiTargetGroup],
     } as IscsiTargetUpdate;
   }
 
