@@ -27,6 +27,7 @@ import {
   VirtualizationProxyProtocol,
   virtualizationProxyProtocolLabels,
   VirtualizationRemote,
+  VirtualizationSource,
   VirtualizationType,
   virtualizationTypeIcons,
 } from 'app/enums/virtualization.enum';
@@ -69,11 +70,6 @@ import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtu
 import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UploadService } from 'app/services/upload.service';
-
-enum SelectImageType {
-  Load = 'LOAD',
-  Choose = 'CHOOSE',
-}
 
 @UntilDestroy()
 @Component({
@@ -120,7 +116,7 @@ export class InstanceWizardComponent {
     [], { select: ['name'], order_by: ['name'] },
   ]).pipe(map((keys) => keys.map((key) => key.name)));
 
-  readonly SelectImageType = SelectImageType;
+  readonly VirtualizationSource = VirtualizationSource;
 
   bridgedNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Bridged);
   macVlanNicDevices$ = this.getNicDevicesOptions(VirtualizationNicType.Macvlan);
@@ -132,9 +128,10 @@ export class InstanceWizardComponent {
     }))),
   );
 
-  imageOptions$: Observable<Option<SelectImageType>[]> = of([
-    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: SelectImageType.Choose },
-    { label: this.translate.instant('Upload an ISO image'), value: SelectImageType.Load },
+  imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
+    { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
+    { label: this.translate.instant('Upload an ISO image'), value: VirtualizationSource.Iso },
+    { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
   ]);
 
   gpuDevices$ = this.api.call(
@@ -154,9 +151,10 @@ export class InstanceWizardComponent {
       [forbiddenAsyncValues(this.forbiddenNames$)],
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
-    image_type: [SelectImageType.Choose, [Validators.required]],
+    source_type: [VirtualizationSource.Image, [Validators.required]],
     image_file: [null as File[] | null, [Validators.required]],
     image_file_name: ['', [Validators.required]],
+    zvol_path: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
     vnc_port: [defaultVncPort, [Validators.min(5900), Validators.max(65535)]],
@@ -226,33 +224,11 @@ export class InstanceWizardComponent {
     this.configStore.initialize();
     this.form.controls.image_file.disable();
     this.form.controls.image_file_name.disable();
-    this.form.controls.image_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
-      if (type === SelectImageType.Choose) {
-        this.form.controls.image_file.disable();
-        this.form.controls.image_file_name.disable();
-        this.form.controls.image.enable();
-      } else {
-        this.form.controls.image_file.enable();
-        this.form.controls.image_file_name.enable();
-        this.form.controls.image.disable();
-      }
-    });
-    this.form.controls.image_file.valueChanges.pipe(untilDestroyed(this)).subscribe((file) => {
-      this.form.controls.image_file_name.setValue(file?.[0] ? `${file[0].name.replace('.iso', '')}_${Date.now()}.iso` : '');
-    });
-    this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
-      if (type === VirtualizationType.Container) {
-        this.form.controls.image_type.setValue(SelectImageType.Choose);
-      }
-      this.instanceType.set(type);
-      if (type === VirtualizationType.Container) {
-        this.form.controls.cpu.setValidators(cpuValidator());
-        this.form.controls.memory.clearValidators();
-      } else {
-        this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
-        this.form.controls.memory.setValidators([Validators.required]);
-      }
-    });
+    this.form.controls.zvol_path.disable();
+
+    this.listenForSourceTypeChanges();
+    this.listenForImageFileChanges();
+    this.listenForInstanceTypeChanges();
   }
 
   protected onBrowseImages(): void {
@@ -304,7 +280,7 @@ export class InstanceWizardComponent {
   }
 
   protected onSubmit(): void {
-    (this.form.value.image_type === SelectImageType.Load ? this.importIsoImage() : of(null)).pipe(
+    (this.form.value.source_type === VirtualizationSource.Iso ? this.importIsoImage() : of(null)).pipe(
       switchMap(() => this.createInstance()),
       untilDestroyed(this),
     ).subscribe({
@@ -368,7 +344,9 @@ export class InstanceWizardComponent {
       name: values.name,
       cpu: values.cpu,
       memory: values.memory,
-      image: values.image,
+      image: values.source_type === VirtualizationSource.Image ? values.image : null,
+      source_type: values.source_type,
+      zvol_path: values.source_type === VirtualizationSource.Zvol ? values.zvol_path : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
 
@@ -379,11 +357,6 @@ export class InstanceWizardComponent {
       if (values.enable_vnc) {
         payload.vnc_password = values.vnc_password;
       }
-    }
-
-    if (values.image_type === SelectImageType.Load) {
-      delete payload.image;
-      payload.source_type = null;
     }
 
     return payload;
@@ -411,7 +384,7 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const iso = this.form.value.image_type === SelectImageType.Load
+    const iso = this.form.value.source_type === VirtualizationSource.Iso
       ? [
           {
             dev_type: VirtualizationDeviceType.Disk,
@@ -493,4 +466,44 @@ export class InstanceWizardComponent {
   }
 
   protected readonly containersHelptext = containersHelptext;
+
+  private listenForInstanceTypeChanges(): void {
+    this.form.controls.instance_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      if (type === VirtualizationType.Container) {
+        this.form.controls.source_type.setValue(VirtualizationSource.Image);
+      }
+      this.instanceType.set(type);
+      if (type === VirtualizationType.Container) {
+        this.form.controls.cpu.setValidators(cpuValidator());
+        this.form.controls.memory.clearValidators();
+      } else {
+        this.form.controls.cpu.setValidators([Validators.required, cpuValidator()]);
+        this.form.controls.memory.setValidators([Validators.required]);
+      }
+    });
+  }
+
+  private listenForImageFileChanges(): void {
+    this.form.controls.image_file.valueChanges.pipe(untilDestroyed(this)).subscribe((file) => {
+      this.form.controls.image_file_name.setValue(file?.[0] ? `${file[0].name.replace('.iso', '')}_${Date.now()}.iso` : '');
+    });
+  }
+
+  private listenForSourceTypeChanges(): void {
+    this.form.controls.source_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
+      this.form.controls.image.disable();
+      this.form.controls.image_file.disable();
+      this.form.controls.image_file_name.disable();
+      this.form.controls.zvol_path.disable();
+
+      if (type === VirtualizationSource.Image) {
+        this.form.controls.image.enable();
+      } else if (type === VirtualizationSource.Iso) {
+        this.form.controls.image_file.enable();
+        this.form.controls.image_file_name.enable();
+      } else if (type === VirtualizationSource.Zvol) {
+        this.form.controls.zvol_path.enable();
+      }
+    });
+  }
 }
