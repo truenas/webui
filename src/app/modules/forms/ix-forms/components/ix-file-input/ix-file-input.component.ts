@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input, viewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -7,7 +7,7 @@ import {
 } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
@@ -39,35 +39,40 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 })
 export class IxFileInputComponent implements ControlValueAccessor {
   readonly label = input<string>();
+  readonly buttonText = input<string>(this.translate.instant('Choose File'));
   readonly tooltip = input<string>();
   readonly acceptedFiles = input('*.*');
   readonly multiple = input<boolean>();
   readonly required = input<boolean>(false);
 
-  value: FileList;
-  isDisabled = false;
+  protected value: FileList;
+  protected isDisabled = false;
 
-  onChange: (value: File[]) => void = (): void => {};
-  onTouch: () => void = (): void => {};
+  private onChange: (value: File[]) => void = (): void => {};
+  private onTouch: () => void = (): void => {};
+  private fileInput = viewChild.required<HTMLInputElement>('fileInput');
 
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private formatter: IxFormatterService,
+    private translate: TranslateService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
   onChanged(value: FileList): void {
     this.value = value;
+    this.onTouch();
     this.onChange([...value]);
   }
 
   writeValue(value: File[] | null): void {
+    this.value = this.transformFiles(value || []);
     if (!value?.length) {
-      return;
+      this.fileInput().value = null;
     }
-    this.value = this.transformFiles(value);
+
     this.cdr.markForCheck();
   }
 
@@ -109,5 +114,10 @@ export class IxFileInputComponent implements ControlValueAccessor {
 
   asFileInput(target: EventTarget): HTMLInputElement {
     return target as HTMLInputElement;
+  }
+
+  // TODO: Workaround for https://github.com/angular/angular/issues/56471
+  protected trackByIdentity(item: File): File {
+    return item;
   }
 }

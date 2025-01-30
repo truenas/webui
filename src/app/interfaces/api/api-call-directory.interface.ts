@@ -253,9 +253,16 @@ import {
   VmDisplayWebUriParams, VmPortWizardResult,
 } from 'app/interfaces/virtual-machine.interface';
 import {
-  VirtualizationDevice, VirtualizationGlobalConfig,
-  VirtualizationImage, VirtualizationImageParams,
-  VirtualizationInstance, VirtualizationNetwork, AvailableUsb, AvailableGpus,
+  VirtualizationDevice,
+  VirtualizationGlobalConfig,
+  VirtualizationImage,
+  VirtualizationImageParams,
+  VirtualizationInstance,
+  VirtualizationNetwork,
+  AvailableUsb,
+  AvailableGpus,
+  VirtualizationVolume,
+  VirtualizationVolumeUpdate,
 } from 'app/interfaces/virtualization.interface';
 import {
   VmDevice, VmDeviceDelete, VmDeviceUpdate, VmDisplayDevice, VmPassthroughDeviceChoice, VmUsbPassthroughDeviceChoice,
@@ -893,6 +900,10 @@ export interface ApiCallDirectory {
   'virt.global.config': { params: []; response: VirtualizationGlobalConfig };
   'virt.global.get_network': { params: [name: string]; response: VirtualizationNetwork };
   'virt.global.pool_choices': { params: []; response: Choices };
+
+  'virt.volume.query': { params: QueryParams<VirtualizationVolume>; response: VirtualizationVolume[] };
+  'virt.volume.update': { params: VirtualizationVolumeUpdate; response: VirtualizationVolume };
+  'virt.volume.delete': { params: [id: string]; response: true };
 
   // VM
   'vm.bootloader_options': { params: void; response: Choices };

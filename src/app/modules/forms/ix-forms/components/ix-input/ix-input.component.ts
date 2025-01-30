@@ -282,4 +282,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
     this.filterOptions('');
   }
+
+  trackByIdentity(option: Option): Option {
+    return option;
+  }
 }

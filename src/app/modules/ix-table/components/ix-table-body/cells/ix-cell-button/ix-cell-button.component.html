@@ -1,0 +1,8 @@
+<button
+  *ixRequiresRoles="requiredRoles"
+  mat-button
+  [ixTest]="[text, uniqueRowTag(row())]"
+  (click)="onClick(row())"
+>
+  {{ text }}
+</button>
