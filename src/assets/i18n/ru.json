@@ -870,6 +870,7 @@
   "Destroy the ZFS filesystem for pool data. This is a permanent operation. You will be       unable to re-mount data from the exported pool.": "",
   "Detach disk {name}?": "",
   "Details for": "",
+  "Details for ": "",
   "Details for {vmDevice}": "",
   "Determines the outgoing and incoming traffic ports.<br>  <i>LACP</i> is the recommended protocol if the network switch is capable of  active LACP.<br><i>Failover</i> is the default protocol choice and  should only be used if the network switch does not support active LACP.": "",
   "Determines whether restic backup will contain absolute or relative paths": "",

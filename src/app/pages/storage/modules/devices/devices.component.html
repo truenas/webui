@@ -1,161 +1,54 @@
+@let pool = poolId();
 <ix-page-header [pageTitle]="pageTitle">
   <a
     *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="add-vdev"
-    [routerLink]="['/storage', poolId, 'add-vdevs']"
+    [routerLink]="['/storage', pool, 'add-vdevs']"
   >
     {{ 'Add VDEV' | translate }}
   </a>
 </ix-page-header>
 
 @let selectedNode = selectedNode$ | async;
-<div class="container">
-  <div class="table-container">
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="!!(isLoading$ | async)"
-    ></ix-fake-progress-bar>
-
-    <div class="item-search">
-      <ix-search-input1
-        [disabled]="!dataSource?.data?.length"
-        (search)="onSearch($event)"
-      ></ix-search-input1>
-    </div>
-
-    <div class="sticky-header">
-      <div class="tree-header">
-        <div>
-          <span class="name-header">
-            {{ 'Device Name' | translate }}
-          </span>
-        </div>
-        <div class="disk-status-header">{{ 'Status' | translate }}</div>
-        <div>{{ 'Capacity' | translate }}</div>
-        <div>{{ 'ZFS Errors' | translate }}</div>
-      </div>
-    </div>
-
-    <div class="tree-wrapper">
-      <div class="tree-inner">
-        <ix-tree-view
-          class="disk-tree"
-          [ixDataSource]="dataSource"
-          [ixTreeControl]="treeControl"
-        >
-          <ix-tree-node
-            *treeNodeDef="let topologyItem; dataSource: dataSource"
-            routerLinkActive="selected"
-            [treeNodeDefDataSource]="dataSource"
-            [class.selected]="topologyItem.guid === selectedNode?.guid"
-            [routerLink]="['/storage', poolId, 'devices', topologyItem.guid]"
-            (click)="viewDetails(poolId, topologyItem.guid)"
-            (keydown.enter)="viewDetails(poolId, topologyItem.guid)"
-          >
-            <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
-            <ix-topology-item-node
-              [topologyItem]="topologyItem | cast"
-              [disk]="getDisk(topologyItem)"
-            ></ix-topology-item-node>
-            <ix-icon
-              name="mdi-chevron-right"
-              class="mobile-actions"
-            ></ix-icon>
-          </ix-tree-node>
-
-          <ix-nested-tree-node
-            *treeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
-            [treeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="nested-tree-root-node"
-              (click)="onRowGroupSelected(group, $event)"
-            >
-              <ix-vdev-group-node [vdevGroup]="group | cast">
-                <button
-                  mat-icon-button
-                  treeNodeToggle
-                  class="vdev-group-toggle"
-                  [ixTest]="['toggle-vdev-group', group.guid]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
-                  (click)="$event.preventDefault()"
-                >
-                  <ix-icon
-                    [name]="treeControl.isExpanded(group) ? 'expand_more' : 'chevron_right'"
-                  ></ix-icon>
-                </button>
-              </ix-vdev-group-node>
-            </div>
-
-            @if (treeControl.isExpanded(group)) {
-              <ng-container treeNodeOutlet></ng-container>
-            }
-          </ix-nested-tree-node>
-
-          <ix-nested-tree-node
-            *treeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
-            [treeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="nested-tree-root-node"
-              routerLinkActive="selected"
-              [class.selected]="vdev.guid === selectedNode?.guid"
-              [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
-              (click)="viewDetails(poolId, vdev.guid)"
-              (keydown.enter)="viewDetails(poolId, vdev.guid)"
-            >
-              <button
-                mat-icon-button
-                treeNodeToggle
-                [ixTest]="['toggle', vdev.guid]"
-                [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
-                (click)="$event.preventDefault()"
-                (keydown.enter)="$event.stopPropagation()"
-              >
-                <ix-icon
-                  [name]="treeControl.isExpanded(vdev) ? 'expand_more' : 'chevron_right'"
-                ></ix-icon>
-              </button>
-
-              <ix-topology-item-node
-                [topologyItem]="vdev | cast"
-                [disk]="getDisk(vdev.children[0])"
-              ></ix-topology-item-node>
-
-              <ix-icon
-                name="mdi-chevron-right"
-                class="mobile-actions"
-              ></ix-icon>
-            </div>
-
-            @if (treeControl.isExpanded(vdev)) {
-              <ng-container
-                treeNodeOutlet
-              ></ng-container>
-            }
-          </ix-nested-tree-node>
-        </ix-tree-view>
-      </div>
-    </div>
-  </div>
-  <div
-    class="details-container"
-    ixDetailsHeight
-    [class.details-container-mobile]="showMobileDetails"
-  >
-    @if (selectedNode) {
-      <ix-disk-details-panel
-        [topologyItem]="selectedNode | cast"
-        [topologyParentItem]="selectedParentNode$ | async | cast"
-        [disk]="getDisk(selectedNode.children[0] || selectedNode)"
-        [poolId]="poolId"
-        [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
-        [topologyCategory]="selectedTopologyCategory$ | async"
-        [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
-        (closeMobileDetails)="closeMobileDetails()"
-      ></ix-disk-details-panel>
-    }
-  </div>
-</div>
+@if (pool) {
+  <ix-master-detail-view
+    #masterDetailView="masterDetailViewContext"
+    [selectedItem]="selectedNode"
+    >
+    <ix-devices-list
+      master 
+      [poolId]="pool" 
+      [isMobileView]="isMobileView()"
+      (showMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
+    ></ix-devices-list>
+    <ng-container detail-header>
+      @if (selectedNode) {
+        <span>{{ 'Details for ' | translate }}</span>
+        <ix-topology-item-icon
+          class="title-icon"
+          [topologyItem]="selectedNode | cast"
+          [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
+        ></ix-topology-item-icon>
+        <span class="device-name">
+          {{ getTitle(selectedNode | cast) | translate }}
+        </span>
+      }
+    </ng-container>
+    <ng-container detail>
+      @if (selectedNode) {
+        <ix-disk-details-panel
+          [topologyItem]="selectedNode | cast"
+          [topologyParentItem]="selectedParentNode$ | async | cast"
+          [disk]="devicesStore.getDisk(selectedNode.children[0] || selectedNode)"
+          [poolId]="pool"
+          [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
+          [topologyCategory]="selectedTopologyCategory$ | async"
+          [disksWithSmartTestSupport]="disksWithSmartTestSupport$ | async"
+          (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
+        ></ix-disk-details-panel>
+      }
+    </ng-container>
+  </ix-master-detail-view>
+}

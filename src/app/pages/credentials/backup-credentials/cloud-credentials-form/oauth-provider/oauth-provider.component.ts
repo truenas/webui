@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
@@ -46,7 +46,7 @@ export class OauthProviderComponent {
     return Boolean(this.form.value.client_id && this.form.value.client_secret);
   }
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: NonNullableFormBuilder) { }
 
   onLoggedIn(result: unknown): void {
     this.form.patchValue(result as OauthProviderData);

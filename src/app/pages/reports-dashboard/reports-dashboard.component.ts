@@ -198,12 +198,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           }
 
           flattenedReport.identifiers = [identifier];
-          if (report.isRendered[index]) {
+          if (report.isRendered?.[index]) {
             flattenedReport.isRendered = [true];
             result.push(flattenedReport);
           }
         });
-      } else if (!report.identifiers?.length && report.isRendered[0]) {
+      } else if (!report.identifiers?.length && report.isRendered?.[0]) {
         // Without identifiers
         const flattenedReport = { ...report };
         flattenedReport.identifiers = [];

@@ -30,7 +30,10 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
     this.translate = inject(TranslateService);
     this.formatDateTime = inject(FormatDateTimePipe);
     this.localeService = inject(LocaleService);
-    this.machineTimezone = this.localeService.timezone;
+
+    if (this.localeService.timezone) {
+      this.machineTimezone = this.localeService.timezone;
+    }
   }
 
   get machineTime(): Date {

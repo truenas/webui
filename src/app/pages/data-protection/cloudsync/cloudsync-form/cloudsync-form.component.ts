@@ -781,7 +781,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       CloudSyncWizardComponent,
       { wide: true },
     );

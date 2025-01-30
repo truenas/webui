@@ -70,7 +70,7 @@ export class ServiceSshComponent implements OnInit {
 
   form = this.fb.group({
     tcpport: [null as number | null],
-    password_login_groups: [null as string[] | null],
+    password_login_groups: [[] as string[]],
     passwordauth: [false],
     kerberosauth: [false],
     tcpfwd: [false],

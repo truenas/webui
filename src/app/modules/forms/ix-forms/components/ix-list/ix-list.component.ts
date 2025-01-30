@@ -63,9 +63,9 @@ export class IxListComponent implements AfterViewInit {
 
   private handleListDefaults(): void {
     setTimeout(() => {
-      this.default().forEach((defaultValue: never) => {
+      this.default()?.forEach((defaultValue: never) => {
         this.addItem(
-          this.itemsSchema().map((item: ChartSchemaNode) => {
+          this.itemsSchema()?.map((item: ChartSchemaNode) => {
             return {
               ...item,
               schema: {
