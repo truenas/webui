@@ -269,6 +269,10 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.editingTask && this.form.controls.direction.value === Direction.Pull) {
+      this.form.controls.snapshot.disable();
+    }
+
     this.getInitialData();
 
     this.isCredentialInvalid$.pipe(untilDestroyed(this)).subscribe((value) => {
