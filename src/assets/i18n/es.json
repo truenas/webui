@@ -4546,6 +4546,7 @@
   "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask.": "",
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "",
   "Use this option to log more detailed information about SMB.": "",
+  "Use zvol with previously installed OS": "",
   "Used by clients in PASV mode. A default of <i>0</i> means any port above 1023.": "",
   "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" target=\"_blank\">proftpd(8)</a> parameters.": "",
   "User API Keys": "",

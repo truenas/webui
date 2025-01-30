@@ -91,6 +91,7 @@
   "This password is only valid for one login within 24 hours and does not persist across reboots.": "",
   "USB Passthrough Device": "",
   "Unlock Child Encrypted Roots": "",
+  "Use zvol with previously installed OS": "",
   "User will be encouraged to choose their own password after they login for the first time.": "",
   "everyone@": "",
   "group@": "",
