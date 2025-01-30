@@ -20,6 +20,7 @@ import {
   VirtualizationDeviceType,
   VirtualizationNicType,
   VirtualizationProxyProtocol,
+  VirtualizationSource,
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -27,6 +28,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -124,6 +126,28 @@ describe('InstanceWizardComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
+  describe('name validation', () => {
+    it('shows error for invalid name', async () => {
+      const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+
+      await form.fillForm({
+        Name: 'invalid+_@name',
+      });
+
+      expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');
+    });
+
+    it('shows error for already existing name', async () => {
+      const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+
+      await form.fillForm({
+        Name: 'test',
+      });
+
+      expect(await instanceNameControl.getErrorText()).toBe('The name "test" is already in use.');
+    });
+  });
+
   describe('container', () => {
     it('creates new instance when form is submitted', async () => {
       await form.fillForm({
@@ -209,6 +233,8 @@ describe('InstanceWizardComponent', () => {
         ],
         image: 'almalinux/8/cloud',
         memory: GiB,
+        source_type: VirtualizationSource.Image,
+        zvol_path: null,
         environment: {},
         enable_vnc: false,
         vnc_port: null,
@@ -252,7 +278,9 @@ describe('InstanceWizardComponent', () => {
         devices: [],
         image: 'almalinux/8/cloud',
         memory: GiB,
+        source_type: VirtualizationSource.Image,
         enable_vnc: false,
+        zvol_path: null,
         vnc_port: null,
         instance_type: 'CONTAINER',
         environment: {},
@@ -354,6 +382,8 @@ describe('InstanceWizardComponent', () => {
         memory: GiB,
         enable_vnc: true,
         vnc_port: 9000,
+        source_type: VirtualizationSource.Image,
+        zvol_path: null,
         root_disk_size: 9,
         vnc_password: 'testing',
         secure_boot: true,
@@ -401,11 +431,54 @@ describe('InstanceWizardComponent', () => {
           destination: null,
           boot_priority: 1,
         }],
+        image: null,
+        source_type: VirtualizationSource.Iso,
         enable_vnc: false,
-        source_type: null,
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
+        zvol_path: null,
+        root_disk_size: 10,
+      }]);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+
+    it('creates new instance using zvol path when form is submitted', async () => {
+      // TODO: Not sure what's causing the below warning, so I mocked 'warn' to make the test pass:
+      // The configured tracking expression (track by identity) caused re-creation of the entire
+      // collection of size 13. This is an expensive operation requiring destruction and subsequent
+      // creation of DOM nodes, directives, components etc. Please review the "track expression"
+      // and make sure that it uniquely identifies items in a collection. Find more at https://angular.dev/errors/NG0956
+      jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
+      await instanceType.setValue('VM');
+
+      await form.fillForm({
+        Name: 'new',
+        'VM Image Options': 'Use zvol with previously installed OS',
+        'CPU Configuration': '2',
+        'Memory Size': '1 GiB',
+        Zvol: '/dev/zvol/test',
+      });
+
+      const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await createButton.click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
+        name: 'new',
+        autostart: true,
+        cpu: '2',
+        instance_type: VirtualizationType.Vm,
+        devices: [],
+        image: null,
+        source_type: VirtualizationSource.Zvol,
+        enable_vnc: false,
+        secure_boot: false,
+        memory: 1073741824,
+        vnc_port: null,
+        zvol_path: '/dev/zvol/test',
         root_disk_size: 10,
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();

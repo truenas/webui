@@ -354,6 +354,7 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.generate_token': { params: void; response: string };
+  'auth.generate_onetime_password': { params: [{ username: string }]; response: string };
   'auth.login_ex': { params: [LoginExQuery]; response: LoginExResponse };
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
@@ -867,7 +868,8 @@ export interface ApiCallDirectory {
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };
 
   // User
-  'user.create': { params: [UserUpdate]; response: number };
+  'user.create': { params: [UserUpdate]; response: User };
+  'user.update': { params: [id: number, update: UserUpdate]; response: User };
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_next_uid': { params: void; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
@@ -877,7 +879,6 @@ export interface ApiCallDirectory {
   'user.set_password': { params: [SetPasswordParams]; response: void };
   'user.setup_local_administrator': { params: [userName: string, password: string, ec2?: { instance_id: string }]; response: void };
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
-  'user.update': { params: [id: number, update: UserUpdate]; response: number };
 
   // Virt
   'virt.instance.query': { params: QueryParams<VirtualizationInstance>; response: VirtualizationInstance[] };

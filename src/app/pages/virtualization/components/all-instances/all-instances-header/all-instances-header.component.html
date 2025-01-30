@@ -5,7 +5,8 @@
     mat-button
     ixTest="edit-global-settings"
     color="primary"
-    (click)="onGlobalConfiguration()"
+    [ixUiSearch]="searchableElements.elements.globalSettings"
+  (click)="onGlobalConfiguration()"
   >
     {{ 'Select Pool' | translate }}
   </button>
@@ -51,5 +52,6 @@
     [color]="canAddNewInstances() ? 'primary' : 'default'"
     [disabled]="!canAddNewInstances()"
     [routerLink]="['/virtualization/new']"
+    [ixUiSearch]="searchableElements.elements.add"
   >{{ 'Create New Instance' | translate }}</a>
 }

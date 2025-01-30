@@ -127,7 +127,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     if (!this.combobox()) {
       return;
     }
-    this.combobox().controlDirective.control.valueChanges.pipe(
+    this.combobox().controlDirective.control?.valueChanges?.pipe(
       distinctUntilChanged(),
       filter(Boolean),
       untilDestroyed(this),

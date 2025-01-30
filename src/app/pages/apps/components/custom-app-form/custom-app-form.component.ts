@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { map, of } from 'rxjs';
+import { filter, map, of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { Role } from 'app/enums/role.enum';
@@ -49,13 +49,16 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   ],
 })
 export class CustomAppFormComponent implements OnInit {
-  protected isNew = signal(true);
   protected requiredRoles = [Role.AppsWrite];
   protected readonly CodeEditorLanguage = CodeEditorLanguage;
   protected form = this.fb.group({
     release_name: ['', Validators.required],
     custom_compose_config_string: ['\n\n', Validators.required],
   });
+
+  get isNew(): boolean {
+    return !this.existingApp;
+  }
 
   protected existingApp: App | undefined;
 
@@ -75,13 +78,16 @@ export class CustomAppFormComponent implements OnInit {
     this.slideInRef.requireConfirmationWhen(() => {
       return of(this.form.dirty);
     });
+
     this.existingApp = this.slideInRef.getData();
+
+    if (this.existingApp?.id) {
+      this.handleExistingApp();
+    }
   }
 
   ngOnInit(): void {
-    if (this.existingApp) {
-      this.setAppForEdit(this.existingApp);
-    } else {
+    if (!this.existingApp) {
       this.setNewApp();
     }
   }
@@ -91,7 +97,6 @@ export class CustomAppFormComponent implements OnInit {
   }
 
   private setAppForEdit(app: App): void {
-    this.isNew.set(false);
     this.form.patchValue({
       release_name: app.id,
       custom_compose_config_string: jsonToYaml(app.config),
@@ -121,14 +126,14 @@ export class CustomAppFormComponent implements OnInit {
       { custom_compose_config_string: data.custom_compose_config_string },
     ]);
 
-    const job$ = this.isNew() ? appCreate$ : appUpdate$;
+    const job$ = this.isNew ? appCreate$ : appUpdate$;
 
     this.dialogService.jobDialog(
       job$,
       {
         title: this.translate.instant('Custom App'),
         canMinimize: false,
-        description: this.isNew()
+        description: this.isNew
           ? this.translate.instant('Creating custom app')
           : this.translate.instant('Updating custom app'),
       },
@@ -146,6 +151,27 @@ export class CustomAppFormComponent implements OnInit {
       error: (error: unknown) => {
         this.isLoading.set(false);
         this.errorHandler.showErrorModal(error);
+      },
+    });
+  }
+
+  private handleExistingApp(): void {
+    this.isLoading.set(true);
+
+    this.appService.getApp(this.existingApp.id).pipe(
+      filter((apps) => apps.length > 0),
+      untilDestroyed(this),
+    ).subscribe({
+      next: ([app]) => {
+        this.existingApp = app;
+        this.setAppForEdit(app);
+      },
+      error: (error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        this.slideInRef.close({ response: false, error });
+      },
+      complete: () => {
+        this.isLoading.set(false);
       },
     });
   }

@@ -118,9 +118,11 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
   private connectFormToStore(): void {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.store.setEnclosureOptions({
-        limitToSingleEnclosure: this.isLimitingToSingle ? value.limitToEnclosure : null,
+        limitToSingleEnclosure: this.isLimitingToSingle
+          ? (value.limitToEnclosure || null)
+          : null,
         maximizeEnclosureDispersal: value.dispersalStrategy === DispersalStrategy.Maximize,
-        dispersalStrategy: value.dispersalStrategy,
+        dispersalStrategy: value.dispersalStrategy || DispersalStrategy.None,
       });
     });
   }

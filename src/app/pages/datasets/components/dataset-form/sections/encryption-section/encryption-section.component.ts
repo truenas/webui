@@ -42,7 +42,7 @@ export class EncryptionSectionComponent implements OnChanges, OnInit {
   readonly formValidityChange = output<boolean>();
 
   protected inheritEncryptionLabel = computed(() => {
-    return this.parent().encrypted
+    return this.parent()?.encrypted
       ? this.translate.instant('Inherit (encrypted)')
       : this.translate.instant('Inherit (non-encrypted)');
   });

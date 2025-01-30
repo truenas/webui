@@ -2,7 +2,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -69,7 +69,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
 
   constructor(
     private errorHandler: ErrorHandlerService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private api: ApiService,
     private cdr: ChangeDetectorRef,
   ) {
@@ -119,9 +119,9 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     this.drives$ = of();
 
     this.api.call('cloudsync.onedrive_list_drives', [{
-      client_id: this.oauthComponent.form.value.client_id,
-      client_secret: this.oauthComponent.form.value.client_secret,
-      token: this.form.value.token,
+      client_id: this.oauthComponent.form.getRawValue().client_id,
+      client_secret: this.oauthComponent.form.getRawValue().client_secret,
+      token: this.form.getRawValue().token,
     }])
       .pipe(
         this.errorHandler.catchError(),

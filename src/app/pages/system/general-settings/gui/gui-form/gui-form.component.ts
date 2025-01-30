@@ -210,9 +210,9 @@ export class GuiFormComponent {
         let href = this.window.location.href;
 
         if (httpPortChanged && protocol === 'http:') {
-          port = changed.ui_port.toString();
+          port = String(changed.ui_port);
         } else if (httpsPortChanged && protocol === 'https:') {
-          port = changed.ui_httpsport.toString();
+          port = String(changed.ui_httpsport);
         }
 
         href = protocol + '//' + hostname + ':' + port + this.window.location.pathname;

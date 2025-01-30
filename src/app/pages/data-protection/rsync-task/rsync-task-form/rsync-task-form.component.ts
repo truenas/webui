@@ -210,13 +210,13 @@ export class RsyncTaskFormComponent implements OnInit {
 
     this.isLoading = true;
     let request$: Observable<RsyncTask>;
-    if (this.isNew) {
-      request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
-    } else {
+    if (this.editingTask) {
       request$ = this.api.call('rsynctask.update', [
         this.editingTask.id,
         values as RsyncTaskUpdate,
       ]);
+    } else {
+      request$ = this.api.call('rsynctask.create', [values as RsyncTaskUpdate]);
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({

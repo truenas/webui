@@ -42,8 +42,8 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
 
   override getSubmitAttributes(): TelegramServiceComponent['form']['value'] {
     return {
-      ...this.form.value,
-      chat_ids: this.form.value.chat_ids.map((chatId) => Number(chatId)),
+      ...this.form.getRawValue(),
+      chat_ids: this.form.getRawValue().chat_ids.map((chatId) => Number(chatId)),
     };
   }
 

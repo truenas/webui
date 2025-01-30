@@ -75,6 +75,8 @@ export interface CreateVirtualizationInstance {
    */
   vnc_port?: number | null;
   vnc_password?: string | null;
+
+  zvol_path?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
