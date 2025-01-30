@@ -77,7 +77,7 @@ export class InstanceEditFormComponent {
     memory: [null as number | null],
     enable_vnc: [false],
     vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
-    vnc_password: [null as string],
+    vnc_password: [null as string | null],
     secure_boot: [false],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });

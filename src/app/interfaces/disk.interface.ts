@@ -117,7 +117,7 @@ export interface DetailsDisk {
   partitions: {
     path: string;
   }[];
-  enclosure?: EnclosureAndSlot;
+  enclosure: EnclosureAndSlot | Record<string, never>;
   vendor: string;
   imported_zpool: string;
 }

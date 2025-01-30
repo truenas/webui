@@ -8,7 +8,7 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
@@ -21,11 +21,11 @@ import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-pro
 import { ApiService } from 'app/modules/websocket/api.service';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 
-const initiators: IscsiInitiatorGroup[] = [
+const initiators = [
   {
     id: 1,
     comment: 'test-iscsi-initiators-groups-comment',
-  } as IscsiExtent,
+  } as IscsiInitiatorGroup,
 ];
 
 describe('InitiatorListComponent', () => {

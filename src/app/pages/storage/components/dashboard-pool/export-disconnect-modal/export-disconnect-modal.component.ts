@@ -201,7 +201,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   showUnstoppableErrorDialog(failureData: Job): void {
     let conditionalErrMessage = '';
     const msg = this.translate.instant(helptextVolumes.exportMessages.onfail.unableToTerminate);
-    conditionalErrMessage = msg + (failureData.extra.processes as string);
+    conditionalErrMessage = msg + (failureData.extra?.processes as string);
     this.dialogService.error({
       title: helptextVolumes.exportError,
       message: conditionalErrMessage,

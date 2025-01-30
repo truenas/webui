@@ -4,7 +4,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyItem } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { BootenvNodeItemComponent } from './bootenv-node-item.component';
 
 describe('BootenvNodeItemComponent', () => {
@@ -24,10 +24,8 @@ describe('BootenvNodeItemComponent', () => {
       allocated: 5607686144,
       fragmentation: 4,
     },
-    children: [],
-    device: null,
-    disk: null,
-  } as TopologyItem;
+    children: [] as TopologyDisk[],
+  } as TopologyDisk;
 
   const poolInstance = {
     guid: 'boot-pool',

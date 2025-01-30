@@ -63,6 +63,6 @@ export class TargetNameValidationService {
   };
 
   private getError(errorValue: string): string {
-    return this.errors.find((error) => error === errorValue);
+    return this.errors.find((error) => error === errorValue) || '';
   }
 }

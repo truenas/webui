@@ -19,7 +19,7 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
     TranslateModule,
   ],
 })
-export class AppJsonDetailsCardComponent<T> {
+export class AppJsonDetailsCardComponent<T extends object> {
   readonly isLoading = input<boolean>();
   readonly jsonDetails = input<T[]>();
   readonly title = input.required<string>();
