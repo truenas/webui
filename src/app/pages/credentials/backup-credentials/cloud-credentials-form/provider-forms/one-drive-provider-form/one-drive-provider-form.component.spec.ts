@@ -78,11 +78,11 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('loads a list of OneDrive drives and populates Drives List select when oAuth flow is completed', async () => {
     const oauthComponent = spectator.query(OauthProviderComponent);
-    oauthComponent.form.setValue({
+    oauthComponent!.form.setValue({
       client_id: 'newclient',
       client_secret: 'newsecret',
     });
-    oauthComponent.authenticated.emit({
+    oauthComponent!.authenticated.emit({
       token: 'newtoken',
     });
 
@@ -102,11 +102,11 @@ describe('OneDriveProviderFormComponent', () => {
 
   it('updates Drive Account Type and ID when a drive is selected from Drives List', async () => {
     const oauthComponent = spectator.query(OauthProviderComponent);
-    oauthComponent.form.setValue({
+    oauthComponent!.form.setValue({
       client_id: 'newclient',
       client_secret: 'newsecret',
     });
-    oauthComponent.authenticated.emit({
+    oauthComponent!.authenticated.emit({
       token: 'newtoken',
     });
 

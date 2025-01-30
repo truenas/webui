@@ -7,7 +7,7 @@ export interface DatasetAclEditorState {
   mountpoint: string | null;
   acl: Acl | null;
   stat: FileSystemStat | null;
-  selectedAceIndex: number;
+  selectedAceIndex: number | null;
   acesWithError: number[]; // Indices
 }
 

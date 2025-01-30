@@ -129,7 +129,10 @@ export class UserApiKeysComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           disabled: (row) => this.authService.hasRole([Role.FullAdmin]).pipe(
-            withLatestFrom(this.authService.user$.pipe(map((user) => user.pw_name))),
+            withLatestFrom(this.authService.user$.pipe(
+              filter((user) => !!user),
+              map((user) => user.pw_name),
+            )),
             map(([isFullAdmin, username]) => !isFullAdmin && row.username !== username),
           ),
           requiredRoles: this.requiredRoles,

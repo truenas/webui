@@ -42,7 +42,7 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   }
 
   getValueFromSlideInResponse(result: SlideInResponse<SshCredentials>): IxSelectValue {
-    return result.response.id;
+    return result.response.id || null;
   }
 
   getFormComponentType(): ComponentType<SshConnectionFormComponent> {
