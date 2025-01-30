@@ -91,7 +91,7 @@ describe('HardwareDiskEncryptionComponent', () => {
     });
 
     it('shows a link to manage SED password and opens dialog', () => {
-      const manageSedPassword = spectator.query(byText('Manage SED Password'));
+      const manageSedPassword = spectator.query(byText('Manage SED Password'))!;
       spectator.click(manageSedPassword);
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManageDiskSedDialogComponent, { data: 'sda' });
     });

@@ -87,7 +87,7 @@ export function processNetworkInterfaces(interfaces: NetworkInterface[]): Dashbo
     } else {
       dashboardNetworkInterfaces[i].state.aliases = dashboardNetworkInterfaces[i].state.aliases.filter(
         (address) => {
-          return [
+          return address.type && [
             NetworkInterfaceAliasType.Inet,
             NetworkInterfaceAliasType.Inet6,
           ].includes(address.type);

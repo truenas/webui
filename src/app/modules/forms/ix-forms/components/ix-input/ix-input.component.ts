@@ -76,13 +76,13 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  readonly format = input<(value: string | number) => string>();
+  readonly format = input<(value: InputValue) => string>();
   readonly parse = input<(value: string | number) => InputValue>();
 
   readonly inputElementRef: Signal<ElementRef<HTMLInputElement>> = viewChild.required('ixInput', { read: ElementRef });
 
   private _value: InputValue = this.controlDirective.value as string;
-  formatted: string | number = '';
+  formatted: string | number | null = '';
 
   isDisabled = false;
   showPassword = false;
@@ -261,7 +261,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   private handleAutocompleteOptionsOnInit(): void {
     // handle input value changes for this.autocomplete options
-    this.controlDirective.control.valueChanges.pipe(
+    this.controlDirective.control?.valueChanges?.pipe(
       debounceTime(100),
       distinctUntilChanged(),
       untilDestroyed(this),

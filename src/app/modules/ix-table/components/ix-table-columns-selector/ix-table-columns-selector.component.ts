@@ -105,10 +105,16 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((values) => {
         if (values.removed.length) {
-          this.columns().find((column) => column.title === values.removed[0].title).hidden = false;
+          const columnToShow = this.columns().find((column) => column.title === values.removed[0].title);
+          if (columnToShow) {
+            columnToShow.hidden = false;
+          }
         }
         if (values.added.length) {
-          this.columns().find((column) => column.title === values.added[0].title).hidden = true;
+          const columnToHide = this.columns().find((column) => column.title === values.added[0].title);
+          if (columnToHide) {
+            columnToHide.hidden = true;
+          }
         }
         this.emitColumnsChange();
         this.cdr.markForCheck();

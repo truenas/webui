@@ -72,9 +72,9 @@ describe('AutomatedDiskSelection', () => {
     expect(normalSelection.inventory).toBe(inventory);
     expect(normalSelection.isStepActive).toBe(false);
 
-    await layoutSelect.setValue('Mirror');
+    await layoutSelect!.setValue('Mirror');
 
-    normalSelection = spectator.query(NormalSelectionComponent);
+    normalSelection = spectator.query(NormalSelectionComponent)!;
     expect(normalSelection).not.toBeNull();
     expect(normalSelection.layout).toBe(CreateVdevLayout.Mirror);
 
@@ -82,7 +82,7 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('shows DraidSelectionComponent for dRAID layouts', async () => {
-    await layoutSelect.setValue('dRAID2');
+    await layoutSelect!.setValue('dRAID2');
 
     const draidSelection = spectator.query(DraidSelectionComponent)!;
     expect(draidSelection).not.toBeNull();
