@@ -24,7 +24,7 @@ describe('WidgetHelpComponent', () => {
       provideMockStore({
         selectors: [{
           selector: selectProductType,
-          value: ProductType.Scale,
+          value: ProductType.CommunityEdition,
         }],
       }),
     ],

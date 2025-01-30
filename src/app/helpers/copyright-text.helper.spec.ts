@@ -10,10 +10,10 @@ describe('getCopyrightText', () => {
   });
 
   it('community edition: copyright text', () => {
-    expect(getCopyrightText(ProductType.Scale)).toBe(`TrueNAS Community Edition ® © ${buildYear}`);
+    expect(getCopyrightText(ProductType.CommunityEdition)).toBe(`TrueNAS Community Edition ® © ${buildYear}`);
   });
 
   it('enterprise: copyright text', () => {
-    expect(getCopyrightText(ProductType.ScaleEnterprise)).toBe(`TrueNAS Enterprise ® © ${buildYear}`);
+    expect(getCopyrightText(ProductType.Enterprise)).toBe(`TrueNAS Enterprise ® © ${buildYear}`);
   });
 });

@@ -33,7 +33,7 @@ describe('TruenasLogoComponent', () => {
         selectors: [{
           selector: selectSystemInfoState,
           value: {
-            productType: ProductType.Scale,
+            productType: ProductType.CommunityEdition,
           } as SystemInfoState,
         }],
       }),
@@ -69,7 +69,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows a logotype', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.ScaleEnterprise,
+      productType: ProductType.Enterprise,
     });
     store$.refreshState();
 
@@ -82,7 +82,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows full logo in color', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.ScaleEnterprise,
+      productType: ProductType.Enterprise,
     });
     store$.refreshState();
     spectator.setInput('fullSize', true);
@@ -94,7 +94,7 @@ describe('TruenasLogoComponent', () => {
   it('enterprise: shows full logo in white', async () => {
     const store$ = spectator.inject(MockStore);
     store$.overrideSelector(selectSystemInfoState, {
-      productType: ProductType.ScaleEnterprise,
+      productType: ProductType.Enterprise,
     });
     store$.refreshState();
     spectator.setInput('fullSize', true);
