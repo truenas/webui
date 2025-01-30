@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.harness';
@@ -27,6 +28,7 @@ describe('UploadIsoButtonComponent', () => {
         })),
       }),
       mockProvider(SnackbarService),
+      mockAuth(),
     ],
   });
 
