@@ -1178,7 +1178,6 @@
   "Custom Value": "사용자 정의 값",
   "Custom app config in YAML format.": "YAML 형식의 사용자 정의 앱 구성입니다.",
   "Custom schedule": "사용자 정의 일정",
-  "Customer Name": "고객 이름",
   "Customizes the importance of the alert. Each level of  importance has a different icon and color to express the level of importance.": "경고의 중요도를 사용자화 합니다. 각 단계는 서로 다른 아이콘과 색상으로 중요도를 나타냅니다.",
   "DEBUG": "디버그",
   "DEFAULT": "기본",

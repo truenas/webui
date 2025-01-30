@@ -1,7 +1,7 @@
 {
   "": "",
-  "Archs": "",
   "API Key copied to clipboard": "",
+  "Archs": "",
   "Are you sure you want to generate a one-time password for \"{username}\" user?": "",
   "Close Change Password Dialog": "",
   "Complete to proceed:": "",
@@ -1255,7 +1255,6 @@
   "Custom Value": "Valor personalizado",
   "Custom app config in YAML format.": "Configuración de app personalizada en formato YAML.",
   "Custom schedule": "Horario personalizado",
-  "Customer Name": "Nombre del cliente",
   "Customizes the importance of the alert. Each level of  importance has a different icon and color to express the level of importance.": "Personaliza la importancia de la alerta. Cada nivel de importancia tiene un ícono y color diferentes para expresar el nivel de importancia.",
   "DEBUG": "DEPURAR",
   "DEFAULT": "PREDETERMINADO",
