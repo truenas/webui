@@ -1,3 +1,7 @@
+<ix-fake-progress-bar
+  [loading]="dataProvider.isLoading$ | async"
+></ix-fake-progress-bar>
+
 <div class="header">
   <h1 mat-dialog-title>{{ 'Volumes' | translate }}</h1>
   <button

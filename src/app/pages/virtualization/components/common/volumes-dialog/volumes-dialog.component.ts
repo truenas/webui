@@ -32,6 +32,7 @@ import { IxTableHeadComponent } from 'app/modules/ix-table/components/ix-table-h
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -64,6 +65,7 @@ export interface VolumesDialogOptions {
     IxTableHeadComponent,
     IxTableEmptyDirective,
     UploadIsoButtonComponent,
+    FakeProgressBarComponent,
   ],
 })
 export class VolumesDialogComponent implements OnInit {
