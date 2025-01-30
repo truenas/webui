@@ -63,12 +63,12 @@ const existingTask: ReplicationTask = {
 describe('ReplicationWizardComponent', () => {
   let spectator: Spectator<ReplicationWizardComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
-  let nextButton: MatStepperNextHarness;
+  let form: IxFormHarness | null;
+  let nextButton: MatStepperNextHarness | null;
   const slideInRef: SlideInRef<ReplicationTask, unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
-    getData: jest.fn(() => undefined),
+    getData: jest.fn(() => ({} as ReplicationTask)),
     requireConfirmationWhen: jest.fn(),
   };
 
@@ -115,12 +115,12 @@ describe('ReplicationWizardComponent', () => {
   }
 
   async function goToNextStep(): Promise<void> {
-    await nextButton.click();
+    await nextButton!.click();
     await updateStepHarnesses();
   }
 
   it('creates objects when wizard is submitted', async () => {
-    await form.fillForm(
+    await form!.fillForm(
       {
         'Source Location': 'On this System',
         'Destination Location': 'On this System',
@@ -133,7 +133,7 @@ describe('ReplicationWizardComponent', () => {
 
     await goToNextStep();
 
-    await form.fillForm({
+    await form!.fillForm({
       'Destination Snapshot Lifetime': 'Custom',
     });
 

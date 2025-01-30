@@ -22,6 +22,47 @@ export function buildNormalizedFileSize(
   return `${formatted} ${unit}`;
 }
 
+export function convertStringDiskSizeToBytes(input: string): number | null {
+  const sizeRegex = /^(\d+(\.\d+)?)([KMGTP](?:i)?(?:B)?)?$/i;
+  const match = input.replace(/\s+/g, '').match(sizeRegex);
+
+  if (!match) {
+    return null;
+  }
+
+  const value = parseFloat(match[1]);
+  let unit = match[3]?.toUpperCase() || '';
+
+  const units = [
+    'B', 'Gb', 'kb', 'Mb', 'Tb', 'Pb', 'Eb', 'Zb', 'Yb',
+    'GiB', 'KiB', 'MiB', 'PiB', 'TiB', 'EiB', 'ZiB', 'YiB',
+  ];
+
+  unit = units.find((item) => item.toUpperCase().includes(unit.toUpperCase())) || 'B';
+
+  const unitMultipliers: Record<string, number> = {
+    B: 1,
+    KIB: KiB,
+    MIB: MiB,
+    GIB: GiB,
+    TIB: TiB,
+    PIB: PiB,
+    EIB: EiB,
+    ZIB: ZiB,
+    YIB: YiB,
+    KB: KiB,
+    MB: MiB,
+    GB: GiB,
+    TB: TiB,
+    PB: PiB,
+    EB: EiB,
+    ZB: ZiB,
+    YB: YiB,
+  };
+
+  return value * (unitMultipliers[unit.toUpperCase()] || 1);
+}
+
 function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;

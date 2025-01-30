@@ -1,8 +1,9 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
@@ -11,6 +12,7 @@ import {
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -18,6 +20,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 import { KmipComponent } from './kmip.component';
 
 describe('KmipComponent', () => {
@@ -45,6 +48,7 @@ describe('KmipComponent', () => {
         mockCall('kmip.kmip_sync_pending', false),
         mockCall('kmip.clear_sync_pending_keys'),
         mockCall('kmip.sync_keys'),
+        mockCall('system.advanced.sed_global_password_is_set', false),
         mockJob('kmip.update'),
       ]),
       mockProvider(DialogService, {
@@ -64,6 +68,12 @@ describe('KmipComponent', () => {
         ]),
       }),
       mockAuth(),
+      provideMockStore({
+        selectors: [{
+          selector: selectIsEnterprise,
+          value: true,
+        }],
+      }),
     ],
   });
 
@@ -169,5 +179,16 @@ describe('KmipComponent', () => {
         helptextSystemKmip.clearSyncKeyInfoDialog.info,
       );
     });
+  });
+
+  it('checks no "Manage SED Passwords" checkbox are present when community edition', async () => {
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectIsEnterprise, false);
+    store$.refreshState();
+
+    const checkboxes = await loader.getAllHarnesses(IxCheckboxHarness);
+    const checkLabels = await parallel(() => checkboxes.map((control) => control.getLabelText()));
+
+    expect(checkLabels.find((label) => label === 'Manage SED Passwords')).not.toExist();
   });
 });

@@ -27,7 +27,7 @@ export class SystemGeneralService {
    * Use selectIsEnterprise selector instead
    */
   get isEnterprise(): boolean {
-    return this.getProductType() === ProductType.ScaleEnterprise;
+    return this.getProductType() === ProductType.Enterprise;
   }
 
   /**
@@ -58,7 +58,7 @@ export class SystemGeneralService {
    * Use selectIsEnterprise selector instead
    */
   readonly isEnterprise$ = this.getProductType$.pipe(
-    map((productType) => productType === ProductType.ScaleEnterprise),
+    map((productType) => productType === ProductType.Enterprise),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 

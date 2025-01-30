@@ -31,7 +31,6 @@ describe('DiskInfoCardComponent', () => {
     hddstandby: DiskStandby.AlwaysOn,
     model: 'VMware_Virtual_S',
     name: 'sda',
-    rotationrate: null,
     serial: 'ABCD1',
     size: 10737418240,
     transfermode: 'Auto',
@@ -78,28 +77,28 @@ describe('DiskInfoCardComponent', () => {
   });
 
   it('shows info of the current disk', () => {
-    const sizeItem = spectator.query(byText('Disk Size:', { exact: true }));
+    const sizeItem = spectator.query(byText('Disk Size:', { exact: true }))!;
     expect(sizeItem.nextElementSibling).toHaveText('10 GiB');
 
-    const transfermodeItem = spectator.query(byText('Transfer Mode:', { exact: true }));
+    const transfermodeItem = spectator.query(byText('Transfer Mode:', { exact: true }))!;
     expect(transfermodeItem.nextElementSibling).toHaveText('Auto');
 
-    const serialItem = spectator.query(byText('Serial:', { exact: true }));
+    const serialItem = spectator.query(byText('Serial:', { exact: true }))!;
     expect(serialItem.nextElementSibling).toHaveText('ABCD1');
 
-    const modelItem = spectator.query(byText('Model:', { exact: true }));
+    const modelItem = spectator.query(byText('Model:', { exact: true }))!;
     expect(modelItem.nextElementSibling).toHaveText('VMware_Virtual_S');
 
-    const rotationrateItem = spectator.query(byText('Rotation Rate:', { exact: true }));
+    const rotationrateItem = spectator.query(byText('Rotation Rate:', { exact: true }))!;
     expect(rotationrateItem.nextElementSibling).toHaveText('N/A');
 
-    const typeItem = spectator.query(byText('Type:', { exact: true }));
+    const typeItem = spectator.query(byText('Type:', { exact: true }))!;
     expect(typeItem.nextElementSibling).toHaveText('HDD');
 
-    const hddstandbyItem = spectator.query(byText('HDD Standby:', { exact: true }));
+    const hddstandbyItem = spectator.query(byText('HDD Standby:', { exact: true }))!;
     expect(hddstandbyItem.nextElementSibling).toHaveText('ALWAYS ON');
 
-    const descriptionItem = spectator.query(byText('Description:', { exact: true }));
+    const descriptionItem = spectator.query(byText('Description:', { exact: true }))!;
     expect(descriptionItem.nextElementSibling).toHaveText('N/A');
   });
 

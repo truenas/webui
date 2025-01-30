@@ -5,7 +5,7 @@ import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -80,7 +80,7 @@ export class IpmiFormComponent implements OnInit {
   readonly helptext = helptextIpmi;
 
   form = this.fb.group({
-    apply_remote: [null as boolean | null],
+    apply_remote: new FormControl(null as boolean | null),
     dhcp: [false],
     ipaddress: ['', [
       this.validatorsService.withMessage(
@@ -100,7 +100,7 @@ export class IpmiFormComponent implements OnInit {
         this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
-    vlan: [null as number | null],
+    vlan: new FormControl(null as number | null),
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
@@ -308,7 +308,7 @@ export class IpmiFormComponent implements OnInit {
   }
 
   private loadFailoverData(): Observable<unknown> {
-    if (this.systemGeneralService.getProductType() !== ProductType.ScaleEnterprise) {
+    if (this.systemGeneralService.getProductType() !== ProductType.Enterprise) {
       return of(null);
     }
 

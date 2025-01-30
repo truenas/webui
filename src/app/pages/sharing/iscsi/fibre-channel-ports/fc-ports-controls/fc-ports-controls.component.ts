@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { map, Observable, of } from 'rxjs';
-import { Option, nullOption, skipOption } from 'app/interfaces/option.interface';
+import { Option, skipOption } from 'app/interfaces/option.interface';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -29,9 +29,10 @@ export class FcPortsControlsComponent implements OnInit {
   form = input.required<TargetFormComponent['fcForm']>();
   isEdit = input(false);
 
-  isNewControl = this.fb.control(false);
+  optionsControl = this.fb.control(null);
 
-  readonly isNewOptions$: Observable<Option<boolean>[]> = of([
+  readonly isNewOptions$: Observable<Option<boolean | null>[]> = of([
+    { label: this.translate.instant('Do not connect to a fibre channel port'), value: null },
     { label: this.translate.instant('Use an existing port'), value: false },
     { label: this.translate.instant('Create new virtual port'), value: true },
   ]);
@@ -44,18 +45,7 @@ export class FcPortsControlsComponent implements OnInit {
   }));
 
   readonly existingPortOptions$ = this.api.call('fcport.port_choices', [false]).pipe(map((ports) => {
-    const option = [{
-      label: this.translate.instant('Do not connect to a fibre channel port'),
-      value: nullOption,
-    }];
-
-    if (this.isEdit()) {
-      option.push({
-        label: this.translate.instant('Use current port'),
-        value: skipOption,
-      });
-    }
-    return option.concat(Object.entries(ports).map(([value]) => ({ label: value, value })));
+    return Object.entries(ports).map(([value]) => ({ label: value, value }));
   }));
 
   constructor(
@@ -66,8 +56,18 @@ export class FcPortsControlsComponent implements OnInit {
 
   ngOnInit(): void {
     this.form().controls.host_id.disable();
-    this.isNewControl.valueChanges.pipe(untilDestroyed(this)).subscribe((isNew) => {
-      if (isNew) {
+    this.form().controls.port.setValue(skipOption);
+
+    this.listenToOptionControlChanges();
+  }
+
+  private listenToOptionControlChanges(): void {
+    this.optionsControl.valueChanges.pipe(untilDestroyed(this)).subscribe((isNew) => {
+      if (isNew === null) {
+        this.form().controls.port.setValue(skipOption);
+        this.form().controls.host_id.setValue(null);
+        this.form().controls.host_id.disable();
+      } else if (isNew) {
         this.form().controls.port.disable();
         this.form().controls.host_id.enable();
         this.form().controls.port.setValue(null);

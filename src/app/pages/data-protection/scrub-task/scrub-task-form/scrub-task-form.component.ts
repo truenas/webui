@@ -107,21 +107,21 @@ export class ScrubTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.editingTask) {
-      this.setTaskForEdit();
+      this.setTaskForEdit(this.editingTask);
     }
   }
 
-  setTaskForEdit(): void {
+  setTaskForEdit(editingTask: PoolScrubTask): void {
     this.form.patchValue({
       ...this.editingTask,
-      schedule: scheduleToCrontab(this.editingTask.schedule),
+      schedule: scheduleToCrontab(editingTask.schedule),
     });
   }
 
   onSubmit(): void {
     const values = {
       ...this.form.value,
-      schedule: crontabToSchedule(this.form.value.schedule),
+      schedule: crontabToSchedule(this.form.getRawValue().schedule),
     };
 
     this.isLoading = true;

@@ -88,7 +88,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.conf().preInit) {
-      this.conf().preInit().pipe(untilDestroyed(this)).subscribe(() => {
+      this.conf().preInit?.().pipe(untilDestroyed(this)).subscribe(() => {
         this.initShell();
       });
     } else {
@@ -188,7 +188,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.xterm.options.fontSize = this.fontSize;
     this.fitAddon.fit();
     const size = this.fitAddon.proposeDimensions();
-    if (size) {
+    if (size && this.connectionId) {
       this.api.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).pipe(untilDestroyed(this)).subscribe(() => {
         this.xterm.focus();
       });
@@ -200,12 +200,14 @@ export class TerminalComponent implements OnInit, OnDestroy {
   initializeWebShell(): void {
     this.shellService.connect(this.token, this.conf().connectionData);
 
-    this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
-      this.shellConnected = event.connected;
-      this.connectionId = event.id;
-      this.updateTerminal();
-      this.resizeTerm();
-    });
+    this.shellService.shellConnected$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((event: ShellConnectedEvent) => {
+        this.shellConnected = event.connected;
+        this.connectionId = event.id;
+        this.updateTerminal();
+        this.resizeTerm();
+      });
   }
 
   resetDefault(): void {

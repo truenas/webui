@@ -32,7 +32,7 @@ export function isIocageMounted(dataset: Pick<Dataset, 'mountpoint'>): boolean {
   return dataset.mountpoint?.split('/')?.[1] === 'iocage';
 }
 
-export function isPropertyInherited(property: ZfsProperty<unknown>): boolean {
+export function isPropertyInherited(property?: ZfsProperty<unknown>): boolean {
   return !property?.source
     || property.source === ZfsPropertySource.Inherited
     || property.source === ZfsPropertySource.Default;
@@ -42,7 +42,7 @@ export function doesDatasetOrChildrenHaveShares(dataset: DatasetDetails): boolea
   if (dataset.nfs_shares?.length || dataset.smb_shares?.length || dataset.iscsi_shares?.length) {
     return true;
   }
-  for (const child of dataset.children) {
+  for (const child of (dataset.children || [])) {
     if (doesDatasetOrChildrenHaveShares(child)) {
       return true;
     }

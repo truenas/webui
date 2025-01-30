@@ -6,7 +6,7 @@ export const helptextApiKeys = {
   },
 
   expires: {
-    tooltip: T('Set an expiration date-time for the API key.'),
+    tooltip: T('Set an expiration date for the API key.'),
   },
 
   username: {

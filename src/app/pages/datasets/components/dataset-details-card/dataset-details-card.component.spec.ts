@@ -32,7 +32,6 @@ const dataset = {
   deduplication: { value: 'OFF' },
   casesensitive: false,
   comments: { value: 'Test comment', source: ZfsPropertySource.Local },
-  origin: null,
 } as DatasetDetails;
 
 const zvol = {

@@ -5,8 +5,16 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <p>{{ 'Name' | translate }}: {{ port().id }}</p>
-    <p>{{ 'Controller A WWPN' | translate }}: {{ port().wwpn }}</p>
-    <p>{{ 'Controller B WWPN' | translate }}: {{ port().wwpn_b }}</p>
+    @if (isLoading()) {
+      <ngx-skeleton-loader></ngx-skeleton-loader>
+    } @else {
+      @if (port(); as port) {
+        <p>{{ 'Port' | translate }}: {{ port.port }}</p>
+        <p>{{ 'Controller A WWPN' | translate }}: {{ port.wwpn }}</p>
+        <p>{{ 'Controller B WWPN' | translate }}: {{ port.wwpn_b }}</p>
+      } @else {
+        <p>{{ 'No associated Fibre Channel port' | translate }}</p>
+      }
+    }
   </mat-card-content>
 </mat-card>

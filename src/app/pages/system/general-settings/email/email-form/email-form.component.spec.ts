@@ -77,7 +77,7 @@ describe('EmailFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.Scale,
+        getProductType: () => ProductType.CommunityEdition,
       }),
       mockWindow({
         open: jest.fn(),
@@ -201,7 +201,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -239,6 +239,16 @@ describe('EmailFormComponent', () => {
         expect.any(Function),
         false,
       );
+    });
+
+    it('disables Save button when no From Email is provided for Outlook OAuth', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'Outlook OAuth',
+        'From Email': '',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
     });
 
     it('calls removeEventListener when outlook oAuth callback is called', async () => {
@@ -300,7 +310,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',
@@ -383,7 +393,7 @@ describe('EmailFormComponent', () => {
         [
           {
             subject: 'Test Message',
-            text: 'This is a test message from TrueNAS SCALE.',
+            text: 'This is a test message from TrueNAS COMMUNITY EDITION.',
           },
           {
             fromemail: 'from@ixsystems.com',

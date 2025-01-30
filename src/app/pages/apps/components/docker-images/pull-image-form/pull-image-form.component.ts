@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -65,7 +65,7 @@ export class PullImageFormComponent {
     public slideInRef: SlideInRef<undefined, boolean>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private fb: FormBuilder,
+    private fb: NonNullableFormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
   ) {
@@ -75,7 +75,7 @@ export class PullImageFormComponent {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
     const params: PullContainerImageParams = {
       image: values.image,

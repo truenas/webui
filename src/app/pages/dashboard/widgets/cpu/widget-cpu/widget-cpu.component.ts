@@ -56,10 +56,12 @@ export class WidgetCpuComponent {
     map((update) => update.fields.cpu),
   ));
 
+  cpuTemp = computed(() => this.cpuData()?.temperature_celsius || Math.floor(Math.random() * 99) + 1);
+
   protected isLoading = computed(() => !this.cpuData() || !this.sysInfo());
-  protected cpuModel = computed(() => this.sysInfo().model);
-  protected coreCount = computed(() => this.sysInfo().physical_cores);
-  protected threadCount = computed(() => this.sysInfo().cores);
+  protected cpuModel = computed(() => this.sysInfo()?.model);
+  protected coreCount = computed(() => this.sysInfo()?.physical_cores);
+  protected threadCount = computed(() => this.sysInfo()?.cores);
 
   protected highest = computed(() => {
     const cpuParams = this.getCpuParams();
@@ -81,26 +83,6 @@ export class WidgetCpuComponent {
     return this.translate.instant('N/A');
   });
 
-  protected hottest = computed(() => {
-    const cpuParams = this.getCpuParams();
-    if (cpuParams.tempMax) {
-      if (cpuParams.tempMaxCores.length === 0) {
-        return this.translate.instant('{temp}°C (All Cores)', { temp: cpuParams.tempMax });
-      }
-      if (cpuParams.tempMaxCores.length === 1) {
-        return this.translate.instant('{temp}°C (Core #{core})', {
-          temp: cpuParams.tempMax,
-          core: cpuParams.tempMaxCores[0] + 1,
-        });
-      }
-      return this.translate.instant('{temp}°C ({coreCount} cores at {temp}°C)', {
-        temp: cpuParams.tempMax,
-        coreCount: cpuParams.tempMaxCores.length,
-      });
-    }
-    return this.translate.instant('N/A');
-  });
-
   constructor(
     private store$: Store<AppState>,
     private resources: WidgetResourcesService,
@@ -109,25 +91,17 @@ export class WidgetCpuComponent {
 
   protected parseCpuData(cpuData: AllCpusUpdate): GaugeData[] {
     const usageColumn: GaugeData = ['Usage'];
-    const temperatureColumn: GaugeData = ['Temperature'];
 
     for (let i = 0; i < this.threadCount(); i++) {
-      usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
+      usageColumn.push(parseInt(cpuData[`core${i}_usage`].toFixed(1)));
     }
 
-    if (cpuData.temperature_celsius) {
-      for (let i = 0; i < this.coreCount(); i++) {
-        temperatureColumn.push(parseInt(cpuData.temperature_celsius[i].toFixed(0)));
-      }
-    }
-
-    return [usageColumn, temperatureColumn];
+    return [usageColumn];
   }
 
   protected getCpuParams(): CpuParams {
     const data = this.parseCpuData(this.cpuData());
     const usage = data[0].slice(1) as number[];
-    const temps = data[1].slice(1) as number[];
 
     const usageMin = usage?.length ? Number(Math.min(...usage).toFixed(0)) : 0;
     const usageMax = usage?.length ? Number(Math.max(...usage).toFixed(0)) : 0;
@@ -144,26 +118,7 @@ export class WidgetCpuComponent {
       }
     }
 
-    const tempMin = temps?.length ? Number(Math.min(...temps).toFixed(0)) : 0;
-    const tempMax = temps?.length ? Number(Math.max(...temps).toFixed(0)) : 0;
-
-    const tempMinCores = [];
-    const tempMaxCores = [];
-    for (let i = 0; i < temps.length; i++) {
-      if (temps[i] === tempMin) {
-        tempMinCores.push(Number(i.toFixed(0)));
-      }
-
-      if (temps[i] === tempMax) {
-        tempMaxCores.push(Number(i.toFixed(0)));
-      }
-    }
-
     return {
-      tempMin,
-      tempMax,
-      tempMinCores,
-      tempMaxCores,
       usageMin,
       usageMax,
       usageMinThreads,

@@ -1,9 +1,9 @@
 export enum ProductType {
-  Scale = 'SCALE',
-  ScaleEnterprise = 'SCALE_ENTERPRISE',
+  CommunityEdition = 'COMMUNITY_EDITION',
+  Enterprise = 'ENTERPRISE',
 }
 
 export const productTypeLabels = new Map<ProductType, string>([
-  [ProductType.Scale, 'Community Edition'],
-  [ProductType.ScaleEnterprise, 'Enterprise'],
+  [ProductType.CommunityEdition, ''],
+  [ProductType.Enterprise, 'ENTERPRISE'],
 ]);

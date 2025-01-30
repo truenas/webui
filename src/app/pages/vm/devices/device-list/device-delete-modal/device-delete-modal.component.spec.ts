@@ -183,7 +183,7 @@ describe('DeviceDeleteModalComponent', () => {
       attributes: {
         dtype: undefined,
       },
-    } as VmRawFileDevice;
+    } as unknown as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
 

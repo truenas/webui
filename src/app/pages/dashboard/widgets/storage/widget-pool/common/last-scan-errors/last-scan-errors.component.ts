@@ -14,7 +14,7 @@ import { Pool } from 'app/interfaces/pool.interface';
   imports: [NgxSkeletonLoaderModule, TranslateModule],
 })
 export class LastScanErrorsComponent {
-  readonly pool = input.required<Pool>();
+  readonly pool = input<Pool>();
 
   protected isPoolLoading = computed(() => !this.pool());
 }

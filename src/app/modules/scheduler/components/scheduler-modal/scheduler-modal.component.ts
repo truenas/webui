@@ -14,7 +14,6 @@ import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { of } from 'rxjs';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { Option } from 'app/interfaces/option.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
@@ -73,7 +72,7 @@ export class SchedulerModalComponent implements OnInit {
   timezone: string;
 
   // TODO: This belongs elsewhere, for example in date-fns.
-  readonly months: Option[] = [
+  readonly months = [
     { label: this.translate.instant('Jan'), value: '1' },
     { label: this.translate.instant('Feb'), value: '2' },
     { label: this.translate.instant('Mar'), value: '3' },
@@ -92,7 +91,7 @@ export class SchedulerModalComponent implements OnInit {
   // TODO: Not every locale uses Sun as first day of the week.
   // TODO: Update in harness too.
   // TODO: Limit type.
-  readonly weekdays: Option[] = [
+  readonly weekdays = [
     { label: this.translate.instant('Sun'), value: 'sun' },
     { label: this.translate.instant('Mon'), value: 'mon' },
     { label: this.translate.instant('Tue'), value: 'tue' },

@@ -1,14 +1,17 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  computed,
   OnInit,
+  signal,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardActions } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -28,6 +31,8 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -72,17 +77,21 @@ export class DiskFormComponent implements OnInit {
   });
 
   readonly helptext = helptextDisks;
-  readonly title = helptextDisks.disk_form_title;
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
-  isLoading = false;
-  existingDisk: Disk;
+  readonly isLoading = signal<boolean>(false);
+  readonly existingDisk = signal<Disk>(null);
+
+  readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  readonly showSedSection = computed(() => {
+    return this.isEnterprise() || (this.existingDisk().passwd && this.existingDisk().passwd !== '');
+  });
 
   constructor(
+    private store$: Store<AppState>,
     private translate: TranslateService,
     private api: ApiService,
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
+    private fb: NonNullableFormBuilder,
     private errorHandler: FormErrorHandlerService,
     private snackbarService: SnackbarService,
     public slideInRef: SlideInRef<Disk, boolean>,
@@ -94,11 +103,13 @@ export class DiskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.clearPasswordField();
+    if (this.showSedSection()) {
+      this.clearPasswordField();
+    }
   }
 
   setFormDisk(disk: Disk): void {
-    this.existingDisk = disk;
+    this.existingDisk.set(disk);
     this.form.patchValue({ ...disk });
   }
 
@@ -143,19 +154,17 @@ export class DiskFormComponent implements OnInit {
   onSubmit(): void {
     const valuesDiskUpdate: DiskUpdate = this.prepareUpdate(this.form.value);
 
-    this.isLoading = true;
-    this.api.call('disk.update', [this.existingDisk.identifier, valuesDiskUpdate])
+    this.isLoading.set(true);
+    this.api.call('disk.update', [this.existingDisk().identifier, valuesDiskUpdate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.slideInRef.close({ response: true, error: null });
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
         error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading.set(false);
           this.errorHandler.handleValidationErrors(error, this.form);
         },
       });

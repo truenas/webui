@@ -210,6 +210,7 @@ export interface ApiJobDirectory {
     response: VirtualizationInstance;
   };
 
+  'virt.volume.import_iso': { params: [{ name: string }]; response: { name: string } };
   'virt.global.update': { params: [VirtualizationGlobalConfigUpdate]; response: VirtualizationGlobalConfig };
 
   // VM

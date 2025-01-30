@@ -7,6 +7,8 @@ import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { JobState } from 'app/enums/job-state.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-description/schedule-description.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,8 +29,12 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
+import {
+  SnapshotTaskFormComponent,
+} from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import {
+  SnapshotTaskListComponent,
+} from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { TaskService } from 'app/services/task.service';
 
 describe('SnapshotTaskListComponent', () => {
@@ -42,9 +48,8 @@ describe('SnapshotTaskListComponent', () => {
       dataset: 'm60pool/manual-2024-02-05_11-19-clone',
       recursive: false,
       lifetime_value: 155,
-      lifetime_unit: 'WEEK',
+      lifetime_unit: LifetimeUnit.Week,
       enabled: true,
-      exclude: [],
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       allow_empty: true,
       schedule: {
@@ -58,7 +63,7 @@ describe('SnapshotTaskListComponent', () => {
       },
       vmware_sync: false,
       state: {
-        state: 'PENDING',
+        state: JobState.Pending,
       },
     } as PeriodicSnapshotTaskUi,
   ];

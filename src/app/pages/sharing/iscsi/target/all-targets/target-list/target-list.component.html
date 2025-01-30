@@ -6,7 +6,14 @@
     <div class="actions action-icon">
       <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
 
-      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-target" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="primary"
+        ixTest="add-target"
+        [ixUiSearch]="searchableElements.elements.add"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
@@ -27,7 +34,15 @@
         [dataProvider]="dataProvider()"
         [isLoading]="!!(dataProvider().isLoading$ | async)"
         (expanded)="expanded($event)"
-      ></tbody>
+      >
+        <ng-template
+          ix-table-cell
+          [columnIndex]="3"
+          [dataProvider]="dataProvider()"
+        >
+          <ix-icon name="mdi-chevron-right"></ix-icon>
+        </ng-template>
+      </tbody>
     </ix-table>
     <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
   </mat-card-content>

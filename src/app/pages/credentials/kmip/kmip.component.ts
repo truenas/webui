@@ -1,11 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -27,6 +29,8 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { AppState } from 'app/store';
+import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -78,6 +82,10 @@ export class KmipComponent implements OnInit {
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
   readonly certificateAuthorities$ = this.systemGeneralService.getCertificateAuthorities().pipe(idNameArrayToOptions());
 
+  protected readonly hasGlobalEncryption = toSignal(this.api.call('system.advanced.sed_global_password_is_set'));
+  protected readonly isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
+  protected readonly allowSedManage = computed(() => this.isEnterprise() || this.hasGlobalEncryption());
+
   constructor(
     private api: ApiService,
     private formBuilder: FormBuilder,
@@ -87,6 +95,7 @@ export class KmipComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {

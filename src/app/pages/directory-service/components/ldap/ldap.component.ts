@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -76,13 +76,13 @@ export class LdapComponent implements OnInit {
     enable: [false],
     anonbind: [false],
     ssl: [''],
-    certificate: [null as number],
+    certificate: new FormControl(null as number | null),
     validate_certificates: [false],
     disable_freenas_cache: [false],
-    kerberos_realm: [null as number],
+    kerberos_realm: new FormControl(null as number | null),
     kerberos_principal: [''],
-    timeout: [null as number],
-    dns_timeout: [null as number],
+    timeout: new FormControl(null as number | null),
+    dns_timeout: new FormControl(null as number | null),
     auxiliary_parameters: [''],
     schema: [''],
   });

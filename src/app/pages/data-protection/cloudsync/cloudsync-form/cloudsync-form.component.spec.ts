@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
@@ -335,7 +336,29 @@ describe('CloudSyncFormComponent', () => {
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
+
+    it('checks payload when use invalid s3 credentials', async () => {
+      spectator.component.isCredentialInvalid$.next(true);
+      spectator.detectChanges();
+
+      const bucketInput = await loader.getHarness(IxInputHarness.with({ label: 'Bucket' }));
+      await bucketInput.setValue('selected');
+
+      expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
+        attributes: expect.objectContaining({
+          bucket: 'selected',
+        }),
+      }));
+
+      await bucketInput.setValue('test-bucket');
+      expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
+        attributes: expect.objectContaining({
+          bucket: 'test-bucket',
+        }),
+      }));
+    });
   });
+
   describe('doesnt load buckets when user doesnt has roles', () => {
     beforeEach(() => {
       spectator = createComponent({

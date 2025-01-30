@@ -1,6 +1,13 @@
 <ix-page-header [loading]="!!(dataProvider.isLoading$ | async)">
-  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
-  <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+  <ix-search-input1
+    [value]="filterString"
+    (search)="onListFiltered($event)"
+  ></ix-search-input1>
+
+  <ix-table-columns-selector
+    [columns]="columns"
+    (columnsChange)="columnsChange($event)"
+  ></ix-table-columns-selector>
 </ix-page-header>
 
 @if (selectedDisks.length) {

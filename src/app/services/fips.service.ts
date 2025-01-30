@@ -5,6 +5,7 @@ import { Observable, of, switchMap } from 'rxjs';
 import {
   filter, tap,
 } from 'rxjs/operators';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,6 +28,7 @@ export class FipsService {
     private snackbar: SnackbarService,
     private api: ApiService,
     private errorHandler: ErrorHandlerService,
+    private authService: AuthService,
   ) {}
 
   promptForRestart(): Observable<unknown> {
@@ -38,6 +40,7 @@ export class FipsService {
       .pipe(
         tap((approved) => {
           if (approved) {
+            this.authService.clearAuthToken();
             this.restart();
           }
         }),

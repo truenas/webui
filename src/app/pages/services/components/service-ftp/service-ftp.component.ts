@@ -5,7 +5,7 @@ import {
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -70,16 +70,16 @@ export class ServiceFtpComponent implements OnInit {
   isFormLoading = false;
   isAdvancedMode = false;
 
-  kibParser = (value: string): number => this.iecFormatter.memorySizeParsing(value, 'KiB');
+  kibParser = (value: string): number | null => this.iecFormatter.memorySizeParsing(value, 'KiB');
 
   form = this.formBuilder.group({
-    port: [null as number, [portRangeValidator(), Validators.required]],
-    clients: [null as number, [rangeValidator(1, 10000), Validators.required]],
-    ipconnections: [null as number, [rangeValidator(0, 1000), Validators.required]],
-    loginattempt: [null as number, [rangeValidator(0, 1000), Validators.required]],
-    timeout_notransfer: [null as number, [rangeValidator(0, 10000), Validators.required]],
-    timeout: [null as number, [rangeValidator(0, 10000), Validators.required]],
-    ssltls_certificate: [null as number],
+    port: new FormControl(null as number | null, [portRangeValidator(), Validators.required]),
+    clients: new FormControl(null as number | null, [rangeValidator(1, 10000), Validators.required]),
+    ipconnections: new FormControl(null as number | null, [rangeValidator(0, 1000), Validators.required]),
+    loginattempt: new FormControl(null as number | null, [rangeValidator(0, 1000), Validators.required]),
+    timeout_notransfer: new FormControl(null as number | null, [rangeValidator(0, 10000), Validators.required]),
+    timeout: new FormControl(null as number | null, [rangeValidator(0, 10000), Validators.required]),
+    ssltls_certificate: new FormControl(null as number | null),
     defaultroot: [false],
     onlyanonymous: [false],
     anonpath: [''],
@@ -100,12 +100,12 @@ export class ServiceFtpComponent implements OnInit {
     tls_opt_stdenvvars: [false],
     tls_opt_dns_name_required: [false],
     tls_opt_ip_address_required: [false],
-    localuserbw: [null as number, Validators.required],
-    localuserdlbw: [null as number, Validators.required],
-    anonuserbw: [null as number, Validators.required],
-    anonuserdlbw: [null as number, Validators.required],
-    passiveportsmin: [null as number, [rangeValidator(0, 65535), Validators.required]],
-    passiveportsmax: [null as number, [rangeValidator(0, 65535), Validators.required]],
+    localuserbw: new FormControl(null as number | null, Validators.required),
+    localuserdlbw: new FormControl(null as number | null, Validators.required),
+    anonuserbw: new FormControl(null as number | null, Validators.required),
+    anonuserdlbw: new FormControl(null as number | null, Validators.required),
+    passiveportsmin: new FormControl(null as number | null, [rangeValidator(0, 65535), Validators.required]),
+    passiveportsmax: new FormControl(null as number | null, [rangeValidator(0, 65535), Validators.required]),
     fxp: [false],
     resume: [false],
     reversedns: [false],
@@ -156,10 +156,10 @@ export class ServiceFtpComponent implements OnInit {
       ...this.form.value,
       filemask: invertUmask(this.form.value.filemask),
       dirmask: invertUmask(this.form.value.dirmask),
-      localuserbw: this.convertByteToKbyte(this.form.value.localuserbw),
-      localuserdlbw: this.convertByteToKbyte(this.form.value.localuserdlbw),
-      anonuserbw: this.convertByteToKbyte(this.form.value.anonuserbw),
-      anonuserdlbw: this.convertByteToKbyte(this.form.value.anonuserdlbw),
+      localuserbw: this.convertByteToKbyte(Number(this.form.value.localuserbw)),
+      localuserdlbw: this.convertByteToKbyte(Number(this.form.value.localuserdlbw)),
+      anonuserbw: this.convertByteToKbyte(Number(this.form.value.anonuserbw)),
+      anonuserdlbw: this.convertByteToKbyte(Number(this.form.value.anonuserdlbw)),
     };
 
     this.isFormLoading = true;

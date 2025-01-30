@@ -127,15 +127,15 @@ export class VmWizardComponent implements OnInit {
     public slideInRef: SlideInRef<undefined, boolean>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(
-        this.osStep().form.dirty
-        || this.cpuAndMemoryStep().form.dirty
-        || this.diskStep().form.dirty
-        || this.networkInterfaceStep().form.dirty
-        || this.installationMediaStep().form.dirty
-        || this.installationMediaStep().form.dirty
-        || this.gpuStep().form.dirty,
-      );
+      return of(Boolean(
+        this.osStep()?.form?.dirty
+        || this.cpuAndMemoryStep()?.form?.dirty
+        || this.diskStep()?.form?.dirty
+        || this.networkInterfaceStep()?.form?.dirty
+        || this.installationMediaStep()?.form?.dirty
+        || this.installationMediaStep()?.form?.dirty
+        || this.gpuStep()?.form?.dirty,
+      ));
     });
   }
 

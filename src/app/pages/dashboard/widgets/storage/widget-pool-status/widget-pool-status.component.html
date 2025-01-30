@@ -3,10 +3,11 @@
     <mat-card-content class="card-content">
       <div class="header">
         <h3>
-          @if (!pool()?.name) {
+          @let name = pool()?.name;
+          @if (!name) {
             <ngx-skeleton-loader></ngx-skeleton-loader>
           } @else {
-            {{ pool().name }}
+            {{ name }}
           }
         </h3>
       </div>

@@ -2,14 +2,15 @@ import {
   ChangeDetectionStrategy, Component, signal,
 } from '@angular/core';
 import {
-  FormArray,
-  FormBuilder, ReactiveFormsModule, Validators,
+  FormArray, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { VirtualizationStatus, VirtualizationType } from 'app/enums/virtualization.enum';
 import { containersHelptext } from 'app/helptext/virtualization/containers';
 import {
   InstanceEnvVariablesFormGroup,
@@ -30,6 +31,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 
 @UntilDestroy()
 @Component({
@@ -46,6 +48,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
     IxFieldsetComponent,
     IxListComponent,
     IxListItemComponent,
+    MatTooltip,
   ],
   templateUrl: './instance-edit-form.component.html',
   styleUrls: ['./instance-edit-form.component.scss'],
@@ -58,16 +61,30 @@ export class InstanceEditFormComponent {
   title: string;
   editingInstance: VirtualizationInstance;
 
-  protected readonly form = this.formBuilder.nonNullable.group({
+  protected readonly containersHelptext = containersHelptext;
+
+  get isVm(): boolean {
+    return this.editingInstance.type === VirtualizationType.Vm;
+  }
+
+  get isStopped(): boolean {
+    return this.editingInstance.status === VirtualizationStatus.Stopped;
+  }
+
+  protected readonly form = this.formBuilder.group({
     autostart: [false],
     cpu: ['', [cpuValidator()]],
     memory: [null as number | null],
+    enable_vnc: [false],
+    vnc_port: [defaultVncPort as number | null, [Validators.min(5900), Validators.max(65535)]],
+    vnc_password: [null as string | null],
+    secure_boot: [false],
     environmentVariables: new FormArray<InstanceEnvVariablesFormGroup>([]),
   });
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -80,12 +97,19 @@ export class InstanceEditFormComponent {
     });
 
     this.editingInstance = this.slideInRef.getData();
+
     this.title = this.translate.instant('Edit Instance: {name}', { name: this.editingInstance.name });
     this.form.patchValue({
       cpu: this.editingInstance.cpu,
       autostart: this.editingInstance.autostart,
       memory: this.editingInstance.memory,
+      enable_vnc: this.editingInstance.vnc_enabled,
+      vnc_port: this.editingInstance.vnc_port,
+      vnc_password: this.editingInstance.vnc_password,
+      secure_boot: this.editingInstance.secure_boot,
     });
+
+    this.setVncControls();
 
     Object.keys(this.editingInstance.environment || {}).forEach((key) => {
       this.addEnvironmentVariable(key, this.editingInstance.environment[key]);
@@ -113,7 +137,7 @@ export class InstanceEditFormComponent {
   }
 
   addEnvironmentVariable(name = '', value = ''): void {
-    const control = this.formBuilder.nonNullable.group({
+    const control = this.formBuilder.group({
       name: [name, Validators.required],
       value: [value, Validators.required],
     });
@@ -126,14 +150,31 @@ export class InstanceEditFormComponent {
   }
 
   private getSubmissionPayload(): UpdateVirtualizationInstance {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
 
-    return {
+    let payload = {
       environment: this.environmentVariablesPayload,
       autostart: values.autostart,
       cpu: values.cpu,
       memory: values.memory,
+      enable_vnc: values.enable_vnc,
+      vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+      vnc_password: values.enable_vnc ? values.vnc_password : null,
     } as UpdateVirtualizationInstance;
+
+    if (payload.enable_vnc) {
+      payload = {
+        ...payload,
+        vnc_port: values.enable_vnc ? values.vnc_port || defaultVncPort : null,
+        vnc_password: values.enable_vnc ? values.vnc_password : null,
+      };
+    }
+
+    if (this.isVm) {
+      payload.secure_boot = values.secure_boot;
+    }
+
+    return payload;
   }
 
   private get environmentVariablesPayload(): Record<string, string> {
@@ -148,5 +189,19 @@ export class InstanceEditFormComponent {
     }, {});
   }
 
-  protected readonly containersHelptext = containersHelptext;
+  private setVncControls(): void {
+    this.form.controls.enable_vnc.valueChanges.pipe(untilDestroyed(this)).subscribe((vncEnabled) => {
+      if (vncEnabled) {
+        this.form.controls.vnc_port.enable();
+      } else {
+        this.form.controls.vnc_port.disable();
+      }
+    });
+
+    if (!this.isStopped) {
+      this.form.controls.enable_vnc.disable();
+      this.form.controls.vnc_password.disable();
+      this.form.controls.vnc_port.disable();
+    }
+  }
 }

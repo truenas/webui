@@ -57,7 +57,6 @@ describe('SmartTaskCardComponent', () => {
       subsystem: 'nd',
       number: 66309,
       serial: '6585AC6A1EE9525D',
-      lunid: null,
       size: 17179865088,
       description: '',
       transfermode: 'Auto',
@@ -68,8 +67,6 @@ describe('SmartTaskCardComponent', () => {
       zfs_guid: '6853459480607509721',
       bus: DiskBus.Spi,
       devname: 'pmem0',
-      supports_smart: null,
-      pool: null,
     } as Disk,
   ];
 

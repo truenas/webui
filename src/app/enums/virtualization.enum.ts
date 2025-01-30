@@ -55,9 +55,9 @@ export const virtualizationDeviceTypeLabels = new Map<VirtualizationDeviceType, 
   [VirtualizationDeviceType.Usb, 'USB'],
   [VirtualizationDeviceType.Tpm, 'TPM'],
   [VirtualizationDeviceType.Disk, T('Disk')],
-  [VirtualizationDeviceType.Disk, T('GPU')],
-  [VirtualizationDeviceType.Disk, T('NIC')],
-  [VirtualizationDeviceType.Disk, T('Proxy')],
+  [VirtualizationDeviceType.Gpu, T('GPU')],
+  [VirtualizationDeviceType.Nic, T('NIC')],
+  [VirtualizationDeviceType.Proxy, T('Proxy')],
 ]);
 
 export enum VirtualizationGpuType {
@@ -101,4 +101,6 @@ export const virtualizationNicTypeLabels = new Map<VirtualizationNicType, string
 
 export enum VirtualizationSource {
   Image = 'IMAGE',
+  Zvol = 'ZVOL',
+  Iso = 'ISO',
 }

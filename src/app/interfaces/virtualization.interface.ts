@@ -37,6 +37,10 @@ export interface VirtualizationInstance {
   aliases: VirtualizationAlias;
   raw: unknown;
   image: VirtualizationImage;
+  vnc_enabled: boolean;
+  vnc_port: number | null;
+  vnc_password: string | null;
+  secure_boot: boolean;
 }
 
 export interface VirtualizationAlias {
@@ -50,9 +54,15 @@ export interface CreateVirtualizationInstance {
   image: string;
   remote: VirtualizationRemote;
   instance_type: VirtualizationType;
+
+  /**
+   * Value in GBs.
+   */
+  root_disk_size?: number;
   source_type?: VirtualizationSource;
   environment?: Record<string, string>;
   autostart?: boolean;
+  secure_boot?: boolean;
   cpu: string;
   /**
    * Value must be greater or equal to 33554432
@@ -64,6 +74,9 @@ export interface CreateVirtualizationInstance {
    * Value must be greater or equal to 5900 and lesser or equal to 65535
    */
   vnc_port?: number | null;
+  vnc_password?: string | null;
+
+  zvol_path?: string | null;
 }
 
 export interface UpdateVirtualizationInstance {
@@ -71,6 +84,10 @@ export interface UpdateVirtualizationInstance {
   autostart?: boolean;
   cpu?: string;
   memory?: number;
+  enable_vnc?: boolean;
+  vnc_port?: number | null;
+  secure_boot?: boolean;
+  vnc_password?: string | null;
 }
 
 export type VirtualizationDevice =
@@ -89,6 +106,7 @@ export interface VirtualizationDisk {
   source: string | null;
   destination: string | null;
   product_id: string;
+  boot_priority?: number;
 }
 
 export interface VirtualizationGpu {

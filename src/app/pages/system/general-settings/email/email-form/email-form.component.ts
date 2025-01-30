@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import {
-  FormBuilder, FormControl, Validators, ReactiveFormsModule,
+  FormControl, Validators, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -141,7 +141,7 @@ export class EmailFormComponent implements OnInit {
     private api: ApiService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
@@ -164,19 +164,21 @@ export class EmailFormComponent implements OnInit {
     return this.sendMethodControl.value === MailSendMethod.Smtp;
   }
 
+  get isFromEmailRequired(): boolean {
+    return this.isSmtp || this.sendMethodControl.value === MailSendMethod.Outlook;
+  }
+
   get hasOauthAuthorization(): boolean {
     return !!this.oauthCredentials?.client_id && this.sendMethodControl.value === this.oauthCredentials.provider;
   }
 
   get isValid(): boolean {
-    return this.isSmtp
-      ? this.form.valid
-      : this.hasOauthAuthorization;
+    return !this.isSmtp ? this.hasOauthAuthorization && this.form.valid : this.form.valid;
   }
 
   ngOnInit(): void {
     if (this.emailConfig) {
-      this.initEmailForm();
+      this.initEmailForm(this.emailConfig);
     }
   }
 
@@ -225,12 +227,12 @@ export class EmailFormComponent implements OnInit {
       });
   }
 
-  private initEmailForm(): void {
-    this.form.patchValue(this.emailConfig);
+  private initEmailForm(emailConfig: MailConfig): void {
+    this.form.patchValue(emailConfig);
 
-    if (this.emailConfig?.oauth?.client_id) {
-      this.sendMethodControl.setValue(this.emailConfig.oauth?.provider);
-      this.oauthCredentials = this.emailConfig.oauth;
+    if (emailConfig.oauth?.client_id) {
+      this.sendMethodControl.setValue(emailConfig.oauth?.provider);
+      this.oauthCredentials = emailConfig.oauth;
     }
     this.cdr.markForCheck();
   }
@@ -239,7 +241,7 @@ export class EmailFormComponent implements OnInit {
     const productType = this.systemGeneralService.getProductType();
     const email = {
       subject: 'Test Message',
-      text: `This is a test message from TrueNAS ${productType}.`,
+      text: `This is a test message from TrueNAS ${productType.replace('_', ' ')}.`,
     };
     const config = this.prepareConfigUpdate();
 
@@ -271,8 +273,8 @@ export class EmailFormComponent implements OnInit {
       }
     } else {
       update = {
-        fromemail: this.form.value.fromemail,
-        fromname: this.form.value.fromname,
+        fromemail: this.form.getRawValue().fromemail,
+        fromname: this.form.getRawValue().fromname,
         oauth: {
           ...this.oauthCredentials as MailOauthConfig,
           provider: this.sendMethodControl.value,

@@ -12,6 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
+  BehaviorSubject,
   EMPTY,
   Observable, forkJoin, of,
 } from 'rxjs';
@@ -164,6 +165,7 @@ export class CloudSyncFormComponent implements OnInit {
     bwlimit: [[] as string[]],
   });
 
+  isCredentialInvalid$ = new BehaviorSubject(false);
   isLoading = false;
   bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
   bucketTooltip: string = helptextCloudSync.bucket_tooltip;
@@ -267,7 +269,21 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.editingTask && this.form.controls.direction.value === Direction.Pull) {
+      this.form.controls.snapshot.disable();
+    }
+
     this.getInitialData();
+
+    this.isCredentialInvalid$.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value) {
+        this.form.controls.bucket_input.enable();
+        this.form.controls.bucket.disable();
+      } else {
+        this.form.controls.bucket_input.disable();
+        this.form.controls.bucket.enable();
+      }
+    });
   }
 
   setupForm(): void {
@@ -427,14 +443,12 @@ export class CloudSyncFormComponent implements OnInit {
           }
           this.bucketOptions$ = of(bucketOptions);
           this.isLoading = false;
-          this.form.controls.bucket.enable();
-          this.form.controls.bucket_input.disable();
+          this.isCredentialInvalid$.next(false);
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.isLoading = false;
-          this.form.controls.bucket.disable();
-          this.form.controls.bucket_input.enable();
+          this.isCredentialInvalid$.next(true);
           this.dialogService.closeAllDialogs();
           this.cdr.markForCheck();
           const apiError = extractApiError(error);
@@ -637,7 +651,8 @@ export class CloudSyncFormComponent implements OnInit {
     }
   }
 
-  prepareData(formValue: FormValue): CloudSyncTaskUpdate {
+  getPayload(): CloudSyncTaskUpdate {
+    const formValue = this.form.value;
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
     const value: CloudSyncTaskUpdate = {
@@ -709,6 +724,8 @@ export class CloudSyncFormComponent implements OnInit {
       if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
         if (name === 'task_encryption') {
           attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else if (name === 'bucket_input') {
+          attributes.bucket = formValue[name];
         } else {
           attributes[name] = formValue[name];
         }
@@ -721,7 +738,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onDryRun(): void {
-    const payload = this.prepareData(this.form.value);
+    const payload = this.getPayload();
     this.dialogService.jobDialog(
       this.api.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
       { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
@@ -734,7 +751,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const payload = this.prepareData(this.form.value);
+    const payload = this.getPayload();
 
     this.isLoading = true;
     let request$: Observable<unknown>;
@@ -764,7 +781,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.swap(
+    this.slideInRef.swap?.(
       CloudSyncWizardComponent,
       { wide: true },
     );

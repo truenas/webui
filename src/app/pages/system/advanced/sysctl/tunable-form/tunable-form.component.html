@@ -4,6 +4,13 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
+        <ix-select
+          formControlName="type"
+          [label]="'Type' | translate"
+          [required]="true"
+          [options]="types$"
+        ></ix-select>
+
         <ix-input
           formControlName="var"
           [label]="'Variable' | translate"

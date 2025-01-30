@@ -42,7 +42,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
   });
 
   protected cpuUsage = toSignal(this.resources.realtimeUpdates$.pipe(
-    map((update) => update.fields.cpu.average),
+    map((update) => update.fields.cpu),
     tap((realtimeUpdate) => {
       this.cachedCpuStats.update((cachedStats) => {
         return [...cachedStats, [realtimeUpdate.user, realtimeUpdate.system]].slice(-60);
@@ -65,7 +65,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
 
   protected cachedCpuStats = signal<number[][]>([]);
   protected cpuStats = computed(() => {
-    const initialStats = this.initialCpuStats();
+    const initialStats = this.initialCpuStats() || [];
     const cachedStats = this.cachedCpuStats();
     return [...initialStats, ...cachedStats].slice(-60);
   });

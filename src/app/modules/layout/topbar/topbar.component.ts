@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatBadge } from '@angular/material/badge';
@@ -39,6 +39,8 @@ import { toolBarElements } from 'app/modules/layout/topbar/topbar.elements';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
+import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { TruenasConnectButtonComponent } from 'app/modules/truenas-connect/truenas-connect-button.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -77,6 +79,7 @@ import { TruenasLogoComponent } from './truenas-logo/truenas-logo.component';
     TestDirective,
     TruecommandButtonComponent,
     TruenasLogoComponent,
+    TruenasConnectButtonComponent,
   ],
 })
 export class TopbarComponent implements OnInit {
@@ -92,6 +95,12 @@ export class TopbarComponent implements OnInit {
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
+  readonly hasTncConfig = computed(() => {
+    const config = this.tnc.config();
+    return config?.ips?.length && config.tnc_base_url
+      && config.account_service_base_url
+      && config.leca_service_base_url;
+  });
 
   readonly alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -104,6 +113,7 @@ export class TopbarComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private appStore$: Store<AppState>,
     private cdr: ChangeDetectorRef,
+    private tnc: TruenasConnectService,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;

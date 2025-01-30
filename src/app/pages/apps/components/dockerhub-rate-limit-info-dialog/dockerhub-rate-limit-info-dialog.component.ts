@@ -6,6 +6,7 @@ import { MatButton } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent,
 } from '@angular/material/dialog';
+import { RouterLink } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { formatDistance } from 'date-fns';
@@ -26,6 +27,7 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
     MatButton,
     TestDirective,
     MatDialogClose,
+    RouterLink,
   ],
 })
 export class DockerHubRateInfoDialogComponent {

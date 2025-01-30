@@ -28,12 +28,11 @@ describe('WidgetCpuComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                0: { usage: 6 },
-                1: { usage: 30 },
-                2: { usage: 70 },
-                3: { usage: 9 },
-                average: { usage: 75 },
-                temperature_celsius: [31, 83],
+                core0_usage: 6,
+                core1_usage: 30,
+                core2_usage: 70,
+                core3_usage: 9,
+                aggregated_usage: 75,
               },
             },
           }),
@@ -72,6 +71,5 @@ describe('WidgetCpuComponent', () => {
     expect(stats[0]).toHaveText('Cores: 2 cores');
     expect(stats[1]).toHaveText('Threads: 4 threads');
     expect(stats[2]).toHaveText('Highest Usage: 70% (Thread #3)');
-    expect(stats[3]).toHaveText('Hottest: 83°C (Core #2)');
   });
 });
