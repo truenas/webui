@@ -39,6 +39,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 export class AuthService {
   @LocalStorage() private token: string | undefined | null;
   protected loggedInUser$ = new BehaviorSubject<LoggedInUser | null>(null);
+  wasOneTimePasswordChanged$ = new BehaviorSubject<boolean>(false);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -60,6 +61,11 @@ export class AuthService {
 
   readonly user$ = this.loggedInUser$.asObservable();
   readonly isTokenAllowed$ = new BehaviorSubject<boolean>(false);
+
+  isOtpwUser$: Observable<boolean> = this.user$.pipe(
+    filter(Boolean),
+    map((user) => user.account_attributes.includes(AccountAttribute.Otpw)),
+  );
 
   /**
    * Special case that only matches root and admin users.
@@ -184,6 +190,7 @@ export class AuthService {
     return this.api.call('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
+        this.wasOneTimePasswordChanged$.next(false);
         this.api.clearSubscriptions();
         this.wsStatus.setLoginStatus(false);
       }),

@@ -1,6 +1,8 @@
 import {
   Component, ChangeDetectionStrategy, input,
   output,
+  signal,
+  OnInit,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton } from '@angular/material/button';
@@ -8,21 +10,26 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, of, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { ActionOption } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/credentials/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
@@ -40,11 +47,13 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     TranslateModule,
   ],
 })
-export class UserDetailsRowComponent {
+export class UserDetailsRowComponent implements OnInit {
   readonly user = input.required<User>();
   readonly delete = output<number>();
 
   loggedInUser = toSignal(this.authService.user$.pipe(filter(Boolean)));
+
+  isStigMode = signal<boolean>(false);
 
   protected readonly Role = Role;
 
@@ -56,7 +65,17 @@ export class UserDetailsRowComponent {
     private urlOptions: UrlOptionsService,
     private authService: AuthService,
     private router: Router,
+    private dialogService: DialogService,
+    private api: ApiService,
+    private errorHandler: ErrorHandlerService,
+    private loader: AppLoaderService,
   ) {}
+
+  ngOnInit(): void {
+    this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.isStigMode.set(config.enable_gpos_stig);
+    });
+  }
 
   getDetails(user: User): ActionOption[] {
     const details = [
@@ -133,6 +152,31 @@ export class UserDetailsRowComponent {
       },
     });
     this.router.navigateByUrl(url);
+  }
+
+  generateOneTimePassword(user: User): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Generate One-Time Password'),
+      message: this.translate.instant(
+        'Are you sure you want to generate a one-time password for "{username}" user?',
+        { username: user.username },
+      ),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => {
+        return this.api.call('auth.generate_onetime_password', [{ username: user.username }]).pipe(
+          switchMap((password) => {
+            this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+            return of(password);
+          }),
+          this.loader.withLoader(),
+        );
+      }),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    )
+      .subscribe();
   }
 
   viewUserApiKeys(user: User): void {

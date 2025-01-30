@@ -54,6 +54,7 @@ export interface UserUpdate {
   full_name?: string;
   email?: string;
   password?: string;
+  random_password?: boolean | null;
   password_disabled?: boolean;
   locked?: boolean;
   smb?: boolean;

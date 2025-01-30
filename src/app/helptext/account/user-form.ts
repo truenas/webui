@@ -41,6 +41,9 @@ export const helptextUsers = {
  <i>No:</i> Requires adding a <b>Password</b> to the account. The \
  account can use the saved <b>Password</b> to authenticate with \
  password-based services.'),
+  user_form_auth_one_time_pw_tooltip: T('Temporary password will be generated and shown to you once form is saved. \
+ <br><br>This password is only valid for one login within 24 hours and does not persist across reboots. \
+ <br><br>User will be encouraged to choose their own password after they login for the first time.'),
   user_form_shell_tooltip: T('Select the shell to use for local and SSH logins.'),
   user_form_lockuser_tooltip: T('Prevent the user from logging in or \
  using password-based services until this option is unset. Locking an \
@@ -48,4 +51,5 @@ export const helptextUsers = {
  a <b>Password</b> has been created for the account.'),
   user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.'),
   smbBuiltin: T('Cannot be enabled for built-in users.'),
+  smbStig: T('Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.'),
 };

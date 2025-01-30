@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -12,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
@@ -21,6 +23,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -81,6 +84,10 @@ describe('UserFormComponent', () => {
         mockCall('user.query'),
         mockCall('user.create'),
         mockCall('user.update'),
+        mockCall('auth.generate_onetime_password', 'test-password'),
+        mockCall('system.security.config', {
+          enable_gpos_stig: false,
+        } as SystemSecurityConfig),
         mockCall('user.shell_choices', {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
@@ -112,11 +119,16 @@ describe('UserFormComponent', () => {
           value: [mockUser],
         }],
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockAuth(),
     ],
   });
 
-  describe('adding a user', () => {
+  describe('adding a user when stig mode is disabled', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -287,7 +299,7 @@ describe('UserFormComponent', () => {
         69, { home: '/home/updated', home_create: true },
       ]);
 
-      expect(api.call).toHaveBeenLastCalledWith('user.update', [
+      expect(api.call).toHaveBeenCalledWith('user.update', [
         69,
         {
           email: null,
@@ -331,6 +343,54 @@ describe('UserFormComponent', () => {
         'Home Directory': true,
         'Primary Group': true,
         Username: true,
+        'SMB User': true,
+      }));
+    });
+  });
+
+  describe('adding a user when stig mode enabled', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+      spectator.component.isStigMode.set(true);
+      spectator.component.setupForm();
+      spectator.component.handleUserWhenStigMode();
+    });
+
+    it('sends a create payload to websocket and closes modal when save is pressed', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Full Name': 'John Smith',
+        Password: 'Generate Temporary One-Time Password',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('user.create', [expect.objectContaining({
+        full_name: 'John Smith',
+        group_create: true,
+        password: null,
+        random_password: true,
+        uid: 1234,
+        username: 'jsmith',
+      })]);
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(OneTimePasswordCreatedDialogComponent, {
+        data: 'test-password',
+      });
+    });
+
+    it('set disable password to true and check inputs', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      form.fillForm({
+        Password: 'Disable Password',
+      });
+
+      const disabled = await form.getDisabledState();
+      expect(disabled).toEqual(expect.objectContaining({
+        'Lock User': true,
         'SMB User': true,
       }));
     });
