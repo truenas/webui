@@ -39,8 +39,8 @@ import {
 } from 'app/pages/virtualization/components/common/volumes-dialog/upload-iso-button/upload-iso-button.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-interface DialogOptions {
-  allowSelection: boolean;
+export interface VolumesDialogOptions {
+  selectionMode: boolean;
 }
 
 @UntilDestroy()
@@ -66,10 +66,10 @@ interface DialogOptions {
   ],
 })
 export class VolumesDialogComponent implements OnInit {
-  private options = signal<DialogOptions>({ allowSelection: false });
+  private options = signal<VolumesDialogOptions>({ selectionMode: false });
 
   protected columns = computed(() => {
-    const allowSelection = this.options().allowSelection;
+    const selectionMode = this.options().selectionMode;
 
     return createTable<VirtualizationVolume>([
       textColumn({
@@ -93,10 +93,12 @@ export class VolumesDialogComponent implements OnInit {
       }),
       buttonColumn({
         text: this.translate.instant('Select'),
-        hidden: !allowSelection,
+        hidden: !selectionMode,
+        cssClass: 'select-cell',
         onClick: (row) => this.dialogRef.close(row),
       }),
       actionsColumn({
+        hidden: selectionMode,
         actions: [
           {
             iconName: iconMarker('mdi-delete'),
@@ -133,9 +135,9 @@ export class VolumesDialogComponent implements OnInit {
     private translate: TranslateService,
     protected emptyService: EmptyService,
     protected dialogRef: MatDialogRef<VolumesDialogComponent, VirtualizationVolume | null>,
-    @Inject(MAT_DIALOG_DATA) options: DialogOptions,
+    @Inject(MAT_DIALOG_DATA) options: VolumesDialogOptions,
   ) {
-    this.options.set(options || { allowSelection: false });
+    this.options.set(options || { selectionMode: false });
   }
 
   ngOnInit(): void {

@@ -65,7 +65,7 @@ describe('VolumesDialogComponent', () => {
     ],
   });
 
-  describe('normal operations', () => {
+  describe('default mode', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -101,20 +101,26 @@ describe('VolumesDialogComponent', () => {
     });
   });
 
-  describe('allowSelection = true', () => {
+  describe('selectionMode = true', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
           {
             provide: MAT_DIALOG_DATA,
-            useValue: { allowSelection: true },
+            useValue: { selectionMode: true },
           },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('allows volume to be selected when `allowSelection` option is true', async () => {
+    it('does not show delete icon', async () => {
+      const table = await loader.getHarness(IxTableHarness);
+      const deleteButtons = await table.getAllHarnessesInRow(IxIconHarness.with({ name: 'mdi-delete' }), 'ubuntu.iso');
+      expect(deleteButtons).toHaveLength(0);
+    });
+
+    it('allows volume to be selected', async () => {
       const table = await loader.getHarness(IxTableHarness);
       const selectButton = await table.getHarnessInRow(MatButtonHarness.with({ text: 'Select' }), 'ubuntu.iso');
       await selectButton.click();

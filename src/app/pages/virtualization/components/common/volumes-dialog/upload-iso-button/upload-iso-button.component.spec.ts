@@ -43,8 +43,12 @@ describe('UploadIsoButtonComponent', () => {
     const fileInput = await loader.getHarness(IxFileInputHarness);
     await fileInput.setValue([iso]);
 
-    expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith(2);
-    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledWith(2);
+    expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
+      file: iso,
+      method: 'virt.volume.import_iso',
+      params: [{ name: 'test.iso', upload_iso: true }],
+    });
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Image uploaded successfully');
 
     expect(spectator.component.uploaded.emit).toHaveBeenCalled();

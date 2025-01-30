@@ -37,7 +37,7 @@ import {
   CreateVirtualizationInstance,
   InstanceEnvVariablesFormGroup,
   VirtualizationDevice,
-  VirtualizationInstance,
+  VirtualizationInstance, VirtualizationVolume,
 } from 'app/interfaces/virtualization.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -62,12 +62,14 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
+  VolumesDialogComponent, VolumesDialogOptions,
+} from 'app/pages/virtualization/components/common/volumes-dialog/volumes-dialog.component';
+import {
   SelectImageDialogComponent, VirtualizationImageWithId,
 } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
 import { defaultVncPort } from 'app/pages/virtualization/virtualization.constants';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UploadService } from 'app/services/upload.service';
 
 @UntilDestroy()
 @Component({
@@ -127,7 +129,7 @@ export class InstanceWizardComponent {
 
   imageSourceTypeOptions$: Observable<Option<VirtualizationSource>[]> = of([
     { label: this.translate.instant('Use a Linux image (linuxcontainer.org)'), value: VirtualizationSource.Image },
-    { label: this.translate.instant('Upload an ISO image'), value: VirtualizationSource.Iso },
+    { label: this.translate.instant('Use an ISO image'), value: VirtualizationSource.Iso },
     { label: this.translate.instant('Use zvol with previously installed OS'), value: VirtualizationSource.Zvol },
   ]);
 
@@ -149,8 +151,7 @@ export class InstanceWizardComponent {
     ],
     instance_type: [VirtualizationType.Container, Validators.required],
     source_type: [VirtualizationSource.Image, [Validators.required]],
-    image_file: [null as File[] | null, [Validators.required]],
-    image_file_name: ['', [Validators.required]],
+    iso_volume: ['', [Validators.required]],
     zvol_path: ['', [Validators.required]],
     image: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(200)]],
     enable_vnc: [false],
@@ -216,19 +217,14 @@ export class InstanceWizardComponent {
     protected configStore: VirtualizationConfigStore,
     private authService: AuthService,
     private filesystem: FilesystemService,
-    private uploadService: UploadService,
   ) {
     this.configStore.initialize();
-    this.form.controls.image_file.disable();
-    this.form.controls.image_file_name.disable();
-    this.form.controls.zvol_path.disable();
 
     this.listenForSourceTypeChanges();
-    this.listenForImageFileChanges();
     this.listenForInstanceTypeChanges();
   }
 
-  protected onBrowseImages(): void {
+  protected onBrowseCatalogImages(): void {
     this.matDialog
       .open(SelectImageDialogComponent, {
         minWidth: '90vw',
@@ -241,6 +237,21 @@ export class InstanceWizardComponent {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((image: VirtualizationImageWithId) => {
         this.form.controls.image.setValue(image.id);
+      });
+  }
+
+  protected onBrowseIsos(): void {
+    this.matDialog
+      .open<VolumesDialogComponent, VolumesDialogOptions, VirtualizationVolume>(VolumesDialogComponent, {
+        minWidth: '90vw',
+        data: {
+          selectionMode: true,
+        },
+      })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((volume) => {
+        this.form.controls.iso_volume.setValue(volume.id);
       });
   }
 
@@ -325,6 +336,7 @@ export class InstanceWizardComponent {
       memory: values.memory,
       image: values.source_type === VirtualizationSource.Image ? values.image : null,
       source_type: values.source_type,
+      iso_volume: values.source_type === VirtualizationSource.Iso ? values.iso_volume : null,
       zvol_path: values.source_type === VirtualizationSource.Zvol ? values.zvol_path : null,
       ...(this.isContainer() ? { environment: this.environmentVariablesPayload } : null),
     } as CreateVirtualizationInstance;
@@ -363,17 +375,6 @@ export class InstanceWizardComponent {
   }
 
   private getDevicesPayload(): VirtualizationDevice[] {
-    const iso = this.form.value.source_type === VirtualizationSource.Iso
-      ? [
-          {
-            dev_type: VirtualizationDeviceType.Disk,
-            source: '',
-            destination: null as string | null,
-            boot_priority: 1,
-          },
-        ]
-      : [];
-
     const disks = this.form.controls.disks.value.map((proxy) => ({
       dev_type: VirtualizationDeviceType.Disk,
       source: proxy.source,
@@ -433,7 +434,6 @@ export class InstanceWizardComponent {
     }
 
     return [
-      ...iso,
       ...disks,
       ...proxies,
       ...macVlanNics,
@@ -462,24 +462,19 @@ export class InstanceWizardComponent {
     });
   }
 
-  private listenForImageFileChanges(): void {
-    this.form.controls.image_file.valueChanges.pipe(untilDestroyed(this)).subscribe((file) => {
-      this.form.controls.image_file_name.setValue(file?.[0] ? `${file[0].name.replace('.iso', '')}_${Date.now()}.iso` : '');
-    });
-  }
-
   private listenForSourceTypeChanges(): void {
+    this.form.controls.iso_volume.disable();
+    this.form.controls.zvol_path.disable();
+
     this.form.controls.source_type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       this.form.controls.image.disable();
-      this.form.controls.image_file.disable();
-      this.form.controls.image_file_name.disable();
+      this.form.controls.iso_volume.disable();
       this.form.controls.zvol_path.disable();
 
       if (type === VirtualizationSource.Image) {
         this.form.controls.image.enable();
       } else if (type === VirtualizationSource.Iso) {
-        this.form.controls.image_file.enable();
-        this.form.controls.image_file_name.enable();
+        this.form.controls.iso_volume.enable();
       } else if (type === VirtualizationSource.Zvol) {
         this.form.controls.zvol_path.enable();
       }

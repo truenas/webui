@@ -11,8 +11,14 @@
   }
 }
 
-.table ::ng-deep table {
-  table-layout: auto;
+:host .table ::ng-deep {
+  table {
+    table-layout: auto;
+  }
+
+  .select-cell {
+    text-align: right;
+  }
 }
 
 .new-volume {

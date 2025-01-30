@@ -64,6 +64,7 @@ export interface CreateVirtualizationInstance {
   autostart?: boolean;
   secure_boot?: boolean;
   cpu: string;
+  iso_volume?: string;
   /**
    * Value must be greater or equal to 33554432
    */
