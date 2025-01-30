@@ -34,7 +34,7 @@ export class AppCardLogoComponent {
   protected readonly appImagePlaceholder = appImagePlaceholder;
 
   protected readonly initialEmitter$ = new Subject<void>();
-  protected readonly scroll$: Observable<Event | void | number>;
+  protected readonly scroll$: Observable<Event | number | void>;
 
   constructor() {
     if (this.scrollTarget) {
