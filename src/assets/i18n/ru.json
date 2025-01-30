@@ -3301,6 +3301,7 @@
   "Use the encryption properties of the root dataset.": "",
   "Use this option to allow legacy SMB clients to connect to the  server. Note that SMB1 is being deprecated and it is advised  to upgrade clients to operating system versions that support  modern versions of the SMB protocol.": "",
   "Use this option to log more detailed information about SMB.": "",
+  "Use zvol with previously installed OS": "",
   "User API Keys": "",
   "User Bind Path": "",
   "User CN": "",
