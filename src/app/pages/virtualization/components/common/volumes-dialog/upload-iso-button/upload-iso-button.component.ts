@@ -5,6 +5,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -22,12 +24,14 @@ import { UploadService } from 'app/services/upload.service';
     IxFileInputComponent,
     ReactiveFormsModule,
     TranslateModule,
+    RequiresRolesDirective,
   ],
 })
 export class UploadIsoButtonComponent implements OnInit {
   readonly uploaded = output();
 
   protected readonly imageFileControl = new FormControl<File[]>([]);
+  protected readonly requiredRoles = [Role.VirtImageWrite];
 
   constructor(
     private dialogService: DialogService,

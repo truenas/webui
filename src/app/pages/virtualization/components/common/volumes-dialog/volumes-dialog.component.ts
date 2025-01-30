@@ -11,6 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { parseISO } from 'date-fns';
 import { filter, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -68,6 +69,8 @@ export interface VolumesDialogOptions {
 export class VolumesDialogComponent implements OnInit {
   private options = signal<VolumesDialogOptions>({ selectionMode: false });
 
+  protected requiredRoles = [Role.VirtImageWrite];
+
   protected columns = computed(() => {
     const selectionMode = this.options().selectionMode;
 
@@ -103,8 +106,7 @@ export class VolumesDialogComponent implements OnInit {
           {
             iconName: iconMarker('mdi-delete'),
             tooltip: this.translate.instant('Delete'),
-            // TODO:
-            // requiredRoles: this.requiredRoles,
+            requiredRoles: this.requiredRoles,
             onClick: (row) => this.onDelete(row),
             disabled: (row) => of(row.used_by.length > 0),
             dynamicTooltip: (row) => {
