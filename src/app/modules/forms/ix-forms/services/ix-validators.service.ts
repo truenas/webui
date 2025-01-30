@@ -71,7 +71,7 @@ export class IxValidatorsService {
   };
 
   confirmValidator(name: string, validationMessage: string): ValidatorFn {
-    return Validators.compose([
+    const confirmValidtor = Validators.compose([
       this.withMessage(
         Validators.pattern(new RegExp(`^${name}$`)),
         validationMessage,
@@ -81,6 +81,12 @@ export class IxValidatorsService {
         validationMessage,
       ),
     ]);
+
+    if (!confirmValidtor) {
+      throw new Error('confirmValidator failed');
+    }
+
+    return confirmValidtor;
   }
 
   /**

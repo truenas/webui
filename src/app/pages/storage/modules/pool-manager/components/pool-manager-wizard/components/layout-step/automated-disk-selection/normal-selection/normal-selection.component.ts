@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
@@ -58,7 +58,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   private selectedDisks: DetailsDisk[] = [];
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     protected store: PoolManagerStore,
   ) {}
 

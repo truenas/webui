@@ -41,7 +41,7 @@ export class MiniDriveTemperaturesComponent {
         const data = this.temperature();
         return {
           dev,
-          temperature: data?.[dev] ? `${data[dev]} ${this.celsius}` : null,
+          temperature: (dev && data?.[dev]) ? `${data[dev]} ${this.celsius}` : null,
         };
       });
   });

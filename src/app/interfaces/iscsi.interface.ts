@@ -19,10 +19,10 @@ export interface IscsiInterface {
 export interface IscsiInitiatorGroup {
   comment: string;
   id: number;
-  initiators?: string[];
+  initiators: string[];
 }
 
-export type IscsiInitiatorGroupUpdate = Omit<IscsiInitiatorGroup, 'id'>;
+export type IscsiInitiatorGroupUpdate = Partial<Omit<IscsiInitiatorGroup, 'id'>>;
 
 export interface IscsiAuthAccess {
   id: number;
@@ -50,7 +50,7 @@ export type IscsiTargetUpdate = Omit<IscsiTarget, 'id'>;
 export interface IscsiTargetGroup {
   portal: number;
   initiator: number;
-  auth: number;
+  auth: number | null;
   authmethod: IscsiAuthMethod;
 }
 
