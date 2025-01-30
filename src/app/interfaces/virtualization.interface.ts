@@ -237,3 +237,20 @@ export type InstanceEnvVariablesFormGroup = FormGroup<{
   name: FormControl<string>;
   value: FormControl<string>;
 }>;
+
+export interface VirtualizationVolume {
+  id: string;
+  name: string;
+  content_type: string;
+  created_at: string;
+  type: string;
+  config: string;
+  used_by: string[];
+}
+
+export type VirtualizationVolumeUpdate = [
+  id: string,
+  update: {
+    size: number;
+  },
+];

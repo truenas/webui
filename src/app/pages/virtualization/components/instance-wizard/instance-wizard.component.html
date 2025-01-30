@@ -53,18 +53,6 @@
           >{{ 'Browse Catalog' | translate }}</button>
         </div>
       } @else {
-        <ix-file-input
-          formControlName="image_file"
-          acceptedFiles=".iso"
-          [label]="'Image' | translate"
-          [multiple]="false"
-          [required]="true"
-        ></ix-file-input>
-        <ix-input
-          formControlName="image_file_name"
-          [label]="'Image Name' | translate"
-          [required]="true"
-        ></ix-input>
       }
     </ix-form-section>
 
