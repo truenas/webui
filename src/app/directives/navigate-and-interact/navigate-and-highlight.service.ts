@@ -18,8 +18,12 @@ export class NavigateAndHighlightService {
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  navigateAndHighlight(route: string[], hash: string): void {
+  navigateAndHighlight(route: string[], hash?: string): void {
     this.router.navigate(route, { fragment: hash }).then(() => {
+      if (!hash) {
+        return;
+      }
+
       setTimeout(() => {
         const htmlElement = this.window.document.getElementById(hash);
         if (htmlElement) {

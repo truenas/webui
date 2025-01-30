@@ -25,7 +25,7 @@ describe('JobProgressDialogComponent', () => {
     component: JobProgressDialogComponent<unknown>,
     providers: [
       mockApi([
-        mockCall('core.job_abort', null),
+        mockCall('core.job_abort'),
       ]),
       mockProvider(MatDialogRef),
     ],

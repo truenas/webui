@@ -42,7 +42,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
     return from(sortedResults).pipe(
       mergeMap((item) => {
         return combineLatest([
-          item.requiredRoles.length ? this.authService.hasRole(item.requiredRoles) : of(true),
+          item.requiredRoles?.length ? this.authService.hasRole(item.requiredRoles) : of(true),
           this.navService.hasFailover$,
           this.navService.hasEnclosure$,
           this.navService.hasVms$,

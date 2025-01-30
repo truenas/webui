@@ -31,11 +31,11 @@ export class CronSchedulePreview {
    */
   listNextRunsInMonth(startDate: Date, limit: number, timezone: string): Date[] {
     const nextRuns: Date[] = [];
-    let previousDate = subMinutes(startDate, 1);
+    let previousDate: Date | null = subMinutes(startDate, 1);
     const endDate = endOfMonth(startDate);
 
     for (let i = 0; i < limit;) {
-      const exampleDate = this.cron.nextRun(previousDate);
+      const exampleDate = this.cron.nextRun(previousDate || undefined);
       previousDate = exampleDate;
 
       if (!exampleDate || !isBefore(exampleDate, endDate)) {

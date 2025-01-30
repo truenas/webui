@@ -146,11 +146,15 @@ export class ApiKeyFormComponent implements OnInit {
       name, username, reset, nonExpiring,
     } = this.form.getRawValue();
 
-    const expiresAt = nonExpiring ? null : { $date: this.form.value.expires_at.getTime() };
+    const expiresAtValue = this.form.value.expires_at;
+    const expiresAt = (nonExpiring || !expiresAtValue)
+      ? null
+      : { $date: expiresAtValue.getTime() };
 
-    const request$ = this.isNew()
-      ? this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }])
-      : this.api.call('api_key.update', [this.editingRow().id, { name, reset, expires_at: expiresAt }]);
+    const editingRow = this.editingRow();
+    const request$ = editingRow
+      ? this.api.call('api_key.update', [editingRow.id, { name, reset, expires_at: expiresAt }])
+      : this.api.call('api_key.create', [{ name, username, expires_at: expiresAt }]);
 
     request$
       .pipe(this.loader.withLoader(), untilDestroyed(this))
