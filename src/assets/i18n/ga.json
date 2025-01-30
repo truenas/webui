@@ -448,6 +448,7 @@
   "Use default network settings": "",
   "Use the default network settings to connect the default bridge to the host.</br><br /><b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the instance.<br /><br /><b>MACVLAN NIC</b> sets up a new network device based on an existing one, but using a different MAC address.": "",
   "Use this option to log more detailed information about SMB.": "",
+  "Use zvol with previously installed OS": "",
   "User API Keys": "",
   "User linked API Keys": "",
   "Username associated with this API key.": "",
