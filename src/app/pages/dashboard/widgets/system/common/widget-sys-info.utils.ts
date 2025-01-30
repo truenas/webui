@@ -41,7 +41,7 @@ export function getProductEnclosure(systemProduct: string): ProductEnclosure | n
 
 export function getSystemVersion(version: string, codename?: Codename): string {
   if (codename) {
-    return version.replace('TrueNAS-SCALE', codename);
+    return version.replace('TrueNAS-COMMUNITY_EDITION', codename);
   }
   return version;
 }
