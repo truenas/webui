@@ -1,0 +1,28 @@
+@import '../../../../../../../assets/styles/scss-imports/variables';
+@import '../../../../../../../assets/styles/mixins/layout';
+
+@include tree-node-with-details-container;
+
+
+.disk-tree {
+  border-top: 2px solid var(--lines);
+}
+
+.vdev-group-toggle {
+  height: 25px;
+  line-height: 0;
+  margin-right: 18px;
+  width: 25px;
+}
+
+.spacer-root {
+  width: 30px;
+}
+
+.container {
+  height: 100%;
+}
+
+.table-container {
+  max-width: none;
+}
