@@ -41,6 +41,14 @@
         fill: #40403f;
       }
 
+      #MINI_XL_CHASSIS .cls-mini3xl-plus-6 {
+        fill: #2a2b2a;
+      }
+
+      #MINI_XL_DRIVES .cls-mini3xl-plus-6 {
+        fill: #3a3b3a;
+      }
+
       .cls-mini3xl-plus-6 {
         fill: #3a3b3a;
       }
@@ -73,7 +81,11 @@
         fill: #353535;
       }
 
-      .cls-mini3xl-plus-12 {
+      #MINI_XL_CHASSIS .cls-mini3xl-plus-12 {
+        fill: #222;
+      }
+
+      #MINI_XL_DRIVES .cls-mini3xl-plus-12 {
         fill: #333;
       }
 
@@ -93,12 +105,20 @@
         fill: white;
       }
 
-      .cls-mini3xl-plus-18 {
+      #MINI_XL_CHASSIS .cls-mini3xl-plus-18 {
+        fill: #282828;
+      }
+
+      #MINI_XL_DRIVES .cls-mini3xl-plus-18 {
         fill: #383838;
       }
 
       .cls-mini3xl-plus-19 {
         fill: #0d0d0d;
+      }
+
+      #MINI_XL_ .tint-target {
+        filter: brightness(0.75) !important;
       }
     </style>
   </defs>
@@ -594,8 +614,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="708.5" width="5.8" height="39" transform="translate(310.7 1456) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="747.5" width="13.7" height="17.1" transform="translate(302.8 1512) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="708.5" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,717.7c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="700.2" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,717.7c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="700.2" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,736.5c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -612,8 +632,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="736.5" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="736.5" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="736.5" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="736.5" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="736.5" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,729.1v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,736.5c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -622,7 +642,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 736.5 394.8 732.4 394.8 740.7 402 736.5"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,700.2v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,700.2v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,735.2v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,768v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,768v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -664,8 +684,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="629.8" width="5.8" height="39" transform="translate(310.7 1298.6) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="668.8" width="13.7" height="17.1" transform="translate(302.8 1354.7) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="629.8" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,639c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="621.5" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,639c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="621.5" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,657.9c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -682,8 +702,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="657.9" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="657.9" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="657.9" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="657.9" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="657.9" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,650.4v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,657.9c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -692,7 +712,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 657.9 394.8 653.7 394.8 662 402 657.9"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,621.5v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,621.5v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,656.5v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,689.3v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,689.3v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -734,8 +754,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="551.1" width="5.8" height="39" transform="translate(310.7 1141.2) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="590.1" width="13.7" height="17.1" transform="translate(302.8 1197.3) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="551.1" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,560.3c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="542.8" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,560.3c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="542.8" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,579.2c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -752,8 +772,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="579.2" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="579.2" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="579.2" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="579.2" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="579.2" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,571.7v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,579.2c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -762,7 +782,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 579.2 394.8 575 394.8 583.3 402 579.2"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,542.8v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,542.8v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,577.8v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,610.6v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,610.6v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -804,8 +824,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="472.5" width="5.8" height="39" transform="translate(310.7 983.9) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="511.4" width="13.7" height="17.1" transform="translate(302.8 1039.9) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="472.5" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,481.6c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="464.1" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,481.6c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="464.1" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,500.5c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -822,8 +842,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="500.5" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="500.5" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="500.5" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="500.5" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="500.5" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,493v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,500.5c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -832,7 +852,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 500.5 394.8 496.3 394.8 504.6 402 500.5"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,464.1v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,464.1v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,499.1v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,531.9v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,531.9v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -874,8 +894,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="335.2" width="5.8" height="39" transform="translate(310.7 709.4) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="374.2" width="13.7" height="17.1" transform="translate(302.8 765.4) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="335.2" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,344.4c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="326.9" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,344.4c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="326.9" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,363.2c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -892,8 +912,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="363.2" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="363.2" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="363.2" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="363.2" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="363.2" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,355.8v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,363.2c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -902,7 +922,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 363.2 394.8 359 394.8 367.4 402 363.2"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,326.9v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,326.9v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,361.8v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,394.7v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,394.7v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -944,8 +964,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="256.5" width="5.8" height="39" transform="translate(310.7 552) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="295.5" width="13.7" height="17.1" transform="translate(302.8 608) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="256.5" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,265.7c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="248.2" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,265.7c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="248.2" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,284.5c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -962,8 +982,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="284.5" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="284.5" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="284.5" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="284.5" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="284.5" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,277.1v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,284.5c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -972,7 +992,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 284.5 394.8 280.3 394.8 288.7 402 284.5"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,248.2v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,248.2v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,283.2v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,316v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,316v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -1014,8 +1034,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="177.8" width="5.8" height="39" transform="translate(310.7 394.6) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="216.8" width="13.7" height="17.1" transform="translate(302.8 450.6) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="177.8" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,187c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="169.5" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,187c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="169.5" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,205.8c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -1032,8 +1052,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="205.8" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="205.8" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="205.8" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="205.8" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="205.8" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,198.4v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,205.8c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -1042,7 +1062,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 205.8 394.8 201.6 394.8 210 402 205.8"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,169.5v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,169.5v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,204.5v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,237.3v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,237.3v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -1084,8 +1104,8 @@
       <rect class="cls-mini3xl-plus-1" x="152.5" y="99.1" width="5.8" height="39" transform="translate(310.7 237.2) rotate(180)"/>
       <rect class="cls-mini3xl-plus-1" x="144.6" y="138.1" width="13.7" height="17.1" transform="translate(302.8 293.2) rotate(180)"/>
       <rect class="cls-mini3xl-plus-9" x="151.1" y="99.1" width="1.4" height="39"/>
-      <path class="cls-mini3xl-plus-6" d="M364.1,108.3c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
-      <rect class="cls-mini3xl-plus-18" x="158.3" y="90.8" width="24.5" height="72.7"/>
+      <path class="tint-target cls-mini3xl-plus-6" d="M364.1,108.3c-4.8,4.8-7.8,11.5-7.8,18.8,0,14,10.9,25.5,24.6,26.6v9.8h-222.7v-72.7h222.7v9.8c-6.5.5-12.4,3.3-16.8,7.7Z"/>
+      <rect class="tint-target cls-mini3xl-plus-18" x="158.3" y="90.8" width="24.5" height="72.7"/>
       <g>
         <g>
           <path class="cls-mini3xl-plus-2" d="M326.7,127.1c0,1.3-.5,2.4-1.3,3.3-.8.8-2,1.3-3.3,1.3h-127.6c-2.5,0-4.6-2.1-4.6-4.6s.5-2.4,1.4-3.3c.8-.8,2-1.3,3.3-1.3h127.6c2.5,0,4.6,2.1,4.6,4.6Z"/>
@@ -1102,8 +1122,8 @@
         </g>
       </g>
       <g>
-        <circle class="cls-mini3xl-plus-6" cx="383" cy="127.1" r="24.5"/>
-        <circle class="cls-mini3xl-plus-11" cx="383" cy="127.1" r="22.3"/>
+        <circle class="tint-target cls-mini3xl-plus-6" cx="383" cy="127.1" r="24.5"/>
+        <circle class="tint-target cls-mini3xl-plus-11" cx="383" cy="127.1" r="22.3"/>
         <circle class="cls-mini3xl-plus-2" cx="383" cy="127.1" r="8.6"/>
         <path class="cls-mini3xl-plus-11" d="M380.5,119.7v14.9c-3.1-1-5.4-4-5.4-7.5s2.3-6.4,5.4-7.5Z"/>
         <path class="cls-mini3xl-plus-11" d="M390.8,127.1c0,3.5-2.3,6.4-5.4,7.5v-14.9c3.1,1,5.4,4,5.4,7.5Z"/>
@@ -1112,7 +1132,7 @@
         <polygon class="cls-mini3xl-plus-6" points="402 127.1 394.8 123 394.8 131.3 402 127.1"/>
       </g>
       <g>
-        <path class="cls-mini3xl-plus-6" d="M444.3,90.8v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
+        <path class="tint-target cls-mini3xl-plus-6" d="M444.3,90.8v72.7h-61.1v-9.7h6.5c7.4,0,14-3,18.8-7.8,4.8-4.8,7.8-11.5,7.8-18.8,0-14.7-11.9-26.6-26.6-26.6h-6.5v-9.7h61.1Z"/>
         <path class="cls-mini3xl-plus-6" d="M423.8,125.8v.7c0,.2-.1.3-.2.3s-.2,0-.2-.3v-.7c0-.9-.6-1.3-1.2-1.3s-1.2.5-1.2,1.3v1h.7c.4,0,.5.2.5.6v2.4c0,.4-.2.6-.6.6h-3.1c-.4,0-.6-.2-.6-.6v-2.4c0-.4.2-.6.6-.6h2v-1c0-1.3.8-1.9,1.7-1.9s1.7.6,1.7,1.9Z"/>
         <path class="cls-mini3xl-plus-6" d="M396.8,158.6v-1c0-1.3-.9-1.9-1.7-1.9s-1.7.6-1.7,1.9v1c-.3,0-.5.2-.5.6v2.4c0,.4.2.6.6.6h3.1c.4,0,.6-.2.6-.6v-2.4c0-.4-.1-.6-.4-.6ZM393.8,158.6v-1c0-.9.6-1.3,1.2-1.3s1.2.5,1.2,1.3v1h-.3s-2.2,0-2.2,0Z"/>
         <g>
@@ -1148,9 +1168,9 @@
     </g>
     <g id="DRIVE_CAGE_1">
       <g>
-        <rect class="cls-mini3xl-plus-18" x="143.3" y="15.2" width="217.3" height="33.8"/>
-        <rect class="cls-mini3xl-plus-6" x="143.3" y="15.2" width="33.8" height="33.8"/>
-        <rect class="cls-mini3xl-plus-5" x="146.4" y="20.5" width="3.7" height="23.2"/>
+        <rect class="tint-target cls-mini3xl-plus-18" x="143.3" y="15.2" width="217.3" height="33.8"/>
+        <rect class="tint-target cls-mini3xl-plus-6" x="143.3" y="15.2" width="33.8" height="33.8"/>
+        <rect class="tint-target cls-mini3xl-plus-5" x="146.4" y="20.5" width="3.7" height="23.2"/>
         <g>
           <g>
             <path class="cls-mini3xl-plus-2" d="M324.1,32.2c0,1-.4,1.9-1,2.5s-1.5,1-2.4,1c0,0,0,0-.1,0h-12c-2,0-3.5-1.6-3.5-3.5s.4-1.9,1-2.5,1.5-1,2.5-1h12s0,0,.1,0c1.9,0,3.4,1.6,3.4,3.5Z"/>
@@ -1185,7 +1205,7 @@
       </g>
       <rect class="cls-mini3xl-plus-12" x="139.9" y="13.1" width="220.7" height="2.2"/>
       <rect class="cls-mini3xl-plus-12" x="139.9" y="49.1" width="220.7" height="2.2"/>
-      <rect class="cls-mini3xl-plus-6" x="360.6" y="13.1" width="11.4" height="38.2"/>
+      <rect class="tint-target cls-mini3xl-plus-6" x="360.6" y="13.1" width="11.4" height="38.2"/>
       <rect class="cls-mini3xl-plus-1" x="139.9" y="15.2" width="3.4" height="33.8"/>
     </g>
   </g>

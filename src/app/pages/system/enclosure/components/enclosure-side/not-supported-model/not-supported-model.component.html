@@ -4,7 +4,7 @@
 >
   @for (slot of slots(); track slot.drive_bay_number) {
     <a
-      class="slot"
+      class="slot tint-target"
       [class.selected]="slot.drive_bay_number === selectedSlot()?.drive_bay_number"
       [class.static]="!enableMouseEvents()"
       [ixTest]="['enclosure-slot', slot.drive_bay_number]"

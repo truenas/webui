@@ -108,6 +108,16 @@
       .r50b-top-cls-24 {
         fill: #40403f;
       }
+
+      /* Contrast Fixes */
+      #R50B_DRAWER .sides {
+        opacity: 0.75;
+      }
+
+      #R50B_DRAWER #R50B_CHASSIS,
+      #R50B_DRAWER .chassis {
+        opacity: 0.25;
+      }
     </style>
   </defs>
   <g id="R50B_CHASSIS" data-name="R50B CHASSIS">
@@ -388,16 +398,16 @@
         <rect class="r50b-top-cls-22" x="246.6" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="314.8 1070.4 303 1070.4 303 1055 314.8 1053 314.8 1070.4"/>
         <polygon class="r50b-top-cls-20" points="314.8 1308.9 303 1308.9 303 1324.3 314.8 1326.3 314.8 1308.9"/>
-        <path class="r50b-top-cls-23" d="M249.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M249.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M249.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="314.8 1053 281.4 1058.8 281.4 1070.9 314.8 1070.9 314.8 1053"/>
         <polygon class="r50b-top-cls-12" points="281.4 1308.5 281.4 1320.6 314.8 1326.3 314.8 1308.5 281.4 1308.5"/>
         <rect class="r50b-top-cls-22" x="281.3" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="281.3" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="254.4" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="254.4" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="271.7" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="316.5 1041 316.5 1338.4 311 1338.4 311 1336.7 314.8 1336.7 314.8 1042.6 311 1042.6 311 1041 316.5 1041"/>
         <rect class="r50b-top-cls-10" x="265.7" y="1278.9" width="33.9" height="45.6"/>
@@ -407,7 +417,7 @@
         <rect class="r50b-top-cls-19" x="268.6" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="248.1" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="254.4 1035.9 254.4 1043.3 244.5 1043.3 244.5 1035.9 248.1 1035.9 248.1 1039.7 251.7 1039.7 251.7 1035.9 254.4 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="254.4 1035.9 254.4 1043.3 244.5 1043.3 244.5 1035.9 248.1 1035.9 248.1 1039.7 251.7 1039.7 251.7 1035.9 254.4 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="271.6" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -427,16 +437,16 @@
         <rect class="r50b-top-cls-22" x="324.8" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="393 1070.4 381.2 1070.4 381.2 1055 393 1053 393 1070.4"/>
         <polygon class="r50b-top-cls-20" points="393 1308.9 381.2 1308.9 381.2 1324.3 393 1326.3 393 1308.9"/>
-        <path class="r50b-top-cls-23" d="M328.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M328.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M328.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="393 1053 359.6 1058.8 359.6 1070.9 393 1070.9 393 1053"/>
         <polygon class="r50b-top-cls-12" points="359.6 1308.5 359.6 1320.6 393 1326.3 393 1308.5 359.6 1308.5"/>
         <rect class="r50b-top-cls-22" x="359.6" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="359.6" y="1155.2" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="332.7" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="332.7" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="349.9" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="394.7 1041 394.7 1338.4 389.2 1338.4 389.2 1336.7 393 1336.7 393 1042.6 389.2 1042.6 389.2 1041 394.7 1041"/>
         <rect class="r50b-top-cls-10" x="344" y="1278.9" width="33.9" height="45.6"/>
@@ -446,7 +456,7 @@
         <rect class="r50b-top-cls-19" x="346.8" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="326.3" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="332.7 1035.9 332.7 1043.3 322.7 1043.3 322.7 1035.9 326.3 1035.9 326.3 1039.7 329.9 1039.7 329.9 1035.9 332.7 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="332.7 1035.9 332.7 1043.3 322.7 1043.3 322.7 1035.9 326.3 1035.9 326.3 1039.7 329.9 1039.7 329.9 1035.9 332.7 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="349.8" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -466,16 +476,16 @@
         <rect class="r50b-top-cls-22" x="403.1" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="471.3 1070.4 459.5 1070.4 459.5 1055 471.3 1053 471.3 1070.4"/>
         <polygon class="r50b-top-cls-20" points="471.3 1308.9 459.5 1308.9 459.5 1324.3 471.3 1326.3 471.3 1308.9"/>
-        <path class="r50b-top-cls-23" d="M406.4,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M406.4,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M406.4,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="471.3 1053 437.9 1058.8 437.8 1070.9 471.3 1070.9 471.3 1053"/>
         <polygon class="r50b-top-cls-12" points="437.8 1308.5 437.8 1320.6 471.3 1326.3 471.3 1308.5 437.8 1308.5"/>
         <rect class="r50b-top-cls-22" x="437.8" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="437.8" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="410.9" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="410.9" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="428.1" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="472.9 1041 472.9 1338.4 467.4 1338.4 467.4 1336.7 471.3 1336.7 471.3 1042.6 467.4 1042.6 467.4 1041 472.9 1041"/>
         <rect class="r50b-top-cls-10" x="422.2" y="1278.9" width="33.9" height="45.6"/>
@@ -485,7 +495,7 @@
         <rect class="r50b-top-cls-19" x="425" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="404.6" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="410.9 1035.9 410.9 1043.3 401 1043.3 401 1035.9 404.6 1035.9 404.6 1039.7 408.2 1039.7 408.2 1035.9 410.9 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="410.9 1035.9 410.9 1043.3 401 1043.3 401 1035.9 404.6 1035.9 404.6 1039.7 408.2 1039.7 408.2 1035.9 410.9 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="428.1" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -505,16 +515,16 @@
         <rect class="r50b-top-cls-22" x="481.3" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="549.5 1070.4 537.7 1070.4 537.7 1055 549.5 1053 549.5 1070.4"/>
         <polygon class="r50b-top-cls-20" points="549.5 1308.9 537.7 1308.9 537.7 1324.3 549.5 1326.3 549.5 1308.9"/>
-        <path class="r50b-top-cls-23" d="M484.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M484.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M484.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="549.5 1053 516.1 1058.8 516.1 1070.9 549.5 1070.9 549.5 1053"/>
         <polygon class="r50b-top-cls-12" points="516.1 1308.5 516.1 1320.6 549.5 1326.3 549.5 1308.5 516.1 1308.5"/>
         <rect class="r50b-top-cls-22" x="516.1" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="516.1" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="489.2" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="489.2" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="506.4" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="551.2 1041 551.2 1338.4 545.7 1338.4 545.7 1336.7 549.5 1336.7 549.5 1042.6 545.7 1042.6 545.7 1041 551.2 1041"/>
         <rect class="r50b-top-cls-10" x="500.4" y="1278.9" width="33.9" height="45.6"/>
@@ -524,7 +534,7 @@
         <rect class="r50b-top-cls-19" x="503.3" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="482.8" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="489.2 1035.9 489.2 1043.3 479.2 1043.3 479.2 1035.9 482.8 1035.9 482.8 1039.7 486.4 1039.7 486.4 1035.9 489.2 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="489.2 1035.9 489.2 1043.3 479.2 1043.3 479.2 1035.9 482.8 1035.9 482.8 1039.7 486.4 1039.7 486.4 1035.9 489.2 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="506.3" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -544,16 +554,16 @@
         <rect class="r50b-top-cls-22" x="559.5" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="627.7 1070.4 615.9 1070.4 615.9 1055 627.7 1053 627.7 1070.4"/>
         <polygon class="r50b-top-cls-20" points="627.7 1308.9 615.9 1308.9 615.9 1324.3 627.7 1326.3 627.7 1308.9"/>
-        <path class="r50b-top-cls-23" d="M562.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M562.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M562.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="627.7 1053 594.3 1058.8 594.3 1070.9 627.7 1070.9 627.7 1053"/>
         <polygon class="r50b-top-cls-12" points="594.3 1308.5 594.3 1320.6 627.7 1326.3 627.7 1308.5 594.3 1308.5"/>
         <rect class="r50b-top-cls-22" x="594.3" y="1070.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="594.3" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="567.4" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="567.4" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="584.6" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="629.4 1041 629.4 1338.4 623.9 1338.4 623.9 1336.7 627.7 1336.7 627.7 1042.6 623.9 1042.6 623.9 1041 629.4 1041"/>
         <rect class="r50b-top-cls-10" x="578.7" y="1278.9" width="33.9" height="45.6"/>
@@ -563,7 +573,7 @@
         <rect class="r50b-top-cls-19" x="581.5" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="561" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="567.4 1035.9 567.4 1043.3 557.4 1043.3 557.4 1035.9 561 1035.9 561 1039.7 564.6 1039.7 564.6 1035.9 567.4 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="567.4 1035.9 567.4 1043.3 557.4 1043.3 557.4 1035.9 561 1035.9 561 1039.7 564.6 1039.7 564.6 1035.9 567.4 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="584.6" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -583,16 +593,16 @@
         <rect class="r50b-top-cls-22" x="637.8" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="706 1070.4 694.2 1070.4 694.2 1055 706 1053 706 1070.4"/>
         <polygon class="r50b-top-cls-20" points="706 1308.9 694.2 1308.9 694.2 1324.3 706 1326.3 706 1308.9"/>
-        <path class="r50b-top-cls-23" d="M641.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M641.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M641.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="706 1053 672.6 1058.8 672.6 1070.9 706 1070.9 706 1053"/>
         <polygon class="r50b-top-cls-12" points="672.6 1308.5 672.6 1320.6 706 1326.3 706 1308.5 672.6 1308.5"/>
         <rect class="r50b-top-cls-22" x="672.5" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="672.5" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="645.6" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="645.6" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="662.8" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="707.7 1041 707.7 1338.4 702.1 1338.4 702.1 1336.7 706 1336.7 706 1042.6 702.1 1042.6 702.1 1041 707.7 1041"/>
         <rect class="r50b-top-cls-10" x="656.9" y="1278.9" width="33.9" height="45.6"/>
@@ -602,7 +612,7 @@
         <rect class="r50b-top-cls-19" x="659.7" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="639.3" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="645.6 1035.9 645.6 1043.3 635.7 1043.3 635.7 1035.9 639.3 1035.9 639.3 1039.7 642.9 1039.7 642.9 1035.9 645.6 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="645.6 1035.9 645.6 1043.3 635.7 1043.3 635.7 1035.9 639.3 1035.9 639.3 1039.7 642.9 1039.7 642.9 1035.9 645.6 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="662.8" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -622,16 +632,16 @@
         <rect class="r50b-top-cls-22" x="740.1" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="808.3 1070.4 796.5 1070.4 796.5 1055 808.3 1053 808.3 1070.4"/>
         <polygon class="r50b-top-cls-20" points="808.3 1308.9 796.5 1308.9 796.5 1324.3 808.3 1326.3 808.3 1308.9"/>
-        <path class="r50b-top-cls-23" d="M743.4,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M743.4,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M743.4,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="808.3 1053 774.9 1058.8 774.9 1070.9 808.3 1070.9 808.3 1053"/>
         <polygon class="r50b-top-cls-12" points="774.9 1308.5 774.9 1320.6 808.3 1326.3 808.3 1308.5 774.9 1308.5"/>
         <rect class="r50b-top-cls-22" x="774.8" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="774.8" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="747.9" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="747.9" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="765.1" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="810 1041 810 1338.4 804.4 1338.4 804.4 1336.7 808.3 1336.7 808.3 1042.6 804.4 1042.6 804.4 1041 810 1041"/>
         <rect class="r50b-top-cls-10" x="759.2" y="1278.9" width="33.9" height="45.6"/>
@@ -641,7 +651,7 @@
         <rect class="r50b-top-cls-19" x="762.1" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="741.6" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="747.9 1035.9 747.9 1043.3 738 1043.3 738 1035.9 741.6 1035.9 741.6 1039.7 745.2 1039.7 745.2 1035.9 747.9 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="747.9 1035.9 747.9 1043.3 738 1043.3 738 1035.9 741.6 1035.9 741.6 1039.7 745.2 1039.7 745.2 1035.9 747.9 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="765.1" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -661,16 +671,16 @@
         <rect class="r50b-top-cls-22" x="818.3" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="886.5 1070.4 874.7 1070.4 874.7 1055 886.5 1053 886.5 1070.4"/>
         <polygon class="r50b-top-cls-20" points="886.5 1308.9 874.7 1308.9 874.7 1324.3 886.5 1326.3 886.5 1308.9"/>
-        <path class="r50b-top-cls-23" d="M821.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M821.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M821.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="886.5 1053 853.1 1058.8 853.1 1070.9 886.5 1070.9 886.5 1053"/>
         <polygon class="r50b-top-cls-12" points="853.1 1308.5 853.1 1320.6 886.5 1326.3 886.5 1308.5 853.1 1308.5"/>
         <rect class="r50b-top-cls-22" x="853.1" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="853.1" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="826.2" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="826.2" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="843.4" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="888.2 1041 888.2 1338.4 882.7 1338.4 882.7 1336.7 886.5 1336.7 886.5 1042.6 882.7 1042.6 882.7 1041 888.2 1041"/>
         <rect class="r50b-top-cls-10" x="837.4" y="1278.9" width="33.9" height="45.6"/>
@@ -680,7 +690,7 @@
         <rect class="r50b-top-cls-19" x="840.3" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="819.8" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="826.2 1035.9 826.2 1043.3 816.2 1043.3 816.2 1035.9 819.8 1035.9 819.8 1039.7 823.4 1039.7 823.4 1035.9 826.2 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="826.2 1035.9 826.2 1043.3 816.2 1043.3 816.2 1035.9 819.8 1035.9 819.8 1039.7 823.4 1039.7 823.4 1035.9 826.2 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="843.3" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -700,16 +710,16 @@
         <rect class="r50b-top-cls-22" x="896.6" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="964.7 1070.4 952.9 1070.4 952.9 1055 964.7 1053 964.7 1070.4"/>
         <polygon class="r50b-top-cls-20" points="964.7 1308.9 952.9 1308.9 952.9 1324.3 964.7 1326.3 964.7 1308.9"/>
-        <path class="r50b-top-cls-23" d="M899.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M899.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M899.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="964.7 1053 931.3 1058.8 931.3 1070.9 964.7 1070.9 964.7 1053"/>
         <polygon class="r50b-top-cls-12" points="931.3 1308.5 931.3 1320.6 964.7 1326.3 964.7 1308.5 931.3 1308.5"/>
         <rect class="r50b-top-cls-22" x="931.3" y="1070.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="931.3" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="904.4" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="904.4" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="921.6" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="966.4 1041 966.4 1338.4 960.9 1338.4 960.9 1336.7 964.7 1336.7 964.7 1042.6 960.9 1042.6 960.9 1041 966.4 1041"/>
         <rect class="r50b-top-cls-10" x="915.7" y="1278.9" width="33.9" height="45.6"/>
@@ -719,7 +729,7 @@
         <rect class="r50b-top-cls-19" x="918.5" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="898.1" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="904.4 1035.9 904.4 1043.3 894.5 1043.3 894.5 1035.9 898.1 1035.9 898.1 1039.7 901.7 1039.7 901.7 1035.9 904.4 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="904.4 1035.9 904.4 1043.3 894.5 1043.3 894.5 1035.9 898.1 1035.9 898.1 1039.7 901.7 1039.7 901.7 1035.9 904.4 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="921.6" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -739,16 +749,16 @@
         <rect class="r50b-top-cls-22" x="974.8" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1043 1070.4 1031.2 1070.4 1031.2 1055 1043 1053 1043 1070.4"/>
         <polygon class="r50b-top-cls-20" points="1043 1308.9 1031.2 1308.9 1031.2 1324.3 1043 1326.3 1043 1308.9"/>
-        <path class="r50b-top-cls-23" d="M978.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M978.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M978.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="1043 1053 1009.6 1058.8 1009.6 1070.9 1043 1070.9 1043 1053"/>
         <polygon class="r50b-top-cls-12" points="1009.6 1308.5 1009.6 1320.6 1043 1326.3 1043 1308.5 1009.6 1308.5"/>
         <rect class="r50b-top-cls-22" x="1009.5" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1009.5" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="982.6" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="982.6" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="999.8" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1044.7 1041 1044.7 1338.4 1039.2 1338.4 1039.2 1336.7 1043 1336.7 1043 1042.6 1039.2 1042.6 1039.2 1041 1044.7 1041"/>
         <rect class="r50b-top-cls-10" x="993.9" y="1278.9" width="33.9" height="45.6"/>
@@ -758,7 +768,7 @@
         <rect class="r50b-top-cls-19" x="996.8" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="976.3" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="982.6 1035.9 982.6 1043.3 972.7 1043.3 972.7 1035.9 976.3 1035.9 976.3 1039.7 979.9 1039.7 979.9 1035.9 982.6 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="982.6 1035.9 982.6 1043.3 972.7 1043.3 972.7 1035.9 976.3 1035.9 976.3 1039.7 979.9 1039.7 979.9 1035.9 982.6 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="999.8" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -778,16 +788,16 @@
         <rect class="r50b-top-cls-22" x="1053" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1121.2 1070.4 1109.4 1070.4 1109.4 1055 1121.2 1053 1121.2 1070.4"/>
         <polygon class="r50b-top-cls-20" points="1121.2 1308.9 1109.4 1308.9 1109.4 1324.3 1121.2 1326.3 1121.2 1308.9"/>
-        <path class="r50b-top-cls-23" d="M1056.3,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1056.3,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1056.3,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="1121.2 1053 1087.8 1058.8 1087.8 1070.9 1121.2 1070.9 1121.2 1053"/>
         <polygon class="r50b-top-cls-12" points="1087.8 1308.5 1087.8 1320.6 1121.2 1326.3 1121.2 1308.5 1087.8 1308.5"/>
         <rect class="r50b-top-cls-22" x="1087.8" y="1070.9" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1087.8" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1060.9" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1060.9" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1078.1" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1122.9 1041 1122.9 1338.4 1117.4 1338.4 1117.4 1336.7 1121.2 1336.7 1121.2 1042.6 1117.4 1042.6 1117.4 1041 1122.9 1041"/>
         <rect class="r50b-top-cls-10" x="1072.2" y="1278.9" width="33.9" height="45.6"/>
@@ -797,7 +807,7 @@
         <rect class="r50b-top-cls-19" x="1075" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1054.5" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1060.9 1035.9 1060.9 1043.3 1050.9 1043.3 1050.9 1035.9 1054.5 1035.9 1054.5 1039.7 1058.1 1039.7 1058.1 1035.9 1060.9 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1060.9 1035.9 1060.9 1043.3 1050.9 1043.3 1050.9 1035.9 1054.5 1035.9 1054.5 1039.7 1058.1 1039.7 1058.1 1035.9 1060.9 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="1078" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -817,16 +827,16 @@
         <rect class="r50b-top-cls-22" x="1131.3" y="1071.3" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1199.4 1070.4 1187.6 1070.4 1187.6 1055 1199.4 1053 1199.4 1070.4"/>
         <polygon class="r50b-top-cls-20" points="1199.4 1308.9 1187.6 1308.9 1187.6 1324.3 1199.4 1326.3 1199.4 1308.9"/>
-        <path class="r50b-top-cls-23" d="M1134.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1134.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1134.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,1071.3h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,1333.5h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,1285.2h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="1199.4 1053 1166 1058.8 1166 1070.9 1199.4 1070.9 1199.4 1053"/>
         <polygon class="r50b-top-cls-12" points="1166 1308.5 1166 1320.6 1199.4 1326.3 1199.4 1308.5 1166 1308.5"/>
         <rect class="r50b-top-cls-22" x="1166" y="1070.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1166" y="1155.1" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1139.1" y="1034" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1139.1" y="1034" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1156.3" y="1345.4" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1201.1 1041 1201.1 1338.4 1195.6 1338.4 1195.6 1336.7 1199.4 1336.7 1199.4 1042.6 1195.6 1042.6 1195.6 1041 1201.1 1041"/>
         <rect class="r50b-top-cls-10" x="1150.4" y="1278.9" width="33.9" height="45.6"/>
@@ -836,7 +846,7 @@
         <rect class="r50b-top-cls-19" x="1153.2" y="1334.7" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1132.8" y="1035.9" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1139.1 1035.9 1139.1 1043.3 1129.2 1043.3 1129.2 1035.9 1132.8 1035.9 1132.8 1039.7 1136.4 1039.7 1136.4 1035.9 1139.1 1035.9"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1139.1 1035.9 1139.1 1043.3 1129.2 1043.3 1129.2 1035.9 1132.8 1035.9 1132.8 1039.7 1136.4 1039.7 1136.4 1035.9 1139.1 1035.9"/>
         </g>
         <rect class="r50b-top-cls-13" x="1156.3" y="1063.1" width="22.2" height="70.8"/>
       </g>
@@ -856,16 +866,16 @@
         <rect class="r50b-top-cls-22" x="291.5" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="234.5 987.7 246.3 987.7 246.3 1003.1 234.5 1005.2 234.5 987.7"/>
         <polygon class="r50b-top-cls-20" points="234.5 749.3 246.3 749.3 246.3 733.9 234.5 731.9 234.5 749.3"/>
-        <path class="r50b-top-cls-23" d="M299.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M299.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M299.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="234.5 1005.2 267.9 999.4 268 987.3 234.5 987.3 234.5 1005.2"/>
         <polygon class="r50b-top-cls-12" points="268 749.7 268 737.6 234.5 731.9 234.5 749.7 268 749.7"/>
         <rect class="r50b-top-cls-22" x="234.5" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="234.5" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="238.4" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="238.4" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="255.6" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="232.9 1017.2 232.9 719.8 238.4 719.8 238.4 721.5 234.5 721.5 234.5 1015.5 238.4 1015.5 238.4 1017.2 232.9 1017.2"/>
         <rect class="r50b-top-cls-10" x="249.7" y="733.6" width="33.9" height="45.6"/>
@@ -875,7 +885,7 @@
         <rect class="r50b-top-cls-19" x="252.5" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="297.6" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="294.9 1022.3 294.9 1014.9 304.8 1014.9 304.8 1022.3 301.2 1022.3 301.2 1018.5 297.6 1018.5 297.6 1022.3 294.9 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="294.9 1022.3 294.9 1014.9 304.8 1014.9 304.8 1022.3 301.2 1022.3 301.2 1018.5 297.6 1018.5 297.6 1022.3 294.9 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="255.6" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -895,16 +905,16 @@
         <rect class="r50b-top-cls-22" x="369.7" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="312.8 987.7 324.6 987.7 324.6 1003.1 312.8 1005.2 312.8 987.7"/>
         <polygon class="r50b-top-cls-20" points="312.8 749.3 324.6 749.3 324.6 733.9 312.8 731.9 312.8 749.3"/>
-        <path class="r50b-top-cls-23" d="M377.7,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M377.7,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M377.7,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="312.8 1005.2 346.2 999.4 346.2 987.3 312.8 987.3 312.8 1005.2"/>
         <polygon class="r50b-top-cls-12" points="346.2 749.7 346.2 737.6 312.8 731.9 312.8 749.7 346.2 749.7"/>
         <rect class="r50b-top-cls-22" x="312.8" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="312.8" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="316.6" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="316.6" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="333.8" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="311.1 1017.2 311.1 719.8 316.6 719.8 316.6 721.5 312.8 721.5 312.8 1015.5 316.6 1015.5 316.6 1017.2 311.1 1017.2"/>
         <rect class="r50b-top-cls-10" x="327.9" y="733.6" width="33.9" height="45.6"/>
@@ -914,7 +924,7 @@
         <rect class="r50b-top-cls-19" x="330.7" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="375.9" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="373.1 1022.3 373.1 1014.9 383.1 1014.9 383.1 1022.3 379.5 1022.3 379.5 1018.5 375.9 1018.5 375.9 1022.3 373.1 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="373.1 1022.3 373.1 1014.9 383.1 1014.9 383.1 1022.3 379.5 1022.3 379.5 1018.5 375.9 1018.5 375.9 1022.3 373.1 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="333.7" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -934,16 +944,16 @@
         <rect class="r50b-top-cls-22" x="448" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="391 987.7 402.8 987.7 402.8 1003.1 391 1005.2 391 987.7"/>
         <polygon class="r50b-top-cls-20" points="391 749.3 402.8 749.3 402.8 733.9 391 731.9 391 749.3"/>
-        <path class="r50b-top-cls-23" d="M455.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M455.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M455.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="391 1005.2 424.4 999.4 424.4 987.3 391 987.3 391 1005.2"/>
         <polygon class="r50b-top-cls-12" points="424.4 749.7 424.4 737.6 391 731.9 391 749.7 424.4 749.7"/>
         <rect class="r50b-top-cls-22" x="391" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="391" y="833.9" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="394.9" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="394.9" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="412.1" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="389.3 1017.2 389.3 719.8 394.8 719.8 394.8 721.5 391 721.5 391 1015.5 394.8 1015.5 394.8 1017.2 389.3 1017.2"/>
         <rect class="r50b-top-cls-10" x="406.2" y="733.6" width="33.9" height="45.6"/>
@@ -953,7 +963,7 @@
         <rect class="r50b-top-cls-19" x="408.9" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="454.1" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="451.4 1022.3 451.4 1014.9 461.3 1014.9 461.3 1022.3 457.7 1022.3 457.7 1018.5 454.1 1018.5 454.1 1022.3 451.4 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="451.4 1022.3 451.4 1014.9 461.3 1014.9 461.3 1022.3 457.7 1022.3 457.7 1018.5 454.1 1018.5 454.1 1022.3 451.4 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="412" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -973,16 +983,16 @@
         <rect class="r50b-top-cls-22" x="526.2" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="469.3 987.7 481.1 987.7 481.1 1003.1 469.3 1005.2 469.3 987.7"/>
         <polygon class="r50b-top-cls-20" points="469.3 749.3 481.1 749.3 481.1 733.9 469.3 731.9 469.3 749.3"/>
-        <path class="r50b-top-cls-23" d="M534.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M534.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M534.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="469.3 1005.2 502.7 999.4 502.7 987.3 469.3 987.3 469.3 1005.2"/>
         <polygon class="r50b-top-cls-12" points="502.7 749.7 502.7 737.6 469.3 731.9 469.3 749.7 502.7 749.7"/>
         <rect class="r50b-top-cls-22" x="469.2" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="469.2" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="473.1" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="473.1" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="490.3" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="467.6 1017.2 467.6 719.8 473.1 719.8 473.1 721.5 469.3 721.5 469.3 1015.5 473.1 1015.5 473.1 1017.2 467.6 1017.2"/>
         <rect class="r50b-top-cls-10" x="484.4" y="733.6" width="33.9" height="45.6"/>
@@ -992,7 +1002,7 @@
         <rect class="r50b-top-cls-19" x="487.2" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="532.3" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="529.6 1022.3 529.6 1014.9 539.5 1014.9 539.5 1022.3 535.9 1022.3 535.9 1018.5 532.3 1018.5 532.3 1022.3 529.6 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="529.6 1022.3 529.6 1014.9 539.5 1014.9 539.5 1022.3 535.9 1022.3 535.9 1018.5 532.3 1018.5 532.3 1022.3 529.6 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="490.3" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1012,16 +1022,16 @@
         <rect class="r50b-top-cls-22" x="604.4" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="547.5 987.7 559.3 987.7 559.3 1003.1 547.5 1005.2 547.5 987.7"/>
         <polygon class="r50b-top-cls-20" points="547.5 749.3 559.3 749.3 559.3 733.9 547.5 731.9 547.5 749.3"/>
-        <path class="r50b-top-cls-23" d="M612.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M612.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M612.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="547.5 1005.2 580.9 999.4 580.9 987.3 547.5 987.3 547.5 1005.2"/>
         <polygon class="r50b-top-cls-12" points="580.9 749.7 580.9 737.6 547.5 731.9 547.5 749.7 580.9 749.7"/>
         <rect class="r50b-top-cls-22" x="547.5" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="547.5" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="551.3" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="551.3" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="568.5" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="545.8 1017.2 545.8 719.8 551.3 719.8 551.3 721.5 547.5 721.5 547.5 1015.5 551.3 1015.5 551.3 1017.2 545.8 1017.2"/>
         <rect class="r50b-top-cls-10" x="562.6" y="733.6" width="33.9" height="45.6"/>
@@ -1031,7 +1041,7 @@
         <rect class="r50b-top-cls-19" x="565.4" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="610.6" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="607.8 1022.3 607.8 1014.9 617.8 1014.9 617.8 1022.3 614.2 1022.3 614.2 1018.5 610.6 1018.5 610.6 1022.3 607.8 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="607.8 1022.3 607.8 1014.9 617.8 1014.9 617.8 1022.3 614.2 1022.3 614.2 1018.5 610.6 1018.5 610.6 1022.3 607.8 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="568.4" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1051,16 +1061,16 @@
         <rect class="r50b-top-cls-22" x="682.7" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="625.7 987.7 637.5 987.7 637.5 1003.1 625.7 1005.2 625.7 987.7"/>
         <polygon class="r50b-top-cls-20" points="625.7 749.3 637.5 749.3 637.5 733.9 625.7 731.9 625.7 749.3"/>
-        <path class="r50b-top-cls-23" d="M690.6,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M690.6,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M690.6,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="625.7 1005.2 659.1 999.4 659.1 987.3 625.7 987.3 625.7 1005.2"/>
         <polygon class="r50b-top-cls-12" points="659.1 749.7 659.1 737.6 625.7 731.9 625.7 749.7 659.1 749.7"/>
         <rect class="r50b-top-cls-22" x="625.7" y="749.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="625.7" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="629.6" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="629.6" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="646.7" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="624 1017.2 624 719.8 629.5 719.8 629.5 721.5 625.7 721.5 625.7 1015.5 629.5 1015.5 629.5 1017.2 624 1017.2"/>
         <rect class="r50b-top-cls-10" x="640.9" y="733.6" width="33.9" height="45.6"/>
@@ -1070,7 +1080,7 @@
         <rect class="r50b-top-cls-19" x="643.6" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="688.8" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="686.1 1022.3 686.1 1014.9 696 1014.9 696 1022.3 692.4 1022.3 692.4 1018.5 688.8 1018.5 688.8 1022.3 686.1 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="686.1 1022.3 686.1 1014.9 696 1014.9 696 1022.3 692.4 1022.3 692.4 1018.5 688.8 1018.5 688.8 1022.3 686.1 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="646.7" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1090,16 +1100,16 @@
         <rect class="r50b-top-cls-22" x="785" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="728 987.7 739.8 987.7 739.8 1003.1 728 1005.2 728 987.7"/>
         <polygon class="r50b-top-cls-20" points="728 749.3 739.8 749.3 739.8 733.9 728 731.9 728 749.3"/>
-        <path class="r50b-top-cls-23" d="M792.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M792.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M792.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="728 1005.2 761.4 999.4 761.4 987.3 728 987.3 728 1005.2"/>
         <polygon class="r50b-top-cls-12" points="761.4 749.7 761.4 737.6 728 731.9 728 749.7 761.4 749.7"/>
         <rect class="r50b-top-cls-22" x="728" y="749.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="728" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="731.9" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="731.9" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="749" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="726.3 1017.2 726.3 719.8 731.9 719.8 731.9 721.5 728 721.5 728 1015.5 731.9 1015.5 731.9 1017.2 726.3 1017.2"/>
         <rect class="r50b-top-cls-10" x="743.2" y="733.6" width="33.9" height="45.6"/>
@@ -1109,7 +1119,7 @@
         <rect class="r50b-top-cls-19" x="745.9" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="791.1" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="788.4 1022.3 788.4 1014.9 798.3 1014.9 798.3 1022.3 794.7 1022.3 794.7 1018.5 791.1 1018.5 791.1 1022.3 788.4 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="788.4 1022.3 788.4 1014.9 798.3 1014.9 798.3 1022.3 794.7 1022.3 794.7 1018.5 791.1 1018.5 791.1 1022.3 788.4 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="749" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1129,16 +1139,16 @@
         <rect class="r50b-top-cls-22" x="863.2" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="806.3 987.7 818.1 987.7 818.1 1003.1 806.3 1005.2 806.3 987.7"/>
         <polygon class="r50b-top-cls-20" points="806.3 749.3 818.1 749.3 818.1 733.9 806.3 731.9 806.3 749.3"/>
-        <path class="r50b-top-cls-23" d="M871.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M871.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M871.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="806.3 1005.2 839.7 999.4 839.7 987.3 806.3 987.3 806.3 1005.2"/>
         <polygon class="r50b-top-cls-12" points="839.7 749.7 839.7 737.6 806.3 731.9 806.3 749.7 839.7 749.7"/>
         <rect class="r50b-top-cls-22" x="806.3" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="806.3" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="810.1" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="810.1" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="827.3" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="804.6 1017.2 804.6 719.8 810.1 719.8 810.1 721.5 806.3 721.5 806.3 1015.5 810.1 1015.5 810.1 1017.2 804.6 1017.2"/>
         <rect class="r50b-top-cls-10" x="821.4" y="733.6" width="33.9" height="45.6"/>
@@ -1148,7 +1158,7 @@
         <rect class="r50b-top-cls-19" x="824.2" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="869.3" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="866.6 1022.3 866.6 1014.9 876.5 1014.9 876.5 1022.3 872.9 1022.3 872.9 1018.5 869.3 1018.5 869.3 1022.3 866.6 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="866.6 1022.3 866.6 1014.9 876.5 1014.9 876.5 1022.3 872.9 1022.3 872.9 1018.5 869.3 1018.5 869.3 1022.3 866.6 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="827.2" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1168,16 +1178,16 @@
         <rect class="r50b-top-cls-22" x="941.5" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="884.5 987.7 896.3 987.7 896.3 1003.1 884.5 1005.2 884.5 987.7"/>
         <polygon class="r50b-top-cls-20" points="884.5 749.3 896.3 749.3 896.3 733.9 884.5 731.9 884.5 749.3"/>
-        <path class="r50b-top-cls-23" d="M949.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M949.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M949.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="884.5 1005.2 917.9 999.4 917.9 987.3 884.5 987.3 884.5 1005.2"/>
         <polygon class="r50b-top-cls-12" points="917.9 749.7 917.9 737.6 884.5 731.9 884.5 749.7 917.9 749.7"/>
         <rect class="r50b-top-cls-22" x="884.5" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="884.5" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="888.4" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="888.4" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="905.6" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="882.8 1017.2 882.8 719.8 888.3 719.8 888.3 721.5 884.5 721.5 884.5 1015.5 888.3 1015.5 888.3 1017.2 882.8 1017.2"/>
         <rect class="r50b-top-cls-10" x="899.7" y="733.6" width="33.9" height="45.6"/>
@@ -1187,7 +1197,7 @@
         <rect class="r50b-top-cls-19" x="902.5" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="947.6" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="944.8 1022.3 944.8 1014.9 954.8 1014.9 954.8 1022.3 951.2 1022.3 951.2 1018.5 947.6 1018.5 947.6 1022.3 944.8 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="944.8 1022.3 944.8 1014.9 954.8 1014.9 954.8 1022.3 951.2 1022.3 951.2 1018.5 947.6 1018.5 947.6 1022.3 944.8 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="905.5" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1207,16 +1217,16 @@
         <rect class="r50b-top-cls-22" x="1019.7" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="962.7 987.7 974.5 987.7 974.5 1003.1 962.7 1005.2 962.7 987.7"/>
         <polygon class="r50b-top-cls-20" points="962.7 749.3 974.5 749.3 974.5 733.9 962.7 731.9 962.7 749.3"/>
-        <path class="r50b-top-cls-23" d="M1027.6,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1027.6,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1027.6,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="962.7 1005.2 996.1 999.4 996.1 987.3 962.7 987.3 962.7 1005.2"/>
         <polygon class="r50b-top-cls-12" points="996.1 749.7 996.1 737.6 962.7 731.9 962.7 749.7 996.1 749.7"/>
         <rect class="r50b-top-cls-22" x="962.7" y="749.8" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="962.7" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="966.5" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="966.5" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="983.7" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="961 1017.2 961 719.8 966.6 719.8 966.6 721.5 962.7 721.5 962.7 1015.5 966.6 1015.5 966.6 1017.2 961 1017.2"/>
         <rect class="r50b-top-cls-10" x="977.9" y="733.6" width="33.9" height="45.6"/>
@@ -1226,7 +1236,7 @@
         <rect class="r50b-top-cls-19" x="980.6" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1025.8" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1023.1 1022.3 1023.1 1014.9 1033 1014.9 1033 1022.3 1029.4 1022.3 1029.4 1018.5 1025.8 1018.5 1025.8 1022.3 1023.1 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1023.1 1022.3 1023.1 1014.9 1033 1014.9 1033 1022.3 1029.4 1022.3 1029.4 1018.5 1025.8 1018.5 1025.8 1022.3 1023.1 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="983.7" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1246,16 +1256,16 @@
         <rect class="r50b-top-cls-22" x="1097.9" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1041 987.7 1052.8 987.7 1052.8 1003.1 1041 1005.2 1041 987.7"/>
         <polygon class="r50b-top-cls-20" points="1041 749.3 1052.8 749.3 1052.8 733.9 1041 731.9 1041 749.3"/>
-        <path class="r50b-top-cls-23" d="M1105.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1105.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1105.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="1041 1005.2 1074.4 999.4 1074.4 987.3 1041 987.3 1041 1005.2"/>
         <polygon class="r50b-top-cls-12" points="1074.4 749.7 1074.4 737.6 1041 731.9 1041 749.7 1074.4 749.7"/>
         <rect class="r50b-top-cls-22" x="1041" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1041" y="834" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1044.8" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1044.8" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1062" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1039.3 1017.2 1039.3 719.8 1044.8 719.8 1044.8 721.5 1041 721.5 1041 1015.5 1044.8 1015.5 1044.8 1017.2 1039.3 1017.2"/>
         <rect class="r50b-top-cls-10" x="1056.1" y="733.6" width="33.9" height="45.6"/>
@@ -1265,7 +1275,7 @@
         <rect class="r50b-top-cls-19" x="1058.9" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1104.1" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1101.3 1022.3 1101.3 1014.9 1111.3 1014.9 1111.3 1022.3 1107.7 1022.3 1107.7 1018.5 1104.1 1018.5 1104.1 1022.3 1101.3 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1101.3 1022.3 1101.3 1014.9 1111.3 1014.9 1111.3 1022.3 1107.7 1022.3 1107.7 1018.5 1104.1 1018.5 1104.1 1022.3 1101.3 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="1061.9" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1285,16 +1295,16 @@
         <rect class="r50b-top-cls-22" x="1176.2" y="773" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1119.2 987.7 1131 987.7 1131 1003.1 1119.2 1005.2 1119.2 987.7"/>
         <polygon class="r50b-top-cls-20" points="1119.2 749.3 1131 749.3 1131 733.9 1119.2 731.9 1119.2 749.3"/>
-        <path class="r50b-top-cls-23" d="M1184.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1184.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1184.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,986.9h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,724.7h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,773h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6v-206.7c0-2,1.6-3.6,3.6-3.6h0Z"/>
         <polygon class="r50b-top-cls-12" points="1119.2 1005.2 1152.6 999.4 1152.6 987.3 1119.2 987.3 1119.2 1005.2"/>
         <polygon class="r50b-top-cls-12" points="1152.6 749.7 1152.6 737.6 1119.2 731.9 1119.2 749.7 1152.6 749.7"/>
         <rect class="r50b-top-cls-22" x="1119.2" y="749.7" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1119.2" y="833.9" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1123.1" y="712.8" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1123.1" y="712.8" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1140.3" y="709.7" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1117.5 1017.2 1117.5 719.8 1123 719.8 1123 721.5 1119.2 721.5 1119.2 1015.5 1123 1015.5 1123 1017.2 1117.5 1017.2"/>
         <rect class="r50b-top-cls-10" x="1134.4" y="733.6" width="33.9" height="45.6"/>
@@ -1304,7 +1314,7 @@
         <rect class="r50b-top-cls-19" x="1137.1" y="721.5" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1182.3" y="1018.5" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1179.6 1022.3 1179.6 1014.9 1189.5 1014.9 1189.5 1022.3 1185.9 1022.3 1185.9 1018.5 1182.3 1018.5 1182.3 1022.3 1179.6 1022.3"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1179.6 1022.3 1179.6 1014.9 1189.5 1014.9 1189.5 1022.3 1185.9 1022.3 1185.9 1018.5 1182.3 1018.5 1182.3 1022.3 1179.6 1022.3"/>
         </g>
         <rect class="r50b-top-cls-13" x="1140.2" y="924.3" width="22.2" height="70.8"/>
       </g>
@@ -1324,16 +1334,16 @@
         <rect class="r50b-top-cls-22" x="246.6" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="314.8 418.9 303 418.9 303 403.5 314.8 401.5 314.8 418.9"/>
         <polygon class="r50b-top-cls-20" points="314.8 657.4 303 657.4 303 672.8 314.8 674.8 314.8 657.4"/>
-        <path class="r50b-top-cls-23" d="M249.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M249.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M249.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M249.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="314.8 401.5 281.4 407.3 281.4 419.4 314.8 419.4 314.8 401.5"/>
         <polygon class="r50b-top-cls-12" points="281.4 657 281.4 669.1 314.8 674.8 314.8 657 281.4 657"/>
         <rect class="r50b-top-cls-22" x="281.3" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="281.3" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="254.4" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="254.4" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="271.7" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="316.5 389.4 316.5 686.9 311 686.9 311 685.2 314.8 685.2 314.8 391.1 311 391.1 311 389.4 316.5 389.4"/>
         <rect class="r50b-top-cls-10" x="265.7" y="627.4" width="33.9" height="45.6"/>
@@ -1343,7 +1353,7 @@
         <rect class="r50b-top-cls-19" x="268.6" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="248.1" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="254.4 384.4 254.4 391.8 244.5 391.8 244.5 384.4 248.1 384.4 248.1 388.2 251.7 388.2 251.7 384.4 254.4 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="254.4 384.4 254.4 391.8 244.5 391.8 244.5 384.4 248.1 384.4 248.1 388.2 251.7 388.2 251.7 384.4 254.4 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="271.6" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1363,16 +1373,16 @@
         <rect class="r50b-top-cls-22" x="324.8" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="393 418.9 381.2 418.9 381.2 403.5 393 401.5 393 418.9"/>
         <polygon class="r50b-top-cls-20" points="393 657.4 381.2 657.4 381.2 672.8 393 674.8 393 657.4"/>
-        <path class="r50b-top-cls-23" d="M328.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M328.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M328.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M328.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="393 401.5 359.6 407.3 359.6 419.4 393 419.4 393 401.5"/>
         <polygon class="r50b-top-cls-12" points="359.6 657 359.6 669.1 393 674.8 393 657 359.6 657"/>
         <rect class="r50b-top-cls-22" x="359.6" y="419.3" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="359.6" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="332.7" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="332.7" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="349.9" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="394.7 389.4 394.7 686.9 389.2 686.9 389.2 685.2 393 685.2 393 391.1 389.2 391.1 389.2 389.4 394.7 389.4"/>
         <rect class="r50b-top-cls-10" x="344" y="627.4" width="33.9" height="45.6"/>
@@ -1382,7 +1392,7 @@
         <rect class="r50b-top-cls-19" x="346.8" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="326.3" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="332.7 384.4 332.7 391.8 322.7 391.8 322.7 384.4 326.3 384.4 326.3 388.2 329.9 388.2 329.9 384.4 332.7 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="332.7 384.4 332.7 391.8 322.7 391.8 322.7 384.4 326.3 384.4 326.3 388.2 329.9 388.2 329.9 384.4 332.7 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="349.8" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1402,16 +1412,16 @@
         <rect class="r50b-top-cls-22" x="403.1" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="471.3 418.9 459.5 418.9 459.5 403.5 471.3 401.5 471.3 418.9"/>
         <polygon class="r50b-top-cls-20" points="471.3 657.4 459.5 657.4 459.5 672.8 471.3 674.8 471.3 657.4"/>
-        <path class="r50b-top-cls-23" d="M406.4,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M406.4,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M406.4,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M406.4,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="471.3 401.5 437.9 407.3 437.8 419.4 471.3 419.4 471.3 401.5"/>
         <polygon class="r50b-top-cls-12" points="437.8 657 437.8 669.1 471.3 674.8 471.3 657 437.8 657"/>
         <rect class="r50b-top-cls-22" x="437.8" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="437.8" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="410.9" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="410.9" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="428.1" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="472.9 389.4 472.9 686.9 467.4 686.9 467.4 685.2 471.3 685.2 471.3 391.1 467.4 391.1 467.4 389.4 472.9 389.4"/>
         <rect class="r50b-top-cls-10" x="422.2" y="627.4" width="33.9" height="45.6"/>
@@ -1421,7 +1431,7 @@
         <rect class="r50b-top-cls-19" x="425" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="404.6" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="410.9 384.4 410.9 391.8 401 391.8 401 384.4 404.6 384.4 404.6 388.2 408.2 388.2 408.2 384.4 410.9 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="410.9 384.4 410.9 391.8 401 391.8 401 384.4 404.6 384.4 404.6 388.2 408.2 388.2 408.2 384.4 410.9 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="428.1" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1441,16 +1451,16 @@
         <rect class="r50b-top-cls-22" x="481.3" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="549.5 418.9 537.7 418.9 537.7 403.5 549.5 401.5 549.5 418.9"/>
         <polygon class="r50b-top-cls-20" points="549.5 657.4 537.7 657.4 537.7 672.8 549.5 674.8 549.5 657.4"/>
-        <path class="r50b-top-cls-23" d="M484.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M484.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M484.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M484.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="549.5 401.5 516.1 407.3 516.1 419.4 549.5 419.4 549.5 401.5"/>
         <polygon class="r50b-top-cls-12" points="516.1 657 516.1 669.1 549.5 674.8 549.5 657 516.1 657"/>
         <rect class="r50b-top-cls-22" x="516" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="516" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="489.2" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="489.2" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="506.4" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="551.2 389.4 551.2 686.9 545.7 686.9 545.7 685.2 549.5 685.2 549.5 391.1 545.7 391.1 545.7 389.4 551.2 389.4"/>
         <rect class="r50b-top-cls-10" x="500.4" y="627.4" width="33.9" height="45.6"/>
@@ -1460,7 +1470,7 @@
         <rect class="r50b-top-cls-19" x="503.3" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="482.8" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="489.2 384.4 489.2 391.8 479.2 391.8 479.2 384.4 482.8 384.4 482.8 388.2 486.4 388.2 486.4 384.4 489.2 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="489.2 384.4 489.2 391.8 479.2 391.8 479.2 384.4 482.8 384.4 482.8 388.2 486.4 388.2 486.4 384.4 489.2 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="506.3" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1480,16 +1490,16 @@
         <rect class="r50b-top-cls-22" x="559.5" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="627.7 418.9 615.9 418.9 615.9 403.5 627.7 401.5 627.7 418.9"/>
         <polygon class="r50b-top-cls-20" points="627.7 657.4 615.9 657.4 615.9 672.8 627.7 674.8 627.7 657.4"/>
-        <path class="r50b-top-cls-23" d="M562.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M562.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M562.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M562.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="627.7 401.5 594.3 407.3 594.3 419.4 627.7 419.4 627.7 401.5"/>
         <polygon class="r50b-top-cls-12" points="594.3 657 594.3 669.1 627.7 674.8 627.7 657 594.3 657"/>
         <rect class="r50b-top-cls-22" x="594.3" y="419.3" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="594.3" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="567.4" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="567.4" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="584.6" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="629.4 389.4 629.4 686.9 623.9 686.9 623.9 685.2 627.7 685.2 627.7 391.1 623.9 391.1 623.9 389.4 629.4 389.4"/>
         <rect class="r50b-top-cls-10" x="578.7" y="627.4" width="33.9" height="45.6"/>
@@ -1499,7 +1509,7 @@
         <rect class="r50b-top-cls-19" x="581.5" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="561" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="567.4 384.4 567.4 391.8 557.4 391.8 557.4 384.4 561 384.4 561 388.2 564.6 388.2 564.6 384.4 567.4 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="567.4 384.4 567.4 391.8 557.4 391.8 557.4 384.4 561 384.4 561 388.2 564.6 388.2 564.6 384.4 567.4 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="584.6" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1519,16 +1529,16 @@
         <rect class="r50b-top-cls-22" x="637.8" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="706 418.9 694.2 418.9 694.2 403.5 706 401.5 706 418.9"/>
         <polygon class="r50b-top-cls-20" points="706 657.4 694.2 657.4 694.2 672.8 706 674.8 706 657.4"/>
-        <path class="r50b-top-cls-23" d="M641.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M641.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M641.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M641.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="706 401.5 672.6 407.3 672.6 419.4 706 419.4 706 401.5"/>
         <polygon class="r50b-top-cls-12" points="672.6 657 672.6 669.1 706 674.8 706 657 672.6 657"/>
         <rect class="r50b-top-cls-22" x="672.5" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="672.5" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="645.6" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="645.6" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="662.8" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="707.7 389.4 707.7 686.9 702.1 686.9 702.1 685.2 706 685.2 706 391.1 702.1 391.1 702.1 389.4 707.7 389.4"/>
         <rect class="r50b-top-cls-10" x="656.9" y="627.4" width="33.9" height="45.6"/>
@@ -1538,7 +1548,7 @@
         <rect class="r50b-top-cls-19" x="659.7" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="639.3" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="645.6 384.4 645.6 391.8 635.7 391.8 635.7 384.4 639.3 384.4 639.3 388.2 642.9 388.2 642.9 384.4 645.6 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="645.6 384.4 645.6 391.8 635.7 391.8 635.7 384.4 639.3 384.4 639.3 388.2 642.9 388.2 642.9 384.4 645.6 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="662.8" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1558,16 +1568,16 @@
         <rect class="r50b-top-cls-22" x="740.1" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="808.3 418.9 796.5 418.9 796.5 403.5 808.3 401.5 808.3 418.9"/>
         <polygon class="r50b-top-cls-20" points="808.3 657.4 796.5 657.4 796.5 672.8 808.3 674.8 808.3 657.4"/>
-        <path class="r50b-top-cls-23" d="M743.4,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M743.4,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M743.4,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M743.4,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="808.3 401.5 774.9 407.3 774.9 419.4 808.3 419.4 808.3 401.5"/>
         <polygon class="r50b-top-cls-12" points="774.9 657 774.9 669.1 808.3 674.8 808.3 657 774.9 657"/>
         <rect class="r50b-top-cls-22" x="774.8" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="774.8" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="747.9" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="747.9" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="765.1" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="810 389.4 810 686.9 804.4 686.9 804.4 685.2 808.3 685.2 808.3 391.1 804.4 391.1 804.4 389.4 810 389.4"/>
         <rect class="r50b-top-cls-10" x="759.2" y="627.4" width="33.9" height="45.6"/>
@@ -1577,7 +1587,7 @@
         <rect class="r50b-top-cls-19" x="762.1" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="741.6" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="747.9 384.4 747.9 391.8 738 391.8 738 384.4 741.6 384.4 741.6 388.2 745.2 388.2 745.2 384.4 747.9 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="747.9 384.4 747.9 391.8 738 391.8 738 384.4 741.6 384.4 741.6 388.2 745.2 388.2 745.2 384.4 747.9 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="765.1" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1597,16 +1607,16 @@
         <rect class="r50b-top-cls-22" x="818.3" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="886.5 418.9 874.7 418.9 874.7 403.5 886.5 401.5 886.5 418.9"/>
         <polygon class="r50b-top-cls-20" points="886.5 657.4 874.7 657.4 874.7 672.8 886.5 674.8 886.5 657.4"/>
-        <path class="r50b-top-cls-23" d="M821.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M821.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M821.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M821.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="886.5 401.5 853.1 407.3 853.1 419.4 886.5 419.4 886.5 401.5"/>
         <polygon class="r50b-top-cls-12" points="853.1 657 853.1 669.1 886.5 674.8 886.5 657 853.1 657"/>
         <rect class="r50b-top-cls-22" x="853.1" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="853.1" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="826.2" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="826.2" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="843.4" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="888.2 389.4 888.2 686.9 882.7 686.9 882.7 685.2 886.5 685.2 886.5 391.1 882.7 391.1 882.7 389.4 888.2 389.4"/>
         <rect class="r50b-top-cls-10" x="837.4" y="627.4" width="33.9" height="45.6"/>
@@ -1616,7 +1626,7 @@
         <rect class="r50b-top-cls-19" x="840.3" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="819.8" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="826.2 384.4 826.2 391.8 816.2 391.8 816.2 384.4 819.8 384.4 819.8 388.2 823.4 388.2 823.4 384.4 826.2 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="826.2 384.4 826.2 391.8 816.2 391.8 816.2 384.4 819.8 384.4 819.8 388.2 823.4 388.2 823.4 384.4 826.2 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="843.3" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1636,16 +1646,16 @@
         <rect class="r50b-top-cls-22" x="896.6" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="964.7 418.9 952.9 418.9 952.9 403.5 964.7 401.5 964.7 418.9"/>
         <polygon class="r50b-top-cls-20" points="964.7 657.4 952.9 657.4 952.9 672.8 964.7 674.8 964.7 657.4"/>
-        <path class="r50b-top-cls-23" d="M899.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M899.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M899.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M899.9,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="964.7 401.5 931.3 407.3 931.3 419.4 964.7 419.4 964.7 401.5"/>
         <polygon class="r50b-top-cls-12" points="931.3 657 931.3 669.1 964.7 674.8 964.7 657 931.3 657"/>
         <rect class="r50b-top-cls-22" x="931.3" y="419.3" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="931.3" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="904.4" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="904.4" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="921.6" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="966.4 389.4 966.4 686.9 960.9 686.9 960.9 685.2 964.7 685.2 964.7 391.1 960.9 391.1 960.9 389.4 966.4 389.4"/>
         <rect class="r50b-top-cls-10" x="915.7" y="627.4" width="33.9" height="45.6"/>
@@ -1655,7 +1665,7 @@
         <rect class="r50b-top-cls-19" x="918.5" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="898.1" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="904.4 384.4 904.4 391.8 894.5 391.8 894.5 384.4 898.1 384.4 898.1 388.2 901.7 388.2 901.7 384.4 904.4 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="904.4 384.4 904.4 391.8 894.5 391.8 894.5 384.4 898.1 384.4 898.1 388.2 901.7 388.2 901.7 384.4 904.4 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="921.6" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1675,16 +1685,16 @@
         <rect class="r50b-top-cls-22" x="974.8" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1043 418.9 1031.2 418.9 1031.2 403.5 1043 401.5 1043 418.9"/>
         <polygon class="r50b-top-cls-20" points="1043 657.4 1031.2 657.4 1031.2 672.8 1043 674.8 1043 657.4"/>
-        <path class="r50b-top-cls-23" d="M978.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M978.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M978.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M978.1,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="1043 401.5 1009.6 407.3 1009.6 419.4 1043 419.4 1043 401.5"/>
         <polygon class="r50b-top-cls-12" points="1009.6 657 1009.6 669.1 1043 674.8 1043 657 1009.6 657"/>
         <rect class="r50b-top-cls-22" x="1009.5" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1009.5" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="982.6" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="982.6" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="999.8" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1044.7 389.4 1044.7 686.9 1039.2 686.9 1039.2 685.2 1043 685.2 1043 391.1 1039.2 391.1 1039.2 389.4 1044.7 389.4"/>
         <rect class="r50b-top-cls-10" x="993.9" y="627.4" width="33.9" height="45.6"/>
@@ -1694,7 +1704,7 @@
         <rect class="r50b-top-cls-19" x="996.8" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="976.3" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="982.6 384.4 982.6 391.8 972.7 391.8 972.7 384.4 976.3 384.4 976.3 388.2 979.9 388.2 979.9 384.4 982.6 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="982.6 384.4 982.6 391.8 972.7 391.8 972.7 384.4 976.3 384.4 976.3 388.2 979.9 388.2 979.9 384.4 982.6 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="999.8" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1714,16 +1724,16 @@
         <rect class="r50b-top-cls-22" x="1053" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1121.2 418.9 1109.4 418.9 1109.4 403.5 1121.2 401.5 1121.2 418.9"/>
         <polygon class="r50b-top-cls-20" points="1121.2 657.4 1109.4 657.4 1109.4 672.8 1121.2 674.8 1121.2 657.4"/>
-        <path class="r50b-top-cls-23" d="M1056.3,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1056.3,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1056.3,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1056.3,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="1121.2 401.5 1087.8 407.3 1087.8 419.4 1121.2 419.4 1121.2 401.5"/>
         <polygon class="r50b-top-cls-12" points="1087.8 657 1087.8 669.1 1121.2 674.8 1121.2 657 1087.8 657"/>
         <rect class="r50b-top-cls-22" x="1087.8" y="419.4" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1087.8" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1060.9" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1060.9" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1078.1" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1122.9 389.4 1122.9 686.9 1117.4 686.9 1117.4 685.2 1121.2 685.2 1121.2 391.1 1117.4 391.1 1117.4 389.4 1122.9 389.4"/>
         <rect class="r50b-top-cls-10" x="1072.2" y="627.4" width="33.9" height="45.6"/>
@@ -1733,7 +1743,7 @@
         <rect class="r50b-top-cls-19" x="1075" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1054.5" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1060.9 384.4 1060.9 391.8 1050.9 391.8 1050.9 384.4 1054.5 384.4 1054.5 388.2 1058.1 388.2 1058.1 384.4 1060.9 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1060.9 384.4 1060.9 391.8 1050.9 391.8 1050.9 384.4 1054.5 384.4 1054.5 388.2 1058.1 388.2 1058.1 384.4 1060.9 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="1078" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1753,16 +1763,16 @@
         <rect class="r50b-top-cls-22" x="1131.3" y="419.8" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1199.4 418.9 1187.6 418.9 1187.6 403.5 1199.4 401.5 1199.4 418.9"/>
         <polygon class="r50b-top-cls-20" points="1199.4 657.4 1187.6 657.4 1187.6 672.8 1199.4 674.8 1199.4 657.4"/>
-        <path class="r50b-top-cls-23" d="M1134.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1134.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
-        <path class="r50b-top-cls-23" d="M1134.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,419.8h-7.6v-25.5h7.6c2,0,3.6,1.6,3.6,3.6v18.3c0,2-1.6,3.6-3.6,3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,682h-7.6v-48.4h7.6c2,0,3.6,1.6,3.6,3.6v41.2c0,2-1.6,3.6-3.6,3.6h0Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1134.6,633.7h-7.6v-213.9h7.6c2,0,3.6,1.6,3.6,3.6v206.7c0,2-1.6,3.6-3.6,3.6Z"/>
         <polygon class="r50b-top-cls-12" points="1199.4 401.5 1166 407.3 1166 419.4 1199.4 419.4 1199.4 401.5"/>
         <polygon class="r50b-top-cls-12" points="1166 657 1166 669.1 1199.4 674.8 1199.4 657 1166 657"/>
         <rect class="r50b-top-cls-22" x="1166" y="419.3" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1166" y="503.6" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1139.1" y="382.4" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1139.1" y="382.4" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1156.3" y="693.9" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1201.1 389.4 1201.1 686.9 1195.6 686.9 1195.6 685.2 1199.4 685.2 1199.4 391.1 1195.6 391.1 1195.6 389.4 1201.1 389.4"/>
         <rect class="r50b-top-cls-10" x="1150.4" y="627.4" width="33.9" height="45.6"/>
@@ -1772,7 +1782,7 @@
         <rect class="r50b-top-cls-19" x="1153.2" y="683.2" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1132.8" y="384.4" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1139.1 384.4 1139.1 391.8 1129.2 391.8 1129.2 384.4 1132.8 384.4 1132.8 388.2 1136.4 388.2 1136.4 384.4 1139.1 384.4"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1139.1 384.4 1139.1 391.8 1129.2 391.8 1129.2 384.4 1132.8 384.4 1132.8 388.2 1136.4 388.2 1136.4 384.4 1139.1 384.4"/>
         </g>
         <rect class="r50b-top-cls-13" x="1156.3" y="411.6" width="22.2" height="70.8"/>
       </g>
@@ -1792,16 +1802,16 @@
         <rect class="r50b-top-cls-22" x="291.5" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="234.5 336.2 246.3 336.2 246.3 351.6 234.5 353.7 234.5 336.2"/>
         <polygon class="r50b-top-cls-20" points="234.5 97.8 246.3 97.8 246.3 82.4 234.5 80.4 234.5 97.8"/>
-        <path class="r50b-top-cls-23" d="M299.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M299.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M299.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M299.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="234.5 353.7 267.9 347.9 268 335.8 234.5 335.8 234.5 353.7"/>
         <polygon class="r50b-top-cls-12" points="268 98.2 268 86.1 234.5 80.4 234.5 98.2 268 98.2"/>
         <rect class="r50b-top-cls-22" x="234.5" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="234.5" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="238.4" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="238.4" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="255.6" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="232.9 365.7 232.9 68.3 238.4 68.3 238.4 70 234.5 70 234.5 364 238.4 364 238.4 365.7 232.9 365.7"/>
         <rect class="r50b-top-cls-10" x="249.7" y="82.1" width="33.9" height="45.6"/>
@@ -1811,7 +1821,7 @@
         <rect class="r50b-top-cls-19" x="252.5" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="297.6" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="294.9 370.8 294.9 363.4 304.8 363.4 304.8 370.8 301.2 370.8 301.2 367 297.6 367 297.6 370.8 294.9 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="294.9 370.8 294.9 363.4 304.8 363.4 304.8 370.8 301.2 370.8 301.2 367 297.6 367 297.6 370.8 294.9 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="255.6" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -1831,16 +1841,16 @@
         <rect class="r50b-top-cls-22" x="369.7" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="312.8 336.2 324.6 336.2 324.6 351.6 312.8 353.7 312.8 336.2"/>
         <polygon class="r50b-top-cls-20" points="312.8 97.8 324.6 97.8 324.6 82.4 312.8 80.4 312.8 97.8"/>
-        <path class="r50b-top-cls-23" d="M377.7,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M377.7,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M377.7,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M377.7,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="312.8 353.7 346.2 347.9 346.2 335.8 312.8 335.8 312.8 353.7"/>
         <polygon class="r50b-top-cls-12" points="346.2 98.2 346.2 86.1 312.8 80.4 312.8 98.2 346.2 98.2"/>
         <rect class="r50b-top-cls-22" x="312.8" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="312.8" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="316.6" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="316.6" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="333.8" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="311.1 365.7 311.1 68.3 316.6 68.3 316.6 70 312.8 70 312.8 364 316.6 364 316.6 365.7 311.1 365.7"/>
         <rect class="r50b-top-cls-10" x="327.9" y="82.1" width="33.9" height="45.6"/>
@@ -1850,7 +1860,7 @@
         <rect class="r50b-top-cls-19" x="330.7" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="375.9" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="373.1 370.8 373.1 363.4 383.1 363.4 383.1 370.8 379.5 370.8 379.5 367 375.9 367 375.9 370.8 373.1 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="373.1 370.8 373.1 363.4 383.1 363.4 383.1 370.8 379.5 370.8 379.5 367 375.9 367 375.9 370.8 373.1 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="333.7" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -1870,16 +1880,16 @@
         <rect class="r50b-top-cls-22" x="448" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="391 336.2 402.8 336.2 402.8 351.6 391 353.7 391 336.2"/>
         <polygon class="r50b-top-cls-20" points="391 97.8 402.8 97.8 402.8 82.4 391 80.4 391 97.8"/>
-        <path class="r50b-top-cls-23" d="M455.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M455.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M455.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M455.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="391 353.7 424.4 347.9 424.4 335.8 391 335.8 391 353.7"/>
         <polygon class="r50b-top-cls-12" points="424.4 98.2 424.4 86.1 391 80.4 391 98.2 424.4 98.2"/>
         <rect class="r50b-top-cls-22" x="391" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="391" y="182.4" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="394.9" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="394.9" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="412.1" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="389.3 365.7 389.3 68.3 394.8 68.3 394.8 70 391 70 391 364 394.8 364 394.8 365.7 389.3 365.7"/>
         <rect class="r50b-top-cls-10" x="406.2" y="82.1" width="33.9" height="45.6"/>
@@ -1889,7 +1899,7 @@
         <rect class="r50b-top-cls-19" x="408.9" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="454.1" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="451.4 370.8 451.4 363.4 461.3 363.4 461.3 370.8 457.7 370.8 457.7 367 454.1 367 454.1 370.8 451.4 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="451.4 370.8 451.4 363.4 461.3 363.4 461.3 370.8 457.7 370.8 457.7 367 454.1 367 454.1 370.8 451.4 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="412" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -1909,16 +1919,16 @@
         <rect class="r50b-top-cls-22" x="526.2" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="469.3 336.2 481.1 336.2 481.1 351.6 469.3 353.7 469.3 336.2"/>
         <polygon class="r50b-top-cls-20" points="469.3 97.8 481.1 97.8 481.1 82.4 469.3 80.4 469.3 97.8"/>
-        <path class="r50b-top-cls-23" d="M534.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M534.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M534.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M534.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="469.3 353.7 502.7 347.9 502.7 335.8 469.3 335.8 469.3 353.7"/>
         <polygon class="r50b-top-cls-12" points="502.7 98.2 502.7 86.1 469.3 80.4 469.3 98.2 502.7 98.2"/>
         <rect class="r50b-top-cls-22" x="469.3" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="469.3" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="473.1" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="473.1" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="490.3" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="467.6 365.7 467.6 68.3 473.1 68.3 473.1 70 469.3 70 469.3 364 473.1 364 473.1 365.7 467.6 365.7"/>
         <rect class="r50b-top-cls-10" x="484.4" y="82.1" width="33.9" height="45.6"/>
@@ -1928,7 +1938,7 @@
         <rect class="r50b-top-cls-19" x="487.2" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="532.3" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="529.6 370.8 529.6 363.4 539.5 363.4 539.5 370.8 535.9 370.8 535.9 367 532.3 367 532.3 370.8 529.6 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="529.6 370.8 529.6 363.4 539.5 363.4 539.5 370.8 535.9 370.8 535.9 367 532.3 367 532.3 370.8 529.6 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="490.3" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -1948,16 +1958,16 @@
         <rect class="r50b-top-cls-22" x="604.4" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="547.5 336.2 559.3 336.2 559.3 351.6 547.5 353.7 547.5 336.2"/>
         <polygon class="r50b-top-cls-20" points="547.5 97.8 559.3 97.8 559.3 82.4 547.5 80.4 547.5 97.8"/>
-        <path class="r50b-top-cls-23" d="M612.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M612.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M612.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M612.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="547.5 353.7 580.9 347.9 580.9 335.8 547.5 335.8 547.5 353.7"/>
         <polygon class="r50b-top-cls-12" points="580.9 98.2 580.9 86.1 547.5 80.4 547.5 98.2 580.9 98.2"/>
         <rect class="r50b-top-cls-22" x="547.5" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="547.5" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="551.3" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="551.3" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="568.5" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="545.8 365.7 545.8 68.3 551.3 68.3 551.3 70 547.5 70 547.5 364 551.3 364 551.3 365.7 545.8 365.7"/>
         <rect class="r50b-top-cls-10" x="562.6" y="82.1" width="33.9" height="45.6"/>
@@ -1967,7 +1977,7 @@
         <rect class="r50b-top-cls-19" x="565.4" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="610.6" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="607.8 370.8 607.8 363.4 617.8 363.4 617.8 370.8 614.2 370.8 614.2 367 610.6 367 610.6 370.8 607.8 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="607.8 370.8 607.8 363.4 617.8 363.4 617.8 370.8 614.2 370.8 614.2 367 610.6 367 610.6 370.8 607.8 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="568.4" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -1987,16 +1997,16 @@
         <rect class="r50b-top-cls-22" x="682.7" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="625.7 336.2 637.5 336.2 637.5 351.6 625.7 353.7 625.7 336.2"/>
         <polygon class="r50b-top-cls-20" points="625.7 97.8 637.5 97.8 637.5 82.4 625.7 80.4 625.7 97.8"/>
-        <path class="r50b-top-cls-23" d="M690.6,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M690.6,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M690.6,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M690.6,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="625.7 353.7 659.1 347.9 659.1 335.8 625.7 335.8 625.7 353.7"/>
         <polygon class="r50b-top-cls-12" points="659.1 98.2 659.1 86.1 625.7 80.4 625.7 98.2 659.1 98.2"/>
         <rect class="r50b-top-cls-22" x="625.7" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="625.7" y="182.4" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="629.6" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="629.6" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="646.7" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="624 365.7 624 68.3 629.5 68.3 629.5 70 625.7 70 625.7 364 629.5 364 629.5 365.7 624 365.7"/>
         <rect class="r50b-top-cls-10" x="640.9" y="82.1" width="33.9" height="45.6"/>
@@ -2006,7 +2016,7 @@
         <rect class="r50b-top-cls-19" x="643.6" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="688.8" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="686.1 370.8 686.1 363.4 696 363.4 696 370.8 692.4 370.8 692.4 367 688.8 367 688.8 370.8 686.1 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="686.1 370.8 686.1 363.4 696 363.4 696 370.8 692.4 370.8 692.4 367 688.8 367 688.8 370.8 686.1 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="646.7" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2026,16 +2036,16 @@
         <rect class="r50b-top-cls-22" x="785" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="728 336.2 739.8 336.2 739.8 351.6 728 353.7 728 336.2"/>
         <polygon class="r50b-top-cls-20" points="728 97.8 739.8 97.8 739.8 82.4 728 80.4 728 97.8"/>
-        <path class="r50b-top-cls-23" d="M792.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M792.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M792.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M792.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="728 353.7 761.4 347.9 761.4 335.8 728 335.8 728 353.7"/>
         <polygon class="r50b-top-cls-12" points="761.4 98.2 761.4 86.1 728 80.4 728 98.2 761.4 98.2"/>
         <rect class="r50b-top-cls-22" x="728" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="728" y="182.4" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="731.9" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="731.9" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="749" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="726.3 365.7 726.3 68.3 731.9 68.3 731.9 70 728 70 728 364 731.9 364 731.9 365.7 726.3 365.7"/>
         <rect class="r50b-top-cls-10" x="743.2" y="82.1" width="33.9" height="45.6"/>
@@ -2045,7 +2055,7 @@
         <rect class="r50b-top-cls-19" x="745.9" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="791.1" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="788.4 370.8 788.4 363.4 798.3 363.4 798.3 370.8 794.7 370.8 794.7 367 791.1 367 791.1 370.8 788.4 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="788.4 370.8 788.4 363.4 798.3 363.4 798.3 370.8 794.7 370.8 794.7 367 791.1 367 791.1 370.8 788.4 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="749" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2065,16 +2075,16 @@
         <rect class="r50b-top-cls-22" x="863.2" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="806.3 336.2 818.1 336.2 818.1 351.6 806.3 353.7 806.3 336.2"/>
         <polygon class="r50b-top-cls-20" points="806.3 97.8 818.1 97.8 818.1 82.4 806.3 80.4 806.3 97.8"/>
-        <path class="r50b-top-cls-23" d="M871.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M871.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M871.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M871.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="806.3 353.7 839.7 347.9 839.7 335.8 806.3 335.8 806.3 353.7"/>
         <polygon class="r50b-top-cls-12" points="839.7 98.2 839.7 86.1 806.3 80.4 806.3 98.2 839.7 98.2"/>
         <rect class="r50b-top-cls-22" x="806.3" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="806.3" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="810.1" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="810.1" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="827.3" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="804.6 365.7 804.6 68.3 810.1 68.3 810.1 70 806.3 70 806.3 364 810.1 364 810.1 365.7 804.6 365.7"/>
         <rect class="r50b-top-cls-10" x="821.4" y="82.1" width="33.9" height="45.6"/>
@@ -2084,7 +2094,7 @@
         <rect class="r50b-top-cls-19" x="824.2" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="869.3" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="866.6 370.8 866.6 363.4 876.5 363.4 876.5 370.8 872.9 370.8 872.9 367 869.3 367 869.3 370.8 866.6 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="866.6 370.8 866.6 363.4 876.5 363.4 876.5 370.8 872.9 370.8 872.9 367 869.3 367 869.3 370.8 866.6 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="827.2" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2104,16 +2114,16 @@
         <rect class="r50b-top-cls-22" x="941.5" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="884.5 336.2 896.3 336.2 896.3 351.6 884.5 353.7 884.5 336.2"/>
         <polygon class="r50b-top-cls-20" points="884.5 97.8 896.3 97.8 896.3 82.4 884.5 80.4 884.5 97.8"/>
-        <path class="r50b-top-cls-23" d="M949.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M949.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M949.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M949.4,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="884.5 353.7 917.9 347.9 917.9 335.8 884.5 335.8 884.5 353.7"/>
         <polygon class="r50b-top-cls-12" points="917.9 98.2 917.9 86.1 884.5 80.4 884.5 98.2 917.9 98.2"/>
         <rect class="r50b-top-cls-22" x="884.5" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="884.5" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="888.4" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="888.4" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="905.6" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="882.8 365.7 882.8 68.3 888.3 68.3 888.3 70 884.5 70 884.5 364 888.3 364 888.3 365.7 882.8 365.7"/>
         <rect class="r50b-top-cls-10" x="899.7" y="82.1" width="33.9" height="45.6"/>
@@ -2123,7 +2133,7 @@
         <rect class="r50b-top-cls-19" x="902.5" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="947.6" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="944.8 370.8 944.8 363.4 954.8 363.4 954.8 370.8 951.2 370.8 951.2 367 947.6 367 947.6 370.8 944.8 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="944.8 370.8 944.8 363.4 954.8 363.4 954.8 370.8 951.2 370.8 951.2 367 947.6 367 947.6 370.8 944.8 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="905.5" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2143,16 +2153,16 @@
         <rect class="r50b-top-cls-22" x="1019.7" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="962.7 336.2 974.5 336.2 974.5 351.6 962.7 353.7 962.7 336.2"/>
         <polygon class="r50b-top-cls-20" points="962.7 97.8 974.5 97.8 974.5 82.4 962.7 80.4 962.7 97.8"/>
-        <path class="r50b-top-cls-23" d="M1027.6,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1027.6,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1027.6,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1027.6,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="962.7 353.7 996.1 347.9 996.1 335.8 962.7 335.8 962.7 353.7"/>
         <polygon class="r50b-top-cls-12" points="996.1 98.2 996.1 86.1 962.7 80.4 962.7 98.2 996.1 98.2"/>
         <rect class="r50b-top-cls-22" x="962.7" y="98.3" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="962.7" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="966.5" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="966.5" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="983.7" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="961 365.7 961 68.3 966.6 68.3 966.6 70 962.7 70 962.7 364 966.6 364 966.6 365.7 961 365.7"/>
         <rect class="r50b-top-cls-10" x="977.9" y="82.1" width="33.9" height="45.6"/>
@@ -2162,7 +2172,7 @@
         <rect class="r50b-top-cls-19" x="980.6" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1025.8" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1023.1 370.8 1023.1 363.4 1033 363.4 1033 370.8 1029.4 370.8 1029.4 367 1025.8 367 1025.8 370.8 1023.1 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1023.1 370.8 1023.1 363.4 1033 363.4 1033 370.8 1029.4 370.8 1029.4 367 1025.8 367 1025.8 370.8 1023.1 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="983.7" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2182,16 +2192,16 @@
         <rect class="r50b-top-cls-22" x="1097.9" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1041 336.2 1052.8 336.2 1052.8 351.6 1041 353.7 1041 336.2"/>
         <polygon class="r50b-top-cls-20" points="1041 97.8 1052.8 97.8 1052.8 82.4 1041 80.4 1041 97.8"/>
-        <path class="r50b-top-cls-23" d="M1105.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1105.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1105.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1105.9,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="1041 353.7 1074.4 347.9 1074.4 335.8 1041 335.8 1041 353.7"/>
         <polygon class="r50b-top-cls-12" points="1074.4 98.2 1074.4 86.1 1041 80.4 1041 98.2 1074.4 98.2"/>
         <rect class="r50b-top-cls-22" x="1041" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1041" y="182.5" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1044.8" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1044.8" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1062" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1039.3 365.7 1039.3 68.3 1044.8 68.3 1044.8 70 1041 70 1041 364 1044.8 364 1044.8 365.7 1039.3 365.7"/>
         <rect class="r50b-top-cls-10" x="1056.1" y="82.1" width="33.9" height="45.6"/>
@@ -2201,7 +2211,7 @@
         <rect class="r50b-top-cls-19" x="1058.9" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1104.1" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1101.3 370.8 1101.3 363.4 1111.3 363.4 1111.3 370.8 1107.7 370.8 1107.7 367 1104.1 367 1104.1 370.8 1101.3 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1101.3 370.8 1101.3 363.4 1111.3 363.4 1111.3 370.8 1107.7 370.8 1107.7 367 1104.1 367 1104.1 370.8 1101.3 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="1061.9" y="272.8" width="22.2" height="70.8"/>
       </g>
@@ -2221,16 +2231,16 @@
         <rect class="r50b-top-cls-22" x="1176.2" y="121.5" width="11.2" height="213.9"/>
         <polygon class="r50b-top-cls-20" points="1119.2 336.2 1131 336.2 1131 351.6 1119.2 353.7 1119.2 336.2"/>
         <polygon class="r50b-top-cls-20" points="1119.2 97.8 1131 97.8 1131 82.4 1119.2 80.4 1119.2 97.8"/>
-        <path class="r50b-top-cls-23" d="M1184.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1184.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
-        <path class="r50b-top-cls-23" d="M1184.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,335.4h7.6v25.5h-7.6c-2,0-3.6-1.6-3.6-3.6v-18.3c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,73.2h7.6v48.4h-7.6c-2,0-3.6-1.6-3.6-3.6v-41.2c0-2,1.6-3.6,3.6-3.6Z"/>
+        <path class="chassis r50b-top-cls-23" d="M1184.1,121.5h7.6v213.9h-7.6c-2,0-3.6-1.6-3.6-3.6V125.1c0-2,1.6-3.6,3.6-3.6Z"/>
         <polygon class="r50b-top-cls-12" points="1119.2 353.7 1152.6 347.9 1152.6 335.8 1119.2 335.8 1119.2 353.7"/>
         <polygon class="r50b-top-cls-12" points="1152.6 98.2 1152.6 86.1 1119.2 80.4 1119.2 98.2 1152.6 98.2"/>
         <rect class="r50b-top-cls-22" x="1119.2" y="98.2" width="33.4" height="237.6"/>
         <rect class="r50b-top-cls-22" x="1119.2" y="182.4" width="33.4" height="69.1"/>
       </g>
       <g>
-        <rect class="r50b-top-cls-15" x="1123.1" y="61.3" width="56.5" height="311.4"/>
+        <rect class="tint-target r50b-top-cls-15" x="1123.1" y="61.3" width="56.5" height="311.4"/>
         <rect class="r50b-top-cls-5" x="1140.3" y="58.2" width="22.1" height="3.1"/>
         <polygon class="r50b-top-cls-3" points="1117.5 365.7 1117.5 68.3 1123 68.3 1123 70 1119.2 70 1119.2 364 1123 364 1123 365.7 1117.5 365.7"/>
         <rect class="r50b-top-cls-10" x="1134.4" y="82.1" width="33.9" height="45.6"/>
@@ -2240,7 +2250,7 @@
         <rect class="r50b-top-cls-19" x="1137.1" y="69.9" width="28.3" height="2.1"/>
         <g>
           <rect class="r50b-top-cls-18" x="1182.3" y="367" width="3.6" height="3.8"/>
-          <polygon class="r50b-top-cls-15" points="1179.6 370.8 1179.6 363.4 1189.5 363.4 1189.5 370.8 1185.9 370.8 1185.9 367 1182.3 367 1182.3 370.8 1179.6 370.8"/>
+          <polygon class="tint-target r50b-top-cls-15" points="1179.6 370.8 1179.6 363.4 1189.5 363.4 1189.5 370.8 1185.9 370.8 1185.9 367 1182.3 367 1182.3 370.8 1179.6 370.8"/>
         </g>
         <rect class="r50b-top-cls-13" x="1140.2" y="272.8" width="22.2" height="70.8"/>
       </g>

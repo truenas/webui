@@ -171,6 +171,12 @@
       .r50bm-rear-cls-41 {
         fill: #bcbcbc;
       }
+
+      /* Contrast Fixes */
+      #R50BM_REAR #R50BM_CHASSIS,
+      #R50BM_REAR #R50BM_POWER_SUPPLIES {
+        opacity: 0.25;
+      }
     </style>
   </defs>
   <g id="R50BM_CHASSIS" data-name="R50BM CHASSIS">
@@ -820,32 +826,32 @@
       <rect class="r50bm-rear-cls-3" x="328.3" y="44.3" width="184.7" height="25.9"/>
       <rect class="r50bm-rear-cls-26" x="524.7" y="45.3" width="4.6" height="9.2"/>
       <rect class="r50bm-rear-cls-26" x="524.7" y="60" width="4.6" height="9.2"/>
-      <rect class="r50bm-rear-cls-34" x="323.6" y="47.8" width="158.4" height="19" transform="translate(805.6 114.5) rotate(180)"/>
-      <rect class="r50bm-rear-cls-34" x="482" y="47.8" width="27.4" height="19" transform="translate(991.4 114.5) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="323.6" y="47.8" width="158.4" height="19" transform="translate(805.6 114.5) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="482" y="47.8" width="27.4" height="19" transform="translate(991.4 114.5) rotate(180)"/>
     </g>
     <g id="DRIVE_CAGE_50">
       <rect class="r50bm-rear-cls-24" x="554.4" y="34.4" width="208.1" height="45.7"/>
       <rect class="r50bm-rear-cls-3" x="554.4" y="44.3" width="184.7" height="25.9"/>
       <rect class="r50bm-rear-cls-26" x="750.8" y="45.3" width="4.6" height="9.2"/>
       <rect class="r50bm-rear-cls-26" x="750.8" y="60" width="4.6" height="9.2"/>
-      <rect class="r50bm-rear-cls-34" x="549.7" y="47.8" width="158.4" height="19" transform="translate(1257.8 114.5) rotate(180)"/>
-      <rect class="r50bm-rear-cls-34" x="708.1" y="47.8" width="27.4" height="19" transform="translate(1443.6 114.5) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="549.7" y="47.8" width="158.4" height="19" transform="translate(1257.8 114.5) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="708.1" y="47.8" width="27.4" height="19" transform="translate(1443.6 114.5) rotate(180)"/>
     </g>
     <g id="DRIVE_CAGE_51">
       <rect class="r50bm-rear-cls-24" x="328.3" y="87" width="208.1" height="45.7"/>
       <rect class="r50bm-rear-cls-3" x="328.3" y="96.9" width="184.7" height="25.9"/>
       <rect class="r50bm-rear-cls-26" x="524.7" y="97.9" width="4.6" height="9.2"/>
       <rect class="r50bm-rear-cls-26" x="524.7" y="112.6" width="4.6" height="9.2"/>
-      <rect class="r50bm-rear-cls-34" x="323.6" y="100.4" width="158.4" height="19" transform="translate(805.6 219.8) rotate(180)"/>
-      <rect class="r50bm-rear-cls-34" x="482" y="100.4" width="27.4" height="19" transform="translate(991.4 219.8) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="323.6" y="100.4" width="158.4" height="19" transform="translate(805.6 219.8) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="482" y="100.4" width="27.4" height="19" transform="translate(991.4 219.8) rotate(180)"/>
     </g>
     <g id="DRIVE_CAGE_52">
       <rect class="r50bm-rear-cls-24" x="554.4" y="87" width="208.1" height="45.7"/>
       <rect class="r50bm-rear-cls-3" x="554.4" y="96.9" width="184.7" height="25.9"/>
       <rect class="r50bm-rear-cls-26" x="750.8" y="97.9" width="4.6" height="9.2"/>
       <rect class="r50bm-rear-cls-26" x="750.8" y="112.6" width="4.6" height="9.2"/>
-      <rect class="r50bm-rear-cls-34" x="549.7" y="100.4" width="158.4" height="19" transform="translate(1257.8 219.8) rotate(180)"/>
-      <rect class="r50bm-rear-cls-34" x="708.1" y="100.4" width="27.4" height="19" transform="translate(1443.6 219.8) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="549.7" y="100.4" width="158.4" height="19" transform="translate(1257.8 219.8) rotate(180)"/>
+      <rect class="tint-target r50bm-rear-cls-34" x="708.1" y="100.4" width="27.4" height="19" transform="translate(1443.6 219.8) rotate(180)"/>
     </g>
   </g>
 </svg>
