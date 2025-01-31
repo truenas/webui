@@ -30,8 +30,8 @@ export class WidgetCpuTempComponent implements WidgetComponent {
 
   protected readonly cpuTemp$ = this.resources.realtimeUpdates$.pipe(
     map((update) => {
-      return update.fields.cpu?.temperature_celsius
-        ? `${update.fields.cpu?.temperature_celsius} C°`
+      return update.fields.cpu?.cpu.temp
+        ? `${update.fields.cpu?.cpu.temp} °C`
         : this.translate.instant('N/A');
     }),
     toLoadingState(),

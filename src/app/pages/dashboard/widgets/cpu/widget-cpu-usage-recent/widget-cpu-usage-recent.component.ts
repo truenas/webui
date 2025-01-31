@@ -45,7 +45,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     map((update) => update.fields.cpu),
     tap((realtimeUpdate) => {
       this.cachedCpuStats.update((cachedStats) => {
-        return [...cachedStats, [realtimeUpdate.user, realtimeUpdate.system]].slice(-60);
+        return [...cachedStats, [realtimeUpdate.cpu.usage]].slice(-60);
       });
     }),
   ));
@@ -55,10 +55,9 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     map((response) => {
       const [update] = response;
 
-      const userIndex = update.legend.indexOf('user');
-      const systemIndex = update.legend.indexOf('system');
+      const usageIndex = update.legend.indexOf('usage');
 
-      return (update.data as number[][]).slice(-60).map((item) => ([item[userIndex], item[systemIndex]]));
+      return (update.data as number[][]).slice(-60).map((item) => ([item[usageIndex]]));
     }),
     startWith(Array.from({ length: 60 }, () => ([0, 0]))),
   ));
@@ -86,21 +85,11 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
     return {
       datasets: [
         {
-          label: this.translate.instant('User'),
+          label: this.translate.instant('Usage'),
           data: values.map((item, index) => ({ x: labels[index], y: item[0] })),
           borderColor: currentTheme.blue,
           backgroundColor: currentTheme.blue,
           pointBackgroundColor: currentTheme.blue,
-          pointRadius: 0,
-          tension: 0.2,
-          fill: false,
-        },
-        {
-          label: this.translate.instant('System'),
-          data: values.map((item, index) => ({ x: labels[index], y: item[1] })),
-          borderColor: currentTheme.orange,
-          backgroundColor: currentTheme.orange,
-          pointBackgroundColor: currentTheme.orange,
           pointRadius: 0,
           tension: 0.2,
           fill: false,
@@ -118,6 +107,7 @@ export class WidgetCpuUsageRecentComponent implements WidgetComponent {
       maintainAspectRatio: false,
       plugins: {
         legend: {
+          display: false,
           align: 'end',
           labels: {
             boxPadding: 2,

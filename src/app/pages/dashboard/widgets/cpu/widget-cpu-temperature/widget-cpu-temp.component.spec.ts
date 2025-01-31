@@ -21,7 +21,7 @@ describe('WidgetCpuTempComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                temperature_celsius: 10,
+                cpu: { temp: 10 },
               },
             },
           }),
@@ -31,7 +31,7 @@ describe('WidgetCpuTempComponent', () => {
 
     const widget = spectator.query(WidgetDatapointComponent)!;
     expect(widget).toBeTruthy();
-    expect(widget.text()).toBe('10 C°');
+    expect(widget.text()).toBe('10 °C');
   });
 
   it('shows an error when CPU Temp cannot be determined', () => {
@@ -44,7 +44,7 @@ describe('WidgetCpuTempComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                temperature_celsius: undefined,
+                cpu: { temp: undefined },
               },
             },
           }),

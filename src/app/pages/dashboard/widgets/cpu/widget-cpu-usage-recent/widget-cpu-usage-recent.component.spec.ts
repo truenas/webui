@@ -32,7 +32,7 @@ describe('WidgetCpuUsageRecentComponent', () => {
                 [0, 50.3, 15.9],
                 [0, 55.2, 16.8],
               ],
-              legend: ['time', 'user', 'system'],
+              legend: ['time', 'usage'],
               start: 0,
               end: 0,
             },
@@ -40,9 +40,9 @@ describe('WidgetCpuUsageRecentComponent', () => {
           realtimeUpdates$: of({
             fields: {
               cpu: {
-                average: {
-                  user: 10,
-                  system: 20,
+                cpu: {
+                  usage: 10,
+                  temp: 20,
                 },
               },
             },
@@ -82,22 +82,13 @@ describe('WidgetCpuUsageRecentComponent', () => {
     expect(data).toMatchObject({
       datasets: [
         {
-          label: 'User',
+          label: 'Usage',
           data: [
             { x: 1721692740000, y: 80.1 },
             { x: 1721692741000, y: 50.3 },
             { x: 1721692742000, y: 55.2 },
           ],
           pointBackgroundColor: 'blue',
-        },
-        {
-          label: 'System',
-          data: [
-            { x: 1721692740000, y: 12.2 },
-            { x: 1721692741000, y: 15.9 },
-            { x: 1721692742000, y: 16.8 },
-          ],
-          pointBackgroundColor: 'orange',
         },
       ],
     });
