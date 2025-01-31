@@ -286,7 +286,8 @@ export class EnclosureSvgComponent implements OnDestroy {
   }
 
   private resetDimValues(): void {
-    if (!this.svgContainer()) {
+    const svgContainer = this.svgContainer();
+    if (!svgContainer || !this.svg()) {
       return;
     }
 
