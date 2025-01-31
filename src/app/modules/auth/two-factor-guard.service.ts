@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import {
   ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateChild,
 } from '@angular/router';
@@ -10,6 +11,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FirstLoginDialogComponent } from 'app/pages/credentials/users/first-login-dialog/first-login-dialog.component';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 @UntilDestroy()
@@ -23,6 +25,7 @@ export class TwoFactorGuardService implements CanActivateChild {
     private wsStatus: WebSocketStatusService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private matDialog: MatDialog,
   ) { }
 
   canActivateChild(_: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
@@ -42,8 +45,17 @@ export class TwoFactorGuardService implements CanActivateChild {
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
       this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
+      this.authService.isOtpwUser$.pipe(take(1)),
+      this.authService.wasOneTimePasswordChanged$.asObservable().pipe(take(1)),
     ]).pipe(
-      switchMap(([userConfig, globalConfig, isFullAdmin]) => {
+      switchMap(([userConfig, globalConfig, isFullAdmin, isOtpwUser, wasOneTimePasswordChanged]) => {
+        if (
+          ((isOtpwUser && !wasOneTimePasswordChanged) || (isOtpwUser && !userConfig.secret_configured))
+          && globalConfig.enabled
+        ) {
+          return this.showFirstLoginDialog();
+        }
+
         if (!globalConfig.enabled || userConfig.secret_configured || state.url.endsWith('/two-factor-auth')) {
           return of(true);
         }
@@ -69,5 +81,18 @@ export class TwoFactorGuardService implements CanActivateChild {
         return of(false);
       }),
     );
+  }
+
+  private showFirstLoginDialog(): Observable<boolean> {
+    const dialogRef = this.matDialog.open(FirstLoginDialogComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100%',
+      width: '100%',
+      panelClass: 'full-screen-modal',
+      disableClose: true,
+    });
+
+    return dialogRef.afterClosed();
   }
 }
