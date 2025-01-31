@@ -13,11 +13,13 @@
 
 ix-truenas-logo {
   background-color: var(--topbar) !important;
+  box-sizing: border-box;
   color: var(--topbar-txt) !important;
   height: 48px;
   left: 0;
   line-height: 48px;
   max-width: var(--sidenav-width);
+  padding: 7px;
   position: fixed;
   top: 0;
   width: 100%;
