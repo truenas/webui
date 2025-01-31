@@ -10,9 +10,10 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, Subscription, map, takeWhile,
+  Observable, Subscription, map,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
@@ -125,15 +126,7 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
     this.cdr.markForCheck();
 
     this.data.job$.pipe(
-      takeWhile((job) => {
-        return [
-          JobState.Hold,
-          JobState.Locked,
-          JobState.Pending,
-          JobState.Running,
-          JobState.Waiting,
-        ].includes(job.state);
-      }, true),
+      observeJob(),
       untilDestroyed(this),
     ).subscribe({
       next: (job) => {
