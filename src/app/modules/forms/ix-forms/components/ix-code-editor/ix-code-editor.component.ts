@@ -135,11 +135,13 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
 
   initEditor(): void {
     const updateListener = EditorView.updateListener.of((update) => {
-      if (!update.docChanged) {
+      const updatedValue = update.state.doc.toString();
+
+      if (!update.docChanged || updatedValue === this.controlDirective.control?.value) {
         return;
       }
 
-      this.onChange(update.state.doc.toString());
+      this.onChange(updatedValue);
     });
 
     const extensions: Extension[] = [
