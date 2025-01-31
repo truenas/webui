@@ -26,7 +26,7 @@ describe('AutomatedDiskSelection', () => {
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<VdevType>();
 
-  let layoutSelect: IxSelectHarness;
+  let layoutSelect: IxSelectHarness | null;
 
   const inventory: DetailsDisk[] = [] as DetailsDisk[];
 
@@ -66,15 +66,15 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('shows NormalSelectionComponent for non-dRAID layouts', async () => {
-    let normalSelection = spectator.query(NormalSelectionComponent);
+    let normalSelection = spectator.query(NormalSelectionComponent)!;
     expect(normalSelection).not.toBeNull();
     expect(normalSelection.type).toBe(VdevType.Data);
     expect(normalSelection.inventory).toBe(inventory);
     expect(normalSelection.isStepActive).toBe(false);
 
-    await layoutSelect.setValue('Mirror');
+    await layoutSelect!.setValue('Mirror');
 
-    normalSelection = spectator.query(NormalSelectionComponent);
+    normalSelection = spectator.query(NormalSelectionComponent)!;
     expect(normalSelection).not.toBeNull();
     expect(normalSelection.layout).toBe(CreateVdevLayout.Mirror);
 
@@ -82,9 +82,9 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('shows DraidSelectionComponent for dRAID layouts', async () => {
-    await layoutSelect.setValue('dRAID2');
+    await layoutSelect!.setValue('dRAID2');
 
-    const draidSelection = spectator.query(DraidSelectionComponent);
+    const draidSelection = spectator.query(DraidSelectionComponent)!;
     expect(draidSelection).not.toBeNull();
     expect(draidSelection.layout).toBe(CreateVdevLayout.Draid2);
     expect(draidSelection.inventory).toBe(inventory);
@@ -102,15 +102,15 @@ describe('AutomatedDiskSelection', () => {
   });
 
   it('resets to default values when store emits a reset event', async () => {
-    await layoutSelect.setValue('Mirror');
+    await layoutSelect!.setValue('Mirror');
 
     startOver$.next();
 
-    expect(await layoutSelect.getValue()).toBe('');
+    expect(await layoutSelect!.getValue()).toBe('');
   });
 
   it('updates layout in store when it is changed', async () => {
-    await layoutSelect.setValue('Mirror');
+    await layoutSelect!.setValue('Mirror');
 
     expect(spectator.inject(PoolManagerStore).setTopologyCategoryLayout).toHaveBeenCalledWith(
       VdevType.Data,

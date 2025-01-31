@@ -8,7 +8,7 @@ import { MatCard } from '@angular/material/card';
 import {
   MatStepper, MatStep, MatStepLabel, MatStepperNext, MatStepperPrevious,
 } from '@angular/material/stepper';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -41,7 +41,7 @@ import {
   IscsiPortalUpdate,
   IscsiTarget,
   IscsiTargetExtent,
-  IscsiTargetExtentUpdate,
+  IscsiTargetExtentUpdate, IscsiTargetGroup,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { newOption, nullOption } from 'app/interfaces/option.interface';
@@ -117,18 +117,18 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as string | null, [Validators.required]],
+      disk: new FormControl(null as string | null, [Validators.required]),
       dataset: ['', [Validators.required]],
-      volsize: [null as number | null, [Validators.required]],
+      volsize: new FormControl(null as number | null, [Validators.required]),
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
     }),
     options: this.fb.group({
-      portal: [null as typeof newOption | number | null, [Validators.required]],
+      portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
       fcport: this.fb.group({
         port: [nullOption as string, [Validators.required]],
-        host_id: [null as number | null, [Validators.required]],
+        host_id: new FormControl(null as number | null, [Validators.required]),
       }),
     }),
   }, {
@@ -172,7 +172,7 @@ export class IscsiWizardComponent implements OnInit {
     return {
       name: value.extent.dataset.replace(`${mntPath}/`, '') + '/' + value.extent.name,
       type: DatasetType.Volume,
-      volsize: value.extent.volsize,
+      volsize: value.extent.volsize || undefined,
     };
   }
 
@@ -234,7 +234,7 @@ export class IscsiWizardComponent implements OnInit {
             initiator: this.isNewInitiator ? this.createdInitiator.id : null,
             authmethod: IscsiAuthMethod.None,
             auth: null,
-          }],
+          } as IscsiTargetGroup],
     } as IscsiTargetUpdate;
   }
 

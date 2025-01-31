@@ -8,17 +8,19 @@
   <form class="form" [formGroup]="form" (submit)="onSubmit()">
     <ix-form-section
       [label]="'Instance Configuration' | translate"
-      [help]="'Instance Configuration' | translate"
+      [help]="containersHelptext.instance_type_tooltip | translate"
     >
       <ix-input
         formControlName="name"
-        [label]="'Name' | translate"
+        [label]="containersHelptext.name_placeholder | translate"
+        [tooltip]="containersHelptext.name_tooltip | translate"
         [required]="true"
       ></ix-input>
 
       <ix-icon-group
         formControlName="instance_type"
-        [label]="'Virtualization Method' | translate"
+        [label]="containersHelptext.instance_type_placeholder | translate"
+        [tooltip]="containersHelptext.instance_type_tooltip | translate"
         [required]="true"
         [options]="virtualizationTypeIcons"
         [showLabels]="true"
@@ -26,60 +28,75 @@
 
       @if (isVm()) {
         <ix-radio-group
-          formControlName="image_type"
+          formControlName="source_type"
           [label]="'VM Image Options' | translate"
           [required]="true"
-          [options]="imageOptions$"
+          [options]="imageSourceTypeOptions$"
         ></ix-radio-group>
       }
 
-      @if (form.value.image_type === SelectImageType.Choose) {
-        <div class="image-field">
-          <ix-input
-            class="input"
-            formControlName="image"
-            [readonly]="true"
+      @switch (form.value.source_type) {
+        @case (VirtualizationSource.Image) {
+          <div class="image-field">
+            <ix-input
+              class="input"
+              formControlName="image"
+              [readonly]="true"
+              [label]="'Image' | translate"
+              [required]="true"
+            ></ix-input>
+
+            <button
+              mat-button
+              ixTest="browse-images"
+              type="button"
+              (click)="onBrowseImages()"
+            >{{ 'Browse Catalog' | translate }}</button>
+          </div>
+        }
+
+        @case (VirtualizationSource.Iso) {
+          <ix-file-input
+            formControlName="image_file"
+            acceptedFiles=".iso"
             [label]="'Image' | translate"
+            [multiple]="false"
+            [required]="true"
+          ></ix-file-input>
+          <ix-input
+            formControlName="image_file_name"
+            [label]="'Image Name' | translate"
             [required]="true"
           ></ix-input>
+        }
 
-          <button
-            mat-button
-            ixTest="browse-images"
-            type="button"
-            (click)="onBrowseImages()"
-          >{{ 'Browse Catalog' | translate }}</button>
-        </div>
-      } @else {
-        <ix-file-input
-          formControlName="image_file"
-          acceptedFiles=".iso"
-          [label]="'Image' | translate"
-          [multiple]="false"
-          [required]="true"
-        ></ix-file-input>
-        <ix-input
-          formControlName="image_file_name"
-          [label]="'Image Name' | translate"
-          [required]="true"
-        ></ix-input>
+        @case (VirtualizationSource.Zvol) {
+          <ix-explorer
+            formControlName="zvol_path"
+            root="/"
+            [label]="'Zvol' | translate"
+            [nodeProvider]="directoryNodeProvider()"
+          ></ix-explorer>
+        }
       }
     </ix-form-section>
 
     <ix-form-section
       [label]="'CPU & Memory' | translate"
-      [help]="'CPU & Memory' | translate"
+      [help]="containersHelptext.cpu_memory_tooltip | translate"
     >
       <ix-input
         formControlName="cpu"
-        [label]="'CPU Configuration' | translate"
+        [label]="containersHelptext.cpu_placeholder | translate"
+        [tooltip]="containersHelptext.cpu_tooltip | translate"
         [required]="isVm()"
         [hint]="isContainer() ? (containersHelptext.cpuHint | translate) : null"
       ></ix-input>
 
       <ix-input
         formControlName="memory"
-        [label]="'Memory Size' | translate"
+        [label]="containersHelptext.memory_placeholder | translate"
+        [tooltip]="containersHelptext.memory_tooltip | translate"
         [format]="formatter.memorySizeFormatting"
         [parse]="formatter.memorySizeParsing"
         [required]="isVm()"
@@ -90,12 +107,11 @@
     @if (isContainer()) {
     <ix-form-section
       [label]="'Environment' | translate"
-      [help]="'Environment' | translate"
     >
       <ix-list
         formArrayName="environment_variables"
         [empty]="form.controls.environment_variables.controls.length === 0"
-        [label]="'Environment Variables' | translate"
+        [label]="containersHelptext.env_placeholder | translate"
         (add)="addEnvironmentVariable()"
       >
         @for (envControl of form.controls.environment_variables.controls; track envControl; let i = $index) {
@@ -107,13 +123,15 @@
             <div class="environment-variable">
               <ix-input
                 formControlName="name"
-                [label]="'Name' | translate"
+                [label]="containersHelptext.env_name_placeholder | translate"
+                [tooltip]="containersHelptext.env_name_tooltip | translate"
                 [required]="true"
               ></ix-input>
 
               <ix-input
                 formControlName="value"
-                [label]="'Value' | translate"
+                [label]="containersHelptext.env_value_placeholder | translate"
+                [tooltip]="containersHelptext.env_value_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -125,12 +143,21 @@
 
     <ix-form-section
       [label]="'Disks' | translate"
-      [help]="'Disks' | translate"
     >
+
+      @if (isVm()) {
+        <ix-input
+          formControlName="root_disk_size"
+          type="number"
+          [required]="true"
+          [label]="'Root Disk Size (in GiB)' | translate"
+        ></ix-input>
+      }
+
       <ix-list
         formArrayName="disks"
         [empty]="form.controls.disks.controls.length === 0"
-        [label]="'Disks' | translate"
+        [label]="containersHelptext.disks_placeholder | translate"
         [formArray]="form.controls.disks"
         (add)="addDisk()"
       >
@@ -143,7 +170,8 @@
             <ix-explorer
               formControlName="source"
               root="/"
-              [label]="'Source' | translate"
+              [label]="containersHelptext.disks_src_placeholder | translate"
+              [tooltip]="containersHelptext.disks_src_tooltip | translate"
               [required]="true"
               [nodeProvider]="directoryNodeProvider()"
               [canCreateDataset]="true"
@@ -152,7 +180,8 @@
             @if (isContainer()) {
               <ix-input
                 formControlName="destination"
-                [label]="'Destination' | translate"
+                [label]="containersHelptext.disks_dst_placeholder | translate"
+                [tooltip]="containersHelptext.disks_dst_tooltip | translate"
                 [required]="true"
               ></ix-input>
             }
@@ -163,12 +192,11 @@
 
     <ix-form-section
       [label]="'Proxies' | translate"
-      [help]="'Proxies' | translate"
     >
       <ix-list
         formArrayName="proxies"
         [empty]="form.controls.proxies.controls.length === 0"
-        [label]="'Proxies' | translate"
+        [label]="containersHelptext.proxies_placeholder | translate"
         [formArray]="form.controls.proxies"
         (add)="addProxy()"
       >
@@ -182,7 +210,8 @@
               <ix-select
                 class="protocol"
                 formControlName="source_proto"
-                [label]="'Host Protocol' | translate"
+                [label]="containersHelptext.host_protocol_placeholder | translate"
+                [tooltip]="containersHelptext.host_protocol_tooltip | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
@@ -191,7 +220,8 @@
                 class="port"
                 type="number"
                 formControlName="source_port"
-                [label]="'Host Port' | translate"
+                [label]="containersHelptext.host_port_placeholder | translate"
+                [tooltip]="containersHelptext.host_port_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -200,7 +230,8 @@
               <ix-select
                 class="protocol"
                 formControlName="dest_proto"
-                [label]="'Instance Protocol' | translate"
+                [label]="containersHelptext.instance_protocol_placeholder | translate"
+                [tooltip]="containersHelptext.instance_protocol_tooltip | translate"
                 [required]="true"
                 [options]="proxyProtocols$"
               ></ix-select>
@@ -209,7 +240,8 @@
                 class="port"
                 type="number"
                 formControlName="dest_port"
-                [label]="'Instance Port' | translate"
+                [label]="containersHelptext.instance_port_placeholder | translate"
+                [tooltip]="containersHelptext.instance_port_tooltip | translate"
                 [required]="true"
               ></ix-input>
             </div>
@@ -220,11 +252,12 @@
 
     <ix-form-section
       [label]="'Network' | translate"
-      [help]="'Network' | translate"
+      [help]="containersHelptext.network_tooltip | translate"
     >
       <ix-checkbox
         formControlName="use_default_network"
-        [label]="'Use default network settings' | translate"
+        [label]="containersHelptext.network_use_default_placeholder | translate"
+        [tooltip]="containersHelptext.network_use_default_tooltip | translate"
       ></ix-checkbox>
 
       @if (!form.controls.use_default_network.value) {
@@ -239,7 +272,8 @@
 
               <ix-checkbox-list
                 formControlName="bridged_nics"
-                [label]="'Bridged NICs' | translate"
+                [label]="containersHelptext.network_bridged_nics_placeholder | translate"
+                [tooltip]="containersHelptext.network_bridged_nics_tooltip | translate"
                 [options]="bridgedNicDevices$"
               ></ix-checkbox-list>
             }
@@ -253,7 +287,8 @@
 
               <ix-checkbox-list
                 formControlName="mac_vlan_nics"
-                [label]="'Macvlan NICs' | translate"
+                [label]="containersHelptext.network_mac_vlan_nics_placeholder | translate"
+                [tooltip]="containersHelptext.network_mac_vlan_nics_tooltip | translate"
                 [options]="macVlanNicDevices$"
               ></ix-checkbox-list>
             }
@@ -261,6 +296,21 @@
             <ngx-skeleton-loader></ngx-skeleton-loader>
           }
         }
+      } @else {
+        <div>
+          <div class="network-list-item">
+            <strong>{{ 'Bridge' | translate }}: </strong>
+            <span>{{ 'Automatic' | translate }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv4 Network' | translate }}: </strong>
+            <span>{{ defaultIpv4Network() }}</span>
+          </div>
+          <div class="network-list-item">
+            <strong>{{ 'IPv6 Network' | translate }}: </strong>
+            <span>{{ defaultIpv6Network() }}</span>
+          </div>
+        </div>
       }
     </ix-form-section>
 
@@ -268,11 +318,11 @@
     @if (usbDevices && usbDevices.length > 0) {
       <ix-form-section
         [label]="'USB Devices' | translate"
-        [help]="'USB Devices' | translate"
       >
         <ix-checkbox-list
           formControlName="usb_devices"
-          [label]="'USB Devices' | translate"
+          [label]="containersHelptext.usb_devices_placeholder | translate"
+          [tooltip]="containersHelptext.usb_devices_tooltip | translate"
           [options]="usbDevices$"
         ></ix-checkbox-list>
       </ix-form-section>
@@ -282,7 +332,6 @@
     @if (gpuDevices && gpuDevices.length > 0) {
       <ix-form-section
         [label]="'GPU Devices' | translate"
-        [help]="'GPU Devices' | translate"
       >
         <ix-checkbox-list
           formControlName="gpu_devices"
@@ -295,11 +344,12 @@
     @if (isVm()) {
       <ix-form-section
         [label]="'VNC' | translate"
-        [help]="'VNC' | translate"
       >
         <ix-checkbox
           formControlName="enable_vnc"
-          [label]="'Enable VNC' | translate"
+          [label]="containersHelptext.enable_vnc_placeholder | translate"
+          [tooltip]="containersHelptext.enable_vnc_tooltip | translate"
+          [hint]="form.value.enable_vnc && containersHelptext.vncHint | translate"
         ></ix-checkbox>
 
         @if (form.value.enable_vnc) {
@@ -308,13 +358,27 @@
             type="number"
             [label]="'VNC Port' | translate"
           ></ix-input>
+
+          <ix-input
+            formControlName="vnc_password"
+            type="password"
+            [label]="'VNC Password' | translate"
+            [hint]="'VNC password is not cryptographically secure. You should not rely on it as a single authentication mechanism for your VMs.' | translate"
+          ></ix-input>
         }
       </ix-form-section>
 
-      <ix-form-section label="TPM">
+      <ix-form-section [label]="'Security' | translate">
         <ix-checkbox
           formControlName="tpm"
-          [label]="'Add Trusted Platform Module' | translate"
+          [label]="containersHelptext.add_tpm_placeholder | translate"
+          [tooltip]="containersHelptext.add_tpm_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="secure_boot"
+          [label]="'Secure Boot' | translate"
+          [tooltip]="containersHelptext.secure_boot_tooltip | translate"
         ></ix-checkbox>
       </ix-form-section>
     }

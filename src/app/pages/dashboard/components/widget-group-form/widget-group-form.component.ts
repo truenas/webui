@@ -83,7 +83,7 @@ export class WidgetGroupFormComponent {
     private cdr: ChangeDetectorRef,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
-      return of(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty);
+      return of(Boolean(this.layoutControl.dirty || this.widgetGroupSlotForm()?.form?.dirty));
     });
 
     this.setupLayoutUpdates();

@@ -35,7 +35,7 @@ describe('FibreChannelService', () => {
         if (method === 'fcport.query') {
           return of([]);
         }
-        return null;
+        return of(null);
       });
 
       await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, fakePort));

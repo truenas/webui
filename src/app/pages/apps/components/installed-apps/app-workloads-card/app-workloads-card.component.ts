@@ -68,7 +68,7 @@ export class AppWorkloadsCardComponent {
     const hostPorts: { hostIp: string; hostPort: string; containerPort: string; protocol: string }[] = [];
 
     this.app().active_workloads.used_ports.forEach((port) => {
-      port.host_ports.forEach((hostPort) => {
+      port.host_ports?.forEach((hostPort) => {
         hostPorts.push({
           hostIp: hostPort.host_ip,
           hostPort: hostPort.host_port,

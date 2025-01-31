@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, computed, input, OnChanges,
 } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -95,7 +95,7 @@ export class SourceSectionComponent implements OnChanges {
 
   constructor(
     private api: ApiService,
-    private formBuilder: FormBuilder,
+    private formBuilder: NonNullableFormBuilder,
     private taskService: TaskService,
     private translate: TranslateService,
     private propertiesOverrideValidator: PropertiesOverrideValidatorService,

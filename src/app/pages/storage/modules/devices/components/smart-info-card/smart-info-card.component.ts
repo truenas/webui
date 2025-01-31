@@ -56,7 +56,7 @@ import {
 export class SmartInfoCardComponent implements OnChanges {
   readonly topologyDisk = input.required<TopologyDisk>();
   readonly disk = input<Disk>();
-  hasSmartTestSupport = input(false);
+  readonly hasSmartTestSupport = input(false);
 
   readonly requiredRoles = [Role.FullAdmin];
 

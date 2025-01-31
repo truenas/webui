@@ -67,7 +67,6 @@ describe('SysInfoComponent', () => {
 
     expect(sysInfoBlock).not.toBeTruthy();
     expect(infoRows).toEqual({
-      'Customer Name:': licenseInfo.customer_name,
       'Model:': licenseInfo.model,
       'Licensed Serials:': licenseInfo.system_serial,
       'System Serial:': systemInfo.system_serial,

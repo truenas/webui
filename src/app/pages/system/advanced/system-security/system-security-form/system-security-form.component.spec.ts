@@ -47,7 +47,7 @@ describe('SystemSecurityFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
-        getProductType: () => ProductType.Scale,
+        getProductType: () => ProductType.CommunityEdition,
       }),
       mockProvider(SlideInRef, {
         close: jest.fn(),

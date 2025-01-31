@@ -31,7 +31,7 @@ export class FcPortsControlsComponent implements OnInit {
 
   optionsControl = this.fb.control(null);
 
-  readonly isNewOptions$: Observable<Option<boolean>[]> = of([
+  readonly isNewOptions$: Observable<Option<boolean | null>[]> = of([
     { label: this.translate.instant('Do not connect to a fibre channel port'), value: null },
     { label: this.translate.instant('Use an existing port'), value: false },
     { label: this.translate.instant('Create new virtual port'), value: true },

@@ -29,9 +29,26 @@
       {{ 'Unset Pool' | translate }}
     </button>
   }
-  <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
+
+  <button
+    mat-menu-item
+    ixTest="container-images"
+    [routerLink]="['/apps', 'manage-container-images']"
+  >
     {{ 'Manage Container Images' | translate }}
   </button>
+
+  <button
+    mat-menu-item
+    ixTest="docker-registries"
+    matTooltipPosition="right"
+    [matTooltip]="!(dockerStore.selectedPool$ | async) ? ('Choose pool first' | translate) : helptext.dockerRegistries.tooltip | translate"
+    [disabled]="!(dockerStore.selectedPool$ | async)"
+    [routerLink]="['/apps', 'docker-registries']"
+  >
+    {{ 'Sign-in to a Docker registry' | translate }}
+  </button>
+
   <button
     mat-menu-item
     ixTest="update-preferred-trains"

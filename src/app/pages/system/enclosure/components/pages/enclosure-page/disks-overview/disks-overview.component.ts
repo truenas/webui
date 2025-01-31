@@ -41,11 +41,11 @@ export class DisksOverviewComponent {
   });
 
   readonly expanders = computed(() => {
-    return [...Object.values(this.selectedEnclosure().elements?.[EnclosureElementType.SasExpander] || {})];
+    return [...Object.values(this.selectedEnclosure()?.elements?.[EnclosureElementType.SasExpander] || {})];
   });
 
   readonly unhealthyPoolsInfo = computed(() => {
-    return this.poolsInfo().filter((info) => info.disk_status !== EnclosureDiskStatus.Online);
+    return this.poolsInfo().filter((info) => info?.disk_status !== EnclosureDiskStatus.Online);
   });
 
   readonly failedDisks = computed(() => {

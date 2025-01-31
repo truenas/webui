@@ -104,7 +104,7 @@ export class SshConnectionFormComponent implements OnInit {
     )],
     sudo: [false],
     otp_token: [''],
-    private_key: [null as (number | typeof generateNewKeyValue), Validators.required],
+    private_key: [generateNewKeyValue as (number | typeof generateNewKeyValue), Validators.required],
 
     connect_timeout: [10],
   });

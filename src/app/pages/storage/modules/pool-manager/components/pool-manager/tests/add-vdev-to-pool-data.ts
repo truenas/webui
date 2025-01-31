@@ -1,29 +1,32 @@
+import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 export const existingPool = {
   id: 1,
   name: 'APPS',
   guid: '4801980308377066041',
   path: '/mnt/APPS',
-  status: 'ONLINE',
+  status: PoolStatus.Online,
   scan: {},
   topology: {
     data: [
       {
         name: 'mirror-0',
-        type: 'MIRROR',
-        path: null,
+        type: TopologyItemType.Mirror,
         guid: '6331690695774156983',
-        status: 'ONLINE',
+        status: TopologyItemStatus.Online,
         children: [
           {
             name: 'f5973318-16d3-4ba1-99ff-e4e78c88671e',
-            type: 'DISK',
+            type: TopologyItemType.Disk,
             path: '/dev/disk/by-partuuid/f5973318-16d3-4ba1-99ff-e4e78c88671e',
             guid: '4839666105427328895',
-            status: 'ONLINE',
-            children: [],
+            status: TopologyItemStatus.Online,
+            children: [] as TopologyDisk[],
             device: 'sdc1',
             disk: 'sdc',
             stats: {
@@ -36,7 +39,7 @@ export const existingPool = {
             type: 'DISK',
             path: '/dev/disk/by-partuuid/f851ae00-b096-4342-88c0-27786cfed87a',
             guid: '6546818946238472251',
-            status: 'ONLINE',
+            status: TopologyItemStatus.Online,
             children: [],
             device: 'sda1',
             disk: 'sda',
@@ -45,36 +48,35 @@ export const existingPool = {
             },
             unavail_disk: null,
           },
-        ],
+        ] as TopologyDisk[],
         unavail_disk: null,
-      },
+      } as TopologyItem,
       {
         name: 'mirror-1',
-        type: 'MIRROR',
-        path: null,
+        type: TopologyItemType.Mirror,
         guid: '13849375887047425360',
-        status: 'ONLINE',
+        status: TopologyItemStatus.Online,
         children: [
           {
             name: 'ea279fcf-56bf-47c0-a386-506fe5eceb9e',
-            type: 'DISK',
+            type: TopologyItemType.Disk,
             path: '/dev/disk/by-partuuid/ea279fcf-56bf-47c0-a386-506fe5eceb9e',
             guid: '15911602115397506092',
-            status: 'ONLINE',
-            children: [],
+            status: TopologyItemStatus.Online,
+            children: [] as TopologyDisk[],
             device: 'sdh1',
             disk: 'sdh',
             stats: {
               size: 12000138625024,
             },
             unavail_disk: null,
-          },
+          } as TopologyDisk,
           {
             name: '2314cb64-b4e1-4df9-8708-a55a7cb6ae64',
-            type: 'DISK',
+            type: TopologyItemType.Disk,
             path: '/dev/disk/by-partuuid/2314cb64-b4e1-4df9-8708-a55a7cb6ae64',
             guid: '2384382266614160232',
-            status: 'ONLINE',
+            status: TopologyItemStatus.Online,
             children: [],
             device: 'sdk1',
             disk: 'sdk',
@@ -83,23 +85,22 @@ export const existingPool = {
             },
             unavail_disk: null,
           },
-        ],
+        ] as TopologyDisk[],
         unavail_disk: null,
-      },
+      } as TopologyItem,
       {
         name: 'mirror-2',
-        type: 'MIRROR',
-        path: null,
+        type: TopologyItemType.Mirror,
         guid: '18023735252693805632',
-        status: 'ONLINE',
+        status: TopologyItemStatus.Online,
         children: [
           {
             name: '6aff38aa-f776-45a4-8e04-913615ef0183',
-            type: 'DISK',
+            type: TopologyItemType.Disk,
             path: '/dev/disk/by-partuuid/6aff38aa-f776-45a4-8e04-913615ef0183',
             guid: '345418775175878585',
-            status: 'ONLINE',
-            children: [],
+            status: TopologyItemStatus.Online,
+            children: [] as TopologyDisk[],
             device: 'sdi1',
             disk: 'sdi',
             stats: {
@@ -109,10 +110,10 @@ export const existingPool = {
           },
           {
             name: 'b85f206e-a13e-4c93-a395-615193d19d45',
-            type: 'DISK',
+            type: TopologyItemType.Disk,
             path: '/dev/disk/by-partuuid/b85f206e-a13e-4c93-a395-615193d19d45',
             guid: '12869578439632579419',
-            status: 'ONLINE',
+            status: TopologyItemStatus.Online,
             children: [],
             device: 'sdj1',
             disk: 'sdj',
@@ -121,16 +122,16 @@ export const existingPool = {
             },
             unavail_disk: null,
           },
-        ],
+        ] as TopologyDisk[],
         unavail_disk: null,
-      },
+      } as TopologyItem,
     ],
     log: [],
     cache: [],
     spare: [],
     special: [],
     dedup: [],
-  },
+  } as PoolTopology,
   healthy: true,
   size: 35974646071296,
 } as Pool;

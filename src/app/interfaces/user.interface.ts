@@ -17,10 +17,10 @@ export interface User {
   locked: boolean;
   sudo_commands_nopasswd: string[];
   sudo_commands: string[];
-  email: string;
+  email: string | null;
   group: UserGroup;
   groups: number[];
-  sshpubkey: string;
+  sshpubkey: string | null;
   twofactor_auth_configured: boolean;
   local: boolean;
   id_type_both: boolean;
@@ -54,6 +54,7 @@ export interface UserUpdate {
   full_name?: string;
   email?: string;
   password?: string;
+  random_password?: boolean | null;
   password_disabled?: boolean;
   locked?: boolean;
   smb?: boolean;

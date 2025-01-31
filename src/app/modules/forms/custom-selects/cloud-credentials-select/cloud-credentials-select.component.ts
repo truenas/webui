@@ -57,7 +57,8 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     return CloudCredentialsFormComponent;
   }
 
-  override getFormInputData(): { providers: CloudSyncProviderName[] } {
-    return this.filterByProviders()?.length ? { providers: this.filterByProviders() } : undefined;
+  override getFormInputData(): { providers: CloudSyncProviderName[] } | undefined {
+    const providers = this.filterByProviders();
+    return providers?.length ? { providers } : undefined;
   }
 }

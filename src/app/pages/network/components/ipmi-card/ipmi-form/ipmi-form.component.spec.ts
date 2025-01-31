@@ -123,7 +123,7 @@ describe('IpmiFormComponent', () => {
 
   describe('product type is SCALE_ENTERPRISE', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.ScaleEnterprise);
+      await setupTest(ProductType.Enterprise);
     });
 
     it('loads data with controller radio buttons in the form for ScaleEnterprise', async () => {
@@ -219,7 +219,7 @@ describe('IpmiFormComponent', () => {
 
   describe('product type is SCALE', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Scale);
+      await setupTest(ProductType.CommunityEdition);
     });
 
     it('loads data in the form if the product type is SCALE', async () => {
@@ -238,7 +238,7 @@ describe('IpmiFormComponent', () => {
 
   describe('IPMI lights', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.ScaleEnterprise);
+      await setupTest(ProductType.Enterprise);
     });
 
     it('flashes IPMI light when Flash Identify Light is pressed', async () => {

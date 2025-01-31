@@ -5,6 +5,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -42,12 +43,15 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     RequiresRolesDirective,
     MatMenuItem,
     RouterLink,
+    MatTooltipModule,
     AsyncPipe,
   ],
 })
 export class AppSettingsButtonComponent {
   readonly searchableElements = appSettingsButtonElements;
   protected readonly updateDockerRoles = [Role.DockerWrite];
+
+  protected readonly helptext = helptextApps;
 
   constructor(
     private ixSlideIn: SlideIn,

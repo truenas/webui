@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, effect, Inject,
+  ChangeDetectionStrategy, Component, computed, effect,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,7 +13,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Omit } from 'utility-types';
 import { Role } from 'app/enums/role.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
@@ -62,7 +61,6 @@ export class TruenasConnectModalComponent {
   };
 
   constructor(
-    @Inject(WINDOW) private window: Window,
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<TruenasConnectModalComponent>,
     protected tnc: TruenasConnectService,

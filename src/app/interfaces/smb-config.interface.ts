@@ -11,6 +11,7 @@ export interface SmbConfig {
   enable_smb1: boolean;
   filemask: string;
   guest: string;
+  debug: boolean;
   id: number;
   localmaster: boolean;
   netbiosalias: string[];

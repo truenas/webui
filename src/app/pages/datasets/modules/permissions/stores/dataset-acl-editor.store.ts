@@ -127,7 +127,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     } as DatasetAclEditorState;
   });
 
-  readonly selectAce = this.updater((state: DatasetAclEditorState, index: number) => {
+  readonly selectAce = this.updater((state: DatasetAclEditorState, index: number | null) => {
     return {
       ...state,
       selectedAceIndex: index,

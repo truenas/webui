@@ -1,10 +1,12 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  signal,
 } from '@angular/core';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDivider } from '@angular/material/divider';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -33,6 +35,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxFileInputComponent } from 'app/modules/forms/ix-forms/components/ix-file-input/ix-file-input.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxPermissionsComponent } from 'app/modules/forms/ix-forms/components/ix-permissions/ix-permissions.component';
+import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import {
   IxSlideToggleComponent,
@@ -48,6 +51,7 @@ import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { OneTimePasswordCreatedDialogComponent } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 import { userAdded, userChanged } from 'app/pages/credentials/users/store/user.actions';
 import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { DownloadService } from 'app/services/download.service';
@@ -58,6 +62,11 @@ import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
 const defaultHomePath = '/var/empty';
+
+export enum UserStigPasswordOption {
+  DisablePassword = 'DISABLE_PASSWORD',
+  OneTimePassword = 'ONE_TIME_PASSWORD',
+}
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -75,6 +84,7 @@ const defaultHomePath = '/var/empty';
     MatDivider,
     IxChipsComponent,
     IxComboboxComponent,
+    IxRadioGroupComponent,
     IxExplorerComponent,
     IxPermissionsComponent,
     IxCheckboxComponent,
@@ -94,9 +104,20 @@ export class UserFormComponent implements OnInit {
   homeModeOldValue = '';
   protected readonly requiredRoles = [Role.AccountWrite];
   protected editingUser: User | undefined;
+  isStigMode = signal<boolean>(false);
 
   get isNewUser(): boolean {
     return !this.editingUser;
+  }
+
+  get smbTooltip(): string {
+    if (this.isStigMode()) {
+      return this.translate.instant(this.tooltips.smbStig);
+    }
+
+    return this.isEditingBuiltinUser
+      ? this.translate.instant(this.tooltips.smbBuiltin)
+      : this.translate.instant(this.tooltips.smb);
   }
 
   get title(): string {
@@ -127,6 +148,7 @@ export class UserFormComponent implements OnInit {
         Validators.required,
       ),
     ]],
+    stig_password: [UserStigPasswordOption.DisablePassword],
     uid: [null as number, [Validators.required]],
     group: [null as number],
     group_create: [true],
@@ -134,10 +156,10 @@ export class UserFormComponent implements OnInit {
     home: [defaultHomePath, []],
     home_mode: ['700'],
     home_create: [false],
-    sshpubkey: [null as string],
-    sshpubkey_file: [null as File[]],
+    sshpubkey: new FormControl(null as string | null),
+    sshpubkey_file: new FormControl(null as File[] | null),
     password_disabled: [false],
-    shell: [null as string],
+    shell: new FormControl(null as string | null),
     locked: [false],
     sudo_commands: [[] as string[]],
     sudo_commands_all: [false],
@@ -163,24 +185,40 @@ export class UserFormComponent implements OnInit {
     home_create: helptextUsers.user_form_home_create_tooltip,
     sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
     password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
+    one_time_password: helptextUsers.user_form_auth_one_time_pw_tooltip,
     shell: helptextUsers.user_form_shell_tooltip,
     locked: helptextUsers.user_form_lockuser_tooltip,
     smb: helptextUsers.user_form_smb_tooltip,
     smbBuiltin: helptextUsers.smbBuiltin,
+    smbStig: helptextUsers.smbStig,
   };
 
-  readonly groupOptions$ = this.api.call('group.query').pipe(
+  readonly groupOptions$ = this.api.call('group.query', [[['local', '=', true]]]).pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
 
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+
   autocompleteProvider: ChipsProvider = (query: string) => {
-    return this.userService.groupQueryDsCache(query).pipe(
+    return this.api.call('group.query', [[['name', '^', query], ['local', '=', true]]]).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
   };
+
+  protected stigPasswordOptions$ = of([
+    {
+      label: this.translate.instant('Disable Password'),
+      value: UserStigPasswordOption.DisablePassword,
+      tooltip: this.tooltips.password_disabled,
+    },
+    {
+      label: this.translate.instant('Generate Temporary One-Time Password'),
+      value: UserStigPasswordOption.OneTimePassword,
+      tooltip: this.tooltips.one_time_password,
+    },
+  ]);
 
   get homeCreateWarning(): string {
     const homeCreate = this.form.value.home_create;
@@ -225,6 +263,7 @@ export class UserFormComponent implements OnInit {
     private downloadService: DownloadService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private matDialog: MatDialog,
     private userService: UserService,
     public slideInRef: SlideInRef<User | undefined, boolean>,
   ) {
@@ -246,6 +285,14 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+
+    this.api.call('system.security.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.isStigMode.set(config.enable_gpos_stig);
+
+      if (this.isStigMode()) {
+        this.handleUserWhenStigMode();
+      }
+    });
   }
 
   setupForm(): void {
@@ -315,9 +362,63 @@ export class UserFormComponent implements OnInit {
     }
   }
 
+  handleUserWhenStigMode(): void {
+    this.form.controls.smb.patchValue(false);
+    this.form.controls.smb.disable();
+
+    if (!this.editingUser) {
+      this.form.controls.password.disable();
+      this.form.controls.password_conf.disable();
+
+      this.subscriptions.push(
+        this.form.controls.locked.disabledWhile(
+          this.form.controls.stig_password.value$
+            .pipe(map((option) => option === UserStigPasswordOption.DisablePassword)),
+        ),
+      );
+    }
+  }
+
   onSubmit(): void {
+    const payload = this.getPayload();
+
+    const homeCreateConfirmation$ = this.getHomeCreateConfirmation();
+
+    homeCreateConfirmation$
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.submitUserRequest(payload)),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (user) => {
+          if (this.isNewUser) {
+            this.snackbar.success(this.translate.instant('User added'));
+            this.store$.dispatch(userAdded({ user }));
+          } else {
+            this.snackbar.success(this.translate.instant('User updated'));
+            this.store$.dispatch(userChanged({ user }));
+          }
+          this.isFormLoading = false;
+          this.slideInRef.close({ response: true, error: null });
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isFormLoading = false;
+          this.formErrorHandler.handleValidationErrors(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private getPayload(): UserUpdate {
     const values = this.form.value;
-    const body: UserUpdate = {
+
+    const disablePassword = this.isStigMode() && this.isNewUser
+      ? values.stig_password === UserStigPasswordOption.DisablePassword
+      : values.password_disabled;
+
+    return {
       email: values.email ? values.email : null,
       full_name: values.full_name,
       group: values.group,
@@ -325,86 +426,88 @@ export class UserFormComponent implements OnInit {
       home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
-      locked: values.password_disabled ? false : values.locked,
-      password_disabled: values.password_disabled,
+      locked: disablePassword ? false : values.locked,
+      password_disabled: disablePassword,
       shell: values.shell,
-      smb: values.smb,
+      smb: values.smb || false,
       ssh_password_enabled: values.ssh_password_enabled,
       sshpubkey: values.sshpubkey ? values.sshpubkey.trim() : values.sshpubkey,
       sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
       sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
     };
+  }
 
-    let homeCreateWarningConfirmation$ = of(true);
+  private getHomeCreateConfirmation(): Observable<boolean> {
     if (this.homeCreateWarning) {
-      homeCreateWarningConfirmation$ = this.dialog.confirm({
+      return this.dialog.confirm({
         title: this.translate.instant('Warning!'),
         message: this.homeCreateWarning,
       });
     }
+    return of(true);
+  }
 
-    homeCreateWarningConfirmation$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.isFormLoading = true;
-        this.cdr.markForCheck();
+  private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
+    if (this.isNewUser && this.form.value.stig_password === UserStigPasswordOption.OneTimePassword) {
+      return this.api.call('auth.generate_onetime_password', [{ username: this.form.value.username }]).pipe(
+        switchMap((password) => {
+          this.matDialog.open(OneTimePasswordCreatedDialogComponent, { data: password });
+          return of(user);
+        }),
+      );
+    }
+    return of(user);
+  }
 
-        let request$: Observable<number>;
-        let nextRequest$: Observable<number>;
-        if (this.editingUser) {
-          const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
-          if (passwordNotEmpty && !values.password_disabled) {
-            body.password = values.password;
-          }
-          if (body.home_create) {
-            request$ = this.api.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
-            delete body.home_create;
-            delete body.home;
-            nextRequest$ = this.api.call('user.update', [this.editingUser.id, body]);
-          } else {
-            request$ = this.api.call('user.update', [this.editingUser.id, body]);
-          }
-        } else {
-          request$ = this.api.call('user.create', [{
-            ...body,
-            group_create: values.group_create,
-            password: values.password,
-            uid: values.uid,
-          }]);
-        }
+  private submitUserRequest(payload: UserUpdate): Observable<User> {
+    this.isFormLoading = true;
+    this.cdr.markForCheck();
 
-        request$.pipe(
-          switchMap((id) => nextRequest$ || of(id)),
-          filter(Boolean),
-          switchMap((id) => this.api.call('user.query', [[['id', '=', id]]])),
-          map((users) => users[0]),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (user) => {
-            if (this.isNewUser) {
-              this.snackbar.success(this.translate.instant('User added'));
-              this.store$.dispatch(userAdded({ user }));
-            } else {
-              this.snackbar.success(this.translate.instant('User updated'));
-              this.store$.dispatch(userChanged({ user }));
-            }
-            this.isFormLoading = false;
-            this.slideInRef.close({ response: true, error: null });
-            this.cdr.markForCheck();
-          },
-          error: (error: unknown) => {
-            this.isFormLoading = false;
-            this.formErrorHandler.handleValidationErrors(error, this.form);
-            this.cdr.markForCheck();
-          },
-        });
-      },
-      complete: () => {
-      },
-    });
+    return this.editingUser ? this.getUpdateUserRequest(payload) : this.getCreateUserRequest(payload);
+  }
+
+  private getCreateUserRequest(payload: UserUpdate): Observable<User> {
+    const oneTimePassword = this.form.value.stig_password === UserStigPasswordOption.OneTimePassword;
+
+    const userPayload = {
+      ...payload,
+      group_create: this.form.value.group_create,
+      password: oneTimePassword || payload.password_disabled ? null : this.form.value.password,
+      random_password: oneTimePassword,
+      uid: this.form.value.uid,
+    };
+
+    if (!oneTimePassword) {
+      delete userPayload.random_password;
+    }
+
+    return this.api.call('user.create', [userPayload]).pipe(
+      switchMap((user) => this.generateOneTimePasswordIfNeeded(user)),
+    );
+  }
+
+  private getUpdateUserRequest(payload: UserUpdate): Observable<User> {
+    const values = this.form.value;
+
+    const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
+    if (passwordNotEmpty && !values.password_disabled) {
+      payload.password = values.password;
+    }
+
+    if (payload.home_create) {
+      return this.api.call('user.update', [
+        this.editingUser.id,
+        { home_create: true, home: payload.home },
+      ]).pipe(
+        switchMap(() => {
+          delete payload.home_create;
+          delete payload.home;
+          return this.api.call('user.update', [this.editingUser.id, payload]);
+        }),
+      );
+    }
+    return this.api.call('user.update', [this.editingUser.id, payload]);
   }
 
   onDownloadSshPublicKey(): void {
@@ -484,7 +587,7 @@ export class UserFormComponent implements OnInit {
       ['enabled', '=', true],
       ['home', '=', true],
     ]]).pipe(
-      filter((shares) => !!shares.length),
+      filter((shares) => !!shares?.length),
       map((shares) => shares[0].path),
       untilDestroyed(this),
     ).subscribe((homeSharePath) => {

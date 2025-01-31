@@ -50,7 +50,7 @@ export class SystemInfoEffects {
         map((productType) => productTypeLoaded({ productType })),
         catchError((error: unknown) => {
           console.error(error);
-          return of(productTypeLoaded({ productType: ProductType.Scale }));
+          return of(productTypeLoaded({ productType: ProductType.CommunityEdition }));
         }),
       );
     }),

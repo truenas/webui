@@ -9,7 +9,7 @@ import {
 } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
@@ -67,15 +67,15 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   protected readonly requiredRoles = [Role.DatasetWrite];
 
   form = this.formBuilder.group({
-    owner: [null as string, [this.validatorService.validateOnCondition(
+    owner: new FormControl(null as string | null, [this.validatorService.validateOnCondition(
       () => this.isToApplyUser,
       Validators.required,
-    )]],
+    )]),
     applyUser: [false],
-    ownerGroup: [null as string, [this.validatorService.validateOnCondition(
+    ownerGroup: new FormControl(null as string | null, [this.validatorService.validateOnCondition(
       () => this.isToApplyGroup,
       Validators.required,
-    )]],
+    )]),
     mode: ['000'],
     applyGroup: [false],
     permission: [''],

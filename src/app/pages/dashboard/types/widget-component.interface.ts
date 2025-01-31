@@ -24,7 +24,7 @@ export interface WidgetSettingsComponent<Settings extends SomeWidgetSettings = n
   widgetSettingsRef: WidgetSettingsRef<Settings>;
 }
 
-type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
+export type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
   ? WidgetSettingsComponent<Settings>
   : null;
 
@@ -33,7 +33,7 @@ export type WidgetVisibilityDepsType<T = unknown> = Map<Type<T>, T>;
 export interface WidgetDefinition<
   Settings extends SomeWidgetSettings | null,
   Component extends WidgetComponent<Settings>,
-  SettingsComponent extends WidgetSettingsComponentType<Settings>,
+  SettingsComponent extends WidgetSettingsComponentType<Settings> | null,
   WidgetVisibilityProvider = unknown,
 > {
   name: string;

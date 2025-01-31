@@ -6,7 +6,7 @@ export interface DataProvider<T> {
   totalRows: number;
   currentPage$: Observable<T[]>;
   currentPageCount$: Observable<number>;
-  expandedRow: T;
+  expandedRow: T | null;
   sorting: TableSort<T>;
   pagination: TablePagination;
 
