@@ -41,6 +41,7 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FilesystemService } from 'app/services/filesystem.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
@@ -138,6 +139,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private store$: Store<AppState>,
+    private filesystem: FilesystemService,
     public slideInRef: SlideInRef<{ datasetId: string; isNew?: boolean } | undefined, Dataset>,
   ) {
     this.slideInRef.requireConfirmationWhen(() => {
@@ -260,6 +262,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
+        this.filesystem.invokeRefresh();
         this.slideInRef.close({ response: createdDataset, error: null });
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {

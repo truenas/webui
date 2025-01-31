@@ -70,6 +70,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly root = input(mntPath);
   readonly nodeProvider = input.required<TreeNodeProvider>();
   // TODO: Come up with a system of extendable controls.
+  // TODO: Add support for zvols.
   readonly canCreateDataset = input(false);
   readonly createDatasetProps = input<Omit<DatasetCreate, 'name'>>({});
 

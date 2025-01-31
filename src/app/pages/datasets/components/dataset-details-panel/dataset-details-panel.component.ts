@@ -29,6 +29,7 @@ import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryptio
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
@@ -68,6 +69,7 @@ export class DatasetDetailsPanelComponent {
     private datasetStore: DatasetTreeStore,
     private router: Router,
     private slideIn: SlideIn,
+    private filesystem: FilesystemService,
   ) { }
 
   protected readonly hasRoles = computed(() => {
@@ -92,6 +94,7 @@ export class DatasetDetailsPanelComponent {
       untilDestroyed(this),
     ).subscribe(({ response }) => {
       this.datasetStore.datasetUpdated();
+      this.filesystem.invokeRefresh();
 
       this.datasetStore.isLoading$.pipe(
         filter((isLoading) => !isLoading),

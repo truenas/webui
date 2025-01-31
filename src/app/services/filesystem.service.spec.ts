@@ -88,5 +88,21 @@ describe('FilesystemService', () => {
         },
       ]);
     });
+
+    it('check for updating the tree', async () => {
+      const treeNodeProvider = spectator.service.getFilesystemNodeProvider({ datasetsAndZvols: true });
+
+      const childNodes = await lastValueFrom(
+        treeNodeProvider({
+          data: {
+            path: '/mnt/parent',
+          },
+        } as TreeNode<ExplorerNodeData>),
+      );
+
+      spectator.service.invokeRefresh();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.listdir', childNodes);
+    });
   });
 });
