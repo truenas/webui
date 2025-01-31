@@ -15,9 +15,16 @@
 
 .header-overlay {
   background-color: rgba(0, 0, 0, 0.5);
-  color: white;
+  color: var(--fg1);
   padding: 30px 10px;
   text-align: center;
+}
+
+.logo-wrapper {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 200px;
 }
 
 #title {
@@ -34,11 +41,11 @@
   display: flex;
   margin: 20px 10px;
 
-  > *:first-child {
+  >*:first-child {
     flex: 1 1 10%;
   }
 
-  > *:last-child {
+  >*:last-child {
     flex: 1 1 90%;
   }
 }
@@ -46,7 +53,8 @@
 .bullet-icon {
   font-size: 36px;
   height: 36px;
-  width: 36px;;
+  width: 36px;
+  ;
 }
 
 #ix-img {
@@ -93,8 +101,9 @@
   text-align: right;
 }
 
-.logo-wrapper .logo {
+.logo-wrapper ix-truenas-logo {
   height: auto;
+  margin: auto;
   position: relative;
   width: 256px;
   z-index: 2;
@@ -115,6 +124,6 @@
   .bullet-icon {
     font-size: 24px;
     height: 24px;
-    width: 24px;;
+    width: 24px;
   }
 }

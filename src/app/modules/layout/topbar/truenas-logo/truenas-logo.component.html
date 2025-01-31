@@ -1,0 +1,42 @@
+<a
+  ixTest="main-logo"
+  class="app-link"
+  [routerLink]="['/dashboard']"
+>
+  @if(fullSize()) {
+    <ix-icon
+      class="app-fullsize-logo"
+      [fullSize]="true"
+      [name]="fullSizeIcon()"
+    ></ix-icon>
+  } @else {
+    <div class="logo" [class.text-hidden]="hideText()">
+      <ix-icon
+        class="app-logo"
+        [fullSize]="true"
+        [name]="logoMarkIcon()"
+      ></ix-icon>
+    </div>
+
+    @if (!hideText()) {
+      <div class="logo-text">
+        <ix-icon
+          class="app-logo-text"
+          [fullSize]="true"
+          [name]="logoTypeIcon()"
+        ></ix-icon>
+
+        @if (!hideBadge()) {
+          <ix-icon
+            class="app-logo-badge"
+            [class.enterprise]="isEnterprise()"
+            [class.community-edition]="!isEnterprise()"
+            [name]="badgeIcon()"
+            [fullSize]="true"
+          ></ix-icon>
+        }
+      </div>
+    }
+  }
+
+</a>

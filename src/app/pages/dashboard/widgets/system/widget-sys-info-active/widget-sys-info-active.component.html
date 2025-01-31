@@ -58,10 +58,6 @@
           </button>
         </div>
 
-        <div class="overview">
-          <strong>{{ 'Overview' | translate }}</strong>
-        </div>
-
         <mat-list>
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
@@ -71,6 +67,29 @@
                   {{ systemInfo().platform }}
                 } @else {
                   {{ 'Generic' }}
+                }
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Edition' | translate }}:</strong>
+            @if (isLoaded()) {
+              <span>
+                @if (isEnterprise()) {
+                  {{ 'Enterprise' | translate }}
+                } @else {
+                  {{ 'Community' | translate }}
                 }
               </span>
             } @else {

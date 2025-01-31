@@ -16,12 +16,7 @@
 
       <ix-global-search-trigger></ix-global-search-trigger>
 
-      <a class="mobile-logo" routerLink="/" ixTest="mobile-logo">
-        <div class="mobile-logo-container">
-          <ix-icon name="ix-truenas-logo-mark-color" class="logomark" [fullSize]="true"></ix-icon>
-          <ix-icon name="ix-truenas-logo-type-color" class="logotype" [fullSize]="true"></ix-icon>
-        </div>
-      </a>
+      <ix-truenas-logo></ix-truenas-logo>
 
       <div class="topbar-mobile-footer" [class.has-console-footer]="hasConsoleFooter$ | async">
         <ix-logo></ix-logo>

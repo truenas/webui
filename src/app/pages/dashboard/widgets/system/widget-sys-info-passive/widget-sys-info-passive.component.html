@@ -54,10 +54,6 @@
           <h3>{{ 'System Information' | translate }} <small>{{ 'standby' | translate }}</small></h3>
         </div>
 
-        <div class="overview">
-          <strong>{{ 'Overview' | translate }}</strong>
-        </div>
-
         <mat-list>
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
@@ -81,6 +77,30 @@
               ></ngx-skeleton-loader>
             }
           </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Edition' | translate }}:</strong>
+            @if (isLoaded()) {
+              <span>
+                @if (isEnterprise()) {
+                  {{ 'Enterprise' | translate }}
+                } @else {
+                  {{ 'Community' | translate }}
+                }
+              </span>
+            } @else {
+              <ngx-skeleton-loader
+                class="inline-loader"
+                [theme]="{
+                  height: '20px',
+                  background: 'var(--alt-bg2)',
+                  opacity: 0.25,
+                  margin: 0,
+                }"
+              ></ngx-skeleton-loader>
+            }
+          </mat-list-item>
+
           <mat-list-item>
             <strong>{{ 'Version' | translate }}:</strong>
             @if (isLoaded()) {

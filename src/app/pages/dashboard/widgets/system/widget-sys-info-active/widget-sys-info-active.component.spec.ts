@@ -19,7 +19,6 @@ import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system
 import { selectIsHaLicensed, selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware, selectProductType,
-  selectIsEnterprise,
   selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
@@ -75,10 +74,6 @@ describe('WidgetSysInfoActiveComponent', () => {
             value: ProductType.Enterprise,
           },
           {
-            selector: selectIsEnterprise,
-            value: true,
-          },
-          {
             selector: selectHasEnclosureSupport,
             value: true,
           },
@@ -121,6 +116,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     const items = await parallel(() => matListItems.map((item) => item.getFullText()));
     expect(items).toEqual([
       'Platform: TRUENAS-M40-HA',
+      'Edition: Enterprise',
       'Version: Goldeye-25.10.0-MASTER-20250126-184805',
       'Support License: Gold Contract,  Expires on 2025-01-01',
       'System Serial: AA-00001',
@@ -158,6 +154,4 @@ describe('WidgetSysInfoActiveComponent', () => {
     const updateButton = await loader.getHarness(MatButtonHarness.with({ text: /Updates Available/ }));
     expect(await updateButton.host()).toExist();
   });
-
-  // TODO: Add more tests
 });

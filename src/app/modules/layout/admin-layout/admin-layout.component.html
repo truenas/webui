@@ -9,22 +9,7 @@
     (closedStart)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold">
-      <div class="branding topbar" [class.truenas-scale]="!isEnterprise()">
-        <a routerLink="/dashboard" class="logo" ixTest="main-logo">
-          <ix-icon
-            class="app-logo"
-            [fullSize]="true"
-            [name]="isDefaultTheme ? 'ix-truenas-logo-mark-color': 'ix-truenas-logo-mark'"
-          ></ix-icon>
-        </a>
-        <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
-          <ix-icon
-            class="app-logo-text"
-            [fullSize]="true"
-            [name]="isDefaultTheme ? iconMarker('ix-truenas-logo-type-color'): iconMarker('ix-truenas-logo-type')"
-          ></ix-icon>
-        </a>
-      </div>
+      <ix-truenas-logo [hideText]="isSidenavCollapsed"></ix-truenas-logo>
 
       <ix-navigation
         [isSidenavCollapsed]="isSidenavCollapsed"
@@ -53,6 +38,7 @@
           @if (hostname$ | async; as hostname) {
             <div
               class="hostname-label"
+              matTooltipPosition="above"
               [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
             >{{ hostname }}</div>
           }

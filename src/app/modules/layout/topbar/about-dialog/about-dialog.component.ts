@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { CopyrightLineComponent } from 'app/modules/layout/copyright-line/copyright-line.component';
+import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -28,6 +29,7 @@ import { selectIsEnterprise, selectSystemInfoState } from 'app/store/system-info
     TranslateModule,
     TestDirective,
     AsyncPipe,
+    TruenasLogoComponent,
   ],
 })
 export class AboutDialogComponent {

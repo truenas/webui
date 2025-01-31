@@ -8,7 +8,8 @@
 
 /*---- Globals -----*/
 html {
-  font-size: 87.5% /* 14px */;
+  font-size: 87.5%
+    /* 14px */;
 }
 
 html,
@@ -242,8 +243,10 @@ body * {
 /*---- Main Sidenav -----*/
 .sidebar-panel.mat-sidenav {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-  min-width: var(--sidenav-width); /*15rem;*/
-  width: var(--sidenav-width); /*15rem;*/
+  min-width: var(--sidenav-width);
+  /*15rem;*/
+  width: var(--sidenav-width);
+  /*15rem;*/
 }
 
 .sidebar-panel.mat-sidenav .navigation-hold {
@@ -275,7 +278,7 @@ body * {
   background: transparent;
 }
 
-.sidebar-list-item.open > .mat-mdc-list-item-unscoped-content {
+.sidebar-list-item.open>.mat-mdc-list-item-unscoped-content {
   background: rgba(0, 0, 0, 0.03);
 }
 
@@ -303,7 +306,7 @@ body * {
   z-index: 1;
 }
 
-.sidebar-panel.mat-sidenav .mat-mdc-list-item-unscoped-content > a,
+.sidebar-panel.mat-sidenav .mat-mdc-list-item-unscoped-content>a,
 .slide-in-nav-item a {
   align-items: center;
   box-direction: normal;
@@ -324,7 +327,7 @@ body * {
 }
 
 .sidebar-panel.mat-sidenav {
-  .sidebar-list-item.open > .mat-mdc-list-item-unscoped-content > .sub-menu {
+  .sidebar-list-item.open>.mat-mdc-list-item-unscoped-content>.sub-menu {
     max-height: 1000px;
   }
 
@@ -362,13 +365,13 @@ body * {
       width: 100% !important;
     }
 
-    .sidebar-list-item > .mat-mdc-list-item-unscoped-content > a {
+    .sidebar-list-item>.mat-mdc-list-item-unscoped-content>a {
       padding: 0;
       position: relative;
     }
 
     .navigation-hold,
-    .sidebar-list-item > .mat-mdc-list-item-unscoped-content {
+    .sidebar-list-item>.mat-mdc-list-item-unscoped-content {
       overflow: visible !important;
     }
 
@@ -381,16 +384,8 @@ body * {
       }
     }
 
-    .branding {
+    ix-truenas-logo {
       max-width: 48px;
-
-      .app-logo-text {
-        display: none;
-      }
-
-      .app-logo {
-        margin: 0;
-      }
     }
 
     .sidebar-list-item.open .sub-menu {
@@ -410,11 +405,11 @@ body * {
       padding-left: 1rem;
     }
 
-    .mat-nav-list > div > .sidebar-list-item a .ix-icon {
+    .mat-nav-list>div>.sidebar-list-item a .ix-icon {
       margin: 0;
     }
 
-    .mat-nav-list > div > .sidebar-list-item a .menu-caret {
+    .mat-nav-list>div>.sidebar-list-item a .menu-caret {
       font-size: medium;
       left: 33px;
       position: absolute;

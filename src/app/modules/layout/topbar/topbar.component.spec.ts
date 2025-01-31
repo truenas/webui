@@ -20,6 +20,7 @@ import { IxLogoComponent } from 'app/modules/layout/topbar/ix-logo/ix-logo.compo
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from 'app/modules/layout/topbar/power-menu/power-menu.component';
 import { TopbarComponent } from 'app/modules/layout/topbar/topbar.component';
+import { TruenasLogoComponent } from 'app/modules/layout/topbar/truenas-logo/truenas-logo.component';
 import { UserMenuComponent } from 'app/modules/layout/topbar/user-menu/user-menu.component';
 import { ThemeService } from 'app/modules/theme/theme.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -53,6 +54,7 @@ describe('TopbarComponent', () => {
         JobsIndicatorComponent,
         UserMenuComponent,
         PowerMenuComponent,
+        TruenasLogoComponent,
       ),
     ],
     providers: [
