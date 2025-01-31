@@ -39,7 +39,7 @@ describe('CopyrightLineComponent', () => {
   });
 
   it('shows copyright line with product type and year of build', () => {
-    store$.overrideSelector(selectProductType, ProductType.Scale);
+    store$.overrideSelector(selectProductType, ProductType.CommunityEdition);
     store$.refreshState();
     spectator.detectChanges();
 
@@ -49,7 +49,7 @@ describe('CopyrightLineComponent', () => {
   });
 
   it('shows copyright line with enterprise product type and year of build', () => {
-    store$.overrideSelector(selectProductType, ProductType.ScaleEnterprise);
+    store$.overrideSelector(selectProductType, ProductType.Enterprise);
     store$.refreshState();
     spectator.detectChanges();
 
