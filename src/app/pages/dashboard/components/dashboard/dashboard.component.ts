@@ -164,8 +164,9 @@ export class DashboardComponent implements OnInit {
 
   protected onGroupsReordered(cdkEvent: CdkDragDrop<WidgetGroup[]>): void {
     this.renderedGroups.update((groups) => {
-      moveItemInArray(groups, cdkEvent.previousIndex, cdkEvent.currentIndex);
-      return groups;
+      const updatedGroups = [...groups];
+      moveItemInArray(updatedGroups, cdkEvent.previousIndex, cdkEvent.currentIndex);
+      return updatedGroups;
     });
   }
 
