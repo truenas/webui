@@ -76,6 +76,7 @@
   "In order to update the form, you need to disable the service first": "",
   "Instance must be stopped to add TPM.": "",
   "Instance must be stopped to update VNC.": "",
+  "Job completed successfully": "",
   "Leca Service Base Url": "",
   "Linux Only": "",
   "Maximum file size is limited to {maxSize}.": "",
