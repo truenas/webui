@@ -6,7 +6,7 @@
     [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
   ></ix-checkbox>
 
-  @if (saveParameters.get('recursive').value) {
+  @if (saveParameters.value.recursive) {
     <ix-checkbox
       formControlName="traverse"
       [label]="helptext.dataset_acl_traverse_placeholder | translate"

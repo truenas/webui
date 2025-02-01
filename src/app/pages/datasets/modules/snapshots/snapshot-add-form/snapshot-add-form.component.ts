@@ -138,16 +138,12 @@ export class SnapshotAddFormComponent implements OnInit {
     ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
 
     if (this.datasetId) {
-      this.setDataset();
+      this.form.controls.dataset.setValue(this.datasetId);
     }
   }
 
-  setDataset(): void {
-    this.form.controls.dataset.setValue(this.datasetId);
-  }
-
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const params: CreateZfsSnapshot = {
       dataset: values.dataset,
       recursive: values.recursive,

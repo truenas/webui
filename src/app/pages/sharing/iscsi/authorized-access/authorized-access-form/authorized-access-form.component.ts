@@ -202,9 +202,9 @@ export class AuthorizedAccessFormComponent implements OnInit {
     };
 
     this.isLoading = true;
-    const request$ = this.isNew
-      ? this.api.call('iscsi.auth.create', [payload])
-      : this.api.call('iscsi.auth.update', [this.editingAccess.id, payload]);
+    const request$ = this.editingAccess
+      ? this.api.call('iscsi.auth.update', [this.editingAccess.id, payload])
+      : this.api.call('iscsi.auth.create', [payload]);
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {

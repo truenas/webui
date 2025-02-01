@@ -203,7 +203,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   unlockSubmit(payload: DatasetUnlockParams): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     payload.recursive = !values.use_file || values.unlock_children;
 
     const job$ = payload.key_file
@@ -228,7 +228,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   onSave(): void {
-    const values = this.form.value;
+    const values = this.form.getRawValue();
     const datasets: DatasetEncryptionSummaryQueryParamsDataset[] = [];
 
     if (!values.use_file) {

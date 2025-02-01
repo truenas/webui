@@ -8,6 +8,5 @@ export const cpuTempWidget = dashboardWidget({
   name: T('CPU Temp'),
   component: WidgetCpuTempComponent,
   category: WidgetCategory.Cpu,
-  settingsComponent: null,
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
 });
