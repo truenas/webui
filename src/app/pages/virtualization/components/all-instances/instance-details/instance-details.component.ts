@@ -12,6 +12,7 @@ import {
 import {
   InstanceGeneralInfoComponent,
 } from 'app/pages/virtualization/components/all-instances/instance-details/instance-general-info/instance-general-info.component';
+import { InstanceIdmapComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-idmap/instance-idmap.component';
 import { InstanceMetricsComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-metrics/instance-metrics.component';
 import { InstanceNicsComponent } from 'app/pages/virtualization/components/all-instances/instance-details/instance-nics/instance-nics.component';
 import {
@@ -35,6 +36,7 @@ import {
     InstanceToolsComponent,
     InstanceMetricsComponent,
     InstanceNicsComponent,
+    InstanceIdmapComponent,
   ],
 })
 export class InstanceDetailsComponent {
