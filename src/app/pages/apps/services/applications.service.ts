@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, OperatorFunction, filter, map, pipe,
 } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   App, AppStartQueryParams, AppUpgradeParams,
@@ -31,6 +32,7 @@ export class ApplicationsService {
   constructor(
     private api: ApiService,
     private translate: TranslateService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   checkIfAppIxVolumeExists(appName: string): Observable<boolean> {
@@ -65,7 +67,7 @@ export class ApplicationsService {
     return this.api.call('app.query', [[], {
       extra: {
         retrieve_config: true,
-        host_ip: window.location.hostname,
+        host_ip: this.window.location.hostname,
       },
     }]);
   }
@@ -75,7 +77,7 @@ export class ApplicationsService {
       extra: {
         include_app_schema: true,
         retrieve_config: true,
-        host_ip: window.location.hostname,
+        host_ip: this.window.location.hostname,
       },
     }]);
   }
