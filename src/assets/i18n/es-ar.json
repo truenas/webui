@@ -44,6 +44,7 @@
   "Pre-script": "",
   "Pull": "",
   "Replication Task Write Pull": "",
+  "Root Disk": "",
   "Root TCP Socket": "",
   "SAN": "",
   "SMB - Operation Close": "",
