@@ -74,6 +74,13 @@ describe('EnclosureSvgComponent', () => {
     spectator.detectChanges();
   }
 
+  function getTintTargets(slotNumber: number): SVGGElement[] {
+    const slotId: string = 'DRIVE_CAGE_' + slotNumber.toString();
+    const driveTrays = spectator.queryAll<SVGGElement>(`svg [id^=${slotId}] .tint-target`);
+
+    return driveTrays;
+  }
+
   describe('svg is loaded', () => {
     beforeEach(fakeAsync(() => {
       mockGetBBox();
@@ -106,9 +113,14 @@ describe('EnclosureSvgComponent', () => {
       expect(tintFn).toHaveBeenCalledTimes(2);
       expect(tintFn).toHaveBeenNthCalledWith(1, { drive_bay_number: 1 });
 
-      const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
-      expect(overlays[0].style.fill).toBe('red');
-      expect(overlays[1].style.fill).toBe('blue');
+      const slotOneTargets: SVGGElement[] = getTintTargets(1);
+      slotOneTargets.forEach((target) => {
+        expect(target.style.fill).toBe('red');
+      });
+      const slotTwoTargets: SVGGElement[] = getTintTargets(2);
+      slotTwoTargets.forEach((target) => {
+        expect(target.style.fill).toBe('blue');
+      });
     });
 
     it('adds overlays for every drive cage in an svg', () => {
