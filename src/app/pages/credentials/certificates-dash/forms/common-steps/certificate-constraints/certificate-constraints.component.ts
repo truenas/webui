@@ -130,7 +130,7 @@ export class CertificateConstraintsComponent implements OnInit, SummaryProvider 
           enabled: basicConstraints.enabled,
           ca: basicConstraints.BasicConstraints.includes(BasicConstraint.Ca),
           extension_critical: basicConstraints.BasicConstraints.includes(BasicConstraint.ExtensionCritical),
-          path_length: Number(basicConstraints.path_length),
+          path_length: basicConstraints.path_length,
         },
         AuthorityKeyIdentifier: this.hasAuthorityKeyIdentifier()
           ? {

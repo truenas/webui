@@ -15,6 +15,7 @@ export interface Disk {
   devname: string;
   difference: number;
   duplicate_serial: string[];
+  expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;
   informational: number;
