@@ -28,6 +28,7 @@ import { VirtualizationInstance } from 'app/interfaces/virtualization.interface'
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -123,6 +124,28 @@ describe('InstanceWizardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+  });
+
+  describe('name validation', () => {
+    it('shows error for invalid name', async () => {
+      const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+
+      await form.fillForm({
+        Name: 'invalid+_@name',
+      });
+
+      expect(await instanceNameControl.getErrorText()).toBe('Invalid format or character');
+    });
+
+    it('shows error for already existing name', async () => {
+      const instanceNameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+
+      await form.fillForm({
+        Name: 'test',
+      });
+
+      expect(await instanceNameControl.getErrorText()).toBe('The name "test" is already in use.');
+    });
   });
 
   describe('container', () => {
