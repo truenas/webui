@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
   createRoutingFactory,
@@ -12,7 +12,6 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -24,7 +23,7 @@ import {
   VirtualizationType,
 } from 'app/enums/virtualization.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { VirtualizationInstance } from 'app/interfaces/virtualization.interface';
+import { VirtualizationInstance, VirtualizationVolume } from 'app/interfaces/virtualization.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxIconGroupHarness } from 'app/modules/forms/ix-forms/components/ix-icon-group/ix-icon-group.harness';
@@ -34,6 +33,9 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import {
+  VolumesDialogComponent,
+} from 'app/pages/virtualization/components/common/volumes-dialog/volumes-dialog.component';
 import { InstanceWizardComponent } from 'app/pages/virtualization/components/instance-wizard/instance-wizard.component';
 import { VirtualizationImageWithId } from 'app/pages/virtualization/components/instance-wizard/select-image-dialog/select-image-dialog.component';
 import { VirtualizationConfigStore } from 'app/pages/virtualization/stores/virtualization-config.store';
@@ -213,6 +215,7 @@ describe('InstanceWizardComponent', () => {
         name: 'new',
         autostart: true,
         cpu: '1-2',
+        iso_volume: null,
         instance_type: VirtualizationType.Container,
         devices: [
           {
@@ -282,7 +285,8 @@ describe('InstanceWizardComponent', () => {
         enable_vnc: false,
         zvol_path: null,
         vnc_port: null,
-        instance_type: 'CONTAINER',
+        iso_volume: null,
+        instance_type: VirtualizationType.Container,
         environment: {},
       }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
@@ -291,7 +295,7 @@ describe('InstanceWizardComponent', () => {
   });
 
   describe('vm', () => {
-    it('creates new instance when form is submitted', async () => {
+    it('creates new instance with catalog iso when form is submitted', async () => {
       await form.fillForm({
         Name: 'new',
         'CPU Configuration': '1-2',
@@ -362,6 +366,7 @@ describe('InstanceWizardComponent', () => {
         autostart: true,
         cpu: '1-2',
         instance_type: VirtualizationType.Vm,
+        iso_volume: null,
         devices: [
           {
             dev_type: VirtualizationDeviceType.Disk,
@@ -392,46 +397,37 @@ describe('InstanceWizardComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    it('loads image and creates new instance when form is submitted', async () => {
-      global.Date.now = jest.fn(() => (new Date('2025-01-20 12:00:00')).getTime());
+    it('creates new instance with an ISO when form is submitted', async () => {
+      jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+        afterClosed: () => of({
+          id: 'myiso.iso',
+        } as VirtualizationVolume),
+      } as MatDialogRef<VolumesDialogComponent>);
 
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
 
       await form.fillForm({
         Name: 'new',
-        'VM Image Options': 'Upload an ISO image',
+        'VM Image Options': 'Use an ISO image',
         'CPU Configuration': '2',
         'Memory Size': '1 GiB',
       });
 
-      const fakeImage = fakeFile('image.iso');
-      await form.fillForm({ Image: [fakeImage] });
+      const selectIso = await loader.getHarness(MatButtonHarness.with({ text: 'Select ISO' }));
+      await selectIso.click();
 
       const createButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
       await createButton.click();
-
-      expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
-        file: fakeImage,
-        method: 'virt.volume.import_iso',
-        params: [{
-          name: 'image_1737367200000.iso',
-          upload_iso: true,
-        }],
-      });
 
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('virt.instance.create', [{
         name: 'new',
         autostart: true,
         cpu: '2',
         instance_type: VirtualizationType.Vm,
-        devices: [{
-          dev_type: VirtualizationDeviceType.Disk,
-          source: 'image_1737367200000.iso',
-          destination: null,
-          boot_priority: 1,
-        }],
+        devices: [],
         image: null,
+        iso_volume: 'myiso.iso',
         source_type: VirtualizationSource.Iso,
         enable_vnc: false,
         memory: 1073741824,
@@ -445,13 +441,6 @@ describe('InstanceWizardComponent', () => {
     });
 
     it('creates new instance using zvol path when form is submitted', async () => {
-      // TODO: Not sure what's causing the below warning, so I mocked 'warn' to make the test pass:
-      // The configured tracking expression (track by identity) caused re-creation of the entire
-      // collection of size 13. This is an expensive operation requiring destruction and subsequent
-      // creation of DOM nodes, directives, components etc. Please review the "track expression"
-      // and make sure that it uniquely identifies items in a collection. Find more at https://angular.dev/errors/NG0956
-      jest.spyOn(console, 'warn').mockImplementation(() => {});
-
       const instanceType = await loader.getHarness(IxIconGroupHarness.with({ label: 'Virtualization Method' }));
       await instanceType.setValue('VM');
 
@@ -478,6 +467,7 @@ describe('InstanceWizardComponent', () => {
         secure_boot: false,
         memory: 1073741824,
         vnc_port: null,
+        iso_volume: null,
         zvol_path: '/dev/zvol/test',
         root_disk_size: 10,
       }]);
