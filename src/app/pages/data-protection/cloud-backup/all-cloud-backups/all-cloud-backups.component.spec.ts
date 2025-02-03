@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
+import { MockComponents, MockDirective } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -12,7 +12,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -49,9 +48,8 @@ describe('AllCloudBackupsComponent', () => {
   const createComponent = createComponentFactory({
     component: AllCloudBackupsComponent,
     imports: [
-      MockComponent(PageHeaderComponent),
-      SearchInput1Component,
       MockComponents(
+        PageHeaderComponent,
         CloudBackupListComponent,
         CloudBackupDetailsComponent,
       ),
@@ -115,7 +113,6 @@ describe('AllCloudBackupsComponent', () => {
   it('checks used components on page', () => {
     expect(spectator.query(PageHeaderComponent)).toExist();
     expect(spectator.query(MasterDetailViewComponent)).toExist();
-    expect(spectator.query(SearchInput1Component)).toExist();
   });
 
   it('shows form to create new Cloud Backup when Add button is pressed', async () => {
@@ -131,7 +128,7 @@ describe('AllCloudBackupsComponent', () => {
   it('sets the default sort for dataProvider', () => {
     spectator.component.dataProvider.load();
 
-    expect(spectator.component.dataProvider.setSorting).toHaveBeenCalledWith({
+    expect(spectator.component.dataProvider.sorting).toEqual({
       active: 1,
       direction: SortDirection.Asc,
       propertyName: 'description',

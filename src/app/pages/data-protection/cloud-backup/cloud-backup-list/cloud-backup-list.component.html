@@ -1,37 +1,35 @@
-<div class="container">
-  <div class="table-container">
-    @if (!isMobileView()) {
-      <ng-container [ngTemplateOutlet]="thead"></ng-container>
-    }
+<div class="item-search">
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="dataProvider()?.isLoading$ | async"
+  ></ix-fake-progress-bar>
 
-    <ix-table
-      class="table"
-      [ixUiSearch]="searchableElements.elements.tasks"
-      [ix-table-empty]="!(dataProvider().currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider().emptyType$ | async)"
-      >
-      @if (isMobileView()) {
-        <ng-container [ngTemplateOutlet]="thead"></ng-container>
-      }
-      <tbody
-        ix-table-body
-        [columns]="columns"
-        [dataProvider]="dataProvider()"
-        [isLoading]="!!(dataProvider().isLoading$ | async)"
-        (expanded)="expanded($event)"
-      ></tbody>
-    </ix-table>
-    <ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>
-  </div>
+  <ix-search-input1
+    [maxLength]="100"
+    [disabled]="!cloudBackups().length"
+    [value]="searchQuery()"
+    (search)="onSearch($event)"
+  ></ix-search-input1>
 </div>
 
-<ng-template #thead>
-  <div class="sticky-header">
-    <thead
-      class="header-row"
-      ix-table-head
-      [columns]="columns"
-      [dataProvider]="dataProvider()"
-    ></thead>
-  </div>
-</ng-template>
+
+<ix-table
+  [ixUiSearch]="searchableElements.elements.tasks"
+  [ix-table-empty]="!(dataProvider()?.currentPageCount$ | async)"
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider()?.emptyType$ | async)"
+>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider()"
+  ></thead>
+
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider()"
+    [isLoading]="!!(dataProvider().isLoading$ | async)"
+    (expanded)="expanded($event)"
+  ></tbody>
+</ix-table>
+<ix-table-pager [dataProvider]="dataProvider()"></ix-table-pager>

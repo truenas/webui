@@ -1,4 +1,4 @@
-import { NgTemplateOutlet, AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
   output,
@@ -17,6 +17,7 @@ import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.inte
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { iconMarker } from 'app/modules/ix-icon/icon-marker.util';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { IxTableComponent } from 'app/modules/ix-table/components/ix-table/ix-table.component';
@@ -34,6 +35,7 @@ import { IxTablePagerComponent } from 'app/modules/ix-table/components/ix-table-
 import { IxTableEmptyDirective } from 'app/modules/ix-table/directives/ix-table-empty.directive';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -50,7 +52,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   standalone: true,
   imports: [
     UiSearchDirective,
-    NgTemplateOutlet,
     IxTableComponent,
     IxTableEmptyDirective,
     IxTableBodyComponent,
@@ -58,14 +59,18 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
     IxTableHeadComponent,
     TranslateModule,
     AsyncPipe,
+    SearchInput1Component,
+    FakeProgressBarComponent,
   ],
 })
 export class CloudBackupListComponent {
-  dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
+  readonly dataProvider = input.required<AsyncDataProvider<CloudBackup>>();
+  readonly cloudBackups = input<CloudBackup[]>([]);
   readonly isMobileView = input<boolean>(false);
+
   readonly toggleShowMobileDetails = output<boolean>();
   readonly requiredRoles = [Role.CloudBackupWrite];
-  readonly cloudBackups = signal<CloudBackup[]>([]);
+  readonly searchQuery = signal<string>('');
   protected readonly searchableElements = cloudBackupListElements;
 
   columns = createTable<CloudBackup>([
@@ -162,6 +167,11 @@ export class CloudBackupListComponent {
     });
   }
 
+  onSearch(query: string): void {
+    this.searchQuery.set(query);
+    this.dataProvider().setFilter({ query, columnKeys: ['description'] });
+  }
+
   openForm(row?: CloudBackup): void {
     this.slideIn.open(CloudBackupFormComponent, { data: row, wide: true })
       .pipe(
@@ -185,6 +195,9 @@ export class CloudBackupListComponent {
     ).subscribe({
       next: () => {
         this.dataProvider().load();
+        if (!this.cloudBackups().length) {
+          this.dataProvider().expandedRow = null;
+        }
       },
       error: (err: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(err));
@@ -200,11 +213,9 @@ export class CloudBackupListComponent {
   private onChangeEnabledState(cloudBackup: CloudBackup): void {
     this.api
       .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
-      .pipe(untilDestroyed(this))
+      .pipe(this.appLoader.withLoader(), untilDestroyed(this))
       .subscribe({
-        next: () => {
-          this.dataProvider().load();
-        },
+        next: () => this.dataProvider().load(),
         error: (err: unknown) => {
           this.dataProvider().load();
           this.dialogService.error(this.errorHandler.parseError(err));
@@ -213,9 +224,7 @@ export class CloudBackupListComponent {
   }
 
   private updateRowJob(row: CloudBackup, job: Job): void {
-    this.cloudBackups.update((backups) => {
-      return backups.map((backup) => (backup.id === row.id ? { ...backup, job } : backup));
-    });
-    this.dataProvider().setRows(this.cloudBackups());
+    const backups = this.cloudBackups().map((backup) => (backup.id === row.id ? { ...backup, job } : backup));
+    this.dataProvider().setRows(backups);
   }
 }

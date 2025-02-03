@@ -1,8 +1,9 @@
 import {
   Component, ChangeDetectionStrategy, signal, OnInit,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
@@ -10,7 +11,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master-detail-view.component';
@@ -33,7 +33,6 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
     MasterDetailViewComponent,
     CloudBackupListComponent,
     CloudBackupDetailsComponent,
-    SearchInput1Component,
     PageHeaderComponent,
     TranslateModule,
     UiSearchDirective,
@@ -43,7 +42,6 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
 })
 export class AllCloudBackupsComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudBackup>;
-  readonly filterString = signal<string>('');
   protected readonly selectedBackup = signal<CloudBackup>(null);
   protected readonly cloudBackups = signal<CloudBackup[]>([]);
   protected readonly searchableElements = cloudBackupListElements;
@@ -53,11 +51,22 @@ export class AllCloudBackupsComponent implements OnInit {
     private api: ApiService,
     private slideIn: SlideIn,
     private route: ActivatedRoute,
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+  ) {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this))
+      .subscribe(() => {
+        if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
+          this.dataProvider.expandedRow = null;
+          this.cdr.markForCheck();
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.route.fragment.pipe(
-      tap((id) => this.loadCloudBackups(id)),
+      tap((id) => this.loadCloudBackups(id || undefined)),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -70,11 +79,6 @@ export class AllCloudBackupsComponent implements OnInit {
       ).subscribe(() => this.dataProvider.load());
   }
 
-  onListFiltered(query: string): void {
-    this.filterString.set(query);
-    this.dataProvider.setFilter({ query, columnKeys: ['description'] });
-  }
-
   private loadCloudBackups(id?: string): void {
     const cloudBackups$ = this.api.call('cloud_backup.query').pipe(
       tap((cloudBackups) => {
@@ -84,7 +88,13 @@ export class AllCloudBackupsComponent implements OnInit {
           ? cloudBackups.find((cloudBackup) => cloudBackup.id.toString() === id)
           : cloudBackups.find((cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id);
 
-        this.dataProvider.expandedRow = selectedBackup ? { ...selectedBackup } : { ...cloudBackups[0] };
+        if (selectedBackup) {
+          this.dataProvider.expandedRow = selectedBackup;
+        } else if (cloudBackups.length) {
+          const [firstBackup] = cloudBackups;
+          this.dataProvider.expandedRow = firstBackup;
+        }
+        this.cdr.markForCheck();
       }),
     );
 
@@ -94,6 +104,7 @@ export class AllCloudBackupsComponent implements OnInit {
       direction: SortDirection.Asc,
       propertyName: 'description',
     });
+
     this.dataProvider.load();
   }
 }

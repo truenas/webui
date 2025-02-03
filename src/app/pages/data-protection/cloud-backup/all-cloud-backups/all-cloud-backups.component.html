@@ -1,6 +1,4 @@
 <ix-page-header>
-  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
-
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
@@ -15,15 +13,19 @@
 
 <ix-master-detail-view
   #masterDetailView="masterDetailViewContext"
-  [selectedItem]="dataProvider.expandedRow"
+  [selectedItem]="dataProvider?.expandedRow"
 >
   <ix-cloud-backup-list
-    #masterDetailView
     master
     [dataProvider]="dataProvider"
+    [cloudBackups]="cloudBackups()"
     [isMobileView]="masterDetailView.isMobileView()"
     (toggleShowMobileDetails)="masterDetailView.toggleShowMobileDetails($event)"
   ></ix-cloud-backup-list>
+
+  <ng-container detail-header>
+    {{ 'Task Details for {task}' | translate: { task: dataProvider?.expandedRow?.description} }}
+  </ng-container>
 
   <ng-container detail>
     @if (dataProvider.expandedRow) {
