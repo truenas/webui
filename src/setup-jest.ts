@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import 'jest-preset-angular/setup-jest';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
@@ -255,4 +256,52 @@ Object.defineProperty(global, 'performance', {
     mark: () => {},
     measure: () => {},
   },
+});
+
+class MockDataTransfer {
+  private filesArray: File[] = [];
+
+  get items(): DataTransferItemList {
+    return {
+      add: (file: File) => this.filesArray.push(file),
+      remove: (index: number) => this.filesArray.splice(index, 1),
+    } as unknown as DataTransferItemList;
+  }
+
+  get files(): FileList {
+    // Simple FileList mock that references our filesArray
+    const fileList: Partial<FileList> = {
+      length: this.filesArray.length,
+      item: (index: number) => this.filesArray[index] || null,
+      * [Symbol.iterator]() {
+        for (let i = 0; i < this.length; i++) {
+          yield this.item(i);
+        }
+      },
+    };
+    // We can manually copy properties to make it more FileList-like
+    this.filesArray.forEach((file, index) => {
+      fileList[index] = file;
+    });
+    return fileList as FileList;
+  }
+}
+
+// 2. Create a mock for ClipboardEvent that uses the above DataTransfer
+class MockClipboardEvent extends Event {
+  clipboardData: DataTransfer;
+
+  constructor(type: string, eventInitDict?: ClipboardEventInit) {
+    super(type, eventInitDict);
+    this.clipboardData = new MockDataTransfer() as unknown as DataTransfer;
+  }
+}
+
+// 3. Attach both mocks to global
+Object.defineProperty(global, 'ClipboardEvent', {
+  value: MockClipboardEvent,
+});
+
+Object.defineProperty(global, 'DataTransfer', {
+  value: MockDataTransfer,
 });
