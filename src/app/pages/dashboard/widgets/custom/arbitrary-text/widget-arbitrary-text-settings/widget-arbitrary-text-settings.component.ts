@@ -60,9 +60,9 @@ export class WidgetArbitraryTextSettingsComponent implements
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
         this.widgetSettingsRef.updateSettings({
-          widgetTitle: settings.widgetTitle,
-          widgetText: settings.widgetText,
-          widgetSubText: settings.widgetSubText,
+          widgetTitle: settings.widgetTitle || '',
+          widgetText: settings.widgetText || '',
+          widgetSubText: settings.widgetSubText || '',
         });
 
         this.widgetSettingsRef.updateValidity(

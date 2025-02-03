@@ -9,5 +9,4 @@ export const osVersionWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.SystemInfo,
   component: WidgetOsVersionComponent,
-  settingsComponent: null,
 });

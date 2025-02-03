@@ -5,7 +5,7 @@ import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { delay, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -34,6 +34,20 @@ describe('CloudBackupCardComponent', () => {
     {
       id: 1,
       description: 'test one',
+      path: '/mnt/nmnmn',
+      pre_script: 'your_pre_script',
+      snapshot: false,
+      enabled: false,
+      job: {
+        state: JobState.Finished,
+        time_finished: {
+          $date: new Date().getTime() - 50000,
+        },
+      },
+    } as CloudBackup,
+    {
+      id: 2,
+      description: 'test two',
       path: '/mnt/nmnmn',
       pre_script: 'your_pre_script',
       snapshot: false,
@@ -100,6 +114,7 @@ describe('CloudBackupCardComponent', () => {
     const expectedRows = [
       ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
       ['test one', '', 'No', 'FINISHED', '1 min. ago', ''],
+      ['test two', '', 'No', 'FINISHED', '1 min. ago', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -167,6 +182,54 @@ describe('CloudBackupCardComponent', () => {
       'cloud_backup.update',
       [1, { enabled: true }],
     );
+  });
+
+  it('sends only one update request when multiple mat-toggle is updated', async () => {
+    jest.spyOn(spectator.component.dataProvider, 'load').mockImplementation();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
+      if (method === 'cloud_backup.update') {
+        return of(null).pipe(delay(10));
+      }
+      throw new Error(`Unexpected method: ${method}`);
+    });
+
+    const toggle1 = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+    const toggle2 = await table.getHarnessInCell(MatSlideToggleHarness, 2, 1);
+
+    expect(spectator.component.dataProvider.load).toHaveBeenCalledTimes(0);
+    await Promise.all([toggle1.check(), toggle2.check()]);
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'cloud_backup.update',
+      [1, { enabled: true }],
+    );
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+      'cloud_backup.update',
+      [2, { enabled: true }],
+    );
+    expect(spectator.component.dataProvider.load).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows cloud backup update error', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
+      if (method === 'cloud_backup.update') {
+        return throwError(() => ({
+          jsonrpc: '2.0',
+          error: {
+            data: {
+              reason: 'cloud backup update error',
+            },
+          },
+        }));
+      }
+      throw new Error(`Unexpected method: ${method}`);
+    });
+
+    expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+    await toggle.check();
+    expect(spectator.inject(DialogService).error).toHaveBeenCalled();
   });
 
   it('navigates to the details page when View Details button is pressed', async () => {

@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { JobState } from 'app/enums/job-state.enum';
-import { Job } from 'app/interfaces/job.interface';
+import { Job, JobProgress } from 'app/interfaces/job.interface';
 import {
   jobsLoaded, jobChanged, jobRemoved, jobAdded, jobPanelClosed, jobsNotLoaded, jobAborted,
 } from 'app/modules/jobs/store/job.actions';
@@ -46,7 +46,7 @@ export const jobReducer = createReducer(
     changes: {
       state: JobState.Aborted,
       abortable: false,
-      progress: null,
+      progress: {} as JobProgress,
       time_finished: {
         $date: Date.now(),
       },
