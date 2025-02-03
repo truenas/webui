@@ -9,5 +9,4 @@ export const cpuWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full],
   category: WidgetCategory.Cpu,
   component: WidgetCpuComponent,
-  settingsComponent: null,
 });

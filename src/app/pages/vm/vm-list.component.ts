@@ -100,7 +100,7 @@ export class VmListComponent implements OnInit {
 
   vmNotSupportedConfig: EmptyConfig = {
     large: true,
-    icon: iconMarker('laptop'),
+    icon: iconMarker('mdi-laptop'),
     title: this.translate.instant('Virtualization is not supported'),
   };
 

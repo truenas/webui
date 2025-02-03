@@ -24,7 +24,7 @@
       <p>{{ 'CPU' | translate }}: {{ instance.cpu || ('All Host CPUs' | translate) }}</p>
       <p>{{ 'Memory' | translate }}: {{ formatter.memorySizeFormatting(instance.memory) || ('Available Host Memory' | translate) }}</p>
 
-      @if (this.isVm) {
+      @if (this.isVm()) {
         <p>{{ 'Secure Boot' | translate }}: {{ instance.secure_boot | yesNo }}</p>
       }
 

@@ -46,7 +46,7 @@ export class DataWizardStepComponent implements OnInit {
 
   protected readonly VdevType = VdevType;
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
-  protected allowedLayouts = Object.values(CreateVdevLayout);
+  protected allowedLayouts = Object.values(CreateVdevLayout) as CreateVdevLayout[];
   readonly helptext = helptextManager;
   canChangeLayout = true;
 

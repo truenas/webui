@@ -9,5 +9,4 @@ export const systemInfoActiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Full, SlotSize.Half],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoActiveComponent,
-  settingsComponent: null,
 });

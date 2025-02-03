@@ -42,7 +42,7 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   }
 
   get isTimezoneDifference(): boolean {
-    return this.machineTime < this.value || this.machineTime > this.value;
+    return this.machineTime < (this.value as Date) || this.machineTime > (this.value as Date);
   }
 
   get isInvalidDate(): boolean {
