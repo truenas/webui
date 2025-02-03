@@ -2215,6 +2215,7 @@
   "KMIP Write": "",
   "Keep": "",
   "Keep Last": "",
+  "Keep current port {port}": "",
   "Keep for": "",
   "Keep snapshot for": "",
   "Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",

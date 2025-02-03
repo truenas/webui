@@ -26,6 +26,7 @@
   "Image uploaded successfully": "",
   "Instance is not container": "",
   "Instance must be stopped to update VNC.": "",
+  "Keep current port {port}": "",
   "Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.": "",
   "Manage Volumes": "",
   "Maprange": "",

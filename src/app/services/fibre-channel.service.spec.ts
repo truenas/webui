@@ -2,7 +2,6 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPort } from 'app/interfaces/fibre-channel.interface';
-import { nullOption, skipOption } from 'app/interfaces/option.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
 
@@ -56,13 +55,13 @@ describe('FibreChannelService', () => {
     });
 
     it('deletes link', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, nullOption));
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, null));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('fcport.delete', [fakePortId]);
     });
 
     it('skips all operations', async () => {
-      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, skipOption));
+      await lastValueFrom(spectator.service.linkFiberChannelToTarget(fakeTargetId, 1));
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'fcport.query',

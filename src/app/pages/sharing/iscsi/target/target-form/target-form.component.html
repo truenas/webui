@@ -55,7 +55,11 @@
             </ix-list>
 
             @if (showPortControls) {
-              <ix-fc-ports-controls [form]="fcForm" [isEdit]="!isNew"></ix-fc-ports-controls>
+              <ix-fc-ports-controls
+                [form]="fcForm"
+                [isEdit]="!isNew"
+                [currentPort]="editingTargetPort"
+              ></ix-fc-ports-controls>
             }
           </ix-fieldset>
         </div>
