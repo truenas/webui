@@ -130,7 +130,7 @@ describe('CloudBackupFormComponent', () => {
       });
 
       await form.fillForm({
-        'Take Snapshot': true,
+        'Use Snapshot': true,
       });
 
       const useAbsolutePathsControl = await form.getControl('Use Absolute Paths');
@@ -194,7 +194,7 @@ describe('CloudBackupFormComponent', () => {
         Folder: '/',
         Enabled: false,
         Bucket: 'bucket1',
-        'Take Snapshot': false,
+        'Use Snapshot': false,
         'Use Absolute Paths': true,
         Exclude: ['/test'],
         'Transfer Setting': 'Fast Storage',
@@ -259,7 +259,7 @@ describe('CloudBackupFormComponent', () => {
         'Pre-script': '',
         Schedule: 'Weekly (0 0 * * sun)  On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
-        'Take Snapshot': false,
+        'Use Snapshot': false,
         'Use Absolute Paths': true,
         'Transfer Setting': 'Performance',
       });
