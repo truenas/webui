@@ -53,18 +53,16 @@
                 <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
               }
             </mat-list-item>
-            @if (cpuTemp()) {
-              <mat-list-item>
-                <span class="label">
-                  <strong>{{ 'Temperature' | translate }}:</strong>
-                </span>
-                @if (!isLoading()) {
-                  {{ cpuTemp() }} C°
-                } @else {
-                  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
-                }
-              </mat-list-item>
-            }
+            <mat-list-item>
+              <span class="label">
+                <strong>{{ 'Hottest' | translate }}:</strong>
+              </span>
+              @if (!isLoading()) {
+                {{ hottest() }}
+              } @else {
+                <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+              }
+            </mat-list-item>
             <ng-template #skeleton>
               <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
             </ng-template>
