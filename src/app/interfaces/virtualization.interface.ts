@@ -41,6 +41,7 @@ export interface VirtualizationInstance {
   vnc_port: number | null;
   vnc_password: string | null;
   secure_boot: boolean;
+  root_disk_size: number | null;
   userns_idmap?: UserNsIdmap;
 }
 
