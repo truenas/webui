@@ -13,5 +13,4 @@ export const serialActiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
   category: WidgetCategory.SystemInfo,
   component: WidgetSerialActiveComponent,
-  settingsComponent: null,
 });

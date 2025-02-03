@@ -42,10 +42,9 @@ describe('DiskDetailsPanel', () => {
     disk: 'sdc',
     unavail_disk: null,
   };
-  const mirror: TopologyItem = {
+  const mirror = {
     name: 'mirror-0',
     type: TopologyItemType.Mirror,
-    path: null,
     guid: '15201895154961148781',
     status: TopologyItemStatus.Online,
     stats: {
@@ -96,7 +95,7 @@ describe('DiskDetailsPanel', () => {
     ],
     unavail_disk: null,
     isRoot: true,
-  };
+  } as TopologyItem;
   const disksWithSmartTestSupport = [
     'sda',
     'sdb',
@@ -116,7 +115,6 @@ describe('DiskDetailsPanel', () => {
     disk: {
       identifier: '{serial_lunid}169f2823-3d33-448d-baaf-1769a7c3d906_6001405169f28233',
       name: 'sdc',
-      duplicate_serial: null,
       subsystem: 'scsi',
       number: 2080,
       serial: '169f2823-3d33-448d-baaf-1769a7c3d906',
@@ -128,18 +126,11 @@ describe('DiskDetailsPanel', () => {
       advpowermgmt: 'DISABLED',
       togglesmart: true,
       smartoptions: '',
-      expiretime: null,
-      critical: null,
-      difference: null,
-      informational: null,
       model: 'ha001_d001',
-      rotationrate: null,
       type: 'HDD',
       zfs_guid: '7184309631055131820',
       bus: DiskBus.Spi,
       devname: 'sdc',
-      enclosure: null,
-      supports_smart: null,
       pool: 'pool',
     } as Disk,
     poolId: 2,
@@ -191,7 +182,6 @@ describe('DiskDetailsPanel', () => {
         topologyItem: {
           name: 'mirror-0',
           type: TopologyItemType.Mirror,
-          path: null,
           guid: '15201895154961148781',
           status: TopologyItemStatus.Online,
           stats: {
@@ -262,13 +252,11 @@ describe('DiskDetailsPanel', () => {
               disk: 'sdd',
               unavail_disk: null,
             },
-          ],
+          ] as TopologyItem[],
           unavail_disk: null,
-          isRoot: true,
-        },
+        } as TopologyItem,
         topologyParentItem: { } as TopologyItem,
         disk: {
-          duplicate_serial: [],
           identifier: '{serial_lunid}169f2823-3d33-448d-baaf-1769a7c3d906_6001405169f28233',
           name: 'sdc',
           subsystem: 'scsi',
@@ -282,19 +270,13 @@ describe('DiskDetailsPanel', () => {
           advpowermgmt: DiskPowerLevel.Disabled,
           togglesmart: true,
           smartoptions: '',
-          expiretime: null,
-          critical: null,
-          difference: null,
-          informational: null,
           model: 'ha001_d001',
-          rotationrate: null,
           type: DiskType.Hdd,
           zfs_guid: '7184309631055131820',
           bus: DiskBus.Spi,
           devname: 'sdc',
-          supports_smart: null,
           pool: 'pool',
-        },
+        } as Disk,
         poolId: 2,
         topologyCategory: VdevType.Data,
         hasTopLevelRaidz: false,

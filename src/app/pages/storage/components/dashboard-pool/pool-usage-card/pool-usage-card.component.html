@@ -50,7 +50,7 @@
             <span class="used-caption">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset()?.used.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ (rootDataset().used.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -58,7 +58,7 @@
             <span class="available-caption">
               <b>{{ 'Available' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset()?.available.parsed | ixFileSize) || ('Unknown' | translate) }}
+                {{ (rootDataset().available.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>

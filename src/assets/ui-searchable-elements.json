@@ -5742,6 +5742,27 @@
     "hierarchy": [
       "Virtualization",
       "Containers",
+      "Idmap"
+    ],
+    "synonyms": [
+      "VM",
+      "Virtual Machines",
+      "Instances"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/virtualization/view/def"
+    ],
+    "routerLink": null,
+    "anchor": "idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtualization",
+      "Containers",
       "Tools"
     ],
     "synonyms": [

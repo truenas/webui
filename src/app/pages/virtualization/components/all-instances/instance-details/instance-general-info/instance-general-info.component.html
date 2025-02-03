@@ -36,7 +36,7 @@
         {{ formatter.memorySizeFormatting(instance.memory) || ('Available Host Memory' | translate) }}
       </p>
 
-      @if (this.isVm) {
+      @if (this.isVm()) {
         <p>
           <span class="label">{{ 'Secure Boot' | translate }}:</span>
           {{ instance.secure_boot | yesNo }}

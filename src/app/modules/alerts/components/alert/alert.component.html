@@ -64,12 +64,13 @@
       </a>
     }
 
-    @if (link()) {
+    @let linkLabel = link()?.label;
+    @if (linkLabel) {
       <a
         [ixTest]="[alert().key, 'open-link']"
         (click)="openLink()"
       >
-        {{ link().label | translate }}
+        {{ linkLabel | translate }}
       </a>
     }
   </div>

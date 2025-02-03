@@ -184,9 +184,15 @@ export class ReportComponent implements OnInit, OnChanges {
       this.chartColors = this.themeService.getColorPattern();
     });
 
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timezone = timezone;
-    });
+    this.store$
+      .select(selectTimezone)
+      .pipe(
+        filter<string>((timezone) => !!timezone),
+        untilDestroyed(this),
+      )
+      .subscribe((timezone) => {
+        this.timezone = timezone;
+      });
 
     this.store$.pipe(
       waitForPreferences,
@@ -194,7 +200,7 @@ export class ReportComponent implements OnInit, OnChanges {
       delay(toggleMenuDuration),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.lineChart().chart.resize();
+      this.lineChart()?.chart?.resize();
     });
 
     this.store$.pipe(
@@ -218,7 +224,7 @@ export class ReportComponent implements OnInit, OnChanges {
     });
 
     this.updateReport$.pipe(
-      filter((changes) => Boolean(changes?.report)),
+      filter<IxSimpleChanges<this>>((changes) => Boolean(changes?.report)),
       throttleTime(100),
       skipWhile(() => this.document.hidden),
       distinctUntilChanged(),
@@ -237,7 +243,7 @@ export class ReportComponent implements OnInit, OnChanges {
       this.currentStartDate = rrdOptions.start;
       this.currentEndDate = rrdOptions.end;
 
-      const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+      const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
       this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
     });
   }
@@ -268,7 +274,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   formatTime(stamp: number): string {
     const result = this.formatDateTimePipe.transform(new Date(stamp));
-    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : null;
+    return result.toLowerCase() !== invalidDate.toLowerCase() ? result : '';
   }
 
   onZoomChange(interval: number[]): void {
@@ -284,7 +290,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     this.customZoom = false;
-    const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+    const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
     this.clearLastEndDateForCurrentZoomLevel();
   }
@@ -314,7 +320,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
     this.customZoom = false;
-    const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+    const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
   }
 
@@ -339,7 +345,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentEndDate = rrdOptions.end;
     this.customZoom = false;
     this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] = null;
-    const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+    const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
   }
 
@@ -358,7 +364,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+    const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
   }
 
@@ -377,7 +383,7 @@ export class ReportComponent implements OnInit, OnChanges {
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report().identifiers ? this.report().identifiers[0] : null;
+    const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });
   }
 
@@ -508,7 +514,7 @@ export class ReportComponent implements OnInit, OnChanges {
 
   private applyChanges(changes: IxSimpleChanges<this>): void {
     const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
-    const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
+    const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : undefined;
     this.fetchReport$.next({ rrdOptions, identifier, report: changes.report.currentValue });
   }
 

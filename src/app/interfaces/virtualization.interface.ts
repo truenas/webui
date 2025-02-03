@@ -42,6 +42,7 @@ export interface VirtualizationInstance {
   vnc_password: string | null;
   secure_boot: boolean;
   root_disk_size: number | null;
+  userns_idmap?: UserNsIdmap;
 }
 
 export interface VirtualizationAlias {
@@ -168,6 +169,17 @@ export interface VirtualizationUsb {
   dev: number;
   product_id: string;
   vendor_id: string;
+}
+
+export interface UserNsIdmap {
+  uid: IdmapUserNsEntry;
+  gid: IdmapUserNsEntry;
+}
+
+export interface IdmapUserNsEntry {
+  hostid: number;
+  maprange: number;
+  nsid: number;
 }
 
 export interface VirtualizationImage {

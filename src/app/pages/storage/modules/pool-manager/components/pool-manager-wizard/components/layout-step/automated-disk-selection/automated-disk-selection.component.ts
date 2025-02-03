@@ -39,7 +39,7 @@ import { NormalSelectionComponent } from './normal-selection/normal-selection.co
   ],
 })
 export class AutomatedDiskSelectionComponent implements OnChanges {
-  readonly isStepActive = input<boolean>();
+  readonly isStepActive = input<boolean>(false);
   readonly type = input<VdevType>();
   readonly inventory = input<DetailsDisk[]>([]);
   readonly canChangeLayout = input(false);

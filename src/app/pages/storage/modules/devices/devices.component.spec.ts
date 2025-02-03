@@ -11,6 +11,7 @@ import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.int
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { DevicesComponent } from 'app/pages/storage/modules/devices/devices.component';
@@ -119,7 +120,6 @@ describe('DevicesComponent', () => {
   const parentNode = {
     name: 'mirror-0',
     type: 'MIRROR',
-    path: null,
     guid: '17711810230640481012',
     status: 'ONLINE',
     stats: {
@@ -163,7 +163,7 @@ describe('DevicesComponent', () => {
     ],
     unavail_disk: null,
     isRoot: true,
-  } as DeviceNestedDataNode;
+  } as TopologyItem;
 
   const nodes = [
     {
@@ -283,7 +283,7 @@ describe('DevicesComponent', () => {
     const rows = spectator.queryAll('.cell-name');
     expect(rows.map((row) => row.textContent)).toEqual(['MIRROR', 'sdc', 'sdd']);
     expect(console.warn).toHaveBeenCalled();
-    const headerContainer = spectator.query('.header-container');
+    const headerContainer = spectator.query('.header-container')!;
     expect(headerContainer.textContent).toBe('Details for  sdc ');
     const zfsInfoCard = spectator.query('ix-zfs-info-card');
     expect(zfsInfoCard).toBeTruthy();

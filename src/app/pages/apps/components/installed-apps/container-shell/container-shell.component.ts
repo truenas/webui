@@ -37,6 +37,10 @@ export class ContainerShellComponent implements TerminalConfiguration {
 
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
+      if (!this.aroute.parent) {
+        throw new Error('Parent route is not found');
+      }
+
       combineLatest([this.aroute.params, this.aroute.parent.params]).pipe(
         untilDestroyed(this),
       ).subscribe(([params, parentParams]: [Record<string, unknown>, Record<string, unknown>]) => {

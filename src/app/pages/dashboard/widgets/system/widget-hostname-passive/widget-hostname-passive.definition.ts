@@ -16,7 +16,6 @@ export const hostnamePassiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
   category: WidgetCategory.SystemInfo,
   component: WidgetHostnamePassiveComponent,
-  settingsComponent: null,
   visibility: {
     deps: [Store],
     isVisible$: (deps) => {

@@ -16,7 +16,6 @@ export const serialPassiveWidget = dashboardWidget({
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
   category: WidgetCategory.SystemInfo,
   component: WidgetSerialPassiveComponent,
-  settingsComponent: null,
   visibility: {
     deps: [Store],
     isVisible$: (deps) => {
