@@ -5,7 +5,7 @@ import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { delay, of } from 'rxjs';
+import { delay, of, throwError } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -209,6 +209,27 @@ describe('CloudBackupCardComponent', () => {
       [2, { enabled: true }],
     );
     expect(spectator.component.dataProvider.load).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows cloud backup update error', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
+      if (method === 'cloud_backup.update') {
+        return throwError(() => ({
+          jsonrpc: '2.0',
+          error: {
+            data: {
+              reason: 'cloud backup update error',
+            },
+          },
+        }));
+      }
+      throw new Error(`Unexpected method: ${method}`);
+    });
+
+    expect(spectator.inject(DialogService).error).not.toHaveBeenCalled();
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 1);
+    await toggle.check();
+    expect(spectator.inject(DialogService).error).toHaveBeenCalled();
   });
 
   it('navigates to the details page when View Details button is pressed', async () => {
